@@ -59,7 +59,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-//import com.ibm.wsdl.util.xml.DOM2Writer;
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -1804,8 +1804,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         AxisMessage inputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         List paramElementList  = new ArrayList();
         if (inputMessage != null) {
+
+            // This is the  wrapped component - add the type mapping
+            Element mainParameter = generateParamComponent(doc,
+                    this.mapper.getParameterName(
+                            inputMessage.getElementQName()),
+                    this.mapper.getTypeMappingName(
+                            inputMessage.getElementQName()),
+                    operation.getName()
+            );
+
+            paramElementList.add(mainParameter);
+
             // this message has been unwrapped - find the correct references of the
-            // the message by looking at the unwrapped details object
+            // the message by looking at the unwrapped details object and attach the
+            // needed parameters inside main parameter element
             if (inputMessage.getParameter(Constants.UNWRAPPED_KEY) != null) {
                 //we have this unwrapped earlier. get the info holder
                 //and then look at the parameters
@@ -1815,10 +1828,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         (MessagePartInformationHolder)detailsParameter.getValue();
                 List partsList = infoHolder.getPartsList();
 
-
+                //populate the parts list - this list is needed to generate multiple
+                //parameters in the signatures
                 for (int i = 0; i < partsList.size(); i++) {
                     QName qName = (QName) partsList.get(i);
-                    paramElementList.add(generateParamComponent(doc,
+                    mainParameter.appendChild(generateParamComponent(doc,
                             this.mapper.getParameterName(
                                     qName),
                             this.mapper.getTypeMappingName(
@@ -1828,18 +1842,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                             (this.mapper.getTypeMappingStatus(qName)!=null))
                     );
                 }
-            } else {
-                // This is a wrapped component - just add the type mapping
-                paramElementList.add(generateParamComponent(doc,
-                        this.mapper.getParameterName(
-                                inputMessage.getElementQName()),
-                        this.mapper.getTypeMappingName(
-                                inputMessage.getElementQName()),
-                        operation.getName()
-                )
-                );
+
+                // apart from the parts list we need to get the wrapping classname
+                // as well
 
             }
+
+
+
 
         }
 
@@ -1920,7 +1930,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         }
         if (partName!= null){
-            addAttribute(doc,"partname",partName,paramElement);
+            addAttribute(doc,"partname",
+                    JavaUtils.capitalizeFirstChar(partName),
+                    paramElement);
         }
 
         if (isPrimitive){

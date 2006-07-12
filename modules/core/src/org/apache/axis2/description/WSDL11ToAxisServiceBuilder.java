@@ -15,6 +15,7 @@ import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -768,9 +769,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 Element newComplexType = document.createElementNS(
                         XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
                         + XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
-                newComplexType.setAttribute(XSD_NAME, name);
 
-                Element cmplxContentSequence = document.createElementNS(
+                Element cmplxTypeSequence = document.createElementNS(
                         XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
                         + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
                 Element child;
@@ -835,9 +835,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         child.setAttribute(XSD_REF, prefix + ":"
                                 + schemaTypeName.getLocalPart());
                     }
-                    cmplxContentSequence.appendChild(child);
+                    cmplxTypeSequence.appendChild(child);
                 }
-                newComplexType.appendChild(cmplxContentSequence);
+                newComplexType.appendChild(cmplxTypeSequence);
                 //add this newly created complextype to the list
                 complexTypeElementsMap.put(wsdl4jMessage.getQName(),
                         newComplexType);
@@ -858,10 +858,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, inputOpName);
 
-            String typeValue = ((Message) inputOperationsMap.get(inputOpName))
-                    .getQName().getLocalPart();
-            elementDeclaration.setAttribute(XSD_TYPE, AXIS2WRAPPED + ":"
-                    + typeValue);
+            QName typeQName = ((Message) inputOperationsMap.get(inputOpName))
+                    .getQName();
+            // add the anonymous
+            elementDeclaration.appendChild((Element)complexTypeElementsMap.get(typeQName));
             elementElementsList.add(elementDeclaration);
             resolvedRpcWrappedElementMap.put(inputOpName, new QName(
                     targetNamespaceUri, inputOpName, AXIS2WRAPPED));
@@ -878,10 +878,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
                     + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, outputOpName);
-            String typeValue = ((Message) outputOperationsMap
-                    .get(baseoutputOpName)).getQName().getLocalPart();
-            elementDeclaration.setAttribute(XSD_TYPE, AXIS2WRAPPED + ":"
-                    + typeValue);
+
+             QName typeQName = ((Message) outputOperationsMap
+                    .get(baseoutputOpName)).getQName();
+            // add the anonymous
+            elementDeclaration.appendChild((Element)complexTypeElementsMap.get(typeQName));
+            elementElementsList.add(elementDeclaration);
+
             elementElementsList.add(elementDeclaration);
             resolvedRpcWrappedElementMap.put(outputOpName, new QName(
                     targetNamespaceUri, outputOpName, AXIS2WRAPPED));
@@ -898,10 +901,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
                     + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, baseFaultOpName);
-            String typeValue = ((Message) faultyOperationsMap
-                    .get(baseFaultOpName)).getQName().getLocalPart();
-            elementDeclaration.setAttribute(XSD_TYPE, AXIS2WRAPPED + ":"
-                    + typeValue);
+
+            QName typeQName = ((Message) faultyOperationsMap
+                    .get(baseFaultOpName)).getQName();
+            elementDeclaration.appendChild((Element)complexTypeElementsMap.get(typeQName));
             elementElementsList.add(elementDeclaration);
             resolvedRpcWrappedElementMap.put(baseFaultOpName, new QName(
                     targetNamespaceUri, baseFaultOpName, AXIS2WRAPPED));
@@ -942,12 +945,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         }
 
-        Element[] complexTypeElements = (Element[]) complexTypeElementsMap
-                .values().toArray(new Element[complexTypeElementsMap.size()]);
-        for (int i = 0; i < complexTypeElements.length; i++) {
-            schemaElement.appendChild(complexTypeElements[i]);
-
-        }
+//        Element[] complexTypeElements = (Element[]) complexTypeElementsMap
+//                .values().toArray(new Element[complexTypeElementsMap.size()]);
+//        for (int i = 0; i < complexTypeElements.length; i++) {
+//            schemaElement.appendChild(complexTypeElements[i]);
+//
+//        }
 
         Element[] elementDeclarations = (Element[]) elementElementsList
                 .toArray(new Element[elementElementsList.size()]);
@@ -956,6 +959,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         }
 
+        //////////////////////////////////////////////////////////////////
+        //System.out.println(DOM2Writer.nodeToString(schemaElement));
+        /////////////////////////////////////////////////////////////////
         return schemaElement;
     }
 

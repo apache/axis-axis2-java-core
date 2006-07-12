@@ -228,7 +228,29 @@
                     */
                     public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
                     <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
-                    <xsl:for-each select="input/param[@type!='']">
+
+                    <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                    <xsl:choose>
+                        <xsl:when test="$inputcount=1">
+                            <!-- Even when the parameters are 1 we have to see whether we have the
+                          wrapped parameters -->
+                            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                            <xsl:choose>
+                                <xsl:when test="$inputWrappedCount &gt; 0">
+                                   <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                        <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                    </xsl:for-each>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/><xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
+                    </xsl:choose>
+
+                    <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
+                    <xsl:for-each select="input/param[not(@location='body') and @type!='']">
                         <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                     </xsl:for-each>)
                     throws java.rmi.RemoteException
@@ -245,29 +267,38 @@
 
               // create SOAP envelope with that payload
               org.apache.axiom.soap.SOAPEnvelope env = null;
-                    <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
+                    <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                     <xsl:choose>
                         <!-- test the number of input parameters
                         If the number of parameter is more then just run the normal test-->
-                        <xsl:when test="$count>0">
+                        <xsl:when test="$count &gt; 0">
                             <xsl:choose>
                                 <!-- style being doclit or rpc does not matter -->
                                 <xsl:when test="$style='rpc' or $style='document'">
                                     //Style is Doc.
+                                    <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
                                     <xsl:choose>
-                                        <xsl:when test="count(input/param[@location='body' and @type!=''])=1">
-                                           env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
-                                                optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                "<xsl:value-of select="$method-name"/>")));
-                                        </xsl:when>
-                                        <xsl:when test="count(input/param[@location='body' and @type!='']) &gt; 1">
-                                           env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                 <xsl:for-each select="input/param[@location='body' and @type!='']">
-                                                   <xsl:value-of select="@name"/>,
-                                                 </xsl:for-each>
-                                                optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                "<xsl:value-of select="$method-name"/>")));
+                                        <xsl:when test="$inputcount=1">
+                                            <!-- Even when the parameters are 1 we have to see whether we have the
+                                                wrapped parameters -->
+                                           <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                                            <xsl:choose>
+                                                <xsl:when test="$inputWrappedCount &gt; 0">
+                                                    env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                                        <xsl:value-of select="@name"/>,
+                                                    </xsl:for-each>
+                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                    "<xsl:value-of select="$method-name"/>")));
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <!-- there are no unwrapped parameters - go ahead and use the normal wrapped codegen-->
+                                                    env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
+                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                    "<xsl:value-of select="$method-name"/>")));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:when>
                                         <xsl:otherwise>
                                               env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
@@ -404,10 +435,32 @@
                 </xsl:text></xsl:for-each>
                 */
                 public  void start<xsl:value-of select="@name"/>(
-                <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
-                <xsl:for-each select="input/param[@type!='']">
-                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
-                <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback)
+
+                 <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                    <xsl:choose>
+                        <xsl:when test="$inputcount=1">
+                            <!-- Even when the parameters are 1 we have to see whether we have the
+                          wrapped parameters -->
+                            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                            <xsl:choose>
+                                <xsl:when test="$inputWrappedCount &gt; 0">
+                                   <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                        <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                    </xsl:for-each>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/><xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
+                    </xsl:choose>                                                
+                    <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
+                    <xsl:for-each select="input/param[not(@location='body') and @type!='']">
+                       <xsl:if test="position() &gt; 1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                    </xsl:for-each>
+
+                <xsl:if test="$inputcount &gt; 0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback)
 
                 throws java.rmi.RemoteException{
 
@@ -419,36 +472,46 @@
 
               // create SOAP envelope with that payload
               org.apache.axiom.soap.SOAPEnvelope env=null;
-                    <xsl:variable name="count"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
+                    <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                     <xsl:choose>
                         <!-- test the number of input parameters
                         If the number of parameter is more then just run the normal test-->
-                        <xsl:when test="$count>0">
+                        <xsl:when test="$count &gt; 0">
                             <xsl:choose>
                                 <xsl:when test="$style='document' or $style='rpc'">
                                     //Style is Doc.
+                                    <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
                                     <xsl:choose>
-                                        <xsl:when test="count(input/param[@location='body' and @type!=''])=1">
-                                           env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
-                                                optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                "<xsl:value-of select="$method-name"/>")));
-                                        </xsl:when>
-                                        <xsl:when test="count(input/param[@location='body' and @type!='']) &gt; 1">
-                                           env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
-                                                 <xsl:for-each select="input/param[@location='body' and @type!='']">
-                                                   <xsl:value-of select="@name"/>,
-                                                 </xsl:for-each>
-                                                optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
-                                                "<xsl:value-of select="$method-name"/>")));
+                                        <xsl:when test="$inputcount=1">
+                                            <!-- Even when the parameters are 1 we have to see whether we have the
+                                                wrapped parameters -->
+                                           <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                                            <xsl:choose>
+                                                <xsl:when test="$inputWrappedCount &gt; 0">
+                                                    env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                                        <xsl:value-of select="@name"/>,
+                                                    </xsl:for-each>
+                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                    "<xsl:value-of select="$method-name"/>")));
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <!-- there are no unwrapped parameters - go ahead and use the normal wrapped codegen-->
+                                                    env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
+                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                    "<xsl:value-of select="$method-name"/>")));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:when>
                                         <xsl:otherwise>
                                               env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
                                         </xsl:otherwise>
                                     </xsl:choose>
+
                                     <xsl:choose>
                                         <!-- If there are headers then build the envelope  -->
-                                        <xsl:when test="count(input/param[@location='header'])>0">
+                                        <xsl:when test="count(input/param[@location='header']) &gt; 0">
                                             env.build();
                                         </xsl:when>
                                     </xsl:choose>
@@ -525,13 +588,40 @@
                 </xsl:if>
                 <!-- End of in-out mep -->
             </xsl:if>
+
+
+
+
             <!-- Start of in only mep-->
             <xsl:if test="$mep='10'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
                 <!-- for the in only mep there is no notion of sync or async. And there is no return type also -->
                 public void <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
-                <xsl:for-each select="input/param[@type!='']">
-                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                </xsl:for-each>) throws java.rmi.RemoteException{
+                 <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                    <xsl:choose>
+                        <xsl:when test="$inputcount=1">
+                            <!-- Even when the parameters are 1 we have to see whether we have the
+                          wrapped parameters -->
+                            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                            <xsl:choose>
+                                <xsl:when test="$inputWrappedCount &gt; 0">
+                                   <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                        <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                    </xsl:for-each>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/><xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
+                    </xsl:choose>
+
+                   <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
+                    <xsl:for-each select="input/param[not(@location='body') and @type!='']">
+                        <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                    </xsl:for-each>
+
+                ) throws java.rmi.RemoteException{
 
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
                 _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
@@ -540,36 +630,78 @@
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
                 org.apache.axiom.soap.SOAPEnvelope env = null;
 
-                <xsl:choose>
-                    <!-- test the number of input parameters
-                       If the number of parameter is more then just run the normal generation-->
-                    <xsl:when test="count(input/param[@type!=''])>0">
-                        <xsl:choose>
-                            <xsl:when test="$style='document' or $style='rpc'">
-                                <!-- for the doc lit case there can be only one element. So take the first element -->
-                                //Style is Doc.
-                                env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()), <xsl:value-of select="input/param[1]/@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")));
-                            </xsl:when>
-                            <xsl:otherwise>
-                               //Unknown style detected !! No code is generated
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <!-- No input parameters present. So generate assuming no input parameters-->
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$style='document' or $style='rpc'">
-                                //Style is Doc. No input parameters
-                                org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
-                                env = factory.getDefaultEnvelope();
-                                env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
-                            </xsl:when>
-                            <xsl:otherwise>
-                                 //Unknown style detected !! No code is generated
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:variable name="count" select="count(input/param[@type!=''])"/>
+                                    <xsl:choose>
+                                        <!-- test the number of input parameters
+                                        If the number of parameter is more then just run the normal test-->
+                                        <xsl:when test="$count &gt; 0">
+                                            <xsl:choose>
+                                                <!-- style being doclit or rpc does not matter -->
+                                                <xsl:when test="$style='rpc' or $style='document'">
+                                                    //Style is Doc.
+                                                    <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                                                    <xsl:choose>
+                                                        <xsl:when test="$inputcount=1">
+                                                            <!-- Even when the parameters are 1 we have to see whether we have the
+                                                                wrapped parameters -->
+                                                           <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                                                            <xsl:choose>
+                                                                <xsl:when test="$inputWrappedCount &gt; 0">
+                                                                    env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                                                        <xsl:value-of select="@name"/>,
+                                                                    </xsl:for-each>
+                                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                                    "<xsl:value-of select="$method-name"/>")));
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    <!-- there are no unwrapped parameters - go ahead and use the normal wrapped codegen-->
+                                                                    env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
+                                                                    <xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>,
+                                                                    optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
+                                                                    "<xsl:value-of select="$method-name"/>")));
+                                                                </xsl:otherwise>
+                                                            </xsl:choose>
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                              env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()));
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+
+                                                    <xsl:choose>
+                                                        <!-- If there are headers then build the envelope -->
+                                                        <xsl:when test="count(input/param[@location='header'])>0">
+                                                            env.build();
+                                                        </xsl:when>
+                                                    </xsl:choose>
+                                                    <xsl:for-each select="input/param[@location='header']">
+                                                        // add the children only if the parameter is not null
+                                                        if (<xsl:value-of select="@name"/>!=null){
+                                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                        }
+                                                    </xsl:for-each>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    //Unknown style detected !! No code is generated
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:when>
+                                        <!-- No input parameters present. So generate assuming no input parameters-->
+                                        <xsl:otherwise>
+                                            <xsl:choose>
+                                                <xsl:when test="$style='rpc' or $style='document'">
+                                                    //Style is taken to be "document". No input parameters
+                                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                                    env = factory.getDefaultEnvelope();
+                                                    env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                     //Unknown style detected !! No code is generated
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+
 
                 // create message context with that soap envelope
             org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;

@@ -78,73 +78,51 @@
                 <!-- We really don't need to make a difference between these-->
                 <xsl:when test="$style='document' or $style='rpc'">
                     //doc style
-                    <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@location='body' and @type!=''])"/></xsl:variable>
-                    <xsl:choose>
-                        <!-- more than 1 argument - assume to be unwrapped -->
-                        <xsl:when test="$paramCount &gt; 1">
-                             java.util.List eltList = explode(
-                                    msgContext.getEnvelope().getBody().getFirstElement());
-                            <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
-                             skel.<xsl:value-of select="@name"/>(
-                             <xsl:for-each select="input/param[@location='body' and @type!='']">
-                             <xsl:if test="position() &gt; 1">,</xsl:if>
-                             <xsl:choose>
-                                <xsl:when test="@primitive">
-                                  convertTo<xsl:value-of select="@shorttype"/>((org.apache.axiom.om.OMElement)eltList.get(<xsl:value-of select="position()-1"/>))
-                                </xsl:when>
-                                <xsl:otherwise>
-                                (<xsl:value-of select="@type"/>)fromOM(
-                                (org.apache.axiom.om.OMElement)eltList.get(<xsl:value-of select="position()-1"/>),
-                                <xsl:value-of select="@type"/>.class,
-                                getEnvelopeNamespaces(msgContext.getEnvelope()))
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            </xsl:for-each>);
-                        </xsl:when>
-                         <!-- for a single parmeter we have to take care in taking the OMelement.
-                              The logic will be to check the partname attribute to determine
-                              whether it is wrapped or unwrapped
-                         -->
-                          <xsl:when test="$paramCount=1">
-                              <xsl:if test="input/param[@location='body' and @type!='']/@partname">
-                                 java.util.List eltList = explode(
-                                    msgContext.getEnvelope().getBody().getFirstElement());
-                              </xsl:if>
-                              <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
-                              skel.<xsl:value-of select="@name"/>(
-                              <xsl:choose>
-                                <xsl:when test="input/param[@location='body' and @type!='' and @partname]/@primitive">
-                                 <!--convert  from the elt list -->
-                                 convertTo<xsl:value-of select="@shorttype"/>((org.apache.axiom.om.OMElement)eltList.get(0))
-                                </xsl:when>
-                                <xsl:when test="input/param[@location='body' and @type!='' and not(@partname)]/@primitive">
-                                 <!-- convert from the root child-->
-                                 convertTo<xsl:value-of select="@shorttype"/>(msgContext.getEnvelope().getBody().getFirstElement())
-                                </xsl:when>
-                                <xsl:when test="(input/param[@location='body' and @type!='' and @partname and not(@primitive)])">
-                                 <!--convert  from the elt list -->
-                                (<xsl:value-of select="input/param[@location='body' and @type!='']/@type"/>)fromOM(
-                                (org.apache.axiom.om.OMElement)eltList.get(0),
-                                <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/>.class,
-                                getEnvelopeNamespaces(msgContext.getEnvelope()))
+                    <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                    <xsl:variable name="inputtype" select="input/param[@location='body' and @type!='']/@type"/>
 
-                                </xsl:when>
-                                <xsl:otherwise>
-                                (<xsl:value-of select="input/param[@location='body' and @type!='']/@type"/>)fromOM(
+
+                                                     <xsl:value-of select="$inputtype"/> wrappedParam =
+                                                         (<xsl:value-of select="$inputtype"/>)fromOM(
                                 msgContext.getEnvelope().getBody().getFirstElement(),
-                                <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/>.class,
-                                getEnvelopeNamespaces(msgContext.getEnvelope()))
-                                </xsl:otherwise>
-                            </xsl:choose>
-                          );
-                        </xsl:when>
-                        <!--No input parameters-->
+                                <xsl:value-of select="$inputtype"/>.class,
+                                getEnvelopeNamespaces(msgContext.getEnvelope()));
 
-                        <xsl:otherwise>
-                             <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
-                            skel.<xsl:value-of select="@name"/>();</xsl:otherwise>
-                    </xsl:choose>
+                                    <xsl:choose>
+                                        <xsl:when test="$inputcount=1">
+                                            <!-- Even when the parameters are 1 we have to see whether we have the
+                                                wrapped parameters -->
+                                           <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                                            <xsl:choose>
+                                                <xsl:when test="$inputWrappedCount &gt; 0">
+                                                    <!-- generate the references. the getters need to be
+                                                        generated by the databinding-->
+                                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                                        <xsl:value-of select="@type"/> param<xsl:value-of select="position()"/>
+                                                                = get<xsl:value-of select="@partname"/>(wrappedParam);
+                                                    </xsl:for-each>
 
+                                                    <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
+                                               skel.<xsl:value-of select="@name"/>(
+                                                    <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                                        <xsl:if test="position() &gt; 1">,</xsl:if>
+                                                        param<xsl:value-of select="position()"/>
+                                                    </xsl:for-each>
+
+                                                );
+
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
+                                                     skel.<xsl:value-of select="@name"/>(wrappedParam) ;
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                             <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
+                                             skel.<xsl:value-of select="@name"/>();
+                                        </xsl:otherwise>
+                                    </xsl:choose>
 
                     <xsl:choose>
                         <xsl:when test="$returntype!=''">
