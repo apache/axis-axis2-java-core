@@ -18,30 +18,16 @@ package org.apache.axis2.client;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPFault;
-import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.RobustOutOnlyAxisOperation;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -89,7 +75,6 @@ public class ServiceClient {
     // list of headers to be sent with the simple APIs
     private ArrayList headers;
 
-    private CallbackReceiver callbackReceiver;
     //whther we creat configctx or not
     private boolean createConfigCtx;
 
@@ -288,6 +273,7 @@ public class ServiceClient {
 
     /**
      * Disengage a module for this service client
+     *
      * @param moduleName
      */
     public void disEngageModule(QName moduleName) {
@@ -313,6 +299,7 @@ public class ServiceClient {
 
     /**
      * This will let the user to add SOAP Headers to the out going message
+     *
      * @param header
      */
     public void addHeader(SOAPHeaderBlock header) {
@@ -476,6 +463,7 @@ public class ServiceClient {
 
     /**
      * This will allow user to do a send and receive invocation just providing the payload.
+     *
      * @param elem
      * @return
      * @throws AxisFault
@@ -486,7 +474,7 @@ public class ServiceClient {
 
     /**
      * Do send receive invocation giving the payload and the operation QName.
-     * 
+     *
      * @param operation
      * @param elem
      * @return
@@ -557,6 +545,7 @@ public class ServiceClient {
     /**
      * Invoke send and receive just providing the payload and the call back handler. This will ease
      * the user by not requiring him to provide an operation name
+     *
      * @param elem
      * @param callback
      * @throws AxisFault
@@ -568,6 +557,7 @@ public class ServiceClient {
 
     /**
      * Do a blocking send and receive invocation.
+     *
      * @param operation
      * @param elem
      * @param callback
@@ -583,11 +573,11 @@ public class ServiceClient {
         mepClient.setCallback(callback);
         mepClient.addMessageContext(mc);
         if (options.isUseSeparateListener()) {
-            if (callbackReceiver == null) {
-                callbackReceiver = new CallbackReceiver();
+            MessageReceiver messageReceiver = axisService.getOperation(operation).getMessageReceiver();
+            if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver)) {
+                CallbackReceiver callbackReceiver = new CallbackReceiver();
+                axisService.getOperation(operation).setMessageReceiver(callbackReceiver);
             }
-            axisService.getOperation(operation).setMessageReceiver(
-                    callbackReceiver);
         }
         mepClient.execute(false);
     }
