@@ -22,7 +22,7 @@ public interface EventingConstants {
 	String EVENTING_NAMESPACE = "http://schemas.xmlsoap.org/ws/2004/08/eventing";
 	String EVENTING_PREFIX = "wse";
 	String DEFAULT_DELIVERY_MODE = "http://schemas.xmlsoap.org/ws/2004/08/eventing/DeliveryModes/Push";
-	String DEFAULT_FILTER_DIALECT = FilterDialects.XPath;
+	String DEFAULT_FILTER_IDENTIFIER = FilterDialects.XPath;
 	
 	interface TransferedProperties {
 		String SUBSCRIBER_UUID = "SAVAN_EVENTING_SUBSCRIBER_UUID";

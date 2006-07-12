@@ -143,7 +143,8 @@ public class EventingClient {
 		options.setTo(managerEPR);
 		
 		OMElement unsubscribeResponse =  serviceClient.sendReceive (envelope.getBody().getFirstElement());
-
+		//TODO process unsubscriber response
+		
 		options.setAction(oldAction);
 		options.setTo(oldTo);
 	}
@@ -217,8 +218,8 @@ public class EventingClient {
 		OMElement expiresElementElement = getStatusResponseElement.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Expires));
 		if (expiresElementElement!=null) {
 			String valueStr = expiresElementElement.getText();
-			long expires = Long.parseLong(valueStr);
-			subscriptionStatus.setExpirationTime(expires);
+//			long expires = Long.parseLong(valueStr);
+			subscriptionStatus.setExpirationValue(valueStr);
 		}
 		
 		return subscriptionStatus;

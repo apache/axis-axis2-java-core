@@ -33,7 +33,6 @@ public interface UtilFactory {
 	public abstract SavanMessageContext initializeMessage (SavanMessageContext messageContext);
 	public abstract SubscriptionProcessor createSubscriptionProcessor ();
 	public abstract MessageReceiverDeligater createMessageReceiverDeligater ();
-	public abstract Filter createFilter (String dialect);
 	public abstract Subscriber createSubscriber ();
 	
 }

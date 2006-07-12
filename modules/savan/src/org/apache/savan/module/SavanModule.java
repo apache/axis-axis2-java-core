@@ -44,7 +44,7 @@ public class SavanModule implements Module  {
 		try {
 			configurationManager.configure();
 		} catch (SavanException e) {
-			log.debug("Exception thrown while trying to configure the Savan module",e);
+			log.error ("Exception thrown while trying to configure the Savan module",e);
 		}
 		
 		configContext.setProperty(SavanConstants.CONFIGURATION_MANAGER,configurationManager);

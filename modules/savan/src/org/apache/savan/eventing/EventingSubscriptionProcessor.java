@@ -35,8 +35,10 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.types.Duration;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.configuration.ConfigurationManager;
 import org.apache.savan.configuration.Protocol;
 import org.apache.savan.filters.Filter;
 import org.apache.savan.subscribers.Subscriber;
@@ -58,6 +60,10 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 	
 	public Subscriber getSubscriberFromMessage(SavanMessageContext smc) throws SavanException {
 
+		ConfigurationManager configurationManager = (ConfigurationManager) smc.getConfigurationContext().getProperty(SavanConstants.CONFIGURATION_MANAGER);
+		if (configurationManager==null)
+			throw new SavanException ("Configuration Manager not set");
+		
 		Protocol protocol = smc.getProtocol();
 		if (protocol==null)
 			throw new SavanException ("Protocol not found");
@@ -112,6 +118,10 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			deliveryMode = EventingConstants.DEFAULT_DELIVERY_MODE;
 		}
 		
+		if (!deliveryModesupported()) {
+			//TODO throw unsupported delivery mode fault.
+		}
+		
 		Delivery delivery = new Delivery ();
 		delivery.setDeliveryEPR(notifyToEPr);
 		delivery.setDeliveryMode(deliveryMode);
@@ -152,13 +162,14 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			OMNode filterNode = filterElement.getFirstOMChild();
 			OMAttribute dialectAttr = filterElement.getAttribute(new QName (EventingConstants.ElementNames.Dialect));
 			Filter filter = null;
-			if (dialectAttr==null) {
-				filter = utilFactory.createFilter (EventingConstants.DEFAULT_FILTER_DIALECT);
-			} else {
-				filter = utilFactory.createFilter (dialectAttr.getAttributeValue());
+			
+			String filterKey = EventingConstants.DEFAULT_FILTER_IDENTIFIER;
+			if (dialectAttr!=null) {
+				filterKey = dialectAttr.getAttributeValue();
 			}
+			filter = configurationManager.getFilterInstance(filterKey);
 			if (filter==null)
-				throw new SavanException ("Cant find a suitable message filter");
+				throw new SavanException ("The Filter defined by the dialect is not available");
 			
 			filter.setUp (filterNode);
 			
@@ -253,6 +264,19 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			}
 		}
 		
+		boolean invalidExpirationTime = false;
+		if (bean.isDuration()) {
+			if (isInvalidDiration (bean.getDurationValue()))
+				invalidExpirationTime = true;
+		} else {
+			if (isDateInThePast (bean.getDateValue())) 
+				invalidExpirationTime = true;
+		}
+		
+		if (invalidExpirationTime) {
+			//TODO throw Invalid Expiration Time fault
+		}
+		
 		return bean;
 	}
 
@@ -270,7 +294,22 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			throw new SavanException ("The subscriber has a unknown SOAP version property set");
 		
 		SOAPEnvelope envelope = factory.getDefaultEnvelope();
-		
-		
 	}
+	
+	private boolean deliveryModesupported() {
+		return true;
+	}
+	
+	private boolean isInvalidDiration (Duration duration) {
+		return false;
+	}
+	
+	private boolean isDateInThePast (Date date) {
+		return false;
+	}
+	
+	private boolean filterDilalectSupported (String filterDialect){ 
+		return true;
+	}
+	
 }

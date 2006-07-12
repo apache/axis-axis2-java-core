@@ -20,8 +20,6 @@ package org.apache.savan.eventing;
 import org.apache.axis2.context.MessageContext;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanMessageContext;
-import org.apache.savan.filters.Filter;
-import org.apache.savan.filters.XPathBasedFilter;
 import org.apache.savan.messagereceiver.MessageReceiverDeligater;
 import org.apache.savan.subscribers.Subscriber;
 import org.apache.savan.subscription.SubscriptionProcessor;
@@ -63,13 +61,6 @@ public class EventingUtilFactory implements UtilFactory {
 	
 	public MessageReceiverDeligater createMessageReceiverDeligater() {
 		return new EventingMessageReceiverDeligater ();
-	}
-
-	public Filter createFilter (String dialect) {
-		if (EventingConstants.FilterDialects.XPath.equals(dialect))
-			return new XPathBasedFilter ();
-		else
-			return null;
 	}
 
 	public Subscriber createSubscriber() {

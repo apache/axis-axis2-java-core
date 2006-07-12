@@ -35,6 +35,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
+import org.apache.savan.filters.Filter;
 import org.apache.savan.storage.SubscriberStore;
 import org.apache.savan.util.UtilFactory;
 
@@ -46,6 +47,7 @@ public class ConfigurationManager {
 	
 	private HashMap protocolMap = null;
 	private HashMap subscriberStoreNamesMap = null;
+	private HashMap filterMap = null;
 	
 	private final String SavanConfig = "savan-config";
 	private final String Protocols = "protocols";
@@ -57,12 +59,16 @@ public class ConfigurationManager {
 	private final String SOAPAction = "mapping-rules";
 	private final String SubscriberStores = "subscriberStores";
 	private final String SubscriberStore = "subscriberStore";
+	private final String Filters = "filters";
+	private final String Filter = "filter";
 	private final String Key = "key";
 	private final String Clazz = "class";
+	private final String Identifier = "identifier";
 	
 	public ConfigurationManager () {
 		protocolMap = new HashMap ();
 		subscriberStoreNamesMap = new HashMap ();
+		filterMap = new HashMap ();
 	}
 	
 	/**
@@ -139,6 +145,12 @@ public class ConfigurationManager {
 			throw new SavanException ("'subscriberStores' element should be present, as a sub-element of the 'savan-config' element");
 		}
 		processSubscriberStores(subscriberStoresElement);
+		
+		OMElement filtersElement = element.getFirstChildWithName(new QName (Filters));
+		if (subscriberStoresElement==null) {
+			throw new SavanException ("'Filters' element should be present, as a sub-element of the 'savan-config' element");
+		}
+		processFilters (filtersElement);
 	}
 	
 	private void processProtocols (OMElement element) throws SavanException {
@@ -230,6 +242,14 @@ public class ConfigurationManager {
 		return (SubscriberStore) getObject(name);
 	}
 	
+	public Filter getFilterInstance (String key) throws SavanException {
+		String filterClass = (String) filterMap.get(key);
+		if (filterClass==null)
+			return null;
+		
+		return (Filter) getObject(filterClass);
+	}
+	
 	private Object getObject (String className) throws SavanException {
 	
 		Object obj;
@@ -242,6 +262,29 @@ public class ConfigurationManager {
 		}
 		 
 		return obj;
+	}
+	
+	private void processFilters (OMElement element) throws SavanException {
+		Iterator filterElementsIterator = element.getChildrenWithName(new QName (Filter));
+		while (filterElementsIterator.hasNext()) {
+			OMElement filterElement = (OMElement) filterElementsIterator.next();
+			processFilter (filterElement);
+		}
+	}
+	
+	private void processFilter (OMElement element) throws SavanException {
+		OMElement identifierElement = element.getFirstChildWithName(new QName (Identifier));
+		OMElement classElement = element.getFirstChildWithName(new QName (Clazz));
+		
+		if (identifierElement==null)
+			throw new SavanException ("Identifier element is not present within the Filter");
+		if (classElement==null)
+			throw new SavanException ("Class element is not present within the Filter");
+		
+		String identifier = identifierElement.getText();
+		String clazz = classElement.getText();
+		
+		filterMap.put(identifier,clazz);
 	}
 	
 }

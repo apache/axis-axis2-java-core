@@ -11,10 +11,14 @@ import junit.framework.TestCase;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.configuration.ConfigurationManager;
 import org.apache.savan.configuration.Protocol;
 import org.apache.savan.eventing.EventingConstants;
 import org.apache.savan.eventing.EventingSubscriber;
@@ -27,6 +31,8 @@ import org.apache.savan.util.CommonUtil;
 
 public class EventingSubscripitonProcessorTest extends TestCase {
 
+	private final String TEST_SAVAN_CONFIG = "savan-config-test.xml";
+	
 	public void testSubscriberExtraction () throws Exception {
 		SavanMessageContext smc = getSubscriptionMessage();
 		
@@ -76,9 +82,14 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 
 		SOAPEnvelope envelope = CommonUtil.getTestEnvelopeFromFile(testRource,"eventing-subscription.xml");
 		
+		AxisConfiguration axisConfiguration = new AxisConfiguration ();
+		ConfigurationContext configurationContext = new ConfigurationContext (axisConfiguration);
+		
 		MessageContext mc = new MessageContext ();
 		SavanMessageContext smc = new SavanMessageContext (mc);
 		mc.setEnvelope(envelope);
+		
+		mc.setConfigurationContext(configurationContext);
 		
 		Options options = new Options ();
 		options.setTo(new EndpointReference ("http://DummyToAddress/"));
@@ -91,6 +102,16 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 		mc.setAxisService(new AxisService ("DummyService"));
 		
 		options.setAction("urn:uuid:DummyAction");
+		
+		String savan_concig_file = testRource + File.separator + TEST_SAVAN_CONFIG;
+		File file = new File (savan_concig_file);
+		if (!file.exists())
+			throw new IOException (TEST_SAVAN_CONFIG + " file is not available in test-resources.");
+		
+		ConfigurationManager configurationManager = new ConfigurationManager ();
+		configurationManager.configure(file);
+		
+		configurationContext.setProperty(SavanConstants.CONFIGURATION_MANAGER,configurationManager);
 		
 		return smc;
 	}

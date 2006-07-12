@@ -20,14 +20,11 @@
     	</subscriberStore>
     </subscriberStores>
     
-    <!--
     <filters>
     	<filter>
-    		<name>xpath</name>
-    		<identifier>org.apache.savan.storage.DefaultSubscriberStore</identifier>
-    		<class>org.apache.savan.storage.DefaultSubscriberStore</class>
+    		<identifier>http://www.w3.org/TR/1999/REC-xpath-19991116</identifier>
+    		<class>org.apache.savan.filters.XPathBasedFilter</class>
     	</filter>
     </filters>
-    -->
     
 </savan-config>
