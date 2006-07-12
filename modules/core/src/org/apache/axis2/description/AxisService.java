@@ -116,7 +116,7 @@ public class AxisService extends AxisDescription {
             Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX;
 
     private boolean enableAllTransport = true;
-    private List exposedTransports;
+    private List exposedTransports = new ArrayList();
 
     /**
      * Keeps track whether the schema locations are adjusted
