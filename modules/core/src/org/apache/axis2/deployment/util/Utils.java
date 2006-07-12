@@ -127,6 +127,7 @@ public class Utils {
     public static File createTempFile(String suffix, InputStream in) throws IOException {
         byte data[] = new byte[2048];
         int count;
+        new File(System.getProperty("java.io.tmpdir")).mkdirs();
         File f = File.createTempFile("axis2", suffix);
         f.deleteOnExit();
         FileOutputStream out = new FileOutputStream(f);
