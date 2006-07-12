@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -975,7 +976,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Element createDOMElementforDatabinders(Document doc,boolean isServerside) {
 
         // First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
-        Map parameterMap = new HashMap();
+        Map parameterMap = new LinkedHashMap();
 
         for (Iterator operationsIterator = axisService.getOperations();operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
