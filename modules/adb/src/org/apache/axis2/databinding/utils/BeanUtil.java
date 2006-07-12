@@ -55,14 +55,18 @@ public class BeanUtil {
             JamServiceFactory factory = JamServiceFactory.getInstance();
             JamServiceParams jam_service_parms = factory.createServiceParams();
             jam_service_parms.addClassLoader(beanObject.getClass().getClassLoader());
+//            beanObject.getClass().isArray()
+
             jam_service_parms.includeClass(beanObject.getClass().getName());
             JamService service = factory.createService(jam_service_parms);
             JamClassIterator jClassIter = service.getClasses();
-            JClass jClass = null;
-            while (jClassIter.hasNext()) {
+            JClass jClass ;
+            if (jClassIter.hasNext()) {
                 jClass = (JClass) jClassIter.next();
-
+            } else {
+                throw new AxisFault("No service class found , exception from JAM");
             }
+
             // properties from JAM
             JProperty properties [] = jClass.getDeclaredProperties();
             Arrays.sort(properties);
@@ -89,7 +93,7 @@ public class BeanUtil {
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             (Object[]) null);
-                    object.add(propDesc.getName());
+                    object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
                     object.add(value == null ? null : value.toString());
                 } else if (ptype.isArray()) {
                     Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
@@ -97,13 +101,13 @@ public class BeanUtil {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
-                            object.add(propDesc.getName());
+                            object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
                             object.add(o == null ? null : o.toString());
                         }
                     } else {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
-                            object.add(new QName(propDesc.getName()));
+                            object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
                             object.add(o);
                         }
                     }
@@ -119,10 +123,10 @@ public class BeanUtil {
                         for (int j = 0; j < objList.size(); j++) {
                             Object o = objList.get(j);
                             if (SimpleTypeMapper.isSimpleType(o)) {
-                                object.add(propDesc.getName());
+                                object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
                                 object.add(o);
                             } else {
-                                object.add(new QName(propDesc.getName()));
+                                object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
                                 object.add(o);
                             }
                         }

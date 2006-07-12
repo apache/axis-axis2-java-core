@@ -48,7 +48,7 @@ public class RPCUtil {
                 OMElement result = (OMElement) resObject;
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
-                OMElement resWrapper = fac.createOMElement(RETURN_WRAPPER,ns.getName(),
+                OMElement resWrapper = fac.createOMElement(RETURN_WRAPPER, ns.getName(),
                         ns.getPrefix());
                 resWrapper.addChild(result);
                 bodyContent.addChild(resWrapper);
@@ -84,6 +84,11 @@ public class RPCUtil {
     }
 
     public static OMElement getResponseElement(QName resname, Object [] objs) {
+        return BeanUtil.getOMElement(resname, objs,
+                new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()));
+    }
+
+    public static OMElement getResponseElementForArray(QName resname, Object [] objs) {
         return BeanUtil.getOMElement(resname, objs,
                 new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()));
     }

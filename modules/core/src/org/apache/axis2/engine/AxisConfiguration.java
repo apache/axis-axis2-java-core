@@ -17,10 +17,12 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -97,6 +99,9 @@ public class AxisConfiguration extends AxisDescription {
     // to keep track of need to manage transport session or not
     private boolean manageTransportSession;
 
+    //to keep tarck of system start or not
+    private boolean start;
+
     /**
      * Constructor AxisConfigurationImpl.
      */
@@ -118,13 +123,13 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public void addMessageReceiver(String mepURL,
-            MessageReceiver messageReceiver) {
+                                   MessageReceiver messageReceiver) {
         messageReceivers.put(mepURL, messageReceiver);
     }
 
     /**
      * Method addModule.
-     * 
+     *
      * @param module
      * @throws AxisFault
      */
@@ -146,7 +151,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * To remove a given module from the system
-     * 
+     *
      * @param module
      */
     public void removeModule(QName module) {
@@ -156,7 +161,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Adds module configuration, if there is moduleConfig tag in service.
-     * 
+     *
      * @param moduleConfiguration
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
@@ -170,7 +175,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method addService.
-     * 
+     *
      * @param service
      * @throws AxisFault
      */
@@ -186,7 +191,7 @@ public class AxisConfiguration extends AxisDescription {
      * This method will check whethere for a given service , can we ganerate
      * valid wsdl or not. So if user derop a wsdl we print that out , else if
      * all the operation uses RPC message recivers we will generate wsdl
-     * 
+     *
      * @param axisService
      */
     private void isWSDLEnable(AxisService axisService) {
@@ -205,7 +210,7 @@ public class AxisConfiguration extends AxisDescription {
                     if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
                             .equals(messageReceiverClass)
                             || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
-                                    .equals(messageReceiverClass) || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                            .equals(messageReceiverClass) || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
                             .equals(messageReceiverClass))) {
                         axisService.setWsdlfound(false);
                         return;
@@ -220,6 +225,10 @@ public class AxisConfiguration extends AxisDescription {
 
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
             throws AxisFault {
+        String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(axisServiceGroup);
+        if (start && Constants.SCOPE_APPLICATION.equals(maxScope)) {
+            throw new AxisFault(Messages.getMessage("cannotaddapplicationscopeservice"));
+        }
         Iterator services = axisServiceGroup.getServices();
         axisServiceGroup.setParent(this);
         AxisService description;
@@ -283,7 +292,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method addTransportIn.
-     * 
+     *
      * @param transport
      * @throws AxisFault
      */
@@ -299,7 +308,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method addTransportOut.
-     * 
+     *
      * @param transport
      * @throws AxisFault
      */
@@ -318,7 +327,7 @@ public class AxisConfiguration extends AxisDescription {
      * or if the module name contains version number in it then it will engage
      * the correct module. Both of the below two cases are valid 1.
      * engageModule("addressing"); 2. engageModule("addressing-1.23");
-     * 
+     *
      * @param moduleref
      * @throws AxisFault
      */
@@ -334,7 +343,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Engages a module using give name and its version ID.
-     * 
+     *
      * @param moduleName
      * @param versionID
      * @throws AxisFault
@@ -383,7 +392,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * To dis-engage module from the system, this will remove all the handlers
      * belongs to this module from all the handler chains
-     * 
+     *
      * @param module
      */
     public void disEngageModule(AxisModule module) {
@@ -439,7 +448,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method removeService.
-     * 
+     *
      * @param name
      * @throws AxisFault
      */
@@ -453,7 +462,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method getEngagedModules.
-     * 
+     *
      * @return Collection
      */
     public Collection getEngagedModules() {
@@ -495,7 +504,7 @@ public class AxisConfiguration extends AxisDescription {
      * nane does not have version string in it then try to check whether default
      * vresion of module available in the sytem for the give name , if so return
      * that
-     * 
+     *
      * @param name
      * @return Returns ModuleDescription.
      */
@@ -551,7 +560,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * Method getService.
-     * 
+     *
      * @param name
      * @return Returns AxisService.
      */
@@ -572,7 +581,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * Service can start and stop , if once stop we can not acess that , so we
      * need a way to get the service even if service is not active
-     * 
+     *
      * @return AxisService
      */
     public AxisService getServiceForActivation(String serviceName) {
@@ -694,7 +703,7 @@ public class AxisConfiguration extends AxisDescription {
      * or by using axis2.xml . The default module version is important if user
      * asks to engage a module without given version ID, in which case, we will
      * engage the default version.
-     * 
+     *
      * @param moduleName
      * @param moduleVersion
      */
@@ -774,5 +783,17 @@ public class AxisConfiguration extends AxisDescription {
                 policySupportedModules.put(namespaces[i], modulesList);
             }
         }
+    }
+
+    public ArrayList getObserversList() {
+        return observersList;
+    }
+
+    public boolean isStart() {
+        return start;
+    }
+
+    public void setStart(boolean start) {
+        this.start = start;
     }
 }

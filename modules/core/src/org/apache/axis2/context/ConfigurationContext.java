@@ -159,9 +159,7 @@ public class ConfigurationContext extends AbstractContext {
              *    service group context
              */
             String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(serviceGroupContext.getDescription());
-            if (Constants.SCOPE_APPLICATION.equals(maxScope)) {
-                addServiceGroupContextintoApplicatoionScopeTable(serviceGroupContext);
-            } else if (Constants.SCOPE_SOAP_SESSION.equals(maxScope)) {
+            if (Constants.SCOPE_SOAP_SESSION.equals(maxScope)) {
                 registerServiceGroupContext(serviceGroupContext);
             } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(maxScope)) {
                 if (sessionContext != null) {
@@ -207,7 +205,7 @@ public class ConfigurationContext extends AbstractContext {
         cleanupServiceGroupContexts();
     }
 
-    private synchronized void addServiceGroupContextintoApplicatoionScopeTable(
+    public synchronized void addServiceGroupContextintoApplicatoionScopeTable(
             ServiceGroupContext serviceGroupContext) {
         applicationSessionServiceGroupContextTable.put(
                 serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
@@ -220,7 +218,6 @@ public class ConfigurationContext extends AbstractContext {
     /**
      * Gets a OperationContext given a Message ID.
      *
-     * @param msgctx
      * @return Returns OperationContext <code>OperationContext<code>
      */
     public OperationContext getOperationContext(String id) {

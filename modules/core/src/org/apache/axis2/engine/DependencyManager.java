@@ -20,9 +20,16 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.receivers.AbstractMessageReceiver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
 /**
  * If the service implementation has an init method with 1 or 2 message context as its parameters, then
@@ -66,7 +73,7 @@ public class DependencyManager {
                                         ServiceContext serviceContext) throws AxisFault {
         try {
             Class classToLoad = obj.getClass();
-             // We can not call classToLoad.getDeclaredMethed() , since there
+            // We can not call classToLoad.getDeclaredMethed() , since there
             //  can be insatnce where mutiple services extends using one class
             // just for init and other reflection methods
             Method[] methods = classToLoad.getMethods();
@@ -90,14 +97,47 @@ public class DependencyManager {
         }
     }
 
+    /**
+     * To init all the services in application scope
+     *
+     * @param serviceGroupContext
+     * @throws AxisFault
+     */
+    public static void initService(ServiceGroupContext serviceGroupContext) throws AxisFault {
+        AxisServiceGroup serviceGroup = serviceGroupContext.getDescription();
+        Iterator serviceItr = serviceGroup.getServices();
+        while (serviceItr.hasNext()) {
+            AxisService axisService = (AxisService) serviceItr.next();
+            ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);
+            AxisService service = serviceContext.getAxisService();
+            ClassLoader classLoader = service.getClassLoader();
+            Parameter implInfoParam = service.getParameter(AbstractMessageReceiver.SERVICE_CLASS);
+            if (implInfoParam != null) {
+                try {
+                    Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
+                            classLoader);
+                    Object serviceImpl = implClass.newInstance();
+                    serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceImpl);
+                    initServiceClass(serviceImpl, serviceContext);
+                } catch (Exception e) {
+                    new AxisFault(e);
+                }
+            } else {
+                throw new AxisFault(Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
+            }
+        }
+
+
+    }
+
     public static void destroyServiceObject(ServiceContext serviceContext) throws AxisFault {
         try {
             Object obj = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
             if (obj != null) {
                 Class classToLoad = obj.getClass();
-                 // We can not call classToLoad.getDeclaredMethed() , since there
-            //  can be insatnce where mutiple services extends using one class
-            // just for init and other reflection methods
+                // We can not call classToLoad.getDeclaredMethed() , since there
+                //  can be insatnce where mutiple services extends using one class
+                // just for init and other reflection methods
                 Method[] methods = classToLoad.getMethods();
 
                 for (int i = 0; i < methods.length; i++) {
@@ -118,7 +158,7 @@ public class DependencyManager {
         } catch (InvocationTargetException e) {
             throw new AxisFault(e);
         }
-
     }
+
 
 }

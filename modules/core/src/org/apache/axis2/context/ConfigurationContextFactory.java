@@ -23,13 +23,16 @@ import org.apache.axis2.deployment.FileSystemConfigurator;
 import org.apache.axis2.deployment.URLBasedAxisConfigurator;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
+import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.util.SessionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -64,7 +67,22 @@ public class ConfigurationContextFactory {
         axisConfigurator.engageGlobalModules();
         axisConfigurator.loadServices();
         addModuleService(axisConfig);
+        initApplicationScopeServices(configContext);
+        axisConfig.setStart(true);
         return configContext;
+    }
+
+    private static void initApplicationScopeServices(ConfigurationContext configCtx) throws AxisFault {
+        Iterator serviceGroups = configCtx.getAxisConfiguration().getServiceGroups();
+        while (serviceGroups.hasNext()) {
+            AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups.next();
+            String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(axisServiceGroup);
+            if (Constants.SCOPE_APPLICATION.equals(maxScope)) {
+                ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configCtx, axisServiceGroup);
+                configCtx.addServiceGroupContextintoApplicatoionScopeTable(serviceGroupContext);
+                DependencyManager.initService(serviceGroupContext);
+            }
+        }
     }
 
     public static void addModuleService(AxisConfiguration axisConfig) throws AxisFault {
