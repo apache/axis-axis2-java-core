@@ -17,15 +17,6 @@
 
 package org.apache.axis2.deployment;
 
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -39,6 +30,14 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Builds a service description from OM
@@ -118,6 +117,16 @@ public class ServiceBuilder extends DescriptionBuilder {
                     String nameSpeceVale = schemaNameSpace.getAttributeValue();
                     if (nameSpeceVale != null && !"".equals(nameSpeceVale)) {
                         service.setSchematargetNamespace(nameSpeceVale);
+                    }
+                }
+                OMAttribute elementFormDefault = schemaElement.
+                        getAttribute(new QName(SCHEMA_ELEMENT_QUALIFIED));
+                if (elementFormDefault != null) {
+                    String value = elementFormDefault.getAttributeValue();
+                    if ("true".equals(value)) {
+                        service.setElementFormDefault(true);
+                    } else if ("false".equals(value)) {
+                        service.setElementFormDefault(false);
                     }
                 }
             }

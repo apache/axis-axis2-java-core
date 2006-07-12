@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -126,11 +127,27 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                 QName resName = new QName(service.getSchematargetNamespace(),
                         method.getName() + "Response",
                         service.getSchematargetNamespacePrefix());
-                OMElement bodyChild = RPCUtil.getResponseElement(resName, (Object[]) resObject);
+                OMElement bodyChild = RPCUtil.getResponseElement(resName,
+                        (Object[]) resObject, service.isElementFormDefault());
                 envelope.getBody().addChild(bodyChild);
             } else {
-                RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method);
+                if (resObject.getClass().isArray()) {
+                    int length = Array.getLength(resObject);
+                    Object objArray [] = new Object[length];
+                    for (int i = 0; i < length; i++) {
+                        objArray[i] = Array.get(resObject, i);
+                    }
+                    QName resName = new QName(service.getSchematargetNamespace(),
+                            method.getName() + "Response",
+                            service.getSchematargetNamespacePrefix());
+                    OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
+                            objArray, service.isElementFormDefault());
+                    envelope.getBody().addChild(bodyChild);
+                } else {
+                    RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method);
+                }
             }
+
 
             outMessage.setEnvelope(envelope);
 

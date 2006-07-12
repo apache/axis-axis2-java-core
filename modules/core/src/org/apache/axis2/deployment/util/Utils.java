@@ -92,7 +92,7 @@ public class Utils {
             ArrayList array = new ArrayList();
             String urlString = url.toString();
             InputStream in = url.openStream();
-            ZipInputStream zin = null;
+            ZipInputStream zin ;
             if (antiJARLocking) {
                 File inputFile = createTempFile(urlString.substring(urlString.length() - 4), in);
                 in.close();
@@ -226,6 +226,9 @@ public class Utils {
                 serviceClass.trim(), axisService.getSchematargetNamespace(),
                 axisService.getSchematargetNamespacePrefix());
         schemaGenerator.setExcludeMethods(excludeOperations);
+        if (!axisService.isElementFormDefault()) {
+            schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
+        }
         Collection schemas = schemaGenerator.generateSchema();
         axisService.addSchema(schemas);
         axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());

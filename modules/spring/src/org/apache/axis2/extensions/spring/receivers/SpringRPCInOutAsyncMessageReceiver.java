@@ -5,14 +5,13 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
 import org.apache.axis2.rpc.receivers.RPCUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -74,7 +73,7 @@ public class SpringRPCInOutAsyncMessageReceiver extends SpringAbstractInOutAsync
             OMElement methodElement = inMessage.getEnvelope().getBody()
                     .getFirstElement();
 
-           AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
             if (inaxisMessage != null) {
                 messageNameSpace = inaxisMessage.getElementQName().getNamespaceURI();
@@ -115,7 +114,8 @@ public class SpringRPCInOutAsyncMessageReceiver extends SpringAbstractInOutAsync
                 QName resName = new QName(service.getSchematargetNamespace(),
                         method.getName() + "Response",
                         service.getSchematargetNamespacePrefix());
-                OMElement bodyChild = RPCUtil.getResponseElement(resName, (Object[]) resObject);
+                OMElement bodyChild = RPCUtil.getResponseElement(resName, (Object[]) resObject,
+                        service.isElementFormDefault());
                 envelope.getBody().addChild(bodyChild);
             } else {
                 RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method);

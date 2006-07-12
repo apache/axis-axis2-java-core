@@ -83,6 +83,7 @@ public interface DeploymentConstants {
     String ATTRIBUTE_WSADDRESSING = "wsaddressing";
     String TARGET_NAME_SPACE = "targetNamespace";
     String SCHEMA_NAME_SPACE = "schemaNamespace";
+    String SCHEMA_ELEMENT_QUALIFIED = "elementFormDefaultQualified";
     String SCHEMA = "schema";
 
     String ATTRIBUTE_DEFAULT_VERSION = "version";

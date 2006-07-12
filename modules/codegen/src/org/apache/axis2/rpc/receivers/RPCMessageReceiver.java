@@ -83,7 +83,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     .getFirstElement();
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace = null;
-            QName elementQName = null;
+            QName elementQName;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -136,7 +136,8 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                 QName resName = new QName(service.getSchematargetNamespace(),
                         method.getName() + "Response",
                         service.getSchematargetNamespacePrefix());
-                OMElement bodyChild = RPCUtil.getResponseElement(resName, (Object[]) resObject);
+                OMElement bodyChild = RPCUtil.getResponseElement(resName,
+                        (Object[]) resObject, service.isElementFormDefault());
                 envelope.getBody().addChild(bodyChild);
             } else {
                 if (resObject.getClass().isArray()) {
@@ -148,12 +149,14 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     QName resName = new QName(service.getSchematargetNamespace(),
                             method.getName() + "Response",
                             service.getSchematargetNamespacePrefix());
-                    OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,  objArray);
+                    OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
+                            objArray, service.isElementFormDefault());
                     envelope.getBody().addChild(bodyChild);
                 } else {
                     RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method);
                 }
             }
+
 
             outMessage.setEnvelope(envelope);
 

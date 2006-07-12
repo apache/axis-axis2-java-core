@@ -34,7 +34,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -46,7 +45,7 @@ import java.net.Socket;
  * This Class is the work hoarse of the TCP request, this process the incomming SOAP Message.
  */
 public class TCPWorker implements Runnable {
-	private static final Log log = LogFactory.getLog(TCPWorker.class);
+    private static final Log log = LogFactory.getLog(TCPWorker.class);
     private ConfigurationContext configurationContext;
     private Socket socket;
 

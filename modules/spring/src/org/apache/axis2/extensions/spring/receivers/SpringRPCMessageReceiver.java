@@ -125,10 +125,11 @@ public class SpringRPCMessageReceiver extends SpringAbstractInOutSyncMessageRece
                 QName resName = new QName(service.getSchematargetNamespace(),
                         method.getName() + "Response",
                         service.getSchematargetNamespacePrefix());
-                OMElement bodyChild = RPCUtil.getResponseElement(resName, (Object[]) resObject);
+                OMElement bodyChild = RPCUtil.getResponseElement(resName, (Object[]) resObject ,
+                        service.isElementFormDefault());
                 envelope.getBody().addChild(bodyChild);
             } else {
-                RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method);
+                RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method );
             }
 
             outMessage.setEnvelope(envelope);

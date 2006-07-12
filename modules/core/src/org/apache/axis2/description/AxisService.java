@@ -104,6 +104,8 @@ public class AxisService extends AxisDescription {
     //to keep the status of the service , since service can stop at the run time
     private boolean active = true;
 
+    private boolean elementFormDefault = true;
+
     //to keep the service target name space
     private String targetNamespace =
             Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE;
@@ -503,7 +505,7 @@ public class AxisService extends AxisDescription {
         AxisOperation axisOperation = getOperation(new QName(operationName));
         if (axisOperation == null) {
             throw new AxisFault(Messages.getMessage("invalidoperation",
-                                                    operationName));
+                    operationName));
         }
         PolicyUtil.writePolicy(axisOperation.getPolicyInclude(), out);
     }
@@ -552,7 +554,7 @@ public class AxisService extends AxisDescription {
                     if (listener != null) {
                         try {
                             if (listener.getEPRForService(getName(), requestIP)
-                                != null) {
+                                    != null) {
                                 String address = listener.getEPRForService(
                                         getName(), requestIP).getAddress();
                                 if (address != null) {
@@ -594,7 +596,7 @@ public class AxisService extends AxisDescription {
     private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
         if (isWsdlfound()) {
             AxisService2OM axisService2WOM = new AxisService2OM(this,
-                                                                serviceURL, "document", "literal", servicePath);
+                    serviceURL, "document", "literal", servicePath);
             try {
                 OMElement wsdlElement = axisService2WOM.generateOM();
                 wsdlElement.serialize(out);
@@ -606,10 +608,10 @@ public class AxisService extends AxisDescription {
         } else {
             try {
                 String wsdlntfound = "<error>" +
-                                     "<description>Unable to generate WSDL for this service</description>" +
-                                     "<reason>Either user has not dropped the wsdl into META-INF or" +
-                                     " operations use message receivers other than RPC.</reason>" +
-                                     "</error>";
+                        "<description>Unable to generate WSDL for this service</description>" +
+                        "<reason>Either user has not dropped the wsdl into META-INF or" +
+                        " operations use message receivers other than RPC.</reason>" +
+                        "</error>";
                 out.write(wsdlntfound.getBytes());
                 out.flush();
                 out.close();
@@ -647,10 +649,10 @@ public class AxisService extends AxisDescription {
         } else {
             try {
                 String wsdlntfound = "<error>" +
-                                     "<description>Unable to generate WSDL for this service</description>" +
-                                     "<reason>Either user has not dropped the wsdl into META-INF or" +
-                                     " operations use message receivers other than RPC.</reason>" +
-                                     "</error>";
+                        "<description>Unable to generate WSDL for this service</description>" +
+                        "<reason>Either user has not dropped the wsdl into META-INF or" +
+                        " operations use message receivers other than RPC.</reason>" +
+                        "</error>";
                 out.write(wsdlntfound.getBytes());
                 out.flush();
                 out.close();
@@ -903,9 +905,9 @@ public class AxisService extends AxisDescription {
      */
     public void setScope(String scope) {
         if (Constants.SCOPE_APPLICATION.equals(scope) ||
-            Constants.SCOPE_TRANSPORT_SESSION.equals(scope) ||
-            Constants.SCOPE_SOAP_SESSION.equals(scope) ||
-            Constants.SCOPE_REQUEST.equals(scope)) {
+                Constants.SCOPE_TRANSPORT_SESSION.equals(scope) ||
+                Constants.SCOPE_SOAP_SESSION.equals(scope) ||
+                Constants.SCOPE_REQUEST.equals(scope)) {
             this.scope = scope;
         }
     }
@@ -1148,8 +1150,8 @@ public class AxisService extends AxisDescription {
         SchemaGenerator schemaGenerator;
         try {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                                                  implClass, axisService.getSchematargetNamespace(),
-                                                  axisService.getSchematargetNamespacePrefix());
+                    implClass, axisService.getSchematargetNamespace(),
+                    axisService.getSchematargetNamespacePrefix());
             ArrayList excludedMethods = new ArrayList();
             excludedMethods.add("init");
             excludedMethods.add("setOperationContext");
@@ -1182,10 +1184,10 @@ public class AxisService extends AxisDescription {
                 operation.setMessageReceiver(messageReceiver);
             } catch (IllegalAccessException e) {
                 throw new AxisFault("IllegalAccessException occured during message receiver loading"
-                                    + e.getMessage());
+                        + e.getMessage());
             } catch (InstantiationException e) {
                 throw new AxisFault("InstantiationException occured during message receiver loading"
-                                    + e.getMessage());
+                        + e.getMessage());
             }
             pinfo.setOperationPhases(operation);
             axisService.addOperation(operation);
@@ -1234,8 +1236,8 @@ public class AxisService extends AxisDescription {
         SchemaGenerator schemaGenerator;
         try {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                                                  implClass, schemaNameSpace,
-                                                  axisService.getSchematargetNamespacePrefix());
+                    implClass, schemaNameSpace,
+                    axisService.getSchematargetNamespacePrefix());
             ArrayList excludeOpeartion = new ArrayList();
             excludeOpeartion.add("init");
             excludeOpeartion.add("setOperationContext");
@@ -1271,10 +1273,10 @@ public class AxisService extends AxisDescription {
                 operation.setMessageReceiver(messageReceiver);
             } catch (IllegalAccessException e) {
                 throw new AxisFault("IllegalAccessException occured during message receiver loading"
-                                    + e.getMessage());
+                        + e.getMessage());
             } catch (InstantiationException e) {
                 throw new AxisFault("InstantiationException occured during message receiver loading"
-                                    + e.getMessage());
+                        + e.getMessage());
             }
             pinfo.setOperationPhases(operation);
             axisService.addOperation(operation);
@@ -1290,7 +1292,7 @@ public class AxisService extends AxisDescription {
             clazz = Class.forName("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
         } catch (ClassNotFoundException e) {
             throw new AxisFault("ClassNotFoundException occured during message receiver loading"
-                                + e.getMessage());
+                    + e.getMessage());
         }
 
         return createService(implClass, axisConfig, clazz);
@@ -1383,12 +1385,12 @@ public class AxisService extends AxisDescription {
                     if (s != null) {
                         calcualteSchemaNames(Arrays.asList(
                                 new XmlSchema[]{s}),
-                                             nameTable);
+                                nameTable);
                         nameTable.put(s,
-                                      ("xsd" + count++)
-                                      + (customSchemaNameSuffix != null ?
-                                         customSchemaNameSuffix :
-                                         ""));
+                                ("xsd" + count++)
+                                        + (customSchemaNameSuffix != null ?
+                                        customSchemaNameSuffix :
+                                        ""));
                     }
 
                 }
@@ -1418,13 +1420,13 @@ public class AxisService extends AxisDescription {
                                 new XmlSchema[]{s}), nameTable);
                         xmlSchemaExternal.setSchemaLocation(
                                 customSchemaNamePrefix == null ?
-                                //use the default mode
-                                (getName() +
-                                 "?xsd=" +
-                                 nameTable.get(s)) :
-                                                   //custom prefix is present - add the custom prefix
-                                                   (customSchemaNamePrefix +
-                                                    nameTable.get(s)));
+                                        //use the default mode
+                                        (getName() +
+                                                "?xsd=" +
+                                                nameTable.get(s)) :
+                                        //custom prefix is present - add the custom prefix
+                                        (customSchemaNamePrefix +
+                                                nameTable.get(s)));
                     }
                 }
             }
@@ -1457,4 +1459,11 @@ public class AxisService extends AxisDescription {
         this.clientSide = clientSide;
     }
 
+    public boolean isElementFormDefault() {
+        return elementFormDefault;
+    }
+
+    public void setElementFormDefault(boolean elementFormDefault) {
+        this.elementFormDefault = elementFormDefault;
+    }
 }

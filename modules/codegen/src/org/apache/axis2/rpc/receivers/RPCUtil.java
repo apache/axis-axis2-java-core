@@ -83,14 +83,24 @@ public class RPCUtil {
         return BeanUtil.deserialize(methodElement, parameters);
     }
 
-    public static OMElement getResponseElement(QName resname, Object [] objs) {
-        return BeanUtil.getOMElement(resname, objs,
-                new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()));
+    public static OMElement getResponseElement(QName resname, Object [] objs, boolean qualified) {
+        if (qualified) {
+            return BeanUtil.getOMElement(resname, objs,
+                    new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()));
+        } else {
+            return BeanUtil.getOMElement(resname, objs,
+                    new QName(RETURN_WRAPPER));
+        }
     }
 
-    public static OMElement getResponseElementForArray(QName resname, Object [] objs) {
-        return BeanUtil.getOMElement(resname, objs,
-                new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()));
+    public static OMElement getResponseElementForArray(QName resname, Object [] objs, boolean qualified) {
+        if (qualified) {
+            return BeanUtil.getOMElement(resname, objs,
+                    new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()));
+        } else {
+            return BeanUtil.getOMElement(resname, objs,
+                    new QName(RETURN_WRAPPER));
+        }
     }
 
 }
