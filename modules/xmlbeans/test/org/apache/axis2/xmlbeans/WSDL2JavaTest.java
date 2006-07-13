@@ -94,12 +94,13 @@ public class WSDL2JavaTest extends TestCase{
      * Test for the WSAT wsdl
      */
     public void testCodeGenerationWSAT(){
-
+        String wsdlName = "wsat.wsdl";
         try {
-            generateAndCompile("wsat.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
             e.printStackTrace();
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test! " + wsdlName + e.getMessage());
         }
     }
 
@@ -111,22 +112,24 @@ public class WSDL2JavaTest extends TestCase{
     public void testCodeGenerationNoService(){
 
         try {
-            generateAndCompile("no-service.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+            String wsdlName = "no-service.wsdl";
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
             fail("Undesired behavior while code generating!");
         } catch (CodeGenerationException e) {
             //done - we are good if we reach here
         }
     }
 
-     /**
+    /**
      * Test for the Headers
      */
     public void testCodeGenerationHeaders(){
-
+        String wsdlName = "headers.wsdl";
         try {
-            generateAndCompile("headers.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test! "+ wsdlName + e.getMessage());
         }
     }
 
@@ -134,12 +137,12 @@ public class WSDL2JavaTest extends TestCase{
      * Test for the ping WSDL
      */
     public void testCodeGenerationPing(){
-
+        String wsdlName = "ping.wsdl";
         try {
-            generateAndCompile("ping.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            e.printStackTrace();
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test! "+wsdlName+ e.getMessage());
         }
     }
 
@@ -148,11 +151,12 @@ public class WSDL2JavaTest extends TestCase{
      * Test for the interoptestdoclitparameters
      */
     public void testCodeGenerationInteropTestDocLitParams(){
-
+        String wsdlName = "interoptestdoclitparameters.wsdl";
         try {
-            generateAndCompile("interoptestdoclitparameters.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test! "+wsdlName+ e.getMessage());
         }
     }
 
@@ -167,15 +171,16 @@ public class WSDL2JavaTest extends TestCase{
 //        }
 //    }
 
-     /**
+    /**
      * Test for the mime doc
      */
     public void testCodeGenerationMimeDoc(){
-
+        String wsdlName = "mime-doc.wsdl";
         try {
-            generateAndCompile("mime-doc.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test! "+ wsdlName + e.getMessage());
         }
     }
 
@@ -194,11 +199,12 @@ public class WSDL2JavaTest extends TestCase{
      * Test for the wscoor.wsdl
      */
     public void testCodeGenerationWSCOOR(){
-
+        String wsdlName = "interoptestdoclit.wsdl";
         try {
-            generateAndCompile("interoptestdoclit.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test! " + wsdlName + e.getMessage());
         }
     }
 
@@ -227,7 +233,7 @@ public class WSDL2JavaTest extends TestCase{
             generateAndCompile("ping-unbound.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
             fail("Undesired behavior while code generating!");
         } catch (CodeGenerationException e) {
-           //we are good
+            //we are good
         }
     }
 
@@ -236,11 +242,12 @@ public class WSDL2JavaTest extends TestCase{
      *
      */
     public void testCodeGenerationSimpleDocLiteral(){
-
+        String wsdlName = "simple-doc-literal.wsdl";
         try {
-            generateAndCompile("simple-doc-literal.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test !" + wsdlName + e.getMessage());
         }
     }
 
@@ -249,11 +256,12 @@ public class WSDL2JavaTest extends TestCase{
      *
      */
     public void testCodeGenerationComplexDocLiteral(){
-
+        String wsdlName = "complex-doc-literal.wsdl";
         try {
-            generateAndCompile("complex-doc-literal.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test! "+wsdlName+ e.getMessage());
         }
     }
     /**
@@ -262,11 +270,12 @@ public class WSDL2JavaTest extends TestCase{
      *
      */
     public void testCodeGenerationMTOMEcho(){
-
+        String wsdlName = "mtomecho.wsdl";
         try {
-            generateAndCompile("mtomecho.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            fail("Exception while code generation test!"+ e.getMessage());
+            fail("Exception while code generation test! "+wsdlName+ e.getMessage());
         }
     }
 
@@ -381,13 +390,13 @@ public class WSDL2JavaTest extends TestCase{
                 CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
                 new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
                         new String[0]));
-         // db is xmlbeans option is on
+        // db is xmlbeans option is on
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
                 new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
                         new String[]{TestConstants.Databinding.XML_BEANS}));
 
-         optionMap.put(
+        optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
                 new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
                         new String[0]));

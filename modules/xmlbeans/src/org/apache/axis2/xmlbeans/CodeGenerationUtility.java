@@ -40,7 +40,13 @@ import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.Constants;
+import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.xmlbeans.BindingConfig;
 import org.apache.xmlbeans.Filer;
 import org.apache.xmlbeans.SchemaProperty;
@@ -49,6 +55,7 @@ import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.SchemaGlobalElement;
 import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
@@ -179,11 +186,47 @@ public class CodeGenerationUtility {
 
             //get the schematypes and add the document types to the type mapper
             SchemaType[] schemaType = sts.documentTypes();
-            SchemaType type;
             for (int j = 0; j < schemaType.length; j++) {
-                type = schemaType[j];
-                mapper.addTypeMappingName(type.getDocumentElementName(),
-                        type.getFullJavaName());
+                mapper.addTypeMappingName(schemaType[j].getDocumentElementName(),
+                        schemaType[j].getFullJavaName());
+
+            }
+
+
+            //process the unwrapped parameters
+            if (!cgconfig.isParametersWrapped()) {
+                //figure out the unwrapped operations
+                AxisService axisService = cgconfig.getAxisService();
+                for (Iterator operations = axisService.getOperations();
+                     operations.hasNext();) {
+                    AxisOperation op = (AxisOperation) operations.next();
+                    if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
+                        AxisMessage message = op.getMessage(
+                                WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                        if (message!= null  && message.getParameter(Constants.UNWRAPPED_KEY) != null){
+                            SchemaGlobalElement xmlbeansElement = sts.findElement(message.getElementQName());
+                            SchemaType sType = xmlbeansElement.getType();
+
+                            SchemaProperty[] elementProperties = sType.getElementProperties();
+                            for (int i = 0; i < elementProperties.length; i++) {
+                                SchemaProperty elementProperty = elementProperties[i];
+
+                                QName partQName = WSDLUtil.getPartQName(op.getName().getLocalPart(),
+                                        WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                        elementProperty.getName().getLocalPart());
+
+                                //this type is based on a primitive type- use the
+                                //primitive type name in this case
+                                mapper.addTypeMappingName(partQName,elementProperty.getType().getFullJavaName());
+                                SchemaType primitiveType = elementProperty.getType().getPrimitiveType();
+
+                                if (primitiveType!=null){
+                                    mapper.addTypeMappingStatus(partQName,Boolean.TRUE);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             //return mapper to be set in the config
@@ -194,7 +237,6 @@ public class CodeGenerationUtility {
             throw new RuntimeException(e);
         }
     }
-
 
     /**
      * Populate the base64 types
@@ -510,6 +552,35 @@ public class CodeGenerationUtility {
             return new ByteArrayInputStream(baos.toByteArray());
 
         }
+
+    }
+
+    /**
+     * Populate the schema objects into the
+     *
+     * @param schemaMap
+     * @param schemaList
+     */
+    private static void populateSchemaMap(Map schemaMap, List schemaList) {
+        for (int i = 0; i < schemaList.size(); i++) {
+            XmlSchema xmlSchema = (XmlSchema) schemaList.get(i);
+            schemaMap.put(xmlSchema.getTargetNamespace(), xmlSchema);
+        }
+    }
+
+    /**
+     * Look for a given schema type given the schema type Qname
+     * @param schemaMap
+     * @param namespaceURI
+     * @return null if the schema is not found
+     */
+    private static XmlSchemaType findSchemaType(Map schemaMap, QName schemaTypeName) {
+        //find the schema
+        XmlSchema schema = (XmlSchema) schemaMap.get(schemaTypeName.getNamespaceURI());
+        if (schema!=null){
+            return schema.getTypeByName(schemaTypeName);
+        }
+        return null;
     }
 }
 

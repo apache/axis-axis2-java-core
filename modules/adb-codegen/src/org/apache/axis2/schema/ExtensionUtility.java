@@ -131,7 +131,6 @@ public class ExtensionUtility {
                 if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
                     walkSchema(op.getMessage(
                             WSDLConstants.MESSAGE_LABEL_IN_VALUE),
-                            configuration,
                             mapper,
                             schemaMap,
                             op.getName().getLocalPart());
@@ -165,7 +164,6 @@ public class ExtensionUtility {
      * @param mapper
      */
     private static void walkSchema(AxisMessage message,
-                                   CodeGenConfiguration configuration,
                                    TypeMapper mapper,
                                    Map schemaMap,
                                    String opName) {
