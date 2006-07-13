@@ -31,10 +31,8 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.rpc.receivers.RPCUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -125,11 +123,12 @@ public class SpringRPCMessageReceiver extends SpringAbstractInOutSyncMessageRece
                 QName resName = new QName(service.getSchematargetNamespace(),
                         method.getName() + "Response",
                         service.getSchematargetNamespacePrefix());
-                OMElement bodyChild = RPCUtil.getResponseElement(resName, (Object[]) resObject ,
+                OMElement bodyChild = RPCUtil.getResponseElement(resName, (Object[]) resObject,
                         service.isElementFormDefault());
                 envelope.getBody().addChild(bodyChild);
             } else {
-                RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method );
+                RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope,
+                        method, service.isElementFormDefault());
             }
 
             outMessage.setEnvelope(envelope);

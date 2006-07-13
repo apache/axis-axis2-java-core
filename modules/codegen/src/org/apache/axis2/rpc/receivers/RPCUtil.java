@@ -41,29 +41,45 @@ public class RPCUtil {
                                        OMElement bodyContent,
                                        OMNamespace ns,
                                        SOAPEnvelope envelope,
-                                       Method method) {
+                                       Method method, boolean qualified) {
         if (resObject != null) {
             //simple type
             if (resObject instanceof OMElement) {
                 OMElement result = (OMElement) resObject;
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
-                OMElement resWrapper = fac.createOMElement(RETURN_WRAPPER, ns.getName(),
-                        ns.getPrefix());
+                OMElement resWrapper;
+                if (qualified) {
+                    resWrapper = fac.createOMElement(RETURN_WRAPPER, ns.getName(),
+                            ns.getPrefix());
+                } else {
+                    resWrapper = fac.createOMElement(RETURN_WRAPPER, null);
+                }
                 resWrapper.addChild(result);
                 bodyContent.addChild(resWrapper);
             } else if (SimpleTypeMapper.isSimpleType(resObject)) {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
-                OMElement child = fac.createOMElement(RETURN_WRAPPER, ns);
+                OMElement child;
+                if (qualified) {
+                    child = fac.createOMElement(RETURN_WRAPPER, ns);
+                } else {
+                    child = fac.createOMElement(RETURN_WRAPPER, null);
+                }
                 child.addChild(fac.createOMText(child, SimpleTypeMapper.getStringValue(resObject)));
                 bodyContent.addChild(child);
             } else {
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
                 // Java Beans
+                QName returnWrapper;
+                if (qualified) {
+                    returnWrapper = new QName(ns.getName(), RETURN_WRAPPER, ns.getPrefix());
+                } else {
+                    returnWrapper = new QName(RETURN_WRAPPER);
+                }
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
-                        new QName(ns.getName(), RETURN_WRAPPER, ns.getPrefix()));
+                        returnWrapper);
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
                                 OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));

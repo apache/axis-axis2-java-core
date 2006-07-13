@@ -153,7 +153,8 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                             objArray, service.isElementFormDefault());
                     envelope.getBody().addChild(bodyChild);
                 } else {
-                    RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method);
+                    RPCUtil.processResponse(fac, resObject, bodyContent, ns,
+                            envelope, method, service.isElementFormDefault());
                 }
             }
 

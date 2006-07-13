@@ -118,7 +118,8 @@ public class SpringRPCInOutAsyncMessageReceiver extends SpringAbstractInOutAsync
                         service.isElementFormDefault());
                 envelope.getBody().addChild(bodyChild);
             } else {
-                RPCUtil.processResponse(fac, resObject, bodyContent, ns, envelope, method);
+                RPCUtil.processResponse(fac, resObject, bodyContent, ns,
+                        envelope, method, service.isElementFormDefault());
             }
 
             outMessage.setEnvelope(envelope);
