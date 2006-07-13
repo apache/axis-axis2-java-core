@@ -18,11 +18,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.engine.AxisObserver;
@@ -35,7 +31,7 @@ public class AxisObserverImpl implements AxisObserver {
 
     // The initilization code will go here
     public void init(AxisConfiguration axisConfig) {
-         parameterimpl = new ParameterIncludeImpl();
+        parameterimpl = new ParameterIncludeImpl();
     }
 
     public void serviceUpdate(AxisEvent event, AxisService service) {
@@ -65,5 +61,8 @@ public class AxisObserverImpl implements AxisObserver {
 
     public void deserializeParameters(OMElement parameterElement) throws AxisFault {
         this.parameterimpl.deserializeParameters(parameterElement);
+    }
+
+    public void serviceGroupUpdate(AxisEvent event, AxisServiceGroup serviceGroup) {
     }
 }

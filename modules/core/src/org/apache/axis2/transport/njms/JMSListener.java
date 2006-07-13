@@ -21,7 +21,6 @@ import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.*;
@@ -44,7 +43,7 @@ import java.util.*;
  * factories at runtime. This JMS Listener registers with Axis to be notified
  * of service deployment/undeployment/start and stop, and enables or disables
  * listening for messages on the destinations as appropriate.
- *
+ * <p/>
  * A Service could state the JMS connection factory name and the destination
  * name for use as Parameters in its services.xml as shown in the example
  * below. If the connection name was not specified, it will use the connection
@@ -53,37 +52,50 @@ import java.util.*;
  * it will default to a JMS queue by the name of the service. If the destination
  * should be a Topic, it should be created on the JMS implementation, and
  * specified in the services.xml of the service.
- *
+ * <p/>
  * <parameter name="transport.jms.ConnectionFactory" locked="true">
- *  myTopicConnectionFactory</parameter>
+ * myTopicConnectionFactory</parameter>
  * <parameter name="transport.jms.Destination" locked="true">
- *  dynamicTopics/something.TestTopic</parameter>
+ * dynamicTopics/something.TestTopic</parameter>
  */
 public class JMSListener implements TransportListener {
 
     private static final Log log = LogFactory.getLog(JMSListener.class);
 
-    /** The maximum number of threads used for the worker thread pool */
+    /**
+     * The maximum number of threads used for the worker thread pool
+     */
     private static final int WORKERS_MAX_THREADS = 100;
-    /** The keep alive time of an idle worker thread */
+    /**
+     * The keep alive time of an idle worker thread
+     */
     private static final long WORKER_KEEP_ALIVE = 60L;
-    /** The worker thread timeout time unit */
+    /**
+     * The worker thread timeout time unit
+     */
     private static final TimeUnit TIME_UNIT = TimeUnit.SECONDS;
 
-    /** A Map containing the connection factories managed by this, keyed by name */
+    /**
+     * A Map containing the connection factories managed by this, keyed by name
+     */
     private Map connectionFactories = new HashMap();
-    /** A Map of service name to the JMS EPR addresses */
+    /**
+     * A Map of service name to the JMS EPR addresses
+     */
     private Map serviceNameToEprMap = new HashMap();
-    /** The Axis2 Configuration context */
+    /**
+     * The Axis2 Configuration context
+     */
     private ConfigurationContext axisConf = null;
 
     /**
      * This is the TransportListener initialization method invoked by Axis2
-     * @param axisConf the Axis configuration context
+     *
+     * @param axisConf   the Axis configuration context
      * @param transprtIn the TransportIn description
      */
     public void init(ConfigurationContext axisConf,
-        TransportInDescription transprtIn) {
+                     TransportInDescription transprtIn) {
 
         // save reference to the configuration context
         this.axisConf = axisConf;
@@ -94,14 +106,14 @@ public class JMSListener implements TransportListener {
         // if no connection factories are defined, we cannot listen
         if (connectionFactories.isEmpty()) {
             log.warn("No JMS connection factories are defined." +
-                "Will not listen for any JMS messages");
+                    "Will not listen for any JMS messages");
             return;
         }
 
         // iterate through deployed services and validate connection factory
         // names, and mark services as faulty where appropriate.
         Iterator services =
-            axisConf.getAxisConfiguration().getServices().values().iterator();
+                axisConf.getAxisConfiguration().getServices().values().iterator();
 
         while (services.hasNext()) {
             AxisService service = (AxisService) services.next();
@@ -120,18 +132,19 @@ public class JMSListener implements TransportListener {
 
     /**
      * Prepare to listen for JMS messages on behalf of this service
+     *
      * @param service
      */
     private void processService(AxisService service) {
         JMSConnectionFactory cf = getConnectionFactory(service);
         if (cf == null) {
             String msg = "Service " + service.getName() + " does not specify" +
-                "a JMS connection factory or refers to an invalid factory. " +
-                "This service is being marked as faulty and will not be " +
-                "available over the JMS transport";
+                    "a JMS connection factory or refers to an invalid factory. " +
+                    "This service is being marked as faulty and will not be " +
+                    "available over the JMS transport";
             log.warn(msg);
             JMSUtils.markServiceAsFaulty(
-                service.getName(), msg , service.getAxisConfiguration());
+                    service.getName(), msg, service.getAxisConfiguration());
             return;
         }
 
@@ -167,7 +180,7 @@ public class JMSListener implements TransportListener {
 
         } else if (connectionFactories.containsKey(JMSConstants.DEFAULT_CONFAC_NAME)) {
             return (JMSConnectionFactory) connectionFactories.
-                get(JMSConstants.DEFAULT_CONFAC_NAME);
+                    get(JMSConstants.DEFAULT_CONFAC_NAME);
 
         } else {
             return null;
@@ -177,6 +190,7 @@ public class JMSListener implements TransportListener {
     /**
      * Initialize the defined connection factories, parsing the TransportIn
      * descriptions
+     *
      * @param transprtIn The Axis2 Transport in for the JMS
      */
     private void initializeConnectionFactories(TransportInDescription transprtIn) {
@@ -187,14 +201,14 @@ public class JMSListener implements TransportListener {
 
             Parameter param = (Parameter) conFacIter.next();
             JMSConnectionFactory jmsConFactory =
-                new JMSConnectionFactory(param.getName());
+                    new JMSConnectionFactory(param.getName());
 
             ParameterIncludeImpl pi = new ParameterIncludeImpl();
             try {
                 pi.deserializeParameters((OMElement) param.getValue());
             } catch (AxisFault axisFault) {
                 handleException("Error reading Parameters for JMS connection " +
-                    "factory" + jmsConFactory.getName(), axisFault);
+                        "factory" + jmsConFactory.getName(), axisFault);
             }
 
             // read connection facotry properties
@@ -205,21 +219,21 @@ public class JMSListener implements TransportListener {
 
                 if (Context.INITIAL_CONTEXT_FACTORY.equals(p.getName())) {
                     jmsConFactory.addProperty(
-                        Context.INITIAL_CONTEXT_FACTORY, (String) p.getValue());
+                            Context.INITIAL_CONTEXT_FACTORY, (String) p.getValue());
                 } else if (Context.PROVIDER_URL.equals(p.getName())) {
                     jmsConFactory.addProperty(
-                        Context.PROVIDER_URL, (String) p.getValue());
+                            Context.PROVIDER_URL, (String) p.getValue());
                 } else if (Context.SECURITY_PRINCIPAL.equals(p.getName())) {
                     jmsConFactory.addProperty(
-                        Context.SECURITY_PRINCIPAL, (String) p.getValue());
+                            Context.SECURITY_PRINCIPAL, (String) p.getValue());
                 } else if (Context.SECURITY_CREDENTIALS.equals(p.getName())) {
                     jmsConFactory.addProperty(
-                        Context.SECURITY_CREDENTIALS, (String) p.getValue());
+                            Context.SECURITY_CREDENTIALS, (String) p.getValue());
                 } else if (JMSConstants.CONFAC_JNDI_NAME_PARAM.equals(p.getName())) {
                     jmsConFactory.setJndiName((String) p.getValue());
                 } else if (JMSConstants.DEST_PARAM.equals(p.getName())) {
                     StringTokenizer st =
-                        new StringTokenizer((String) p.getValue(), " ,");
+                            new StringTokenizer((String) p.getValue(), " ,");
                     while (st.hasMoreTokens()) {
                         jmsConFactory.addDestination(st.nextToken(), null);
                     }
@@ -231,8 +245,8 @@ public class JMSListener implements TransportListener {
                 jmsConFactory.connect();
                 connectionFactories.put(jmsConFactory.getName(), jmsConFactory);
             } catch (NamingException e) {
-               handleException("Error connecting to JMS connection factory : " +
-                   jmsConFactory.getJndiName(), e);
+                handleException("Error connecting to JMS connection factory : " +
+                        jmsConFactory.getJndiName(), e);
             }
         }
     }
@@ -241,7 +255,8 @@ public class JMSListener implements TransportListener {
      * Get the EPR for the given JMS connection factory and destination
      * the form of the URL is
      * jms:/<destination>?[<key>=<value>&]*
-     * @param cf the Axis2 JMS connection factory
+     *
+     * @param cf          the Axis2 JMS connection factory
      * @param destination the JNDI name of the destination
      * @return the EPR as a String
      */
@@ -249,7 +264,7 @@ public class JMSListener implements TransportListener {
         StringBuffer sb = new StringBuffer();
         sb.append(JMSConstants.JMS_PREFIX).append(destination);
         sb.append("?").append(JMSConstants.CONFAC_JNDI_NAME_PARAM).
-            append("=").append(cf.getJndiName());
+                append("=").append(cf.getJndiName());
         Iterator props = cf.getProperties().keySet().iterator();
         while (props.hasNext()) {
             String key = (String) props.next();
@@ -261,29 +276,30 @@ public class JMSListener implements TransportListener {
 
     /**
      * Start this JMS Listener (Transport Listener)
+     *
      * @throws AxisFault
      */
     public void start() throws AxisFault {
         // create thread pool of workers
         ExecutorService workerPool = new ThreadPoolExecutor(
-            1,
-            WORKERS_MAX_THREADS, WORKER_KEEP_ALIVE, TIME_UNIT,
-            new LinkedBlockingQueue(),
-            new DefaultThreadFactory(
-                new ThreadGroup("JMS Worker thread group"),
-                "JMSWorker"));
+                1,
+                WORKERS_MAX_THREADS, WORKER_KEEP_ALIVE, TIME_UNIT,
+                new LinkedBlockingQueue(),
+                new DefaultThreadFactory(
+                        new ThreadGroup("JMS Worker thread group"),
+                        "JMSWorker"));
 
         Iterator iter = connectionFactories.values().iterator();
         while (iter.hasNext()) {
             JMSConnectionFactory conFac = (JMSConnectionFactory) iter.next();
             JMSMessageReceiver msgRcvr =
-                new JMSMessageReceiver(conFac, workerPool, axisConf);
+                    new JMSMessageReceiver(conFac, workerPool, axisConf);
 
             try {
                 conFac.listen(msgRcvr);
             } catch (JMSException e) {
                 handleException("Error starting connection factory : " +
-                    conFac.getName(), e);
+                        conFac.getName(), e);
             }
         }
     }
@@ -300,8 +316,9 @@ public class JMSListener implements TransportListener {
 
     /**
      * Returns the EPR for the given service and IP. (Picks up precomputed EPR)
+     *
      * @param serviceName service name
-     * @param ip ignored
+     * @param ip          ignored
      * @return the EPR for the service
      * @throws AxisFault not used
      */
@@ -311,6 +328,7 @@ public class JMSListener implements TransportListener {
 
     /**
      * Starts listening for messages on this service
+     *
      * @param service the AxisService just deployed
      */
     private void startListeningForService(AxisService service) {
@@ -318,12 +336,12 @@ public class JMSListener implements TransportListener {
         JMSConnectionFactory cf = getConnectionFactory(service);
         if (cf == null) {
             String msg = "Service " + service.getName() + " does not specify" +
-                "a JMS connection factory or refers to an invalid factory." +
-                "This service is being marked as faulty and will not be " +
-                "available over the JMS transport";
+                    "a JMS connection factory or refers to an invalid factory." +
+                    "This service is being marked as faulty and will not be " +
+                    "available over the JMS transport";
             log.warn(msg);
             JMSUtils.markServiceAsFaulty(
-                service.getName(), msg , service.getAxisConfiguration());
+                    service.getName(), msg, service.getAxisConfiguration());
             return;
         }
 
@@ -331,18 +349,19 @@ public class JMSListener implements TransportListener {
         try {
             cf.listenOnDestination(destination);
             log.info("Started listening on destination : " + destination +
-                " for service " + service.getName());
+                    " for service " + service.getName());
 
         } catch (JMSException e) {
             handleException(
-                "Could not listen on JMS for service " + service.getName(), e);
+                    "Could not listen on JMS for service " + service.getName(), e);
             JMSUtils.markServiceAsFaulty(
-                service.getName(), e.getMessage(), service.getAxisConfiguration());
+                    service.getName(), e.getMessage(), service.getAxisConfiguration());
         }
     }
 
     /**
      * Stops listening for messages for the service undeployed
+     *
      * @param service the AxisService just undeployed
      */
     private void stopListeningForService(AxisService service) {
@@ -350,24 +369,24 @@ public class JMSListener implements TransportListener {
         JMSConnectionFactory cf = getConnectionFactory(service);
         if (cf == null) {
             String msg = "Service " + service.getName() + " does not specify" +
-                "a JMS connection factory or refers to an invalid factory." +
-                "This service is being marked as faulty and will not be " +
-                "available over the JMS transport";
+                    "a JMS connection factory or refers to an invalid factory." +
+                    "This service is being marked as faulty and will not be " +
+                    "available over the JMS transport";
             log.warn(msg);
             JMSUtils.markServiceAsFaulty(
-                service.getName(), msg , service.getAxisConfiguration());
+                    service.getName(), msg, service.getAxisConfiguration());
             return;
         }
 
         // remove from the serviceNameToEprMap
         serviceNameToEprMap.remove(service.getName());
-        
+
         String destination = JMSUtils.getDestination(service);
         try {
             cf.removeDestination(destination);
         } catch (JMSException e) {
             handleException(
-                "Error while terminating listening on JMS destination : " + destination, e);
+                    "Error while terminating listening on JMS destination : " + destination, e);
         }
     }
 
@@ -429,6 +448,9 @@ public class JMSListener implements TransportListener {
 
         public boolean isParameterLocked(String parameterName) {
             return false;
+        }
+
+        public void serviceGroupUpdate(AxisEvent event, AxisServiceGroup serviceGroup) {
         }
     }
 }

@@ -271,6 +271,7 @@ public class AxisConfiguration extends AxisDescription {
         // serviceGroups.put(axisServiceGroup.getServiceGroupName(),
         // axisServiceGroup);
         addChild(axisServiceGroup);
+        notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
     }
 
     public void removeServiceGroup(String serviceGroupName) throws AxisFault {
@@ -288,6 +289,7 @@ public class AxisConfiguration extends AxisDescription {
             }
         }
         removeChild(serviceGroupName);
+        notifyObservers(AxisEvent.SERVICE_REMOVE, axisServiceGroup);
     }
 
     /**
@@ -439,6 +441,21 @@ public class AxisConfiguration extends AxisDescription {
 
             try {
                 axisObserver.moduleUpdate(event, moule);
+            } catch (Throwable e) {
+                // No need to stop the system due to this , So log and ignore
+                log.debug(e);
+            }
+        }
+    }
+
+    public void notifyObservers(int event_type, AxisServiceGroup serviceGroup) {
+        AxisEvent event = new AxisEvent(event_type);
+
+        for (int i = 0; i < observersList.size(); i++) {
+            AxisObserver axisObserver = (AxisObserver) observersList.get(i);
+
+            try {
+                axisObserver.serviceGroupUpdate(event, serviceGroup);
             } catch (Throwable e) {
                 // No need to stop the system due to this , So log and ignore
                 log.debug(e);

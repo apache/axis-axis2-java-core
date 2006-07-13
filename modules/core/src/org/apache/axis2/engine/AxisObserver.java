@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ParameterInclude;
 
 public interface AxisObserver extends ParameterInclude {
@@ -27,6 +28,8 @@ public interface AxisObserver extends ParameterInclude {
     void init(AxisConfiguration axisConfig);
 
     void serviceUpdate(AxisEvent event, AxisService service);
+
+    void serviceGroupUpdate(AxisEvent event, AxisServiceGroup serviceGroup);
 
     void moduleUpdate(AxisEvent event, AxisModule module);
 }
