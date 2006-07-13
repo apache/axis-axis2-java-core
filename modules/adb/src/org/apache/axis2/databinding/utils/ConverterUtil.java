@@ -394,6 +394,10 @@ public class ConverterUtil {
         return new Token(s);
     }
 
+    public static Token convertToToken(String s) {
+        return new Token(s);
+    }
+
     public static NormalizedString convertTonormalizedString(String s) {
         return new NormalizedString(s);
     }
