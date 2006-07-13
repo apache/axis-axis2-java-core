@@ -77,7 +77,7 @@ public class DispatchPhase extends Phase {
      */
     private void validateTransport(MessageContext msgctx) throws AxisFault {
         AxisService service = msgctx.getAxisService();
-        if (service.isEnableAllTransport()) {
+        if (service.isEnableAllTransports()) {
             return;
         } else {
             List trs = service.getExposedTransports();

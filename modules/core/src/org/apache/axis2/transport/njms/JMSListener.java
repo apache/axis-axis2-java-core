@@ -117,7 +117,7 @@ public class JMSListener implements TransportListener {
 
         while (services.hasNext()) {
             AxisService service = (AxisService) services.next();
-            boolean process = service.isEnableAllTransport();
+            boolean process = service.isEnableAllTransports();
             if (JMSUtils.isJMSService(service)) {
                 processService(service);
             }

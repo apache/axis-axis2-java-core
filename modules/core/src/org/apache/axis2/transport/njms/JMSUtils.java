@@ -58,7 +58,7 @@ public class JMSUtils {
      * @return true if JMS should be enabled
      */
     public static boolean isJMSService(AxisService service) {
-        boolean process = service.isEnableAllTransport();
+        boolean process = service.isEnableAllTransports();
         if (process) {
             return true;
 

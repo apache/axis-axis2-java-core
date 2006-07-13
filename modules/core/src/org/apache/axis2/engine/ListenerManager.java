@@ -70,7 +70,7 @@ public class ListenerManager {
                 throw new AxisFault(Messages.getMessage(
                         "servicenotfoundinthesystem", serviceName));
             }
-            if (service.isEnableAllTransport()) {
+            if (service.isEnableAllTransports()) {
                 Iterator itr_st = startedTransports.values().iterator();
                 if (itr_st.hasNext()) {
                     TransportListener transportListener = (TransportListener) itr_st.next();

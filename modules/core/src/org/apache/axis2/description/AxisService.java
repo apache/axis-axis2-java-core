@@ -117,7 +117,7 @@ public class AxisService extends AxisDescription {
     private String schematargetNamespacePrefix =
             Java2WSDLConstants.SCHEMA_NAMESPACE_PRFIX;
 
-    private boolean enableAllTransport = true;
+    private boolean enableAllTransports = true;
     private List exposedTransports = new ArrayList();
 
     /**
@@ -525,7 +525,7 @@ public class AxisService extends AxisDescription {
 
     private String[] getServiceEprs(String requestIP, ArrayList eprList) throws AxisFault {
         AxisConfiguration axisConfig = getAxisConfiguration();
-        if (enableAllTransport) {
+        if (enableAllTransports) {
             Iterator transports = axisConfig.getTransportsIn().values().iterator();
             while (transports.hasNext()) {
                 TransportInDescription transportIn = (TransportInDescription) transports.next();
@@ -978,8 +978,8 @@ public class AxisService extends AxisDescription {
         return null;
     }
 
-    public boolean isEnableAllTransport() {
-        return enableAllTransport;
+    public boolean isEnableAllTransports() {
+        return enableAllTransports;
     }
 
     public List getExposedTransports() {
@@ -987,15 +987,17 @@ public class AxisService extends AxisDescription {
     }
 
     public void setExposedTransports(List transports) {
-        enableAllTransport = false;
+        enableAllTransports = false;
         this.exposedTransports = transports;
     }
 
     public void addExposedTransport(String transport) {
+        enableAllTransports = false;
         this.exposedTransports.add(transport);
     }
 
     public void removeExposedTransport(String transport) {
+        enableAllTransports = false;
         this.exposedTransports.remove(transport);
     }
 
