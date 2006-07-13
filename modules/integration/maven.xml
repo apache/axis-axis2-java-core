@@ -84,7 +84,6 @@
 	  <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test1"
 						 target="jar.client"/>
           
-          <!--  to be  uncommented - currently the tests fail due to a prob with the toOM method-->
           <ant:echo>Running codegen RPC WSDLs - take 2</ant:echo>
 	  <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 		<classpath refid="maven.dependency.classpath"/>
@@ -93,6 +92,22 @@
 	  <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test2"
 						 target="jar.client"/>
           
+	  
+          <ant:echo>Running codegen RPC WSDLs - take 3</ant:echo>
+	  <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+		<classpath refid="maven.dependency.classpath"/>
+		<arg line="-o target/rpc-test3 -uri test-resources/rpc/test-rpc-2.wsdl -uw -d xmlbeans"/>
+	   </java>
+	  <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test3"
+						 target="jar.client"/>
+          
+           <ant:echo>Running codegen RPC WSDLs - take 4</ant:echo>
+	  <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+		<classpath refid="maven.dependency.classpath"/>
+		<arg line="-o target/rpc-test4 -uri test-resources/rpc/test-rpc-2.wsdl -uw -d xmlbeans -ss -sd"/>
+	   </java>
+	  <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test4"
+						 target="jar.server"/>
 
         <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
 		<j:if test="${context.getVariable('skip.enterprise.tests') != 'true'}">
