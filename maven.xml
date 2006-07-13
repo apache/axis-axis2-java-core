@@ -694,7 +694,7 @@
         <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
