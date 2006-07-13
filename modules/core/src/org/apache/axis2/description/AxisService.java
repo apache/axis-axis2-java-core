@@ -993,7 +993,9 @@ public class AxisService extends AxisDescription {
 
     public void addExposedTransport(String transport) {
         enableAllTransports = false;
-        this.exposedTransports.add(transport);
+        if (!this.exposedTransports.contains(transport)) {
+            this.exposedTransports.add(transport);
+        }
     }
 
     public void removeExposedTransport(String transport) {
