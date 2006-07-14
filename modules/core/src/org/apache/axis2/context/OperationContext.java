@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -40,6 +39,9 @@ import java.util.Map;
  */
 public class OperationContext extends AbstractContext {
     private boolean isComplete;
+
+    //The key value of the operationContextMap;
+    private String key;
 
     // the AxisOperation of which this is a running instance. The MEP of this
     // AxisOperation must be one of the 8 predefined ones in WSDL 2.0.
@@ -90,7 +92,7 @@ public class OperationContext extends AbstractContext {
 
     /**
      * Removes the pointers to this <code>OperationContext</code> in the
-     * <code>EngineContext</code>'s OperationContextMap so that this
+     * <code>ConfigurationContext</code>'s OperationContextMap so that this
      * <code>OperationContext</code> will eventually get garbage collected
      * along with the <code>MessageContext</code>'s it contains. Note that if
      * the caller wants to make sure its safe to clean up this OperationContext
@@ -99,15 +101,7 @@ public class OperationContext extends AbstractContext {
      * being complete due to the optional nature of the MEP.
      */
     public void cleanup() {
-        Iterator msgContexts = messageContexts.values().iterator();
-
-        while (msgContexts.hasNext()) {
-            MessageContext messageContext = (MessageContext) msgContexts.next();
-
-            if ((null != messageContext) && (operationContextMap != null)) {
-                operationContextMap.remove(messageContext.getMessageID());
-            }
-        }
+        operationContextMap.remove(key);
     }
 
     /**
@@ -164,5 +158,9 @@ public class OperationContext extends AbstractContext {
         super.setParent(context);
         this.operationContextMap =
                 getServiceContext().getConfigurationContext().getOperationContextMap();
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

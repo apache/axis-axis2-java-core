@@ -344,6 +344,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // set the transport Headers
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(req));
         msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
+        msgContext.setProperty(Constants.HTTP_SERVLET_REQUEST, req);
         msgContext.setProperty(Constants.SERVLET_CONTEXT, servletConfig.getServletContext());
         return msgContext;
     }

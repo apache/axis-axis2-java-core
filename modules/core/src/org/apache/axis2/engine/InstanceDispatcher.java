@@ -75,7 +75,8 @@ public class InstanceDispatcher extends AbstractHandler {
         if (operationContext != null) {
 
             // register operation context and message context
-            axisOperation.registerOperationContext(msgContext, operationContext);
+//            axisOperation.registerOperationContext(msgContext, operationContext);
+            axisOperation.registerMessageContext(msgContext, operationContext);
 
             serviceContext = (ServiceContext) operationContext.getParent();
             ServiceGroupContext serviceGroupContext =

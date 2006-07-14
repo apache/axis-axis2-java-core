@@ -484,7 +484,6 @@ public class AxisEngine {
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
                 confContext.getAxisConfiguration().getGlobalInFlow();
-
         // Set the initial execution chain in the MessageContext to a *copy* of what
         // we got above.  This allows individual message processing to change the chain without
         // affecting later messages.

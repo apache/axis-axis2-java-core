@@ -189,6 +189,7 @@ public class ConfigurationContext extends AbstractContext {
      */
     public synchronized void registerOperationContext(String messageID,
                                                       OperationContext mepContext) {
+        mepContext.setKey(messageID);
         this.operationContextMap.put(messageID, mepContext);
     }
 
