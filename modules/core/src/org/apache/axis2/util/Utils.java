@@ -80,7 +80,6 @@ public class Utils {
         }
 
         newmsgCtx.setFaultTo(oldOptions.getTo());
-        newmsgCtx.setFrom(oldOptions.getTo());
         newmsgCtx.addRelatesTo(
                 new RelatesTo(
                         oldOptions.getMessageId(),
