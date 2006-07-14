@@ -19,6 +19,8 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaChoice;
+import org.apache.ws.commons.schema.XmlSchemaAll;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -84,6 +86,15 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
     /**
      * walk the given schema element
+     * For a successful unwrapping the element should have the
+     * following structure
+     * &lt; element &gt;
+     *      &lt; complexType &gt;
+     *          &lt; sequence &gt;
+     *              &lt; element /&gt;
+     *          &lt; /sequence &gt;
+     *      &lt; /complexType &gt;
+     * &lt; /element &gt;
      */
 
     public void walkSchema(AxisMessage message,CodeGenConfiguration config)
@@ -94,6 +105,12 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         }
 
         XmlSchemaType schemaType = message.getSchemaElement().getSchemaType();
+        if (schemaType.getQName()!=null){
+            throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                    "named type","anonymous type"));
+        }
+       
+
         //create a type mapper
         if (schemaType instanceof XmlSchemaComplexType){
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType)schemaType;
@@ -132,14 +149,12 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                                         WSDLConstants.INPUT_PART_QNAME_SUFFIX,
                                         partName));
 
-
-                    }else{
                         // if the particle contains anything other than
                         // a XMLSchemaElement then we are not in a position
                         // to unwrap it
-                        //in this case just do nothing and return breaking
-                        //the whole thing
-                        return;
+                    }else{
+                        throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                                "unknown type","Element"));
                     }
                 }
 
@@ -164,16 +179,26 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     throw new CodeGenerationException(axisFault);
                 }
 
-
-            }else{
                 //we do not know how to deal with other particles
                 //such as xs:all or xs:choice. Usually occurs when
                 //passed with the user built WSDL where the style
                 //is document. We'll just return here doing nothing
+            }else if (particle instanceof XmlSchemaChoice){
+                  throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                                "choice","sequence"));
 
+            }else if (particle instanceof XmlSchemaAll){
+                  throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                                "all","sequence"));
+            }else{
+                throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                                "unknown","sequence"));
             }
         }else{
-            //we've no idea how to unwrap a non complexYype!!!!!!
+             //we've no idea how to unwrap a non complexYype!!!!!!
+             throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                                "unknown","complexType"));
+
         }
 
     }
