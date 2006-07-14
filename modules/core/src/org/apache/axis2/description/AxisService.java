@@ -1132,72 +1132,7 @@ public class AxisService extends AxisDescription {
     public static AxisService createService(String implClass,
                                             AxisConfiguration axisConfig,
                                             Class messageReceiverClass) throws AxisFault {
-        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
-        OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
-        parameter.setParameterElement(paraElement);
-        AxisService axisService = new AxisService();
-        axisService.setUseDefaultChains(false);
-        axisService.addParameter(parameter);
-
-        int index = implClass.lastIndexOf(".");
-        String serviceName;
-        if (index > 0) {
-            serviceName = implClass.substring(index + 1, implClass.length());
-        } else {
-            serviceName = implClass;
-        }
-
-        axisService.setName(serviceName);
-        axisService.setClassLoader(axisConfig.getServiceClassLoader());
-
-        ClassLoader serviceClassLoader = axisService.getClassLoader();
-        SchemaGenerator schemaGenerator;
-        try {
-            schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                    implClass, axisService.getSchematargetNamespace(),
-                    axisService.getSchematargetNamespacePrefix());
-            ArrayList excludedMethods = new ArrayList();
-            excludedMethods.add("init");
-            excludedMethods.add("setOperationContext");
-            excludedMethods.add("destroy");
-            schemaGenerator.setExcludeMethods(excludedMethods);
-            axisService.addSchema(schemaGenerator.generateSchema());
-            axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
-        } catch (Exception e) {
-            throw new AxisFault(e);
-        }
-
-        JMethod [] method = schemaGenerator.getMethods();
-        TypeTable table = schemaGenerator.getTypeTable();
-
-        PhasesInfo pinfo = axisConfig.getPhasesInfo();
-
-        for (int i = 0; i < method.length; i++) {
-            JMethod jmethod = method[i];
-            if (!jmethod.isPublic()) {
-                // no need to expose , private and protected methods
-                continue;
-            } else if ("init".equals(jmethod.getSimpleName())) {
-                continue;
-            }
-            AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
-
-            // loading message receivers
-            try {
-                MessageReceiver messageReceiver = (MessageReceiver) messageReceiverClass.newInstance();
-                operation.setMessageReceiver(messageReceiver);
-            } catch (IllegalAccessException e) {
-                throw new AxisFault("IllegalAccessException occured during message receiver loading"
-                        + e.getMessage());
-            } catch (InstantiationException e) {
-                throw new AxisFault("InstantiationException occured during message receiver loading"
-                        + e.getMessage());
-            }
-            pinfo.setOperationPhases(operation);
-            axisService.addOperation(operation);
-        }
-        return axisService;
-
+        return createService(implClass, axisConfig, messageReceiverClass, null, null);
     }
 
     /**
@@ -1225,6 +1160,10 @@ public class AxisService extends AxisDescription {
         axisService.setUseDefaultChains(false);
         axisService.addParameter(parameter);
 
+        if (schemaNameSpace == null) {
+            schemaNameSpace = axisService.getSchematargetNamespace();
+        }
+
         int index = implClass.lastIndexOf(".");
         String serviceName;
         if (index > 0) {
@@ -1242,6 +1181,7 @@ public class AxisService extends AxisDescription {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
                     implClass, schemaNameSpace,
                     axisService.getSchematargetNamespacePrefix());
+            schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             ArrayList excludeOpeartion = new ArrayList();
             excludeOpeartion.add("init");
             excludeOpeartion.add("setOperationContext");
