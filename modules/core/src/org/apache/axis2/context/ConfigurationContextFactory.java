@@ -128,7 +128,7 @@ public class ConfigurationContextFactory {
      * an AxisConfiguration.
      * <p/>
      * Here either or both parameter can be null. So that boil down to following
-     * scanarios and it should note that parameter value should be pull path ,
+     * scanarios and it should note that parameter value should be full path ,
      * you are not allowed to give one relative to other. And these two can be located
      * in completely different locations.
      * <ul>
