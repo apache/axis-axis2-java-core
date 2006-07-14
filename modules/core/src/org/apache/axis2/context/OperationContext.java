@@ -66,12 +66,14 @@ public class OperationContext extends AbstractContext {
      * @param serviceContext the parent ServiceContext representing any state related to
      *                       the set of all operations of the service.
      */
-    public OperationContext(AxisOperation axisOperation, ServiceContext serviceContext) {
+    public OperationContext(AxisOperation axisOperation,
+                            ServiceContext serviceContext) {
         super(serviceContext);
         this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
         this.operationContextMap =
-                getServiceContext().getConfigurationContext().getOperationContextMap();
+                getServiceContext().getConfigurationContext()
+                        .getOperationContextMap();
     }
 
     /**
@@ -101,7 +103,9 @@ public class OperationContext extends AbstractContext {
      * being complete due to the optional nature of the MEP.
      */
     public void cleanup() {
-        operationContextMap.remove(key);
+        if (key != null) {
+            operationContextMap.remove(key);
+        }
     }
 
     /**
@@ -125,7 +129,8 @@ public class OperationContext extends AbstractContext {
      * @return Returns MessageContext.
      * @throws AxisFault
      */
-    public MessageContext getMessageContext(String messageLabel) throws AxisFault {
+    public MessageContext getMessageContext(String messageLabel)
+            throws AxisFault {
         return (MessageContext) messageContexts.get(messageLabel);
     }
 
@@ -157,7 +162,8 @@ public class OperationContext extends AbstractContext {
     public void setParent(AbstractContext context) {
         super.setParent(context);
         this.operationContextMap =
-                getServiceContext().getConfigurationContext().getOperationContextMap();
+                getServiceContext().getConfigurationContext()
+                        .getOperationContextMap();
     }
 
     public void setKey(String key) {
