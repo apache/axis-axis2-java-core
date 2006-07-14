@@ -34,6 +34,7 @@ import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -119,13 +120,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     descriptionElement = readInTheWSDLFile(wsdlURI);
                 } else if (in != null) {
 
-                    DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                    documentBuilderFactory.setNamespaceAware(true);
+                    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
                     Document document = documentBuilder.parse(in);
 
                     WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
                     WSDLSource wsdlSource = reader.createWSDLSource();
                     wsdlSource.setSource(document.getDocumentElement());
-//                    wsdlSource.setBaseURI(getBaseUri());
+//                    wsdlSource.setBaseURI(new URI(getBaseUri()));
                     descriptionElement = reader.readWSDL(wsdlSource);
                 } else {
                     throw new AxisFault("No resources found to read the wsdl");

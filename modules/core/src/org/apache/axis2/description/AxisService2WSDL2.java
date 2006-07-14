@@ -236,8 +236,8 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         OMElement bindingElement = fac.createOMElement(BINDING_LOCAL_NAME, null);
         description.addChild(bindingElement);
         bindingElement.addAttribute("name", axisService.getName() + SOAP_BINDING_PREFIX, null);
-        bindingElement.addAttribute(INTERFACE_LOCAL_NAME, axisService.getName() +
-                INTERFACE_PREFIX, tns);
+        bindingElement.addAttribute(INTERFACE_LOCAL_NAME, tns.getPrefix() + ":" + axisService.getName() +
+                INTERFACE_PREFIX, null);
         bindingElement.addAttribute("type", URI_WSDL2_SOAP, null);
         bindingElement.addAttribute("protocol", HTTP_PROTOCAL, wsoap);
 
