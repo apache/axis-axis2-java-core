@@ -236,7 +236,7 @@ class XMLSpineImpl implements XMLSpine {
 			Block oldBlock = bodyBlocks.get(index);
 		
 			// Convert to new Block
-			Block newBlock = blockFactory.createFrom(oldBlock, blockFactory);
+			Block newBlock = blockFactory.createFrom(oldBlock, context);
 			if (newBlock != oldBlock) {
 				bodyBlocks.set(index, newBlock);
 			}
@@ -270,7 +270,7 @@ class XMLSpineImpl implements XMLSpine {
 			Block oldBlock = bodyBlocks.get(index);
 		
 			// Convert to new Block
-			Block newBlock = blockFactory.createFrom(oldBlock, blockFactory);
+			Block newBlock = blockFactory.createFrom(oldBlock, context);
 			if (newBlock != oldBlock) {
 				headerBlocks.set(index, newBlock);
 			}

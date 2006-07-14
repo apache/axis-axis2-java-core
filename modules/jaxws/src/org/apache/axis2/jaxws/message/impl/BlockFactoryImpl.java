@@ -42,9 +42,15 @@ public abstract class BlockFactoryImpl implements BlockFactory {
 	public Block createFrom(Block other, Object context) throws XMLStreamException, MessageException {
 		// This is the default behavior.  Derived Factories may
 		// provide a more performant implementation.
-		if (other.getBlockFactory().equals(this) &&
-		    other.getBusinessContext().equals(context)) {
-			return other;
+		if (other.getBlockFactory().equals(this)) {
+            if (other.getBusinessContext() == null && 
+                context == null) {
+                return other;
+            }
+            else if (other.getBusinessContext() != null &&
+                     other.getBusinessContext().equals(context)) {
+                return other;
+            }
 		}
 		QName qName= null;
 		if (other.isQNameAvailable()) {
