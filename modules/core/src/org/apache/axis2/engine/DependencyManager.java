@@ -18,6 +18,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Service;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -44,18 +45,26 @@ public class DependencyManager {
                                                       OperationContext opCtx)
             throws AxisFault {
         try {
-            Class classToLoad = obj.getClass();
-            // We can not call classToLoad.getDeclaredMethed() , since there
-            //  can be insatnce where mutiple services extends using one class
-            // just for init and other reflection methods
-            Method[] methods = classToLoad.getMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName())
-                        && (methods[i].getParameterTypes().length == 1)
-                        && (methods[i].getParameterTypes()[0] == OperationContext.class)) {
-                    methods[i].invoke(obj, new Object[]{opCtx});
-                    break;
+            // if this service is implementing the o.a.a.Service interface, then use that fact to invoke the
+            // proper method.
+            if (obj instanceof Service) {
+                ((Service) obj).setOperationContext(opCtx);
+            } else {
+                Class classToLoad = obj.getClass();
+
+                // We can not call classToLoad.getDeclaredMethed() , since there
+                //  can be insatnce where mutiple services extends using one class
+                // just for init and other reflection methods
+                Method[] methods = classToLoad.getMethods();
+
+                for (int i = 0; i < methods.length; i++) {
+                    if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName())
+                            && (methods[i].getParameterTypes().length == 1)
+                            && (methods[i].getParameterTypes()[0] == OperationContext.class)) {
+                        methods[i].invoke(obj, new Object[]{opCtx});
+                        break;
+                    }
                 }
             }
         } catch (SecurityException e) {
