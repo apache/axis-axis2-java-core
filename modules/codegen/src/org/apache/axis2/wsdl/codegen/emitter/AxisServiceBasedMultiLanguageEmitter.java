@@ -1020,9 +1020,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // process the header parameters
             Element newChild;
             List headerParameterQNameList = new ArrayList();
-
             addHeaderOperations(headerParameterQNameList, axisOperation, true);
-
             List parameterElementList = getParameterElementList(doc, headerParameterQNameList, "header");
 
             for (int i = 0; i < parameterElementList.size(); i++) {
@@ -1656,7 +1654,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
     }
 
-
+    /**
+     * Get the input element
+     * @param doc
+     * @param operation
+     * @param headerParameterQNameList
+     * @return
+     */
     protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
         Element inputElt = doc.createElement("input");
         String MEP = operation.getMessageExchangePattern();
@@ -1678,7 +1682,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Get the fault element - No header faults are supported
-     *
      * @param doc
      * @param operation
      */
@@ -1695,7 +1698,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Finds the output element.
-     *
      * @param doc
      * @param operation
      * @param headerParameterQNameList
