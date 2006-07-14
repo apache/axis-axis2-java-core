@@ -1182,6 +1182,7 @@ public class AxisService extends AxisDescription {
                     implClass, schemaNameSpace,
                     axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
+            axisService.setElementFormDefault(false);
             ArrayList excludeOpeartion = new ArrayList();
             excludeOpeartion.add("init");
             excludeOpeartion.add("setOperationContext");
