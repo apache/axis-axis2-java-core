@@ -19,7 +19,7 @@ package org.apache.axis2.jaxws;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
-import client.EchoStringResponse;
+import test.EchoStringResponse;
 
 public class JAXBCallbackHandler<T> implements AsyncHandler<T> {
 

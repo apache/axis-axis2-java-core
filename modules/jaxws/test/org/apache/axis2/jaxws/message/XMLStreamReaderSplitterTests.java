@@ -33,8 +33,8 @@ import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.message.util.XMLStreamReaderSplitter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
-import client.EchoString;
-import client.ObjectFactory;
+import test.EchoString;
+import test.ObjectFactory;
 
 import junit.framework.TestCase;
 

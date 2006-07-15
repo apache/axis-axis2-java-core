@@ -24,9 +24,9 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-import client.EchoString;
-import client.EchoStringResponse;
-import client.ObjectFactory;
+import test.EchoString;
+import test.EchoStringResponse;
+import test.ObjectFactory;
 
 public class JAXBDispatch extends TestCase {
 
@@ -45,7 +45,7 @@ public class JAXBDispatch extends TestCase {
         //Create the JAX-B Dispatch object
         JAXBContext jbc = null;
         try {
-            jbc = JAXBContext.newInstance("client");
+            jbc = JAXBContext.newInstance("test");
             dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                     jbc, Service.Mode.PAYLOAD);
         } catch (Exception e) {

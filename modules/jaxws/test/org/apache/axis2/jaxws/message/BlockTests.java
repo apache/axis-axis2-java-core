@@ -38,8 +38,8 @@ import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
-import client.EchoString;
-import client.ObjectFactory;
+import test.EchoString;
+import test.ObjectFactory;
 
 import junit.framework.TestCase;
 
@@ -306,7 +306,7 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("client");
+        JAXBContext jbc = JAXBContext.newInstance("test");
         JAXBIntrospector jbi = jbc.createJAXBIntrospector();
         QName expectedQName = jbi.getElementName(jaxb);
         
@@ -354,7 +354,7 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("client");
+        JAXBContext jbc = JAXBContext.newInstance("test");
         JAXBIntrospector jbi = jbc.createJAXBIntrospector();
         QName expectedQName = jbi.getElementName(jaxb);
         
@@ -402,7 +402,7 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("client");
+        JAXBContext jbc = JAXBContext.newInstance("test");
 		
 		// On inbound, there will already be a XMLStreamReader (probably from OM)
 		// which represents the message.  We will simulate this with inflow.
@@ -447,7 +447,7 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("client");
+        JAXBContext jbc = JAXBContext.newInstance("test");
         JAXBIntrospector jbi = jbc.createJAXBIntrospector();
         QName expectedQName = jbi.getElementName(jaxb);
 		
@@ -500,7 +500,7 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("client");
+        JAXBContext jbc = JAXBContext.newInstance("test");
         JAXBIntrospector jbi = jbc.createJAXBIntrospector();
         QName expectedQName = jbi.getElementName(jaxb);
 		
