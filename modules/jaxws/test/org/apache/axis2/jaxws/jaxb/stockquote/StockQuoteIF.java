@@ -27,8 +27,8 @@ public interface StockQuoteIF {
      */
     @WebMethod(action = "http://tempuri.org/StockQuote/getPrice")
     @WebResult(name = "price", targetNamespace = "")
-    @RequestWrapper(localName = "getPrice", targetNamespace = "http://org/apache/axis2/jaxws/test", className = "org.apache.axis2.jaxws.jaxb.stockquote.GetPrice")
-    @ResponseWrapper(localName = "getPriceResponse", targetNamespace = "http://org/apache/axis2/jaxws/test", className = "org.apache.axis2.jaxws.jaxb.stockquote.StockPrice")
+    @RequestWrapper(localName = "getPrice", targetNamespace = "urn://stock2.test.org", className = "org.test.stock2.GetPrice")
+    @ResponseWrapper(localName = "getPriceResponse", targetNamespace = "urn://stock2.test.org", className = "org.test.stock2.StockPrice")
     public String getPrice(
         @WebParam(name = "symbol", targetNamespace = "")
         String symbol);

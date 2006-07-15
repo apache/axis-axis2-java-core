@@ -201,9 +201,21 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 		return filteredPds;
 	}
 	
+	/**
+	 * Get the name of the xml element by looking at the XmlElement annotation.
+	 * @param jaxbClass
+	 * @param fieldName
+	 * @return
+	 * @throws NoSuchFieldException
+	 */
 	private String getXmlElementName(Class jaxbClass, String fieldName)throws NoSuchFieldException{
 		Field field = jaxbClass.getDeclaredField(fieldName);
 		XmlElement xmlElement =field.getAnnotation(XmlElement.class);
+		
+		// If XmlElement does not exist, default to using the field name
+		if (xmlElement == null) {
+			return fieldName;
+		}
 		return xmlElement.name();
 		
 	}

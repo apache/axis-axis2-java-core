@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import org.apache.axis2.jaxws.jaxb.stockquote.GetPrice;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
@@ -34,7 +33,7 @@ public class WrapperToolTest extends TestCase {
 		try{
 			JAXBWrapperTool wrapper = new JAXBWrapperToolImpl();
 			
-			String jaxbClassName = "org.apache.axis2.jaxws.jaxb.stockquote.GetPrice";
+			String jaxbClassName = "org.test.stock2.GetPrice";
 			Class jaxbClass = Class.forName(jaxbClassName, false, ClassLoader.getSystemClassLoader());
 			ArrayList<String> childNames = new ArrayList<String>();
 			String childName = "symbol";
@@ -43,7 +42,7 @@ public class WrapperToolTest extends TestCase {
 			Map<String, Object> childObjects= new WeakHashMap<String, Object>();
 			childObjects.put(childName, symbolObj);
 			Object jaxbObject = wrapper.wrap(jaxbClass, jaxbClassName,childNames, childObjects);
-			GetPrice getPrice = (GetPrice)jaxbObject;
+			org.test.stock2.GetPrice getPrice = (org.test.stock2.GetPrice)jaxbObject;
 			
 		}catch(JAXBWrapperException e){
 			e.printStackTrace();
@@ -55,7 +54,7 @@ public class WrapperToolTest extends TestCase {
 	public void testUnwrapStockQuote(){
 		try{
 			JAXBWrapperTool wrapper = new JAXBWrapperToolImpl();
-			GetPrice price = new GetPrice();
+			org.test.stock2.GetPrice price = new org.test.stock2.GetPrice();
 			price.setSymbol("IBM");
 			
 			ArrayList<String> childNames = new ArrayList<String>();
@@ -73,12 +72,12 @@ public class WrapperToolTest extends TestCase {
 		try{
 			JAXBWrapperTool wrapper = new JAXBWrapperToolImpl();
 			
-			String jaxbClassName = "org.apache.axis2.jaxws.jaxb.mfquote.GetPrice";
+			String jaxbClassName = "org.test.stock1.GetPrice";
 			Class jaxbClass = Class.forName(jaxbClassName, false, ClassLoader.getSystemClassLoader());
 			ArrayList<String> childNames = new ArrayList<String>();
 			String fund ="fund";
 			String fundName = new String("PRGFX");
-			String holding = "_10Holdings";
+			String holding = "holdings.";
 			String topHolding = new String("GE");
 			String nav ="nav";
 			String navInMillion = new String("700");
@@ -94,7 +93,7 @@ public class WrapperToolTest extends TestCase {
 			childObjects.put(nav, navInMillion);
 			
 			Object jaxbObject = wrapper.wrap(jaxbClass, jaxbClassName,childNames, childObjects);
-			org.apache.axis2.jaxws.jaxb.mfquote.GetPrice getPrice = (org.apache.axis2.jaxws.jaxb.mfquote.GetPrice)jaxbObject;
+			org.test.stock1.GetPrice getPrice = (org.test.stock1.GetPrice)jaxbObject;
 			
 		}catch(JAXBWrapperException e){
 			e.printStackTrace();
@@ -106,15 +105,15 @@ public class WrapperToolTest extends TestCase {
 	public void testUnwrapMFQuote(){
 		try{
 			JAXBWrapperTool wrapper = new JAXBWrapperToolImpl();
-			org.apache.axis2.jaxws.jaxb.mfquote.GetPrice price = new org.apache.axis2.jaxws.jaxb.mfquote.GetPrice();
+			org.test.stock1.GetPrice price = new org.test.stock1.GetPrice();
 			price.setFund("PRGFX");
-			price.set10Holdings("GE");
+			price.setHoldings("GE");
 			price.setNav("700");
 			
 			ArrayList<String> childNames = new ArrayList<String>();
 			String fund ="fund";
 			childNames.add(fund);
-			String holding = "_10Holdings";
+			String holding = "holdings.";
 			childNames.add(holding);
 			String nav ="nav";
 			childNames.add(nav);

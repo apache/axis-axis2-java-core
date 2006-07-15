@@ -42,7 +42,23 @@
         	<classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/echo.xsd"/>
         </java>
+        <ant:echo>Generating java from stock1.xsd</ant:echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+        	<jvmarg line="${maven.junit.jvmargs}"/>
+        	<classpath refid="maven.dependency.classpath"/>
+        	<classpath location="${compiled.classes.dir}"/>
+            <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd"/>
+        </java>
+        <ant:echo>Generating java from stock2.xsd</ant:echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+        	<jvmarg line="${maven.junit.jvmargs}"/>
+        	<classpath refid="maven.dependency.classpath"/>
+        	<classpath location="${compiled.classes.dir}"/>
+            <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd"/>
+        </java>
+    	
 
+    	
        <!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>
         <javac destdir="${schema.generated.classes.dir}" srcdir="${schema.generated.src.dir}">
