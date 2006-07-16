@@ -90,7 +90,7 @@ public class SavanMessageContext {
 		try {
 			messageContext.getAxisService().addParameter(parameter);
 		} catch (AxisFault e) {
-			String message = "Could not add the Subscriber Store parameter";
+			String message = "Could not add the AbstractSubscriber Store parameter";
 			throw new SavanException (message,e);
 		}
 	}

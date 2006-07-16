@@ -28,7 +28,7 @@ import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.storage.SubscriberStore;
-import org.apache.savan.subscribers.Subscriber;
+import org.apache.savan.subscribers.AbstractSubscriber;
 import org.apache.savan.util.CommonUtil;
 
 /**
@@ -43,6 +43,8 @@ public class SavanOutHandler extends AbstractHandler {
 	
 	public void invoke(MessageContext msgContext) throws AxisFault {
 
+		System.out.println("SAVAN OUT HANDLER CALLED...");
+		
 		SavanMessageContext smc = new SavanMessageContext (msgContext);
 		int messagetype = smc.getMessageType();
 	
@@ -51,14 +53,21 @@ public class SavanOutHandler extends AbstractHandler {
 			SavanMessageContext publication = new SavanMessageContext(msgContext);
 			SubscriberStore store = (SubscriberStore) CommonUtil.getSubscriberStore(msgContext.getAxisService());
 			if (store != null) {
+				
+				System.out.println("sending publication:");
+				System.out.println(msgContext.getEnvelope());
 				PublicationReport report = new PublicationReport();
 				Iterator iterator = store.retrieveAll();
 				while (iterator.hasNext()) {
-					Subscriber subscriber = (Subscriber) iterator.next();
+					AbstractSubscriber subscriber = (AbstractSubscriber) iterator.next();
 					try {
+						
+						System.out.println("INVOKING SUBSCRIBER...");
+						
 						subscriber.processPublication (publication, report);
 					} catch (SavanException e) {
 						report.addErrorReportEntry(subscriber.getId(),e);
+						e.printStackTrace();
 					}
 					
 					//TODO do something with the report.

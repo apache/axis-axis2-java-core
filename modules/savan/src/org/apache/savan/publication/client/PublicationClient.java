@@ -39,14 +39,30 @@ import org.apache.savan.storage.SubscriberStore;
  */
 public class PublicationClient {
 	
+	public static final String TEMP_PUBLICATION_ACTION = "UUID:TempPublicationAction";
+	
 	public static void sendPublication (SOAPEnvelope publication,ConfigurationContext configurationContext, SubscriberStore store) throws SavanException {
+		
+		try {
+			Options options = new Options ();
+			sendPublication(publication,configurationContext,options,store);
+			
+		} catch (AxisFault e) {
+			String message = "Could not send the publication";
+			throw new SavanException (message,e);
+		}
+	}
+	
+	public static void sendPublication (SOAPEnvelope publication,ConfigurationContext configurationContext, Options options, SubscriberStore store) throws SavanException {
 		
 		try {
 			ServiceClient sc = new ServiceClient (configurationContext,null);
 			
-			Options options = new Options ();
 			options.setTo(new EndpointReference ("http://temp.publication.URI"));
-			options.setAction("UUID:TempPublicationAction");
+			
+			if (options.getAction()==null)
+				options.setAction(TEMP_PUBLICATION_ACTION);
+			
 			sc.setOptions(options);
 			
 			//this will not be required when the 

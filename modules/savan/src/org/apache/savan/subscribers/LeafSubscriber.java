@@ -30,7 +30,7 @@ import org.apache.savan.util.CommonUtil;
  *Defines a single node subscriber. 
  *
  */
-public abstract class LeafSubscriber extends Subscriber {
+public abstract class LeafSubscriber extends AbstractSubscriber {
 	
 	/**
 	 * The time at which further notification of messages should be avaoded
@@ -76,8 +76,6 @@ public abstract class LeafSubscriber extends Subscriber {
 		
 		doProtocolSpecificPublication (publication);
 	}
-	
-	
 	
 	public void setSubscriptionEndingTime(Date subscriptionEndingTime) {
 		this.subscriptionEndingTime = subscriptionEndingTime;

@@ -1,26 +1,7 @@
-/*
- * Copyright  1999-2004 The Apache Software Foundation.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- */
-
 package org.apache.savan.subscribers;
 
 import java.util.Date;
-import java.util.HashMap;
 
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.filters.Filter;
@@ -28,78 +9,76 @@ import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscription.ExpirationBean;
 
 /**
- * Defines a subscriber which is the entity that define a specific subscription 
- * in savan. Independent of the protocol type.
- *
+ * Defines methods common to all subscribers.
  */
-public abstract class Subscriber {
-
-	String id;
-	Filter filter = null;
-	HashMap properties = null;
-	
-	public Subscriber () {
-		properties = new HashMap ();
-	}
-	
-	public void addProperty (String key, Object value) {
-		properties.put(key,value);
-	}
-	
-	public Object getProperty (String key) {
-		return properties.get(key);
-	}
-	
-	public Filter getFilter() {
-		return filter;
-	}
-
-	public void setFilter(Filter filter) {
-		this.filter = filter;
-	}
-
-	public String getId() {
-		return id;
-	}
-	
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public boolean doesMessageBelongToTheFilter(SavanMessageContext smc) throws SavanException {
-		if (filter!=null) {
-			SOAPEnvelope envelope = smc.getEnvelope();
-			return filter.checkEnvelopeCompliance(envelope);
-		} else 
-			return true;
-	}
+public interface Subscriber {
 	
 	/**
-	 * This method first checks weather the passed message complies with the current filter.
-	 * If so message is sent, and the subscriberID is added to the PublicationReport.
-	 * Else message is ignored.
+	 * To get the Filter object
+	 * @return
+	 */
+	Filter getFilter ();
+	
+	/**
+	 * To set the Filter object
+	 * @param filter
+	 */
+	void setFilter (Filter filter);
+	
+	/**
+	 * To get the subscriber Id.
+	 * @return
+	 */
+	String getId ();
+	
+	/**
+	 * To set the subscriber Id
+	 * @param id
+	 */
+	void setId (String id);
+	
+	/**
+	 * To add a property to the subscriber.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	void addProperty (String key, Object value);
+	
+	/**
+	 * To get a property from the Subscriber.
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public Object getProperty (String key);
+	
+	/**
+	 * To check weather a certain message complies with the filter.
 	 * 
 	 * @param smc
-	 * @param report
+	 * @return
 	 * @throws SavanException
 	 */
-	public void processPublication (SavanMessageContext publication,PublicationReport report) throws SavanException {
-		if (doesMessageBelongToTheFilter(publication)) {
-			sendPublication(publication,report);
-			if (getId()!=null)
-				report.addNotifiedSubscriber(getId());
-		}
-	}
+	boolean doesMessageBelongToTheFilter (SavanMessageContext smc) throws SavanException;
 	
-	public abstract void setSubscriptionEndingTime (Date subscriptionEndingTime);
-	public abstract void renewSubscription (ExpirationBean bean);
+	
+	void processPublication (SavanMessageContext publication,PublicationReport report) throws SavanException;
 	
 	/**
-	 * This should be used by based classes to sendThe publication in its own manner
+	 * To set the Subscription expiration time.
 	 * 
-	 * @param publication
-	 * @param report
-	 * @throws SavanException
+	 * @param subscriptionEndingTime
 	 */
-	protected abstract void sendPublication (SavanMessageContext publication,PublicationReport report) throws SavanException;
+	void setSubscriptionEndingTime (Date subscriptionEndingTime);
+	
+	/**
+	 * To renew a subscription.
+	 * 
+	 * @param bean
+	 */
+	void renewSubscription (ExpirationBean bean);
+
+	
+	
 }

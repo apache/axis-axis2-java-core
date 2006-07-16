@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.savan.SavanException;
+import org.apache.savan.subscribers.AbstractSubscriber;
 import org.apache.savan.subscribers.Subscriber;
 
 public class DefaultSubscriberStore implements SubscriberStore {
@@ -38,7 +39,7 @@ public class DefaultSubscriberStore implements SubscriberStore {
 	}
 
 	public Subscriber retrieve(String id) {
-		return (Subscriber) subscriberMap.get(id);
+		return (AbstractSubscriber) subscriberMap.get(id);
 	}
 
 	public void store(Subscriber s) {

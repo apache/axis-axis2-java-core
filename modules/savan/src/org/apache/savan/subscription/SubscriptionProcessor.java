@@ -22,6 +22,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.storage.SubscriberStore;
+import org.apache.savan.subscribers.AbstractSubscriber;
 import org.apache.savan.subscribers.Subscriber;
 import org.apache.savan.util.CommonUtil;
 
@@ -42,7 +43,7 @@ public abstract class SubscriptionProcessor {
 		
 		SubscriberStore store = endSubscriptionMessage.getSubscriberStore();
 		if (store==null)
-			throw new SavanException ("Subscriber store not found");
+			throw new SavanException ("AbstractSubscriber store not found");
 		
 		store.delete (subscriberID);
 	}
@@ -50,10 +51,10 @@ public abstract class SubscriptionProcessor {
 	public void renewSubscription(SavanMessageContext renewMessage)  throws SavanException {
 		SubscriberStore store = renewMessage.getSubscriberStore();
 		if (store==null)
-			throw new SavanException ("Subscriber store not found");
+			throw new SavanException ("AbstractSubscriber store not found");
 			
 		ExpirationBean bean = getExpirationBean(renewMessage);
-		Subscriber subscriber = (Subscriber) store.retrieve(bean.getSubscriberID());
+		AbstractSubscriber subscriber = (AbstractSubscriber) store.retrieve(bean.getSubscriberID());
 		if (subscriber==null) {
 			throw new SavanException ("Given subscriber is not present");
 		}
@@ -64,7 +65,7 @@ public abstract class SubscriptionProcessor {
 	public void subscribe(SavanMessageContext subscriptionMessage) throws SavanException {
 		SubscriberStore store = subscriptionMessage.getSubscriberStore();
 		if (store==null)
-			throw new SavanException ("Subscriber store not found");
+			throw new SavanException ("AbstractSubscriber store not found");
 			
 		if (store==null)
 			throw new SavanException ("Sabscriber store not found");

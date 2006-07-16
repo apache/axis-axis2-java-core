@@ -41,6 +41,8 @@ public class SavanInHandler extends AbstractHandler  {
 
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		
+		System.out.println("SAVAN IN HANDLER CALLED...");
+		
 		SavanMessageContext smc = new SavanMessageContext (msgContext);
 		
 		//setting the Protocol
@@ -51,7 +53,7 @@ public class SavanInHandler extends AbstractHandler  {
 		if (axisService==null)
 			throw new SavanException ("Service context is null");
 		
-		//setting the Subscriber Store
+		//setting the AbstractSubscriber Store
 		Parameter parameter = axisService.getParameter(SavanConstants.SUBSCRIBER_STORE);
 		if (parameter==null){
 			setSubscriberStore (smc);

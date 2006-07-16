@@ -28,7 +28,25 @@ public class Protocol {
 	private String name;
 	private UtilFactory utilFactory;
 	private MappingRules mappingRules;
+	private String defaultSubscriber;
+	private String defaultFilter;
 	
+	public String getDefaultFilter() {
+		return defaultFilter;
+	}
+
+	public String getDefaultSubscriber() {
+		return defaultSubscriber;
+	}
+
+	public void setDefaultFilter(String defaultFilter) {
+		this.defaultFilter = defaultFilter;
+	}
+
+	public void setDefaultSubscriber(String defaultSubscriber) {
+		this.defaultSubscriber = defaultSubscriber;
+	}
+
 	public String getName() {
 		return name;
 	}

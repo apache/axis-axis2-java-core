@@ -31,8 +31,10 @@ import org.apache.axis2.databinding.utils.ConverterUtil;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.eventing.subscribers.EventingLeafSubscriber;
 import org.apache.savan.messagereceiver.MessageReceiverDeligater;
 import org.apache.savan.storage.SubscriberStore;
+import org.apache.savan.subscribers.AbstractSubscriber;
 import org.apache.savan.subscribers.Subscriber;
 import org.apache.savan.util.CommonUtil;
 
@@ -91,7 +93,7 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 		
 		//setting the message type
 		outMessage.setProperty(SavanConstants.MESSAGE_TYPE,new Integer (SavanConstants.MessageTypes.SUBSCRIPTION_RESPONSE_MESSAGE));
-		
+	
 	}
 	
 	public void handleRenewRequest(SavanMessageContext renewMessage, MessageContext outMessage) throws SavanException {
@@ -132,9 +134,9 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 
 		SubscriberStore store = CommonUtil.getSubscriberStore(renewMessage.getMessageContext().getAxisService());
 		Subscriber subscriber = store.retrieve(subscriberID);
-		EventingSubscriber eventingSubscriber = (EventingSubscriber) subscriber;
+		EventingLeafSubscriber eventingSubscriber = (EventingLeafSubscriber) subscriber;
 		if (eventingSubscriber==null) {
-			String message = "Cannot find the Subscriber with the given ID";
+			String message = "Cannot find the AbstractSubscriber with the given ID";
 			throw new SavanException (message);
 		}
 		
@@ -194,7 +196,7 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 		
 		String id = (String) getStatusMessage.getProperty(EventingConstants.TransferedProperties.SUBSCRIBER_UUID);
 		if (id==null)
-			throw new SavanException ("Cannot fulfil request. Subscriber ID not found");
+			throw new SavanException ("Cannot fulfil request. AbstractSubscriber ID not found");
 		
 		//setting the action
 		outMessage.getOptions().setAction(EventingConstants.Actions.UnsubscribeResponse);
@@ -219,12 +221,12 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 		
 		
 		if (store==null) {
-			throw new SavanException ("Subscriber Store was not found");
+			throw new SavanException ("AbstractSubscriber Store was not found");
 		}
 		
-		EventingSubscriber subscriber = (EventingSubscriber) store.retrieve(id);
+		EventingLeafSubscriber subscriber = (EventingLeafSubscriber) store.retrieve(id);
 		if (subscriber==null) {
-			throw new SavanException ("Subscriber not found");
+			throw new SavanException ("AbstractSubscriber not found");
 		}
 		
 		OMNamespace ens = factory.createOMNamespace(EventingConstants.EVENTING_NAMESPACE,EventingConstants.EVENTING_PREFIX);

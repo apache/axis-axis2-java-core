@@ -21,9 +21,9 @@ import org.apache.savan.SavanMessageContext;
 import org.apache.savan.configuration.ConfigurationManager;
 import org.apache.savan.configuration.Protocol;
 import org.apache.savan.eventing.EventingConstants;
-import org.apache.savan.eventing.EventingSubscriber;
 import org.apache.savan.eventing.EventingSubscriptionProcessor;
 import org.apache.savan.eventing.EventingUtilFactory;
+import org.apache.savan.eventing.subscribers.EventingLeafSubscriber;
 import org.apache.savan.storage.DefaultSubscriberStore;
 import org.apache.savan.storage.SubscriberStore;
 import org.apache.savan.subscription.ExpirationBean;
@@ -32,21 +32,24 @@ import org.apache.savan.util.CommonUtil;
 public class EventingSubscripitonProcessorTest extends TestCase {
 
 	private final String TEST_SAVAN_CONFIG = "savan-config-test.xml";
+	private final String EVENTING_PROTOCOL_NAME = "eventing";
 	
 	public void testSubscriberExtraction () throws Exception {
 		SavanMessageContext smc = getSubscriptionMessage();
 		
-		Protocol protocol = new Protocol ();
-		protocol.setName("eventing");
-		protocol.setUtilFactory(new EventingUtilFactory ());
+//		Protocol protocol = new Protocol ();
+//		protocol.setName("eventing");
+//		protocol.setUtilFactory(new EventingUtilFactory ());
+//		protocol.setDefaultSubscriber("org.apache.savan.eventing.subscribers.EventingLeafSubscriber");
 		
 		SubscriberStore store = new DefaultSubscriberStore ();
 		
-		smc.setProtocol(protocol);
+//		smc.setProtocol(protocol);
+		
 		smc.setSubscriberStore(store);
 		
 		EventingSubscriptionProcessor esp = new EventingSubscriptionProcessor ();
-		EventingSubscriber eventingSubscriber = (EventingSubscriber) esp.getSubscriberFromMessage(smc);
+		EventingLeafSubscriber eventingSubscriber = (EventingLeafSubscriber) esp.getSubscriberFromMessage(smc);
 		assertNotNull(eventingSubscriber);
 		
 		assertNotNull(eventingSubscriber.getDelivery());
@@ -112,6 +115,9 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 		configurationManager.configure(file);
 		
 		configurationContext.setProperty(SavanConstants.CONFIGURATION_MANAGER,configurationManager);
+		
+		Protocol protocol = configurationManager.getProtocol(EVENTING_PROTOCOL_NAME);
+		smc.setProtocol(protocol);
 		
 		return smc;
 	}

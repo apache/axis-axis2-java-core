@@ -29,7 +29,7 @@ import org.apache.savan.subscription.ExpirationBean;
  * Defines a set of subscribers that are acting as a group or a Topic.
  *
  */
-public class CompositeSubscriber extends Subscriber {
+public class CompositeSubscriber extends AbstractSubscriber {
 
 	ArrayList subscribers = null;
 	
@@ -37,27 +37,27 @@ public class CompositeSubscriber extends Subscriber {
 		subscribers = new ArrayList ();
 	}
 	
-	public void addSubscriber (Subscriber subscriber) {
+	public void addSubscriber (AbstractSubscriber subscriber) {
 		subscribers.add(subscriber);
 	}
 	
 	public void sendPublication(SavanMessageContext publication, PublicationReport report)  throws SavanException {
 		for (Iterator it = subscribers.iterator();it.hasNext();) {
-			Subscriber subscriber = (Subscriber) it.next();
+			AbstractSubscriber subscriber = (AbstractSubscriber) it.next();
 			subscriber.processPublication(publication,report);
 		}
 	}
 
 	public void renewSubscription(ExpirationBean bean) {
 		for (Iterator it = subscribers.iterator();it.hasNext();) {
-			Subscriber subscriber = (Subscriber) it.next();
+			AbstractSubscriber subscriber = (AbstractSubscriber) it.next();
 			subscriber.renewSubscription(bean);
 		}
 	}
 
 	public void setSubscriptionEndingTime(Date subscriptionEndingTime) {
 		for (Iterator it = subscribers.iterator();it.hasNext();) {
-			Subscriber subscriber = (Subscriber) it.next();
+			AbstractSubscriber subscriber = (AbstractSubscriber) it.next();
 			subscriber.setSubscriptionEndingTime(subscriptionEndingTime);
 		}
 	}

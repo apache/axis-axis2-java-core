@@ -15,7 +15,9 @@
  *
  */
 
-package org.apache.savan.eventing;
+package org.apache.savan.eventing.subscribers;
+
+import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
@@ -25,9 +27,10 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.eventing.Delivery;
 import org.apache.savan.subscribers.LeafSubscriber;
 
-public class EventingSubscriber extends LeafSubscriber {
+public class EventingLeafSubscriber extends LeafSubscriber implements EventingSubscriber {
 
 	private EndpointReference endToEPr;
 	
@@ -54,14 +57,18 @@ public class EventingSubscriber extends LeafSubscriber {
 		EndpointReference deliveryEPR  = delivery.getDeliveryEPR();
 		
 		try {
-			ServiceClient sc = new ServiceClient (null,null);
+			ServiceClient sc = new ServiceClient (publication.getConfigurationContext(),null);
 			
 			Options options = publication.getMessageContext().getOptions();
 			if (options==null) {
 				options = new Options ();
 			}
 			
+			sc.engageModule(new QName ("addressing"));
+			
+			options.setProperty("xmppasync", "true");
 			sc.setOptions(options);
+			
 			options.setTo(deliveryEPR);
 			MessageContext mc = new MessageContext ();
 			mc.setEnvelope(publication.getEnvelope());

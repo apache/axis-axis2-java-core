@@ -19,7 +19,9 @@ package org.apache.savan.eventing;
 
 import java.util.Calendar;
 import java.util.Date;
+
 import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
@@ -40,12 +42,15 @@ import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.configuration.ConfigurationManager;
 import org.apache.savan.configuration.Protocol;
+import org.apache.savan.configuration.SubscriberBean;
+import org.apache.savan.eventing.subscribers.EventingSubscriber;
 import org.apache.savan.filters.Filter;
+import org.apache.savan.subscribers.AbstractSubscriber;
 import org.apache.savan.subscribers.Subscriber;
 import org.apache.savan.subscription.ExpirationBean;
 import org.apache.savan.subscription.SubscriptionProcessor;
-import org.apache.savan.util.UtilFactory;
 import org.apache.savan.util.CommonUtil;
+import org.apache.savan.util.UtilFactory;
 
 public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 
@@ -74,9 +79,15 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		if (envelope==null)
 			return null;
 		
-		Subscriber subscriber = utilFactory.createSubscriber();  //eventing only works on leaf subscriber for now.
+//		AbstractSubscriber subscriber = utilFactory.createSubscriber();  //eventing only works on leaf subscriber for now.
+		
+		String subscriberName = protocol.getDefaultSubscriber();
+		SubscriberBean subscriberBean = configurationManager.getSubscriberBean(subscriberName);
+		
+		AbstractSubscriber subscriber = configurationManager.getSubscriberInstance(subscriberName);
+		
 		if (!(subscriber instanceof EventingSubscriber)) {
-			String message = "Eventing protocol only support EventingSubscribers (or subtypes) as Subscribers";
+			String message = "Eventing protocol only support implementations of eventing subscriber as Subscribers";
 			throw new SavanException (message);
 		}
 		
@@ -167,7 +178,7 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			if (dialectAttr!=null) {
 				filterKey = dialectAttr.getAttributeValue();
 			}
-			filter = configurationManager.getFilterInstance(filterKey);
+			filter = configurationManager.getFilterInstanceFromId(filterKey);
 			if (filter==null)
 				throw new SavanException ("The Filter defined by the dialect is not available");
 			

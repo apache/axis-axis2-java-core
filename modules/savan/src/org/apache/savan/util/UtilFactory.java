@@ -20,7 +20,7 @@ package org.apache.savan.util;
 import org.apache.savan.SavanMessageContext;
 import org.apache.savan.filters.Filter;
 import org.apache.savan.messagereceiver.MessageReceiverDeligater;
-import org.apache.savan.subscribers.Subscriber;
+import org.apache.savan.subscribers.AbstractSubscriber;
 import org.apache.savan.subscription.SubscriptionProcessor;
 
 /**
@@ -33,6 +33,6 @@ public interface UtilFactory {
 	public abstract SavanMessageContext initializeMessage (SavanMessageContext messageContext);
 	public abstract SubscriptionProcessor createSubscriptionProcessor ();
 	public abstract MessageReceiverDeligater createMessageReceiverDeligater ();
-	public abstract Subscriber createSubscriber ();
+//	public abstract AbstractSubscriber createSubscriber ();
 	
 }
