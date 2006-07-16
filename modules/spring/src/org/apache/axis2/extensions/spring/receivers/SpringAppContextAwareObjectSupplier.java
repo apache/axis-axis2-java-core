@@ -16,33 +16,29 @@
 
 package org.apache.axis2.extensions.spring.receivers;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.springframework.context.ApplicationContext;
+import org.apache.axis2.Constants;
 
-public class SpringMakeNewServiceObject {
+import javax.servlet.ServletContext;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+public class SpringAppContextAwareObjectSupplier {
     public static final String SERVICE_SPRING_BEANNAME = "SpringBeanName";
-    public static final String SCOPE = "scope";
 
     /**
-     * Method makeNewServiceObject that is Spring aware.
+     * Method getServiceObject that is Spring aware via ServletContext
      *
      * @param msgContext
      * @return Returns Object.
      * @throws AxisFault
      */
-    public Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
+    public static Object getServiceObject(MessageContext msgContext) throws AxisFault {
         try {
             AxisService service =
                     msgContext.getOperationContext().getServiceContext().getAxisService();

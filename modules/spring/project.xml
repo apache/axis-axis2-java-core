@@ -112,6 +112,14 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+          <groupId>servletapi</groupId>
+          <artifactId>servletapi</artifactId>
+          <version>${servletapi.version}</version>
+          <properties>
+            <module>true</module>
+          </properties>
+        </dependency>
 
     </dependencies>
     <build/>
