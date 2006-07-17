@@ -77,8 +77,19 @@ public class Util {
     public static void processRSTR(OMElement rstr, ConversationConfiguration config)
             throws Exception {
         // Extract the SecurityContextToken
+        
+        String ns = null;
+        
         OMElement rstElem = rstr.getFirstChildWithName(new QName(
-                RahasConstants.WST_NS, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+                RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+        if(rstElem != null) {
+            ns = RahasConstants.WST_NS_05_02;
+        } else {
+            //At this point we certainthe version is the WS-SX version
+            rstElem = rstr.getFirstChildWithName(new QName(
+                    RahasConstants.WST_NS_05_12, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+            ns = RahasConstants.WST_NS_05_12;
+        }
         Token token = null;
         if (rstElem != null) {
             OMElement sctElem = rstElem
@@ -97,7 +108,7 @@ public class Util {
 
         // Process RequestedProofToken and extract the secret
         byte[] secret = null;
-        OMElement rpt = rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02,
+        OMElement rpt = rstr.getFirstChildWithName(new QName(ns,
                 RahasConstants.REQUESTED_PROOF_TOKEN_LN));
         if (rpt != null) {
             OMElement elem = rpt.getFirstElement();

@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.databinding.types.URI;
-import org.apache.rahas.types.RequestSecurityTokenType;
 
 import javax.xml.namespace.QName;
 
@@ -51,30 +48,54 @@ public class TokenRequestDispatcher {
     public SOAPEnvelope handle(MessageContext inMsgCtx, MessageContext outMsgCtx)
             throws TrustException {
 
+        //figureout the WS-Trust version and get the RST element
+        int version;
+        String ns;
         
-        RequestSecurityTokenType request = null;
         OMElement rstElem = inMsgCtx.getEnvelope().getBody()
                 .getFirstChildWithName(
-                        new QName(RahasConstants.WST_NS,
+                        new QName(RahasConstants.WST_NS_05_02,
                                 RahasConstants.REQUEST_SECURITY_TOKEN_LN));
-        try {
-            request = RequestSecurityTokenType.Factory.parse(rstElem
-                    .getXMLStreamReader());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new TrustException(TrustException.INVALID_REQUEST, 
-                    new String[] { "missing " + RahasConstants.WST_PREFIX + ":"
-                            + RahasConstants.REQUEST_SECURITY_TOKEN_LN }, e);
+        if(rstElem != null) {
+            version = RahasConstants.VERSION_05_02;
+        } else {
+            rstElem = inMsgCtx.getEnvelope().getBody().getFirstChildWithName(
+                    new QName(RahasConstants.WST_NS_05_12,
+                            RahasConstants.REQUEST_SECURITY_TOKEN_LN));
+            if(rstElem != null) {
+                version = RahasConstants.VERSION_05_12;
+            } else {
+                throw new TrustException(TrustException.INVALID_REQUEST);
+            }
         }
         
-        URI reqType = request.getRequestType();
-        URI tokenType = request.getTokenType();
+        ns = TrustUtil.getWSTNamespace(version);
 
-        if (reqType == null
-                || (reqType != null && "".equals(reqType.toString()))) {
+        // Get the req type
+        OMElement reqTypeElem = rstElem.getFirstChildWithName(new QName(ns,
+                RahasConstants.REQUEST_TYPE_LN));
+        String reqType = null;
+
+        if (reqTypeElem == null
+                || (reqTypeElem != null && reqTypeElem.getText() != null && ""
+                        .equals(reqTypeElem.getText().trim()))) {
             throw new TrustException(TrustException.INVALID_REQUEST);
+        } else {
+            reqType = reqTypeElem.getText().trim();
         }
-        if (RahasConstants.REQ_TYPE_ISSUE.equals(reqType.toString())) {
+        
+        // Get the token type
+        OMElement tokTypeElem = rstElem.getFirstChildWithName(new QName(ns,
+                RahasConstants.TOKEN_TYPE_LN));
+        String tokenType = null;
+
+        if (tokTypeElem != null && tokTypeElem.getText() != null
+                && !"".equals(tokTypeElem.getText().trim())) {
+            tokenType = tokTypeElem.getText().trim();
+        }
+        
+        if (RahasConstants.V_05_02.REQ_TYPE_ISSUE.equals(reqType) ||
+                RahasConstants.V_05_12.REQ_TYPE_ISSUE.equals(reqType)) {
             TokenIssuer issuer = null;
             if (tokenType == null
                     || (tokenType != null && "".equals(tokenType.toString()))) {
@@ -90,13 +111,16 @@ public class TokenRequestDispatcher {
                     issuer.getResponseAction(rstElem, inMsgCtx));
             
             return response;
-        } else if(RahasConstants.REQ_TYPE_VALIDATE.equals(reqType.toString())) {
+        } else if(RahasConstants.V_05_02.REQ_TYPE_VALIDATE.equals(reqType) ||
+                RahasConstants.V_05_12.REQ_TYPE_VALIDATE.equals(reqType)) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "validate requests");
-        } else if(RahasConstants.REQ_TYPE_RENEW.equals(reqType.toString())) {
+        } else if(RahasConstants.V_05_02.REQ_TYPE_RENEW.equals(reqType) ||
+                RahasConstants.V_05_12.REQ_TYPE_RENEW.equals(reqType)) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "renew requests");            
-        } else if(RahasConstants.REQ_TYPE_CANCEL.equals(reqType.toString())) {
+        } else if(RahasConstants.V_05_02.REQ_TYPE_CANCEL.equals(reqType) ||
+                RahasConstants.V_05_12.REQ_TYPE_CANCEL.equals(reqType)) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "cancel requests");
         } else {

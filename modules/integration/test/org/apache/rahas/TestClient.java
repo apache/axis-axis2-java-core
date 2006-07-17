@@ -63,7 +63,7 @@ public abstract class TestClient extends TestCase {
             Options options = new Options();
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-            options.setAction(org.apache.rahas.RahasConstants.RST_ACTON_SCT);
+            options.setAction(org.apache.rahas.RahasConstants.V_05_02.RST_ACTON_SCT);
             
 
 

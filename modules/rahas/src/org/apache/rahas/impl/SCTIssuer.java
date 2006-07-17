@@ -129,15 +129,18 @@ public class SCTIssuer implements TokenIssuer {
                                 .getLocalPart() });
             }
 
+            //Get WST Version
+            int wstVersion = TrustUtil.getWSTVersion(request.getNamespace().getName());
+            
             parseEntropyInfo(inMsgCtx.getEnvelope(), config);
             
             if(ENCRYPTED_KEY.equals(config.proofTokenType)) {
                 SOAPEnvelope responseEnv = this.doEncryptedKey(config,
-                        inMsgCtx, cert);
+                        inMsgCtx, cert, wstVersion);
                 return responseEnv;
             } else if(BINARY_SECRET.equals(config.proofTokenType)) {
                 SOAPEnvelope responseEnv = this.doBinarySecret(config,
-                        inMsgCtx);
+                        inMsgCtx, wstVersion);
                 return responseEnv;
             } else if(COMPUTED_KEY.equals(config.proofTokenType)) {
                 // TODO 
@@ -156,10 +159,10 @@ public class SCTIssuer implements TokenIssuer {
      * @param config
      */
     private void parseEntropyInfo(SOAPEnvelope envelope, SCTIssuerConfig config) {
-        OMElement elem = envelope.getBody().getFirstChildWithName(new QName(RahasConstants.WST_NS, RahasConstants.REQUEST_SECURITY_TOKEN_LN));
-        if(elem != null) {
-            //TODO get the entropy and keysize info
-        }
+//        OMElement elem = envelope.getBody().getFirstChildWithName(new QName(RahasConstants.WST_NS, RahasConstants.REQUEST_SECURITY_TOKEN_LN));
+//        if(elem != null) {
+//            //TODO get the entropy and keysize info
+//        }
     }
 
     /**
@@ -168,7 +171,7 @@ public class SCTIssuer implements TokenIssuer {
      * @param cert
      * @return
      */
-    private SOAPEnvelope doBinarySecret(SCTIssuerConfig config, MessageContext msgCtx) throws TrustException {
+    private SOAPEnvelope doBinarySecret(SCTIssuerConfig config, MessageContext msgCtx, int wstVersion) throws TrustException {
         
         SOAPEnvelope env = TrustUtil.createSOAPEnvelope(msgCtx.getEnvelope()
                 .getNamespace().getName());
@@ -177,25 +180,35 @@ public class SCTIssuer implements TokenIssuer {
         
         SecurityContextToken sct = new SecurityContextToken(doc);
         
-        OMElement rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(env.getBody());
+        OMElement rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(wstVersion, env.getBody());
 
-        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(rstrElem);
+        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(wstVersion, rstrElem);
         
         rstElem.addChild((OMElement)sct.getElement());
         
         if (config.addRequestedAttachedRef) {
-            TrustUtil.createRequestedAttachedRef(rstrElem, "#" + sct.getID(),
-                    RahasConstants.TOK_TYPE_SCT);
+            if(wstVersion == RahasConstants.VERSION_05_02) {
+                TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#" + sct.getID(),
+                    RahasConstants.V_05_02.TOK_TYPE_SCT);
+            } else {
+                TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#" + sct.getID(),
+                        RahasConstants.V_05_12.TOK_TYPE_SCT);
+            }
         }
 
         if (config.addRequestedUnattachedRef) {
-            TrustUtil.createRequestedUnattachedRef(
-                    rstrElem, sct.getIdentifier(), RahasConstants.TOK_TYPE_SCT);
+            if(wstVersion == RahasConstants.VERSION_05_02) {
+                TrustUtil.createRequestedUnattachedRef(wstVersion, 
+                    rstrElem, sct.getIdentifier(), RahasConstants.V_05_02.TOK_TYPE_SCT);
+            } else {
+                TrustUtil.createRequestedUnattachedRef(wstVersion, 
+                        rstrElem, sct.getIdentifier(), RahasConstants.V_05_12.TOK_TYPE_SCT);
+            }
         }
         
-        OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(rstrElem);
+        OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(wstVersion, rstrElem);
         
-        OMElement binSecElem = TrustUtil.createBinarySecretElement(reqProofTok, null);
+        OMElement binSecElem = TrustUtil.createBinarySecretElement(wstVersion, reqProofTok, null);
 
         byte[] secret = this.generateEphemeralKey();
         binSecElem.setText(Base64.encode(secret));
@@ -209,7 +222,7 @@ public class SCTIssuer implements TokenIssuer {
     }
 
     private SOAPEnvelope doEncryptedKey(SCTIssuerConfig config,
-            MessageContext msgCtx, X509Certificate cert) throws TrustException {
+            MessageContext msgCtx, X509Certificate cert, int wstVersion) throws TrustException {
         
         SOAPEnvelope env = TrustUtil.createSOAPEnvelope(msgCtx.getEnvelope()
                 .getNamespace().getName());
@@ -233,28 +246,38 @@ public class SCTIssuer implements TokenIssuer {
         SecurityContextToken sct = new SecurityContextToken(doc);
         
         OMElement rstrElem = TrustUtil
-                .createRequestSecurityTokenResponseElement(env.getBody());
+                .createRequestSecurityTokenResponseElement(wstVersion, env.getBody());
 
         OMElement rstElem = TrustUtil
-                .createRequestedSecurityTokenElement(rstrElem);
+                .createRequestedSecurityTokenElement(wstVersion, rstrElem);
         
         rstElem.addChild((OMElement)sct.getElement());
         
         if (config.addRequestedAttachedRef) {
-            TrustUtil.createRequestedAttachedRef(rstrElem, "#" + sct.getID(),
-                    RahasConstants.TOK_TYPE_SCT);
+            if(wstVersion == RahasConstants.VERSION_05_02) {
+                TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#" + sct.getID(),
+                    RahasConstants.V_05_02.TOK_TYPE_SCT);
+            } else {
+                TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#" + sct.getID(),
+                        RahasConstants.V_05_12.TOK_TYPE_SCT);
+            }
         }
 
         if (config.addRequestedUnattachedRef) {
-            TrustUtil.createRequestedUnattachedRef(
-                    rstrElem, sct.getIdentifier(), RahasConstants.TOK_TYPE_SCT);
+            if(wstVersion == RahasConstants.VERSION_05_02) {
+                TrustUtil.createRequestedUnattachedRef(wstVersion, 
+                    rstrElem, sct.getIdentifier(), RahasConstants.V_05_02.TOK_TYPE_SCT);
+            } else {
+                TrustUtil.createRequestedUnattachedRef(wstVersion, 
+                        rstrElem, sct.getIdentifier(), RahasConstants.V_05_12.TOK_TYPE_SCT);
+            }
         }
         
         Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
         Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
         
         OMElement reqProofTok = TrustUtil
-                .createRequestedProofTokenElement(rstrElem);
+                .createRequestedProofTokenElement(wstVersion, rstrElem);
 
         if(bstElem != null) {
             reqProofTok.addChild((OMElement)bstElem);
@@ -272,7 +295,11 @@ public class SCTIssuer implements TokenIssuer {
     }
 
     public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
-        return RahasConstants.RSTR_ACTON_SCT;
+        if(RahasConstants.WST_NS_05_02.equals(request.getNamespace().getName())) {
+            return RahasConstants.V_05_02.RSTR_ACTON_SCT;
+        } else {
+            return RahasConstants.V_05_12.RSTR_ACTON_SCT;
+        }
     }
 
     /**

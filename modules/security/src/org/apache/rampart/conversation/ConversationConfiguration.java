@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.rahas.RahasConstants;
 import org.apache.rahas.SimpleTokenStore;
 import org.apache.rahas.TokenStorage;
 import org.apache.rampart.RampartException;
@@ -140,6 +141,12 @@ public class ConversationConfiguration {
     private String encryptionUser;
     
     private boolean provideEntropy;
+    
+    /**
+     * WS-Trust version to use
+     * Default is RahasConstants.VERSION_05_02
+     */
+    private int wstVersion = RahasConstants.VERSION_05_02;
     
     /**
      * Builds the configuration from an Axis2 parameter.
@@ -663,5 +670,19 @@ public class ConversationConfiguration {
      */
     protected void setContextIdentifier(String contextIdentifier) {
         this.contextIdentifier = contextIdentifier;
+    }
+
+    /**
+     * @return Returns the wstVersion.
+     */
+    public int getWstVersion() {
+        return wstVersion;
+    }
+
+    /**
+     * @param wstVersion The wstVersion to set.
+     */
+    public void setWstVersion(int wstVersion) {
+        this.wstVersion = wstVersion;
     }
 }

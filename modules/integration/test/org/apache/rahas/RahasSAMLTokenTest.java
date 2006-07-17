@@ -71,20 +71,20 @@ public class RahasSAMLTokenTest extends TestClient {
 
         RequestSecurityTokenType rst = new RequestSecurityTokenType();
         try {
-            rst.setRequestType(new URI(org.apache.rahas.RahasConstants.REQ_TYPE_ISSUE));
-            rst.setTokenType(new URI(org.apache.rahas.RahasConstants.TOK_TYPE_SAML_10));
+            rst.setRequestType(new URI(RahasConstants.V_05_02.REQ_TYPE_ISSUE));
+            rst.setTokenType(new URI(RahasConstants.TOK_TYPE_SAML_10));
             rst.setContext(new URI("http://get.optional.attrs.working"));
             
             Axis2Util.useDOOM(false);
             StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
-                    .getPullParser(new QName(org.apache.rahas.RahasConstants.WST_NS,
-                            org.apache.rahas.RahasConstants.REQUEST_SECURITY_TOKEN_LN))));
+                    .getPullParser(new QName(RahasConstants.WST_NS_05_02,
+                            RahasConstants.REQUEST_SECURITY_TOKEN_LN))));
 
             OMElement rstElem = builder.getDocumentElement();
 
             rstElem.build();
             
-            OMElement appliesToElem = TrustUtil.createAppliesToElement(rstElem);
+            OMElement appliesToElem = TrustUtil.createAppliesToElement(RahasConstants.VERSION_05_02, rstElem);
             appliesToElem.setText("http://localhost:5555/axis2/services/SecureService");
             
             rstElem = (OMElement)rstElem.detach();
@@ -96,7 +96,7 @@ public class RahasSAMLTokenTest extends TestClient {
     }
     
     public void validateRsponse(OMElement resp) {
-        OMElement rst = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+        OMElement rst = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
         assertNotNull("RequestedSecurityToken missing", rst);
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);

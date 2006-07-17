@@ -37,8 +37,6 @@ import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.util.Base64;
 import org.apache.ws.security.util.XmlSchemaDateFormat;
-import org.apache.xml.security.encryption.XMLCipher;
-import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.utils.EncryptionConstants;
 import org.opensaml.SAMLAssertion;
@@ -202,35 +200,37 @@ public class SAMLTokenIssuer implements TokenIssuer {
         SAMLAssertion assertion = this.createAssertion(doc, encryptedKeyElem, 
                 config, crypto, creationTime, expirationTime);
         
+        int version = TrustUtil.getWSTVersion(request.getNamespace().getName());
+        
         OMElement rstrElem = TrustUtil
-                .createRequestSecurityTokenResponseElement(env.getBody());
+                .createRequestSecurityTokenResponseElement(version, env.getBody());
 
-        TrustUtil.createtTokenTypeElement(rstrElem).setText(
+        TrustUtil.createtTokenTypeElement(version, rstrElem).setText(
                 RahasConstants.TOK_TYPE_SAML_10);
 
-        TrustUtil.createKeySizeElement(rstrElem).setText(
-                Integer.toString(getKeySize(request, config)));
+        TrustUtil.createKeySizeElement(version, rstrElem).setText(
+                Integer.toString(getKeySize(request, config, version)));
         
         if (config.addRequestedAttachedRef) {
-            TrustUtil.createRequestedAttachedRef(rstrElem, "#"
+            TrustUtil.createRequestedAttachedRef(version, rstrElem, "#"
                     + assertion.getId(), RahasConstants.TOK_TYPE_SAML_10);
         }
 
         if (config.addRequestedUnattachedRef) {
-            TrustUtil.createRequestedUnattachedRef(rstrElem, assertion.getId(),
-                    RahasConstants.TOK_TYPE_SAML_10);
+            TrustUtil.createRequestedUnattachedRef(version, rstrElem, assertion
+                    .getId(), RahasConstants.TOK_TYPE_SAML_10);
         }
-        
-        //Use GMT time in milliseconds
+
+        // Use GMT time in milliseconds
         DateFormat zulu = new XmlSchemaDateFormat();
-        
-        //Add the Lifetime element
-        TrustUtil.createLifetimeElement(rstrElem, zulu.format(creationTime),
-                zulu.format(expirationTime));
+
+        // Add the Lifetime element
+        TrustUtil.createLifetimeElement(version, rstrElem, zulu
+                .format(creationTime), zulu.format(expirationTime));
         
         //Create the RequestedSecurityToken element and add the SAML token to it
         OMElement reqSecTokenElem = TrustUtil
-                .createRequestedSecurityTokenElement(rstrElem);
+                .createRequestedSecurityTokenElement(version, rstrElem);
         try {
             Node tempNode = assertion.toDOM();
             reqSecTokenElem.addChild((OMNode) ((Element) rstrElem)
@@ -250,8 +250,8 @@ public class SAMLTokenIssuer implements TokenIssuer {
 
         //Add the RequestedProofToken
         OMElement reqProofTokElem = TrustUtil
-                .createRequestedProofTokenElement(rstrElem);
-        OMElement binSecElem = TrustUtil.createBinarySecretElement(
+                .createRequestedProofTokenElement(version, rstrElem);
+        OMElement binSecElem = TrustUtil.createBinarySecretElement(version,
                 reqProofTokElem, null);
         binSecElem.setText(Base64.encode(secret));
         
@@ -267,10 +267,10 @@ public class SAMLTokenIssuer implements TokenIssuer {
      * available in the config. 
      * @return
      */
-    private int getKeySize(OMElement request, SAMLTokenIssuerConfig config)
+    private int getKeySize(OMElement request, SAMLTokenIssuerConfig config, int version)
             throws TrustException {
         OMElement keySizeElem = request.getFirstChildWithName(
-                    new QName(RahasConstants.WST_NS, RahasConstants.KEY_SIZE_LN));
+                    new QName(TrustUtil.getWSTNamespace(version), RahasConstants.KEY_SIZE_LN));
         if (keySizeElem != null) {
             // Try to get the wst:KeySize value
             try {
@@ -380,8 +380,6 @@ public class SAMLTokenIssuer implements TokenIssuer {
             throw new TrustException("samlAssertionCreationError", e);
         }
     }
-    
-    
 
     /*
      * (non-Javadoc)
@@ -391,7 +389,11 @@ public class SAMLTokenIssuer implements TokenIssuer {
      */
     public String getResponseAction(OMElement request, MessageContext inMsgCtx)
             throws TrustException {
-        return RahasConstants.RSTR_ACTON_ISSUE;
+        if(RahasConstants.WST_NS_05_02.equals(request.getNamespace().getName())) {
+            return RahasConstants.V_05_02.RSTR_ACTON_ISSUE;
+        } else {
+            return RahasConstants.V_05_12.RSTR_ACTON_ISSUE;    
+        }
     }
 
     /*

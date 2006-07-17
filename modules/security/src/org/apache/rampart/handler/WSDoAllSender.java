@@ -147,7 +147,8 @@ public class WSDoAllSender extends WSDoAllHandler {
      * @throws WSSecurityException
      * @throws AxisFault
      */
-    private void processBasic(MessageContext msgContext, boolean disableDoom, RequestData reqData) throws WSSecurityException, AxisFault {
+    private void processBasic(MessageContext msgContext, boolean disableDoom,
+            RequestData reqData) throws WSSecurityException, AxisFault {
         boolean doDebug = log.isDebugEnabled();
         
         try {
@@ -376,22 +377,24 @@ public class WSDoAllSender extends WSDoAllHandler {
             header = ((SOAPFactory)env.getOMFactory()).createSOAPHeader(env);
         }
         
-        OMElement rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(header);
+        OMElement rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(config.getWstVersion(), header);
 
-        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(rstrElem);
+        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(config.getWstVersion(), rstrElem);
         
         rstElem.addChild((OMElement)sct.getElement());
         
-        TrustUtil.createRequestedAttachedRef(rstrElem, "#" + sct.getID(),
-                WSSHandlerConstants.TOK_TYPE_SCT);
+        TrustUtil.createRequestedAttachedRef(config.getWstVersion(), rstrElem,
+                "#" + sct.getID(), WSSHandlerConstants.TOK_TYPE_SCT);
 
-        TrustUtil.createRequestedUnattachedRef(rstrElem, sct.getIdentifier(),
-                WSSHandlerConstants.TOK_TYPE_SCT);
+        TrustUtil
+                .createRequestedUnattachedRef(config.getWstVersion(), rstrElem,
+                        sct.getIdentifier(), WSSHandlerConstants.TOK_TYPE_SCT);
         
         Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
         Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
         
-        OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(rstrElem);
+        OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(
+                config.getWstVersion(), rstrElem);
 
         if(bstElem != null) {
             reqProofTok.addChild((OMElement)bstElem);
