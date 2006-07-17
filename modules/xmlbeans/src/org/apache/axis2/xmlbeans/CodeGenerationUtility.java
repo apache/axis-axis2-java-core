@@ -46,7 +46,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.xmlbeans.BindingConfig;
 import org.apache.xmlbeans.Filer;
 import org.apache.xmlbeans.SchemaProperty;
@@ -555,33 +554,7 @@ public class CodeGenerationUtility {
 
     }
 
-    /**
-     * Populate the schema objects into the
-     *
-     * @param schemaMap
-     * @param schemaList
-     */
-    private static void populateSchemaMap(Map schemaMap, List schemaList) {
-        for (int i = 0; i < schemaList.size(); i++) {
-            XmlSchema xmlSchema = (XmlSchema) schemaList.get(i);
-            schemaMap.put(xmlSchema.getTargetNamespace(), xmlSchema);
-        }
-    }
 
-    /**
-     * Look for a given schema type given the schema type Qname
-     * @param schemaMap
-     * @param namespaceURI
-     * @return null if the schema is not found
-     */
-    private static XmlSchemaType findSchemaType(Map schemaMap, QName schemaTypeName) {
-        //find the schema
-        XmlSchema schema = (XmlSchema) schemaMap.get(schemaTypeName.getNamespaceURI());
-        if (schema!=null){
-            return schema.getTypeByName(schemaTypeName);
-        }
-        return null;
-    }
 }
 
 

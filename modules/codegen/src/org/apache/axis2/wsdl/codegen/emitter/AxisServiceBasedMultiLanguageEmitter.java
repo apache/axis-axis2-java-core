@@ -2,6 +2,7 @@ package org.apache.axis2.wsdl.codegen.emitter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +17,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.AxisMessage;
@@ -445,7 +451,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "package", packageName, rootElement);
         addAttribute(doc, "name", stubName, rootElement);
         addAttribute(doc, "servicename", localPart, rootElement);
-        //todo is this right ??
+        //The target nemespace is added as the namespace for this service
         addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
         addAttribute(doc, "interfaceName", localPart, rootElement);
         addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
@@ -636,7 +642,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         addAttribute(doc, "name", makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
 
-        // TODO JAXRPC mapping support should be considered
+        // TODO JAXRPC mapping support should be considered here ??
         this.loadOperations(doc, rootElement, null);
 
         doc.appendChild(rootElement);
@@ -1523,21 +1529,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected void debugLogDocument(String description, Document doc) {
         if (log.isDebugEnabled()) {
             try {
-//                System.err.println(DOM2Writer.nodeToString(doc.getDocumentElement()));
-//                DOMSource source = new DOMSource(doc);
-//                StringWriter swrite = new StringWriter();
-//                swrite.write(description);
-//                swrite.write("\n");
-//                Transformer transformer =
-//                        TransformerFactory.newInstance().newTransformer();
-//                transformer.setOutputProperty("omit-xml-declaration", "yes");
-//                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-//                transformer.transform(source, new StreamResult(swrite));
-//
-//                log.debug(swrite.toString());
+                DOMSource source = new DOMSource(doc);
+                StringWriter swrite = new StringWriter();
+                swrite.write(description);
+                swrite.write("\n");
+                Transformer transformer =
+                        TransformerFactory.newInstance().newTransformer();
+                transformer.setOutputProperty("omit-xml-declaration", "yes");
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.transform(source, new StreamResult(swrite));
+
+                log.debug(swrite.toString());
 
             } catch (Exception e) {
-
                 e.printStackTrace();
             }
         }
@@ -1781,8 +1785,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 Iterator iter = msg.getExtensibilityAttributes().iterator();
                 while (iter.hasNext()) {
-                    //TODO : implement this
-//
+                    // process extensibility attributes
                 }
                 params.add(paramElement);
             }

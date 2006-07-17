@@ -46,7 +46,20 @@ import java.util.LinkedList;
  * This extension invokes the schema unwrapper depending on the users setting.
  * it is desirable to put this extension before other extensions since extnsions
  * such as the databinding extension may well depend on the schema being unwrapped
- * previously
+ * previously.
+ * For a complete unwrap the following format of the schema is expected
+ *   &lt; element &gt;
+ *      &lt; complexType &gt;
+ *          &lt; sequence &gt;
+ *              &lt; element /&gt;
+ *          &lt; /sequence &gt;
+ *      &lt; /complexType &gt;
+ * &lt; /element &gt;
+ *
+ * When an unwrapped WSDL is encountered Axis2 generates a wrapper schema
+ * and that wrapper schema has the above mentioned format. This unwrapping algorithm
+ * will work on a pure doc/lit WSDL if it has the above mentioned format
+ * only
  */
 public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
@@ -109,7 +122,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
                     "named type","anonymous type"));
         }
-       
+
 
         //create a type mapper
         if (schemaType instanceof XmlSchemaComplexType){
@@ -182,22 +195,22 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 //we do not know how to deal with other particles
                 //such as xs:all or xs:choice. Usually occurs when
                 //passed with the user built WSDL where the style
-                //is document. We'll just return here doing nothing
+                //is document.
             }else if (particle instanceof XmlSchemaChoice){
-                  throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                                "choice","sequence"));
+                throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                        "choice","sequence"));
 
             }else if (particle instanceof XmlSchemaAll){
-                  throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                                "all","sequence"));
+                throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                        "all","sequence"));
             }else{
                 throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                                "unknown","sequence"));
+                        "unknown","sequence"));
             }
         }else{
-             //we've no idea how to unwrap a non complexYype!!!!!!
-             throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                                "unknown","complexType"));
+            //we've no idea how to unwrap a non complexType!!!!!!
+            throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                    "unknown","complexType"));
 
         }
 

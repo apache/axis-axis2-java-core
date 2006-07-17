@@ -840,41 +840,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return axisOperation;
     }
 
-//    /**
-//     * Generates a referenceQName
-//     *
-//     * @param wsdl4jMessage
-//     */
-//    private QName generateReferenceQname(QName outerName,
-//                                         Message wsdl4jMessage,
-//                                         boolean isWrappable) {
-//        QName referenceQName = null;
-//        if (isWrappable) {
-//            //The schema for this should be already made ! Find the QName from
-//            // the list
-//            referenceQName = (QName) resolvedRpcWrappedElementMap.get(outerName
-//                    .getLocalPart());
-//
-//        } else {
-//            //Only one part so copy the QName of the referenced type.
-//            Iterator outputIterator = wsdl4jMessage.getParts().values()
-//                    .iterator();
-//            if (outputIterator.hasNext()) {
-//                Part outPart = ((Part) outputIterator.next());
-//                QName typeName;
-//                if (null != (typeName = outPart.getTypeName())) {
-//                    referenceQName = typeName;
-//                } else {
-//                    referenceQName = outPart.getElementName();
-//                }
-//            }
-//        }
-//        ////////////////////////////////////////////////////////////////////////////////
-//        System.out.println(wsdl4jMessage.getQName());
-//        System.out.println("final referenceQName = " + referenceQName);
-//        ////////////////////////////////////////////////////////////////////////////////
-//        return referenceQName;
-//    }
 
     /**
      * Generates a list of wrapper schemas
@@ -1195,12 +1160,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         }
 
-//        Element[] complexTypeElements = (Element[]) complexTypeElementsMap
-//                .values().toArray(new Element[complexTypeElementsMap.size()]);
-//        for (int i = 0; i < complexTypeElements.length; i++) {
-//            schemaElement.appendChild(complexTypeElements[i]);
-//
-//        }
 
         Element[] elementDeclarations = (Element[]) elementElementsList
                 .toArray(new Element[elementElementsList.size()]);
@@ -1585,7 +1544,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         PolicyInclude.BINDING_POLICY, policyRefElement);
             }
 
-            //TODO wsdl:portType ?
+            //TODO policy for  wsdl:portType ?
 
         } else if (description instanceof AxisOperation) {
 
