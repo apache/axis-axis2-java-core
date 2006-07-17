@@ -17,29 +17,45 @@
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axis2.databinding.types.URI;
 import org.apache.axis2.security.sc.PWCallback;
-import org.apache.axis2.util.StreamWrapper;
-import org.apache.rahas.types.RequestSecurityTokenType;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
-import org.apache.rampart.util.Axis2Util;
 import org.opensaml.XML;
 
 import javax.xml.namespace.QName;
 
-public class RahasSAMLTokenTest extends TestClient {
-
+/**
+ * RahasSAMLTokenTest with the WS-SX namespaces
+ */
+public class RahasSAMLTokenV1205Test extends TestClient {
 
     /**
      * @param name
      */
-    public RahasSAMLTokenTest(String name) {
+    public RahasSAMLTokenV1205Test(String name) {
         super(name);
     }
 
-
+    /* (non-Javadoc)
+     * @see org.apache.rahas.TestClient#getRequest()
+     */
+    public OMElement getRequest() {
+        try {
+            OMElement rstElem = TrustUtil.createRequestSecurityTokenElement(RahasConstants.VERSION_05_12);
+            OMElement reqTypeElem = TrustUtil.createRequestTypeElement(RahasConstants.VERSION_05_12, rstElem);
+            OMElement tokenTypeElem = TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, rstElem);
+            reqTypeElem.setText(RahasConstants.V_05_12.REQ_TYPE_ISSUE);
+            tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
+            
+            OMElement appliesToElem = TrustUtil.createAppliesToElement(rstElem);
+            appliesToElem.setText("http://localhost:5555/axis2/services/SecureService");
+            
+            return rstElem;
+            
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     public OutflowConfiguration getClientOutflowConfiguration() {
         OutflowConfiguration ofc = new OutflowConfiguration();
 
@@ -66,45 +82,16 @@ public class RahasSAMLTokenTest extends TestClient {
     public String getServiceRepo() {
         return "rahas_service_repo_1";
     }
-
-    public OMElement getRequest() {
-
-        RequestSecurityTokenType rst = new RequestSecurityTokenType();
-        try {
-            rst.setRequestType(new URI(RahasConstants.V_05_02.REQ_TYPE_ISSUE));
-            rst.setTokenType(new URI(RahasConstants.TOK_TYPE_SAML_10));
-            rst.setContext(new URI("http://get.optional.attrs.working"));
-            
-            Axis2Util.useDOOM(false);
-            StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
-                    .getPullParser(new QName(RahasConstants.WST_NS_05_02,
-                            RahasConstants.REQUEST_SECURITY_TOKEN_LN))));
-
-            OMElement rstElem = builder.getDocumentElement();
-
-            rstElem.build();
-            
-            OMElement appliesToElem = TrustUtil.createAppliesToElement(rstElem);
-            appliesToElem.setText("http://localhost:5555/axis2/services/SecureService");
-            
-            rstElem = (OMElement)rstElem.detach();
-            return rstElem;
-            
-        } catch (Exception e) {
-            throw  new RuntimeException(e);    
-        }
-    }
     
     public void validateRsponse(OMElement resp) {
-        OMElement rst = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+        OMElement rst = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
         assertNotNull("RequestedSecurityToken missing", rst);
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);
     }
 
-
     public String getRequestAction() {
-        return RahasConstants.V_05_02.RST_ACTON_ISSUE;
+        return RahasConstants.V_05_12.RST_ACTON_ISSUE;
     }
 
 }

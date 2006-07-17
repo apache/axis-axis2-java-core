@@ -182,8 +182,7 @@ public class TrustUtil {
         return ltElem;
     }
 
-    public static OMElement createAppliesToElement(
-            int version, OMElement parent) {
+    public static OMElement createAppliesToElement(OMElement parent) {
         return createOMElement(parent, RahasConstants.WSP_NS,
                 RahasConstants.APPLIES_TO_LN,
                 RahasConstants.WSP_PREFIX);

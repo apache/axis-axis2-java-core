@@ -38,8 +38,6 @@ import org.apache.ws.security.message.token.SecurityContextToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.xml.namespace.QName;
-
 import java.security.Principal;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
