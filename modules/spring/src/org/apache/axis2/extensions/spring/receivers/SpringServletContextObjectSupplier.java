@@ -32,7 +32,7 @@ public class SpringServletContextObjectSupplier {
     public static final String SERVICE_SPRING_BEANNAME = "SpringBeanName";
 
     /**
-     * Method getServiceObject that is Spring aware via ServletContext
+     * Method getServiceObject that is Spring aware via ServletContext. 
      *
      * @param msgContext
      * @return Returns Object.
@@ -54,7 +54,8 @@ public class SpringServletContextObjectSupplier {
             	if (servletContext == null) {
             		throw new Exception("Axis2 Can't find ServletContext");
                 }
-                ApplicationContext aCtx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+                ApplicationContext aCtx = 
+                    WebApplicationContextUtils.getWebApplicationContext(servletContext);
             	if (aCtx == null) {
             		throw new Exception("Axis2 Can't find Spring's ApplicationContext");
             	} else if (aCtx.getBean(beanName) == null) {

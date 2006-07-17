@@ -26,13 +26,13 @@ import org.apache.axis2.Constants;
 import javax.servlet.ServletContext;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class SpringAppContextAwareObjectSupplier {
     public static final String SERVICE_SPRING_BEANNAME = "SpringBeanName";
 
     /**
-     * Method getServiceObject that is Spring aware via ServletContext
+     * Method getServiceObject that is Spring aware via Spring interface 
+     * ApplicationContextAware. 
      *
      * @param msgContext
      * @return Returns Object.
