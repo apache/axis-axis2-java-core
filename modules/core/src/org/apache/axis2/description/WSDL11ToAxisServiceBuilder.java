@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
@@ -15,6 +16,7 @@ import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -172,25 +174,35 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService.setTargetNamespace(wsdl4jDefinition
                     .getTargetNamespace());
 
+
             //adding ns in the original WSDL
             processPoliciesInDefintion(wsdl4jDefinition);
 
             //process the imports
             processImports(wsdl4jDefinition);
             axisService.setNameSpacesMap(wsdl4jDefinition.getNamespaces());
-            Types wsdl4jTypes = wsdl4jDefinition.getTypes();
-            if (null != wsdl4jTypes) {
-                this.copyExtensibleElements(wsdl4jTypes
-                        .getExtensibilityElements(), wsdl4jDefinition,
-                        axisService, TYPES);
-            }
 
+            Types wsdl4jTypes = wsdl4jDefinition.getTypes();
+
+            Map schemaMap = populateSchemaMap(wsdl4jTypes);
             Binding binding = findBinding(wsdl4jDefinition);
 
             // create new Schema extensions element for wrapping
-            Element[] schemaElements = generateWrapperSchema(wsdl4jDefinition,
-                    binding);
-            if (schemaElements != null && schemaElements.length > 0) {
+            //(if its present)
+            Element[] schemaElements = generateWrapperSchema(schemaMap,binding);
+
+            //we might have modified the schemas by now so the addition should
+            //happen here
+            if (null != wsdl4jTypes) {
+                this.copyExtensibleElements(
+                        wsdl4jTypes.getExtensibilityElements(),
+                        wsdl4jDefinition,
+                        axisService,
+                        TYPES);
+            }
+
+            //add the newly created schemas
+             if (schemaElements != null && schemaElements.length > 0) {
                 for (int i = 0; i < schemaElements.length; i++) {
                     Element schemaElement = schemaElements[i];
                     if (schemaElement != null) {
@@ -199,18 +211,42 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     }
                 }
             }
+            // copy the documentation element contentto the description
             Element documentationElement = wsdl4jDefinition.getDocumentationElement();
             if (documentationElement != null) {
                 String serviceDes = documentationElement.getFirstChild().toString();
                 axisService.setServiceDescription(serviceDes);
             }
             processBinding(binding, wsdl4jDefinition);
+
             return axisService;
         } catch (WSDLException e) {
             throw new AxisFault(e);
         } catch (Exception e) {
             throw new AxisFault(e);
         }
+    }
+
+    /**
+     * Populate a map of targetNamespace vs DOM schema element
+     * This is used to grab the correct schema element when adding
+     * a new element
+     * @param wsdl4jTypes
+     * @return
+     */
+
+    private Map populateSchemaMap(Types wsdl4jTypes) {
+        List typesExtensibilityElements = wsdl4jTypes.getExtensibilityElements();
+        Map schemaMap = new HashMap();
+        for (int i = 0; i < typesExtensibilityElements.size(); i++) {
+            Object o =  typesExtensibilityElements.get(i);
+            if (o instanceof Schema){
+                Schema s = (Schema)o;
+                String targetNamespace = s.getElement().getAttribute("targetNamespace");
+                schemaMap.put(targetNamespace,s.getElement());
+            }
+        }
+        return schemaMap;
     }
 
     /**
@@ -318,6 +354,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             PortType portType = binding.getPortType();
             processPortType(portType, dif);
 
+            String portTypeNs = portType.getQName().getNamespaceURI();
             List list = binding.getBindingOperations();
             for (int i = 0; i < list.size(); i++) {
                 BindingOperation wsdl4jBindingOperation = (BindingOperation) list
@@ -347,9 +384,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 BindingOutput bindingOutput = wsdl4jBindingOperation
                         .getBindingOutput();
                 Map bindingFaultsMap = wsdl4jBindingOperation.getBindingFaults();
-
                 Operation wsdl4jOperation = wsdl4jBindingOperation.getOperation();
-
                 String MEP = operation.getMessageExchangePattern();
 
                 /* Process the binding inputs */
@@ -467,11 +502,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     //for the wrapped types we need to find this from the
                     //wrapper schema map
                     if (isWrapped) {
-                        QName wrappedInputName = new QName(wsdl4jOperation.getName());
                         //The schema for this should be already made ! Find the QName from
-                        //the list and add it
-                        inMessage.setElementQName((QName) resolvedRpcWrappedElementMap.get(wrappedInputName
-                                .getLocalPart()));
+                        //the list and add it - the name for this is just the
+                        inMessage.setElementQName((QName) resolvedRpcWrappedElementMap.get(wsdl4jOperation.getName()));
 
                     } else {
                         //pick the first part from the list and take that as the relevant part
@@ -519,7 +552,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (wsdl4jMessagePart.getElementName() == null) {
                 //this cannot be done - we need to have a
                 //element reference
-               throw new WSDLProcessingException("Element reference missing!");
+                throw new WSDLProcessingException("Element reference missing!");
             }
             inMessage.setElementQName(wsdl4jMessagePart.getElementName());
 
@@ -560,13 +593,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     //for the wrapped types we need to find this from the
                     //wrapper schema map
                     if (isWrapped) {
-                        QName wrappedOutputName = new QName(
-                                wsdl4jOperation.getName() + WRAPPED_OUTPUTNAME_SUFFIX);
                         //The schema for this should be already made ! Find the QName from
                         //the list and add it
                         outMessage.setElementQName(
-                                (QName) resolvedRpcWrappedElementMap.get(wrappedOutputName
-                                        .getLocalPart()));
+                                (QName) resolvedRpcWrappedElementMap.get(
+                                        wsdl4jOperation.getName() + WRAPPED_OUTPUTNAME_SUFFIX));
 
                     } else {
                         //pick the first part from the list and take that as the relevant part
@@ -845,24 +876,29 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Generates a list of wrapper schemas
      *
      * @param wsdl4jDefinition
-     * @param binding
+     * @param wsdl4jBinding
      */
-    private Element[] generateWrapperSchema(Definition wsdl4jDefinition,
-                                            Binding binding) {
+    private Element[] generateWrapperSchema(
+            Map schemaMap,
+            Binding wsdl4jBinding) {
 
         List schemaElementList = new ArrayList();
-        String targetNamespaceUri = wsdl4jDefinition.getTargetNamespace();
+        //target namespace for this should be the namespace URI for
+        //the porttype
+        String porttypeNamespaceURI =wsdl4jBinding.getPortType().
+                getQName().getNamespaceURI();
 
         ////////////////////////////////////////////////////////////////////////
         // if there are any bindings present then we have to process them. we
-        // have to generate a schema per binding (that is the safest option).
+        // have to generate a schema per wsdl4jBinding (that is the safest option).
         // if not we just resolve to
         // the good old port type
         // list, in which case we'll generate a schema per porttype
         ////////////////////////////////////////////////////////////////////////
 
         Element schemaElement = createSchemaForPorttype(
-                targetNamespaceUri, findWrappableOperations(binding));
+                porttypeNamespaceURI, findWrappableOperations(wsdl4jBinding),
+                schemaMap);
 
         if (schemaElement != null) {
             schemaElementList.add(schemaElement);
@@ -873,11 +909,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Create a schema by looking at the port type
-     * @param targetNamespaceUri
+     * @param namespaceURI
      * @return null if there is no element
      */
-    private Element createSchemaForPorttype(String targetNamespaceUri,
-                                            List operationListToProcess) {
+    private Element createSchemaForPorttype(String namespaceURI,
+                                            List operationListToProcess,
+                                            Map existingSchemaMap) {
         //first of all look at the operations list
         //we can return immediately if we get the operations list
         //as empty
@@ -1079,7 +1116,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             elementDeclaration.appendChild((Element) complexTypeElementsMap.get(typeQName));
             elementElementsList.add(elementDeclaration);
             resolvedRpcWrappedElementMap.put(inputOpName, new QName(
-                    targetNamespaceUri, inputOpName, AXIS2WRAPPED));
+                    namespaceURI, inputOpName, AXIS2WRAPPED));
         }
 
         //loop through the output op map and generate the elements
@@ -1100,9 +1137,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             elementDeclaration.appendChild((Element) complexTypeElementsMap.get(typeQName));
             elementElementsList.add(elementDeclaration);
 
-            elementElementsList.add(elementDeclaration);
             resolvedRpcWrappedElementMap.put(outputOpName, new QName(
-                    targetNamespaceUri, outputOpName, AXIS2WRAPPED));
+                    namespaceURI, outputOpName, AXIS2WRAPPED));
 
         }
 
@@ -1122,56 +1158,88 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             elementDeclaration.appendChild((Element) complexTypeElementsMap.get(typeQName));
             elementElementsList.add(elementDeclaration);
             resolvedRpcWrappedElementMap.put(baseFaultOpName, new QName(
-                    targetNamespaceUri, baseFaultOpName, AXIS2WRAPPED));
+                    namespaceURI, baseFaultOpName, AXIS2WRAPPED));
 
         }
 
-        //////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        //
         // Now we are done with processing the messages and generating the right
         // schema object model
         // time to write out the schema
-        //////////////////////////////////////////////////////////////////////////////////////////////
+        //
+        // There is a catch here - when the target namespace of the generated
+        // schema is equivalent to one of the  existing schemas we'll have to
+        // insert the elements there rather than creating a new Schema element
+        ////////////////////////////////////////////////////////////////////////
+        //
+        if (existingSchemaMap.containsKey(namespaceURI)){
+            //get the relevant schema element
+            Element schemaElement = (Element)existingSchemaMap.get(namespaceURI);
+            Document ownerDocument = schemaElement.getOwnerDocument();
 
-        Element schemaElement = document.createElementNS(
-                XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                + XML_SCHEMA_LOCAL_NAME);
+            //loop through the namespace declarations first and add them
+            String[] nameSpaceDeclarationArray = (String[]) namespacePrefixMap
+                    .keySet().toArray(new String[namespacePrefixMap.size()]);
+            for (int i = 0; i < nameSpaceDeclarationArray.length; i++) {
+                String s = nameSpaceDeclarationArray[i];
+                //todo - look for the namespace decalarations first before
+                // declaring them
+                schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
+                        "xmlns:" + namespacePrefixMap.get(s).toString(), s);
 
-        //loop through the namespace declarations first
-        String[] nameSpaceDeclarationArray = (String[]) namespacePrefixMap
-                .keySet().toArray(new String[namespacePrefixMap.size()]);
-        for (int i = 0; i < nameSpaceDeclarationArray.length; i++) {
-            String s = nameSpaceDeclarationArray[i];
+            }
+
+            //attach the namespace decalarations if they are not the targetnamespace
+            Element[] elementDeclarations = (Element[]) elementElementsList
+                    .toArray(new Element[elementElementsList.size()]);
+            for (int i = 0; i < elementDeclarations.length; i++) {
+                schemaElement.appendChild(ownerDocument.
+                        importNode(elementDeclarations[i],true));
+            }
+
+
+            return null;
+        } else {
+            // there is no element in the
+            Element schemaElement = document.createElementNS(
+                    XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+                    + XML_SCHEMA_LOCAL_NAME);
+
+            //loop through the namespace declarations first
+            String[] nameSpaceDeclarationArray = (String[]) namespacePrefixMap
+                    .keySet().toArray(new String[namespacePrefixMap.size()]);
+            for (int i = 0; i < nameSpaceDeclarationArray.length; i++) {
+                String s = nameSpaceDeclarationArray[i];
+                schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
+                        "xmlns:" + namespacePrefixMap.get(s).toString(), s);
+
+            }
+
+            //add the targetNamespace
             schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:" + namespacePrefixMap.get(s).toString(), s);
+                    XMLNS_AXIS2WRAPPED, namespaceURI);
+            schemaElement.setAttribute(XSD_TARGETNAMESPACE, namespaceURI);
+            schemaElement.setAttribute(XSD_ELEMENT_FORM_DEFAULT, XSD_UNQUALIFIED);
 
+            Element[] namespaceImports = (Element[]) namespaceImportsMap.values()
+                    .toArray(new Element[namespaceImportsMap.size()]);
+            for (int i = 0; i < namespaceImports.length; i++) {
+                schemaElement.appendChild(namespaceImports[i]);
+
+            }
+
+            Element[] elementDeclarations = (Element[]) elementElementsList
+                    .toArray(new Element[elementElementsList.size()]);
+            for (int i = 0; i < elementDeclarations.length; i++) {
+                schemaElement.appendChild(elementDeclarations[i]);
+
+            }
+
+
+            return schemaElement;
         }
 
-        //add the targetNamespace
-
-        schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                XMLNS_AXIS2WRAPPED, targetNamespaceUri);
-        schemaElement.setAttribute(XSD_TARGETNAMESPACE, targetNamespaceUri);
-        schemaElement.setAttribute(XSD_ELEMENT_FORM_DEFAULT, XSD_UNQUALIFIED);
-
-        Element[] namespaceImports = (Element[]) namespaceImportsMap.values()
-                .toArray(new Element[namespaceImportsMap.size()]);
-        for (int i = 0; i < namespaceImports.length; i++) {
-            schemaElement.appendChild(namespaceImports[i]);
-
-        }
-
-
-        Element[] elementDeclarations = (Element[]) elementElementsList
-                .toArray(new Element[elementElementsList.size()]);
-        for (int i = 0; i < elementDeclarations.length; i++) {
-            schemaElement.appendChild(elementDeclarations[i]);
-
-        }
-
-        //////////////////////////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(schemaElement));
-        /////////////////////////////////////////////////////////////////
-        return schemaElement;
     }
 
     /**
