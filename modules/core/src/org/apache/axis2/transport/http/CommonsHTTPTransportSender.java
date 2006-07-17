@@ -54,7 +54,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
      * proxydiscription
      */
     protected TransportOutDescription proxyOutSetting = null;
-	private static final Log log = LogFactory.getLog(CommonsHTTPTransportSender.class);
+    private static final Log log = LogFactory.getLog(CommonsHTTPTransportSender.class);
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
     private boolean chunked = false;
@@ -268,8 +268,11 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 soapActionString = msgContext.getWSAAction();
             }
 
+
             if (soapActionString == null) {
                 soapActionString = "\"\"";
+            } else if (soapActionString.startsWith("\"")) {  // SOAPAction string must be a quoted string
+                soapActionString = "\"" + soapActionString + "\"";
             }
 
             // select the Message Sender depending on the REST status

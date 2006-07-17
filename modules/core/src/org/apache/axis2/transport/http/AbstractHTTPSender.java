@@ -21,23 +21,23 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.Utils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
@@ -52,6 +52,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 
@@ -61,7 +62,7 @@ public abstract class AbstractHTTPSender {
     protected static final String PROXY_PORT = "proxy_port";
     protected boolean chunked = false;
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
-	private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
+    private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
     /**
@@ -79,8 +80,7 @@ public abstract class AbstractHTTPSender {
         if (version != null) {
             if (HTTPConstants.HEADER_PROTOCOL_11.equals(version)) {
                 this.httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
-            } else
-            if (HTTPConstants.HEADER_PROTOCOL_10.equals(version)) {
+            } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version)) {
                 this.httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
                 // chunked is not possible with HTTP/1.0
                 this.chunked = false;
@@ -228,7 +228,7 @@ public abstract class AbstractHTTPSender {
                 }
             }
         }
-        
+
         String sessionCookie = null;
         // Process old style headers first
         Header[] cookieHeaders = method.getResponseHeaders(HTTPConstants.HEADER_SET_COOKIE);
@@ -255,7 +255,7 @@ public abstract class AbstractHTTPSender {
 
         if (sessionCookie != null) {
             msgContext.getServiceContext().setProperty(Constants.COOKIE_STRING, sessionCookie);
-        }        
+        }
     }
 
     protected void processResponse(HttpMethodBase httpMethod,
@@ -266,12 +266,12 @@ public abstract class AbstractHTTPSender {
         InputStream in = httpMethod.getResponseBodyAsStream();
 
         Header contentEncoding =
-            httpMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
+                httpMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
         if (contentEncoding != null) {
             if (contentEncoding.getValue().
                     equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
                 in =
-                    new GZIPInputStream(in);
+                        new GZIPInputStream(in);
             } else {
                 throw new AxisFault("HTTP :"
                         + "unsupported content-encoding of '"
@@ -285,7 +285,7 @@ public abstract class AbstractHTTPSender {
                     Messages.getMessage("canNotBeNull", "InputStream"));
         }
 
-        if(msgContext.getOperationContext() != null) {
+        if (msgContext.getOperationContext() != null) {
             msgContext.getOperationContext()
                     .setProperty(MessageContext.TRANSPORT_IN, in);
         }
@@ -317,9 +317,9 @@ public abstract class AbstractHTTPSender {
 
         if (!isHostProxy && !authenticationEnabled) {
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
-        }else if(authenticationEnabled){
-             // premtive authentication Basic or NTLM
-            this.configServerPreemtiveAuthenticaiton(client,msgCtx,config,targetURL);
+        } else if (authenticationEnabled) {
+            // premtive authentication Basic or NTLM
+            this.configServerPreemtiveAuthenticaiton(client, msgCtx, config, targetURL);
         } else {
 
             // proxy configuration
@@ -364,7 +364,7 @@ public abstract class AbstractHTTPSender {
                                                      HostConfiguration config,
                                                      URL targetURL) {
         config.setHost(targetURL.getHost(), targetURL.getPort(),
-                       targetURL.getProtocol());
+                targetURL.getProtocol());
 
         agent.getParams().setAuthenticationPreemptive(true);
 
@@ -383,7 +383,7 @@ public abstract class AbstractHTTPSender {
                     basicAuthentication.getUsername(),
                     basicAuthentication.getPassword());
             if (basicAuthentication.getPort() == -1 ||
-                basicAuthentication.getHost() == null) {
+                    basicAuthentication.getHost() == null) {
 
                 agent.getState()
                         .setCredentials(AuthScope.ANY, defaultCredentials);
@@ -399,7 +399,7 @@ public abstract class AbstractHTTPSender {
                             basicAuthentication.getHost(),
                             basicAuthentication.getPort(),
                             basicAuthentication.getRealm()),
-                                                    defaultCredentials);
+                            defaultCredentials);
                 }
             }
         }
@@ -444,7 +444,7 @@ public abstract class AbstractHTTPSender {
     private boolean serverPreemtiveAuthentication(MessageContext msgContext) {
 
         return (msgContext.getProperty(HTTPConstants.BASIC_AUTHENTICATION) !=
-               null || msgContext.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null);
+                null || msgContext.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null);
     }
 
     private boolean isProxyListed(MessageContext msgCtx) throws AxisFault {
@@ -471,8 +471,7 @@ public abstract class AbstractHTTPSender {
             while (ite.hasNext()) {
                 OMAttribute attribute = (OMAttribute) ite.next();
 
-                if (attribute.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME))
-                {
+                if (attribute.getLocalName().equalsIgnoreCase(PROXY_HOST_NAME)) {
                     returnValue = true;
                 }
             }
@@ -615,9 +614,9 @@ public abstract class AbstractHTTPSender {
     protected HttpClient getHttpClient(MessageContext msgContext) {
         HttpClient httpClient = null;
         Boolean reuse = (Boolean) msgContext.getOptions().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
-        if(reuse != null && reuse.booleanValue()) {
+        if (reuse != null && reuse.booleanValue()) {
             httpClient = (HttpClient) msgContext.getConfigurationContext().getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
-            if(httpClient == null){
+            if (httpClient == null) {
                 MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
                 httpClient = new HttpClient(connectionManager);
                 msgContext.getConfigurationContext().setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
@@ -641,6 +640,10 @@ public abstract class AbstractHTTPSender {
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
         msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
 
+
+        // set the custom headers, if available
+        addCustomHeaders(method, msgContext);
+
         // add compression headers if needed
         if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_ACCEPT_GZIP)) {
             method.addRequestHeader(HTTPConstants.HEADER_ACCEPT_ENCODING,
@@ -651,6 +654,56 @@ public abstract class AbstractHTTPSender {
                     HTTPConstants.COMPRESSION_GZIP);
         }
 
+
+
         httpClient.executeMethod(config, method);
+    }
+
+    public void addCustomHeaders(HttpMethod method, MessageContext msgContext) {
+
+        boolean isCustomUserAgentSet = false;
+        // set the custom headers, if available
+        Object httpHeadersObj = msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+        if (httpHeadersObj != null && httpHeadersObj instanceof ArrayList) {
+            ArrayList httpHeaders = (ArrayList) httpHeadersObj;
+            Header header;
+            for (int i = 0; i < httpHeaders.size(); i++) {
+                header = (Header) httpHeaders.get(i);
+                if (HTTPConstants.HEADER_USER_AGENT.equals(header.getName())) {
+                    isCustomUserAgentSet = true;
+                }
+                method.addRequestHeader((Header) header);
+            }
+
+        }
+
+        if (!isCustomUserAgentSet) {
+            String userAgentString = getUserAgent(msgContext);
+            method.setRequestHeader(HTTPConstants.HEADER_USER_AGENT, userAgentString);
+        }
+
+    }
+
+    private String getUserAgent(MessageContext messageContext) {
+        String userAgentString = "Axis2";
+        boolean locked = false;
+        if (messageContext.getParameter(HTTPConstants.USER_AGENT) != null) {
+            OMElement userAgentElement = messageContext.getParameter(HTTPConstants.USER_AGENT).getParameterElement();
+            userAgentString = userAgentElement.getText().trim();
+            OMAttribute lockedAttribute = userAgentElement.getAttribute(new QName("locked"));
+            if (lockedAttribute != null) {
+                if (lockedAttribute.getAttributeValue().equalsIgnoreCase("true")) {
+                    locked = true;
+                }
+            }
+        }
+        // Runtime overing part
+        if (!locked) {
+            if (messageContext.getProperty(HTTPConstants.USER_AGENT) != null) {
+                userAgentString = (String) messageContext.getProperty(HTTPConstants.USER_AGENT);
+            }
+        }
+
+        return userAgentString;
     }
 }

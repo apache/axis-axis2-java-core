@@ -298,7 +298,7 @@ public class HTTPConstants {
     /**
      * Field HEADER_CONNECTION_KEEPALIVE
      */
-    public static final String HEADER_CONNECTION_KEEPALIVE = "Keep-Alive".intern();    
+    public static final String HEADER_CONNECTION_KEEPALIVE = "Keep-Alive".intern();
 
     /**
      * Field HEADER_CONNECTION_CLOSE
@@ -441,6 +441,12 @@ public class HTTPConstants {
      * context property to true to have the request body gzip compressed.
      */
     public static final String MC_GZIP_REQUEST = "transport.http.gzipRequest";
+
+    /**
+     * This will allow users to set any custom headers to the message context, which will be picked
+     * up by the sender while sending the request
+     */
+    public static final String HTTP_HEADERS = "HTTP_HEADERS";
 
     /**
      * Method getBytes.

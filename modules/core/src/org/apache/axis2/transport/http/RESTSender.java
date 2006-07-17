@@ -25,7 +25,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
@@ -43,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class RESTSender extends AbstractHTTPSender {
-	private static final Log log = LogFactory.getLog(RESTSender.class);
+    private static final Log log = LogFactory.getLog(RESTSender.class);
 
     /*Obtain two strings;one to go in the url and rest to pass in the body
     **when doing POST in application/x-www-form-urlencoded form.
@@ -129,7 +128,7 @@ public class RESTSender extends AbstractHTTPSender {
                     (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
 
             if ((httpMethod != null)
-                && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
+                    && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
                 this.sendViaGet(msgContext, url);
 
                 return;
@@ -155,12 +154,12 @@ public class RESTSender extends AbstractHTTPSender {
         // Default encoding scheme
         if (charEncoding == null) {
             getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                                       HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
-                                       + MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                    HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
+                            + MessageContext.DEFAULT_CHAR_SET_ENCODING);
         } else {
             getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                                       HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
-                                       + charEncoding);
+                    HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
+                            + charEncoding);
         }
 
         HttpClient httpClient = getHttpClient(msgContext);
@@ -177,14 +176,14 @@ public class RESTSender extends AbstractHTTPSender {
 
             if (value != null) {
                 if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
-                    || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
+                        || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
                     processResponse(getMethod, msgContext);
                 }
             }
         } else {
             throw new AxisFault(Messages.getMessage("transportError",
-                                                    String.valueOf(getMethod.getStatusCode()),
-                                                    getMethod.getResponseBodyAsString()));
+                    String.valueOf(getMethod.getStatusCode()),
+                    getMethod.getResponseBodyAsString()));
         }
     }
 
@@ -218,29 +217,23 @@ public class RESTSender extends AbstractHTTPSender {
         if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
             reqData = createRequest(msgContext, dataout);
             postMethod.setPath(url.getPath() + ((reqData.urlRequest) != null
-                                                ? ("?" + reqData.urlRequest)
-                                                : ""));
+                    ? ("?" + reqData.urlRequest)
+                    : ""));
 
             if (reqData.bodyRequest == null) {
                 reqData.bodyRequest = "0";
             }
             postMethod.setRequestEntity(new AxisRESTRequestEntity(reqData.bodyRequest,
-                                                                  charEncoding, msgContext, httpContentType));
+                    charEncoding, msgContext, httpContentType));
 
         } else {
             postMethod.setPath(url.getPath());
             postMethod.setRequestEntity(new AxisRequestEntity(dataout, chunked, msgContext,
-                                                              charEncoding, soapActionString));
+                    charEncoding, soapActionString));
         }
 
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
             postMethod.setContentChunked(true);
-        }
-
-        postMethod.setRequestHeader(HTTPConstants.HEADER_USER_AGENT, "Axis/2.0");
-
-        if (msgContext.isSOAP11() && !msgContext.isDoingREST()) {
-            postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
         }
 
         postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
@@ -249,14 +242,14 @@ public class RESTSender extends AbstractHTTPSender {
             if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
                 httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-                                            HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
             } else {
 
                 // allowing keep-alive for 1.1
                 postMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
-                                            HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
                 postMethod.setRequestHeader(HTTPConstants.HEADER_EXPECT,
-                                            HTTPConstants.HEADER_EXPECT_100_Continue);
+                        HTTPConstants.HEADER_EXPECT_100_Continue);
             }
         }
 
@@ -280,7 +273,7 @@ public class RESTSender extends AbstractHTTPSender {
                     String value = contenttypeHheader.getValue();
 
                     if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
-                        || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
+                            || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
                         processResponse(postMethod, msgContext);
 
                         return;
@@ -289,8 +282,8 @@ public class RESTSender extends AbstractHTTPSender {
             }
 
             throw new AxisFault(Messages.getMessage("transportError",
-                                                    String.valueOf(postMethod.getStatusCode()),
-                                                    postMethod.getResponseBodyAsString()));
+                    String.valueOf(postMethod.getStatusCode()),
+                    postMethod.getResponseBodyAsString()));
         } catch (Exception e) {
             log.error("Error in processing POST request", e);
         }
