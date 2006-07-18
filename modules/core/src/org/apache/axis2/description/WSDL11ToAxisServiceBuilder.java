@@ -1,7 +1,6 @@
 package org.apache.axis2.description;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
-import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
@@ -16,7 +15,6 @@ import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
-import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -99,6 +97,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
     private List wrappableOperations = new ArrayList();
     public static final String WRAPPED_OUTPUTNAME_SUFFIX = "Response";
+    public static final String XML_NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
+    public static final String NAMESPACE_DECLARATION_PREFIX = "xmlns:";
+
+    private static int prefixCounter = 0;
+    public static final String NAMESPACE_URI = "namespace";
+    public static final String TRAGET_NAMESPACE = "targetNamespace";
 
     /**
      * constructor taking in the service name and the port name
@@ -151,6 +155,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * populates a given service
+     * This is the only publicly accessible method in this class
      *
      * @return
      * @throws AxisFault
@@ -202,7 +207,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             //add the newly created schemas
-             if (schemaElements != null && schemaElements.length > 0) {
+            if (schemaElements != null && schemaElements.length > 0) {
                 for (int i = 0; i < schemaElements.length; i++) {
                     Element schemaElement = schemaElements[i];
                     if (schemaElement != null) {
@@ -242,7 +247,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Object o =  typesExtensibilityElements.get(i);
             if (o instanceof Schema){
                 Schema s = (Schema)o;
-                String targetNamespace = s.getElement().getAttribute("targetNamespace");
+                String targetNamespace = s.getElement().getAttribute(TRAGET_NAMESPACE);
                 schemaMap.put(targetNamespace,s.getElement());
             }
         }
@@ -1059,7 +1064,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             Element namespaceImport = document.createElementNS(
                                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
                                     + XML_SCHEMA_IMPORT_LOCAL_NAME);
-                            namespaceImport.setAttribute("namespace", uri);
+                            namespaceImport.setAttribute(NAMESPACE_URI, uri);
                             //add this to the map
                             namespaceImportsMap.put(uri, namespaceImport);
                             //we also need to associate this uri with a prefix
@@ -1183,14 +1188,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     .keySet().toArray(new String[namespacePrefixMap.size()]);
             for (int i = 0; i < nameSpaceDeclarationArray.length; i++) {
                 String s = nameSpaceDeclarationArray[i];
-                //todo - look for the namespace decalarations first before
-                // declaring them
-                schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                        "xmlns:" + namespacePrefixMap.get(s).toString(), s);
-
+                checkAndAddNamespaceDeclarations(s,namespacePrefixMap,schemaElement);
             }
 
-            //attach the namespace decalarations if they are not the targetnamespace
+             //add imports  - check whether it is the targetnamespace before
+            // adding
+            Element[] namespaceImports = (Element[]) namespaceImportsMap.values()
+                    .toArray(new Element[namespaceImportsMap.size()]);
+            for (int i = 0; i < namespaceImports.length; i++) {
+                if (!namespaceURI.equals(namespaceImports[i].getAttribute(NAMESPACE_URI))){
+                    schemaElement.appendChild(namespaceImports[i]);
+                }
+            }
+
             Element[] elementDeclarations = (Element[]) elementElementsList
                     .toArray(new Element[elementElementsList.size()]);
             for (int i = 0; i < elementDeclarations.length; i++) {
@@ -1198,7 +1208,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         importNode(elementDeclarations[i],true));
             }
 
-
+            //don't return anything!!
             return null;
         } else {
             // there is no element in the
@@ -1211,17 +1221,18 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     .keySet().toArray(new String[namespacePrefixMap.size()]);
             for (int i = 0; i < nameSpaceDeclarationArray.length; i++) {
                 String s = nameSpaceDeclarationArray[i];
-                schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                        "xmlns:" + namespacePrefixMap.get(s).toString(), s);
+                schemaElement.setAttributeNS(XML_NAMESPACE_URI,
+                        NAMESPACE_DECLARATION_PREFIX + namespacePrefixMap.get(s).toString(), s);
 
             }
 
             //add the targetNamespace
-            schemaElement.setAttributeNS("http://www.w3.org/2000/xmlns/",
+            schemaElement.setAttributeNS(XML_NAMESPACE_URI,
                     XMLNS_AXIS2WRAPPED, namespaceURI);
             schemaElement.setAttribute(XSD_TARGETNAMESPACE, namespaceURI);
             schemaElement.setAttribute(XSD_ELEMENT_FORM_DEFAULT, XSD_UNQUALIFIED);
 
+            //add imports
             Element[] namespaceImports = (Element[]) namespaceImportsMap.values()
                     .toArray(new Element[namespaceImportsMap.size()]);
             for (int i = 0; i < namespaceImports.length; i++) {
@@ -1229,6 +1240,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             }
 
+            //add element declarations
             Element[] elementDeclarations = (Element[]) elementElementsList
                     .toArray(new Element[elementElementsList.size()]);
             for (int i = 0; i < elementDeclarations.length; i++) {
@@ -1238,6 +1250,46 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
 
             return schemaElement;
+        }
+
+    }
+
+    /**
+     *
+     * @param namespaceDeclaration
+     * @param prefixMap
+     */
+    private void checkAndAddNamespaceDeclarations(String namespace,
+                                                  Map prefixMap,
+                                                  Element schemaElement) {
+        //get the attribute for the current namespace
+        String prefix = (String)prefixMap.get(namespace);
+        //A prefix must be found at this point!
+        String existingURL = schemaElement.getAttributeNS(
+                XML_NAMESPACE_URI,
+                NAMESPACE_DECLARATION_PREFIX + prefix);
+        if (existingURL==null){
+            //there is no existing URL by that prefix - declare a new namespace
+            schemaElement.setAttributeNS(XML_NAMESPACE_URI,
+                    NAMESPACE_DECLARATION_PREFIX + prefix,
+                    namespace);
+        }else if (existingURL.equals(namespace)){
+            //this namespace declaration is already there with the same prefix
+            //ignore it
+        }else{
+            //there is a different namespace declared in the given prefix
+            //change the prefix in the prefix map to a new one and declare it
+
+            //create a prefix
+            String generatedPrefix = "ns" +prefixCounter++;
+            while(prefixMap.containsKey(generatedPrefix)){
+                generatedPrefix = "ns" +prefixCounter++;
+            }
+            schemaElement.setAttributeNS(XML_NAMESPACE_URI,
+                    NAMESPACE_DECLARATION_PREFIX + generatedPrefix,
+                    namespace);
+            //add to the map
+            prefixMap.put(generatedPrefix,namespace);
         }
 
     }
@@ -1264,8 +1316,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         Definition importedDef = wsdlImport.getDefinition();
                         if (importedDef != null) {
                             processImports(importedDef);
-                            //copy ns
 
+                            //copy ns
                             Map namespaces = importedDef.getNamespaces();
                             Iterator keys = namespaces.keySet().iterator();
                             while (keys.hasNext()) {
@@ -1304,6 +1356,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             //add bindings
                             Map bindingMap = importedDef.getBindings();
                             wsdl4JDefinition.getBindings().putAll(bindingMap);
+
                             //add services
                             Map serviceMap = importedDef.getServices();
                             wsdl4JDefinition.getServices().putAll(serviceMap);
@@ -1326,6 +1379,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+        
         //switch off the verbose mode for all usecases
         reader.setFeature("javax.wsdl.verbose", false);
 
@@ -1686,7 +1740,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
         }
 
-        //if no SOAPBinding is not present just return an empty list
+        //if SOAPBinding is not present just return an empty list
         if (!isSOAPBinding) {
             return new ArrayList();
         }

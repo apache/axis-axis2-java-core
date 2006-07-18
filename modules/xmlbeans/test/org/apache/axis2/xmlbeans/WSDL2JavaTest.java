@@ -184,6 +184,19 @@ public class WSDL2JavaTest extends TestCase{
         }
     }
 
+     /**
+     * Test for the mime doc
+     */
+    public void testCodeGenerationUnreferenced(){
+        String wsdlName = "unreferenced.wsdl";
+        try {
+            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+            fail("Code generation should fail with  "+ wsdlName);
+        } catch (CodeGenerationException e) {
+
+        }
+    }
+
 //     /**
 //     * Test for the dime doc
 //     */
@@ -224,7 +237,7 @@ public class WSDL2JavaTest extends TestCase{
     /**
      * Test for the modified ping-unboond wsdl.
      * The binding is removed in this wsdl.Codegen should fail for this
-     * WSDL by saying
+     * WSDL by saying  no binding!
      *
      */
     public void testCodeGenerationPingUnbound(){

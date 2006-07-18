@@ -99,7 +99,6 @@ public class CodeGenerationUtility {
                 return new DefaultTypeMapper();
             }
 
-
             SchemaTypeSystem sts;
             List completeSchemaList = new ArrayList();
             List topLevelSchemaList = new ArrayList();

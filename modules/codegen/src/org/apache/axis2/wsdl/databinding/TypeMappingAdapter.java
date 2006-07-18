@@ -17,6 +17,7 @@
 package org.apache.axis2.wsdl.databinding;
 
 import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
@@ -32,7 +33,6 @@ public abstract class TypeMappingAdapter implements TypeMapper {
      */
     protected String defaultClassName = OMElement.class.getName();
 
-    //todo get this from a constant
     protected static final String XSD_SCHEMA_URL = Constants.URI_2001_SCHEMA_XSD;
 
     //hashmap that contains the type mapping names
@@ -66,12 +66,21 @@ public abstract class TypeMappingAdapter implements TypeMapper {
             Object o = qName2NameMap.get(qname);
             if (o != null) {
                 return (String) o;
-            } else {
+            } else if (Constants.XSD_ANYTYPE.equals(qname) ||
+                     Constants.XSD_ANY.equals(qname)) {
                 return defaultClassName;
+            }else{
+                throw new UnmatchedTypeException(
+                        CodegenMessages.getMessage("databinding.typemapper.typeunmatched",
+                                qname.getLocalPart(),
+                                qname.getNamespaceURI())
+                );
             }
+        }else{
+           return null;
         }
 
-        return null;
+
     }
 
     /**
