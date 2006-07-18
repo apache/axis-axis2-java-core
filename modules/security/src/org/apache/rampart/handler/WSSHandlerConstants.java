@@ -36,7 +36,7 @@ public class WSSHandlerConstants {
     
     public static final String INFLOW_SECURITY_SERVER = "InflowSecurity-server";
     public static final String INFLOW_SECURITY_CLIENT = "InflowSecurity-client";
-
+    
     /**
      * Outflow security parameter 
      */
@@ -44,6 +44,20 @@ public class WSSHandlerConstants {
     
     public static final String OUTFLOW_SECURITY_SERVER = "OutflowSecurity-server";
     public static final String OUTFLOW_SECURITY_CLIENT = "OutflowSecurity-client";
+    
+    
+    /**
+     * Inflow security parameter of a client to talk to an STS 
+     * when sec conv is used
+     */
+    public final static String STS_INFLOW_SECURITY = "STSInflowSecurity"; 
+
+    /**
+     * Outflow security parameter of a client to talk to an STS 
+     * when sec conv is used
+     */
+    public final static String STS_OUTFLOW_SECURITY = "STSOutflowSecurity"; 
+
     
     public static final String ACTION = "action";
     

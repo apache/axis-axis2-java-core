@@ -58,19 +58,21 @@ public class STSRequester {
         
         //Get the security configurations
         Parameter outFlowParam = msgCtx
-                .getParameter(WSSHandlerConstants.OUTFLOW_SECURITY);
+                .getParameter(WSSHandlerConstants.STS_OUTFLOW_SECURITY);
         Parameter inFlowParam = msgCtx
-                .getParameter(WSSHandlerConstants.INFLOW_SECURITY);
+                .getParameter(WSSHandlerConstants.STS_INFLOW_SECURITY);
         
         if(outFlowParam == null) {
             outFlowParam = (Parameter) msgCtx
-                    .getProperty(WSSHandlerConstants.OUTFLOW_SECURITY);
+                    .getProperty(WSSHandlerConstants.STS_OUTFLOW_SECURITY);
         }
         if(inFlowParam == null) {
             inFlowParam = (Parameter) msgCtx
-                    .getProperty(WSSHandlerConstants.INFLOW_SECURITY);
+                    .getProperty(WSSHandlerConstants.STS_INFLOW_SECURITY);
         }
         
+        
+        //Set the STS specific config config
         options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, outFlowParam);
         options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, inFlowParam);
         

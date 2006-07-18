@@ -40,7 +40,7 @@ import junit.framework.TestCase;
 public abstract class TestClient extends TestCase {
     
     private static final String AXIS2_ECHO_STRING = "Axis2 Echo String";
-    protected int port = UtilServer.TESTING_PORT;
+    protected int port = 5556;//UtilServer.TESTING_PORT;
     
     public TestClient(String name) {
         super(name);
@@ -74,11 +74,11 @@ public abstract class TestClient extends TestCase {
 
             OutflowConfiguration clientOutflowConfiguration = getClientOutflowConfiguration();
             if(clientOutflowConfiguration != null) {
-                options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, clientOutflowConfiguration.getProperty());
+                options.setProperty(WSSHandlerConstants.STS_OUTFLOW_SECURITY, clientOutflowConfiguration.getProperty());
             }
             InflowConfiguration clientInflowConfiguration = getClientInflowConfiguration();
             if(clientInflowConfiguration != null) {
-                options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, clientInflowConfiguration.getProperty());
+                options.setProperty(WSSHandlerConstants.STS_INFLOW_SECURITY, clientInflowConfiguration.getProperty());
             }
             options.setProperty(ConversationConfiguration.SC_CONFIG, getClientConversationConfiguration());
 
