@@ -56,26 +56,6 @@ public abstract class
         return getFactory(options.getSoapVersionURI()).getDefaultEnvelope();
     }
 
-    /**
-     * A util method that extracts the correct element.
-     *
-     * @param env
-     * @param type
-     * @return the relevant element to be databound
-     */
-    protected OMElement getElement(SOAPEnvelope env, String type) {
-        SOAPBody body = env.getBody();
-        OMElement element = body.getFirstElement();
-
-        if (WSDLConstants.STYLE_RPC.equals(type)) {
-            return element.getFirstElement();    // todo this needs to be fixed
-        } else if (WSDLConstants.STYLE_DOC.equals(type)) {
-            return element;
-        } else {
-            throw new UnsupportedOperationException(Messages
-                    .getMessage("unsupportedType"));
-        }
-    }
 
     protected OMElement getElementFromReader(XMLStreamReader reader) {
         StAXOMBuilder builder =
