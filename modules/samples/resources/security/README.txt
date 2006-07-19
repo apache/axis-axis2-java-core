@@ -12,19 +12,19 @@ Setup the service
 Please follow each of the following steps:
 Note - These instructions assume that the Axis2.war is already deployed in Tomcat
 
-1.) Download the rampart-1.0.mar and addressing-1.0.mar from 
-	http://ws.apache.org/axis2/modules/
+1.) Download the rampart-SNAPSHOT.mar and addressing-SNAPSHOT.mar from 
+	http://people.apache.org/repository/axis2/mars/
 2.) To engage the rampart (WSS4J) module add the following line to axis2.xml in axis2/WEB-INF/conf/
 	<module ref="rampart"/>
 3.) Copy samples/security/SecureService.aar to axis2/WEB-INF/services/ directory
 4.) Copy all jars other than the secUtil.jar in the samples/security/lib directory to axis2/WEB-INF/lib/
-5.) Copy the downloaded rampart-1.0.mar to Axis2/WEB-INF/modules/ directory
+5.) Copy the downloaded rampart-SNAPSHOT.mar to Axis2/WEB-INF/modules/ directory
 6.) Start Tomcat
 
 Run the sample
 ------------------------------------------------------------------------------
 
-Copy the downloaded rampart-1.0.mar and addressing-1.0.mar to samples/security/client_repo/modules/ directory
+Copy the downloaded rampart-SNAPSHOT.mar and addressing-SNAPSHOT.mar to samples/security/client_repo/modules/ directory
 
 To run the sample client run the securitySample ant task in the ant build file available in the samples directory.
 	$ ant securitySample
