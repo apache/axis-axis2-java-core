@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws;
 import java.lang.reflect.Proxy;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.AxisFault;
@@ -31,7 +32,9 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.jaxws.client.JAXBDispatch;
 import org.apache.axis2.jaxws.client.XMLDispatch;
+import org.apache.axis2.jaxws.client.proxy.ProxyHandler;
 import org.apache.axis2.jaxws.handler.PortData;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 /*
  * This class acts as a mediator to creating Proxy or Dispatch implementation when Client makes a call to Service.
@@ -94,27 +97,22 @@ public class ClientMediator {
 	}
 
 	// Add required parameter to this method.
-	public <T> T createProxy(JAXWSClientContext<T> clientContext) {
+    public <T> T createProxy(JAXWSClientContext<T> clientContext, ServiceDelegate delegate) {
 		//TODO: Have to rewrite this
+		this.clientContext = clientContext;
 		Class<T> sei = clientContext.getClazz();
 		//read port information from JAXWSClientContext and set that.
 		QName portName = null;
-		if(sei == null){
-    		return null;
-    	}
+		
 		try{
+			
 			AxisController axisController = buildAxisController();
-			axisController.setClientContext(this.clientContext);
-    	
-	    	Proxies proxyHandler = new Proxies(axisController);
-	    	Class[] seiClazz = new Class[]{sei};
+			axisController.setClientContext(clientContext);
+	    	ProxyHandler proxyHandler = new ProxyHandler(axisController, delegate);
+	    	
+	    	Class[] seiClazz = new Class[]{sei, BindingProvider.class};
 	    	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
 	    	
-	    	
-	    	/*TODO handle this in AxisController
-	    	*proxyHandler.setAxisService(axisService);
-	    	*proxyHandler.setServiceClient(serviceClient);
-	    	*/
 	    	return sei.cast(proxyClass);
 		}catch(AxisFault e){
     		throw new WebServiceException(e.getMessage());

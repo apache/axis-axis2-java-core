@@ -178,47 +178,40 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     }
 
     @Override
-    public <T> T getPort(Class<T> sei) {
-        // TODO Auto-generated method stub
-    	if(sei == null){
-    		return null;
-    	}
-    	JAXWSClientContext<T> clientContext = new JAXWSClientContext<T>();
-    	//Set all the required properties for JAXWSClientContext.
-    	
-    	return mediator.createProxy(clientContext);
-    	
-    	
-    	/* TODO move this code to ClientMediators CreateProxy() 
-    	Class[] seiClazz = new Class[]{sei};
-    	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
-    	createAxisService();
-    	proxyHandler.setAxisService(axisService);
-    	proxyHandler.setServiceClient(serviceClient);
-    	*/
+    public <T> T getPort(Class<T> sei) throws WebServiceException {
+       return getPort(null, sei);
     }
      
     @Override
-    public <T> T getPort(QName qname, Class<T> sei) {
-        // TODO Auto-generated method stub
-    	if(sei == null){
-    		return null;
+    public <T> T getPort(QName qname, Class<T> sei) throws WebServiceException {
+    	/* TODO Check to see if WSDL Location is provided.
+         * if not check WebService annotation's WSDLLocation
+         * if both are not provided then throw exception.
+         */
+        
+    	if(!isValidWSDLLocation()){
+    		//TODO: Should I throw Exception if no WSDL
+    		//throw new WebServiceException("WSLD Not found");
     	}
-    	
-    	JAXWSClientContext<T> clientContext = new JAXWSClientContext<T>();
+    	if(sei == null){
+    		throw new WebServiceException("Invalid Service Endpoint Interface Class");
+    	}
+    	/*TODO: if portQname is null then fetch it from annotation. 
+    	 * if portQname is provided then add that to the ports table.
+    	 */
+    	if(qname!=null){
+    		String address = "";
+    		if(isValidWSDLLocation()){
+    			address = getWSDLWrapper().getSOAPAddress(serviceQname, qname);
+    		}
+    		if(ports.get(qname)==null){
+    			addPort(qname, null, address);
+    		}
+    	}
+   	
+    	JAXWSClientContext<T> clientContext = createClientContext(ports.get(qname), sei, null);
     	//Set all the required properties for JAXWSClientContext.
-    	
-    	return mediator.createProxy(clientContext);
-    	/*TODO move this code to ClientMediators CreateProxy() 
-    	this.portQname = qname;
-    	Proxies proxyHandler = new Proxies();
-    	Class[] seiClazz = new Class[]{sei};
-    	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
-    	createAxisService();
-    	proxyHandler.setAxisService(axisService);
-    	proxyHandler.setServiceClient(serviceClient);
-    	return sei.cast(proxyClass);
-    	*/
+    	return mediator.createProxy(clientContext, this);
       
     }
     
