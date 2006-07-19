@@ -36,16 +36,18 @@ import org.apache.axis2.databinding.types.UnsignedLong;
 import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
+import org.apache.axis2.databinding.i18n.ADBMessages;
 import org.apache.axis2.util.Base64;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.activation.DataHandler;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
@@ -221,9 +223,9 @@ public class ConverterUtil {
         return Base64.encode(bytes);
     }
 
-     public static String convertToString(javax.activation.DataHandler handler) {
+    public static String convertToString(javax.activation.DataHandler handler) {
         return getStringFromDatahandler(handler);
-     }
+    }
 
     /* ################################################################################ */
     /* String to java type conversions
@@ -254,7 +256,7 @@ public class ConverterUtil {
     }
 
     public static float convertTofloat(String s) {
-         if (POSITIVE_INFINITY.equals(s)){
+        if (POSITIVE_INFINITY.equals(s)){
             return Float.POSITIVE_INFINITY;
         }else if (NEGATIVE_INFINITY.equals(s)){
             return Float.NEGATIVE_INFINITY;
@@ -649,7 +651,7 @@ public class ConverterUtil {
     /* list to array conversion methods */
 
     public static Object convertToArray(Class baseArrayClass, String[] valueArray) {
-          //create a list using the string array
+        //create a list using the string array
         List valuesList = new ArrayList(valueArray.length);
         for (int i = 0; i < valueArray.length; i++) {
             valuesList.add(valueArray[i]);
@@ -697,14 +699,45 @@ public class ConverterUtil {
             for (int i = 0; i < listSize; i++) {
                 Array.setDouble(returnArray, i, Double.parseDouble(objectList.get(i).toString()));
             }
-        } else {
-            objectList.toArray((Object[])returnArray);
+        } else{
+            ConvertToArbitraryObjectArray( returnArray, baseArrayClass, objectList);
         }
         return returnArray;
     }
 
     /**
      * 
+     * @param returnArray
+     * @param baseArrayClass
+     * @param objectList
+     */
+    private static void ConvertToArbitraryObjectArray(                                                     Object returnArray,
+                                                      Class baseArrayClass,
+                                                      List objectList) {
+        try {
+            for (int i = 0; i < objectList.size(); i++) {
+                Array.set(returnArray, i, getObjectForClass(
+                        baseArrayClass,
+                        objectList.get(i).toString()));
+            }
+            return;
+        } catch (Exception e) {
+            //oops! - this cannot be converted fall through and
+            //try the other alternative
+        }
+
+        try {
+            objectList.toArray((Object[])returnArray);
+        } catch (Exception e) {
+            //we are over with alternatives - throw the
+            //converison exception
+            throw new ObjectConversionException(e);
+        }
+    }
+
+    /**
+     * We could have used the Arraya.asList() method
+     * but that returns an *immutable* list !!!!!
      * @param array
      * @return
      */
@@ -733,5 +766,74 @@ public class ConverterUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * A reflection based method to generate an instance of
+     * a given class and populate it with a given value
+     * @param clazz
+     * @param value
+     * @return
+     */
+    public static Object getObjectForClass(Class clazz,String value){
+        //first see whether this class has a constructor that can
+        //take the string as an argument.
+        boolean continueFlag = false;
+        try {
+            Constructor stringConstructor = clazz.getConstructor(new Class[]{String.class});
+            return stringConstructor.newInstance(new Object[]{value});
+        } catch (NoSuchMethodException e) {
+            //oops - no such constructors - continue with the
+            //parse method
+            continueFlag = true;
+        } catch (Exception e) {
+            throw new ObjectConversionException(
+                    ADBMessages.getMessage("converter.cannotGenerate",
+                            clazz.getName()),
+                    e);
+        }
+
+        if (!continueFlag){
+            throw new ObjectConversionException(
+                    ADBMessages.getMessage("converter.cannotConvert",
+                            clazz.getName()));
+        }
+
+        try {
+            Method parseMethod =  clazz.getMethod("parse",new Class[]{String.class});
+            Object instance = clazz.newInstance();
+            return parseMethod.invoke(instance,new Object[]{value});
+        } catch (NoSuchMethodException e) {
+            throw new ObjectConversionException(
+                    ADBMessages.getMessage("converter.cannotConvert",
+                            clazz.getName()));
+        } catch (Exception e) {
+            throw new ObjectConversionException(
+                    ADBMessages.getMessage("converter.cannotGenerate",
+                            clazz.getName()),
+                    e);
+        }
+
+    }
+
+    /**
+     * A simple exception that is thrown when the conversion fails
+     */
+    public static class ObjectConversionException extends RuntimeException{
+        public ObjectConversionException() {
+        }
+
+        public ObjectConversionException(String message) {
+            super(message);
+        }
+
+        public ObjectConversionException(Throwable cause) {
+            super(cause);
+        }
+
+        public ObjectConversionException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
     }
 }

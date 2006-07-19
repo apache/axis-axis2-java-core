@@ -177,22 +177,6 @@
         }
 
 
-        /**
-            *  Generate a method that can explode the OMElement and provide a list of inner
-            *  elements. the inner elements need to be ordered! This however need not be
-            *   specific to a databinding impl
-            */
-           private java.util.List explode(org.apache.axiom.om.OMElement element){
-               java.util.List listToReturn = new java.util.LinkedList();
-               for (java.util.Iterator children = element.getChildElements();
-                    children.hasNext();){
-                  listToReturn.add(children.next());
-               }
-
-               return listToReturn;
-           }
-
-
 
         }//end of class
     </xsl:template>
@@ -305,20 +289,6 @@
         return returnMap;
         }
 
-        /**
-            *  Generate a method that can explode the OMElement and provide a list of inner
-            *  elements. the inner elements need to be ordered! This however need not be
-            *   specific to a databinding impl
-            */
-           private java.util.List explode(org.apache.axiom.om.OMElement element){
-               java.util.List listToReturn = new java.util.LinkedList();
-               for (java.util.Iterator children = element.getChildElements();
-                    children.hasNext();){
-                  listToReturn.add(children.next());
-               }
-
-               return listToReturn;
-           }
 
 
         }//end of class
