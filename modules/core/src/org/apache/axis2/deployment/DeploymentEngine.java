@@ -304,8 +304,9 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         if (service != null) {
             messageReceiver = service.getMessageReceiver(mepURL);
-            if (messageReceiver != null)
+            if (messageReceiver != null) {
                 return messageReceiver;
+            }
         }
         return axisConfig.getMessageReceiver(mepURL);
     }
@@ -1007,5 +1008,9 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void setWebLocationString(String webLocationString) {
         this.webLocationString = webLocationString;
+    }
+
+    public ArrayList getModulelist() {
+        return modulelist;
     }
 }
