@@ -4,8 +4,8 @@
     <!-- #################################################################################  -->
     <!-- ############################   xmlbeans template   ##############################  -->
     <xsl:template match="databinders[@dbtype='xmlbeans']">
-         <xsl:variable name="serverside"  select="@isserverside"></xsl:variable>
-        <xsl:variable name="base64"><xsl:value-of select="base64Elements/name"/></xsl:variable>
+        <xsl:variable name="serverside" select="@isserverside"/>
+        <xsl:variable name="base64" select="base64Elements/name"/>
         <xsl:if test="$base64">
             private static javax.xml.namespace.QName[] qNameArray = {
             <xsl:for-each select="base64Elements/name">
