@@ -32,11 +32,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WSDL2JavaTest extends TestCase{
+public abstract class WSDL2JavaSuccessTestBase extends TestCase{
 
     public static final String OUTPUT_LOCATION_BASE = "./out_put_classes";
     public static final String OUTPUT_LOCATION_PREFIX = "/test";
-    private static int folderCount = 0;
+    protected static int folderCount = 0;
     // public static final String OUTPUT_LOCATION_BASE = "C:\\GeneratedCode\\test4\\src";
     public static final String WSDL_BASE_DIR = "test-resources/";
     public static final String CLASSES_DIR = "/target/classes/";
@@ -44,6 +44,7 @@ public class WSDL2JavaTest extends TestCase{
     private static final String MODULE_PATH_PREFIX = "../modules/";
     private static final String COMPILE_TARGET_NAME = "compile";
 
+    protected String wsdlFileName;
 
     /**
      * Make the root output directory
@@ -90,75 +91,18 @@ public class WSDL2JavaTest extends TestCase{
         return dir.delete();
     }
 
-    /**
-     * Test for the WSAT wsdl
-     */
-    public void testCodeGenerationWSAT(){
-        String wsdlName = "wsat.wsdl";
-        try {
 
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+    public void testWSDLFile(){
+         try {
+            generateAndCompile(wsdlFileName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
-            e.printStackTrace();
-            fail("Exception while code generation test! " + wsdlName + e.getMessage());
+            fail("Exception while code generation test! " + wsdlFileName + e.getMessage());
         }
-    }
 
-    /**
-     * Test for the WSDL that's missing a service
-     * Since we do noit permit the clients to be generated when
-     * service is missing, we should get an error
-     */
-    public void testCodeGenerationNoService(){
-
-        try {
-            String wsdlName = "no-service.wsdl";
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-            fail("Undesired behavior while code generating!");
-        } catch (CodeGenerationException e) {
-            //done - we are good if we reach here
-        }
-    }
-
-    /**
-     * Test for the Headers
-     */
-    public void testCodeGenerationHeaders(){
-        String wsdlName = "headers.wsdl";
-        try {
-
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test! "+ wsdlName + e.getMessage());
-        }
-    }
-
-    /**
-     * Test for the ping WSDL
-     */
-    public void testCodeGenerationPing(){
-        String wsdlName = "ping.wsdl";
-        try {
-
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test! "+wsdlName+ e.getMessage());
-        }
     }
 
 
-    /**
-     * Test for the interoptestdoclitparameters
-     */
-    public void testCodeGenerationInteropTestDocLitParams(){
-        String wsdlName = "interoptestdoclitparameters.wsdl";
-        try {
 
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test! "+wsdlName+ e.getMessage());
-        }
-    }
 
 //    /**
 //     * Test for the sales rank and price!
@@ -171,31 +115,6 @@ public class WSDL2JavaTest extends TestCase{
 //        }
 //    }
 
-    /**
-     * Test for the mime doc
-     */
-    public void testCodeGenerationMimeDoc(){
-        String wsdlName = "mime-doc.wsdl";
-        try {
-
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test! "+ wsdlName + e.getMessage());
-        }
-    }
-
-     /**
-     * Test for the mime doc
-     */
-    public void testCodeGenerationUnreferenced(){
-        String wsdlName = "unreferenced.wsdl";
-        try {
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-            fail("Code generation should fail with  "+ wsdlName);
-        } catch (CodeGenerationException e) {
-
-        }
-    }
 
 //     /**
 //     * Test for the dime doc
@@ -208,18 +127,6 @@ public class WSDL2JavaTest extends TestCase{
 //            fail("Exception while code generation test!"+ e.getMessage());
 //        }
 //    }
-    /**
-     * Test for the wscoor.wsdl
-     */
-    public void testCodeGenerationWSCOOR(){
-        String wsdlName = "interoptestdoclit.wsdl";
-        try {
-
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test! " + wsdlName + e.getMessage());
-        }
-    }
 
     /**
      * Test for the modified ping wsdl. it will be the test for the detached schema with only an import
@@ -234,63 +141,6 @@ public class WSDL2JavaTest extends TestCase{
 //        }
 //    }
 
-    /**
-     * Test for the modified ping-unboond wsdl.
-     * The binding is removed in this wsdl.Codegen should fail for this
-     * WSDL by saying  no binding!
-     *
-     */
-    public void testCodeGenerationPingUnbound(){
-
-        try {
-            generateAndCompile("ping-unbound.wsdl", OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-            fail("Undesired behavior while code generating!");
-        } catch (CodeGenerationException e) {
-            //we are good
-        }
-    }
-
-    /**
-     * Test for the simple doc lit from Axis 1
-     *
-     */
-    public void testCodeGenerationSimpleDocLiteral(){
-        String wsdlName = "simple-doc-literal.wsdl";
-        try {
-
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test !" + wsdlName + e.getMessage());
-        }
-    }
-
-    /**
-     * Test for the simple doc lit from Axis 1
-     *
-     */
-    public void testCodeGenerationComplexDocLiteral(){
-        String wsdlName = "complex-doc-literal.wsdl";
-        try {
-
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test! "+wsdlName+ e.getMessage());
-        }
-    }
-    /**
-     * Test for the mtom echo wsdl. This wsdl contains a restriction based on xmime and a
-     * SOAP 1.2 binding
-     *
-     */
-    public void testCodeGenerationMTOMEcho(){
-        String wsdlName = "mtomecho.wsdl";
-        try {
-
-            generateAndCompile(wsdlName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
-        } catch (CodeGenerationException e) {
-            fail("Exception while code generation test! "+wsdlName+ e.getMessage());
-        }
-    }
 
     /**
      *
@@ -298,12 +148,9 @@ public class WSDL2JavaTest extends TestCase{
      * @param outputLocation
      * @throws CodeGenerationException
      */
-    private void generateAndCompile(String wsdlName, String outputLocation) throws CodeGenerationException {
+    protected void generateAndCompile(String wsdlName, String outputLocation) throws CodeGenerationException {
         codeGenerate(WSDL_BASE_DIR + wsdlName,outputLocation);
-        //todo - Still the compilation fails (the original problem of the java.home was settled by setting fork
-        //todo - to true). Now the compiler fails for some unknown reason (inside maven! works fine in the IDE though)
-
-        //compile(outputLocation);
+        compile(outputLocation);
     }
 
     /**
@@ -363,11 +210,7 @@ public class WSDL2JavaTest extends TestCase{
         //output the classes into the output dir as well
         javaCompiler.setDestdir(outputLocationFile);
         javaCompiler.setVerbose(true);
-        try {
-            codeGenProject.executeTarget(COMPILE_TARGET_NAME);
-        } catch (BuildException e) {
-            fail();
-        }
+        javaCompiler.execute();
 
     }
 
@@ -413,6 +256,7 @@ public class WSDL2JavaTest extends TestCase{
                 CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
                 new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
                         new String[0]));
+
         //todo Make this work
         //test case option is on
 //        optionMap.put(

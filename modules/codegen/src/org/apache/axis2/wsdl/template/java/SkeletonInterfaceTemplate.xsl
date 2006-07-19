@@ -19,10 +19,6 @@
 	           java method -->
         /**
          * Auto generated method signature
-         <!--  select only the body parameters  -->
-          <xsl:for-each select="input/param[@location='body']">
-            <xsl:if test="@type!=''">* @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
-         </xsl:text></xsl:if></xsl:for-each>
          */
         public  <xsl:if test="$count=0 or $outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>
         (

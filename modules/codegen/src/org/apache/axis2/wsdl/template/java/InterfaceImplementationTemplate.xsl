@@ -361,7 +361,7 @@
                 <xsl:choose>
                     <xsl:when test="$style='document' or $style='rpc'">
                            java.lang.Object object = fromOM(
-                                        getElement(_returnEnv,"<xsl:value-of select="$style"/>"),
+                                        _returnEnv.getBody().getFirstElement() ,
                                         <xsl:value-of select="$outputtype"/>.class,
                                          getEnvelopeNamespaces(_returnEnv));
                            _messageContext.getTransportOut().getSender().cleanup(_messageContext);
@@ -559,8 +559,7 @@
                            _operationClient.setCallback(new org.apache.axis2.client.async.Callback() {
                     public void onComplete(
                             org.apache.axis2.client.async.AsyncResult result) {
-                        java.lang.Object object = fromOM(getElement(
-                                result.getResponseEnvelope(), "document"),
+                        java.lang.Object object = fromOM(result.getResponseEnvelope().getBody().getFirstElement(),
                                <xsl:value-of select="$outputtype"/>.class,
                                getEnvelopeNamespaces(result.getResponseEnvelope())
                             );

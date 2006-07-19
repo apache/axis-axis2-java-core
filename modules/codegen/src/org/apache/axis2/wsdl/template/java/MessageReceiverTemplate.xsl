@@ -82,16 +82,17 @@
                     <xsl:variable name="inputtype" select="input/param[@location='body' and @type!='']/@type"/>
 
 
-                                                     <xsl:value-of select="$inputtype"/> wrappedParam =
+
+
+                                    <xsl:choose>
+                                        <xsl:when test="$inputcount=1">
+                                             <xsl:value-of select="$inputtype"/> wrappedParam =
                                                          (<xsl:value-of select="$inputtype"/>)fromOM(
                                 msgContext.getEnvelope().getBody().getFirstElement(),
                                 <xsl:value-of select="$inputtype"/>.class,
                                 getEnvelopeNamespaces(msgContext.getEnvelope()));
-
-                                    <xsl:choose>
-                                        <xsl:when test="$inputcount=1">
                                             <!-- Even when the parameters are 1 we have to see whether we have the
-                                                wrapped parameters -->
+                                          wrapped parameters -->
                                            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
                                             <xsl:choose>
                                                 <xsl:when test="$inputWrappedCount &gt; 0">
@@ -198,7 +199,7 @@
     <!-- end of template for in-out message receiver -->
 
     <!-- start of in-only -->
-    <xsl:template match="interface[@basereceiver='org.apache.axis2.receivers.AbstractInMessageReceiver']">
+    <xsl:template match="/interface[@basereceiver='org.apache.axis2.receivers.AbstractInMessageReceiver']">
         <xsl:variable name="skeletonname"><xsl:value-of select="@skeletonname"/></xsl:variable>
         <xsl:variable name="dbsupportpackage"><xsl:value-of select="@dbsupportpackage"/></xsl:variable>
 

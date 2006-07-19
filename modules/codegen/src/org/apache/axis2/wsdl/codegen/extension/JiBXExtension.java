@@ -84,7 +84,7 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             Method method = clazz.getMethod(BINDING_MAP_METHOD,
                 new Class[] { String.class, HashMap.class, boolean.class });
             TypeMapper mapper = (TypeMapper)method.invoke(null,
-                new Object[] { path, defsmap, new Boolean(unwrap) });
+                new Object[] { path, defsmap, Boolean.valueOf(unwrap) });
 
             // set the type mapper to the config
             configuration.setTypeMapper(mapper);
