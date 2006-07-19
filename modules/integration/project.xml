@@ -53,6 +53,11 @@
             <artifactId>axis2-samples</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-spring</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
 
         <dependency>
             <groupId>ws-commons</groupId>
@@ -335,6 +340,38 @@
 	  <artifactId>log4j</artifactId>
 	  <version>${log4j.version}</version>
 	</dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
+            <groupId>springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
 
 
     </dependencies>

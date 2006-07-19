@@ -443,6 +443,11 @@
             <copy file="../core/conf/axis2.xml"
                   tofile="target/groovyRepo/conf/axis2.xml"/>
 
+            <!-- Spring resources -->
+            <mkdir dir="target/test-resources/spring"/>
+            <copy file="../spring/test-resources/applicationContext.xml"
+                  tofile="target/test-resources/spring/applicationContext.xml"/>
+
             <!--Axis2 repositories for WS-Security interop tests -->
 
             <!-- A default repository with security and addressing modules -->
