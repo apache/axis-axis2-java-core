@@ -25,7 +25,7 @@ package org.apache.axis2.jaxws.message;
  * (@see org.apache.axis2.jaxws.message.MessageInternalException)
  */
 public class MessageException extends Exception {
-
+	 
 	/**
 	 * @param message
 	 */

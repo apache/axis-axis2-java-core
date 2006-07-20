@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.DispatchTestSuite;
 import org.apache.axis2.jaxws.description.ServiceDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
+import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
 import org.apache.axis2.jaxws.message.BlockTests;
 import org.apache.axis2.jaxws.message.MessageTests;
@@ -57,6 +58,8 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(StringProviderTests.class);
         suite.addTestSuite(SourceProviderTests.class);
+        
+        suite.addTestSuite(ExceptionFactoryTests.class);
 
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {

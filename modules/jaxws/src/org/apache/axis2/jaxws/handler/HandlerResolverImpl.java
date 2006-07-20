@@ -10,6 +10,7 @@ import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.handler.soap.SOAPHandler;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
@@ -78,15 +79,15 @@ public class HandlerResolverImpl implements HandlerResolver {
 			} catch (ClassNotFoundException e) {
 				// TODO: should we just ignore this problem?
 				// TODO: NLS log and throw
-				throw new WebServiceException(e);
+				throw ExceptionFactory.makeWebServiceException(e);
 			} catch (InstantiationException ie) {
 				// TODO: should we just ignore this problem?
 				// TODO: NLS log and throw
-				throw new WebServiceException(ie);
+				throw ExceptionFactory.makeWebServiceException(ie);
 			} catch (IllegalAccessException e) {
 				// TODO: should we just ignore this problem?
 				// TODO: NLS log and throw
-				throw new WebServiceException(e);
+				throw ExceptionFactory.makeWebServiceException(e);
 			}
 			
 			// 9.2.1.2 sort them by Logical, then SOAP
@@ -97,10 +98,10 @@ public class HandlerResolverImpl implements HandlerResolver {
 				protocolHandlers.add((SOAPHandler)handlerClass);
 			else if (Handler.class.isAssignableFrom(handlerClass.getClass())) {
 				// TODO: NLS better error message
-				throw new WebServiceException("cannot implement Handler directly");
+				throw ExceptionFactory.makeWebServiceException("cannot implement Handler directly");
 			} else {
 				// TODO: NLS better error message
-				throw new WebServiceException("Some error");
+				throw ExceptionFactory.makeWebServiceException("Some error");
 			}
 		}
 		

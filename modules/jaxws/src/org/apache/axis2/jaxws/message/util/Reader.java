@@ -22,6 +22,7 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 
 
@@ -69,7 +70,7 @@ public abstract class Reader implements XMLStreamReader {
 	public void reset() throws MessageInternalException {
 		if (!resettable) {
 			// TODO NLS
-			throw new MessageInternalException("Can't reset non-resettable XMLStreamReader");
+			throw ExceptionFactory.makeMessageInternalException("Can't reset non-resettable XMLStreamReader", null);
 		}
 		reader = newReader();
 	}

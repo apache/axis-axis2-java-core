@@ -151,7 +151,7 @@ public class Dispatch<T> extends BindingProvider implements javax.xml.ws.Dispatc
                 p.setJAXBContext(jaxbContext);
             }
         } catch (Exception e) {
-            throw new WebServiceException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
         
         rspParam = fromOM(rspEnvelope, rspParam, axisController.getServiceClient().getOptions().getSoapVersionURI());
@@ -161,37 +161,39 @@ public class Dispatch<T> extends BindingProvider implements javax.xml.ws.Dispatc
     
    public void invokeOneWay(Object obj) throws WebServiceException{
        if(obj == null){
-            throw new WebServiceException("Dispatch Cannot Invoke SEI with null object");
+    	   // TODO NLS
+           throw ExceptionFactory.makeWebServiceException("Dispatch Cannot Invoke SEI with null object");
         }
         try{
             Parameter param = ParameterFactory.createParameter(obj);
             axisController.invokeOneWay(param, requestContext);
         }catch(Exception e){
-            throw new WebServiceException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
    
     public Future<?> invokeAsync(Object obj, AsyncHandler asynchandler) throws WebServiceException {
        if(obj == null){
-           throw new WebServiceException("Dispatch Cannot Invoke SEI with null object");
+           throw ExceptionFactory.makeWebServiceException("Dispatch Cannot Invoke SEI with null object");
        }
        try{
            Parameter param = ParameterFactory.createParameter(obj);
            return axisController.invokeAsync(param, asynchandler, requestContext);
        } catch(Exception e) {
-           throw new WebServiceException(e);
+           throw ExceptionFactory.makeWebServiceException(e);
        }
     }
   
     public Response invokeAsync(Object obj)throws WebServiceException{
         if(obj == null){
-            throw new WebServiceException("Dispatch Cannot Invoke SEI with null object");
+        	// TODO NLS
+            throw ExceptionFactory.makeWebServiceException("Dispatch Cannot Invoke SEI with null object");
         }
         try{
             Parameter param = ParameterFactory.createParameter(obj);
             return axisController.invokeAsync(param, requestContext);
         }catch(Exception e){
-            throw new WebServiceException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }    
 

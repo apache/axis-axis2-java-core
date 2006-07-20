@@ -51,7 +51,7 @@ public class ClientMediator {
     public <T> JAXBDispatch<T> createJAXBDispatch(JAXWSClientContext<T> clientContext){
 
         if (clientContext == null) {
-            throw new WebServiceException(
+            throw ExceptionFactory.makeWebServiceException(
                     "Internal Error ... JAXWSClientContext not found");
         }
         this.clientContext = clientContext;
@@ -69,14 +69,14 @@ public class ClientMediator {
             dispatch.setJAXBContext(clientContext.getJAXBContext());
             return dispatch;
         }catch(AxisFault e){
-            throw new WebServiceException(e.getMessage());
+            throw ExceptionFactory.makeWebServiceException(e.getMessage());
         }
     }
     
     public <T> XMLDispatch<T> createXMLDispatch(JAXWSClientContext<T> clientContext){
 
 		if (clientContext == null) {
-			throw new WebServiceException(
+			throw ExceptionFactory.makeWebServiceException(
 					"Internal Error ... JAXWSClientContext not found");
 		}
 		this.clientContext = clientContext;
@@ -92,7 +92,7 @@ public class ClientMediator {
             dispatch.setMode(clientContext.getServiceMode());
 			return dispatch;
 		}catch(AxisFault e){
-			throw new WebServiceException(e.getMessage());
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class ClientMediator {
 	    	
 	    	return sei.cast(proxyClass);
 		}catch(AxisFault e){
-    		throw new WebServiceException(e.getMessage());
+    		throw ExceptionFactory.makeWebServiceException(e);
     	}
 		
 	}
@@ -126,7 +126,7 @@ public class ClientMediator {
             ConfigurationContext configCtx = factory.getClientConfigurationContext();
             return configCtx;
 		} catch (Exception e) {
-			throw new WebServiceException(e);
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 	}
 

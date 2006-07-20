@@ -32,6 +32,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
@@ -86,10 +87,10 @@ public class AxisInvocationController implements InvocationController {
         // Check to make sure we at least have a valid InvocationContext
         // and request MessageContext
         if (ic == null) {
-            throw new WebServiceException("Cannot invoke; InvocationContext was null");
+            throw ExceptionFactory.makeWebServiceException("Cannot invoke; InvocationContext was null");
         }
         if (ic.getRequestMessageContext() == null) {
-            throw new WebServiceException("Cannot invoke; request MessageContext was null");
+            throw ExceptionFactory.makeWebServiceException("Cannot invoke; request MessageContext was null");
         }
         
         // Setup the MessageContext for the response
@@ -115,7 +116,7 @@ public class AxisInvocationController implements InvocationController {
                 OMElement reqEnvelope = requestMsgCtx.getMessageAsOM();
                 rspEnvelope = client.sendReceive(ServiceClient.ANON_OUT_IN_OP, reqEnvelope);
             } catch (AxisFault e) {
-                throw new WebServiceException(e);
+                throw ExceptionFactory.makeWebServiceException(e);
             }
             
             // Set the response message on the response MessageContext
@@ -141,10 +142,10 @@ public class AxisInvocationController implements InvocationController {
         // Check to make sure we at least have a valid InvocationContext
         // and request MessageContext
         if (ic == null) {
-            throw new WebServiceException("Cannot invoke; InvocationContext was null");
+            throw ExceptionFactory.makeWebServiceException("Cannot invoke; InvocationContext was null");
         }
         if (ic.getRequestMessageContext() == null) {
-            throw new WebServiceException("Cannot invoke; request MessageContext was null");
+            throw ExceptionFactory.makeWebServiceException("Cannot invoke; request MessageContext was null");
         }
         
         // Setup the MessageContext for the response
@@ -173,7 +174,7 @@ public class AxisInvocationController implements InvocationController {
                 OMElement reqEnvelope = requestMsgCtx.getMessageAsOM();
                 client.fireAndForget(ServiceClient.ANON_OUT_ONLY_OP, reqEnvelope);
             } catch (AxisFault e) {
-                throw new WebServiceException(e);
+                throw ExceptionFactory.makeWebServiceException(e);
             }
         }
         
@@ -198,10 +199,10 @@ public class AxisInvocationController implements InvocationController {
         // Check to make sure we at least have a valid InvocationContext
         // and request MessageContext
         if (ic == null) {
-            throw new WebServiceException("Cannot invoke; InvocationContext was null");
+            throw ExceptionFactory.makeWebServiceException("Cannot invoke; InvocationContext was null");
         }
         if (ic.getRequestMessageContext() == null) {
-            throw new WebServiceException("Cannot invoke; request MessageContext was null");
+            throw ExceptionFactory.makeWebServiceException("Cannot invoke; request MessageContext was null");
         }
         
         // Setup the MessageContext for the response
@@ -253,7 +254,7 @@ public class AxisInvocationController implements InvocationController {
                 wrapper.setAsyncHandler(callback);
             }
             else {
-                throw new WebServiceException("Cannot call asynchronous invoke with null callback");
+                throw ExceptionFactory.makeWebServiceException("Cannot call asynchronous invoke with null callback");
             }
             
             // Get the request message from the MessageContext and send it
@@ -263,7 +264,7 @@ public class AxisInvocationController implements InvocationController {
                 client.sendReceiveNonBlocking(ServiceClient.ANON_OUT_IN_OP, reqEnvelope, axisCallback);
             } catch (AxisFault e) {
                 e.printStackTrace();
-                throw new WebServiceException(e);
+                throw ExceptionFactory.makeWebServiceException(e);
             }
             
             // Now that the request has been sent, start the listener thread so that it can
@@ -281,10 +282,10 @@ public class AxisInvocationController implements InvocationController {
                 future.get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                throw new WebServiceException(e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(e.getMessage());
             } catch (ExecutionException e) {
                 e.printStackTrace();
-                throw new WebServiceException(e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(e.getMessage());
             }
             
             return wrapper;
@@ -325,7 +326,7 @@ public class AxisInvocationController implements InvocationController {
             AxisOperation operation = service.getOperation(new QName(operationName));
             
             if (operation == null) {
-                throw new WebServiceException("Operation not found.");
+                throw ExceptionFactory.makeWebServiceException("Operation not found.");
             }
             
             try {
@@ -338,7 +339,7 @@ public class AxisInvocationController implements InvocationController {
             }            
         }
         else {
-            throw new WebServiceException("Operation name not set.");
+            throw ExceptionFactory.makeWebServiceException("Operation name not set.");
         }
         
         return client;

@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
@@ -97,10 +98,10 @@ public abstract class XMLPartBase implements XMLPart {
 		this.protocol = protocol;
 		if (protocol.equals(Protocol.unknown)) {
 			// TODO NLS
-			throw new MessageException("Protocol unknown is not supported");
+			throw ExceptionFactory.makeMessageException("Protocol unknown is not supported");
 		} else if (protocol.equals(Protocol.rest)) {
 			// TODO NLS
-			throw new MessageException("Protocol rest is not supported");
+			throw ExceptionFactory.makeMessageException("Protocol rest is not supported");
 		}
 		content = _createSpine(protocol);
 		contentType = SPINE;
@@ -121,7 +122,7 @@ public abstract class XMLPartBase implements XMLPart {
 		} else if (qName.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
 			protocol = Protocol.soap12;
 		} else {
-			throw new MessageException("Protocol rest is not supported");
+			throw ExceptionFactory.makeMessageException("Protocol rest is not supported");
 		}
 	}
 	
@@ -144,7 +145,7 @@ public abstract class XMLPartBase implements XMLPart {
 			break;
 		default:
 			// TODO NLS
-			throw new MessageInternalException("Unknown type");
+			throw ExceptionFactory.makeMessageInternalException("Unknown type", null);
 		}
 		setContent(om, OM);
 		return om;
@@ -164,7 +165,7 @@ public abstract class XMLPartBase implements XMLPart {
 			break;
 		default:
 			// TODO NLS
-			throw new MessageInternalException("Unknown type");
+			throw ExceptionFactory.makeMessageInternalException("Unknown type", null);
 		}
 		setContent(se, SOAPENVELOPE);
 		return se;
@@ -184,7 +185,7 @@ public abstract class XMLPartBase implements XMLPart {
 			break;
 		default:
 			// TODO NLS
-			throw new MessageInternalException("Unknown type");
+			throw ExceptionFactory.makeMessageInternalException("Unknown type", null);
 		}
 		setContent(spine, SPINE);
 		return spine;
@@ -205,7 +206,7 @@ public abstract class XMLPartBase implements XMLPart {
 	public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException {
 		if (consumed) {
 			// TODO NLS
-			throw new MessageException("Already consumed");
+			throw ExceptionFactory.makeMessageException("Already consumed");
 		}
 		XMLStreamReader reader = null;
 		if (contentType == SPINE) {
@@ -229,7 +230,7 @@ public abstract class XMLPartBase implements XMLPart {
 	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
 		if (consumed) {
 			// TODO NLS
-			throw new MessageException("Already consumed");
+			throw ExceptionFactory.makeMessageException("Already consumed");
 		}
 		if (contentType == SPINE) {
 			getContentAsXMLSpine().outputTo(writer, consume);

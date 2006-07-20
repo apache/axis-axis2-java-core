@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -105,7 +106,7 @@ public abstract class BlockImpl implements Block {
 	public Object getBusinessObject(boolean consume) throws XMLStreamException, MessageException {
 		if (consumed) {
 			// TODO NLS
-			throw new MessageException("The block is already consumed");
+			throw ExceptionFactory.makeMessageException("The block is already consumed");
 		}
 		if (busObject != null) {
 			busObject =  _getBOFromBO(busObject, busContext, consume);
@@ -145,7 +146,7 @@ public abstract class BlockImpl implements Block {
 			}
 			return qName;
 		} catch (XMLStreamException xse) {
-			throw new MessageException(xse);
+			throw ExceptionFactory.makeMessageException(xse);
 		}
 	}
 	
@@ -164,7 +165,7 @@ public abstract class BlockImpl implements Block {
 		XMLStreamReader newReader = null;
 		if (consumed) {
 			// TODO NLS
-			throw new MessageException("The block is already consumed");
+			throw ExceptionFactory.makeMessageException("The block is already consumed");
 		}
 		if (omElement != null) {
 			if (consume) {
@@ -187,7 +188,7 @@ public abstract class BlockImpl implements Block {
 		boolean consume =true;  // get the OM consumes the message
 		if (consumed) {
 			// TODO NLS
-			throw new MessageException("The block is already consumed");
+			throw ExceptionFactory.makeMessageException("The block is already consumed");
 		}
 		if (omElement != null) {
 			newOMElement = omElement;
@@ -232,7 +233,7 @@ public abstract class BlockImpl implements Block {
 	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
 		if (consumed) {
 			// TODO NLS
-			throw new MessageException("The block is already consumed");
+			throw ExceptionFactory.makeMessageException("The block is already consumed");
 		}
 		if (omElement != null) {
 			if (consume) {

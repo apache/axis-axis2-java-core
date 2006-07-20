@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -84,7 +85,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 			setQName(getQName(jaxb, jc));
 			return jaxb;
 		} catch(JAXBException je) {
-			throw new MessageException(je);
+			throw ExceptionFactory.makeMessageException(je);
 		}
 	}
 
@@ -121,7 +122,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 			m.marshal(busObject, writer);
 		} catch(JAXBException je) {
 			// TODO NLS
-			throw new MessageException(je);
+			throw ExceptionFactory.makeMessageException(je);
 		}
 	}
 

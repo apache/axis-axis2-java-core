@@ -170,7 +170,7 @@ public class AxisController {
         }catch(AxisFault e){
         	//TODO
         	String todo = "Fault processing not supported for Alpha, we are only printing the fault node from soap fault.";
-            throw new WebServiceException(e.getMessage() + " " + todo);
+            throw ExceptionFactory.makeWebServiceException(e.getMessage() + " " + todo);
             
         }       
     }
@@ -198,7 +198,7 @@ public class AxisController {
         } catch(AxisFault e) {
         	
         	String todo = "Fault processing not supported for Alpha, we are only printing the fault node from soap fault.";
-            throw new WebServiceException(e.getMessage() + " " + todo);
+            throw ExceptionFactory.makeWebServiceException(e.getMessage() + " " + todo);
         }
     }
     
@@ -258,10 +258,10 @@ public class AxisController {
                 getExecutor().submit(response).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                throw new WebServiceException(e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(e.getMessage());
             } catch (ExecutionException e) {
                 e.printStackTrace();
-                throw new WebServiceException(e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(e.getMessage());
             }
             
             //TODO: Need to figure out who/when the Listener should be shutdown
@@ -271,7 +271,7 @@ public class AxisController {
         }catch(AxisFault e){
         	
         	String todo = "Fault processing not supported for Alpha, we are only printing the fault node from soap fault.";
-            throw new WebServiceException(e.getMessage() + " " + todo);
+            throw ExceptionFactory.makeWebServiceException(e.getMessage() + " " + todo);
         }
     }
     

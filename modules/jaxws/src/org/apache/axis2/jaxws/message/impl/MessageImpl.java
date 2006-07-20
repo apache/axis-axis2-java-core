@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -56,10 +57,10 @@ public class MessageImpl implements Message {
 		this.protocol = protocol;
 		if (protocol.equals(Protocol.unknown)) {
 			// TODO NLS
-			throw new MessageException("Protocol unknown is not supported");
+			throw ExceptionFactory.makeMessageException("Protocol unknown is not supported");
 		} else if (protocol.equals(Protocol.rest)) {
 			// TODO NLS
-			throw new MessageException("Protocol rest is not supported");
+			throw ExceptionFactory.makeMessageException("Protocol rest is not supported");
 		}
 		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
 		xmlPart = factory.create(protocol);
@@ -81,7 +82,7 @@ public class MessageImpl implements Message {
 	 */
 	public SOAPMessage getAsSOAPMessage() throws MessageException {
 		// TODO Missing implementation
-		throw new MessageException("Not Implemented Yet");
+		throw ExceptionFactory.makeMessageException("Not Implemented Yet");
 	}
 
 	/* (non-Javadoc)

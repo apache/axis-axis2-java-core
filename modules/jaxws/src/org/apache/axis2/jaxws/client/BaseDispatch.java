@@ -30,6 +30,7 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.AxisController;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -212,7 +213,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             Parameter param = ParameterFactory.createParameter(obj);
             return axisController.invokeAsync(param, requestContext);
         }catch(Exception e){
-            throw new WebServiceException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
     

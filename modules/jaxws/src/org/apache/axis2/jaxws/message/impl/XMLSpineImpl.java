@@ -34,6 +34,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
@@ -93,7 +94,7 @@ class XMLSpineImpl implements XMLSpine {
 			protocol = Protocol.soap12;
 		} else {
 			// TODO NLS
-			throw new MessageInternalException("unrecognized protocol");
+			throw ExceptionFactory.makeMessageInternalException("unrecognized protocol", null);
 		}
 	} 
 
@@ -121,7 +122,7 @@ class XMLSpineImpl implements XMLSpine {
 		} else {
 			// Process the Fault
 			// TODO NLS
-			throw new MessageException("Not Implemented Yet");
+			throw ExceptionFactory.makeMessageException("Not Implemented Yet");
 		}
 		return;
 	}
@@ -154,7 +155,7 @@ class XMLSpineImpl implements XMLSpine {
 				try { 
 					block = obf.createFrom((OMElement) node, null, null);
 				} catch (XMLStreamException xse) {
-					throw new MessageException(xse);
+					throw ExceptionFactory.makeMessageException(xse);
 				}
 				blocks.add(block);
 			} else {
@@ -171,7 +172,7 @@ class XMLSpineImpl implements XMLSpine {
 			soapFactory = new SOAP11Factory();
 		} else {
 			// TODO NLS
-			throw new MessageInternalException("unsupported protocol");
+			throw ExceptionFactory.makeMessageInternalException("unsupported protocol", null);
 		}
 		return soapFactory;
 	}
@@ -210,12 +211,12 @@ class XMLSpineImpl implements XMLSpine {
 
 	public javax.xml.soap.SOAPEnvelope getAsSOAPEnvelope() throws MessageException {
 		// TODO NLS
-		throw new MessageInternalException("Should never be called");
+		throw ExceptionFactory.makeMessageInternalException("Should never be called", null);
 	}
 
 	public OMElement getAsOMElement() throws MessageException {
 		// TODO NLS
-		throw new MessageInternalException("Should never be called");
+		throw ExceptionFactory.makeMessageInternalException("Should never be called", null);
 	}
 
 	/* (non-Javadoc)
@@ -242,7 +243,7 @@ class XMLSpineImpl implements XMLSpine {
 			}
 			return newBlock;
 		} catch (XMLStreamException xse) {
-			throw new MessageException(xse);
+			throw ExceptionFactory.makeMessageException(xse);
 		}
 	}
 
@@ -276,7 +277,7 @@ class XMLSpineImpl implements XMLSpine {
 			}
 			return newBlock;
 		} catch (XMLStreamException xse) {
-			throw new MessageException(xse);
+			throw ExceptionFactory.makeMessageException(xse);
 		}
 	}
 

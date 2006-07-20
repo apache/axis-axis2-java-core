@@ -36,6 +36,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
@@ -92,7 +93,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 		} catch (MessageException e) {
 			throw e;
 		} catch (SOAPException e) {
-			throw new MessageException(e);
+			throw ExceptionFactory.makeMessageException(e);
 		}
 		return soapEnvelope;
 	}
@@ -137,7 +138,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 		}
 		if (env == null) {
 			// TODO NLS
-			throw new MessageException("SOAPEnvelope is needed!");
+			throw ExceptionFactory.makeMessageException("SOAPEnvelope is needed!");
 		}
 		return buildSOAPTree((SOAPEnvelope) env, null, parent, reader, false);
 	}
@@ -241,9 +242,9 @@ public class SAAJConverterImpl implements SAAJConverter {
 		} catch (MessageException e) {
 			throw e;
 		} catch (XMLStreamException e) {
-			throw new MessageException(e);
+			throw ExceptionFactory.makeMessageException(e);
 		} catch (SOAPException e) {
-			throw new MessageException(e);
+			throw ExceptionFactory.makeMessageException(e);
 		}
 		return root;
 	}
@@ -375,6 +376,6 @@ public class SAAJConverterImpl implements SAAJConverter {
 		// Review We need NLS for this message, but this code will probably 
 		// be added to JAX-WS.  So for now we there is no NLS.
 		// TODO NLS
-		throw new MessageException("Unexpected XMLStreamReader event:" + event);
+		throw ExceptionFactory.makeMessageException("Unexpected XMLStreamReader event:" + event);
 	}
 }
