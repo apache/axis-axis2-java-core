@@ -446,7 +446,7 @@
             <!-- Spring resources -->
             <mkdir dir="target/test-resources/spring"/>
             <copy file="../spring/test-resources/applicationContext.xml"
-                  tofile="target/test-resources/spring/applicationContext.xml"/>
+                  tofile="target/test-classes/spring/applicationContext.xml"/>
 
             <!--Axis2 repositories for WS-Security interop tests -->
 

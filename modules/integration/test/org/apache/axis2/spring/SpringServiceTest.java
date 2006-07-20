@@ -182,7 +182,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
     public void createSpringAppCtx(ClassLoader cl)
             throws Exception {
 
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {Constants.TESTING_PATH + "spring/applicationContext.xml"}, false);
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"/spring/applicationContext.xml"}, false);
         ctx.setClassLoader(cl);
         ctx.refresh();
     }
