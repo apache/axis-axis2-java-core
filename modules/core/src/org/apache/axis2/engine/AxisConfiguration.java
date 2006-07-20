@@ -229,6 +229,7 @@ public class AxisConfiguration extends AxisDescription {
         if (start && Constants.SCOPE_APPLICATION.equals(maxScope)) {
             throw new AxisFault(Messages.getMessage("cannotaddapplicationscopeservice"));
         }
+        notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
         Iterator services = axisServiceGroup.getServices();
         axisServiceGroup.setParent(this);
         AxisService description;
@@ -271,7 +272,6 @@ public class AxisConfiguration extends AxisDescription {
         // serviceGroups.put(axisServiceGroup.getServiceGroupName(),
         // axisServiceGroup);
         addChild(axisServiceGroup);
-        notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
     }
 
     public void removeServiceGroup(String serviceGroupName) throws AxisFault {
