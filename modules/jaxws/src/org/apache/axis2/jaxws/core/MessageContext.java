@@ -50,6 +50,11 @@ public class MessageContext {
         properties = new HashMap<String, Object>();
     }
     
+    public MessageContext(org.apache.axis2.context.MessageContext mc) {
+        axisMsgCtx = mc;
+        properties = new HashMap<String, Object>();
+    }
+    
     public Map<String, Object> getProperties() {   
         return properties;
     }

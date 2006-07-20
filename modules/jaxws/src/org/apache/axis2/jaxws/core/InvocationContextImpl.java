@@ -17,10 +17,12 @@
 package org.apache.axis2.jaxws.core;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import javax.xml.ws.handler.Handler;
 
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.jaxws.impl.AsyncListener;
 
 /**
  * An implementation of the InvocationContext interface.
@@ -32,6 +34,8 @@ public class InvocationContextImpl implements InvocationContext {
     private List<Handler> handlers;
     private MessageContext requestMsgCtx;
     private MessageContext responseMsgCtx;
+    private Executor executor;
+    private AsyncListener asyncListener;
     
     private ServiceClient serviceClient; //FIXME: This is temporary
     
@@ -81,6 +85,22 @@ public class InvocationContextImpl implements InvocationContext {
      */
     public MessageContext getRequestMessageContext() {
         return requestMsgCtx;
+    }
+    
+    public Executor getExecutor() {
+        return executor;
+    }
+    
+    public void setExecutor(Executor e) {
+        executor = e;
+    }
+    
+    public AsyncListener getAsyncListener() {
+        return asyncListener;
+    }
+    
+    public void setAsyncListener(AsyncListener al) {
+        asyncListener = al;
     }
     
     // FIXME: This is temporary

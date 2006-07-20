@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.client;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.AxisController;
+import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.param.Parameter;
 import org.apache.axis2.jaxws.param.ParameterFactory;
 
@@ -31,6 +32,13 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     
     public XMLDispatch(AxisController ac) {
         super(ac);
+    }
+    
+    public AsyncListener createAsyncListener() {
+        XMLDispatchAsyncListener al = new XMLDispatchAsyncListener();
+        al.setMode(mode);
+        al.setType(type);
+        return al;
     }
     
     public OMElement createMessageFromValue(Object value) {

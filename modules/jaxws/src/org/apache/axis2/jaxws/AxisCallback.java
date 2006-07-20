@@ -17,29 +17,53 @@
 
 package org.apache.axis2.jaxws;
 
-import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.jaxws.core.MessageContext;
 
+/**
+ * The AxisCallback is the touch point for asynchronous invocations 
+ * between the Axis2 runtime and the JAX-WS implementation.  This
+ * object will be handed to the ServiceClient/OperationClient APIs
+ * to use in processing the async response.
+ * 
+ * The AxisCallback is responsible for taking the incoming message and
+ * MessageContext from Axis2 and turning that into a MessageContext
+ * that can be used by the JAX-WS implementation.
+ */
 public class AxisCallback extends Callback {
 
-    private SOAPEnvelope responseEnv;
     private MessageContext responseMsgCtx;
     
+    /**
+     * This method will be called when the Axis2 implementation is
+     * ready to send the async response back to the client.
+     */
     public void onComplete(AsyncResult result) {
-        responseEnv = result.getResponseEnvelope();
-        responseMsgCtx = result.getResponseMessageContext();
+        org.apache.axis2.context.MessageContext axisMsgCtx = 
+            result.getResponseMessageContext();
+        responseMsgCtx = new MessageContext(axisMsgCtx);
+        
+        try {
+            OMElement responseEnv = result.getResponseEnvelope();
+            responseMsgCtx.setMessageAsOM(responseEnv);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    // FIXME: Figure out what needs to be done when this method is called
+    // and we've received an error from Axis2.
     public void onError(Exception e) {
         e.printStackTrace();
     }
     
-    public SOAPEnvelope getSOAPEnvelope() {
-        return responseEnv;
-    }
-    
+    /**
+     * Returns the <@link org.apache.axis2.jaxws.core.MessageContext> that was
+     * created for the response message.
+     * @return - a MessageContext with the response contents
+     */
     public MessageContext getResponseMessageContext() {
         return responseMsgCtx;
     }

@@ -16,19 +16,27 @@
  */
 package org.apache.axis2.jaxws.core.controller;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
+import org.apache.axis2.jaxws.impl.AsyncListener;
+import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -110,6 +118,7 @@ public class AxisInvocationController implements InvocationController {
                 throw new WebServiceException(e);
             }
             
+            // Set the response message on the response MessageContext
             responseMsgCtx.setMessageAsOM(rspEnvelope);
         }
 
@@ -128,6 +137,46 @@ public class AxisInvocationController implements InvocationController {
         if (log.isDebugEnabled()) {
             log.debug("Invocation pattern: one-way");
         }
+        
+        // Check to make sure we at least have a valid InvocationContext
+        // and request MessageContext
+        if (ic == null) {
+            throw new WebServiceException("Cannot invoke; InvocationContext was null");
+        }
+        if (ic.getRequestMessageContext() == null) {
+            throw new WebServiceException("Cannot invoke; request MessageContext was null");
+        }
+        
+        // Setup the MessageContext for the response
+        MessageContext requestMsgCtx = ic.getRequestMessageContext();
+        
+        //TODO: Need to figure out whether or not we need to create the response
+        //MessageContext here and whether or not handlers need to be run for 
+        //one-way invocations.
+        MessageContext responseMsgCtx = new MessageContext();
+        ic.setResponseMessageContext(responseMsgCtx);
+        
+        ServiceClient client = ic.getServiceClient();        
+        if (client != null) {
+            // Get the target endpoint address and setup the TO endpoint 
+            // reference.  This tells us where the request is going.
+            String targetUrl = (String) requestMsgCtx.getProperties().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+            EndpointReference toEPR = new EndpointReference(targetUrl);
+            client.getOptions().setTo(toEPR);
+            
+            // Get the SOAP Action (if needed)
+            String soapAction = getSOAPAction(requestMsgCtx);
+            client.getOptions().setAction(soapAction);
+            
+            // Use the ServiceClient to send the request.
+            try {
+                OMElement reqEnvelope = requestMsgCtx.getMessageAsOM();
+                client.fireAndForget(ServiceClient.ANON_OUT_ONLY_OP, reqEnvelope);
+            } catch (AxisFault e) {
+                throw new WebServiceException(e);
+            }
+        }
+        
         return;
     }
     
@@ -145,6 +194,102 @@ public class AxisInvocationController implements InvocationController {
         if (log.isDebugEnabled()) {
             log.debug("Invocation pattern: async (callback)");
         }
+
+        // Check to make sure we at least have a valid InvocationContext
+        // and request MessageContext
+        if (ic == null) {
+            throw new WebServiceException("Cannot invoke; InvocationContext was null");
+        }
+        if (ic.getRequestMessageContext() == null) {
+            throw new WebServiceException("Cannot invoke; request MessageContext was null");
+        }
+        
+        // Setup the MessageContext for the response
+        MessageContext requestMsgCtx = ic.getRequestMessageContext();
+        MessageContext responseMsgCtx = new MessageContext();
+        ic.setResponseMessageContext(responseMsgCtx);
+        
+        ServiceClient client = ic.getServiceClient();        
+        if (client != null) {
+            // Get the target endpoint address and setup the TO endpoint 
+            // reference.  This tells us where the request is going.
+            String targetUrl = (String) requestMsgCtx.getProperties().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+            EndpointReference toEPR = new EndpointReference(targetUrl);
+            client.getOptions().setTo(toEPR);
+            
+            // Get the SOAP Action (if needed)
+            String soapAction = getSOAPAction(requestMsgCtx);
+            client.getOptions().setAction(soapAction);
+            
+            // Setup the client so that it knows whether the underlying call to
+            // Axis2 knows whether or not to start a listening port for an
+            // asynchronous response.
+            Boolean useAsyncMep = (Boolean) requestMsgCtx.getProperties().get(Constants.USE_ASYNC_MEP);
+            if((useAsyncMep != null && useAsyncMep.booleanValue()) 
+                    || client.getOptions().isUseSeparateListener()) {
+                client.getOptions().setUseSeparateListener(true);
+                client.getOptions().setTransportInProtocol("http");
+            }
+            
+            // There should be an AsyncListener that is configured and set on the
+            // InvocationContext.  We must get this and use it to wait for the 
+            // async response to come back.  The AxisCallback that is set on the 
+            // AsyncListener is the callback that Axis2 will call when the response
+            // has arrived.
+            AsyncListener listener = ic.getAsyncListener();
+            AxisCallback axisCallback = new AxisCallback();
+            listener.setAxisCallback(axisCallback);
+            
+            // Once the AsyncListener is configured, we must include that in an 
+            // AsyncListenerWrapper.  The wrapper is what will handle the lifecycle 
+            // of the listener and determine when it's started and stopped.
+            AsyncListenerWrapper<?> wrapper = new AsyncListenerWrapper<Object>(listener);
+
+            // Inside of the wrapper we must set the callback that the JAX-WS
+            // client programmer provided.  This is the user object that we 
+            // must call back on once we've done everything we need to do at
+            // the JAX-WS layer.
+            if(callback != null){
+                wrapper.setAsyncHandler(callback);
+            }
+            else {
+                throw new WebServiceException("Cannot call asynchronous invoke with null callback");
+            }
+            
+            // Get the request message from the MessageContext and send it
+            // using the ServiceClient API.
+            OMElement reqEnvelope = requestMsgCtx.getMessageAsOM();
+            try {
+                client.sendReceiveNonBlocking(ServiceClient.ANON_OUT_IN_OP, reqEnvelope, axisCallback);
+            } catch (AxisFault e) {
+                e.printStackTrace();
+                throw new WebServiceException(e);
+            }
+            
+            // Now that the request has been sent, start the listener thread so that it can
+            // catch the async response.
+            // TODO: Need to determine whether this should be done BEFORE or AFTER
+            // we send the request.  My guess is before though.
+            try {
+                // TODO:Need to figure out where we get the Executor from
+                // Can't be from the MessageContext, but should maybe be 
+                // set somewhere accessible.
+                // FIXME: This should NOT be an ExecutorService, but should just
+                // be a plain old Executor.
+                ExecutorService exec = (ExecutorService) ic.getExecutor();
+                Future<?> future = exec.submit(wrapper);
+                future.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new WebServiceException(e.getMessage());
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                throw new WebServiceException(e.getMessage());
+            }
+            
+            return wrapper;
+        }
+
         return null;
     }
     

@@ -20,6 +20,7 @@ import javax.xml.bind.JAXBContext;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.AxisController;
+import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.param.JAXBParameter;
 import org.apache.axis2.jaxws.param.Parameter;
 
@@ -33,6 +34,21 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
     
     public JAXBDispatch(AxisController ac) {
         super(ac);
+    }
+    
+    public JAXBContext getJAXBContext() {
+        return jaxbContext;
+    }
+    
+    public void setJAXBContext(JAXBContext jbc) {
+        jaxbContext = jbc;
+    }
+    
+    public AsyncListener createAsyncListener() {
+        JAXBDispatchAsyncListener listener = new JAXBDispatchAsyncListener();
+        listener.setJAXBContext(jaxbContext);
+        listener.setMode(mode);
+        return listener;
     }
     
     public OMElement createMessageFromValue(Object value) {
@@ -55,13 +71,5 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
         Parameter p = fromOM(message, param, 
                 axisController.getServiceClient().getOptions().getSoapVersionURI());
         return p.getValue();
-    }
-
-    public JAXBContext getJAXBContext() {
-        return jaxbContext;
-    }
-    
-    public void setJAXBContext(JAXBContext jbc) {
-        jaxbContext = jbc;
     }
 }

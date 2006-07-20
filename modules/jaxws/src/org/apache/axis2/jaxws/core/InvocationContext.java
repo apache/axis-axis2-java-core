@@ -17,10 +17,12 @@
 package org.apache.axis2.jaxws.core;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import javax.xml.ws.handler.Handler;
 
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.jaxws.impl.AsyncListener;
 
 /**
  * The <code>InvocationContext</code> encapsulates all of the information 
@@ -31,15 +33,23 @@ import org.apache.axis2.client.ServiceClient;
  */
 public interface InvocationContext {
 
-    public MessageContext getRequestMessageContext();
-   
-    public MessageContext getResponseMessageContext();
-    
     public List<Handler> getHandlers();
+    
+    public MessageContext getRequestMessageContext();
     
     public void setRequestMessageContext(MessageContext ctx);
     
+    public MessageContext getResponseMessageContext();
+    
     public void setResponseMessageContext(MessageContext ctx);
+    
+    public Executor getExecutor();
+    
+    public void setExecutor(Executor e);
+    
+    public AsyncListener getAsyncListener();
+    
+    public void setAsyncListener(AsyncListener al);
     
     //FIXME: This is temporary.
     public void setServiceClient(ServiceClient client);

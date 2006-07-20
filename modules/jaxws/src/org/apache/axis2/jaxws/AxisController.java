@@ -43,8 +43,8 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.handler.PortData;
-import org.apache.axis2.jaxws.impl.AsyncResponse;
-import org.apache.axis2.jaxws.impl.AsyncResponseProcessor;
+import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
+import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.param.JAXBParameter;
 import org.apache.axis2.jaxws.param.Parameter;
 import org.apache.axis2.jaxws.param.ParameterFactory;
@@ -245,11 +245,11 @@ public class AxisController {
                 p.setJAXBContext(clientContext.getJAXBContext());
             }
             
-            AsyncResponseProcessor asyncProcessor = new AsyncResponseProcessor(callback);
+            AsyncListener asyncProcessor = new AsyncListener(callback);
             asyncProcessor.setMode((Mode) clientContext.getServiceMode());
-            asyncProcessor.setParameter(responseParam);
+            //asyncProcessor.setParameter(responseParam);
             
-            AsyncResponse<?> response = new AsyncResponse<Object>(asyncProcessor);
+            AsyncListenerWrapper<?> response = new AsyncListenerWrapper<Object>(asyncProcessor);
             if(asynchandler !=null){
                 response.setAsyncHandler(asynchandler);
             }
@@ -276,7 +276,7 @@ public class AxisController {
     }
     
     public Response invokeAsync(Parameter param, Map requestContext)throws WebServiceException{
-    	AsyncResponse<Object>  response= (AsyncResponse<Object>)invokeAsync(param, null, requestContext);
+    	AsyncListenerWrapper<Object>  response= (AsyncListenerWrapper<Object>)invokeAsync(param, null, requestContext);
         return response;
     }
     
