@@ -62,6 +62,15 @@ public class TrustUtil {
                 RahasConstants.REQUEST_SECURITY_TOKEN_RESPONSE_LN,
                 RahasConstants.WST_PREFIX);
     }
+    
+    public static OMElement createRequestSecurityTokenResponseCollectionElement(
+            int version, 
+            OMElement parent) throws TrustException {
+        String ns = getWSTNamespace(version);
+        return createOMElement(parent, ns,
+                RahasConstants.REQUEST_SECURITY_TOKEN_RESPONSE_COLLECTION_LN,
+                RahasConstants.WST_PREFIX);
+    }
 
     public static OMElement createRequestedSecurityTokenElement(
             int version, OMElement parent) throws TrustException {
@@ -159,6 +168,14 @@ public class TrustUtil {
                 RahasConstants.WST_PREFIX);
     }
     
+    public static OMElement createKeyTypeElement(
+            int version, OMElement parent) throws TrustException {
+        String ns = getWSTNamespace(version);
+        return createOMElement(parent, ns,
+                RahasConstants.KEY_TYPE_LN,
+                RahasConstants.WST_PREFIX);
+    }
+    
     public static OMElement createLifetimeElement(
             int version, OMElement parent,
             String created, String expires) throws TrustException {
@@ -209,6 +226,47 @@ public class TrustUtil {
         return parent.getOMFactory().createOMElement(new QName(ns, ln, prefix),
                 parent);
     }
+
+    /**
+     * Find the value of the KeyType element of the RST
+     * @param version WS-Trsut version
+     * @param rst RequestSecurityToken element
+     * @return The value of the KeyType element of the RST. If there's no 
+     * KeyType element null will be returned.
+     * @throws TrustException
+     */
+    public static String findKeyType(OMElement rst) throws TrustException {
+        OMElement keyTypeElem = rst.getFirstChildWithName(new QName(rst.getNamespace().getName(), RahasConstants.KEY_TYPE_LN));
+        if(keyTypeElem != null) {
+            String text = keyTypeElem.getText();
+            if(text != null && !"".equals(text.trim())) {
+                return text.trim();
+            } 
+        }
+        return null;
+    }
+    
+    /**
+     * Find the KeySize
+     * @param rst
+     * @return Value of KeySize if available, otherwise -1
+     * @throws TrustException
+     */
+    public static int findKeySize(OMElement rst) throws TrustException {
+        OMElement keySizeElem = rst.getFirstChildWithName(new QName(rst.getNamespace().getName(), RahasConstants.KEY_SIZE_LN));
+        if(keySizeElem != null) {
+            String text = keySizeElem.getText();
+            if(text != null && !"".equals(text.trim())) {
+                try {
+                    return Integer.parseInt(text.trim());
+                } catch (NumberFormatException e) {
+                    throw new TrustException(TrustException.BAD_REQUEST, e);
+                }
+            } 
+        }
+        return -1;
+    }
+    
     
     public static String getWSTNamespace(int version) throws TrustException {
         switch (version){
@@ -247,4 +305,5 @@ public class TrustUtil {
         }
         return storage;
     }
+    
 }

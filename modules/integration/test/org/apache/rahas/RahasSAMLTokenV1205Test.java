@@ -84,7 +84,9 @@ public class RahasSAMLTokenV1205Test extends TestClient {
     }
     
     public void validateRsponse(OMElement resp) {
-        OMElement rst = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+        OMElement rstr = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.REQUEST_SECURITY_TOKEN_RESPONSE_LN));
+        assertNotNull("RequestedSecurityToken missing", rstr);
+        OMElement rst = rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
         assertNotNull("RequestedSecurityToken missing", rst);
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);

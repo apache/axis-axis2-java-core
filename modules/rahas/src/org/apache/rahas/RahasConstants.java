@@ -48,6 +48,7 @@ public class RahasConstants {
     public final static String REQUESTED_ATTACHED_REFERENCE_LN = "RequestedAttachedReference";
     public final static String REQUESTED_UNATTACHED_REFERENCE_LN = "RequestedUnattachedReference";
     public final static String KEY_SIZE_LN = "KeySize";
+    public final static String KEY_TYPE_LN = "KeyType";
     public final static String ENTROPY_LN = "Entropy";
     public final static String APPLIES_TO_LN = "AppliesTo";
     public final static String LIFETIME_LN = "Lifetime";
@@ -78,6 +79,11 @@ public class RahasConstants {
         
         //Token types
         public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
+        
+        //Key types
+        public final static String KEY_TYPE_SYMM_KEY = WST_NS_05_02 + "/SymmetricKey";
+        public final static String KEY_TYPE_PUBLIC_KEY = WST_NS_05_02 + "/PublicKey";
+        public final static String KEY_TYPE_BEARER = WST_NS_05_02 + "/Bearer";
     }
     
     public class V_05_12 { 
@@ -105,6 +111,11 @@ public class RahasConstants {
         
         //Token types
         public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/12/sc/sct";
+        
+        //Key types
+        public final static String KEY_TYPE_SYMM_KEY = WST_NS_05_12 + "/SymmetricKey";
+        public final static String KEY_TYPE_PUBLIC_KEY = WST_NS_05_12 + "/PublicKey";
+        public final static String KEY_TYPE_BEARER = WST_NS_05_12 + "/Bearer";
     }
     
     //Token types

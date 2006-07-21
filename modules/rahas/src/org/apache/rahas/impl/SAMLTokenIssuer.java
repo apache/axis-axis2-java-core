@@ -143,68 +143,65 @@ public class SAMLTokenIssuer implements TokenIssuer {
                         new String[] { this.configParamName });
             }
         }
+        
+
+        //Set the DOM impl to DOOM
+        DocumentBuilderFactoryImpl.setDOOMRequired(true);
+
+        SOAPEnvelope env = TrustUtil.createSOAPEnvelope(inMsgCtx.getEnvelope()
+                .getNamespace().getName());
 
         Crypto crypto = CryptoFactory.getInstance(config.cryptoPropFile,
                 inMsgCtx.getAxisService().getClassLoader());
-        
-        SOAPEnvelope env = TrustUtil.createSOAPEnvelope(inMsgCtx.getEnvelope()
-                .getNamespace().getName());
-        // Get the document
-        Document doc = ((Element) env).getOwnerDocument();
-        
-        byte[] secret = null;
-        
-        Element encryptedKeyElem = null;
-        try {
-            
-            //Get ApliesTo to figureout which service to issue the token for
-            X509Certificate serviceCert = getServiceCert(request, config, crypto);
-
-            //Ceate the encrypted key
-            WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
-    
-            //Use thumbprint id
-            encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
-
-            //SEt the encryption cert
-            encrKeyBuilder.setUseThisCert(serviceCert);
-            
-            //set keysize
-            encrKeyBuilder.setKeySize(256);
-            
-            //Set key encryption algo
-            encrKeyBuilder.setKeyEncAlgo(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15);
-            
-            //Build
-            encrKeyBuilder.prepare(doc, crypto);
-            
-            //Extract the base64 encoded secret value
-            secret = encrKeyBuilder.getEphemeralKey();
-            
-            //Extract the Encryptedkey DOM element 
-            encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
-        } catch (WSSecurityException e) {
-            throw new TrustException(
-                    "errorInBuildingTheEncryptedKeyForPrincipal",
-                    new String[] { clientCert.getSubjectDN().getName()}, e);
-        }
         
         //Creation and expiration times
         Date creationTime = new Date();
         Date expirationTime = new Date();
         expirationTime.setTime(creationTime.getTime() + config.ttl);
         
-        //Set the DOM impl to DOOM
-        DocumentBuilderFactoryImpl.setDOOMRequired(true);
-
-        SAMLAssertion assertion = this.createAssertion(doc, encryptedKeyElem, 
-                config, crypto, creationTime, expirationTime);
+        // Get the document
+        Document doc = ((Element) env).getOwnerDocument();
+        
+        //Get the key size and create a new byte array of that size
+        int keySize = TrustUtil.findKeySize(request);
+        
+        keySize = (keySize == -1) ? config.keySize : keySize;
+        
+        byte[] secret = new byte[keySize/8]; 
+        
+        /*
+         * Find the KeyType
+         * If the KeyType is SymmetricKey or PublicKey, issue a SAML HoK 
+         * assertion.
+         *      - In the case of the PublicKey, in coming security header 
+         *      MUST contain a certificate (maybe via signature)
+         *      
+         * If the KeyType is Bearer then issue a Bearer assertion
+         * 
+         * If the key type is missing we will issue a HoK asserstion
+         */ 
+        
+        String keyType = TrustUtil.findKeyType(request);
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        
+        SAMLAssertion assertion = createHoKAssertion(config, request, doc, crypto, creationTime, expirationTime, keyType, secret);
+        OMElement rstrElem = null; 
         
         int version = TrustUtil.getWSTVersion(request.getNamespace().getName());
         
-        OMElement rstrElem = TrustUtil
+        if(RahasConstants.VERSION_05_02 == version) {
+            rstrElem = TrustUtil
                 .createRequestSecurityTokenResponseElement(version, env.getBody());
-
+        } else {
+            OMElement rstrcElem = TrustUtil
+                    .createRequestSecurityTokenResponseCollectionElement(
+                            version, env.getBody());
+            
+            rstrElem = TrustUtil
+                .createRequestSecurityTokenResponseElement(version, rstrcElem);
+        }
+        
         TrustUtil.createtTokenTypeElement(version, rstrElem).setText(
                 RahasConstants.TOK_TYPE_SAML_10);
 
@@ -316,11 +313,54 @@ public class SAMLTokenIssuer implements TokenIssuer {
         
     }
 
+    private SAMLAssertion createHoKAssertion(SAMLTokenIssuerConfig config,
+            OMElement request, Document doc, Crypto crypto, Date creationTime,
+            Date expirationTime, String keyType, byte[] secret)
+            throws TrustException {
+        
+        Element encryptedKeyElem = null;
+        X509Certificate serviceCert = null;
+        try {
+            
+            //Get ApliesTo to figureout which service to issue the token for
+            serviceCert = getServiceCert(request, config, crypto);
+
+            //Ceate the encrypted key
+            WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
+    
+            //Use thumbprint id
+            encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+
+            //SEt the encryption cert
+            encrKeyBuilder.setUseThisCert(serviceCert);
+            
+            //set keysize
+            encrKeyBuilder.setKeySize(secret.length*8);
+            
+            //Set key encryption algo
+            encrKeyBuilder.setKeyEncAlgo(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15);
+            
+            //Build
+            encrKeyBuilder.prepare(doc, crypto);
+            
+            //Extract the base64 encoded secret value
+            System.arraycopy(encrKeyBuilder.getEphemeralKey(), 0, secret, 0, secret.length);
+            
+            //Extract the Encryptedkey DOM element 
+            encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
+        } catch (WSSecurityException e) {
+            throw new TrustException(
+                    "errorInBuildingTheEncryptedKeyForPrincipal",
+                    new String[] { serviceCert.getSubjectDN().getName()}, e);
+        }
+        return this.createAssertion(doc, encryptedKeyElem, 
+                config, crypto, creationTime, expirationTime);
+    }
     /**
      * Create the SAML assertion with the secret held in an 
      * <code>xenc:EncryptedKey</code>
      * @param doc
-     * @param encryptedKeyElem
+     * @param keyInfoContent
      * @param config
      * @param crypto
      * @param notBefore
@@ -329,7 +369,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
      * @throws TrustException
      */
     private SAMLAssertion createAssertion(Document doc, 
-                Element encryptedKeyElem, 
+                Element keyInfoContent, 
                 SAMLTokenIssuerConfig config, 
                 Crypto crypto,
                 Date notBefore,
@@ -338,10 +378,10 @@ public class SAMLTokenIssuer implements TokenIssuer {
             String[] confirmationMethods = new String[]{SAMLSubject.CONF_HOLDER_KEY};
             
             Element keyInfoElem = doc.createElementNS(WSConstants.SIG_NS, "KeyInfo");
-            ((OMElement)encryptedKeyElem).declareNamespace(WSConstants.SIG_NS, WSConstants.SIG_PREFIX);
-            ((OMElement)encryptedKeyElem).declareNamespace(WSConstants.ENC_NS, WSConstants.ENC_PREFIX);
+            ((OMElement)keyInfoContent).declareNamespace(WSConstants.SIG_NS, WSConstants.SIG_PREFIX);
+            ((OMElement)keyInfoContent).declareNamespace(WSConstants.ENC_NS, WSConstants.ENC_PREFIX);
             
-            keyInfoElem.appendChild(encryptedKeyElem);
+            keyInfoElem.appendChild(keyInfoContent);
             
             SAMLSubject subject = new SAMLSubject(null, 
                     Arrays.asList(confirmationMethods),
@@ -381,6 +421,9 @@ public class SAMLTokenIssuer implements TokenIssuer {
         }
     }
 
+    
+
+    
     /*
      * (non-Javadoc)
      * 

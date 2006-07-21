@@ -76,6 +76,8 @@ public class SAMLTokenIssuerConfig {
     public final static QName ADD_REQUESTED_ATTACHED_REF = new QName("addRequestedAttachedRef");
     public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
     
+    public final static QName USE_SAML_ATTRIBUTE_STATEMENT = new QName("useSAMLAttributeStatement");
+    
     public final static QName ISSUER_NAME = new QName("issuerName");
     
     protected String cryptoPropFile;
