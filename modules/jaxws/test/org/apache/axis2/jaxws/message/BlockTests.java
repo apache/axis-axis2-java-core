@@ -16,17 +16,23 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axiom.om.OMElement;
@@ -37,6 +43,9 @@ import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import test.EchoString;
 import test.ObjectFactory;
@@ -887,4 +896,90 @@ public class BlockTests extends TestCase {
 		assertTrue(sampleText.equals(newText));
 		
 	}
+    
+    /**
+     * Create a Block representing a DOMSource instance and simulate an 
+     * outbound flow
+     * @throws Exception
+     */
+    public void testDOMSourceOutflow() throws Exception {
+        // Get the BlockFactory
+        SourceBlockFactory f = (SourceBlockFactory)
+            FactoryRegistry.getFactory(SourceBlockFactory.class);
+        
+        // Turn the content into a stream
+        ByteArrayInputStream bais = new ByteArrayInputStream(sampleText.getBytes());
+        
+        // Create a DOM tree from the sample text
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true);
+        DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
+        Document domTree = domBuilder.parse(bais);
+        Node node = domTree.getDocumentElement();
+        System.out.println(node.toString());
+        
+        // Create a DOMSource object from the DOM tree
+        DOMSource ds = new DOMSource(node);
+        node = ds.getNode();
+        
+        // Create a Block using the sample string as the content.  This simulates
+        // what occurs on the outbound JAX-WS dispatch<Source> client
+        Block block = f.createFrom(ds, null, null);
+        
+        // We didn't pass in a qname, so the following should return false
+        assertTrue(!block.isQNameAvailable());
+        
+        // Assuming no handlers are installed, the next thing that will happen
+        // is a XMLStreamReader will be requested...to go to OM.   At this point the
+        // block should be consumed.
+        XMLStreamReader reader = block.getXMLStreamReader(true);
+        
+        // The block should be consumed
+        assertTrue(block.isConsumed());
+        
+        // To check that the output is correct, get the String contents of the 
+        // reader
+        Reader2Writer r2w = new Reader2Writer(reader);
+        String newText = r2w.getAsString();
+        assertTrue(sampleText.equals(newText));
+    }
+    
+    /**
+     * Create a Block representing a SAXSource instance and simulate an 
+     * outbound flow
+     * @throws Exception
+     */
+    public void testSAXSourceOutflow() throws Exception {
+        // Get the BlockFactory
+        SourceBlockFactory f = (SourceBlockFactory)
+            FactoryRegistry.getFactory(SourceBlockFactory.class);
+        
+        // Create a SAXSource from the sample text
+        byte[] bytes = sampleText.getBytes();
+        ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+        InputSource input = new InputSource(stream);
+        SAXSource ss = new SAXSource(input);
+        
+        // Create a Block using the sample string as the content.  This simulates
+        // what occurs on the outbound JAX-WS dispatch<Source> client
+        Block block = f.createFrom(ss, null, null);
+        
+        // We didn't pass in a qname, so the following should return false
+        assertTrue(!block.isQNameAvailable());
+        
+        // Assuming no handlers are installed, the next thing that will happen
+        // is a XMLStreamReader will be requested...to go to OM.   At this point the
+        // block should be consumed.
+        XMLStreamReader reader = block.getXMLStreamReader(true);
+        
+        // The block should be consumed
+        assertTrue(block.isConsumed());
+        
+        // To check that the output is correct, get the String contents of the 
+        // reader
+        Reader2Writer r2w = new Reader2Writer(reader);
+        String newText = r2w.getAsString();
+        assertTrue(sampleText.equals(newText));
+    }
+
 }

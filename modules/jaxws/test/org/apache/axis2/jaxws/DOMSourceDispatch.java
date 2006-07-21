@@ -62,6 +62,7 @@ public class DOMSourceDispatch extends TestCase{
 			Map<String, Object> requestContext = dispatch.getRequestContext();
 			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
+			domFactory.setNamespaceAware(true);
 			Document domTree = domBuilder.parse(stream);
 			DOMSource srcStream = new DOMSource(domTree);
 			

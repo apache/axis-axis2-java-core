@@ -134,6 +134,18 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	@Override
 	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException  {
 		// TODO not sure if this is always the most performant way to do this.
+		if (busObj instanceof DOMSource) {
+			// Let's use our own DOMReader for now...
+			Element element = (Element) ((DOMSource)busObj).getNode();
+			
+			// We had some problems with testers producing DOMSources w/o Namespaces.  
+			// It's easy to catch this here.
+			if (element.getLocalName() == null) {
+				// TODO NLS
+				throw new XMLStreamException(ExceptionFactory.makeMessageException("The DOMSource must be Namespace Aware"));
+			}
+			return new DOMReader((Element) ((DOMSource)busObj).getNode());
+		} 
 		return inputFactory.createXMLStreamReader((Source) busObj);
 	}
 
