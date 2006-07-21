@@ -351,7 +351,13 @@
 					<!-- TODO remove the following line -->
                                        //xmlWriter.writeStartElement("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                                        // write the nil attribute
-                                       xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
+                                    java.lang.String schemaNS = "http://www.w3.org/2001/XMLSchema-instance";
+                                          java.lang.String schemaPrefix = "xsi";
+                                          if (xmlWriter.getPrefix(schemaNS) == null) {
+                                              xmlWriter.writeNamespace(schemaPrefix, schemaNS);
+                                              xmlWriter.setPrefix(schemaPrefix, schemaNS);
+                                          }
+                                       xmlWriter.writeAttribute(schemaNS,
                                                      "nil",
                                                      "true");
                                        xmlWriter.writeEndElement();
@@ -474,10 +480,14 @@
 					
 					<!-- TODO remove the following -->
 			      // xmlWriter.writeStartElement("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
+                            java.lang.String schemaNS = "http://www.w3.org/2001/XMLSchema-instance";
+                            java.lang.String schemaPrefix = "xsi";
+                                          if (xmlWriter.getPrefix(schemaNS) == null) {
+                                              xmlWriter.writeNamespace(schemaPrefix, schemaNS);
+                                              xmlWriter.setPrefix(schemaPrefix, schemaNS);
+                                          }
                               if (<xsl:value-of select="$varName"/>[i]==null){
-                                  xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
-                                                     "nil",
-                                                     "true");
+                                  xmlWriter.writeAttribute(schemaNS,"nil","true");
                               }else{
                                  xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
                               }
@@ -574,7 +584,13 @@
 						<!--TODO remove the following line -->
                                           //xmlWriter.writeStartElement("<xsl:value-of select="property/@namespace"/>","<xsl:value-of select="property/@name"/>");
                                           // write the nil attribute
-                                          xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
+                                          java.lang.String schemaNS = "http://www.w3.org/2001/XMLSchema-instance";
+                                          java.lang.String schemaPrefix = "xsi";
+                                          if (xmlWriter.getPrefix(schemaNS) == null) {
+                                              xmlWriter.writeNamespace(schemaPrefix, schemaNS);
+                                              xmlWriter.setPrefix(schemaPrefix, schemaNS);
+                                          }
+                                          xmlWriter.writeAttribute(schemaNS,
                                                      "nil",
                                                      "true");
                                           xmlWriter.writeEndElement();
@@ -1501,7 +1517,13 @@
                                     if (<xsl:value-of select="$varName"/>==null){
                                        xmlWriter.writeStartElement("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                                        // write the nil attribute
-                                       xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
+                                       java.lang.String schemaNS = "http://www.w3.org/2001/XMLSchema-instance";
+                                          java.lang.String schemaPrefix = "xsi";
+                                          if (xmlWriter.getPrefix(schemaNS) == null) {
+                                              xmlWriter.writeNamespace(schemaPrefix, schemaNS);
+                                              xmlWriter.setPrefix(schemaPrefix, schemaNS);
+                                          }
+                                       xmlWriter.writeAttribute(schemaNS,
                                                      "nil",
                                                      "true");
                                        xmlWriter.writeEndElement();
@@ -1603,7 +1625,13 @@
                             for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                               xmlWriter.writeStartElement("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                               if (<xsl:value-of select="$varName"/>[i]==null){
-                                  xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
+                                  java.lang.String schemaNS = "http://www.w3.org/2001/XMLSchema-instance";
+                                          java.lang.String schemaPrefix = "xsi";
+                                          if (xmlWriter.getPrefix(schemaNS) == null) {
+                                              xmlWriter.writeNamespace(schemaPrefix, schemaNS);
+                                              xmlWriter.setPrefix(schemaPrefix, schemaNS);
+                                          }
+                                  xmlWriter.writeAttribute(schemaNS,
                                                      "nil",
                                                      "true");
                               }else{
@@ -1661,7 +1689,13 @@
                                       if (<xsl:value-of select="$varName"/>==null){
                                           xmlWriter.writeStartElement("<xsl:value-of select="property/@namespace"/>","<xsl:value-of select="property/@name"/>");
                                           // write the nil attribute
-                                          xmlWriter.writeAttribute("http://www.w3.org/2001/XMLSchema-instance",
+                                         java.lang.String schemaNS = "http://www.w3.org/2001/XMLSchema-instance";
+                                          java.lang.String schemaPrefix = "xsi";
+                                          if (xmlWriter.getPrefix(schemaNS) == null) {
+                                              xmlWriter.writeNamespace(schemaPrefix, schemaNS);
+                                              xmlWriter.setPrefix(schemaPrefix, schemaNS);
+                                          }
+                                          xmlWriter.writeAttribute(schemaNS,
                                                      "nil",
                                                      "true");
                                           xmlWriter.writeEndElement();
