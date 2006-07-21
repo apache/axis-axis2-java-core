@@ -128,13 +128,19 @@ public class AxisServiceGroup extends AxisDescription {
                 return;
             }
         }
-        Iterator srevice = getServices();
-        while (srevice.hasNext()) {
-            // engaging each service
-            AxisService axisService = (AxisService) srevice.next();
+        for (Iterator serviceIter = getServices(); serviceIter.hasNext();) {
+            AxisService axisService = (AxisService) serviceIter.next();
             axisService.engageModule(module, axisConfig);
         }
         addToengagedModules(moduleName);
+    }
+
+    public void disengageModule(AxisModule module) throws AxisFault {
+        for (Iterator serviceIter = getServices(); serviceIter.hasNext();) {
+            AxisService axisService = (AxisService) serviceIter.next();
+            axisService.disEngageModule(module);
+        }
+        removeFromEngageList(module.getName());
     }
 
     public void removeService(String name) throws AxisFault {
