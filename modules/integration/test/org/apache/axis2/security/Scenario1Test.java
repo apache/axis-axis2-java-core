@@ -19,6 +19,8 @@ package org.apache.axis2.security;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 
+import java.util.Hashtable;
+
 
 /**
  * WS-Security interop scenario 1
@@ -49,5 +51,17 @@ public class Scenario1Test extends InteropTestBase {
 	protected boolean isUseSOAP12InStaticConfigTest() {
 		return true;
 	}
+
+    protected OutflowConfiguration getOutflowConfigurationWithRefs() {
+        return null;
+    }
+
+    protected InflowConfiguration getInflowConfigurationWithRefs() {
+        return null;
+    }
+
+    protected Hashtable getPropertyRefs() {
+        return null;
+    }
 
 }

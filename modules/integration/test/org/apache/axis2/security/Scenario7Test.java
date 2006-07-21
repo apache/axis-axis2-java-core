@@ -22,6 +22,9 @@ import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.security.WSConstants;
 
+import java.util.Hashtable;
+import java.util.Properties;
+
 /**
  * WS-Security interop scenario 7
  */
@@ -69,4 +72,69 @@ public class Scenario7Test extends InteropTestBase {
 	protected boolean isUseSOAP12InStaticConfigTest() {
 		return false;
 	}
+
+    protected OutflowConfiguration getOutflowConfigurationWithRefs() {
+        OutflowConfiguration ofc = new OutflowConfiguration();
+        
+        ofc.setActionItems("Signature Encrypt Timestamp");
+        ofc.setUser("alice");
+        ofc.setEncryptionUser("bob");
+        ofc.setSignaturePropRefId("key1");
+        ofc.setEncryptionPropRefId("key2");
+        ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+        ofc.setEncryptionSymAlgorithm(WSConstants.TRIPLE_DES);
+        ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
+        ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+        ofc.setEmbeddedKeyCallbackClass("rg.apache.axis2.security.PWCallback");
+        ofc.setSignatureParts("{}{" + 
+                                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI + 
+                                "}Body;STRTransform");
+        
+        return ofc;
+    }
+
+    protected InflowConfiguration getInflowConfigurationWithRefs() {
+        InflowConfiguration ifc = new InflowConfiguration();
+        
+        ifc.setActionItems("Signature Encrypt Timestamp");
+        ifc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+        ifc.setSignaturePropRefId("key3");
+        ifc.setDecryptionPropRefKey("key4");
+        
+        return ifc;
+    }
+
+    protected Hashtable getPropertyRefs() {
+        Properties prop1 =  new Properties();
+        prop1.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        prop1.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        prop1.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "password");
+        prop1.setProperty("org.apache.ws.security.crypto.merlin.file", "interop2.jks");
+
+        Properties prop2 =  new Properties();
+        prop2.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        prop2.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        prop2.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "password");
+        prop2.setProperty("org.apache.ws.security.crypto.merlin.file", "interop2.jks");
+        
+        Properties prop3 =  new Properties();
+        prop3.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        prop3.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        prop3.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "password");
+        prop3.setProperty("org.apache.ws.security.crypto.merlin.file", "interop2.jks");
+
+        Properties prop4 =  new Properties();
+        prop4.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        prop4.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        prop4.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "password");
+        prop4.setProperty("org.apache.ws.security.crypto.merlin.file", "interop2.jks");
+        
+        Hashtable table = new Hashtable();
+        table.put("key1", prop1);
+        table.put("key2", prop2);
+        table.put("key3", prop3);
+        table.put("key4", prop4);
+        
+        return table;
+    }
 }

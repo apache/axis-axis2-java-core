@@ -30,9 +30,11 @@ import org.xmlsoap.ping.PingResponse;
 import org.xmlsoap.ping.PingResponseDocument;
 import org.xmlsoap.ping.TicketType;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 /**
- * Client for the interop service
- * This MUST be used with the codegen'ed classes
+ * Client for the interop service This MUST be used with the codegen'ed classes
  */
 public class InteropScenarioClient {
 
@@ -44,7 +46,8 @@ public class InteropScenarioClient {
         }
     }
 
-    public void invokeWithStaticConfig(String clientRepo, String url) throws Exception {
+    public void invokeWithStaticConfig(String clientRepo, String url)
+            throws Exception {
         TicketType ticket = TicketType.Factory.newInstance();
         ticket.setId("My ticket Id");
 
@@ -55,16 +58,17 @@ public class InteropScenarioClient {
         PingDocument pingDoc = PingDocument.Factory.newInstance();
         pingDoc.setPing(ping);
 
-        PingPortStub stub = new PingPortStub(
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        clientRepo, clientRepo +"/conf/axis2.xml"), url);
+        PingPortStub stub = new PingPortStub(ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(clientRepo,
+                        clientRepo + "/conf/axis2.xml"), url);
 
-        //Enable MTOM to those scenarios where they are configured using:
-        //<optimizeParts>xpathExpression</optimizeParts>
-        stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        // Enable MTOM to those scenarios where they are configured using:
+        // <optimizeParts>xpathExpression</optimizeParts>
+        stub._getServiceClient().getOptions().setProperty(
+                Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         stub._getServiceClient().getOptions().setSoapVersionURI(soapNsURI);
-        stub._getServiceClient().engageModule(new javax.xml.namespace.QName("rampart"));
-
+        stub._getServiceClient().engageModule(
+                new javax.xml.namespace.QName("rampart"));
 
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 
@@ -73,9 +77,9 @@ public class InteropScenarioClient {
         System.out.println(pingRes.getText());
     }
 
-    public void invokeWithGivenConfig(String clientRepo,
-                                      String url, OutflowConfiguration outflowConfig,
-                                      InflowConfiguration inflowConfig) throws Exception {
+    public void invokeWithGivenConfig(String clientRepo, String url,
+            OutflowConfiguration outflowConfig, InflowConfiguration inflowConfig)
+            throws Exception {
         TicketType ticket = TicketType.Factory.newInstance();
         ticket.setId("My ticket Id");
 
@@ -86,21 +90,27 @@ public class InteropScenarioClient {
         PingDocument pingDoc = PingDocument.Factory.newInstance();
         pingDoc.setPing(ping);
 
-        PingPortStub stub = new PingPortStub(
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(clientRepo, clientRepo +"/conf/axis2.xml"), url);
+        PingPortStub stub = new PingPortStub(ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(clientRepo,
+                        clientRepo + "/conf/axis2.xml"), url);
 
-        //Enable MTOM to those scenarios where they are configured using:
-        //<optimizeParts>xpathExpression</optimizeParts>
-        stub._getServiceClient().getOptions().setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        //Engage the security module
-        stub._getServiceClient().engageModule(new javax.xml.namespace.QName("rampart"));
-
+        // Enable MTOM to those scenarios where they are configured using:
+        // <optimizeParts>xpathExpression</optimizeParts>
+        stub._getServiceClient().getOptions().setProperty(
+                Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        // Engage the security module
+        stub._getServiceClient().engageModule(
+                new javax.xml.namespace.QName("rampart"));
 
         if (outflowConfig != null) {
-            stub._getServiceClient().getOptions().setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, outflowConfig.getProperty());
+            stub._getServiceClient().getOptions().setProperty(
+                    WSSHandlerConstants.OUTFLOW_SECURITY,
+                    outflowConfig.getProperty());
         }
         if (inflowConfig != null) {
-            stub._getServiceClient().getOptions().setProperty(WSSHandlerConstants.INFLOW_SECURITY, inflowConfig.getProperty());
+            stub._getServiceClient().getOptions().setProperty(
+                    WSSHandlerConstants.INFLOW_SECURITY,
+                    inflowConfig.getProperty());
         }
         PingResponseDocument pingResDoc = stub.Ping(pingDoc);
 
@@ -110,4 +120,58 @@ public class InteropScenarioClient {
         stub = null;
     }
 
+    public void invokeWithGivenConfigWithProRefs(String clientRepo, String url,
+            OutflowConfiguration outflowConfig, InflowConfiguration inflowConfig,
+            Hashtable propRefs)
+            throws Exception {
+        TicketType ticket = TicketType.Factory.newInstance();
+        ticket.setId("My ticket Id");
+
+        Ping ping = Ping.Factory.newInstance();
+        ping.setText("Testing axis2-wss4j module");
+        ping.setTicket(ticket);
+
+        PingDocument pingDoc = PingDocument.Factory.newInstance();
+        pingDoc.setPing(ping);
+
+        PingPortStub stub = new PingPortStub(ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(clientRepo,
+                        clientRepo + "/conf/axis2.xml"), url);
+
+        // Enable MTOM to those scenarios where they are configured using:
+        // <optimizeParts>xpathExpression</optimizeParts>
+        stub._getServiceClient().getOptions().setProperty(
+                Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        // Engage the security module
+        stub._getServiceClient().engageModule(
+                new javax.xml.namespace.QName("rampart"));
+
+        if (outflowConfig != null) {
+            stub._getServiceClient().getOptions().setProperty(
+                    WSSHandlerConstants.OUTFLOW_SECURITY,
+                    outflowConfig.getProperty());
+        }
+        if (inflowConfig != null) {
+            stub._getServiceClient().getOptions().setProperty(
+                    WSSHandlerConstants.INFLOW_SECURITY,
+                    inflowConfig.getProperty());
+        }
+        
+        if(propRefs != null) {
+            Enumeration keysEnum = propRefs.keys();
+            while (keysEnum.hasMoreElements()) {
+                String refKey = (String) keysEnum.nextElement();
+                
+                stub._getServiceClient().getOptions().setProperty(refKey,
+                       propRefs.get(refKey));
+            }
+        }
+        
+        PingResponseDocument pingResDoc = stub.Ping(pingDoc);
+
+        PingResponse pingRes = pingResDoc.getPingResponse();
+
+        System.out.println(pingRes.getText());
+        stub = null;
+    }
 }

@@ -19,6 +19,8 @@ package org.apache.axis2.security;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 
+import java.util.Hashtable;
+
 /**
  * SAML Scenario 1
  */
@@ -46,5 +48,29 @@ public class ScenarioST1Test extends InteropTestBase {
 		// TODO TODO
 		throw new UnsupportedOperationException("TODO");
 	}
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.security.InteropTestBase#getOutflowConfigurationWithRefs()
+     */
+    protected OutflowConfiguration getOutflowConfigurationWithRefs() {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.security.InteropTestBase#getInflowConfigurationWithRefs()
+     */
+    protected InflowConfiguration getInflowConfigurationWithRefs() {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.security.InteropTestBase#getPropertyRefs()
+     */
+    protected Hashtable getPropertyRefs() {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
 
 }

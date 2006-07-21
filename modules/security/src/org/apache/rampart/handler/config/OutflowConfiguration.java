@@ -205,6 +205,16 @@ public class OutflowConfiguration {
 				WSHandlerConstants.SIG_PROP_FILE, signaturePropFile);
 	}
 
+    /**
+     * Sets the signature property ref key of the current action.
+     * 
+     * @param signaturePropRefId
+     */
+    public void setSignaturePropRefId(String signaturePropRefId) {
+        this.actionList[this.currentAction].put(
+                WSHandlerConstants.SIG_PROP_REF_ID, signaturePropRefId);
+    }
+    
 	/**
 	 * Returns the signature property file of the current action.
 	 * @return Returns String.
@@ -465,6 +475,16 @@ public class OutflowConfiguration {
 				WSHandlerConstants.ENC_PROP_FILE, encPropFile);
 	}
 	
+    /**
+     * Sets the encryption property ref key of the current action.
+     * 
+     * @param encryptionPropRefId
+     */
+    public void setEncryptionPropRefId(String encryptionPropRefId) {
+        this.actionList[this.currentAction].put(
+                WSHandlerConstants.ENC_PROP_REF_ID, encryptionPropRefId);
+    }
+    
 	/**
 	 * Returns the encryption property file. 
 	 * @return Returns String.

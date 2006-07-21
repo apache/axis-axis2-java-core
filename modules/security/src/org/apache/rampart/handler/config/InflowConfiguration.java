@@ -111,6 +111,14 @@ public class InflowConfiguration {
 	public void setDecryptionPropFile(String decryptionPropFile) {
 		this.action.put(WSHandlerConstants.DEC_PROP_FILE,decryptionPropFile);
 	}
+    
+    /**
+     * Sets the decryption property ref key.
+     * @param decryptionPropFile
+     */
+    public void setDecryptionPropRefKey(String decryptionPropRefKey) {
+        this.action.put(WSHandlerConstants.DEC_PROP_REF_ID,decryptionPropRefKey);
+    }
 
 	/**
 	 * Returns the password callback class name.
@@ -143,6 +151,14 @@ public class InflowConfiguration {
 	public void setSignaturePropFile(String signaturePropFile) {
 		this.action.put(WSHandlerConstants.SIG_PROP_FILE, signaturePropFile);
 	}
+    
+    /**
+     * Sets the signature property ref key.
+     * @param signaturePropFile
+     */
+    public void setSignaturePropRefId(String signaturePropRefId) {
+        this.action.put(WSHandlerConstants.SIG_PROP_REF_ID, signaturePropRefId);
+    }
 	
 	/**
 	 * Sets whether signature confirmation should be enabled or not.

@@ -21,6 +21,9 @@ import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.security.WSConstants;
 
+import java.util.Hashtable;
+import java.util.Properties;
+
 
 /**
  * WS-Security interop scenario 2a
@@ -57,4 +60,39 @@ public class Scenario2aTest extends InteropTestBase {
 	protected boolean isUseSOAP12InStaticConfigTest() {
 		return true;
 	}
+
+    protected OutflowConfiguration getOutflowConfigurationWithRefs() {
+        OutflowConfiguration ofc = new OutflowConfiguration();
+        
+        ofc.setActionItems("UsernameTokenSignature Encrypt Timestamp");
+        ofc.setUser("Chris");
+        ofc.setEncryptionParts("{Element}{" + WSSE_NS + "}UsernameToken");
+        ofc.setEncryptionUser("bob");
+        ofc.setPasswordCallbackClass("org.apache.axis2.security.PWCallback");
+        ofc.setEncryptionSymAlgorithm(WSConstants.TRIPLE_DES);
+        ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+        
+        ofc.setEncryptionPropRefId("key1");
+        
+        return ofc;
+    }
+
+    protected InflowConfiguration getInflowConfigurationWithRefs() {
+        return null;
+    }
+
+    protected Hashtable getPropertyRefs() {
+        
+        Properties prop1 =  new Properties();
+        prop1.setProperty("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
+        prop1.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
+        prop1.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "password");
+        prop1.setProperty("org.apache.ws.security.crypto.merlin.file", "interop2.jks");
+        
+        Hashtable table = new Hashtable();
+        table.put("key1", prop1);
+        
+        return table;
+        
+    }
 }
