@@ -23,10 +23,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
@@ -75,7 +72,7 @@ public class EchoRawSwATest extends UtilServerBasedTestCase {
         service.addParameter(new Parameter(
                 AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
                 .getName()));
-        AxisOperation axisOp = new OutInAxisOperation(operationName);
+        AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
         axisOp.setStyle(WSDLConstants.STYLE_DOC);
         service.addOperation(axisOp);
