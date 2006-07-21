@@ -18,47 +18,32 @@ package org.apache.axis2.spring;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import junit.framework.TestCase;
-import junit.framework.Assert;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.databinding.utils.BeanUtil;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
+import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import java.io.StringWriter;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringServiceTest extends UtilServerBasedTestCase {
 
@@ -67,7 +52,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
     EndpointReference targetEPR = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
 //            "http://127.0.0.1:" + 5556
-                  //  + "/axis2/services/EchoXMLService/echoOMElement");
+                    //  + "/axis2/services/EchoXMLService/echoOMElement");
                     + "/axis2/services/SpringExample/getValue");
 
     protected AxisConfiguration engineRegistry;
@@ -84,7 +69,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
 
     protected void setUp() throws Exception {
 
-        AxisService service = 
+        AxisService service =
                 createSpringService(springServiceName, new RawXMLINOutMessageReceiver(),
                         "org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier",
                         "springAwareService",
@@ -114,21 +99,21 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
 
         OMFactory factory = OMAbstractFactory.getOMFactory();
         OMNamespace omNs = factory.createOMNamespace(
-        		"http://springExample.org/example1", "example1");
-        
+                "http://springExample.org/example1", "example1");
+
         OMElement method = factory.createOMElement("getValue", omNs);
         OMElement value = factory.createOMElement("Text", omNs);
         value.addChild(factory.createOMText(value, "Test String "));
         method.addChild(value);
-              
+
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setTo(targetEPR);
         options.setAction(springOperationName.getLocalPart());
         sender.setOptions(options);
-       
+
         OMElement result = sender.sendReceive(springOperationName, method);
-  
+
         StringWriter writer = new StringWriter();
         result.serialize(XMLOutputFactory.newInstance()
                 .createXMLStreamWriter(writer));
@@ -136,11 +121,11 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
         String testStr = writer.toString();
         // write to report
         System.out.println("\ntestSpringAppContextAwareObjectSupplier result: " + testStr);
-        assertNotSame(new Integer(testStr.indexOf("emerge thyself")), new Integer(-1));       
+        assertNotSame(new Integer(testStr.indexOf("emerge thyself")), new Integer(-1));
     }
 
     private AxisService createSpringService(QName springServiceName,
-        MessageReceiver messageReceiver, String supplierName, String beanName, QName opName) throws AxisFault {
+                                            MessageReceiver messageReceiver, String supplierName, String beanName, QName opName) throws AxisFault {
 
         AxisService service = new AxisService(springServiceName.getLocalPart());
 
@@ -159,10 +144,10 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
     }
 
     public AxisService createSpringServiceforClient(QName springServiceName,
-                                                           MessageReceiver messageReceiver,
-                                                           String supplierName,
-                                                           String beanName,
-                                                           QName opName)
+                                                    MessageReceiver messageReceiver,
+                                                    String supplierName,
+                                                    String beanName,
+                                                    QName opName)
             throws AxisFault {
         AxisService service = new AxisService(springServiceName.getLocalPart());
 
@@ -182,7 +167,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
     public void createSpringAppCtx(ClassLoader cl)
             throws Exception {
 
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"/spring/applicationContext.xml"}, false);
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{"/spring/applicationContext.xml"}, false);
         ctx.setClassLoader(cl);
         ctx.refresh();
     }

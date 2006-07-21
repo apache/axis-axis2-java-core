@@ -1,6 +1,7 @@
 package org.apache.axis2.description;
 
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
@@ -17,17 +18,14 @@ import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap.SOAPHeader;
-import javax.wsdl.extensions.soap.SOAPOperation;
-import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.*;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
@@ -179,7 +177,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService.setTargetNamespace(wsdl4jDefinition
                     .getTargetNamespace());
 
-
             //adding ns in the original WSDL
             processPoliciesInDefintion(wsdl4jDefinition);
 
@@ -194,7 +191,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             // create new Schema extensions element for wrapping
             //(if its present)
-            Element[] schemaElements = generateWrapperSchema(schemaMap,binding);
+            Element[] schemaElements = generateWrapperSchema(schemaMap, binding);
 
             //we might have modified the schemas by now so the addition should
             //happen here
@@ -219,7 +216,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // copy the documentation element contentto the description
             Element documentationElement = wsdl4jDefinition.getDocumentationElement();
             if (documentationElement != null) {
-                String serviceDes = documentationElement.getFirstChild().toString();
+                Node firstChild = documentationElement.getFirstChild();
+                String serviceDes;
+                if (firstChild.getNodeType() == Node.TEXT_NODE) {
+                    serviceDes = firstChild.getNodeValue();
+                } else {
+                    serviceDes = DOM2Writer.nodeToString(firstChild);
+                }
                 axisService.setServiceDescription(serviceDes);
             }
             processBinding(binding, wsdl4jDefinition);
@@ -236,6 +239,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Populate a map of targetNamespace vs DOM schema element
      * This is used to grab the correct schema element when adding
      * a new element
+     *
      * @param wsdl4jTypes
      * @return
      */
@@ -244,11 +248,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         List typesExtensibilityElements = wsdl4jTypes.getExtensibilityElements();
         Map schemaMap = new HashMap();
         for (int i = 0; i < typesExtensibilityElements.size(); i++) {
-            Object o =  typesExtensibilityElements.get(i);
-            if (o instanceof Schema){
-                Schema s = (Schema)o;
+            Object o = typesExtensibilityElements.get(i);
+            if (o instanceof Schema) {
+                Schema s = (Schema) o;
                 String targetNamespace = s.getElement().getAttribute(TRAGET_NAMESPACE);
-                schemaMap.put(targetNamespace,s.getElement());
+                schemaMap.put(targetNamespace, s.getElement());
             }
         }
         return schemaMap;
@@ -351,7 +355,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @throws Exception
      */
     private void processBinding(
-            Binding binding, Definition dif)  throws Exception {
+            Binding binding, Definition dif) throws Exception {
         if (binding != null) {
             copyExtensibleElements(binding.getExtensibilityElements(), dif,
                     axisService, BINDING);
@@ -446,7 +450,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     Fault wsdl4jFault = wsdl4jOperation.getFault(bindingFault.getName());
                     AxisMessage faultMessage = findFaultMessage(wsdl4jFault.getMessage().getQName().getLocalPart(), operation.getFaultMessages());
 
-                    AddQNameReference(faultMessage,wsdl4jFault.getMessage());
+                    AddQNameReference(faultMessage, wsdl4jFault.getMessage());
 
 
                 }
@@ -458,6 +462,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /**
      * Find the fault message relevant to a given name
      * from the fault message list
+     *
      * @param name
      * @param faultMessages
      * @return
@@ -497,7 +502,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (extElement instanceof SOAPBody) {
                 SOAPBody soapBody = (SOAPBody) extElement;
                 List bindingPartsList = soapBody.getParts();
-                if (bindingPartsList!=null && !bindingPartsList.isEmpty()) {
+                if (bindingPartsList != null && !bindingPartsList.isEmpty()) {
                     //we can process a single part only
                     processPartsList(bindingPartsList, wsdl4jMessage, inMessage);
                     // there are no parts named in the binding - process the items normally
@@ -540,6 +545,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * A reusable method to both the input and output QName populators
+     *
      * @param bindingPartsList
      * @param wsdl4jMessage
      * @param inMessage
@@ -587,7 +593,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (extElement instanceof SOAPBody) {
                 SOAPBody soapBody = (SOAPBody) extElement;
                 List bindingPartsList = soapBody.getParts();
-                if (bindingPartsList!=null && !bindingPartsList.isEmpty()) {
+                if (bindingPartsList != null && !bindingPartsList.isEmpty()) {
                     //we can process a single part only so delegate the task
                     //of processing
                     processPartsList(bindingPartsList, wsdl4jMessage, outMessage);
@@ -640,25 +646,22 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param isWrapped
      */
     private void AddQNameReference(AxisMessage faultMessage,
-                                   Message wsdl4jMessage){
-
+                                   Message wsdl4jMessage) {
 
         // for a fault this is trivial - All faults are related directly to a
         // message by the name and are supposed to have a single part. So it is
         // a matter of copying the right QName from the message part
 
         //get the part
-        Part wsdl4jMessagePart = (Part)wsdl4jMessage.getParts().values().toArray()[0];
-        if (wsdl4jMessagePart==null){
+        Part wsdl4jMessagePart = (Part) wsdl4jMessage.getParts().values().toArray()[0];
+        if (wsdl4jMessagePart == null) {
             throw new WSDLProcessingException();
         }
         faultMessage.setElementQName(wsdl4jMessagePart.getElementName());
 
 
-
-
-
     }
+
     /**
      * A util method that returns the SOAP style
      * included in the binding operation
@@ -715,7 +718,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @throws Exception
      */
     private AxisOperation populateOperations(Operation wsdl4jOperation, PortType wsdl4jPortType,
-                                             Definition dif ) throws Exception {
+                                             Definition dif) throws Exception {
         QName opName = new QName(wsdl4jOperation.getName());
         //Copy Name Attribute
         AxisOperation axisOperation = axisService.getOperation(opName);
@@ -890,7 +893,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         List schemaElementList = new ArrayList();
         //target namespace for this should be the namespace URI for
         //the porttype
-        String porttypeNamespaceURI =wsdl4jBinding.getPortType().
+        String porttypeNamespaceURI = wsdl4jBinding.getPortType().
                 getQName().getNamespaceURI();
 
         ////////////////////////////////////////////////////////////////////////
@@ -914,6 +917,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Create a schema by looking at the port type
+     *
      * @param namespaceURI
      * @return null if there is no element
      */
@@ -1178,9 +1182,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // insert the elements there rather than creating a new Schema element
         ////////////////////////////////////////////////////////////////////////
         //
-        if (existingSchemaMap.containsKey(namespaceURI)){
+        if (existingSchemaMap.containsKey(namespaceURI)) {
             //get the relevant schema element
-            Element schemaElement = (Element)existingSchemaMap.get(namespaceURI);
+            Element schemaElement = (Element) existingSchemaMap.get(namespaceURI);
             Document ownerDocument = schemaElement.getOwnerDocument();
 
             //loop through the namespace declarations first and add them
@@ -1188,15 +1192,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     .keySet().toArray(new String[namespacePrefixMap.size()]);
             for (int i = 0; i < nameSpaceDeclarationArray.length; i++) {
                 String s = nameSpaceDeclarationArray[i];
-                checkAndAddNamespaceDeclarations(s,namespacePrefixMap,schemaElement);
+                checkAndAddNamespaceDeclarations(s, namespacePrefixMap, schemaElement);
             }
 
-             //add imports  - check whether it is the targetnamespace before
+            //add imports  - check whether it is the targetnamespace before
             // adding
             Element[] namespaceImports = (Element[]) namespaceImportsMap.values()
                     .toArray(new Element[namespaceImportsMap.size()]);
             for (int i = 0; i < namespaceImports.length; i++) {
-                if (!namespaceURI.equals(namespaceImports[i].getAttribute(NAMESPACE_URI))){
+                if (!namespaceURI.equals(namespaceImports[i].getAttribute(NAMESPACE_URI))) {
                     schemaElement.appendChild(namespaceImports[i]);
                 }
             }
@@ -1205,7 +1209,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     .toArray(new Element[elementElementsList.size()]);
             for (int i = 0; i < elementDeclarations.length; i++) {
                 schemaElement.appendChild(ownerDocument.
-                        importNode(elementDeclarations[i],true));
+                        importNode(elementDeclarations[i], true));
             }
 
             //don't return anything!!
@@ -1255,7 +1259,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     *
      * @param namespaceDeclaration
      * @param prefixMap
      */
@@ -1263,33 +1266,33 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                                   Map prefixMap,
                                                   Element schemaElement) {
         //get the attribute for the current namespace
-        String prefix = (String)prefixMap.get(namespace);
+        String prefix = (String) prefixMap.get(namespace);
         //A prefix must be found at this point!
         String existingURL = schemaElement.getAttributeNS(
                 XML_NAMESPACE_URI,
                 NAMESPACE_DECLARATION_PREFIX + prefix);
-        if (existingURL==null){
+        if (existingURL == null) {
             //there is no existing URL by that prefix - declare a new namespace
             schemaElement.setAttributeNS(XML_NAMESPACE_URI,
                     NAMESPACE_DECLARATION_PREFIX + prefix,
                     namespace);
-        }else if (existingURL.equals(namespace)){
+        } else if (existingURL.equals(namespace)) {
             //this namespace declaration is already there with the same prefix
             //ignore it
-        }else{
+        } else {
             //there is a different namespace declared in the given prefix
             //change the prefix in the prefix map to a new one and declare it
 
             //create a prefix
-            String generatedPrefix = "ns" +prefixCounter++;
-            while(prefixMap.containsKey(generatedPrefix)){
-                generatedPrefix = "ns" +prefixCounter++;
+            String generatedPrefix = "ns" + prefixCounter++;
+            while (prefixMap.containsKey(generatedPrefix)) {
+                generatedPrefix = "ns" + prefixCounter++;
             }
             schemaElement.setAttributeNS(XML_NAMESPACE_URI,
                     NAMESPACE_DECLARATION_PREFIX + generatedPrefix,
                     namespace);
             //add to the map
-            prefixMap.put(generatedPrefix,namespace);
+            prefixMap.put(generatedPrefix, namespace);
         }
 
     }
@@ -1379,7 +1382,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        
+
         //switch off the verbose mode for all usecases
         reader.setFeature("javax.wsdl.verbose", false);
 
@@ -1899,7 +1902,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /**
      * Inner class declaration for the processing exceptions
      */
-    public static class WSDLProcessingException extends RuntimeException{
+    public static class WSDLProcessingException extends RuntimeException {
         public WSDLProcessingException() {
         }
 

@@ -45,7 +45,7 @@ public class ServiceContext extends AbstractContext {
         super(serviceGroupContext);
         this.serviceGroupContext = serviceGroupContext;
         this.axisService = serviceConfig;
-        this.configContext =(ConfigurationContext) parent.getParent();
+        this.configContext = (ConfigurationContext) parent.getParent();
     }
 
     public OperationContext createOperationContext(QName name) {
@@ -67,10 +67,11 @@ public class ServiceContext extends AbstractContext {
     }
 
     /**
-     *  To get the ERP for a given service , if the transport is present and not
+     * To get the ERP for a given service , if the transport is present and not
      * running then it will add as a listener to ListenerManager , there it will
      * init that and start the listener , and finally ask the EPR from tarnsport
      * for a given service
+     *
      * @param transport : Name of the transport
      * @return
      * @throws AxisFault
@@ -106,6 +107,18 @@ public class ServiceContext extends AbstractContext {
     }
 
     public EndpointReference getMyEPR() {
+        if (myEPR == null) {
+            try {
+                if (ListenerManager.defaultConfigurationContext != null) {
+                    ListenerManager listenerManager =
+                            ListenerManager.defaultConfigurationContext.getListenerManager();
+                    myEPR = listenerManager.getEPRforService(axisService.getName(), null, null);
+                }
+            } catch (AxisFault axisFault) {
+                // what else I can do 
+                myEPR = null;
+            }
+        }
         return myEPR;
     }
 
