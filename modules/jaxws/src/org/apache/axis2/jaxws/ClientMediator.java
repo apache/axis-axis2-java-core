@@ -32,7 +32,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.jaxws.client.JAXBDispatch;
 import org.apache.axis2.jaxws.client.XMLDispatch;
-import org.apache.axis2.jaxws.client.proxy.ProxyHandler;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
@@ -69,14 +68,14 @@ public class ClientMediator {
             dispatch.setJAXBContext(clientContext.getJAXBContext());
             return dispatch;
         }catch(AxisFault e){
-            throw ExceptionFactory.makeWebServiceException(e.getMessage());
+            throw new WebServiceException(e.getMessage());
         }
     }
     
     public <T> XMLDispatch<T> createXMLDispatch(JAXWSClientContext<T> clientContext){
 
 		if (clientContext == null) {
-			throw ExceptionFactory.makeWebServiceException(
+			throw new WebServiceException(
 					"Internal Error ... JAXWSClientContext not found");
 		}
 		this.clientContext = clientContext;
@@ -92,31 +91,14 @@ public class ClientMediator {
             dispatch.setMode(clientContext.getServiceMode());
 			return dispatch;
 		}catch(AxisFault e){
-			throw ExceptionFactory.makeWebServiceException(e);
+			throw new WebServiceException(e.getMessage());
 		}
 	}
 
 	// Add required parameter to this method.
     public <T> T createProxy(JAXWSClientContext<T> clientContext, ServiceDelegate delegate) {
-		//TODO: Have to rewrite this
-		this.clientContext = clientContext;
-		Class<T> sei = clientContext.getClazz();
-		//read port information from JAXWSClientContext and set that.
-		QName portName = null;
-		
-		try{
-			
-			AxisController axisController = buildAxisController();
-			axisController.setClientContext(clientContext);
-	    	ProxyHandler proxyHandler = new ProxyHandler(axisController, delegate);
-	    	
-	    	Class[] seiClazz = new Class[]{sei, BindingProvider.class};
-	    	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
-	    	
-	    	return sei.cast(proxyClass);
-		}catch(AxisFault e){
-    		throw ExceptionFactory.makeWebServiceException(e);
-    	}
+		//proxy is now create from ServiceDelegate.getport
+		return null;
 		
 	}
 

@@ -32,6 +32,7 @@ import org.apache.axis2.jaxws.message.MessageTests;
 import org.apache.axis2.jaxws.message.SAAJConverterTests;
 import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.provider.*;
+import org.apache.axis2.proxy.ProxyTests;
 
 public class JAXWSTest extends TestCase {
     /**
@@ -58,6 +59,7 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(StringProviderTests.class);
         suite.addTestSuite(SourceProviderTests.class);
+        suite.addTestSuite(ProxyTests.class);
         
         suite.addTestSuite(ExceptionFactoryTests.class);
 

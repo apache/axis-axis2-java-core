@@ -20,6 +20,8 @@ package org.apache.axis2.jaxws.registry;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.axis2.jaxws.client.factory.DescriptorFactory;
+import org.apache.axis2.jaxws.client.factory.ProxyHandlerFactory;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SourceBlockFactoryImpl;
@@ -51,6 +53,8 @@ public class FactoryRegistry {
 		table.put(MessageFactory.class, new MessageFactoryImpl());
 		table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
 		table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
+		table.put(ProxyHandlerFactory.class, new ProxyHandlerFactory());
+		table.put(DescriptorFactory.class, new DescriptorFactory());
 	}
 	/**
 	 * FactoryRegistry is currently a static singleton

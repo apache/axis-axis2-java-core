@@ -17,6 +17,7 @@
 
 package org.apache.axis2.jaxws.spi;
 
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -24,9 +25,9 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import javax.wsdl.WSDLException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
@@ -34,17 +35,24 @@ import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ClientMediator;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.JAXWSClientContext;
 import org.apache.axis2.jaxws.client.JAXBDispatch;
 import org.apache.axis2.jaxws.client.XMLDispatch;
+import org.apache.axis2.jaxws.client.factory.DescriptorFactory;
+import org.apache.axis2.jaxws.client.factory.ProxyHandlerFactory;
+import org.apache.axis2.jaxws.client.proxy.BaseProxyHandler;
+import org.apache.axis2.jaxws.client.proxy.ProxyDescriptor;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.handler.PortInfoImpl;
-import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
-import org.apache.commons.logging.LogFactory;
 
 public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 	private Executor executor;
@@ -53,7 +61,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     private ServiceDescription serviceDescription;
     private QName serviceQname;
     private ClientMediator mediator = null;
-
+    private ServiceClient serviceClient = null;
     // If no binding ID is available, use this one
     private static String DEFAULT_BINDING_ID = SOAPBinding.SOAP11HTTP_BINDING;
     
@@ -71,8 +79,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         serviceDescription = new ServiceDescription(url, serviceQname, clazz);
         if (isValidWSDLLocation()) {
             if(!isServiceDefined(serviceQname)){
-            	// TODO NLS
-                throw ExceptionFactory.makeWebServiceException("Service " + serviceQname + " not defined in WSDL");
+                throw new WebServiceException("Service " + serviceQname + " not defined in WSDL");
             }
             readPorts();
         }
@@ -110,8 +117,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     		port.setBindingID(bindingId);
     		port.setEndPointAddress(endpointAddress);
     		*/
-    		// TODO NLS
-    		throw ExceptionFactory.makeWebServiceException("Port is already added");
+    		
+    		throw new WebServiceException("Port is already added");
     	}
     }
     private <T> JAXWSClientContext<T> createClientContext(PortData portData, Class<T> clazz, Mode mode){
@@ -193,7 +200,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     }
      
     @Override
-    public <T> T getPort(QName qname, Class<T> sei) throws WebServiceException {
+    public <T> T getPort(QName portName, Class<T> sei) throws WebServiceException {
     	/* TODO Check to see if WSDL Location is provided.
          * if not check WebService annotation's WSDLLocation
          * if both are not provided then throw exception.
@@ -210,20 +217,25 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	/*TODO: if portQname is null then fetch it from annotation. 
     	 * if portQname is provided then add that to the ports table.
     	 */
-    	if(qname!=null){
+    	if(portName!=null){
     		String address = "";
     		if(isValidWSDLLocation()){
-    			address = getWSDLWrapper().getSOAPAddress(serviceQname, qname);
+    			address = getWSDLWrapper().getSOAPAddress(serviceQname, portName);
     		}
-    		if(ports.get(qname)==null){
-    			addPort(qname, null, address);
+    		if(ports.get(portName)==null){
+    			addPort(portName, null, address);
     		}
     	}
-   	
-    	JAXWSClientContext<T> clientContext = createClientContext(ports.get(qname), sei, null);
-    	//Set all the required properties for JAXWSClientContext.
-    	return mediator.createProxy(clientContext, this);
-      
+    	DescriptorFactory df = (DescriptorFactory)FactoryRegistry.getFactory(DescriptorFactory.class);
+    	ProxyDescriptor pd = df.create(sei);
+    	pd.setPort(ports.get(portName));
+    	ProxyHandlerFactory phf =(ProxyHandlerFactory) FactoryRegistry.getFactory(ProxyHandlerFactory.class);
+    	BaseProxyHandler proxyHandler = phf.create(pd, this);
+    	
+    	Class[] seiClazz = new Class[]{sei, BindingProvider.class};
+    	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
+    	
+    	return sei.cast(proxyClass);
     }
     
     @Override
@@ -309,4 +321,23 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 	        }
         }
     }
+    //TODO We should hang AxisConfiguration from ServiceDescription or something parent to ServiceDescription
+    private ConfigurationContext getAxisConfigContext() {
+    	ClientConfigurationFactory factory = ClientConfigurationFactory.newInstance(); 
+    	ConfigurationContext configCtx = factory.getClientConfigurationContext();
+    	return configCtx;
+    	
+    }
+    //TODO Change when ServiceDescription has was to return ServiceClient or OperationClient
+    public ServiceClient getServiceClient() throws AxisFault {
+    	if(serviceClient == null){
+    		serviceClient = new ServiceClient(getAxisConfigContext(), 
+    				serviceDescription.getAxisService());
+    	}
+    	return serviceClient;
+    	
+    }
+		
+	
+
 }

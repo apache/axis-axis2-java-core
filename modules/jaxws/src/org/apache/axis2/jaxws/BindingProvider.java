@@ -51,4 +51,18 @@ public class BindingProvider implements javax.xml.ws.BindingProvider {
     public Map<String, Object> getResponseContext() {
         return responseContext;
     }
+    
+    protected void initRequestContext(String endPointAddress, String soapAddress, String soapAction){
+    	if (endPointAddress != null && !"".equals(endPointAddress)) {
+			requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+					endPointAddress);
+		} else if (soapAddress != null && !"".equals(soapAddress)) {
+			requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+					soapAddress);
+		}
+		if (soapAction != null && !"".equals(soapAction)) {
+			getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,
+					soapAction);
+		}
+    }
 }

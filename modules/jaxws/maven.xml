@@ -25,6 +25,7 @@
         <j:set var="compiled.classes.dir" value="target/test-classes"/>
         <!-- Theres got to be a better way to do this -->
         <j:set var="schema.source.dir" value="test-resources/xsd"/>
+    	<j:set var="wsdl.source.dir" value="test-resources/wsdl"/>
         <j:set var="schema.output.base.dir" value="target/schema"/>
         <j:set var="schema.generated.src.dir" value="${schema.output.base.dir}/src"/>
         <j:set var="schema.generated.classes.dir" value="${schema.output.base.dir}/classes"/>
@@ -40,14 +41,14 @@
         	<jvmarg line="${maven.junit.jvmargs}"/>
         	<classpath refid="maven.dependency.classpath"/>
         	<classpath location="${compiled.classes.dir}"/>
-            <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/echo.xsd"/>
+            <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/echo.xsd"/>
         </java>
         <ant:echo>Generating java from stock1.xsd</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
         	<jvmarg line="${maven.junit.jvmargs}"/>
         	<classpath refid="maven.dependency.classpath"/>
         	<classpath location="${compiled.classes.dir}"/>
-            <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd"/>
+            <arg line="-d ${schema.generated.src.dir} -verbose ${schema.source.dir}/stock1.xsd"/>
         </java>
         <ant:echo>Generating java from stock2.xsd</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
@@ -56,8 +57,13 @@
         	<classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd"/>
         </java>
-    	
-
+    	<ant:echo>Generating java from ProxyDocLitWrapped.wsdl</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    		<jvmarg line="${maven.junit.jvmargs}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
+    	</java>
     	
        <!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>
@@ -99,6 +105,20 @@
 				<ant:include name="org/apache/axis2/jaxws/provider/source/**"/>
 			</ant:fileset>
 			<ant:fileset dir="test/org/apache/axis2/jaxws/provider/source">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+        <!-- ================================================================ -->
+        <!--- Proxy endpoint Service Samples -->
+        <!-- ================================================================ -->
+		<ant:copy toDir="target/test-classes/services/ProxyDocLitWrapped/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/proxy/doclitwrapped/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/proxy/doclitwrapped">
                 <ant:include name="META-INF/**"/>
 			</ant:fileset>
 			<ant:fileset dir="target/classes">
