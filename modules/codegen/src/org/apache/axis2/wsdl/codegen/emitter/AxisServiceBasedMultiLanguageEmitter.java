@@ -1161,6 +1161,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Object o = objectIterator.next();
 
             if (o instanceof Document) {
+                //we cannot have an empty document
                 root.appendChild(doc.importNode(((Document) o).getDocumentElement(), true));
             } else {
 

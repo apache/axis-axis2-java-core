@@ -90,6 +90,13 @@ public class JavaBeanWriter implements BeanWriter {
     private boolean isHelperMode = false;
 
     /**
+     * package for the mapping class
+     */
+    private String mappingClassPackage = null;
+
+    public static final String EXTENSION_MAPPER_CLASSNAME = "ExtensionMapper";
+
+    /**
      * Default constructor
      */
     public JavaBeanWriter() {
@@ -151,8 +158,8 @@ public class JavaBeanWriter implements BeanWriter {
             throw new SchemaCompilationException(e);
         } catch (ParserConfigurationException e) {
             throw new SchemaCompilationException(e); // todo need to put
-                                                        // correct error
-                                                        // messages
+            // correct error
+            // messages
         }
     }
 
@@ -164,12 +171,12 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws SchemaCompilationException
      */
     public String write(XmlSchemaElement element, Map typeMap,
-            BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+                        BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
         try {
             QName qName = element.getQName();
 
-            return process(qName, metainf, typeMap, true, null);
+            return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
@@ -189,14 +196,13 @@ public class JavaBeanWriter implements BeanWriter {
      *      java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaComplexType complexType, Map typeMap,
-            BeanWriterMetaInfoHolder metainf, String fullyQualifiedClassName)
+                        BeanWriterMetaInfoHolder metainf)
             throws SchemaCompilationException {
 
         try {
             // determine the package for this type.
             QName qName = complexType.getQName();
-            return process(qName, metainf, typeMap, false,
-                    fullyQualifiedClassName);
+            return process(qName, metainf, typeMap, false);
 
         } catch (SchemaCompilationException e) {
             throw e;
@@ -240,7 +246,7 @@ public class JavaBeanWriter implements BeanWriter {
      *      java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap,
-            BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+                        BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         throw new SchemaCompilationException(SchemaCompilerMessages
                 .getMessage("schema.notimplementedxception"));
     }
@@ -277,14 +283,7 @@ public class JavaBeanWriter implements BeanWriter {
         String namespaceURI = qName.getNamespaceURI();
         String basePackageName;
 
-        if (ns2packageNameMap.containsKey(namespaceURI)) {
-            basePackageName = (String) ns2packageNameMap.get(namespaceURI);
-        } else {
-            basePackageName = URLProcessor.makePackageName(namespaceURI);
-        }
-
-        String packageName = this.packageName == null ? basePackageName
-                : this.packageName + basePackageName;
+        String packageName = getPackage(namespaceURI);
 
         String originalName = qName.getLocalPart();
         String className = makeUniqueJavaClassName(this.namesList, originalName);
@@ -308,6 +307,19 @@ public class JavaBeanWriter implements BeanWriter {
         return fullyqualifiedClassName;
     }
 
+    private String getPackage(String namespaceURI) {
+        String basePackageName;
+        if (ns2packageNameMap.containsKey(namespaceURI)) {
+            basePackageName = (String) ns2packageNameMap.get(namespaceURI);
+        } else {
+            basePackageName = URLProcessor.makePackageName(namespaceURI);
+        }
+
+        String packageName = this.packageName == null ? basePackageName
+                : this.packageName + basePackageName;
+        return packageName;
+    }
+
     /**
      * A util method that holds common code for the complete schema that the
      * generated XML complies to look under other/beanGenerationSchema.xsd
@@ -323,17 +335,17 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws Exception
      */
     private String process(QName qName, BeanWriterMetaInfoHolder metainf,
-            Map typeMap, boolean isElement, String fullyQualifiedClassName)
+                           Map typeMap, boolean isElement)
             throws Exception {
-
+        String fullyQualifiedClassName = metainf.getOwnClassName();
         if (fullyQualifiedClassName == null)
             fullyQualifiedClassName = makeFullyQualifiedClassName(qName);
         String className = fullyQualifiedClassName
                 .substring(1 + fullyQualifiedClassName.lastIndexOf('.'));
         String basePackageName;
         if (fullyQualifiedClassName.lastIndexOf('.') == -1) {// no 'dots' so
-                                                                // the package
-                                                                // is not there
+            // the package
+            // is not there
             basePackageName = "";
         } else {
             basePackageName = fullyQualifiedClassName.substring(0,
@@ -369,11 +381,11 @@ public class JavaBeanWriter implements BeanWriter {
                 // create the file
                 File out = createOutFile(basePackageName, className);
                 // parse with the template and create the files
-   
+
                 if (isHelperMode) {
 
                     XSLTUtils.addAttribute(model, "helperMode", "yes", model.getDocumentElement());
-                    
+
                     // Generate bean classes
                     parse(model, out);
 
@@ -384,6 +396,7 @@ public class JavaBeanWriter implements BeanWriter {
                     parse(model, out);
 
                 } else {
+                    //No helper mode - just generate the classes
                     parse(model, out);
                 }
             }
@@ -411,10 +424,15 @@ public class JavaBeanWriter implements BeanWriter {
      * @return Returns Element.
      * @throws SchemaCompilationException
      */
-    private Element getBeanElement(Document model, String className,
-            String originalName, String packageName, QName qName,
-            boolean isElement, BeanWriterMetaInfoHolder metainf,
-            ArrayList propertyNames, Map typeMap)
+    private Element getBeanElement(Document model,
+                                   String className,
+                                   String originalName,
+                                   String packageName,
+                                   QName qName,
+                                   boolean isElement,
+                                   BeanWriterMetaInfoHolder metainf,
+                                   ArrayList propertyNames,
+                                   Map typeMap)
             throws SchemaCompilationException {
 
         Element rootElt = XSLTUtils.getElement(model, "bean");
@@ -445,7 +463,10 @@ public class JavaBeanWriter implements BeanWriter {
         if (metainf.isExtension()) {
             XSLTUtils.addAttribute(model, "extension", metainf
                     .getExtensionClassName(), rootElt);
+
         }
+        //add the mapper class name
+        XSLTUtils.addAttribute(model, "mapperClass", getFullyQualifiedMapperClassName(), rootElt);
 
         if (metainf.isChoice()) {
             XSLTUtils.addAttribute(model, "choice", "yes", rootElt);
@@ -462,6 +483,7 @@ public class JavaBeanWriter implements BeanWriter {
         // populate all the information
         populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
 
+
         return rootElt;
     }
 
@@ -475,8 +497,8 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws SchemaCompilationException
      */
     private void populateInfo(BeanWriterMetaInfoHolder metainf, Document model,
-            Element rootElt, ArrayList propertyNames, Map typeMap,
-            boolean isInherited) throws SchemaCompilationException {
+                              Element rootElt, ArrayList propertyNames, Map typeMap,
+                              boolean isInherited) throws SchemaCompilationException {
         if (metainf.getParent() != null) {
             populateInfo(metainf.getParent(), model, rootElt, propertyNames,
                     typeMap, true);
@@ -496,8 +518,8 @@ public class JavaBeanWriter implements BeanWriter {
      * @throws SchemaCompilationException
      */
     private void addPropertyEntries(BeanWriterMetaInfoHolder metainf,
-            Document model, Element rootElt, ArrayList propertyNames,
-            Map typeMap, boolean isInherited) throws SchemaCompilationException {
+                                    Document model, Element rootElt, ArrayList propertyNames,
+                                    Map typeMap, boolean isInherited) throws SchemaCompilationException {
         // go in the loop and add the part elements
         QName[] qNames;
         if (metainf.isOrdered()) {
@@ -611,7 +633,7 @@ public class JavaBeanWriter implements BeanWriter {
         return SchemaCompiler.DEFAULT_CLASS_NAME
                 .equals(javaClassNameForElement)
                 || SchemaCompiler.DEFAULT_CLASS_ARRAY_NAME
-                        .equals(javaClassNameForElement);
+                .equals(javaClassNameForElement);
     }
 
     /**
@@ -757,6 +779,108 @@ public class JavaBeanWriter implements BeanWriter {
 
         return typeClassName.substring(typeClassName.lastIndexOf(".") + 1,
                 typeClassName.length());
+
+    }
+
+    /**
+     * Get the mapper class name - there is going to be only one
+     * mapper class for the whole
+     * @return
+     */
+    private String getFullyQualifiedMapperClassName(){
+        if (wrapClasses || !writeClasses){
+            return EXTENSION_MAPPER_CLASSNAME;
+        }else{
+            return mappingClassPackage + "." +  EXTENSION_MAPPER_CLASSNAME;
+        }
+    }
+
+    /**
+     * Sets the mapping class name of this writer. A mapping class
+     * package set by the options may be overridden at the this point
+     * @param mapperPackageName
+     */
+    public void registerExtensionMapperPackageName(String mapperPackageName) {
+        this.mappingClassPackage = mapperPackageName;
+    }
+
+    /**
+     * Write the extension classes - this is needed to process
+     * the hierarchy of classes
+     * @param metainfArray
+     * @return
+     */
+    public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException{
+        //generate the element
+        try {
+
+
+            String mapperClassName = getFullyQualifiedMapperClassName();
+
+            Document model =XSLTUtils.getDocument();
+            Element rootElt = XSLTUtils.getElement(model, "mapper");
+            String mapperName = mapperClassName.substring(mapperClassName.lastIndexOf(".") + 1);
+            XSLTUtils.addAttribute(model, "name",mapperName, rootElt);
+            String basePackageName = "";
+            if (mapperClassName.indexOf(".")!=-1){
+                basePackageName = mapperClassName.substring(0, mapperClassName.lastIndexOf("."));
+                XSLTUtils.addAttribute(model, "package",basePackageName, rootElt);
+            }else {
+                XSLTUtils.addAttribute(model, "package","", rootElt);
+            }
+
+            if (!wrapClasses) {
+                XSLTUtils.addAttribute(model, "unwrapped", "yes", rootElt);
+            }
+
+            if (!writeClasses) {
+                XSLTUtils.addAttribute(model, "skip-write", "yes", rootElt);
+            }
+
+
+            for (int i = 0; i < metainfArray.length; i++) {
+                QName ownQname = metainfArray[i].getOwnQname();
+                String className = metainfArray[i].getOwnClassName();
+                //do  not add when the qname is not availble
+                if (ownQname!=null){
+                    Element typeChild = XSLTUtils.addChildElement(model,"type",rootElt);
+                    XSLTUtils.addAttribute(model, "nsuri", ownQname.getNamespaceURI(), typeChild);
+                    XSLTUtils.addAttribute(model, "classname", className==null?"":className, typeChild);
+                    XSLTUtils.addAttribute(model, "shortname", ownQname==null?"":
+                            ownQname.getLocalPart(), typeChild);
+                }
+            }
+
+            model.appendChild(rootElt);
+
+            if (!templateLoaded){
+                loadTemplate();
+            }
+
+            if (wrapClasses) {
+                //add to the global wrapped document
+                globalWrappedDocument.getDocumentElement().appendChild(rootElt);
+            } else {
+                if (writeClasses) {
+                    // create the file
+                    File out = createOutFile(basePackageName, mapperName);
+                    // parse with the template and create the files
+                    parse(model, out);
+
+                }
+
+                // add the model to the model map
+                modelMap.put(new QName(mapperName), model);
+            }
+
+        } catch (ParserConfigurationException e) {
+            throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.docuement.error"),e);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new SchemaCompilationException(e);
+        }
+
+
 
     }
 }

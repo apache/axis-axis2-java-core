@@ -11,7 +11,6 @@ import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.util.PrimitiveTypeFinder;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.util.XSLTUtils;
-import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.XSLTTemplateProcessor;
 import org.apache.ws.commons.schema.XmlSchemaElement;
@@ -122,7 +121,7 @@ public class CStructWriter implements BeanWriter {
         try {
             QName qName = element.getQName();
 
-            return process(qName, metainf, typeMap, true, null);
+            return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
         }
@@ -139,13 +138,13 @@ public class CStructWriter implements BeanWriter {
      *
      * @see org.apache.axis2.schema.writer.BeanWriter
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf, String fullyQualifiedClassName)
+    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf)
             throws SchemaCompilationException {
 
         try {
             //determine the package for this type.
             QName qName = complexType.getQName();
-            return process(qName, metainf, typeMap, false, fullyQualifiedClassName);
+            return process(qName, metainf, typeMap, false);
 
         } catch (SchemaCompilationException e) {
             throw e;
@@ -230,8 +229,8 @@ public class CStructWriter implements BeanWriter {
      * @return Returns String.
      * @throws Exception
      */
-    private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement, String fullyQualifiedClassName) throws Exception {
-
+    private String process(QName qName, BeanWriterMetaInfoHolder metainf, Map typeMap, boolean isElement) throws Exception {
+        String fullyQualifiedClassName = metainf.getOwnClassName();
         if (fullyQualifiedClassName == null)
             fullyQualifiedClassName = makeFullyQualifiedClassName(qName);
         String className = fullyQualifiedClassName;
@@ -681,5 +680,23 @@ public class CStructWriter implements BeanWriter {
 
         return typeClassName.substring(typeClassName.lastIndexOf(".")+1, typeClassName.length());
 
+    }
+
+    /**
+     * Keep unimplemented
+     * @see BeanWriter#registerExtensionMapperPackageName(String)
+     * @param mapperPackageName
+     */
+    public void registerExtensionMapperPackageName(String mapperPackageName) {
+        //unimplemented
+    }
+
+    /**
+     * Keep unimplemented
+     * @see BeanWriter#writeExtensionMapper(org.apache.axis2.schema.BeanWriterMetaInfoHolder[])
+     * @param metainfArray
+     */
+    public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException{
+        //unimplemented
     }
 }

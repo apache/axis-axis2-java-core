@@ -230,7 +230,7 @@ public class AntCodegenTask extends Task {
                         CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
                         new String[]{portName}));
         // set the namespaces
-         optionMap.put(
+        optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
@@ -252,18 +252,16 @@ public class AntCodegenTask extends Task {
 
     public void execute() throws BuildException {
         try {
-            /**
-             * This needs the ClassLoader we use to load the task have all the dependancies set, hope that
+            /*
+             * This needs the ClassLoader we use to load the task
+             * have all the dependancies set, hope that
              * is ok for now
-             *
-             * todo look into this further!!!!!
              */
-
 
             AntClassLoader cl = new AntClassLoader(
                     getClass().getClassLoader(),
                     getProject(),
-					classpath == null ? createClasspath() : classpath,
+                    classpath == null ? createClasspath() : classpath,
                     false);
 
             Thread.currentThread().setContextClassLoader(cl);
@@ -330,14 +328,6 @@ public class AntCodegenTask extends Task {
     public void setGenerateServiceXml(boolean generateServiceXml) {
         this.generateServiceXml = generateServiceXml;
     }
-
-//    public static void main(String[] args) {
-//        AntCodegenTask task = new AntCodegenTask();
-//        task.setWSDLFileName(
-//                "modules/samples/test-resources/wsdl/compound2.wsdl");
-//        task.setOutput("temp");
-//        task.execute();
-//    }
 
     /**
      * @return Returns Path.

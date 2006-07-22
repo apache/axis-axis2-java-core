@@ -52,7 +52,7 @@ public interface BeanWriter {
      * of the schema compiler may be exposed.
      */
     public Map getModelMap();
-    
+
     /** Make the fully qualified class name for an element or named type
      * @param qName the qualified Name for this element or type in the schema
      * @return the appropriate fully qualified class name to use in generated code
@@ -69,8 +69,8 @@ public interface BeanWriter {
      * @return Returns String.
      * @throws SchemaCompilationException
      */
-    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf, String fullyQualifiedClassName)
-    throws SchemaCompilationException;
+    public String write(XmlSchemaComplexType complexType, Map typeMap, BeanWriterMetaInfoHolder metainf)
+            throws SchemaCompilationException;
 
     /**
      * Write a element
@@ -95,4 +95,22 @@ public interface BeanWriter {
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
 
+
+    /**
+     * Registers the mapper package name - this is relevant to languages
+     * that enforce packaging such as Java or C#. May be ignored in other
+     * languages
+     * @param mapperPackageName
+     */
+    public void registerExtensionMapperPackageName(String mapperPackageName);
+
+
+    /**
+     * Write the extensions mapper component - this is relevant to only the OOP languages
+     * and a particular implementation may ignore this
+     * @param metainfArray
+     * @param namespaceToUse
+     * @return
+     */
+    public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException;
 }

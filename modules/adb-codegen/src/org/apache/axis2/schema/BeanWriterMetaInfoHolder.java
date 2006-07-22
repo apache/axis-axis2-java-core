@@ -3,7 +3,6 @@ package org.apache.axis2.schema;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +45,8 @@ public class BeanWriterMetaInfoHolder {
     protected Map qNameMaxOccursCountMap = new LinkedHashMap();
     protected Map qNameMinOccursCountMap = new LinkedHashMap();
     protected Map qNameOrderMap = new LinkedHashMap();
+    protected QName ownQname = null;
+    protected String ownClassName = null;
 
     protected List nillableQNameList  = new ArrayList();
 
@@ -62,6 +63,22 @@ public class BeanWriterMetaInfoHolder {
 
     public void setChoice(boolean choice) {
         this.choice = choice;
+    }
+
+    public String getOwnClassName() {
+        return ownClassName;
+    }
+
+    public void setOwnClassName(String ownClassName) {
+        this.ownClassName = ownClassName;
+    }
+
+    public QName getOwnQname() {
+        return ownQname;
+    }
+
+    public void setOwnQname(QName ownQname) {
+        this.ownQname = ownQname;
     }
 
     /**

@@ -40,6 +40,18 @@ public class CompilerOptions {
      */
     private File outputLocation;
     private String packageName = null;
+    /**
+     * Package for the mapper
+     */
+    private String mapperClassPackage = null;
+
+    public String getMapperClassPackage() {
+        return mapperClassPackage;
+    }
+
+    public void setMapperClassPackage(String mapperClassPackage) {
+        this.mapperClassPackage = mapperClassPackage;
+    }
 
     /**
      * The flag keeping whether seperate helpers

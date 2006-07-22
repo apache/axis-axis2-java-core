@@ -6,6 +6,7 @@ import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaAny;
@@ -91,6 +92,7 @@ public class SchemaCompiler {
     //a list of nillable elements - used to generate code
     //for nillable elements
     private List nillableElementList;
+    // writee reference
     private BeanWriter writer = null;
     private Map baseSchemaTypeMap = null;
 
@@ -187,9 +189,12 @@ public class SchemaCompiler {
      * @see #compile(org.apache.ws.commons.schema.XmlSchema)
      */
     public void compile(List schemalist) throws SchemaCompilationException {
-
-
         try {
+
+            if (schemalist.isEmpty()){
+                return;
+            }
+
             //clear the loaded and available maps
             loadedSchemaMap.clear();
             availableSchemaMap.clear();
@@ -204,10 +209,18 @@ public class SchemaCompiler {
                 );
             }
 
+            //get the first schema from the list and take that namespace as the
+            //mapper namespace
+            writer.registerExtensionMapperPackageName(
+                    URLProcessor.makePackageName(((XmlSchema) schemalist.get(0)).getTargetNamespace()));
+
             // second round - call the schema compiler one by one
             for (int i = 0; i < schemalist.size(); i++) {
-                compile((XmlSchema) schemalist.get(i));
+                compile((XmlSchema) schemalist.get(i),true);
             }
+
+            //finish up
+            finalizeSchemaCompilation();
 
         } catch (SchemaCompilationException e) {
             throw e;
@@ -222,11 +235,27 @@ public class SchemaCompiler {
      * @throws SchemaCompilationException
      */
     public void compile(XmlSchema schema) throws SchemaCompilationException {
+        compile(schema,false);
+    }
+
+    /**
+     * Compile (rather codegen) a single schema element
+     * @param schema
+     * @param isPartofGroup
+     * @throws SchemaCompilationException
+     */
+    private void compile(XmlSchema schema,boolean isPartofGroup) throws SchemaCompilationException {
 
         // some documents explicitly imports the schema of built in types. We don't actually need to compile
         // the built-in types. So check the target namespace here and ignore it.
         if (Constants.URI_2001_SCHEMA_XSD.equals(schema.getTargetNamespace())) {
             return;
+        }
+
+        //register the package from this namespace as the mapper classes package
+        if (!isPartofGroup){
+            writer.registerExtensionMapperPackageName(
+                    URLProcessor.makePackageName(schema.getTargetNamespace()));
         }
 
         //First look for the schemas that are imported and process them
@@ -268,13 +297,31 @@ public class SchemaCompiler {
         Iterator xmlSchemaElement2Iterator = elements.getValues();
 
         // re-iterate through the elements and write them one by one
-        // if the mode is unwrap this process will not really write the
+        // if the mode is unpack this process will not really write the
         // classes but will accumilate the models for a final single shot
         // write
         while (xmlSchemaElement2Iterator.hasNext()) {
             //this is the set of outer elements so we need to generate classes
             writeElement((XmlSchemaElement) xmlSchemaElement2Iterator.next());
         }
+
+        if (!isPartofGroup){
+            //complete the compilation
+            finalizeSchemaCompilation();
+        }
+    }
+
+    /**
+     * Completes the schema compilation process by writing the
+     * mappers and the classes in a batch if needed
+     * @throws SchemaCompilationException
+     */
+    private void finalizeSchemaCompilation() throws SchemaCompilationException {
+        //write the extension mapping class
+        writer.writeExtensionMapper(
+                (BeanWriterMetaInfoHolder[])
+                        processedTypeMetaInfoMap.values().toArray(
+                                new BeanWriterMetaInfoHolder[processedTypeMetaInfoMap.size()]));
 
 
         if (options.isWrapClasses()) {
@@ -448,8 +495,7 @@ public class SchemaCompiler {
                         //set a name
                         schemaType.setName(generatedTypeName.getLocalPart());
                         writeComplexType((XmlSchemaComplexType)schemaType,
-                                (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(xsElt),
-                                null);
+                                (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(xsElt));
                         //remove the reference from the anon list since we named the type
                         processedAnonymousComplexTypesMap.remove(xsElt);
                         String className = findClassName(schemaType.getQName(), isArray(xsElt));
@@ -501,8 +547,8 @@ public class SchemaCompiler {
                     referenceSchemaType.setName(generatedTypeName.getLocalPart());
 
                     writeComplexType((XmlSchemaComplexType)referenceSchemaType,
-                            (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement),
-                            null);
+                            (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement)
+                    );
                     //remove the reference from the anon list since we named the type
                     processedAnonymousComplexTypesMap.remove(referencedElement);
 
@@ -716,10 +762,12 @@ public class SchemaCompiler {
                 fullyQualifiedClassName);
 
         BeanWriterMetaInfoHolder metaInfHolder = processComplexType(complexType,parentSchema);
-
+        //add this information to the metainfo holder
+        metaInfHolder.setOwnQname(complexType.getQName());
+        metaInfHolder.setOwnClassName(fullyQualifiedClassName);
         //write the class. This type mapping would have been populated right now
         //Note - We always write classes for named complex types
-        writeComplexType(complexType, metaInfHolder, fullyQualifiedClassName);
+        writeComplexType(complexType, metaInfHolder);
 
 
     }
@@ -731,9 +779,9 @@ public class SchemaCompiler {
      * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @throws SchemaCompilationException
      */
-    private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder, String fullyQualifiedClassName)
+    private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        writer.write(complexType, processedTypemap, metaInfHolder, fullyQualifiedClassName);
+        writer.write(complexType, processedTypemap, metaInfHolder);
         processedTypeMetaInfoMap.put(complexType.getQName(),metaInfHolder);
     }
 
@@ -856,9 +904,12 @@ public class SchemaCompiler {
                                        QName baseTypeName,
                                        XmlSchema parentSchema)
             throws SchemaCompilationException {
+
         XmlSchemaType type = parentSchema.getTypeByName(baseTypeName);
+
         BeanWriterMetaInfoHolder baseMetaInfoHolder = (BeanWriterMetaInfoHolder)
                 processedTypeMetaInfoMap.get(baseTypeName);
+
 
         if (baseMetaInfoHolder!= null){
 
@@ -908,6 +959,12 @@ public class SchemaCompiler {
         }
     }
 
+    /**
+     *
+     * @param simpleContent
+     * @param metaInfHolder
+     * @throws SchemaCompilationException
+     */
     private void processSimpleContent(XmlSchemaSimpleContent simpleContent,BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException{
         XmlSchemaContent content;
