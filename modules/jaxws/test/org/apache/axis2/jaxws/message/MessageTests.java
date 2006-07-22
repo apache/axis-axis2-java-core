@@ -16,8 +16,11 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
+import java.util.HashMap;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLInputFactory;
@@ -26,11 +29,16 @@ import javax.xml.stream.XMLStreamReader;
 import junit.framework.TestCase;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+
+import test.EchoStringResponse;
+import test.ObjectFactory;
 
 /**
  * MessageTests
@@ -40,17 +48,33 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 public class MessageTests extends TestCase {
 
 	// String test variables
-	private static final String sampleText =
+    private static final String sampleEnvelopeHeader =
+        "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+        "<soapenv:Header /><soapenv:Body>";
+    
+    private static final String sampleEnvelopeFooter = 
+        "</soapenv:Body></soapenv:Envelope>";
+    
+    private static final String sampleText =
 		"<pre:a xmlns:pre=\"urn://sample\">" +
 		"<b>Hello</b>" +
 		"<c>World</c>" +
 		"</pre:a>";
 	
-	private static final String sampleEnvelope = 
-		"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-		"<soapenv:Header /><soapenv:Body>" +
-		sampleText +
-		"</soapenv:Body></soapenv:Envelope>";
+    private static final String sampleEnvelope = 
+        sampleEnvelopeHeader +
+        sampleText +
+        sampleEnvelopeFooter;
+        
+    private static final String sampleJAXBText = 
+        "<echoStringResponse xmlns=\"http://test\">" +
+        "<echoStringReturn>sample return value</echoStringReturn>" + 
+        "</echoStringResponse>";
+    
+    private static final String sampleJAXBEnvelope = 
+        sampleEnvelopeHeader + 
+        sampleJAXBText + 
+        sampleEnvelopeFooter;
 
 	private static final QName sampleQName = new QName("urn://sample", "a");
 	
@@ -238,5 +262,94 @@ public class MessageTests extends TestCase {
 		assertTrue(sampleText.equals(bo.toString()));
 		
 	}
-	
+    
+    /**
+     * Create a JAXBBlock containing a JAX-B business object 
+     * and simulate a normal Dispatch<Object> output flow
+     * @throws Exception
+     */
+    public void testJAXBOutflow() throws Exception {
+        // Create a SOAP 1.1 Message
+        MessageFactory mf = (MessageFactory)
+            FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.create(Protocol.soap11);
+        
+        // Get the BlockFactory
+        JAXBBlockFactory bf = (JAXBBlockFactory)
+            FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        
+        // Create the JAX-B object
+        ObjectFactory of = new ObjectFactory();
+        EchoStringResponse obj = of.createEchoStringResponse();
+        obj.setEchoStringReturn("sample return value");
+        
+        // Create the JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("test");
+        
+        
+        // Create a JAXBBlock using the Echo object as the content.  This simulates
+        // what occurs on the outbound JAX-WS Dispatch<Object> client
+        Block block = bf.createFrom(obj, jbc, null);
+        
+        // Add the block to the message as normal body content.
+        m.setBodyBlock(0, block);
+        
+        // On an outbound flow, we need to convert the Message 
+        // to an OMElement, specifically an OM SOAPEnvelope, 
+        // so we can set it on the Axis2 MessageContext
+        org.apache.axiom.soap.SOAPEnvelope env = 
+            (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        
+        // Serialize the Envelope using the same mechanism as the 
+        // HTTP client.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        env.serializeAndConsume(baos, new OMOutputFormat());
+        
+        // To check that the output is correct, get the String contents of the 
+        // reader
+        String newText = baos.toString();
+        System.out.println(newText);
+        assertTrue(newText.contains(sampleJAXBText));
+        assertTrue(newText.contains("soap"));
+        assertTrue(newText.contains("Envelope"));
+        assertTrue(newText.contains("Body"));
+    }
+    
+    public void testJAXBInflow() throws Exception {
+        // Create a SOAP OM out of the sample incoming XML.  This
+        // simulates what Axis2 will be doing with the inbound message. 
+        StringReader sr = new StringReader(sampleJAXBEnvelope);
+        XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
+        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        OMElement omElement = builder.getSOAPEnvelope();
+        
+        // Create a SOAP 1.1 Message from the sample incoming XML
+        MessageFactory mf = (MessageFactory)
+            FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.createFrom(omElement);
+        
+        // Get the BlockFactory
+        JAXBBlockFactory bf = (JAXBBlockFactory)
+            FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        
+        // Create the JAXBContext instance that will be used
+        // to deserialize the JAX-B object content in the message.
+        JAXBContext jbc = JAXBContext.newInstance("test");
+        
+        // Get the JAXBBlock that wraps the content
+        Block b = m.getBodyBlock(0, jbc, bf);
+     
+        // Get the business object from the block, which should be a 
+        // JAX-B object
+        Object bo = b.getBusinessObject(true);
+        
+        // Check to make sure the right object was returned
+        assertNotNull(bo);
+        assertTrue(bo instanceof EchoStringResponse);
+        
+        // Check to make sure the content of that object is correct
+        EchoStringResponse esr = (EchoStringResponse) bo;
+        assertNotNull(esr.getEchoStringReturn());
+        assertTrue(esr.getEchoStringReturn().equals("sample return value"));
+    }
 }
