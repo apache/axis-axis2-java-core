@@ -48,6 +48,23 @@
                <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/>
            </xsl:for-each>;
      </xsl:for-each>
-    }
+
+
+         <!-- write the classes for the exceptions if there are any present -->
+   <xsl:for-each select="fault-list/fault">
+         public static class <xsl:value-of select="@shortName"/> extends java.rmi.RemoteException{
+
+            private <xsl:value-of select="@type"/> faultMessage;
+
+            public void setFaultMessage(<xsl:value-of select="@type"/> msg){
+               faultMessage = msg;
+            }
+
+            public <xsl:value-of select="@type"/> getFaultMessage(){
+               return faultMessage;
+            }
+         }
+   </xsl:for-each>
+         }
     </xsl:template>
  </xsl:stylesheet>

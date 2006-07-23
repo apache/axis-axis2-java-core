@@ -723,7 +723,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     /**
-     * @return fully qualified MR name
+     * @return fully qualified skeleton name
      */
     protected String getFullyQualifiedSkeletonName() {
         String packageName = codeGenConfiguration.getPackageName();
@@ -731,6 +731,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return packageName + "." + localPart + SKELETON_CLASS_SUFFIX;
     }
 
+    /**
+     * @return fully qualified skeleton interface name
+     */
+    protected String getFullyQualifiedSkeletonInterfaceName() {
+        String packageName = codeGenConfiguration.getPackageName();
+        String localPart = makeJavaClassName(axisService.getName());
+        return packageName + "." + localPart + SKELETON_INTERFACE_SUFFIX;
+    }
     /**
      * Emits the skeleton
      * @throws Exception
@@ -748,7 +756,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             //handle faults
             generateAndPopulateFaultNames();
-            updateFaultPackageForSkeleton();
+            updateFaultPackageForSkeleton(codeGenConfiguration.isServerSideInterface());
 
             if (codeGenConfiguration.isServerSideInterface()) {
                 //write skeletonInterface
@@ -871,13 +879,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      *  skeleton
      *  the faults are always generated as inner types
      */
-    protected void updateFaultPackageForSkeleton() {
+    protected void updateFaultPackageForSkeleton(boolean isInterface) {
         Iterator faultClassNameKeys = fullyQualifiedFaultClassNameMap.keySet().iterator();
         while (faultClassNameKeys.hasNext()) {
             Object key = faultClassNameKeys.next();
             String className = (String) fullyQualifiedFaultClassNameMap.get(key);
             //append the skelton name
-            String fullyQualifiedSkeletonName = getFullyQualifiedSkeletonName();
+            String fullyQualifiedSkeletonName = null;
+            if (isInterface){
+                fullyQualifiedSkeletonName = getFullyQualifiedSkeletonInterfaceName();
+            }else{
+                fullyQualifiedSkeletonName = getFullyQualifiedSkeletonName();
+            }
             fullyQualifiedFaultClassNameMap.put(key, fullyQualifiedSkeletonName + "."
                     + className);
             InstantiatableFaultClassNameMap.put(key, fullyQualifiedSkeletonName + "$"

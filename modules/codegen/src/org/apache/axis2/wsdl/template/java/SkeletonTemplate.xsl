@@ -57,22 +57,24 @@
         }
      </xsl:for-each>
 
+        <!-- we write the faults here only if it is not the interface mode-->
+        <xsl:if test="not(@skeletonInterfaceName)">
+            <!-- write the classes for the exceptions if there are any present -->
+            <xsl:for-each select="fault-list/fault">
+                public static class <xsl:value-of select="@shortName"/> extends java.rmi.RemoteException{
 
-    <!-- write the classes for the exceptions if there are any present -->
-   <xsl:for-each select="fault-list/fault">
-         public static class <xsl:value-of select="@shortName"/> extends java.rmi.RemoteException{
+                private <xsl:value-of select="@type"/> faultMessage;
 
-            private <xsl:value-of select="@type"/> faultMessage;
+                public void setFaultMessage(<xsl:value-of select="@type"/> msg){
+                faultMessage = msg;
+                }
 
-            public void setFaultMessage(<xsl:value-of select="@type"/> msg){
-               faultMessage = msg;
-            }
-
-            public <xsl:value-of select="@type"/> getFaultMessage(){
-               return faultMessage;
-            }
-         }
-   </xsl:for-each>
+                public <xsl:value-of select="@type"/> getFaultMessage(){
+                return faultMessage;
+                }
+                }
+            </xsl:for-each>
+        </xsl:if>
     }
     </xsl:template>
  </xsl:stylesheet>
