@@ -111,7 +111,7 @@ public class STSRequester {
                 }
                 elem.setText(Base64.encode(nonce));
 
-                TrustUtil.createKeySizeElement(config.getWstVersion(), rstElem).setText(Integer.toString(nonceLength * 8));
+                TrustUtil.createKeySizeElement(config.getWstVersion(), rstElem, nonceLength * 8);
             }
 
             String str = rstElem.toString();

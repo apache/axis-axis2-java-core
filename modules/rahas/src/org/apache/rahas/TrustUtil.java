@@ -161,19 +161,24 @@ public class TrustUtil {
     }
     
     public static OMElement createKeySizeElement(
-            int version, OMElement parent) throws TrustException {
+            int version, OMElement parent, int size) throws TrustException {
         String ns = getWSTNamespace(version);
-        return createOMElement(parent, ns,
+        OMElement ksElem = createOMElement(parent, ns,
                 RahasConstants.KEY_SIZE_LN,
                 RahasConstants.WST_PREFIX);
+        ksElem.setText(Integer.toString(size));
+        return ksElem;
     }
     
     public static OMElement createKeyTypeElement(
-            int version, OMElement parent) throws TrustException {
+            int version, OMElement parent, String type) throws TrustException {
         String ns = getWSTNamespace(version);
-        return createOMElement(parent, ns,
+        OMElement ktelem = createOMElement(parent, ns,
                 RahasConstants.KEY_TYPE_LN,
                 RahasConstants.WST_PREFIX);
+        
+        ktelem.setText(ns + type);
+        return ktelem;
     }
     
     public static OMElement createLifetimeElement(
@@ -199,10 +204,16 @@ public class TrustUtil {
         return ltElem;
     }
 
-    public static OMElement createAppliesToElement(OMElement parent) {
-        return createOMElement(parent, RahasConstants.WSP_NS,
+    public static OMElement createAppliesToElement(OMElement parent, String address) {
+        OMElement appliesToElem = createOMElement(parent, RahasConstants.WSP_NS,
                 RahasConstants.APPLIES_TO_LN,
                 RahasConstants.WSP_PREFIX);
+        
+        OMElement eprElem = createOMElement(appliesToElem, RahasConstants.WSA_NS, RahasConstants.ENDPOINT_REFERENCE, RahasConstants.WSA_PREFIX);
+        OMElement addressElem = createOMElement(eprElem, RahasConstants.WSA_NS, RahasConstants.ADDRESS, RahasConstants.WSA_PREFIX);
+        addressElem.setText(address);
+        
+        return appliesToElem;
     }
     
     /**
@@ -260,7 +271,7 @@ public class TrustUtil {
                 try {
                     return Integer.parseInt(text.trim());
                 } catch (NumberFormatException e) {
-                    throw new TrustException(TrustException.BAD_REQUEST, e);
+                    throw new TrustException(TrustException.INVALID_REQUEST, new String[] { "invalid wst:Keysize value" }, e);
                 }
             } 
         }

@@ -182,10 +182,24 @@ public class SAMLTokenIssuer implements TokenIssuer {
          */ 
         
         String keyType = TrustUtil.findKeyType(request);
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        String appliesToAddress = this.getServiceAddress(request);
         
+        SAMLAssertion assertion = null;
         
-        SAMLAssertion assertion = createHoKAssertion(config, request, doc, crypto, creationTime, expirationTime, keyType, secret);
+        if(keyType == null) {
+            throw new TrustException(TrustException.INVALID_REQUEST, new String[]{"Requested KeyType is missing"});
+        }
+        
+        if(keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY) || 
+                         keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY)) {
+            assertion = createHoKAssertion(config, request, doc, crypto,
+                    creationTime, expirationTime, keyType, secret);
+        } else  if(keyType.endsWith(RahasConstants.KEY_TYPE_BEARER)) {
+            //TODO Create bearer token
+        } else {
+            throw new TrustException("unsupportedKeyType");
+        }
+        
         OMElement rstrElem = null; 
         
         int version = TrustUtil.getWSTVersion(request.getNamespace().getName());
@@ -205,8 +219,8 @@ public class SAMLTokenIssuer implements TokenIssuer {
         TrustUtil.createtTokenTypeElement(version, rstrElem).setText(
                 RahasConstants.TOK_TYPE_SAML_10);
 
-        TrustUtil.createKeySizeElement(version, rstrElem).setText(
-                Integer.toString(getKeySize(request, config, version)));
+        
+        TrustUtil.createKeySizeElement(version, rstrElem, keySize);
         
         if (config.addRequestedAttachedRef) {
             TrustUtil.createRequestedAttachedRef(version, rstrElem, "#"
@@ -218,6 +232,10 @@ public class SAMLTokenIssuer implements TokenIssuer {
                     .getId(), RahasConstants.TOK_TYPE_SAML_10);
         }
 
+        if(appliesToAddress != null) {
+            TrustUtil.createAppliesToElement(rstrElem, appliesToAddress);
+        }
+        
         // Use GMT time in milliseconds
         DateFormat zulu = new XmlSchemaDateFormat();
 
@@ -257,29 +275,6 @@ public class SAMLTokenIssuer implements TokenIssuer {
         return env;
     }
     
-    /**
-     * Get the keysize of the encrypted key
-     * If the request contains a <code>wst:KeySize</code> element and if it is a
-     * a valid value then return that value. If not, then use the value 
-     * available in the config. 
-     * @return
-     */
-    private int getKeySize(OMElement request, SAMLTokenIssuerConfig config, int version)
-            throws TrustException {
-        OMElement keySizeElem = request.getFirstChildWithName(
-                    new QName(TrustUtil.getWSTNamespace(version), RahasConstants.KEY_SIZE_LN));
-        if (keySizeElem != null) {
-            // Try to get the wst:KeySize value
-            try {
-                return Integer.parseInt(keySizeElem.getText().trim());
-            } catch (NumberFormatException e) {
-                throw new TrustException(TrustException.INVALID_REQUEST,
-                        new String[] { "invalid wst:Keysize value" });
-            }
-        } else {
-            return config.keySize;
-        }
-    }
 
     /**
      * Uses the <code>wst:AppliesTo</code> to figure out the certificate to 
@@ -293,19 +288,12 @@ public class SAMLTokenIssuer implements TokenIssuer {
     private X509Certificate getServiceCert(OMElement request,
             SAMLTokenIssuerConfig config, Crypto crypto)
             throws WSSecurityException, TrustException {
+
+        String address = this.getServiceAddress(request);
         
-        OMElement appliesToElem = request.getFirstChildWithName(
-                new QName(RahasConstants.WSP_NS, RahasConstants.APPLIES_TO_LN));
-        if(appliesToElem != null) {
-            //Right now we only expect the service epr address to be here
-            String address = appliesToElem.getText().trim();
-            if(address != null && !"".equals(address)) {
-                //figure out the alias from the config
-                String alias = (String)config.trustedServices.get(address);;
-                return (X509Certificate)crypto.getCertificates(alias)[0];
-            } else {
-                throw new TrustException("samlInvalidAppliesToValue");
-            }
+        if(address != null && !"".equals(address)) {
+            String alias = (String)config.trustedServices.get(address);;
+            return (X509Certificate)crypto.getCertificates(alias)[0];
         } else {
             //Return the STS cert
             return (X509Certificate)crypto.getCertificates(config.issuerKeyAlias)[0];
@@ -313,6 +301,29 @@ public class SAMLTokenIssuer implements TokenIssuer {
         
     }
 
+    
+    private String getServiceAddress(OMElement request) throws TrustException {
+        OMElement appliesToElem = request.getFirstChildWithName(
+                new QName(RahasConstants.WSP_NS, RahasConstants.APPLIES_TO_LN));
+        if(appliesToElem != null) {
+            OMElement eprElem = appliesToElem.getFirstChildWithName(new QName(
+                    RahasConstants.WSA_NS, RahasConstants.ENDPOINT_REFERENCE));
+            if (eprElem != null) {
+                OMElement addrElem = eprElem.getFirstChildWithName(new QName(
+                        RahasConstants.WSA_NS, RahasConstants.ADDRESS));
+                if (addrElem != null && addrElem.getText() != null && !"".equals(addrElem.getText().trim())) {
+                    return addrElem.getText().trim();
+                } else {
+                    throw new TrustException("samlInvalidAppliesToElem");
+                }
+            } else {
+                throw new TrustException("samlInvalidAppliesToElem");
+            }
+        }
+        //If the AppliesTo element is missing
+        return null;
+    }
+    
     private SAMLAssertion createHoKAssertion(SAMLTokenIssuerConfig config,
             OMElement request, Document doc, Crypto crypto, Date creationTime,
             Date expirationTime, String keyType, byte[] secret)

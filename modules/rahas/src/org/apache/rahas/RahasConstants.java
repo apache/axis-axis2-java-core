@@ -35,6 +35,12 @@ public class RahasConstants {
     
     public final static String WSP_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     public final static String WSP_PREFIX = "wsp";
+    
+    public final static String WSA_NS = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
+    public final static String WSA_PREFIX = "wsa";
+    
+    public final static String ENDPOINT_REFERENCE = "EndpointReference";
+    public final static String ADDRESS = "Address";
 
     //Local names
     public final static String REQUEST_TYPE_LN = "RequestType";
@@ -52,6 +58,12 @@ public class RahasConstants {
     public final static String ENTROPY_LN = "Entropy";
     public final static String APPLIES_TO_LN = "AppliesTo";
     public final static String LIFETIME_LN = "Lifetime";
+    
+    
+    //Key types
+    public final static String KEY_TYPE_SYMM_KEY = "/SymmetricKey";
+    public final static String KEY_TYPE_PUBLIC_KEY = "/PublicKey";
+    public final static String KEY_TYPE_BEARER = "/Bearer";
     
     
     public class V_05_02 { 
@@ -80,10 +92,6 @@ public class RahasConstants {
         //Token types
         public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
         
-        //Key types
-        public final static String KEY_TYPE_SYMM_KEY = WST_NS_05_02 + "/SymmetricKey";
-        public final static String KEY_TYPE_PUBLIC_KEY = WST_NS_05_02 + "/PublicKey";
-        public final static String KEY_TYPE_BEARER = WST_NS_05_02 + "/Bearer";
     }
     
     public class V_05_12 { 
@@ -112,10 +120,6 @@ public class RahasConstants {
         //Token types
         public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/12/sc/sct";
         
-        //Key types
-        public final static String KEY_TYPE_SYMM_KEY = WST_NS_05_12 + "/SymmetricKey";
-        public final static String KEY_TYPE_PUBLIC_KEY = WST_NS_05_12 + "/PublicKey";
-        public final static String KEY_TYPE_BEARER = WST_NS_05_12 + "/Bearer";
     }
     
     //Token types

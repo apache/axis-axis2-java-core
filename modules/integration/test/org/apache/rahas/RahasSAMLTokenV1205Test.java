@@ -36,9 +36,6 @@ public class RahasSAMLTokenV1205Test extends TestClient {
         super(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.rahas.TestClient#getRequest()
-     */
     public OMElement getRequest() {
         try {
             OMElement rstElem = TrustUtil.createRequestSecurityTokenElement(RahasConstants.VERSION_05_12);
@@ -47,8 +44,11 @@ public class RahasSAMLTokenV1205Test extends TestClient {
             reqTypeElem.setText(RahasConstants.V_05_12.REQ_TYPE_ISSUE);
             tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
             
-            OMElement appliesToElem = TrustUtil.createAppliesToElement(rstElem);
-            appliesToElem.setText("http://localhost:5555/axis2/services/SecureService");
+            TrustUtil.createAppliesToElement(rstElem,
+                    "http://localhost:5555/axis2/services/SecureService");
+            TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12,
+                    rstElem, RahasConstants.KEY_TYPE_SYMM_KEY);
+            TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, rstElem, 256);
             
             return rstElem;
             
@@ -76,9 +76,6 @@ public class RahasSAMLTokenV1205Test extends TestClient {
         return ifc;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.rahas.TestClient#getServiceRepo()
-     */
     public String getServiceRepo() {
         return "rahas_service_repo_1";
     }
