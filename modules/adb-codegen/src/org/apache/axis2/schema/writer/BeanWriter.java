@@ -96,6 +96,12 @@ public interface BeanWriter {
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException;
 
 
+     /**
+     * Find whether the mapper class name is present
+     * @param mapperPackageName
+     */
+    public String getExtensionMapperPackageName();
+
     /**
      * Registers the mapper package name - this is relevant to languages
      * that enforce packaging such as Java or C#. May be ignored in other

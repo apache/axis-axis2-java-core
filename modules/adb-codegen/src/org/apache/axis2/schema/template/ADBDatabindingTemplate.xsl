@@ -4,6 +4,7 @@
     <!-- ############################   ADB template   ##############################  -->
     <xsl:template match="databinders[@dbtype='adb']">
         <xsl:variable name="serverside"  select="@isserverside"></xsl:variable>
+        <xsl:variable name="helpermode"  select="extra/@h"></xsl:variable>
 
         <!--  generate toOM for only non parts and non primitives!!! -->
         <xsl:for-each select="param[@type!='' and not(@primitive)]">
@@ -104,7 +105,15 @@
         try {
         <xsl:for-each select="param[not(@primitive) and @type!='']">
                 if (<xsl:value-of select="@type"/>.class.equals(type)){
-                return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                <xsl:choose>
+                    <xsl:when test="$helpermode">
+                           return <xsl:value-of select="@type"/>Helper.parse(param.getXMLStreamReaderWithoutCaching());
+                    </xsl:when>
+                    <xsl:otherwise>
+                           return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+                    </xsl:otherwise>
+                </xsl:choose>
+
                 }
            </xsl:for-each>
         } catch (Exception e) {

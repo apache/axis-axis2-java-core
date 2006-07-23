@@ -104,6 +104,8 @@ public class SchemaConstants {
         public static final String WRITE_SCHEMA_CLASSES = "r";
         public static final String STYLE = "s";
         public static final String PACKAGE = "p";
+        public static final String MAPPER_PACKAGE = "mp";
+        public static final String HELPER_MODE = "h";
 
     }
 

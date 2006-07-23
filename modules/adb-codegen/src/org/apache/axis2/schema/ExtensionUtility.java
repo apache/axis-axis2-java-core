@@ -231,7 +231,7 @@ public class ExtensionUtility {
             typeMap.addTypeMappingName(partQName,className);
             if (Boolean.TRUE.equals(
                     metaInfoMap.get(SchemaConstants.
-                    SchemaCompilerInfoHolder.CLASSNAME_PRIMITVE_KEY))){
+                            SchemaCompilerInfoHolder.CLASSNAME_PRIMITVE_KEY))){
 
                 //this type is primitive - add that to the type mapper status
                 //for now lets add a boolean
@@ -251,7 +251,7 @@ public class ExtensionUtility {
         //find the schema
         XmlSchema schema = (XmlSchema) schemaMap.get(schemaTypeName.getNamespaceURI());
         if (schema!=null){
-             return schema.getTypeByName(schemaTypeName);
+            return schema.getTypeByName(schemaTypeName);
         }
         return null;
     }
@@ -289,6 +289,23 @@ public class ExtensionUtility {
                 options.setPackageName(packageName);
             }
 
+        }
+
+        //add custom mapper package name
+        if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.MAPPER_PACKAGE)) {
+            String packageName = (String) propertyMap.get(SchemaConstants.SchemaCompilerArguments.MAPPER_PACKAGE);
+            if (packageName != null || !"".equals(packageName)) {
+                options.setMapperClassPackage(packageName);
+            }
+
+        }
+
+        //set helper mode
+        //this becomes effective only if the classes are unpacked
+        if (!options.isWrapClasses()){
+            if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.HELPER_MODE)) {
+                options.setHelperMode(true);
+            }
         }
     }
 

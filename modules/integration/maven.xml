@@ -109,6 +109,22 @@
 	  <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test4"
 						 target="jar.server"/>
 
+        <ant:echo>Running codegen RPC WSDLs with helper mode -  take 1</ant:echo>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <classpath refid="maven.dependency.classpath"/>
+            <arg line="-o target/helper-test1 -uri test-resources/rpc/test-rpc-2.wsdl -u -Eh"/>
+        </java>
+        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/helper-test1"
+                 target="jar.client"/>
+
+        <ant:echo>Running codegen RPC WSDLs with helper mode -  take 2</ant:echo>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <classpath refid="maven.dependency.classpath"/>
+            <arg line="-o target/helper-test2 -uri test-resources/rpc/test-rpc-2.wsdl -u -Eh"/>
+        </java>
+        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/helper-test2"
+                 target="jar.client"/>
+
         <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
 		<j:if test="${context.getVariable('skip.enterprise.tests') != 'true'}">
 			<!-- codegen for the enterprise wsdl -->

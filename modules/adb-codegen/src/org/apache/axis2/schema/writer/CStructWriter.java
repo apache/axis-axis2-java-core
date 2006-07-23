@@ -699,4 +699,13 @@ public class CStructWriter implements BeanWriter {
     public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException{
         //unimplemented
     }
+
+    /**
+     * Keep unimplemented
+     * @see org.apache.axis2.schema.writer.BeanWriter#getExtensionMapperPackageName() 
+     * @return
+     */
+    public String getExtensionMapperPackageName() {
+        return null;
+    }
 }

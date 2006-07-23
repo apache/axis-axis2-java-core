@@ -65,7 +65,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-//import com.ibm.wsdl.util.xml.DOM2Writer;
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -1063,6 +1063,25 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //this will be used to select the correct template
         addAttribute(doc, "dbtype", codeGenConfiguration.getDatabindingType(), rootElement);
 
+        //at this point we may need to capture the extra parameters passes to the
+        //particular databinding framework
+        //these parameters showup in the property map and we can just copy these items over
+        //to an extra element.
+        Element extraElement = addElement(doc, "extra", null, rootElement);
+        Map propertiesMap = codeGenConfiguration.getProperties();
+        for (Iterator it = propertiesMap.keySet().iterator();
+             it.hasNext();){
+            Object key = it.next();
+            Object value = propertiesMap.get(key);
+            //if the value is null set it to empty string
+            if (value==null) value="";
+            //add the property to the extra element only if both
+            //are strings
+            if (key instanceof String && value instanceof String){
+                 addAttribute(doc,(String)key,(String)value, extraElement);
+            }
+        }
+
         //add the server side attribute. this helps the databinding template
         //to determine the methods to generate
         if (isServerside){
@@ -1084,7 +1103,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
 
         ///////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
+        System.out.println(DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////////////////////
 
         return rootElement;
@@ -2058,7 +2077,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected Element addElement(Document document, String eltName, String eltValue, Element element) {
         Element elt = XSLTUtils.addChildElement(document, eltName, element);
-        elt.appendChild(document.createTextNode(eltValue));
+        if (eltValue!=null){
+            elt.appendChild(document.createTextNode(eltValue));
+        }
         return elt;
     }
 

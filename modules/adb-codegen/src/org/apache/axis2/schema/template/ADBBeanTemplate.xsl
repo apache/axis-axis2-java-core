@@ -1538,7 +1538,7 @@
             final org.apache.axiom.om.OMFactory factory){
 
         org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this){
+                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName){
                            public void serialize(
                                   javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
             <xsl:choose>
@@ -2440,8 +2440,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
   </xsl:template>
 
   <xsl:template match="mapper">
-        <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
-       
+        <xsl:variable name="name" select="@name"/>
+        <xsl:variable name="helperMode" select="@helpermode"/>
+
          <xsl:if test="not(not(@unwrapped) or (@skip-write))">
             /**
             * <xsl:value-of select="$name"/>.java
@@ -2465,7 +2466,15 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                 <xsl:if test="position() &gt; 1">else </xsl:if> if (
                   "<xsl:value-of select="@nsuri"/>".equals(namespaceURI) &amp;&amp;
                   "<xsl:value-of select="@shortname"/>".equals(typeName)){
-                     return  <xsl:value-of select="@classname"/>.Factory.parse(reader);
+                   <xsl:choose>
+                       <xsl:when test="$helperMode">
+                           return  <xsl:value-of select="@classname"/>Helper.parse(reader); 
+                       </xsl:when>
+                        <xsl:otherwise>
+                            return  <xsl:value-of select="@classname"/>.Factory.parse(reader);
+                        </xsl:otherwise>
+                   </xsl:choose>
+
                   }
 
               </xsl:for-each>

@@ -54,6 +54,15 @@ public class CompilerOptions {
     }
 
     /**
+     * get whether the mapper class package
+     * name is present
+     * @return
+     */
+    public boolean isMapperClassPackagePresent(){
+        return   (mapperClassPackage!=null &&
+                       "".equals(mapperClassPackage));
+    }
+    /**
      * The flag keeping whether seperate helpers
      * need to be generated or not
      */

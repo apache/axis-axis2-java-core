@@ -209,11 +209,13 @@ public class SchemaCompiler {
                 );
             }
 
-            //get the first schema from the list and take that namespace as the
-            //mapper namespace
-            writer.registerExtensionMapperPackageName(
-                    URLProcessor.makePackageName(((XmlSchema) schemalist.get(0)).getTargetNamespace()));
-
+            //set a mapper package if not avaialable
+            if (writer.getExtensionMapperPackageName()==null){
+                //get the first schema from the list and take that namespace as the
+                //mapper namespace
+                writer.registerExtensionMapperPackageName(
+                        URLProcessor.makePackageName(((XmlSchema) schemalist.get(0)).getTargetNamespace()));
+            }
             // second round - call the schema compiler one by one
             for (int i = 0; i < schemalist.size(); i++) {
                 compile((XmlSchema) schemalist.get(i),true);
@@ -254,8 +256,11 @@ public class SchemaCompiler {
 
         //register the package from this namespace as the mapper classes package
         if (!isPartofGroup){
-            writer.registerExtensionMapperPackageName(
-                    URLProcessor.makePackageName(schema.getTargetNamespace()));
+            //set a mapper package if not avaialable
+            if (writer.getExtensionMapperPackageName()==null){
+                writer.registerExtensionMapperPackageName(
+                        URLProcessor.makePackageName(schema.getTargetNamespace()));
+            }
         }
 
         //First look for the schemas that are imported and process them

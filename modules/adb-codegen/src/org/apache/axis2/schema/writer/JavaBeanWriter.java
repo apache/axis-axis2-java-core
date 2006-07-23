@@ -151,8 +151,12 @@ public class JavaBeanWriter implements BeanWriter {
 
             // add the ns mappings
             this.ns2packageNameMap = options.getNs2PackageMap();
-
+            //set helper mode
             this.isHelperMode = options.isHelperMode();
+            //set mapper class package if present
+            if (options.isMapperClassPackagePresent()){
+                this.mappingClassPackage = options.getMapperClassPackage();
+            }
 
         } catch (IOException e) {
             throw new SchemaCompilationException(e);
@@ -796,6 +800,15 @@ public class JavaBeanWriter implements BeanWriter {
     }
 
     /**
+     * get the mapper class package name
+     * May be ignored by the implementer
+     * @return
+     */
+    public String getExtensionMapperPackageName() {
+        return mappingClassPackage;
+    }
+
+    /**
      * Sets the mapping class name of this writer. A mapping class
      * package set by the options may be overridden at the this point
      * @param mapperPackageName
@@ -837,6 +850,9 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "skip-write", "yes", rootElt);
             }
 
+            if (isHelperMode){
+                 XSLTUtils.addAttribute(model, "helpermode", "yes", rootElt);
+            }
 
             for (int i = 0; i < metainfArray.length; i++) {
                 QName ownQname = metainfArray[i].getOwnQname();
