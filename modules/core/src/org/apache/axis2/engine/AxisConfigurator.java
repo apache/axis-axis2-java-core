@@ -23,15 +23,21 @@ import org.apache.axis2.AxisFault;
 public interface AxisConfigurator {
 
     /**
-     * Configurationcontextfactory will call this method to get the AxisConfiguration
+     * Configurationcontextfactory will invoke this method to get the AxisConfiguration
      *
      * @return AxisConfigurator
      */
     AxisConfiguration getAxisConfiguration() throws AxisFault;
 
-    //to load services
+    /**
+     * Method to deploy services from the repository
+     */
     void loadServices();
 
-    //To engage globally listed modules
+    /**
+     * Engages the global modules specified in the configuration
+     * 
+     * @throws AxisFault
+     */
     void engageGlobalModules() throws AxisFault;
 }
