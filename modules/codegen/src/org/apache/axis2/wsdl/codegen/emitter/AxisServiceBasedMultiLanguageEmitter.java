@@ -65,7 +65,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-import com.ibm.wsdl.util.xml.DOM2Writer;
+//import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -1103,7 +1103,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
 
         ///////////////////////////////////////////////
-        System.out.println(DOM2Writer.nodeToString(rootElement));
+        //System.out.println(DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////////////////////
 
         return rootElement;
