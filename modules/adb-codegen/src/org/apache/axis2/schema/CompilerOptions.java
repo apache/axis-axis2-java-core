@@ -60,7 +60,7 @@ public class CompilerOptions {
      */
     public boolean isMapperClassPackagePresent(){
         return   (mapperClassPackage!=null &&
-                       "".equals(mapperClassPackage));
+                       !"".equals(mapperClassPackage));
     }
     /**
      * The flag keeping whether seperate helpers
