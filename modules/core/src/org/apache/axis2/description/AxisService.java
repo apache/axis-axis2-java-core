@@ -51,6 +51,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
@@ -518,9 +519,24 @@ public class AxisService extends AxisDescription {
     }
 
     public void printWSDL(OutputStream out, String requestIP, String servicePath) throws AxisFault {
-        ArrayList eprList = new ArrayList();
-        String[] eprArray = getServiceEprs(requestIP, eprList);
-        getWSDL(out, eprArray, servicePath);
+        if (isUseUserWSDL()) {
+            Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+            if (wsld4jdefinition != null) {
+                try {
+                    Definition definition = (Definition) wsld4jdefinition.getValue();
+                    WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
+                    writer.writeWSDL(definition, out);
+                } catch (WSDLException e) {
+                    throw new AxisFault(e);
+                }
+            } else {
+                printWSDLError(out);
+            }
+        } else {
+            ArrayList eprList = new ArrayList();
+            String[] eprArray = getServiceEprs(requestIP, eprList);
+            getWSDL(out, eprArray, servicePath);
+        }
     }
 
     private String[] getServiceEprs(String requestIP, ArrayList eprList) throws AxisFault {
@@ -606,20 +622,24 @@ public class AxisService extends AxisDescription {
                 throw new AxisFault(e);
             }
         } else {
-            try {
-                String wsdlntfound = "<error>" +
-                        "<description>Unable to generate WSDL for this service</description>" +
-                        "<reason>Either user has not dropped the wsdl into META-INF or" +
-                        " operations use message receivers other than RPC.</reason>" +
-                        "</error>";
-                out.write(wsdlntfound.getBytes());
-                out.flush();
-                out.close();
-            } catch (IOException e) {
-                throw new AxisFault(e);
-            }
+            printWSDLError(out);
         }
 
+    }
+
+    private void printWSDLError(OutputStream out) throws AxisFault {
+        try {
+            String wsdlntfound = "<error>" +
+                    "<description>Unable to generate WSDL for this service</description>" +
+                    "<reason>Either user has not dropped the wsdl into META-INF or" +
+                    " operations use message receivers other than RPC.</reason>" +
+                    "</error>";
+            out.write(wsdlntfound.getBytes());
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
     }
 
     //WSDL 2.0
@@ -647,18 +667,7 @@ public class AxisService extends AxisDescription {
                 throw new AxisFault(e);
             }
         } else {
-            try {
-                String wsdlntfound = "<error>" +
-                        "<description>Unable to generate WSDL for this service</description>" +
-                        "<reason>Either user has not dropped the wsdl into META-INF or" +
-                        " operations use message receivers other than RPC.</reason>" +
-                        "</error>";
-                out.write(wsdlntfound.getBytes());
-                out.flush();
-                out.close();
-            } catch (IOException e) {
-                throw new AxisFault(e);
-            }
+            printWSDLError(out);
         }
 
     }
@@ -1410,5 +1419,23 @@ public class AxisService extends AxisDescription {
 
     public void setElementFormDefault(boolean elementFormDefault) {
         this.elementFormDefault = elementFormDefault;
+    }
+
+    /**
+     * User can set a paramter in services.xml saying he want to show the original wsdl
+     * that he put into META-INF once someone ask for ?wsdl
+     * so if you want to use your own wsdl then add following parameter into
+     * services.xml
+     * <parameter name="useOriginalwsdl">true</parameter>
+     */
+    public boolean isUseUserWSDL() {
+        Parameter parameter = getParameter("useOriginalwsdl");
+        if (parameter != null) {
+            String value = (String) parameter.getValue();
+            if ("true".equals(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -521,7 +521,7 @@ public class DeploymentEngine implements DeploymentConstants {
             currentArchiveFile.setClassLoader(false, config.getModuleClassLoader());
             axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());
             archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule,
-                                            false, axisConfig);
+                                            false, config);
             ClassLoader moduleClassLoader = axismodule.getModuleClassLoader();
             Flow inflow = axismodule.getInFlow();
 

@@ -54,8 +54,8 @@ public class Java2WSDLUtils {
         if (currentIndex > 0) {
             strBuf.append(HTTP);
         } else if(currentIndex ==-1){
-            strBuf.append(HTTP);
-            strBuf.append(packageName);
+//            strBuf.append(HTTP);
+//            strBuf.append(packageName);
             return strBuf;
         }
         while (currentIndex != -1) {

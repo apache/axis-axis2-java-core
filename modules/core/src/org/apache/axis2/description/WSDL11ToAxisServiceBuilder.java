@@ -241,7 +241,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * a new element
      *
      * @param wsdl4jTypes
-     * @return
      */
 
     private Map populateSchemaMap(Types wsdl4jTypes) {
@@ -363,7 +362,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             PortType portType = binding.getPortType();
             processPortType(portType, dif);
 
-            String portTypeNs = portType.getQName().getNamespaceURI();
+//            String portTypeNs = portType.getQName().getNamespaceURI();
             List list = binding.getBindingOperations();
             for (int i = 0; i < list.size(); i++) {
                 BindingOperation wsdl4jBindingOperation = (BindingOperation) list
@@ -465,7 +464,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *
      * @param name
      * @param faultMessages
-     * @return
      */
     private AxisMessage findFaultMessage(String name, ArrayList faultMessages) {
         AxisMessage tempMessage;
@@ -575,7 +573,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *
      * @param outMessage
      * @param wsdl4jOperation
-     * @param bindingInput
      * @param isWrapped
      */
     private void AddQNameReference(AxisMessage outMessage,
@@ -639,11 +636,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Add the QName for the binding output
-     *
-     * @param outMessage
-     * @param wsdl4jOperation
-     * @param bindingInput
-     * @param isWrapped
      */
     private void AddQNameReference(AxisMessage faultMessage,
                                    Message wsdl4jMessage) {
@@ -667,7 +659,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * included in the binding operation
      *
      * @param bindingOp
-     * @return
      */
     private String getSOAPStyle(BindingOperation bindingOp) {
         List extensibilityElements = bindingOp.getExtensibilityElements();
@@ -883,7 +874,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     /**
      * Generates a list of wrapper schemas
      *
-     * @param wsdl4jDefinition
      * @param wsdl4jBinding
      */
     private Element[] generateWrapperSchema(
@@ -1259,7 +1249,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     * @param namespaceDeclaration
      * @param prefixMap
      */
     private void checkAndAddNamespaceDeclarations(String namespace,
@@ -1718,7 +1707,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Look for the wrappable operations depending on the style
      *
      * @param binding
-     * @return
      */
     private List findWrappableOperations(Binding binding) {
         //first find the global style declaration.
