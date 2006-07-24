@@ -9,8 +9,19 @@
         <!--  generate toOM for only non parts and non primitives!!! -->
         <xsl:for-each select="param[@type!='' and not(@primitive)]">
             private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
-            return param.getOMElement(<xsl:value-of select="@type"/>.MY_QNAME,
-            org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+            <xsl:choose>
+                    <xsl:when test="$helpermode">
+                            return <xsl:value-of select="@type"/>Helper.getOMElement(
+                                        param,
+                                        <xsl:value-of select="@type"/>.MY_QNAME,
+                                        org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                    </xsl:when>
+                    <xsl:otherwise>
+                     return param.getOMElement(<xsl:value-of select="@type"/>.MY_QNAME,
+                                  org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                    </xsl:otherwise>
+            </xsl:choose>
+
             }
         </xsl:for-each>
 
@@ -41,7 +52,17 @@
 
 
                        org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                       emptyEnvelope.getBody().addChild(wrappedType.getOMElement(<xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
+                          <xsl:choose>
+                            <xsl:when test="$helpermode">
+                                emptyEnvelope.getBody().addChild(<xsl:value-of select="$inputElementType"/>Helper.getOMElement(
+                                wrappedType,
+                                <xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
+                            </xsl:when>
+                            <xsl:otherwise>
+                                emptyEnvelope.getBody().addChild(wrappedType.getOMElement(<xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
+                            </xsl:otherwise>
+                        </xsl:choose>
+
                        return emptyEnvelope;
                        }
 
@@ -52,7 +73,16 @@
 						<!-- Assumption - the parameter is always an ADB element-->
 				    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent){
                     org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                     emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
+                         <xsl:choose>
+                            <xsl:when test="$helpermode">
+                                emptyEnvelope.getBody().addChild(<xsl:value-of select="$inputElementType"/>Helper.getOMElement(
+                                param,
+                                <xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
+                            </xsl:when>
+                            <xsl:otherwise>
+                                emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
+                            </xsl:otherwise>
+                    </xsl:choose>
                      return emptyEnvelope;
                     }
 
@@ -71,7 +101,18 @@
                     <!-- Assumption - The ADBBean here is always an element based bean -->
                     private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent){
                       org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
-                     emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
+                       <xsl:choose>
+                            <xsl:when test="$helpermode">
+                                emptyEnvelope.getBody().addChild(
+                                <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>Helper.getOMElement(
+                                param,
+                                <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
+                            </xsl:when>
+                            <xsl:otherwise>
+                                emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/>.MY_QNAME,factory));
+                            </xsl:otherwise>
+                    </xsl:choose>
+
                      return emptyEnvelope;
                     }
                 </xsl:when>
