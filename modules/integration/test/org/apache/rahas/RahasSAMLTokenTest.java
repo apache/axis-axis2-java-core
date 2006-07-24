@@ -60,9 +60,6 @@ public class RahasSAMLTokenTest extends TestClient {
         return ifc;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.rahas.TestClient#getServiceRepo()
-     */
     public String getServiceRepo() {
         return "rahas_service_repo_1";
     }

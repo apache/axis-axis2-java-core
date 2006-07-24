@@ -357,7 +357,33 @@
 
 			<!-- Rahas Test1: SAML Token test : END -->
 
-		
+
+			<!-- Rahas Test 3 & 4: RahasSAMLTokenUTForHoKTest and RahasSAMLTokenUTForHoKV1205Test -->
+            <mkdir dir="target/test-resources/rahas_service_repo_3"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_3/conf"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_3/services"/>
+            <mkdir dir="target/test-resources/rahas_service_repo_3/modules"/>
+
+            <copy file="../security/target/rampart-${rampart_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_3/modules/rampart-${rampart_version}.mar"/>
+		    <copy file="../rahas/target/rahas-${rahas_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_3/modules/rahas-${rahas_version}.mar"/>
+            <copy file="../addressing/target/addressing-${addressing_version}.mar"
+                  tofile="target/test-resources/rahas_service_repo_3/modules/addressing-${addressing_version}.mar"/>
+				  
+				  
+			<!-- copy the services.xml and create the aar -->
+			<copy overwrite="yes" file="test-resources/rahas/s3-services.xml"
+                  tofile="target/temp-rahas/META-INF/services.xml"/>
+			<copy overwrite="yes" file="test-resources/rahas/sctIssuer.properties"
+                  tofile="target/temp-rahas/sctIssuer.properties"/>
+
+		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_3/services/SecureService.aar"
+                 basedir="target/temp-rahas"/>
+
+			<!-- Rahas Test 3 & 4: RahasSAMLTokenUTForHoKTest and RahasSAMLTokenUTForHoKV1205Test : END-->
+
+
 			<mkdir dir="target/test-resources/samples/modules"/>
             <mkdir dir="target/test-resources/samples/conf"/>
             <mkdir dir="target/test-resources/repository-client/modules"/>

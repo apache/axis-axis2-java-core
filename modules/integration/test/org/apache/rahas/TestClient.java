@@ -51,7 +51,7 @@ public abstract class TestClient extends TestCase {
     /**
      * @param args
      */
-    public void testConversation() {
+    public void testRequest() {
         try {
 
             // Get the repository location from the args
