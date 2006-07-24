@@ -17,6 +17,7 @@ package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -196,7 +197,9 @@ public class RESTUtil {
                     msgCtxt.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEnc);
                 }
 
-                body.addChild(new StAXOMBuilder(xmlreader).getDocumentElement());
+                OMNodeEx documentElement = (OMNodeEx)new StAXOMBuilder(xmlreader).getDocumentElement();
+                documentElement.setParent(null);
+                body.addChild(documentElement);
 
                 // if the media type is multipart/related, get help from Axis2 :)
             } else if (checkContentType(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
