@@ -130,7 +130,7 @@ public class DeploymentEngine implements DeploymentConstants {
             engageModules();
         } catch (AxisFault axisFault) {
             log.info(Messages.getMessage(DeploymentErrorMsgs.MODULE_VALIDATION_FAILED,
-                                         axisFault.getMessage()));
+                    axisFault.getMessage()));
             throw new DeploymentException(axisFault);
         }
     }
@@ -147,8 +147,8 @@ public class DeploymentEngine implements DeploymentConstants {
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
                     URL servicesURL = new URL(servicesDir, "services/" + fileUrl);
                     ArrayList servicelist = populateService(serviceGroup,
-                                                            servicesURL,
-                                                            fileUrl.substring(0, fileUrl.indexOf(".aar")));
+                            servicesURL,
+                            fileUrl.substring(0, fileUrl.indexOf(".aar")));
                     addServiceGroup(serviceGroup, servicelist, servicesURL);
                 }
             }
@@ -261,7 +261,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 return serviceList;
             } else if (TAG_SERVICE_GROUP.equals(elementName)) {
                 ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, new HashMap(),
-                                                                           axisConfig);
+                        axisConfig);
                 ArrayList servicList = groupBuilder.populateServiceGroup(serviceGroup);
                 Iterator serviceIterator = servicList.iterator();
                 while (serviceIterator.hasNext()) {
@@ -383,8 +383,8 @@ public class DeploymentEngine implements DeploymentConstants {
             if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
                 if (!axisConfig.isManageTransportSession()) {
                     throw new DeploymentException("You can not deploy the service " +
-                                                  "in transport session , since transport session management" +
-                                                  " disabled in axis2.xml change manageTransportSession parameter value to true");
+                            "in transport session , since transport session management" +
+                            " disabled in axis2.xml change manageTransportSession parameter value to true");
                 }
             }
             axisService.setUseDefaultChains(false);
@@ -440,11 +440,11 @@ public class DeploymentEngine implements DeploymentConstants {
         axisConfig.addServiceGroup(serviceGroup);
         if (currentArchiveFile != null) {
             addAsWebResources(currentArchiveFile.getFile(),
-                              serviceGroup.getServiceGroupName());
+                    serviceGroup.getServiceGroupName(), serviceGroup);
         }
     }
 
-    private void addAsWebResources(File in, String serviceFileName) {
+    private void addAsWebResources(File in, String serviceFileName, AxisServiceGroup serviceGroup) {
         try {
             if (webLocationString == null) {
                 return;
@@ -464,7 +464,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 if (zip.getName().toUpperCase().startsWith("WWW")) {
                     String fileName = zip.getName();
                     fileName = fileName.substring("WWW/".length(),
-                                                  fileName.length());
+                            fileName.length());
                     if (zip.isDirectory()) {
                         new File(out, fileName).mkdirs();
                     } else {
@@ -476,6 +476,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         tempOut.close();
                         tempOut.flush();
                     }
+                    serviceGroup.setFoundWebResources(true);
                 }
             }
             zin.close();
@@ -521,7 +522,7 @@ public class DeploymentEngine implements DeploymentConstants {
             currentArchiveFile.setClassLoader(false, config.getModuleClassLoader());
             axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());
             archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule,
-                                            false, config);
+                    false, config);
             ClassLoader moduleClassLoader = axismodule.getModuleClassLoader();
             Flow inflow = axismodule.getInFlow();
 
@@ -575,7 +576,7 @@ public class DeploymentEngine implements DeploymentConstants {
             currentArchiveFile.setClassLoader(classLoader);
 
             ServiceBuilder builder = new ServiceBuilder(serviceInputStream, axisConfig,
-                                                        axisService);
+                    axisService);
 
             builder.populateService(builder.buildOM());
         } catch (AxisFault axisFault) {
@@ -599,7 +600,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     switch (type) {
                         case TYPE_SERVICE :
                             currentArchiveFile.setClassLoader(explodedDir,
-                                                              axisConfig.getServiceClassLoader());
+                                    axisConfig.getServiceClassLoader());
                             archiveReader = new ArchiveReader();
                             String serviceStatus = "";
                             try {
@@ -624,20 +625,20 @@ public class DeploymentEngine implements DeploymentConstants {
                                         axisConfig);
                                 addServiceGroup(sericeGroup, serviceList, currentArchiveFile.getFile().toURL());
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                                                             currentArchiveFile.getName()));
+                                        currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
                                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
-                                                              currentArchiveFile.getName(),
-                                                              de.getMessage()),
-                                          de);
+                                        currentArchiveFile.getName(),
+                                        de.getMessage()),
+                                        de);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 de.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" + errorWriter.toString();
                             } catch (AxisFault axisFault) {
                                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
-                                                              currentArchiveFile.getName(),
-                                                              axisFault.getMessage()),
-                                          axisFault);
+                                        currentArchiveFile.getName(),
+                                        axisFault.getMessage()),
+                                        axisFault);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 axisFault.printStackTrace(error_ptintWriter);
                                 serviceStatus = "Error:\n" + errorWriter.toString();
@@ -670,14 +671,14 @@ public class DeploymentEngine implements DeploymentConstants {
                             } finally {
                                 if (serviceStatus.startsWith("Error:")) {
                                     axisConfig.getFaultyServices().put(currentArchiveFile.getFile().getAbsolutePath(),
-                                                                       serviceStatus);
+                                            serviceStatus);
                                 }
                                 currentArchiveFile = null;
                             }
                             break;
                         case TYPE_MODULE :
                             currentArchiveFile.setClassLoader(explodedDir,
-                                                              axisConfig.getModuleClassLoader());
+                                    axisConfig.getModuleClassLoader());
                             archiveReader = new ArchiveReader();
                             String moduleStatus = "";
                             try {
@@ -685,33 +686,33 @@ public class DeploymentEngine implements DeploymentConstants {
                                 metaData.setModuleClassLoader(currentArchiveFile.getClassLoader());
                                 metaData.setParent(axisConfig);
                                 archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(),
-                                                                this, metaData, explodedDir,
-                                                                axisConfig);
+                                        this, metaData, explodedDir,
+                                        axisConfig);
                                 metaData.setFileName(currentArchiveFile.getFile().toURL());
                                 addNewModule(metaData);
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
-                                                             metaData.getName().getLocalPart()));
+                                        metaData.getName().getLocalPart()));
                             } catch (DeploymentException e) {
                                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
-                                                              currentArchiveFile.getName(),
-                                                              e.getMessage()),
-                                          e);
+                                        currentArchiveFile.getName(),
+                                        e.getMessage()),
+                                        e);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 moduleStatus = "Error:\n" + errorWriter.toString();
                             } catch (AxisFault axisFault) {
                                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
-                                                              currentArchiveFile.getName(),
-                                                              axisFault.getMessage()),
-                                          axisFault);
+                                        currentArchiveFile.getName(),
+                                        axisFault.getMessage()),
+                                        axisFault);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 axisFault.printStackTrace(error_ptintWriter);
                                 moduleStatus = "Error:\n" + errorWriter.toString();
                             } catch (MalformedURLException e) {
                                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
-                                                              currentArchiveFile.getName(),
-                                                              e.getMessage()),
-                                          e);
+                                        currentArchiveFile.getName(),
+                                        e.getMessage()),
+                                        e);
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 moduleStatus = "Error:\n" + errorWriter.toString();
@@ -726,8 +727,8 @@ public class DeploymentEngine implements DeploymentConstants {
                     }
                 } catch (AxisFault axisFault) {
                     log.info(Messages.getMessage(DeploymentErrorMsgs.ERROR_SETTING_CLIENT_HOME,
-                                                 axisFault.getMessage()),
-                             axisFault);
+                            axisFault.getMessage()),
+                            axisFault);
                 }
             }
         }
@@ -798,7 +799,7 @@ public class DeploymentEngine implements DeploymentConstants {
                         fileName = getAxisServiceName(wsInfo.getFileName());
                         axisConfig.removeServiceGroup(fileName);
                         log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                                                     wsInfo.getFileName()));
+                                wsInfo.getFileName()));
                     }
                 }
             }
@@ -910,7 +911,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
         if (modules.exists()) {
             axisConfig.setModuleClassLoader(Utils.getClassLoader(axisConfig.getSystemClassLoader(),
-                                                                 modules));
+                    modules));
         } else {
             axisConfig.setModuleClassLoader(axisConfig.getSystemClassLoader());
         }

@@ -46,6 +46,9 @@ public class AxisServiceGroup extends AxisDescription {
     // to keep name of the service group
     private String serviceGroupName;
 
+    //to check whether user has put WWW dir or not
+    private boolean foundWebResources;
+
     //To check whether server side service or client side service
 
     /**
@@ -217,5 +220,13 @@ public class AxisServiceGroup extends AxisDescription {
             }
         }
         return false;
+    }
+
+    public boolean isFoundWebResources() {
+        return foundWebResources;
+    }
+
+    public void setFoundWebResources(boolean foundWebResources) {
+        this.foundWebResources = foundWebResources;
     }
 }
