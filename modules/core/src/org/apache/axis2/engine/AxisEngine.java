@@ -423,7 +423,7 @@ public class AxisEngine {
             }
         }
 
-        Parameter param = context.getParameter("sendStacktraceDetailsWithFaults");
+        Parameter param = context.getParameter(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
         boolean sendStacktraceDetailsWithFaults = param != null && ((String) param.getValue()).equalsIgnoreCase("true");
 
         Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
@@ -460,7 +460,7 @@ public class AxisEngine {
      */
     private String getFaultReasonFromException(Throwable e, MessageContext context) {
         Throwable throwable = e;
-        Parameter param = context.getParameter("DrillDownToRootCauseForFaultReason");
+        Parameter param = context.getParameter(Constants.Configuration.DRILL_DOWN_TO_ROOT_CAUSE_FOR_FAULT_REASON);
         boolean drillDownToRootCauseForFaultReason = param != null && ((String) param.getValue()).equalsIgnoreCase("true");
         if (drillDownToRootCauseForFaultReason) {
             while (throwable.getCause() != null) {

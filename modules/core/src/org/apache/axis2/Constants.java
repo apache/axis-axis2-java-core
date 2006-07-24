@@ -221,6 +221,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
 
         public static final String TRANSPORT_IN_URL = "TransportInURL";
-        String URL_PARAMETER_LIST = "URLParameterList";
+        
+        public static final String URL_PARAMETER_LIST = "URLParameterList";
+        
+        public static final String SEND_STACKTRACE_DETAILS_WITH_FAULTS = "sendStacktraceDetailsWithFaults";
+        
+        public static final String DRILL_DOWN_TO_ROOT_CAUSE_FOR_FAULT_REASON = "drillDownToRootCauseForFaultReason";
     }
 }
