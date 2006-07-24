@@ -33,7 +33,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * Class AxisConfigurationImpl
+ * Class AxisConfiguration
  */
 public class AxisConfiguration extends AxisDescription {
 
@@ -48,7 +48,7 @@ public class AxisConfiguration extends AxisDescription {
     private final HashMap allModules = new HashMap();
 
     // to store mapping between default version to module name
-    private final HashMap nameToverionMap = new HashMap();
+    private final HashMap nameToversionMap = new HashMap();
 
     // private final HashMap serviceGroups = new HashMap();
     private final HashMap transportsIn = new HashMap();
@@ -725,13 +725,13 @@ public class AxisConfiguration extends AxisDescription {
      * @param moduleVersion
      */
     public void addDefaultModuleVersion(String moduleName, String moduleVersion) {
-        if (nameToverionMap.get(moduleName) == null) {
-            nameToverionMap.put(moduleName, moduleVersion);
+        if (nameToversionMap.get(moduleName) == null) {
+            nameToversionMap.put(moduleName, moduleVersion);
         }
     }
 
     public String getDefaultModuleVersion(String moduleName) {
-        return (String) nameToverionMap.get(moduleName);
+        return (String) nameToversionMap.get(moduleName);
     }
 
     public AxisModule getDefaultModule(String moduleName) {
