@@ -59,6 +59,10 @@ public interface AddressingConstants {
     // ADDRESSING_REQUIRED is the equivalent of <wsaw:UsingAddressing required="true" />
     // in a WSDL file
     public static final String ADDRESSING_REQUIRED    = "required";
+
+    // If this property is set, addressing headers will be replaced from the information in the
+    // message context.  
+    public static final String REPLACE_ADDRESSING_HEADERS = "ReplaceAddressingHeaders";
     
     public interface Final {
 

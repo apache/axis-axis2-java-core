@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.llom.util.XMLComparator;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -138,6 +139,50 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         outHandler.invoke(msgCtxt);
 
         assertTrue(defaultEnvelope.getHeader().getFirstChildWithName(new QName("http://whatever.duplicate.org")) == null);
+
+
+    }
+
+    public void testDuplicateHeadersWithOverridingOn() throws AxisFault {
+
+        // this will check whether we can add to epr, if there is one already.
+        EndpointReference eprOne = new EndpointReference("http://whatever.org");
+        msgCtxt = new MessageContext();
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
+        SOAPHeaderBlock soapHeaderBlock =
+                defaultEnvelope.getHeader().addHeaderBlock(WSA_TO, factory.createOMNamespace(
+                Final.WSA_NAMESPACE, WSA_DEFAULT_PREFIX));
+        soapHeaderBlock.setText("http://oldEPR.org");
+        msgCtxt.setEnvelope(defaultEnvelope);
+
+        msgCtxt.setProperty(REPLACE_ADDRESSING_HEADERS, Boolean.TRUE);
+        msgCtxt.setTo(eprOne);
+        outHandler.invoke(msgCtxt);
+
+        assertTrue("http://whatever.org".equals(defaultEnvelope.getHeader().getFirstChildWithName(new QName(WSA_TO)).getText()));
+
+
+    }
+
+    public void testDuplicateHeadersWithOverridingOff() throws AxisFault {
+
+        // this will check whether we can add to epr, if there is one already.
+        EndpointReference eprOne = new EndpointReference("http://whatever.org");
+        msgCtxt = new MessageContext();
+        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
+        SOAPHeaderBlock soapHeaderBlock =
+                defaultEnvelope.getHeader().addHeaderBlock(WSA_TO, factory.createOMNamespace(
+                Final.WSA_NAMESPACE, WSA_DEFAULT_PREFIX));
+        soapHeaderBlock.setText("http://oldEPR.org");
+        msgCtxt.setEnvelope(defaultEnvelope);
+
+        msgCtxt.setProperty(REPLACE_ADDRESSING_HEADERS, Boolean.FALSE);
+        msgCtxt.setTo(eprOne);
+        outHandler.invoke(msgCtxt);
+
+        assertTrue("http://oldEPR.org".equals(defaultEnvelope.getHeader().getFirstChildWithName(new QName(WSA_TO)).getText()));
 
 
     }

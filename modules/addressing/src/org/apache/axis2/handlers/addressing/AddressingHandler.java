@@ -33,6 +33,6 @@ public abstract class AddressingHandler extends AbstractHandler implements Addre
     protected String relationshipType = Final.WSA_DEFAULT_RELATIONSHIP_TYPE; // defaulting to final version
 
 
-    private static final Log log = LogFactory.getLog(AddressingHandler.class);
+    protected static final Log log = LogFactory.getLog(AddressingHandler.class);
 
 }
