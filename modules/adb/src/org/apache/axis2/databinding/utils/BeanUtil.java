@@ -538,7 +538,18 @@ public class BeanUtil {
         return stAXOMBuilder.getDocumentElement();
     }
 
+    /**
+     * @deprecated Please use getUniquePrefix
+     */
     public static String getUniquePrifix() {
+        return "ns" + nsCount++;
+    }
+
+    /**
+     * increments the namespace counter and returns a new prefix
+     * @return unique prefix
+     */
+    public static String getUniquePrefix() {
         return "ns" + nsCount++;
     }
 

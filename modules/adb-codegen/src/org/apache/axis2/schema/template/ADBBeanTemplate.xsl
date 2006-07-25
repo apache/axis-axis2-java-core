@@ -279,7 +279,7 @@
                         xmlWriter.writeStartElement(namespace, parentQName.getLocalPart());
                     } else {
                         if (prefix == null) {
-                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
+                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
                         }
                         
                         xmlWriter.writeStartElement(prefix, parentQName.getLocalPart(), namespace);
@@ -349,7 +349,7 @@
 						java.lang.String prefix = xmlWriter.getPrefix(namespace);
 				    
 						if (prefix == null) {
-							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
+							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 					
 							xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
 							xmlWriter.writeNamespace(prefix, namespace);
@@ -470,7 +470,7 @@
 						prefix = xmlWriter.getPrefix(namespace);
 
 						if (prefix == null) {
-							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
+							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
 							xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
 							xmlWriter.writeNamespace(prefix, namespace);
@@ -520,7 +520,7 @@
 						prefix = xmlWriter.getPrefix(namespace);
 
 						if (prefix == null) {
-							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
+							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
 							xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
 							xmlWriter.writeNamespace(prefix, namespace);
@@ -569,7 +569,7 @@
 							java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
 							if (prefix == null) {
-								prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
+								prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
 								xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
 								xmlWriter.writeNamespace(prefix, namespace);
@@ -610,7 +610,7 @@
 				java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
 				if (prefix == null) {
-					prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrifix();
+					prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
 					xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
 					xmlWriter.writeNamespace(prefix, namespace);
