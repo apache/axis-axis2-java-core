@@ -914,19 +914,6 @@
     public static class Factory{
 
 
-        // This is horrible, but the OM implementation of getElementText() does not obey the proper contract.  Specifically, it does
-        // does not advance the reader to the END_ELEMENT.  This bug is triggered by calls to getElementText() unpredictably, e.g. it
-        // happens with outer (document) elements, but not with inner elements.  The root bug is in OMStAXWrapper.java, which is now part
-        // of commons and so cannot just be fixed in axis2.  This method should be removed and the calls to it below replaced with
-        // simple calls to getElementText() as soon as this serious bug can be fixed.
-
-        private static java.lang.String getElementTextProperly(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
-            java.lang.String value = reader.getElementText();
-            while (!reader.isEndElement())
-                reader.next();
-            return value;
-        }
-
         /**
         * static method to create the object
         * Precondition:  If this object is an element, the current or next start element starts this object and any intervening reader events are ignorable
@@ -1136,7 +1123,7 @@
                                         </xsl:when>
                                         <!-- End of Array handling of default class - that is the OMElement -->
                                         <xsl:otherwise>
-                                            <xsl:value-of select="$listName"/>.add(getElementTextProperly(reader));
+                                            <xsl:value-of select="$listName"/>.add(reader.getElementText());
                                             //loop until we find a start element that is not part of this array
                                             boolean <xsl:value-of select="$loopBoolName"/> = false;
                                             while(!<xsl:value-of select="$loopBoolName"/>){
@@ -1154,7 +1141,7 @@
                                                     <xsl:value-of select="$loopBoolName"/> = true;
                                                 } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
-                                                        <xsl:value-of select="$listName"/>.add(getElementTextProperly(reader));
+                                                        <xsl:value-of select="$listName"/>.add(reader.getElementText());
                                                     }else{
                                                         <xsl:value-of select="$loopBoolName"/> = true;
                                                     }
@@ -1230,7 +1217,7 @@
                                          (javax.activation.DataHandler)reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
                                      }else{
                                         //Do the usual conversion
-                                        java.lang.String content = getElementTextProperly(reader);
+                                        java.lang.String content = reader.getElementText();
                                         object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
 
@@ -1242,7 +1229,7 @@
                                 </xsl:when>
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
-                                    java.lang.String content = getElementTextProperly(reader);
+                                    java.lang.String content = reader.getElementText();
                                     object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
@@ -1880,12 +1867,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
 
 
-    private static java.lang.String getElementTextProperly(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
-            java.lang.String value = reader.getElementText();
-            while (!reader.isEndElement())
-                reader.next();
-            return value;
-        }
 
         /**
         * static method to create the object
@@ -2095,7 +2076,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         </xsl:when>
                                         <!-- End of Array handling of default class - that is the OMElement -->
                                         <xsl:otherwise>
-                                            <xsl:value-of select="$listName"/>.add(getElementTextProperly(reader));
+                                            <xsl:value-of select="$listName"/>.add(reader.getElementText());
                                             //loop until we find a start element that is not part of this array
                                             boolean <xsl:value-of select="$loopBoolName"/> = false;
                                             while(!<xsl:value-of select="$loopBoolName"/>){
@@ -2113,7 +2094,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                     <xsl:value-of select="$loopBoolName"/> = true;
                                                 } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
-                                                        <xsl:value-of select="$listName"/>.add(getElementTextProperly(reader));
+                                                        <xsl:value-of select="$listName"/>.add(reader.getElementText());
                                                     }else{
                                                         <xsl:value-of select="$loopBoolName"/> = true;
                                                     }
@@ -2189,7 +2170,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                          (javax.activation.DataHandler)reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
                                      }else{
                                         //Do the usual conversion
-                                        java.lang.String content = getElementTextProperly(reader);
+                                        java.lang.String content = reader.getElementText();
                                         object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
 
@@ -2201,7 +2182,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 </xsl:when>
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
-                                    java.lang.String content = getElementTextProperly(reader);
+                                    java.lang.String content = reader.getElementText();
                                     object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->

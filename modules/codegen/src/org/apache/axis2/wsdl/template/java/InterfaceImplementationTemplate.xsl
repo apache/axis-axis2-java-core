@@ -305,6 +305,9 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
 
+                                   <xsl:if test="count(input/param[@location='header']) &gt; 0">
+                                               env.build();
+                                    </xsl:if>
                                     <xsl:for-each select="input/param[@location='header']">
                                         // add the children only if the parameter is not null
                                         if (<xsl:value-of select="@name"/>!=null){
