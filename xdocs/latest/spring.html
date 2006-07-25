@@ -119,6 +119,21 @@ ServletContext, the services.xml for the example would be using SpringAppContext
     &lt;/operation&gt;
 &lt;/service&gt; </pre>
 
+<p>In a non-servlet container environment, one way you could load the applicationContext.xml file 
+is in a place that will be run once, upon start-up, execute: </p>
+
+<pre>import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+ public void createSpringAppCtx(ClassLoader cl)
+            throws Exception {
+
+    ClassPathXmlApplicationContext ctx = new
+      ClassPathXmlApplicationContext(new String[] {Constants.MY_PATH +
+      "spring/applicationContext.xml"}, false);
+           ctx.setClassLoader(cl);
+           ctx.refresh();</pre>
+ }
+
 <p>From here, its just standard Axis2 coding, only now the service has Spring wiring
 capabilities. The service is below: </p>
 <pre>package spring;
