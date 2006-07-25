@@ -21,12 +21,15 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.modules.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
 import org.apache.savan.configuration.ConfigurationManager;
+import org.apache.savan.storage.SubscriberStore;
 
 /**
  * Savan Module class. 
@@ -37,6 +40,14 @@ public class SavanModule implements Module  {
 	private static final Log log = LogFactory.getLog(SavanModule.class);
 	
 	public void engageNotify(AxisDescription axisDescription) throws AxisFault {
+		//adding a subscriber store to the description
+		
+		if (axisDescription instanceof AxisService) { //TODO remove this restriction
+
+			//TODO set a suitable SubscriberStore for the service.
+			
+		}
+		
 	}
 
 	public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault {

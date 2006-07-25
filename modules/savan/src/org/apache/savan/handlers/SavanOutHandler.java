@@ -43,8 +43,6 @@ public class SavanOutHandler extends AbstractHandler {
 	
 	public void invoke(MessageContext msgContext) throws AxisFault {
 
-		System.out.println("SAVAN OUT HANDLER CALLED...");
-		
 		SavanMessageContext smc = new SavanMessageContext (msgContext);
 		int messagetype = smc.getMessageType();
 	
@@ -54,16 +52,14 @@ public class SavanOutHandler extends AbstractHandler {
 			SubscriberStore store = (SubscriberStore) CommonUtil.getSubscriberStore(msgContext.getAxisService());
 			if (store != null) {
 				
-				System.out.println("sending publication:");
-				System.out.println(msgContext.getEnvelope());
+				//building the publication envelope
+				msgContext.getEnvelope().build();
+				
 				PublicationReport report = new PublicationReport();
 				Iterator iterator = store.retrieveAll();
 				while (iterator.hasNext()) {
 					AbstractSubscriber subscriber = (AbstractSubscriber) iterator.next();
 					try {
-						
-						System.out.println("INVOKING SUBSCRIBER...");
-						
 						subscriber.processPublication (publication, report);
 					} catch (SavanException e) {
 						report.addErrorReportEntry(subscriber.getId(),e);
@@ -75,7 +71,6 @@ public class SavanOutHandler extends AbstractHandler {
 			} else {
 				String message = "Couldnt send the message since the subscriber storage was not found";
 				log.debug(message);
-				throw new SavanException (message);
 			}
 			
 			msgContext.pause();

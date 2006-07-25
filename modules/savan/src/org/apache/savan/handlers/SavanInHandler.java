@@ -41,8 +41,6 @@ public class SavanInHandler extends AbstractHandler  {
 
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		
-		System.out.println("SAVAN IN HANDLER CALLED...");
-		
 		SavanMessageContext smc = new SavanMessageContext (msgContext);
 		
 		//setting the Protocol
