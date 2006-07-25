@@ -150,7 +150,7 @@ public class ClientInfo
 
                             String content = reader.getElementText();
                             object.setName(
-                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTostring(content));
+                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                             count++;
 
 
@@ -161,7 +161,7 @@ public class ClientInfo
 
                             String content = reader.getElementText();
                             object.setSsn(
-                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTostring(content));
+                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
                             count++;
 
 

@@ -266,7 +266,7 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			}
 		} else {
 			try {
-			    Calendar calendar = ConverterUtil.convertTodateTime(expiresStr);
+			    Calendar calendar = ConverterUtil.convertToDateTime(expiresStr);
 			    date = calendar.getTime();
 			    bean.setDateValue(date);
 			} catch (Exception e) {

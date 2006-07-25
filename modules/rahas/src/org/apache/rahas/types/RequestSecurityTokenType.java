@@ -275,7 +275,7 @@ public class RequestSecurityTokenType implements
                 if (tempAttribContext != null) {
                     object
                             .setContext(org.apache.axis2.databinding.utils.ConverterUtil
-                                    .convertToanyURI(tempAttribContext));
+                                    .convertToAnyURI(tempAttribContext));
                 }
 
                 org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine stateMachine1 = new org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine();
@@ -287,7 +287,7 @@ public class RequestSecurityTokenType implements
                 object.setTokenType(
 
                 org.apache.axis2.databinding.utils.ConverterUtil
-                        .convertToanyURI(stateMachine1.getText()));
+                        .convertToAnyURI(stateMachine1.getText()));
 
                 // Move to a start element
                 event = reader.getEventType();
@@ -304,7 +304,7 @@ public class RequestSecurityTokenType implements
                 object.setRequestType(
 
                 org.apache.axis2.databinding.utils.ConverterUtil
-                        .convertToanyURI(stateMachine2.getText()));
+                        .convertToAnyURI(stateMachine2.getText()));
                 
                 // Move to a start element
                 event = reader.getEventType();

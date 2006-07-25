@@ -24,7 +24,7 @@ public class EventingExpirationTypesTest extends TestCase {
 		ExpirationBean expirationBean = processor.getExpirationBean(renewMessage);
 		assertTrue(expirationBean.isDuration());
 		
-		Duration duration = ConverterUtil.convertToduration("P1Y2M3DT10H30M");
+		Duration duration = ConverterUtil.convertToDuration("P1Y2M3DT10H30M");
 		assertEquals(duration,expirationBean.getDurationValue());
 		assertEquals (expirationBean.getSubscriberID(),"UUID:DummySubscriberID");
 	}
@@ -35,7 +35,7 @@ public class EventingExpirationTypesTest extends TestCase {
 		ExpirationBean expirationBean = processor.getExpirationBean(renewMessage);
 		assertFalse(expirationBean.isDuration());
 		
-		Date date = ConverterUtil.convertTodateTime("2004-06-26T21:07:00.000-08:00").getTime();
+		Date date = ConverterUtil.convertToDateTime("2004-06-26T21:07:00.000-08:00").getTime();
 		assertEquals(expirationBean.getDateValue(),date);
 		assertEquals (expirationBean.getSubscriberID(),"UUID:DummySubscriberID");
 	}

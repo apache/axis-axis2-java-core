@@ -277,7 +277,7 @@ public class RequestSecurityTokenResponseType implements
                 if (tempAttribContext != null) {
                     object
                             .setContext(org.apache.axis2.databinding.utils.ConverterUtil
-                                    .convertToanyURI(tempAttribContext));
+                                    .convertToAnyURI(tempAttribContext));
                 }
 
                 org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine stateMachine1 = new org.apache.axis2.databinding.utils.SimpleElementReaderStateMachine();
@@ -289,7 +289,7 @@ public class RequestSecurityTokenResponseType implements
                 object.setTokenType(
 
                 org.apache.axis2.databinding.utils.ConverterUtil
-                        .convertToanyURI(stateMachine1.getText()));
+                        .convertToAnyURI(stateMachine1.getText()));
 
                 object
                         .setRequestedSecurityToken(org.apache.rahas.types.RequestedSecurityTokenType.Factory

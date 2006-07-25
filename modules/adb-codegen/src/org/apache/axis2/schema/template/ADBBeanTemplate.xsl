@@ -281,7 +281,7 @@
                         if (prefix == null) {
                             prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
                         }
-                        
+
                         xmlWriter.writeStartElement(prefix, parentQName.getLocalPart(), namespace);
                         xmlWriter.writeNamespace(prefix, namespace);
                         xmlWriter.setPrefix(prefix, namespace);
@@ -342,27 +342,27 @@
                             <xsl:choose>
                                 <xsl:when test="@nillable">
                                     if (<xsl:value-of select="$varName"/>==null){
-				    
+
 				        java.lang.String namespace = "<xsl:value-of select="$namespace"/>";
-			
+
 					if (! namespace.equals("")) {
 						java.lang.String prefix = xmlWriter.getPrefix(namespace);
-				    
+
 						if (prefix == null) {
 							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-					
+
 							xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
 							xmlWriter.writeNamespace(prefix, namespace);
 							xmlWriter.setPrefix(prefix, namespace);
-					    
+
 						} else {
 							xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
 						}
-				    
+
 					} else {
 						xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
 					}
-					
+
 
                                        // write the nil attribute
                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
@@ -976,7 +976,8 @@
                     <xsl:variable name="propertyName" select="@name"/>
                     <xsl:variable name="propertyType" select="@type"/>
                     <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
-                    <xsl:variable name="shortTypeName"  select="@shorttypename"/>
+                    <xsl:variable name="shortTypeName"
+                    select="concat(translate(substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
                     <xsl:variable name="javaName" select="@javaname"/>
                     <xsl:variable name="namespace" select="@nsuri"/>
                     <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
@@ -1024,7 +1025,9 @@
                         <xsl:for-each select="property[not(@attribute)]">
                             <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                             <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
-                            <xsl:variable name="shortTypeName"><xsl:value-of select="@shorttypename"/></xsl:variable>
+                            <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
+                            <xsl:variable name="shortTypeName"
+                                select="concat(translate(substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
                             <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
                             <xsl:variable name="listName">list<xsl:value-of select="position()"/></xsl:variable>
                             <xsl:variable name="loopBoolName">loopDone<xsl:value-of select="position()"/></xsl:variable>
@@ -1930,8 +1933,10 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                 <!-- populate attributes here!!!. The attributes are part of an element, not part of a type -->
                 <xsl:for-each select="property[@attribute]">
                     <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
-                    <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
-                    <xsl:variable name="shortTypeName"><xsl:value-of select="@shorttypename"/></xsl:variable>
+                    <xsl:variable name="propertyType" select="@type"/>
+                    <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
+                    <xsl:variable name="shortTypeName"
+                    select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
                     <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
                     <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
@@ -1979,7 +1984,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                         <xsl:for-each select="property[not(@attribute)]">
                             <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                             <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
-                            <xsl:variable name="shortTypeName"><xsl:value-of select="@shorttypename"/></xsl:variable>
+                            <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
+                            <xsl:variable name="shortTypeName"
+                               select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
                             <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
                             <xsl:variable name="listName">list<xsl:value-of select="position()"/></xsl:variable>
                             <xsl:variable name="loopBoolName">loopDone<xsl:value-of select="position()"/></xsl:variable>

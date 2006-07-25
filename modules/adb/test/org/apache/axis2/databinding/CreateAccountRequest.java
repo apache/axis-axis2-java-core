@@ -146,7 +146,7 @@ public class CreateAccountRequest implements
                             String content = reader.getElementText();
                             object
                                     .setPassword(org.apache.axis2.databinding.utils.ConverterUtil
-                                            .convertTostring(content));
+                                            .convertToString(content));
                             count++;
 
                         }

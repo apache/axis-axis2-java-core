@@ -202,7 +202,7 @@ public class EventingClient {
 				expirationBean.setDurationValue(duration);
 			} else {
 				expirationBean.setDuration(false);
-				Date date = ConverterUtil.convertTodateTime(text).getTime();
+				Date date = ConverterUtil.convertToDateTime(text).getTime();
 				expirationBean.setDateValue(date);
 			}
 			

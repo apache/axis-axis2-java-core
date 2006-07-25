@@ -238,11 +238,11 @@ public class ConverterUtil {
     */
 
 
-    public static int convertToint(String s) {
+    public static int convertToInt(String s) {
         return Integer.parseInt(s);
     }
 
-    public static double convertTodouble(String s) {
+    public static double convertToDouble(String s) {
         if (POSITIVE_INFINITY.equals(s)){
             return Double.POSITIVE_INFINITY;
         }else if (NEGATIVE_INFINITY.equals(s)){
@@ -251,11 +251,11 @@ public class ConverterUtil {
         return Double.parseDouble(s);
     }
 
-    public static BigDecimal convertTodecimal(String s) {
+    public static BigDecimal convertToDecimal(String s) {
         return new BigDecimal(s);
     }
 
-    public static float convertTofloat(String s) {
+    public static float convertToFloat(String s) {
         if (POSITIVE_INFINITY.equals(s)){
             return Float.POSITIVE_INFINITY;
         }else if (NEGATIVE_INFINITY.equals(s)){
@@ -264,27 +264,27 @@ public class ConverterUtil {
         return Float.parseFloat(s);
     }
 
-    public static String convertTostring(String s) {
+    public static String convertToString(String s) {
         return s;
     }
 
-    public static long convertTolong(String s) {
+    public static long convertToLong(String s) {
         return Long.parseLong(s);
     }
 
-    public static short convertToshort(String s) {
+    public static short convertToShort(String s) {
         return Short.parseShort(s);
     }
 
-    public static boolean convertToboolean(String s) {
+    public static boolean convertToBoolean(String s) {
         return Boolean.valueOf(s).booleanValue();
     }
 
-    public static String convertToanySimpleType(String s) {
+    public static String convertToAnySimpleType(String s) {
         return s;
     }
 
-    public static OMElement convertToanyType(String s) {
+    public static OMElement convertToAnyType(String s) {
         try {
             XMLStreamReader r = StAXUtils.createXMLStreamReader(
                     new ByteArrayInputStream(s.getBytes()));
@@ -295,38 +295,36 @@ public class ConverterUtil {
         }
     }
 
-    public static YearMonth convertTogYearMonth(String s) {
+    public static YearMonth convertToGYearMonth(String s) {
         return new YearMonth(s);
     }
 
-    public static MonthDay convertTogMonthDay(String s) {
+    public static MonthDay convertToGMonthDay(String s) {
         return new MonthDay(s);
     }
 
-    public static Year convertTogYear(String s) {
+    public static Year convertToGYear(String s) {
         return new Year(s);
     }
 
-    public static Month convertTogMonth(String s) {
+    public static Month convertToGMonth(String s) {
         return new Month(s);
     }
 
-    public static Day convertTogDay(String s) {
+    public static Day convertToGDay(String s) {
         return new Day(s);
-    }
-
-    public static Duration convertToduration(String s) {
-        return new Duration(s);
     }
 
     public static Duration convertToDuration(String s) {
         return new Duration(s);
     }
-    public static HexBinary convertTohexBinary(String s) {
+
+
+    public static HexBinary convertToHexBinary(String s) {
         return new HexBinary(s);
     }
 
-    public static javax.activation.DataHandler convertTobase64Binary(String s)
+    public static javax.activation.DataHandler convertToBase64Binary(String s)
             throws Exception{
         // reusing the byteArrayDataSource from the Axiom classes
         ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
@@ -342,7 +340,7 @@ public class ConverterUtil {
      * @param source
      * @return Returns Date.
      */
-    public static Date convertTodate(String source) {
+    public static Date convertToDate(String source) {
 
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
@@ -388,51 +386,49 @@ public class ConverterUtil {
         return result;
     }
 
-    public static Time convertTotime(String s) {
+    public static Time convertToTime(String s) {
         return new Time(s);
-    }
-
-    public static Token convertTotoken(String s) {
-        return new Token(s);
     }
 
     public static Token convertToToken(String s) {
         return new Token(s);
     }
 
-    public static NormalizedString convertTonormalizedString(String s) {
+
+
+    public static NormalizedString convertToNormalizedString(String s) {
         return new NormalizedString(s);
     }
 
-    public static UnsignedLong convertTounsignedLong(String s) {
+    public static UnsignedLong convertToUnsignedLong(String s) {
         return new UnsignedLong(s);
     }
 
-    public static UnsignedInt convertTounsignedInt(String s) {
+    public static UnsignedInt convertToUnsignedInt(String s) {
         return new UnsignedInt(s);
     }
 
-    public static UnsignedShort convertTounsignedShort(String s) {
+    public static UnsignedShort convertToUnsignedShort(String s) {
         return new UnsignedShort(s);
     }
 
-    public static UnsignedByte convertTounsignedByte(String s) {
+    public static UnsignedByte convertToUnsignedByte(String s) {
         return new UnsignedByte(s);
     }
 
-    public static NonNegativeInteger convertTononNegativeInteger(String s) {
+    public static NonNegativeInteger convertToNonNegativeInteger(String s) {
         return new NonNegativeInteger(s);
     }
 
-    public static NegativeInteger convertTonegativeInteger(String s) {
+    public static NegativeInteger convertToNegativeInteger(String s) {
         return new NegativeInteger(s);
     }
 
-    public static PositiveInteger convertTopositiveInteger(String s) {
+    public static PositiveInteger convertToPositiveInteger(String s) {
         return new PositiveInteger(s);
     }
 
-    public static NonPositiveInteger convertTononPositiveInteger(String s) {
+    public static NonPositiveInteger convertToNonPositiveInteger(String s) {
         return new NonPositiveInteger(s);
     }
 
@@ -448,7 +444,7 @@ public class ConverterUtil {
         return new Id(s);
     }
 
-    public static Language convertTolanguage(String s) {
+    public static Language convertToLanguage(String s) {
         return new Language(s);
     }
 
@@ -481,15 +477,15 @@ public class ConverterUtil {
         return new IDRefs(s);
     }
 
-    public static URI convertToanyURI(String s) throws Exception {
+    public static URI convertToAnyURI(String s) throws Exception {
         return new URI(s);
     }
 
-    public static BigInteger convertTointeger(String s) throws Exception {
+    public static BigInteger convertToInteger(String s) throws Exception {
         return new BigInteger(s);
     }
 
-    public static byte convertTobyte(String s) throws Exception {
+    public static byte convertToByte(String s) throws Exception {
         return Byte.parseByte(s);
     }
 
@@ -500,7 +496,7 @@ public class ConverterUtil {
      * @return Returns Calendar.
      * @throws Exception
      */
-    public static Calendar convertTodateTime(String source) throws Exception {
+    public static Calendar convertToDateTime(String source) throws Exception {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat zulu =
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");

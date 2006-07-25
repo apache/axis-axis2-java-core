@@ -63,7 +63,7 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 		
 		assertEquals(eventingSubscriber.getDelivery().getDeliveryEPR().getAddress() ,"http://www.other.example.com/OnStormWarning");
 		assertEquals(eventingSubscriber.getEndToEPr().getAddress(),"http://www.example.com/MyEventSink");
-		Date date = ConverterUtil.convertTodateTime("2004-06-26T21:07:00.000-08:00").getTime();
+		Date date = ConverterUtil.convertToDateTime("2004-06-26T21:07:00.000-08:00").getTime();
 		assertEquals(eventingSubscriber.getSubscriptionEndingTime(),date);
 	}
 	
@@ -75,7 +75,7 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 		assertNotNull(expirationBean);
 		assertNotNull(expirationBean.getSubscriberID());
 		
-		Date date = ConverterUtil.convertTodateTime("2004-06-26T21:07:00.000-08:00").getTime();
+		Date date = ConverterUtil.convertToDateTime("2004-06-26T21:07:00.000-08:00").getTime();
 		assertEquals(expirationBean.getDateValue(),date);
 	}
 	
