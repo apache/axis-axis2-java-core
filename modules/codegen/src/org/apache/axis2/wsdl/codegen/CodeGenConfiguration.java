@@ -67,7 +67,11 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     public void setUri2PackageNameMap(Map uri2PackageNameMap) {
-        this.uri2PackageNameMap = uri2PackageNameMap;
+        if (this.uri2PackageNameMap==null){
+            this.uri2PackageNameMap = uri2PackageNameMap;
+        }else{
+            this.uri2PackageNameMap.putAll(uri2PackageNameMap);
+        }
     }
 
     /**
