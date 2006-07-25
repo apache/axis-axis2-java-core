@@ -93,7 +93,7 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
                 object
                         .setEchoStringReturn(stateMachine1.getText() == null ? null
                                 : org.apache.axis2.databinding.utils.ConverterUtil
-                                        .convertTostring(stateMachine1
+                                        .convertToString(stateMachine1
                                                 .getText()));
 
             } catch (javax.xml.stream.XMLStreamException e) {

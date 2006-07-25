@@ -113,7 +113,7 @@
                        stateMachine1.read(reader);
                        object.setInput(
                          stateMachine1.getText()==null?null:
-                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTostring(
+                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                                   stateMachine1.getText()));
                              
                } catch (javax.xml.stream.XMLStreamException e) {
