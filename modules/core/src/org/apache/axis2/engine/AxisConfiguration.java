@@ -225,10 +225,6 @@ public class AxisConfiguration extends AxisDescription {
 
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
             throws AxisFault {
-        String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(axisServiceGroup);
-        if (start && Constants.SCOPE_APPLICATION.equals(maxScope)) {
-            throw new AxisFault(Messages.getMessage("cannotaddapplicationscopeservice"));
-        }
         notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
         Iterator services = axisServiceGroup.getServices();
         axisServiceGroup.setParent(this);
