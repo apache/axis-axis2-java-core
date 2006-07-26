@@ -28,7 +28,7 @@ Axis2 Delegate: none
 
 JSR-181 Annotations: 
 @WebService Note this can be specified on the endpoint Impl without an SEI
-- name it’s the PortType Class Name, one you get with getPort() call in Service Delegate [NT]
+- name its the PortType Class Name, one you get with getPort() call in Service Delegate [NT]
 - targetNamespace
 - serviceName default is portType+Service. Should we use this if Service.create call does not provide/have ServiceQname?[NT]
 - wsdlLocation if no wsdl location provided the read this annotation. Should this override what is client sets?[NT]

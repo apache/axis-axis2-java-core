@@ -18,7 +18,10 @@ package org.apache.axis2.jaxws;
 
 import java.io.StringWriter;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -27,6 +30,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
+
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
 public class CallbackHandler<T> implements AsyncHandler <T> {
 
@@ -38,39 +43,15 @@ public class CallbackHandler<T> implements AsyncHandler <T> {
             if(res instanceof String){
                 System.out.println("Response [" + res + "]");
             }
-            else if(res instanceof SAXSource){
-            	
-    			SAXSource retVal = (SAXSource)res;
-    			StringBuffer buffer = new StringBuffer();
-    			byte b;
-    			while ((b = (byte) retVal.getInputSource().getByteStream().read()) != -1) {
-    				char c = (char) b;
-    				buffer.append(c);
-
-    			}
-    			System.out.println(">> Response [" + buffer + "]");
-            }
-            else if(res instanceof StreamSource){
-            	StreamSource retVal = (StreamSource) res;
-
-    			byte b;
-    			StringBuffer buffer = new StringBuffer();
-    			while ((b = (byte) retVal.getInputStream().read()) != -1) {
-    				char c = (char) b;
-    				buffer.append(c);
-
-    			}
-    			System.out.println(">> Response [" + buffer + "]");
-            }
-            else if(res instanceof DOMSource){
-            	DOMSource retVal = (DOMSource) res;
-
-            	StringWriter writer = new StringWriter();
-    			Transformer trasformer = TransformerFactory.newInstance().newTransformer();
-    			Result result = new StreamResult(writer);
-    			trasformer.transform(retVal, result);
-    			StringBuffer buffer = writer.getBuffer();
-    			System.out.println(">> Response [" + buffer + "]");
+            else if(Source.class.isAssignableFrom(res.getClass())){
+                Source source = (Source) res;
+                
+                XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+                XMLStreamReader reader = inputFactory.createXMLStreamReader(source);
+                Reader2Writer r2w = new Reader2Writer(reader);
+                String responseText = r2w.getAsString();
+                
+                System.out.println(responseText);
             }
         }catch(Exception e){
             e.printStackTrace();

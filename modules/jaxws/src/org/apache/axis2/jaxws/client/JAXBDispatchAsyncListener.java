@@ -20,10 +20,15 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.impl.AsyncListener;
+import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.param.JAXBParameter;
 import org.apache.axis2.jaxws.param.ParameterUtils;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
  * The JAXBDispatchAsyncListener is an extension of the  
@@ -48,14 +53,18 @@ public class JAXBDispatchAsyncListener extends AsyncListener {
     }
     
     public Object getResponseValueObject(MessageContext mc) {
-        // FIXME: This is where the Message Model will be integrated instead of 
-        // the ParameterFactory/Parameter APIs.
-        SOAPEnvelope msg = (SOAPEnvelope) mc.getMessageAsOM();
+        Object value = null;
         
-        JAXBParameter param = new JAXBParameter();
-        param.setJAXBContext(jaxbContext);
-        ParameterUtils.fromEnvelope(mode, msg, param);
+        Message message = mc.getMessage();
+        try {
+            JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
+            
+            Block block = message.getBodyBlock(0, jaxbContext, factory);
+            value = block.getBusinessObject(true);
+        } catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
         
-        return param.getValue();
+        return value;
     }
 }

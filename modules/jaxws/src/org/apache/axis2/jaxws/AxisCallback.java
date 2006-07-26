@@ -21,6 +21,9 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
  * The AxisCallback is the touch point for asynchronous invocations 
@@ -47,7 +50,11 @@ public class AxisCallback extends Callback {
         
         try {
             OMElement responseEnv = result.getResponseEnvelope();
-            responseMsgCtx.setMessageAsOM(responseEnv);
+            
+            MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+            Message msg = mf.createFrom(responseEnv);
+            
+            responseMsgCtx.setMessage(msg);
         } catch (Exception e) {
             e.printStackTrace();
         }

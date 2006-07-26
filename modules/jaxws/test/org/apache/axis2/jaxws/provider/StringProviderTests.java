@@ -41,16 +41,17 @@ public class StringProviderTests extends ProviderTestCase {
         super(name);
     }
     
-    public void testProviderString() {
+    public void testProviderString() throws Exception {
         System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
         Service svc = Service.create(serviceName);
-        svc.addPort(portName,null, endpointUrl);
+        svc.addPort(portName, null, endpointUrl);
+        
         Dispatch<String> dispatch = svc
-                .createDispatch(portName, String.class, null);
-        Map<String, Object> requestContext = dispatch.getRequestContext();
-        requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                endpointUrl);
-        System.out.println(">> Invoking SimpleProvider");
+                .createDispatch(portName, String.class, Service.Mode.PAYLOAD);
+        
+        System.out.println(">> Invoking Dispatch<String> StringProviderService");
         String retVal = dispatch.invoke(xmlString);
         System.out.println(">> Response [" + retVal + "]");
     }

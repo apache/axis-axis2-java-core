@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.impl.AsyncListener;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.param.Parameter;
 import org.apache.axis2.jaxws.param.ParameterFactory;
 import org.apache.axis2.jaxws.param.ParameterUtils;
@@ -79,7 +80,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
      * @param value
      * @return
      */
-    protected abstract OMElement createMessageFromValue(Object value);
+    protected abstract Message createMessageFromValue(Object value);
     
     /**
      * Given a message, return the business object based on the requestor's
@@ -88,7 +89,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
      * @param message
      * @return
      */
-    protected abstract Object getValueFromMessage(OMElement message);
+    protected abstract Object getValueFromMessage(Message message);
     
     /**
      * Creates an instance of the AsyncListener that is to be used for waiting
@@ -112,8 +113,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
         MessageContext requestMsgCtx = new MessageContext();
         invocationContext.setRequestMessageContext(requestMsgCtx);
         
-        OMElement reqEnvelope = createMessageFromValue(obj);
-        requestMsgCtx.setMessageAsOM(reqEnvelope);
+        Message requestMsg = createMessageFromValue(obj);
+        requestMsgCtx.setMessage(requestMsg);
         
         // Copy the properties from the request context into the MessageContext
         requestMsgCtx.getProperties().putAll(requestContext);
@@ -124,8 +125,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
         MessageContext responseMsgCtx = invocationContext.getResponseMessageContext();
         
         //FIXME: This is temporary until more of the Message model is available
-        OMElement rspEnvelope = responseMsgCtx.getMessageAsOM();
-        Object returnObj = getValueFromMessage(rspEnvelope);
+        Message responseMsg = responseMsgCtx.getMessage();
+        Object returnObj = getValueFromMessage(responseMsg);
         
         if (log.isDebugEnabled()) {
             log.debug("Synchronous invocation completed: BaseDispatch.invoke()");
@@ -148,8 +149,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
         MessageContext requestMsgCtx = new MessageContext();
         invocationContext.setRequestMessageContext(requestMsgCtx);
        
-        OMElement reqEnvelope = createMessageFromValue(obj);
-        requestMsgCtx.setMessageAsOM(reqEnvelope);
+        Message requestMsg = createMessageFromValue(obj);
+        requestMsgCtx.setMessage(requestMsg);
        
         // Copy the properties from the request context into the MessageContext
         requestMsgCtx.getProperties().putAll(requestContext);
@@ -178,8 +179,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
         MessageContext requestMsgCtx = new MessageContext();
         invocationContext.setRequestMessageContext(requestMsgCtx);
         
-        OMElement reqEnvelope = createMessageFromValue(obj);
-        requestMsgCtx.setMessageAsOM(reqEnvelope);
+        Message requestMsg = createMessageFromValue(obj);
+        requestMsgCtx.setMessage(requestMsg);
         
         // Copy the properties from the request context into the MessageContext
         requestMsgCtx.getProperties().putAll(requestContext);
@@ -199,7 +200,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         Future<?> asyncResponse = ic.invokeAsync(invocationContext, asynchandler);
         
         if (log.isDebugEnabled()) {
-            log.debug("Asynchronous (callback) invocation sent: BaseDispatch.invokeOneWay()");
+            log.debug("Asynchronous (callback) invocation sent: BaseDispatch.invokeAsync()");
         }
         
         return asyncResponse;

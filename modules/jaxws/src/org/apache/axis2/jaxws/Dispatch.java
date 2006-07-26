@@ -111,6 +111,8 @@ public class Dispatch<T> extends BindingProvider implements javax.xml.ws.Dispatc
     }
     
     public Object invoke(Object obj) throws WebServiceException {
+        /*
+        
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
         invocationContext.setServiceClient(axisController.getServiceClient());
@@ -157,6 +159,10 @@ public class Dispatch<T> extends BindingProvider implements javax.xml.ws.Dispatc
         rspParam = fromOM(rspEnvelope, rspParam, axisController.getServiceClient().getOptions().getSoapVersionURI());
         
         return rspParam.getValue();
+        
+        */
+        
+        return null;
     }
     
    public void invokeOneWay(Object obj) throws WebServiceException{

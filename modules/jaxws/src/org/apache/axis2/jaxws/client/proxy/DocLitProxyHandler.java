@@ -35,6 +35,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -132,10 +133,16 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		String resultName = proxyDescriptor.getWebResultName();
 		JAXBContext ctx = JAXBContext.newInstance(new Class[]{wrapperClazz});
 		//TODO: I should go away from using messageAsOM and see if I can fetch Block from messageContext!!
-		OMElement om = response.getMessageAsOM();
-		Block resBlock = createJAXBBlock(om, ctx);
+		
+        // Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
+        // out of the Message
+        JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        
+        Message responseMsg = response.getMessage();
+        Block resBlock = responseMsg.getBodyBlock(0, ctx, factory);
 		Object bo = resBlock.getBusinessObject(true);
-		return getWebResultObject(wrapperClazz, bo, resultName);
+		
+        return getWebResultObject(wrapperClazz, bo, resultName);
 	}
 	
 	private Block createJAXBBlock(Object jaxbObject, JAXBContext context) throws MessageException{
@@ -215,7 +222,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	
 	private MessageContext initializeRequest(Block messageBlock) throws XMLStreamException, MessageException{
 		MessageContext request = new MessageContext();
-		request.setMessageAsOM(messageBlock.getOMElement());
+		//request.setMessageAsOM(messageBlock.getOMElement());
 		request.getProperties().putAll(getRequestContext());
 	
 		return request;

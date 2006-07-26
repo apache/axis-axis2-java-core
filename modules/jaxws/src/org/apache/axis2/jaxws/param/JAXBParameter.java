@@ -102,8 +102,11 @@ public class JAXBParameter implements Parameter {
 	public void fromOM(OMElement omElement) {
 		createUnmarshaller();
         
+        String omString = omElement.toString();
+        System.out.println(">> [OMSTRING] " + omString);
+        
         try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(omElement.toString().getBytes());
+            ByteArrayInputStream bais = new ByteArrayInputStream(omString.getBytes());
             value = unmarshaller.unmarshal(bais);
             
         } catch (JAXBException e) {

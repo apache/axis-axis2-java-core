@@ -57,10 +57,8 @@ public class SourceProviderTests extends ProviderTestCase {
         	StreamSource xmlStreamSource = new StreamSource(inputStream);
         	
         	Service svc = Service.create(serviceName);
-        	svc.addPort(portName,null, null);
+        	svc.addPort(portName,null, endpointUrl);
         	Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, null);
-        	Map<String, Object> requestContext = dispatch.getRequestContext();
-        	requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointUrl);
         	System.out.println(">> Invoking Source Provider Dispatch");
         	Source response = dispatch.invoke(xmlStreamSource);
 

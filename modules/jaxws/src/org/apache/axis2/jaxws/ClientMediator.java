@@ -20,7 +20,9 @@ import java.lang.reflect.Proxy;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Service.Mode;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
@@ -64,7 +66,13 @@ public class ClientMediator {
             axisController.setClientContext(clientContext);
             
             JAXBDispatch<T> dispatch = new JAXBDispatch<T>(axisController);
+            if (clientContext.getServiceMode() != null) {
             dispatch.setMode(clientContext.getServiceMode());
+            }
+            else {
+                dispatch.setMode(Service.Mode.PAYLOAD);
+            }
+
             dispatch.setJAXBContext(clientContext.getJAXBContext());
             return dispatch;
         }catch(AxisFault e){
@@ -88,7 +96,13 @@ public class ClientMediator {
 			AxisController axisController = buildAxisController();
 			axisController.setClientContext(clientContext);
 			XMLDispatch<T> dispatch = new XMLDispatch<T>(axisController);
+            if (clientContext.getServiceMode() != null) {
             dispatch.setMode(clientContext.getServiceMode());
+            }
+            else {
+                dispatch.setMode(Service.Mode.PAYLOAD);
+            }
+            
 			return dispatch;
 		}catch(AxisFault e){
 			throw new WebServiceException(e.getMessage());

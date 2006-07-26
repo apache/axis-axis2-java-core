@@ -20,7 +20,25 @@ import javax.xml.namespace.QName;
 
 public class DispatchTestConstants {
 
-    public static String URL = "http://localhost:8080/axis2/services/EchoService";
-    public static QName QNAME_SERVICE = new QName("http://ws.apache.org/axis2", "EchoService");
-    public static QName QNAME_PORT = new QName("http://ws.apache.org/axis2", "EchoServiceSOAP11port0");
+    public static final String URL = "http://localhost:8080/axis2/services/EchoService";
+    public static final QName QNAME_SERVICE = new QName("http://ws.apache.org/axis2", "EchoService");
+    public static final QName QNAME_PORT = new QName("http://ws.apache.org/axis2", "EchoServiceSOAP11port0");
+
+    private static final String sampleSoapEnvelopeHeader = 
+        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + 
+        "<soap:Body>";
+    
+    private static final String sampleSoapEnvelopeFooter =
+        "</soap:Body>" + 
+        "</soap:Envelope>";
+    
+    public static final String sampleBodyContent = 
+        "<ns1:echoString xmlns:ns1=\"http://test\">" + 
+        "<ns1:input xmlns=\"http://test\">HELLO THERE!!!</ns1:input>" + 
+        "</ns1:echoString>";
+    
+    public static final String sampleSoapMessage = 
+        sampleSoapEnvelopeHeader +
+        sampleBodyContent + 
+        sampleSoapEnvelopeFooter;
 }

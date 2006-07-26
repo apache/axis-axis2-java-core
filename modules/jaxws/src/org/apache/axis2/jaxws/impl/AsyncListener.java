@@ -22,7 +22,11 @@ import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.AxisCallback;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.MessageException;
 
 
 /**
@@ -38,6 +42,7 @@ public class AsyncListener implements Callable {
 
     protected AxisCallback axisCallback;
     protected Mode mode;
+    protected InvocationContext invocationCtx;
     
     public AsyncListener() {
         //do nothing
@@ -49,6 +54,10 @@ public class AsyncListener implements Callable {
     
     public void setAxisCallback(AxisCallback cb) {
         axisCallback = cb;
+    }
+    
+    public void setInvocationContext(InvocationContext ic) {
+        invocationCtx = ic;
     }
     
     //TODO: This will probably be removed or at least made a little more 
@@ -68,6 +77,7 @@ public class AsyncListener implements Callable {
             }
             
             MessageContext responseMsgCtx = axisCallback.getResponseMessageContext();
+            
             Object responseObj = getResponseValueObject(responseMsgCtx);
             return responseObj;            
         }
@@ -85,7 +95,12 @@ public class AsyncListener implements Callable {
      * @param msg
      */
     protected Object getResponseValueObject(MessageContext mc) {
-        OMElement msg = mc.getMessageAsOM();
-        return msg.toString();
+        try {
+            Message msg = mc.getMessage();
+            OMElement om = msg.getAsOMElement();
+            return om.toString();
+        } catch (MessageException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
     }
 }

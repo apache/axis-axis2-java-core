@@ -28,7 +28,7 @@ public class DispatchTestSuite {
 	
     public static TestSuite addTestSuites(TestSuite suite) {
         suite.addTestSuite(StringDispatch.class);
-        suite.addTestSuite(SourceDispatch.class);
+        suite.addTestSuite(StreamSourceDispatch.class);
         suite.addTestSuite(DOMSourceDispatch.class);
         suite.addTestSuite(SAXSourceDispatch.class);
         // FIXME: Add this test in

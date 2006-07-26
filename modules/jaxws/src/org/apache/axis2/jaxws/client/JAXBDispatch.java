@@ -18,18 +18,22 @@ package org.apache.axis2.jaxws.client;
 
 import javax.xml.bind.JAXBContext;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.AxisController;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.impl.AsyncListener;
-import org.apache.axis2.jaxws.param.JAXBParameter;
-import org.apache.axis2.jaxws.param.Parameter;
+import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 public class JAXBDispatch<T> extends BaseDispatch<T> {
 
     private JAXBContext jaxbContext;
     
     public JAXBDispatch() {
-        //do nothing
+        super();
     }
     
     public JAXBDispatch(AxisController ac) {
@@ -51,25 +55,37 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
         return listener;
     }
     
-    public OMElement createMessageFromValue(Object value) {
-        // FIXME: This is where the Message Model will be integrated instead of 
-        // the ParameterFactory/Parameter APIs.
-        JAXBParameter param = new JAXBParameter();
-        param.setValue(value);
-        param.setJAXBContext(jaxbContext);
+    public Message createMessageFromValue(Object value) {
+        Message message = null;
+        try {
+            MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+
+            // FIXME: The protocol should actually come from the binding information included in
+            // either the WSDL or an annotation.
+            message = mf.create(Protocol.soap11);
+            
+            JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
+            Block block = factory.createFrom(value, jaxbContext, null);
+            
+            message.setBodyBlock(0, block);
+        } catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
         
-        OMElement envelope = toOM(param, 
-                axisController.getServiceClient().getOptions().getSoapVersionURI());
-        return envelope;
+        return message;
     }
 
-    public Object getValueFromMessage(OMElement message) {
-        // FIXME: This is where the Message Model will be integrated instead of 
-        // the ParameterFactory/Parameter APIs.
-        JAXBParameter param = new JAXBParameter();
-        param.setJAXBContext(jaxbContext);
-        Parameter p = fromOM(message, param, 
-                axisController.getServiceClient().getOptions().getSoapVersionURI());
-        return p.getValue();
+    public Object getValueFromMessage(Message message) {
+        Object value = null;
+        try {
+            JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
+            
+            Block block = message.getBodyBlock(0, jaxbContext, factory);
+            value = block.getBusinessObject(true);
+        } catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+        
+        return value;
     }
 }

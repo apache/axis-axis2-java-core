@@ -23,6 +23,7 @@ import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.message.Message;
 
 /**
  * The <code>org.apache.axis2.jaxws.core.MessageContext</code> is
@@ -41,9 +42,10 @@ public class MessageContext {
     private org.apache.axis2.context.MessageContext axisMsgCtx;
     private Map<String, Object> properties;
     private ServiceDescription serviceDesc;
+    private Message message;
     private Mode mode;
         
-    private OMElement message;  //FIXME: This is temporary until we integrate with the Message Model
+    private OMElement omMessage;  //FIXME: This is temporary until we integrate with the Message Model
     
     public MessageContext() {
         axisMsgCtx = new org.apache.axis2.context.MessageContext();
@@ -81,15 +83,15 @@ public class MessageContext {
     
     //FIXME: This is a temporary mechanism until the Message Model 
     //implementation is available.
-    public void setMessageAsOM(OMElement msg) {
+    public void setMessage(Message msg) {
         message = msg;
     }
     
-    public OMElement getMessageAsOM() {
+    public Message getMessage() {
         return message;
     }
     
-    protected org.apache.axis2.context.MessageContext getAxisMessageContext() {
+    public org.apache.axis2.context.MessageContext getAxisMessageContext() {
         return axisMsgCtx;
     }
 }

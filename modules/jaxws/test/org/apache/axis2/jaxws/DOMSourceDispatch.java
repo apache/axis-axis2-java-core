@@ -17,230 +17,199 @@
 package org.apache.axis2.jaxws;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.util.Map;
 import java.util.concurrent.Future;
 
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Result;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.Service.Mode;
 
 import junit.framework.TestCase;
 
-import org.apache.axis2.jaxws.CallbackHandler;
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
+/**
+ * This class tests the JAX-WS Dispatch with various forms of the 
+ * javax.xml.transform.dom.DOMSource 
+ */
 public class DOMSourceDispatch extends TestCase{
-	private String urlHost = "localhost";
-    private String urlPort = "8080";
-    private String urlSuffix = "/axis2/services/EchoService";
-    private String endpointUrl = "http://" + urlHost + ":" + urlPort + urlSuffix;
-	private String soapMessage ="<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns1:echoString xmlns:ns1=\"http://test\"><ns1:input xmlns=\"http://test\">HELLO THERE!!!</ns1:input></ns1:echoString></soap:Body></soap:Envelope>";
-	private String xmlString = "<ns1:echoString xmlns:ns1=\"http://test\"><ns1:input xmlns=\"http://test\">HELLO THERE!!!</ns1:input></ns1:echoString>";
-	private QName serviceQname = new QName("http://ws.apache.org/axis2", "EchoService");
-	private QName portQname = new QName("http://ws.apache.org/axis2", "EchoServiceSOAP11port0");
 
-  public void testSync() {
-		try {
-			System.out.println("---------------------------------------");
-			Service svc = Service.create(serviceQname);
-			svc.addPort(portQname, null, endpointUrl);
-			Dispatch<Source> dispatch = svc.createDispatch(portQname, Source.class,
-					null);
-			ByteArrayInputStream stream = new ByteArrayInputStream(xmlString
-					.getBytes());
-			Map<String, Object> requestContext = dispatch.getRequestContext();
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
-			domFactory.setNamespaceAware(true);
-			Document domTree = domBuilder.parse(stream);
-			DOMSource srcStream = new DOMSource(domTree);
-			
-			requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-					endpointUrl);
-			System.out.println(">> Invoking sync Dispatch");
-			DOMSource retVal = (DOMSource) dispatch.invoke(srcStream);
-			
-			assertNotNull("dispatch invoke returned null",retVal);
-			
-			StringWriter writer = new StringWriter();
-			Transformer trasformer = TransformerFactory.newInstance().newTransformer();
-			Result result = new StreamResult(writer);
-			trasformer.transform(retVal, result);
-			System.out.println(">> Response [" + writer.getBuffer().toString() + "]");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	// Not for Alpha
-	public void testAsyncPooling() {
-
-	}
-	
-	public void testSyncWithMessageMode(){
-		try {
-			System.out.println("---------------------------------------");
-			Service svc = Service.create(serviceQname);
-			svc.addPort(portQname, null, endpointUrl);
-			Dispatch<Source> dispatch = svc.createDispatch(portQname, Source.class,
-					Mode.MESSAGE);
-			ByteArrayInputStream stream = new ByteArrayInputStream(soapMessage.getBytes());
-			Map<String, Object> requestContext = dispatch.getRequestContext();
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
-			Document domTree = domBuilder.parse(stream);
-			DOMSource srcStream = new DOMSource(domTree);
-			
-			requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-					endpointUrl);
-			System.out.println(">> Invoking sync Dispatch with Message Mode");
-			DOMSource retVal = (DOMSource) dispatch.invoke(srcStream);
-			
-			assertNotNull("dispatch invoke returned null",retVal);
-			
-			StringWriter writer = new StringWriter();
-			Transformer trasformer = TransformerFactory.newInstance().newTransformer();
-			Result result = new StreamResult(writer);
-			trasformer.transform(retVal, result);
-			System.out.println(">> Response [" + writer.getBuffer().toString() + "]");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void testAsyncCallbackWithMessageMode() {
-		try {
-			System.out.println("---------------------------------------");
-	        CallbackHandler<Source> callbackHandler = new CallbackHandler<Source>();
-	        Service svc = Service.create(serviceQname);
-			svc.addPort(portQname, null, endpointUrl);
-			Dispatch<Source> dispatch = svc.createDispatch(portQname, Source.class,
-					Mode.MESSAGE);
-			ByteArrayInputStream stream = new ByteArrayInputStream(soapMessage
-					.getBytes());
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
-			Document domTree = domBuilder.parse(stream);
-			DOMSource srcStream = new DOMSource(domTree);
-			
-			Map<String, Object> requestContext = dispatch.getRequestContext();
-			requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-	                endpointUrl);
-			
-	        System.out.println(">> Invoking async (callback) Dispatch");
-	        Future<?> monitor = dispatch.invokeAsync(srcStream, callbackHandler);
-	        
-	            while (!monitor.isDone()) {
-	                System.out.println(">> Async invocation still not complete");
-	                Thread.sleep(1000);
-	            }
-	            
-	            //monitor.get();
-	        
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	}
-	/*
-	public void testSyncWithWSDL() {
-		try {
-			System.out.println("---------------------------------------");
-			 URL wsdlUrl = new URL(endpointUrl + "?wsdl");
-			Service svc = Service.create(wsdlUrl,serviceQname);
-			svc.addPort(portQname, null, endpointUrl);
-			Dispatch<Source> dispatch = svc.createDispatch(portQname, Source.class,
-					Mode.PAYLOAD);
-			ByteArrayInputStream stream = new ByteArrayInputStream(xmlString
-					.getBytes());
-			Map<String, Object> requestContext = dispatch.getRequestContext();
-			
-			String url = (String) requestContext.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
-            assertNotNull("ERROR: the URL should not be null", url);
-            
-            DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
-			Document domTree = domBuilder.parse(stream);
-			DOMSource srcStream = new DOMSource(domTree);
-			System.out.println(">> URL from WSDL [" + url + "]");
-			System.out.println(">> Invoking sync Dispatch with WSDL, Service and Port");
-			DOMSource retVal = (DOMSource) dispatch.invoke(srcStream);
-
-			StringWriter writer = new StringWriter();
-			Transformer trasformer = TransformerFactory.newInstance().newTransformer();
-			Result result = new StreamResult(writer);
-			trasformer.transform(retVal, result);
-			System.out.println(">> Response [" + writer.getBuffer().toString() + "]");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	*/
-	public void testAsyncCallback() {
-		try{
-			System.out.println("---------------------------------------");
-	        CallbackHandler<Source> callbackHandler = new CallbackHandler<Source>();
-	        Service svc = Service.create(serviceQname);
-			svc.addPort(portQname, null, endpointUrl);
-			Dispatch<Source> dispatch = svc.createDispatch(portQname, Source.class,
-					null);
-			ByteArrayInputStream stream = new ByteArrayInputStream(xmlString
-					.getBytes());
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
-			Document domTree = domBuilder.parse(stream);
-			DOMSource srcStream = new DOMSource(domTree);
-			Map<String, Object> requestContext = dispatch.getRequestContext();
-			requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-	                endpointUrl);
-			
-	        System.out.println(">> Invoking async (callback) Dispatch");
-	        Future<?> monitor = dispatch.invokeAsync(srcStream, callbackHandler);
-	       
-	        while (!monitor.isDone()) {
-	            System.out.println(">> Async invocation still not complete");
-	            Thread.sleep(1000);
-	        }
-	            
-	            //monitor.get();
+    private static final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+    
+    public void testSyncPayloadMode() throws Exception {
+		System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
         
-        } catch (Exception e) {
-            e.printStackTrace();
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.PAYLOAD);
+        
+        // Create the DOMSource
+        DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
+        
+		System.out.println(">> Invoking sync Dispatch");
+		Source response = dispatch.invoke(request);
+		assertNotNull("dispatch invoke returned null",response);
+		
+        // Turn the Source into a String so we can check it
+        String responseText = createStringFromSource(response);        
+        System.out.println(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+	}
+
+	public void testSyncMessageMode() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.MESSAGE);
+        
+        // Create the DOMSource
+        DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleSoapMessage);
+        
+        System.out.println(">> Invoking sync Dispatch");
+        Source response = dispatch.invoke(request);
+        assertNotNull("dispatch invoke returned null",response);
+        
+        // Turn the Source into a String so we can check it
+        String responseText = createStringFromSource(response);        
+        System.out.println(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+	}
+
+    public void testAsyncCallbackPayloadMode() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.PAYLOAD);
+        
+        // Create the DOMSource
+        DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
+
+        // Setup the callback for async responses
+        CallbackHandler<Source> callbackHandler = new CallbackHandler<Source>();
+        
+        System.out.println(">> Invoking async (callback) Dispatch");
+        Future<?> monitor = dispatch.invokeAsync(request, callbackHandler);
+            
+        while (!monitor.isDone()) {
+            System.out.println(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+    }
+    
+    public void testAsyncCallbackMessageMode() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.MESSAGE);
+        
+        // Create the DOMSource
+        DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleSoapMessage);
+
+        // Setup the callback for async responses
+        CallbackHandler<Source> callbackHandler = new CallbackHandler<Source>();
+        
+        System.out.println(">> Invoking async (callback) Dispatch");
+        Future<?> monitor = dispatch.invokeAsync(request, callbackHandler);
+	        
+        while (!monitor.isDone()) {
+            System.out.println(">> Async invocation still not complete");
+            Thread.sleep(1000);
         }
 	}
+    
+    public void testOneWayPayloadMode() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.PAYLOAD);
 
-	public void testOneWay() {
-		try {
-			System.out.println("---------------------------------------");
-			Service svc = Service.create(serviceQname);
-			svc.addPort(portQname, null, endpointUrl);
-			Dispatch<Source> dispatch = svc.createDispatch(portQname, Source.class,
-					null);
-			ByteArrayInputStream stream = new ByteArrayInputStream(xmlString
-					.getBytes());
-			Map<String, Object> requestContext = dispatch.getRequestContext();
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
-			Document domTree = domBuilder.parse(stream);
-			DOMSource srcStream = new DOMSource(domTree);
-			requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-					endpointUrl);
-			System.out.println(">> Invoking One Way Dispatch");
-			dispatch.invokeOneWay(srcStream);
+        // Create the DOMSource
+        DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
 
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        System.out.println(">> Invoking One Way Dispatch");
+        dispatch.invokeOneWay(request);
+    }
+    
+    public void testOneWayMessageMode() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.MESSAGE);
+
+        // Create the DOMSource
+        DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleSoapMessage);
+
+        System.out.println(">> Invoking One Way Dispatch");
+        dispatch.invokeOneWay(request);
 	}
+    
+	/**
+     * Create a DOMSource with the provided String as the content
+     * @param input
+     * @return
+	 */
+    private DOMSource createDOMSourceFromString(String input) throws Exception {
+        byte[] bytes = input.getBytes();
+        ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
+        
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true);
+        DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
+        Document domTree = domBuilder.parse(stream);
+        Node node = domTree.getDocumentElement();
+        
+        DOMSource domSource = new DOMSource(node);
+        return domSource;
+    }
+    
+    /**
+     * Create a String from the provided Source
+     * @param input
+     * @return
+     */
+    private String createStringFromSource(Source input) throws Exception {
+        XMLStreamReader reader = inputFactory.createXMLStreamReader(input);
+        Reader2Writer r2w = new Reader2Writer(reader);
+        String text = r2w.getAsString();
+        return text;
+    }
 }
