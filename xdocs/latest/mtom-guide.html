@@ -29,6 +29,7 @@ Message Transmission Optimization Mechanism.</p>
           <li><a href="#242">Client</a></li>
         </ul>
       </li>
+      <li><a href="#25">MTOM Databinding</a>
     </ul>
   </li>
   <li><a href="#3">SOAP with Attachments with Axis2</a></li>
@@ -329,6 +330,295 @@ in the server side for outgoing messages,</p>
         Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());</pre>
 </source><a name="3"></a>
+
+<p><a name="25"></a></p>
+
+<h3>MTOM Databinding</h3>
+
+<p>When using MTOM, you simply define the binary file as part of your SOAP message as
+type="xsd:base64Binary" or type="xsd:hexBinary. You indicate the
+type of content in the element at runtime using an MTOM attribute extension,
+xmime:contentType. Furthermore, you can identify what type of data
+might be expected in the element using the xmime:expectedContentType. Putting it all
+together, our example element becomes: 
+</p>
+
+<source><pre>
+      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' &gt;
+        &lt;complexType&gt;
+          &lt;simpleContent&gt;
+            &lt;extension base="base64Binary" &gt;
+              &lt;attribute ref="xmime:contentType" use="required"/&gt;
+            &lt;/extension&gt;
+          &lt;/simpleContent&gt;
+        &lt;/complexType&gt;
+      &lt;/element&gt;</pre>
+</source>
+<p>Lets define a full, validated doc / lit style WSDL that imports the xmime schema, has a service that 
+       receives a jpeg and returns a pass / fail status to the client:</p>
+
+<source><pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;definitions name="MyMTOMService" targetNamespace="http://myMtomNS" xmlns:tns="http://myMtomNS" xmlns="http://schemas.xmlsoap.org/wsdl/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://myMtomNS/types"&gt;
+  &lt;types&gt;
+    &lt;schema targetNamespace="http://myMtomNS/types" elementFormDefault="qualified" xmlns:tns="http://myMtomNS/types" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://www.w3.org/2001/XMLSchema" 
+    xmlns:xmime="http://www.w3.org/2005/05/xmlmime"&gt;
+      &lt;import namespace="http://schemas.xmlsoap.org/soap/encoding/"/&gt;
+       &lt;import namespace="http://www.w3.org/2005/05/xmlmime"
+                schemaLocation="http://www.w3.org/2005/05/xmlmime"/&gt;
+      &lt;complexType name="ReturnWebBase"&gt;
+        &lt;sequence&gt;
+          &lt;element name="errorMessage" type="xsd:string"/&gt;
+          &lt;element name="successErrorCode" type="xsd:int"/&gt;
+        &lt;/sequence&gt;
+      &lt;/complexType&gt;
+      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' &gt;
+        &lt;complexType&gt;
+          &lt;simpleContent&gt;
+            &lt;extension base="base64Binary" &gt;
+              &lt;attribute ref="xmime:contentType" use="required"/&gt;
+            &lt;/extension&gt;
+          &lt;/simpleContent&gt;
+        &lt;/complexType&gt;
+      &lt;/element&gt;
+      &lt;element name="sendData"&gt;
+        &lt;complexType&gt;
+          &lt;sequence&gt;
+            &lt;element ref='tns:MyBinaryData' minOccurs="1" maxOccurs="1" /&gt;
+          &lt;/sequence&gt;
+        &lt;/complexType&gt;
+      &lt;/element&gt;
+      &lt;element name="sendDataResponse"&gt;
+        &lt;complexType&gt;
+          &lt;sequence&gt;
+            &lt;element minOccurs="1" maxOccurs="1" name="sendDataResult" type="tns:ReturnWebBase" /&gt;
+          &lt;/sequence&gt;
+        &lt;/complexType&gt;
+      &lt;/element&gt;
+    &lt;/schema&gt;
+  &lt;/types&gt;
+  &lt;message name="MyMTOMEndpoint_sendData"&gt;
+     &lt;part name="parameters" element="ns2:sendData"/&gt;
+  &lt;/message&gt;
+  &lt;message name="MyMTOMEndpoint_sendDataResponse"&gt;
+    &lt;part name="result" element="ns2:sendDataResponse"/&gt;
+  &lt;/message&gt;
+  &lt;portType name="MyMTOMEndpoint"&gt;
+    &lt;operation name="sendData"&gt;
+      &lt;input message="tns:MyMTOMEndpoint_sendData" name="MyMTOMEndpoint_sendData"/&gt;
+      &lt;output message="tns:MyMTOMEndpoint_sendDataResponse" name="MyMTOMEndpoint_sendDataResponse"/&gt;
+    &lt;/operation&gt;
+  &lt;/portType&gt;
+  &lt;binding name="MyMTOMEndpointBinding" type="tns:MyMTOMEndpoint"&gt;
+    &lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/&gt;
+    &lt;operation name="sendData"&gt;
+      &lt;soap:operation soapAction="sendData"/&gt;
+      &lt;input name="MyMTOMEndpoint_sendData"&gt;
+        &lt;soap:body use="literal"/&gt;
+      &lt;/input&gt;
+      &lt;output name="MyMTOMEndpoint_sendDataResponse"&gt;
+        &lt;soap:body use="literal"/&gt;
+      &lt;/output&gt;
+    &lt;/operation&gt;
+  &lt;/binding&gt;
+  &lt;service name="MyMTOMService"&gt;
+    &lt;port name="MyMTOMEndpointPort" binding="tns:MyMTOMEndpointBinding"&gt;
+      &lt;soap:address location="http://localhost:8080/axis2/services/MyMTOMService"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;
+  </pre>
+</source>
+<p>The important point here is we import http://www.w3.org/2005/05/xmlmime and define an element, 'MyBinaryData' , that utilizes MTOM. </p>
+
+<p>The next step is using the Axis2 tool 'WSDL2Java' to generate java source files from this WSDL. See the 'Code Generator Tool' guide for more 
+info.  Here, we define an ant task that chooses XMLBeans as the databinding implementation. We also choose to generate an interface which our 
+Skeleton will implement. The name we list for the WSDL above is mtomExample.wsdl, and we define our package name for our generated source files to be 
+'org.apache.axis2.samples.mtomDatabinding.endpoint' . Our ant task for this example is: 
+</p>
+
+<source><pre>&lt;target name="wsdl2java" depends="clean,prepare"&gt;
+      &lt;delete dir="output" /&gt;
+      &lt;java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true"&gt;
+          &lt;classpath refid="axis.classpath"/&gt; 
+          &lt;arg value="-d"/&gt;
+          &lt;arg value="xmlbeans"/&gt;
+          &lt;arg value="-uri"/&gt;
+          &lt;arg file="wsdl/mtomExample.wsdl"/&gt;
+          &lt;arg value="-ss"/&gt;
+          &lt;arg value="-ssi"/&gt;
+          &lt;arg value="-g"/&gt;
+          &lt;arg value="-sd"/&gt;
+          &lt;arg value="-o"/&gt;
+          &lt;arg file="output"/&gt;
+          &lt;arg value="-p"/&gt;
+          &lt;arg value="org.apache.axis2.samples.mtomDatabinding.endpoint"/&gt;
+      &lt;/java&gt;
+
+      &lt;!-- Move the schema folder to classpath--&gt;
+      &lt;move todir="${build.classes}"&gt;
+          &lt;fileset dir="output/resources"&gt;
+              &lt;include name="*schema*/**/*.class"/&gt;
+              &lt;include name="*schema*/**/*.xsb"/&gt;
+          &lt;/fileset&gt;
+      &lt;/move&gt;
+
+  &lt;/target&gt;</pre>
+</source>
+<p>Now we are ready to code. Lets edit output/src/org/apache/axis2/samples/mtomDatabinding/endpoint/MyMTOMServiceSkeleton.java
+and fill in the business logic. The end result becomes: </p>
+
+<source><pre>/**
+ * MyMTOMServiceSkeleton.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: SNAPSHOT Jul 19, 2006 (03:46:19 BRT)
+ */
+package org.apache.axis2.samples.mtomDatabinding.endpoint;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import mymtomns.types.ReturnWebBase;
+import mymtomns.types.SendDataDocument;
+import mymtomns.types.SendDataResponseDocument;
+import mymtomns.types.MyBinaryDataDocument.MyBinaryData;
+import mymtomns.types.SendDataDocument.SendData;
+import mymtomns.types.SendDataResponseDocument.SendDataResponse;
+
+/**
+ *  MyMTOMServiceSkeleton java skeleton for the axisService
+ */
+public class MyMTOMServiceSkeleton implements MyMTOMServiceSkeletonInterface {
+     
+    /** commons logging declaration. * */
+    private static Log logger = LogFactory
+            .getLog(MyMTOMServiceSkeleton.class);
+    
+    /** Put file received here - change path for your system. */
+    private static final String MY_DIR = "/home/myuser/example_dir/output";
+    /** Success code. */
+    public static final Integer SUCCESS = new Integer(0);
+    /** Failure / Exception code. */
+    public static final Integer FAILURE = new Integer(-1);
+    
+    /**
+     * Auto generated method signature.
+     *
+     * @param sendDataDocument
+     *            input complex object
+     * @return SendDataResponseDocument complex object return values
+     */
+    public SendDataResponseDocument sendData (SendDataDocument sendDataDocument) {
+    
+        // prepare output
+        SendDataResponseDocument retDoc = SendDataResponseDocument.Factory
+                .newInstance();
+
+        SendDataResponse retElement = SendDataResponse.Factory
+                .newInstance();
+    
+        ReturnWebBase returnWebBase = ReturnWebBase.Factory
+                .newInstance();
+
+        try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Reached mtomExample on the server side...");
+            }
+            SendData sendData = sendDataDocument.getSendData();
+            MyBinaryData myBinaryData = sendData.getMyBinaryData();
+            byte [] myJpegBytes = myBinaryData.getByteArrayValue();
+
+            File jpegFile = new File(MY_DIR+"myJpeg.jpg");
+            FileOutputStream fos = new FileOutputStream(jpegFile);
+            fos.write( myJpegBytes );
+            fos.flush();
+            fos.close();        
+
+            returnWebBase.setSuccessErrorCode(SUCCESS);
+            returnWebBase.setErrorMessage("SUCCESS");
+
+        } catch (Exception ex) {
+            logger.error("MyMTOMServiceSkeleton.sendData error:"
+                    + ex.getMessage(), ex);
+            returnWebBase.setErrorMessage(ex.getMessage());
+            returnWebBase.setSuccessErrorCode(FAILURE);
+        }
+        retElement.setSendDataResult(returnWebBase);
+        retDoc.setSendDataResponse(retElement);
+        return retDoc;
+    }
+     
+}</pre>
+</source>
+
+<p>The code above receives a jpeg file and writes it to disk. 
+It returns zero on success and in the case of an error, returns -1 along with a stacktrace. Now lets define the client:</p>
+
+<source><pre>package client;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+
+import mymtomns.types.ReturnWebBase;
+import mymtomns.types.SendDataDocument;
+import mymtomns.types.SendDataResponseDocument;
+import mymtomns.types.MyBinaryDataDocument.MyBinaryData;
+import mymtomns.types.SendDataDocument.SendData;
+import mymtomns.types.SendDataResponseDocument.SendDataResponse;
+import org.apache.axis2.samples.mtomDatabinding.endpoint.MyMTOMServiceStub;
+
+public class MTOMXMLBeansClient {
+
+    /** Read file from here - change path for your system. */
+    private static final String MY_DIR = "/home/myuser/example_dir/input/";
+
+    public static void main(String [] args) throws Exception {
+ 
+        try {
+            SendData sendData
+                  = SendData.Factory
+                      .newInstance();
+            SendDataDocument doc
+                  = SendDataDocument.Factory
+                      .newInstance();
+            MyBinaryData myBinaryData
+              = MyBinaryData.Factory
+                  .newInstance();
+            
+            File file=new File(MY_DIR + "axis.jpg");
+            FileInputStream stream=new FileInputStream(file);
+            int size=stream.available();
+            byte[] bytes=new byte[size];
+            stream.read(bytes);
+            
+            myBinaryData.setByteArrayValue(bytes);
+            sendData.setMyBinaryData(myBinaryData);
+            doc.setSendData(sendData);
+       
+            MyMTOMServiceStub stub = new MyMTOMServiceStub();
+            SendDataResponseDocument responseDoc = stub
+                      .sendData(doc);
+            SendDataResponse response = responseDoc
+                      .getSendDataResponse();
+            ReturnWebBase result = response.getSendDataResult();
+            // test for errors
+            if (result.getSuccessErrorCode() ==-1) {
+                System.out.println("ERROR: " + result.getErrorMessage());
+            }
+       
+        } catch (Exception e) {
+              e.printStackTrace();
+        }
+    }
+}</pre>
+</source>
+
+<p>The last step is to create an AAR with the our Skeleton and the generated interface and services.xml, and then deploy the service. See the user guide for more info. </p>
 
 <h2>SOAP with Attachments (SwA) with Axis2</h2>
 
