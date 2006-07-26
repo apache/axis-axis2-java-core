@@ -13,9 +13,9 @@
     <parameter name="saml-issuer-config">
 		<saml-issuer-config>
 			<issuerName>Test_STS</issuerName>
-			<issuerKeyAlias>sts</issuerKeyAlias>
+			<issuerKeyAlias>ip</issuerKeyAlias>
 			<issuerKeyPassword>password</issuerKeyPassword>
-			<cryptoProperties>sctIssuer.properties</cryptoProperties>
+			<cryptoProperties>issuer.properties</cryptoProperties>
 			<timeToLive>300000</timeToLive>
 			<keySize>256</keySize>
 			<addRequestedAttachedRef />
@@ -32,15 +32,15 @@
 	<parameter name="InflowSecurity">
       <action>
         <items>Timestamp UsernameToken</items>
-		<passwordCallbackClass xmlns="">org.apache.axis2.security.sc.PWCallback</passwordCallbackClass>
+		<passwordCallbackClass xmlns="">org.apache.rahas.PWCallback</passwordCallbackClass>
       </action>
     </parameter>
 
     <parameter name="OutflowSecurity">
       <action>
         <items>Timestamp</items>
-        <user>sts</user>
-	    <passwordCallbackClass xmlns="">org.apache.axis2.security.sc.PWCallback</passwordCallbackClass>
+        <user>ip</user>
+	    <passwordCallbackClass xmlns="">org.apache.rahas.PWCallback</passwordCallbackClass>
 		<enableSignatureConfirmation>false</enableSignatureConfirmation>
       </action>
     </parameter>

@@ -17,7 +17,7 @@
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.security.sc.PWCallback;
+import org.apache.rahas.PWCallback;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.opensaml.XML;

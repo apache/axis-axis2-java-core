@@ -17,7 +17,7 @@
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.security.sc.PWCallback;
+import org.apache.rahas.PWCallback;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.opensaml.XML;
@@ -61,7 +61,7 @@ public class RahasSAMLTokenV1205Test extends TestClient {
 
         ofc.setActionItems("Timestamp Signature");
         ofc.setUser("alice");
-        ofc.setSignaturePropFile("sec.properties");
+        ofc.setSignaturePropFile("rahas-sec.properties");
         ofc.setPasswordCallbackClass(PWCallback.class.getName());
         return ofc;
     }
@@ -71,7 +71,7 @@ public class RahasSAMLTokenV1205Test extends TestClient {
 
         ifc.setActionItems("Timestamp Signature");
         ifc.setPasswordCallbackClass(PWCallback.class.getName());
-        ifc.setSignaturePropFile("sec.properties");
+        ifc.setSignaturePropFile("rahas-sec.properties");
         
         return ifc;
     }

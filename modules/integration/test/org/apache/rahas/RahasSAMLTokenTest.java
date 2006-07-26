@@ -45,7 +45,7 @@ public class RahasSAMLTokenTest extends TestClient {
 
         ofc.setActionItems("Timestamp Signature");
         ofc.setUser("alice");
-        ofc.setSignaturePropFile("sec.properties");
+        ofc.setSignaturePropFile("rahas-sec.properties");
         ofc.setPasswordCallbackClass(PWCallback.class.getName());
         return ofc;
     }
@@ -55,7 +55,7 @@ public class RahasSAMLTokenTest extends TestClient {
 
         ifc.setActionItems("Timestamp Signature");
         ifc.setPasswordCallbackClass(PWCallback.class.getName());
-        ifc.setSignaturePropFile("sec.properties");
+        ifc.setSignaturePropFile("rahas-sec.properties");
         
         return ifc;
     }

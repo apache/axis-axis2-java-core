@@ -160,7 +160,7 @@ public class PWCallback implements CallbackHandler {
 
                     pc.setPassword("noR");
 
-                } else if(pc.getIdentifer().equals("sts")) {
+                } else if(pc.getIdentifer().equals("ip")) {
                     
                     pc.setPassword("password");
                     

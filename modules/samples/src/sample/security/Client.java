@@ -42,10 +42,10 @@ public class Client {
 
             // Get the repository location from the args
             String repo = args[0];
-            String port = args[1];
+            String port = "9080";
 
             OMElement payload = getEchoElement();
-            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, null);
+            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, repo + "/conf/axis2.xml");
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             Options options = new Options();
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
@@ -55,6 +55,7 @@ public class Client {
             serviceClient.setOptions(options);
             
             //Blocking invocation
+            System.out.println(payload);
             OMElement result = serviceClient.sendReceive(payload);
 
             StringWriter writer = new StringWriter();

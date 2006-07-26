@@ -296,12 +296,12 @@
 			<copy overwrite="yes" file="target/test-classes/org/apache/rahas/Service.class"
                   tofile="target/temp-rahas/org/apache/rahas/Service.class"/>
 			<copy overwrite="yes" file="target/test-classes/org/apache/rahas/PWCallback.class"
-                  tofile="target/temp-sc/org/apache/rahas/PWCallback.class"/>
+                  tofile="target/temp-rahas/org/apache/rahas/PWCallback.class"/>
 				  
 			<copy overwrite="yes" todir="target/temp-rahas">
             	<fileset dir="test-resources/rahas">
-					<include name="sctIssuer.properties"/>
-					<include name="sts.jks"/>
+					<include name="issuer.properties"/>
+					<include name="rahas-sts.jks"/>
 				</fileset>
 			</copy>
 
@@ -349,8 +349,6 @@
 			<!-- copy the services.xml and create the aar -->
 			<copy overwrite="yes" file="test-resources/rahas/s1-services.xml"
                   tofile="target/temp-rahas/META-INF/services.xml"/>
-			<copy overwrite="yes" file="test-resources/rahas/saml.s1.properties"
-                  tofile="target/temp-rahas/saml.s1.properties"/>
 
 		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_1/services/SecureService.aar"
                  basedir="target/temp-rahas"/>
@@ -375,8 +373,6 @@
 			<!-- copy the services.xml and create the aar -->
 			<copy overwrite="yes" file="test-resources/rahas/s3-services.xml"
                   tofile="target/temp-rahas/META-INF/services.xml"/>
-			<copy overwrite="yes" file="test-resources/rahas/sctIssuer.properties"
-                  tofile="target/temp-rahas/sctIssuer.properties"/>
 
 		    <jar  overwrite="yes" jarfile="target/test-resources/rahas_service_repo_3/services/SecureService.aar"
                  basedir="target/temp-rahas"/>
