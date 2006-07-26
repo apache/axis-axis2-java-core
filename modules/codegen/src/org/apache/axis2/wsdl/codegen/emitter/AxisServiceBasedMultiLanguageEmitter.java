@@ -758,18 +758,31 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             generateAndPopulateFaultNames();
             updateFaultPackageForSkeleton(codeGenConfiguration.isServerSideInterface());
 
+            //
             if (codeGenConfiguration.isServerSideInterface()) {
                 //write skeletonInterface
                 writeSkeletonInterface();
             }
-            // write skeleton
-            writeSkeleton();
+
+            // write skeleton only if the used has
+            // asked for the deployment descriptor in the interface mode
+            // else write it anyway :)
+            if (codeGenConfiguration.isServerSideInterface()){
+                 if (codeGenConfiguration.isGenerateDeployementDescriptor()){
+                     writeSkeleton();
+                 }
+            }else{
+               writeSkeleton();
+            }
 
             // write a MessageReceiver for this particular service.
             writeMessageReceiver();
 
-            // write interface implementations
-            writeServiceXml();
+            // write service xml
+            // if asked
+            if (codeGenConfiguration.isGenerateDeployementDescriptor()) {
+                writeServiceXml();
+            }
 
             //write the ant build
             //we skip this for the flattened case
@@ -1239,7 +1252,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @throws Exception
      */
     protected void writeServiceXml() throws Exception {
-        if (this.codeGenConfiguration.isGenerateDeployementDescriptor()) {
 
             // Write the service xml in a folder with the
             Document serviceXMLModel = createDOMDocumentForServiceXML();
@@ -1252,7 +1264,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                             this.codeGenConfiguration.getOutputLanguage());
 
             writeClass(serviceXMLModel, serviceXmlWriter);
-        }
+
     }
 
     protected Document createDOMDocumentForServiceXML() {
