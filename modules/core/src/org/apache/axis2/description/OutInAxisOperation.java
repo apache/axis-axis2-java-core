@@ -355,7 +355,7 @@ class OutInAxisOperationClient implements OperationClient {
 
             SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
                     responseMessageContext, msgctx.getEnvelope().getNamespace()
-                    .getName());
+                    .getNamespaceURI());
             if (resenvelope != null) {
                 responseMessageContext.setEnvelope(resenvelope);
                 engine = new AxisEngine(msgctx.getConfigurationContext());

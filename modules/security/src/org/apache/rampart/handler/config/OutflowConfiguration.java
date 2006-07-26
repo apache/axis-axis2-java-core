@@ -19,7 +19,6 @@ package org.apache.rampart.handler.config;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.description.Parameter;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
@@ -75,16 +74,15 @@ public class OutflowConfiguration {
         }
                 
 		OMFactory fac = OMAbstractFactory.getOMFactory();
-		OMNamespace ns = fac.createOMNamespace("", null);
         //TODO: Find the constants for "Parameter" and "name"
-        OMElement paramElement = fac.createOMElement("Parameter",ns);
+        OMElement paramElement = fac.createOMElement("Parameter",null);
 		paramElement.addAttribute(fac.createOMAttribute("name", null ,WSSHandlerConstants.OUTFLOW_SECURITY));
 
 		
 		for (int i = 0; i < this.actionList.length; i++) {
 			// Create the action element
 			OMElement actionElem = fac.createOMElement(
-					WSSHandlerConstants.ACTION, ns);
+					WSSHandlerConstants.ACTION, null);
 
 			// Get the current action
 			HashMap action = this.actionList[i];
@@ -97,7 +95,7 @@ public class OutflowConfiguration {
                 String value = (String) action.get(key);
                 if(value != null && value.length() > 0) {
                     // Create an element with the name of the key
-    				OMElement elem = fac.createOMElement(key, ns);
+    				OMElement elem = fac.createOMElement(key, null);
     				// Set the text value of the element
                     elem.setText(value);
     				// Add the element as a child of this action element

@@ -16,7 +16,6 @@
 
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -29,7 +28,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -41,6 +39,7 @@ import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 
@@ -91,7 +90,7 @@ public class SOAPversionTest extends UtilServerBasedTestCase implements TestCons
         SOAPEnvelope result = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
         assertEquals("SOAP Version received is not compatible",
                 SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                result.getNamespace().getName());
+                result.getNamespace().getNamespaceURI());
     }
 
     public void testSOAP12() throws AxisFault {
@@ -113,7 +112,7 @@ public class SOAPversionTest extends UtilServerBasedTestCase implements TestCons
         SOAPEnvelope result = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
         assertEquals("SOAP Version received is not compatible",
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                result.getNamespace().getName());
+                result.getNamespace().getNamespaceURI());
     }
 
     private MessageContext prepareTheSOAPEnvelope(OMElement toSend, Options options) throws AxisFault {

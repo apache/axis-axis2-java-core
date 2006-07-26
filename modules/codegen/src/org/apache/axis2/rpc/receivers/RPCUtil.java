@@ -50,7 +50,7 @@ public class RPCUtil {
                         method.getName() + "Response", ns);
                 OMElement resWrapper;
                 if (qualified) {
-                    resWrapper = fac.createOMElement(RETURN_WRAPPER, ns.getName(),
+                    resWrapper = fac.createOMElement(RETURN_WRAPPER, ns.getNamespaceURI(),
                             ns.getPrefix());
                 } else {
                     resWrapper = fac.createOMElement(RETURN_WRAPPER, null);
@@ -74,7 +74,7 @@ public class RPCUtil {
                 // Java Beans
                 QName returnWrapper;
                 if (qualified) {
-                    returnWrapper = new QName(ns.getName(), RETURN_WRAPPER, ns.getPrefix());
+                    returnWrapper = new QName(ns.getNamespaceURI(), RETURN_WRAPPER, ns.getPrefix());
                 } else {
                     returnWrapper = new QName(RETURN_WRAPPER);
                 }

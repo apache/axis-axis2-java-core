@@ -406,7 +406,7 @@ public class AddressingOutHandler extends AddressingHandler {
      * @return false - if one can add new headers, true - if one should not touch them.
      */
     private boolean isAddressingHeaderAlreadyAvailable(String name, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders) {
-        OMElement addressingHeader = envelope.getHeader().getFirstChildWithName(new QName(addressingNamespaceObject.getName(), name, addressingNamespaceObject.getPrefix()));
+        OMElement addressingHeader = envelope.getHeader().getFirstChildWithName(new QName(addressingNamespaceObject.getNamespaceURI(), name, addressingNamespaceObject.getPrefix()));
 
         if (addressingHeader != null && replaceHeaders) {
             addressingHeader.detach();

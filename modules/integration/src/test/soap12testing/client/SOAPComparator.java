@@ -30,7 +30,7 @@ public class SOAPComparator extends XMLComparator {
 
     public boolean compare(SOAPEnvelope expectedEnvelope, SOAPEnvelope ReplyEnvelope) throws XMLComparisonException {
 
-        if (expectedEnvelope.getNamespace().getName().equals(ReplyEnvelope.getNamespace().getName())) {
+        if (expectedEnvelope.getNamespace().getNamespaceURI().equals(ReplyEnvelope.getNamespace().getNamespaceURI())) {
             //a!=null && b==null
             if ((expectedEnvelope.getHeader() != null && ReplyEnvelope.getHeader() != null) ||
                     (expectedEnvelope.getHeader() == null && ReplyEnvelope.getHeader() == null)) {

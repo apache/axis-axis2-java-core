@@ -23,7 +23,11 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.*;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
@@ -263,7 +267,7 @@ public class HTTPTransportUtils {
                 String faultCode;
 
                 if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
-                        envelope.getNamespace().getName())) {
+                        envelope.getNamespace().getNamespaceURI())) {
                     faultCode = SOAP12Constants.FAULT_CODE_SENDER;
                 } else {
                     faultCode = SOAP11Constants.FAULT_CODE_SENDER;

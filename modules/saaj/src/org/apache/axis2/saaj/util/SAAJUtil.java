@@ -17,12 +17,12 @@
 package org.apache.axis2.saaj.util;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,7 +47,7 @@ public class SAAJUtil {
         //Check the namespace and find SOAP version and factory
         String nsURI;
         SOAPFactory factory;
-        if (env.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+        if (env.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
             nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
             factory = DOOMAbstractFactory.getSOAP11Factory();
         } else {
@@ -76,7 +76,7 @@ public class SAAJUtil {
         //Check the namespace and find SOAP version and factory
         String nsURI;
         SOAPFactory factory;
-        if (env.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+        if (env.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
             nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
             factory = DOOMAbstractFactory.getSOAP11Factory();
         } else {

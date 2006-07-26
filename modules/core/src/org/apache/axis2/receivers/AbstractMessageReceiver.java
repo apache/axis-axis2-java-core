@@ -80,7 +80,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     }
 
     public SOAPFactory getSOAPFactory(MessageContext msgContext) throws AxisFault {
-        String nsURI = msgContext.getEnvelope().getNamespace().getName();
+        String nsURI = msgContext.getEnvelope().getNamespace().getNamespaceURI();
         if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {
             return OMAbstractFactory.getSOAP12Factory();
         } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(nsURI)) {

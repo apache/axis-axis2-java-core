@@ -18,8 +18,8 @@
 package org.apache.axis2.transport.jms;
 
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -45,7 +45,6 @@ import javax.jms.Message;
 import javax.jms.TextMessage;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
@@ -138,7 +137,7 @@ public class SimpleJMSWorker implements Runnable {
                 String faultCode;
 
                 if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
-                        envelope.getNamespace().getName())) {
+                        envelope.getNamespace().getNamespaceURI())) {
                     faultCode = SOAP12Constants.FAULT_CODE_SENDER;
                 } else {
                     faultCode = SOAP11Constants.FAULT_CODE_SENDER;

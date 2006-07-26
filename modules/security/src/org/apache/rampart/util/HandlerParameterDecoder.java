@@ -233,7 +233,7 @@ public class HandlerParameterDecoder {
     private static void handleSignEncrParts(boolean signAllHeaders,
             boolean signBody, boolean encrBody, MessageContext msgCtx,
             int repetition) {
-        String soapNs = msgCtx.getEnvelope().getNamespace().getName();
+        String soapNs = msgCtx.getEnvelope().getNamespace().getNamespaceURI();
         if(signBody) {
             //Add body signPart
             String sigBodySigPart = "{Element}{" + soapNs + "}Body";
@@ -250,7 +250,7 @@ public class HandlerParameterDecoder {
                 OMElement element = (OMElement) children.next();
                 //Sign only the quilified headers
                 //TODO check whether we can sign the unqualified header elements
-                String ns = element.getNamespace().getName();
+                String ns = element.getNamespace().getNamespaceURI();
                 if(ns != null && ns.length() > 0) {
                     addSigPart("{Element}{" + ns + "}" + element.getLocalName(),msgCtx, repetition);
                 }

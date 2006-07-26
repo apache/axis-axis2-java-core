@@ -21,10 +21,22 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.*;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DescriptionBuilder;
+import org.apache.axis2.deployment.ModuleBuilder;
+import org.apache.axis2.deployment.ServiceBuilder;
+import org.apache.axis2.deployment.ServiceGroupBuilder;
 import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDLToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
@@ -34,7 +46,13 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -228,12 +246,12 @@ public class ArchiveReader implements DeploymentConstants {
                         OMNamespace documentElementNS = new StAXOMBuilder(in).getDocumentElement().getNamespace();
                         if (documentElementNS != null) {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getName())) {
+                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
                                 // we have a WSDL 2.0 document here.
                                 wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(new FileInputStream(file1), null, null);
 
                             } else if (Constants.NS_URI_WSDL11.
-                                    equals(documentElementNS.getName())) {
+                                    equals(documentElementNS.getNamespaceURI())) {
                                 wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(new FileInputStream(file1), null, null);
                             } else {
                                 new DeploymentException(Messages.getMessage("invalidWSDLFound"));
@@ -286,12 +304,12 @@ public class ArchiveReader implements DeploymentConstants {
                         OMNamespace documentElementNS = new StAXOMBuilder(in).getDocumentElement().getNamespace();
                         if (documentElementNS != null) {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getName())) {
+                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
                                 // we have a WSDL 2.0 document here.
                                 wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);
                                 wsdlToAxisServiceBuilder.setBaseUri(entryName);
                             } else if (Constants.NS_URI_WSDL11.
-                                    equals(documentElementNS.getName())) {
+                                    equals(documentElementNS.getNamespaceURI())) {
                                 wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);
                             } else {
                                 new DeploymentException(Messages.getMessage("invalidWSDLFound"));

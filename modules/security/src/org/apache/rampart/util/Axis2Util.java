@@ -40,7 +40,6 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamReader;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -99,7 +98,7 @@ public class Axis2Util {
     			//Check the namespace and find SOAP version and factory
     			String nsURI = null;
     			SOAPFactory factory;
-    			if(env.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+    			if(env.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
     				nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
     				factory = DOOMAbstractFactory.getSOAP11Factory();
     			} else {

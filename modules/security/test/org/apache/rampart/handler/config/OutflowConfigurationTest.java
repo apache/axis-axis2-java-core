@@ -16,11 +16,10 @@
 
 package org.apache.rampart.handler.config;
 
+import junit.framework.TestCase;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
-
-import junit.framework.TestCase;
 
 /**
  * Tests the org.apache.axis2.security.handler.config.OutflowConfiguration
@@ -131,13 +130,13 @@ public class OutflowConfigurationTest extends TestCase {
 						"<" + WSHandlerConstants.ENC_SYM_ALGO + ">"
 								+ WSConstants.AES_128 + "</"
 								+ WSHandlerConstants.ENC_SYM_ALGO + ">"));
-		
+
 		assertTrue("encrUser missing", -1 < ofc.getProperty().getParameterElement().toString()
 				.indexOf(
 						"<" + WSHandlerConstants.ENCRYPTION_USER + ">"
 								+ encrUser + "</"
 								+ WSHandlerConstants.ENCRYPTION_USER + ">"));
-		
+
 		assertTrue("passwordType missing", -1 < ofc.getProperty().getParameterElement().toString()
 				.indexOf(
 						"<" + WSHandlerConstants.PASSWORD_TYPE + ">"
@@ -149,7 +148,7 @@ public class OutflowConfigurationTest extends TestCase {
 						"<" + WSHandlerConstants.SAML_PROP_FILE + ">"
 								+ samlPropFile + "</"
 								+ WSHandlerConstants.SAML_PROP_FILE + ">"));
-		
+
 		assertTrue("sigPropFile missing", -1 < ofc.getProperty().getParameterElement().toString()
 				.indexOf(
 						"<" + WSHandlerConstants.SIG_PROP_FILE + ">"

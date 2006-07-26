@@ -126,7 +126,7 @@ public class XMLComparatorInterop {
         if (elt != null) {
             OMNamespace namespace = elt.getNamespace();
             if (namespace != null) {
-                return ignorableNamespaceList.contains(namespace.getName());
+                return ignorableNamespaceList.contains(namespace.getNamespaceURI());
             } else {
                 return false;
             }
@@ -225,7 +225,7 @@ public class XMLComparatorInterop {
         } else if (one == null && two != null) {
             return false;
         }
-        if (!one.getName().equals(two.getName())) {
+        if (!one.getNamespaceURI().equals(two.getNamespaceURI())) {
             return false;
         }
 

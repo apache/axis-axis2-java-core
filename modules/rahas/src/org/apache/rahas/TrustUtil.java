@@ -247,7 +247,7 @@ public class TrustUtil {
      * @throws TrustException
      */
     public static String findKeyType(OMElement rst) throws TrustException {
-        OMElement keyTypeElem = rst.getFirstChildWithName(new QName(rst.getNamespace().getName(), RahasConstants.KEY_TYPE_LN));
+        OMElement keyTypeElem = rst.getFirstChildWithName(new QName(rst.getNamespace().getNamespaceURI(), RahasConstants.KEY_TYPE_LN));
         if(keyTypeElem != null) {
             String text = keyTypeElem.getText();
             if(text != null && !"".equals(text.trim())) {
@@ -264,7 +264,7 @@ public class TrustUtil {
      * @throws TrustException
      */
     public static int findKeySize(OMElement rst) throws TrustException {
-        OMElement keySizeElem = rst.getFirstChildWithName(new QName(rst.getNamespace().getName(), RahasConstants.KEY_SIZE_LN));
+        OMElement keySizeElem = rst.getFirstChildWithName(new QName(rst.getNamespace().getNamespaceURI(), RahasConstants.KEY_SIZE_LN));
         if(keySizeElem != null) {
             String text = keySizeElem.getText();
             if(text != null && !"".equals(text.trim())) {

@@ -38,7 +38,7 @@ public class RequestCounterMessageReceiver extends AbstractInOutSyncMessageRecei
 
         SOAPFactory factory;
 
-        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(inMessage.getEnvelope().getNamespace().getName())) {
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(inMessage.getEnvelope().getNamespace().getNamespaceURI())) {
             factory = OMAbstractFactory.getSOAP12Factory();
         } else {
             factory = OMAbstractFactory.getSOAP11Factory();

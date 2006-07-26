@@ -752,7 +752,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                     OMNamespace namespace = OMAttrib.getNamespace();
                     if (namespace != null) {
                         addToNsMap(namespace.getPrefix(),
-                                namespace.getName());
+                                namespace.getNamespaceURI());
                     }
                 } else if (attribName instanceof OMAttribKey) {
                     //this is definitely the OMAttribute case
@@ -760,7 +760,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                     OMNamespace namespace = OMAttrib.getNamespace();
                     if (namespace != null) {
                         addToNsMap(namespace.getPrefix(),
-                                namespace.getName());
+                                namespace.getNamespaceURI());
                     }
                 } else if (attribName instanceof String) {
                     //ignore this case - Nothing to do

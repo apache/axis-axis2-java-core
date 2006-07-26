@@ -17,11 +17,11 @@
 package org.apache.rampart.conversation;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.util.Base64;
+import org.apache.axis2.util.Loader;
 import org.apache.rahas.RahasConstants;
 import org.apache.rahas.Token;
 import org.apache.rahas.TrustException;
-import org.apache.axis2.util.Base64;
-import org.apache.axis2.util.Loader;
 import org.apache.rampart.RampartException;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.components.crypto.Crypto;
@@ -32,7 +32,6 @@ import org.w3c.dom.Element;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
-
 import java.util.Vector;
 
 public class Util {
@@ -114,7 +113,7 @@ public class Util {
             OMElement elem = rpt.getFirstElement();
 
             if (WSConstants.ENC_KEY_LN.equals(elem.getLocalName())
-                    && WSConstants.ENC_NS.equals(elem.getNamespace().getName())) {
+                    && WSConstants.ENC_NS.equals(elem.getNamespace().getNamespaceURI())) {
                 // Handle the xenc:EncryptedKey case
                 EncryptedKeyProcessor processor = new EncryptedKeyProcessor();
                 processor.handleToken((Element) elem, null, Util
@@ -123,12 +122,12 @@ public class Util {
                         null);
                 secret = processor.getDecryptedBytes();
             } else if (RahasConstants.BINARY_SECRET_LN.equals(elem.getLocalName())
-                    && RahasConstants.WST_NS_05_02.equals(elem.getNamespace().getName())) {
+                    && RahasConstants.WST_NS_05_02.equals(elem.getNamespace().getNamespaceURI())) {
                 // Handle the wst:BinarySecret case
                 secret = Base64.decode(elem.getText());
             } else {
                 throw new TrustException("notSupported", new String[] { "{"
-                        + elem.getNamespace().getName() + "}"
+                        + elem.getNamespace().getNamespaceURI() + "}"
                         + elem.getLocalName() });
             }
         } else {

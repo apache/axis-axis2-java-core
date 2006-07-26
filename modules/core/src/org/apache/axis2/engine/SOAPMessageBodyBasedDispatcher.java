@@ -74,7 +74,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             OMNamespace ns = bodyFirstChild.getNamespace();
 
             if (ns != null) {
-                String filePart = ns.getName();
+                String filePart = ns.getNamespaceURI();
 
                 log.debug(
                         "Checking for Service using SOAP message body's first child's namespace : "

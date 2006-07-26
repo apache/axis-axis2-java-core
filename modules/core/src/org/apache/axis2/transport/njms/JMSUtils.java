@@ -45,8 +45,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class JMSUtils {
 
@@ -359,7 +359,7 @@ public class JMSUtils {
 
             if (envelope.getNamespace() != null &&
                 SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.
-                    equals(envelope.getNamespace().getName())) {
+                    equals(envelope.getNamespace().getNamespaceURI())) {
                 faultCode = SOAP12Constants.FAULT_CODE_SENDER;
             } else {
                 faultCode = SOAP11Constants.FAULT_CODE_SENDER;

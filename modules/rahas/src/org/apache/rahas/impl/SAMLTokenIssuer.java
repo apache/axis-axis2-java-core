@@ -50,7 +50,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
-
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
@@ -149,7 +148,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
         DocumentBuilderFactoryImpl.setDOOMRequired(true);
 
         SOAPEnvelope env = TrustUtil.createSOAPEnvelope(inMsgCtx.getEnvelope()
-                .getNamespace().getName());
+                .getNamespace().getNamespaceURI());
 
         Crypto crypto = CryptoFactory.getInstance(config.cryptoPropFile,
                 inMsgCtx.getAxisService().getClassLoader());
@@ -202,7 +201,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
         
         OMElement rstrElem = null; 
         
-        int version = TrustUtil.getWSTVersion(request.getNamespace().getName());
+        int version = TrustUtil.getWSTVersion(request.getNamespace().getNamespaceURI());
         
         if(RahasConstants.VERSION_05_02 == version) {
             rstrElem = TrustUtil
@@ -443,7 +442,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
      */
     public String getResponseAction(OMElement request, MessageContext inMsgCtx)
             throws TrustException {
-        if(RahasConstants.WST_NS_05_02.equals(request.getNamespace().getName())) {
+        if(RahasConstants.WST_NS_05_02.equals(request.getNamespace().getNamespaceURI())) {
             return RahasConstants.V_05_02.RSTR_ACTON_ISSUE;
         } else {
             return RahasConstants.V_05_12.RSTR_ACTON_ISSUE;    

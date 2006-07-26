@@ -50,7 +50,6 @@ import org.w3c.dom.Document;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
-
 import java.security.cert.X509Certificate;
 import java.util.Iterator;
 import java.util.Vector;
@@ -324,7 +323,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
         while (headers.hasNext()) { // Find the wsse header
             SOAPHeaderBlock hb = (SOAPHeaderBlock) headers.next();
             if (hb.getLocalName().equals(WSConstants.WSSE_LN)
-                    && hb.getNamespace().getName().equals(WSConstants.WSSE_NS)) {
+                    && hb.getNamespace().getNamespaceURI().equals(WSConstants.WSSE_NS)) {
                 headerBlock = hb;
                 break;
             }

@@ -128,7 +128,7 @@ public class SCTIssuer implements TokenIssuer {
             }
 
             //Get WST Version
-            int wstVersion = TrustUtil.getWSTVersion(request.getNamespace().getName());
+            int wstVersion = TrustUtil.getWSTVersion(request.getNamespace().getNamespaceURI());
             
             parseEntropyInfo(inMsgCtx.getEnvelope(), config);
             
@@ -172,7 +172,7 @@ public class SCTIssuer implements TokenIssuer {
     private SOAPEnvelope doBinarySecret(SCTIssuerConfig config, MessageContext msgCtx, int wstVersion) throws TrustException {
         
         SOAPEnvelope env = TrustUtil.createSOAPEnvelope(msgCtx.getEnvelope()
-                .getNamespace().getName());
+                .getNamespace().getNamespaceURI());
         //Get the document
         Document doc = ((Element)env).getOwnerDocument();
         
@@ -223,7 +223,7 @@ public class SCTIssuer implements TokenIssuer {
             MessageContext msgCtx, X509Certificate cert, int wstVersion) throws TrustException {
         
         SOAPEnvelope env = TrustUtil.createSOAPEnvelope(msgCtx.getEnvelope()
-                .getNamespace().getName());
+                .getNamespace().getNamespaceURI());
         //Get the document
         Document doc = ((Element)env).getOwnerDocument();
         
@@ -293,7 +293,7 @@ public class SCTIssuer implements TokenIssuer {
     }
 
     public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
-        if(RahasConstants.WST_NS_05_02.equals(request.getNamespace().getName())) {
+        if(RahasConstants.WST_NS_05_02.equals(request.getNamespace().getNamespaceURI())) {
             return RahasConstants.V_05_02.RSTR_ACTON_SCT;
         } else {
             return RahasConstants.V_05_12.RSTR_ACTON_SCT;
