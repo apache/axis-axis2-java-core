@@ -27,10 +27,12 @@ import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
 
+import org.custommonkey.xmlunit.XMLTestCase;
+
 /**
  * 
  */
-public class MessageFactoryTest extends TestCase {
+public class MessageFactoryTest extends XMLTestCase {
     private MessageFactory mf = null;
 
     protected void setUp() throws Exception {
@@ -101,9 +103,7 @@ public class MessageFactoryTest extends TestCase {
             }
             msg2.writeTo(baos2);
 
-            if (!(baos1.toString().equals(baos2.toString()))) {
-                fail();
-            }
+            this.assertXMLEqual(baos1.toString(), baos2.toString());
         } catch (Exception e) {
             e.printStackTrace();
             fail();
