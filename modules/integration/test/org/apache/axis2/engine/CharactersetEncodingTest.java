@@ -16,7 +16,6 @@
 
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -29,7 +28,6 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
@@ -81,7 +79,7 @@ public class CharactersetEncodingTest extends UtilServerBasedTestCase implements
             payload.addChild(text);
 
             Options options = new Options();
-            options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "utf-16");
+            options.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, "utf-16");
 
             options.setTo(targetEPR);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);

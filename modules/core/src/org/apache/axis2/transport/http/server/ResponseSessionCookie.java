@@ -55,10 +55,10 @@ public class ResponseSessionCookie implements HttpResponseInterceptor {
         String sessionCookie = null;
         MessageContext msgctx = (MessageContext) context.getAttribute(AxisParams.MESSAGE_CONTEXT);
         if (msgctx != null) {
-            sessionCookie = (String) msgctx.getProperty(Constants.COOKIE_STRING);
+            sessionCookie = (String) msgctx.getProperty(HTTPConstants.COOKIE_STRING);
         }
         if (sessionCookie == null) {
-          sessionCookie = (String) context.getAttribute(Constants.COOKIE_STRING);
+          sessionCookie = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
         }
         if (sessionCookie != null) {
             CharArrayBuffer buffer = new CharArrayBuffer(sessionCookie.length() + 40);

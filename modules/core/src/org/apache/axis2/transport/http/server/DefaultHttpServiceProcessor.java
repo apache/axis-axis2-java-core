@@ -36,6 +36,7 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
@@ -153,7 +154,7 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
         
             msgContext.setConfigurationContext(this.configurationContext);
 
-            String sessionKey = (String) this.httpcontext.getAttribute(Constants.COOKIE_STRING);
+            String sessionKey = (String) this.httpcontext.getAttribute(HTTPConstants.COOKIE_STRING);
             if (this.configurationContext.getAxisConfiguration().isManageTransportSession()) {
                 SessionContext sessionContext = this.sessionManager.getSessionContext(sessionKey);
                 msgContext.setSessionContext(sessionContext);

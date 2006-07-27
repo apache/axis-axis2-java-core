@@ -205,7 +205,7 @@ public class JMSUtils {
         OMOutputFormat format = new OMOutputFormat();
         String soapActionString = getSOAPAction(msgCtx);
         String charSetEnc = (String) msgCtx.getProperty(
-            MessageContext.CHARACTER_SET_ENCODING);
+            Constants.Configuration.CHARACTER_SET_ENCODING);
 
         if (charSetEnc != null) {
             format.setCharSetEncoding(charSetEnc);
@@ -213,7 +213,7 @@ public class JMSUtils {
             OperationContext opctx = msgCtx.getOperationContext();
             if (opctx != null) {
                 charSetEnc = (String) opctx.getProperty(
-                    MessageContext.CHARACTER_SET_ENCODING);
+                    Constants.Configuration.CHARACTER_SET_ENCODING);
             }
         }
 
@@ -309,7 +309,7 @@ public class JMSUtils {
                                                                 MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                     // Set the encoding scheme in the message context
-                    msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                    msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                 } else {
@@ -318,7 +318,7 @@ public class JMSUtils {
                     xmlreader = StAXUtils.createXMLStreamReader(in, charSetEnc);
 
                     // Setting the value in msgCtx
-                    msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEnc);
+                    msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
                 }
 
                 if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
@@ -340,7 +340,7 @@ public class JMSUtils {
                                                                         MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
             // Set the encoding scheme in the message context
-            msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                    MessageContext.DEFAULT_CHAR_SET_ENCODING);
             builder = new StAXSOAPModelBuilder(
                 xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
@@ -349,7 +349,7 @@ public class JMSUtils {
 
         String charEncOfMessage = builder.getDocument().getCharsetEncoding();
         String charEncOfTransport = ((String) msgContext.getProperty(
-            MessageContext.CHARACTER_SET_ENCODING));
+            Constants.Configuration.CHARACTER_SET_ENCODING));
 
         if (charEncOfMessage != null &&
             !(charEncOfMessage.trim().length() == 0) &&

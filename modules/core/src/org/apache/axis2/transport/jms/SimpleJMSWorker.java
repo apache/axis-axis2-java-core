@@ -97,7 +97,7 @@ public class SimpleJMSWorker implements Runnable {
                                 MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                         // Set the encoding scheme in the message context
-                        msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                 MessageContext.DEFAULT_CHAR_SET_ENCODING);
                     } else {
 
@@ -108,7 +108,7 @@ public class SimpleJMSWorker implements Runnable {
                                 charSetEnc);
 
                         // Setting the value in msgCtx
-                        msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEnc);
+                        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
                     }
 
                     if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
@@ -133,7 +133,7 @@ public class SimpleJMSWorker implements Runnable {
 
             if ((charsetEncoding != null) && !"".equals(charsetEncoding)
                     && !((String) msgContext.getProperty(
-                    MessageContext.CHARACTER_SET_ENCODING)).equalsIgnoreCase(charsetEncoding)) {
+                    Constants.Configuration.CHARACTER_SET_ENCODING)).equalsIgnoreCase(charsetEncoding)) {
                 String faultCode;
 
                 if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(

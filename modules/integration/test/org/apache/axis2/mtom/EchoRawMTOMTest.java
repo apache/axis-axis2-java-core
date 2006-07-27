@@ -111,7 +111,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, MessageContext.UTF_16);
+        options.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, MessageContext.UTF_16);
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {

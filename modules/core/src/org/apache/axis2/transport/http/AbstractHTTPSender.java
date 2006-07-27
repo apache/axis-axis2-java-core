@@ -222,7 +222,7 @@ public abstract class AbstractHTTPSender {
                     }
                 } else if (charsetEnc != null) {
                     if (opContext != null) {
-                        opContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                        opContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                 charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
                     }
                 }
@@ -254,7 +254,7 @@ public abstract class AbstractHTTPSender {
         }
 
         if (sessionCookie != null) {
-            msgContext.getServiceContext().setProperty(Constants.COOKIE_STRING, sessionCookie);
+            msgContext.getServiceContext().setProperty(HTTPConstants.COOKIE_STRING, sessionCookie);
         }
     }
 

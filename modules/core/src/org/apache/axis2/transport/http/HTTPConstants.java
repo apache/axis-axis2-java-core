@@ -447,6 +447,10 @@ public class HTTPConstants {
      * up by the sender while sending the request
      */
     public static final String HTTP_HEADERS = "HTTP_HEADERS";
+    public static final String CHUNKED="__CHUNKED__";
+    public static final String HTTP_PROTOCOL_VERSION = "__HTTP_PROTOCOL_VERSION__";
+    //to set and get the property from service context
+    public static final String COOKIE_STRING = "Cookie";
 
     /**
      * Method getBytes.

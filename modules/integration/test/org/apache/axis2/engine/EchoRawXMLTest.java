@@ -18,7 +18,6 @@ package org.apache.axis2.engine;
 
 //todo
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.framework.Test;
 import org.apache.axiom.om.OMElement;
@@ -32,7 +31,6 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
@@ -164,7 +162,7 @@ public class EchoRawXMLTest extends UtilServerBasedTestCase implements TestConst
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        options.setProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION, HTTPConstants.HEADER_PROTOCOL_10);
+        options.setProperty(HTTPConstants.HTTP_PROTOCOL_VERSION, HTTPConstants.HEADER_PROTOCOL_10);
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);

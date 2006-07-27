@@ -68,6 +68,7 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Field CHARACTER_SET_ENCODING
+     * @deprecated please use org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING
      */
     public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
 

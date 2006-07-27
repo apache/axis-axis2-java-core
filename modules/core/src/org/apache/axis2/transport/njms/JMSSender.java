@@ -22,7 +22,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
@@ -54,7 +53,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
         // is there a transport url? which may be different from the WS-A To..
         targetAddress = (String) msgContext.getProperty(
-            MessageContextConstants.TRANSPORT_URL);
+            Constants.Configuration.TRANSPORT_URL);
 
         if (targetAddress != null) {
             transportInfo = new JMSOutTransportInfo(targetAddress);            
@@ -217,7 +216,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             OMOutputFormat format = new OMOutputFormat();
             format.setCharSetEncoding(
-                 getProperty(msgContext, MessageContext.CHARACTER_SET_ENCODING));
+                 getProperty(msgContext, Constants.Configuration.CHARACTER_SET_ENCODING));
             format.setDoOptimize(msgContext.isDoingMTOM());
             try {
                 msgElement.serializeAndConsume(baos, format);

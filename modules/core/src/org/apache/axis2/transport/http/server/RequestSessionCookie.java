@@ -62,7 +62,7 @@ public class RequestSessionCookie implements HttpRequestInterceptor {
                 }
             }
         }
-        context.setAttribute(Constants.COOKIE_STRING, sessionCookie);
+        context.setAttribute(HTTPConstants.COOKIE_STRING, sessionCookie);
     }
     
 }

@@ -27,7 +27,6 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -202,7 +201,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
         }
 
         String endpointAddress = (String) msgContext
-                        .getProperty(MessageContextConstants.TRANSPORT_URL);
+                        .getProperty(Constants.Configuration.TRANSPORT_URL);
         if (endpointAddress == null &&
             msgContext.getTo() != null &&
             !AddressingConstants.Submission.WSA_ANONYMOUS_URL
@@ -440,7 +439,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
                 // Pick the char set encoding from the msgContext
                 String charSetEnc =
-                        (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                        (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
                 format.setDoOptimize(msgContext.isDoingMTOM());
                 format.setCharSetEncoding(charSetEnc);
@@ -458,7 +457,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
         OMOutputFormat format = new OMOutputFormat();
         String soapActionString = getSOAPAction(msgCtx);
         String charSetEnc =
-                (String) msgCtx.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                (String) msgCtx.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
         if (charSetEnc != null) {
             format.setCharSetEncoding(charSetEnc);
@@ -466,7 +465,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             OperationContext opctx = msgCtx.getOperationContext();
 
             if (opctx != null) {
-                charSetEnc = (String) opctx.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                charSetEnc = (String) opctx.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
             }
         }
 

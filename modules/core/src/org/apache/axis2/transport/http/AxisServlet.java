@@ -149,7 +149,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
             res.setContentType("text/xml; charset="
-                    + msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
+                    + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);

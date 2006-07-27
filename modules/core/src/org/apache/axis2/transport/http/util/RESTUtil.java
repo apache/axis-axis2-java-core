@@ -24,6 +24,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.HTTPConstants;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
@@ -183,7 +184,7 @@ public class RESTUtil {
                 	xmlreader = StAXUtils.createXMLStreamReader(inputStream, MessageContext.DEFAULT_CHAR_SET_ENCODING);
                 	
                     // Set the encoding scheme in the message context
-                    msgCtxt.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                    msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                             MessageContext.DEFAULT_CHAR_SET_ENCODING);
                 } else {
 
@@ -194,7 +195,7 @@ public class RESTUtil {
                             charSetEnc);
 
                     // Setting the value in msgCtx
-                    msgCtxt.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEnc);
+                    msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
                 }
 
                 OMNodeEx documentElement = (OMNodeEx)new StAXOMBuilder(xmlreader).getDocumentElement();

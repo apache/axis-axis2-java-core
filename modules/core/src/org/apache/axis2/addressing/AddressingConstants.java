@@ -64,6 +64,10 @@ public interface AddressingConstants {
     // message context.  
     public static final String REPLACE_ADDRESSING_HEADERS = "ReplaceAddressingHeaders";
     
+    // this property once set to Boolean.TRUE will make the messages to skip Addressing Handler.
+    // So you will not see Addressing Headers in the OUT path.
+    public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
+
     public interface Final {
 
         // ====================== Addressing 1.0 Final Version Constants ====================

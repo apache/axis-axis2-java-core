@@ -52,7 +52,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         PostMethod postMethod = new PostMethod(url.toString());
 
         String charEncoding =
-                (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
         if (charEncoding == null) {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
@@ -77,7 +77,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         } else {
         }
         //setting the coolie in the out path
-        Object cookieString = msgContext.getProperty(Constants.COOKIE_STRING);
+        Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
         if (cookieString != null) {
             StringBuffer buffer = new StringBuffer();
             buffer.append(Constants.SESSION_COOKIE);

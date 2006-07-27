@@ -18,12 +18,12 @@ package test.interop.mtom;
 
 import junit.framework.TestCase;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP12Constants;
 import test.interop.util.BodyElements;
@@ -50,7 +50,7 @@ public class MTOMEchoTestMultipleTest extends TestCase {
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.ENABLE_MTOM,
                 Constants.VALUE_TRUE);
-        options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
+        options.setProperty(HTTPConstants.CHUNKED, Constants.VALUE_FALSE);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 

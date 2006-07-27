@@ -65,7 +65,7 @@ public class SOAPUtil {
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
             response.setContentType("text/xml; charset="
-                                    + msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
+                                    + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
 
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {

@@ -25,7 +25,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
@@ -37,10 +36,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 
@@ -80,7 +77,7 @@ public class MailWorker implements Runnable {
                 msgContext.setTransportOut(transportOut);
                 msgContext.setServerSide(true);
                 msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
-                msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                         mimeMessage.getEncoding());
                 String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION);
                 if (soapAction == null){

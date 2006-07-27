@@ -21,7 +21,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
@@ -38,7 +37,7 @@ public class ClientUtils {
     public static synchronized TransportOutDescription inferOutTransport(AxisConfiguration ac,
                                                                          EndpointReference epr,
                                                                          MessageContext msgctx) throws AxisFault {
-        String transportURI = (String) msgctx.getProperty(MessageContextConstants.TRANSPORT_URL);
+        String transportURI = (String) msgctx.getProperty(Constants.Configuration.TRANSPORT_URL);
         if (transportURI != null && !"".equals(transportURI)) {
             int index = transportURI.indexOf(':');
             String transport = (index > 0) ? transportURI.substring(0, index) : null;

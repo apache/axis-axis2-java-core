@@ -149,7 +149,7 @@ public class RESTSender extends AbstractHTTPSender {
 
         // Serialization as "application/x-www-form-urlencoded"
         String charEncoding =
-                (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
         // Default encoding scheme
         if (charEncoding == null) {
@@ -205,7 +205,7 @@ public class RESTSender extends AbstractHTTPSender {
         }
 
         String charEncoding =
-                (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
         if (charEncoding == null) {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;

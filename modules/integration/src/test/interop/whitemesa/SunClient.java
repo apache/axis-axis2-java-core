@@ -19,6 +19,7 @@ package test.interop.whitemesa;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
@@ -27,7 +28,6 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.MessageContextConstants;
 
 import java.net.URL;
 
@@ -42,7 +42,7 @@ public class SunClient {
             url = new URL(epUrl);
 
             Options options = new Options();
-            options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
+            options.setProperty(HTTPConstants.CHUNKED, Constants.VALUE_FALSE);
             options.setTo(new EndpointReference(url.toString()));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setAction(soapAction);

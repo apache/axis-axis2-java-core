@@ -184,8 +184,8 @@ public class AxisEngine {
                 new RelatesTo(
                         processingContext.getOptions().getMessageId(),
                         AddressingConstants.Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
-        faultContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
-                processingContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
+        faultContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                processingContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
         // register the fault message context
         if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null) {

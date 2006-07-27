@@ -19,6 +19,7 @@ package sample.amazon.amazonSimpleQueueService.util;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -65,7 +66,7 @@ public class RunnableDeleteQueue extends QueueManager implements Runnable {
             options.setTo(new EndpointReference(url));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setProperty(
-                    org.apache.axis2.context.MessageContextConstants.CHUNKED,
+                    HTTPConstants.CHUNKED,
                     org.apache.axis2.Constants.VALUE_FALSE);
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);

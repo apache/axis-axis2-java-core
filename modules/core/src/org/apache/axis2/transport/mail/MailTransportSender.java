@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -82,7 +83,7 @@ public class MailTransportSender extends AbstractTransportSender {
 
                 // In mail char set is what is being used. Charset encoding is not what is expected here.
                 String charSet =
-                        (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                        (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
                 if (charSet == null) {
                     charSet = MailSrvConstants.DEFAULT_CHAR_SET;
                 }

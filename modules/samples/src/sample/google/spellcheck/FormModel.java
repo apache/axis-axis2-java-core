@@ -24,12 +24,12 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.MessageContextConstants;
 import sample.google.common.util.PropertyLoader;
 
 import javax.xml.namespace.QName;
@@ -93,7 +93,7 @@ public class FormModel {
 
         Options options = new Options();
         options.setTo(new EndpointReference(url.toString()));
-        options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
+        options.setProperty(HTTPConstants.CHUNKED, Constants.VALUE_FALSE);
         try {
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);
@@ -122,7 +122,7 @@ public class FormModel {
         Options options = new Options();
 
         options.setTo(new EndpointReference(url.toString()));
-        options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
+        options.setProperty(HTTPConstants.CHUNKED, Constants.VALUE_FALSE);
 
         try {
 

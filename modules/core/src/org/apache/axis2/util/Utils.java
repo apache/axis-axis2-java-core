@@ -100,8 +100,8 @@ public class Utils {
                 inMessageContext.getProperty(Constants.OUT_TRANSPORT_INFO));
 
         // Setting the charater set encoding
-        newmsgCtx.setProperty(MessageContext.CHARACTER_SET_ENCODING,
-                inMessageContext.getProperty(MessageContext.CHARACTER_SET_ENCODING));
+        newmsgCtx.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                inMessageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
         newmsgCtx.setDoingREST(inMessageContext.isDoingREST());
         newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
         newmsgCtx.setServerSide(inMessageContext.isServerSide());

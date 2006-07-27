@@ -188,7 +188,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
     public static final String FAULT_INFORMATION_FOR_HEADERS = "FaultHeaders";
 
-    //to set and get the property from service context
+    /** @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING */
     public static final String COOKIE_STRING = "Cookie";
     public static final String SESSION_COOKIE = "axis_session";
 
@@ -216,10 +216,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
         public static final String CONFIG_CONTEXT_TIMOUT_INTERVAL = "ConfigContextTimeoutInterval";
 
-        // this property once set to Boolean.TRUE will make the messages to skip Addressing Handler.
-        // So you will not see Addressing Headers in the OUT path.
-        public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
-
         public static final String TRANSPORT_IN_URL = "TransportInURL";
         
         public static final String URL_PARAMETER_LIST = "URLParameterList";
@@ -227,5 +223,16 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String SEND_STACKTRACE_DETAILS_WITH_FAULTS = "sendStacktraceDetailsWithFaults";
         
         public static final String DRILL_DOWN_TO_ROOT_CAUSE_FOR_FAULT_REASON = "drillDownToRootCauseForFaultReason";
+
+        // this will contain the keys of all the properties that will be in the message context
+        public static final String TRANSPORT_URL = "TransportURL";
+
+        /** @deprecated please use org.apache.axis2.addressing.AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES */
+        public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
+
+        /**
+         * Field CHARACTER_SET_ENCODING
+         */
+        public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
     }
 }

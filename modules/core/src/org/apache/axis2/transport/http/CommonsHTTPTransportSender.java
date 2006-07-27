@@ -25,7 +25,6 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.MessageContextConstants;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
@@ -139,7 +138,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             OMOutputFormat format = new OMOutputFormat();
             String charSetEnc =
                     (String) msgContext
-                            .getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                            .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
             if (charSetEnc != null) {
                 format.setCharSetEncoding(charSetEnc);
@@ -148,7 +147,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
                 if (opctx != null) {
                     charSetEnc = (String) opctx
-                            .getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                            .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
                 }
             }
 
@@ -170,7 +169,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             EndpointReference epr = null;
             String transportURL =
                     (String) msgContext
-                            .getProperty(MessageContextConstants.TRANSPORT_URL);
+                            .getProperty(Constants.Configuration.TRANSPORT_URL);
 
             if (transportURL != null) {
                 epr = new EndpointReference(transportURL);
@@ -283,13 +282,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             } else {
                 sender = new RESTSender();
             }
-            if (msgContext.getProperty(MessageContextConstants.CHUNKED) != null) {
+            if (msgContext.getProperty(HTTPConstants.CHUNKED) != null) {
                 chunked = Constants.VALUE_TRUE.equals(msgContext.getProperty(
-                        MessageContextConstants.CHUNKED));
+                        HTTPConstants.CHUNKED));
             }
 
-            if (msgContext.getProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION) != null) {
-                httpVersion = (String) msgContext.getProperty(MessageContextConstants.HTTP_PROTOCOL_VERSION);
+            if (msgContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION) != null) {
+                httpVersion = (String) msgContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION);
             }
 
             // Following order needed to be preserved because,

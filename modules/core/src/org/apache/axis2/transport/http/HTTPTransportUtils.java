@@ -193,7 +193,7 @@ public class HTTPTransportUtils {
                                 MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                         // Set the encoding scheme in the message context
-                        msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                 MessageContext.DEFAULT_CHAR_SET_ENCODING);
                     } else {
 
@@ -204,7 +204,7 @@ public class HTTPTransportUtils {
                                 charSetEnc);
 
                         // Setting the value in msgCtx
-                        msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEnc);
+                        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
                     }
 
                     if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
@@ -252,7 +252,7 @@ public class HTTPTransportUtils {
                         MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                 // Set the encoding scheme in the message context
-                msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
+                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                         MessageContext.DEFAULT_CHAR_SET_ENCODING);
                 builder = new StAXSOAPModelBuilder(
                         xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
@@ -263,7 +263,7 @@ public class HTTPTransportUtils {
 
             if ((charsetEncoding != null) && !"".equals(charsetEncoding)
                     && ! charsetEncoding.equalsIgnoreCase((String) msgContext.getProperty(
-                    MessageContext.CHARACTER_SET_ENCODING))) {
+                    Constants.Configuration.CHARACTER_SET_ENCODING))) {
                 String faultCode;
 
                 if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(

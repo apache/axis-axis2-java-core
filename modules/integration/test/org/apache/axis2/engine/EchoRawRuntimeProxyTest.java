@@ -79,7 +79,7 @@ public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
         /**
          * Proxy setting in runtime
          */
-        HttpTransportProperties.ProxyProperties proxyproperties = new HttpTransportProperties().new ProxyProperties();
+        HttpTransportProperties.ProxyProperties proxyproperties = new HttpTransportProperties.ProxyProperties();
         proxyproperties.setProxyName("localhost");
         proxyproperties.setProxyPort(5555);
         proxyproperties.setDomain("anonymous");

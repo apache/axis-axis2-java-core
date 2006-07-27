@@ -19,10 +19,10 @@ package test.interop.sun.round4.simple;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.MessageContextConstants;
 import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
 
 public class EchoBlockingClient {
@@ -36,7 +36,7 @@ public class EchoBlockingClient {
             options.setExceptionToBeThrownOnSOAPFault(false);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setAction(soapAction);
-            options.setProperty(MessageContextConstants.CHUNKED, Constants.VALUE_FALSE);
+            options.setProperty(HTTPConstants.CHUNKED, Constants.VALUE_FALSE);
 
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);

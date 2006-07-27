@@ -39,7 +39,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.BufferedReader;
@@ -83,10 +82,10 @@ public class TransportUtils {
             StAXBuilder builder;
             SOAPEnvelope envelope ;
             String charSetEnc =
-                    (String) msgContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                    (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
             if (charSetEnc == null) {
-                charSetEnc = (String) opContext.getProperty(MessageContext.CHARACTER_SET_ENCODING);
+                charSetEnc = (String) opContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
             }
 
             if (charSetEnc == null) {
@@ -217,7 +216,7 @@ public class TransportUtils {
             throw new XMLStreamException(e);
         }
 
-        msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING, charSetEncoding);
+        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEncoding);
 
         /*
         * put a reference to Attachments in to the message context
