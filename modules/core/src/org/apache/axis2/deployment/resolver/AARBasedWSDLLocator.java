@@ -42,9 +42,6 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
         this.aarFile = zipFile;
     }
 
-    /**
-     * @return
-     */
     public InputSource getBaseInputSource() {
         return new InputSource(baseInputStream);
     }
@@ -52,7 +49,6 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
     /**
      * @param parentLocation
      * @param importLocation
-     * @return
      */
     public InputSource getImportInputSource(String parentLocation, String importLocation) {
         if (isAbsolute(importLocation)) {
@@ -68,13 +64,11 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
                 byte[] buf = new byte[1024];
                 int read;
                 ByteArrayOutputStream out;
+                String searchingStr;
                 while ((entry = zin.getNextEntry()) != null) {
-                    String entryName = entry.getName();
-                    if ((entryName.startsWith(DeploymentConstants.META_INF.toLowerCase())
-                            || entryName.startsWith(DeploymentConstants.META_INF))
-                            && entryName.endsWith(importLocation)) {
-                        //read the item into a byte array to allow the
-                        //stream to be closed
+                    String entryName = entry.getName().toLowerCase();
+                    searchingStr = (DeploymentConstants.META_INF + "/" + importLocation).toLowerCase();
+                    if (entryName.equals(searchingStr)) {
                         out = new ByteArrayOutputStream();
                         while ((read = zin.read(buf)) > 0) {
                             out.write(buf, 0, read);
@@ -102,8 +96,6 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
     /**
      * As for the zip there is no point in returning
      * a base URI
-     *
-     * @return
      */
     public String getBaseURI() {
         // we don't care
@@ -112,8 +104,6 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
 
     /**
      * returns the latest import
-     *
-     * @return
      */
     public String getLatestImportURI() {
         //we don't care about this either

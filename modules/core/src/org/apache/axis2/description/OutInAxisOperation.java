@@ -248,9 +248,9 @@ class OutInAxisOperationClient implements OperationClient {
         }
 
         if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
-            Parameter soapaction = axisOp.getParameter(AxisOperation.SOAP_ACTION);
+            String soapaction = axisOp.getSoapAction();
             if (soapaction != null) {
-                mc.setSoapAction((String) soapaction.getValue());
+                mc.setSoapAction(soapaction);
             }
         }
         addReferenceParameters(mc);

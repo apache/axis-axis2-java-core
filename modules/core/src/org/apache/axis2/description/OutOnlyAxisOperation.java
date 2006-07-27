@@ -334,9 +334,9 @@ class OutOnlyAxisOperationClient implements OperationClient {
         mc.setTransportOut(senderTransport);
 
         if (mc.getSoapAction() == null) {
-            Parameter soapaction = axisOp.getParameter(AxisOperation.SOAP_ACTION);
+            String soapaction = axisOp.getSoapAction();
             if (soapaction != null) {
-                mc.setSoapAction((String) soapaction.getValue());
+                mc.setSoapAction(soapaction);
             }
         }
 

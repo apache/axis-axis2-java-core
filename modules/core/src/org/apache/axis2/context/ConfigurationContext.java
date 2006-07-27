@@ -111,8 +111,9 @@ public class ConfigurationContext extends AbstractContext {
 
         if (serviceContext == null) {
             if (Constants.SCOPE_APPLICATION.equals(axisService.getScope())) {
+                String serviceGroupName = ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
                 serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTable.get(
-                        ((AxisServiceGroup) axisService.getParent()).getServiceGroupName());
+                        serviceGroupName);
                 if (serviceGroupContext == null) {
                     AxisServiceGroup axisServiceGroup = messageContext.getAxisServiceGroup();
                     if (axisServiceGroup == null) {
@@ -120,6 +121,7 @@ public class ConfigurationContext extends AbstractContext {
                     }
                     serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
                             axisServiceGroup);
+                    applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
                 }
                 serviceContext = serviceGroupContext.getServiceContext(axisService);
 

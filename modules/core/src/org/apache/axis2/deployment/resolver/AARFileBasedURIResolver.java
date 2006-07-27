@@ -80,13 +80,11 @@ public class AARFileBasedURIResolver extends DefaultURIResolver{
                 byte[] buf = new byte[1024];
                 int read;
                 ByteArrayOutputStream out;
+                String searchingStr;
                 while ((entry = zin.getNextEntry()) != null) {
-                    String entryName = entry.getName();
-                    if ((entryName.startsWith(DeploymentConstants.META_INF.toLowerCase())
-                        || entryName.startsWith(DeploymentConstants.META_INF))
-                            && entryName.endsWith(schemaLocation)) {
-                        //read the item into a byte array to allow the
-                        //stream to be closed
+                    String entryName = entry.getName().toLowerCase();
+                    searchingStr = (DeploymentConstants.META_INF + "/" + schemaLocation).toLowerCase();
+                    if (entryName.equals(searchingStr)) {
                         out = new ByteArrayOutputStream();
                         while ((read = zin.read(buf)) > 0) {
                             out.write(buf, 0, read);
