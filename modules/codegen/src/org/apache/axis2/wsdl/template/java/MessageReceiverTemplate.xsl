@@ -171,7 +171,7 @@
         java.util.Iterator namespaceIterator = env.getAllDeclaredNamespaces();
         while (namespaceIterator.hasNext()) {
         org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
-        returnMap.put(ns.getPrefix(),ns.getName());
+        returnMap.put(ns.getPrefix(),ns.getNamespaceURI());
         }
         return returnMap;
         }
@@ -284,7 +284,7 @@
         java.util.Iterator namespaceIterator = env.getAllDeclaredNamespaces();
         while (namespaceIterator.hasNext()) {
         org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) namespaceIterator.next();
-        returnMap.put(ns.getPrefix(),ns.getName());
+        returnMap.put(ns.getPrefix(),ns.getNamespaceURI());
         }
         return returnMap;
         }
