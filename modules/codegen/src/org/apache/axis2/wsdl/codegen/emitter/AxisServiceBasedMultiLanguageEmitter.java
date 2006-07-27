@@ -83,10 +83,6 @@ import org.w3c.dom.Text;
  * limitations under the License.
  */
 
-/**
- * MultiLanguageClientEmitter we have now is based on WOM. This one will directly infer the information
- * from the AxisService.
- */
 
 public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 

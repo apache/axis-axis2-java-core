@@ -41,195 +41,209 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class PolicyEvaluator implements CodeGenExtension {
 
-	private CodeGenConfiguration configuration;
-    private AxisService axisService;
-	private HashMap ns2Exts = new HashMap();
+    /**
+     * Inot method to initialization
+     * @param configuration
+     * @param namespace2ExtsMap
+     */
+    private void init(CodeGenConfiguration configuration, Map namespace2ExtsMap) {
 
-	private void init(CodeGenConfiguration configuration) {
-		this.configuration = configuration;
-        this.axisService = configuration.getAxisService();
-        
        // adding default PolicyExtensions
-       ns2Exts.put("http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization", new MTOMPolicyExtension());
-       ns2Exts.put("http://schemas.xmlsoap.org/ws/2004/09/policy/encoding", new EncodePolicyExtension());
+       namespace2ExtsMap.put("http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization",
+               new MTOMPolicyExtension(configuration));
+       namespace2ExtsMap.put("http://schemas.xmlsoap.org/ws/2004/09/policy/encoding",
+               new EncodePolicyExtension());
 
        //set the policy handling template 
        configuration.putProperty("policyExtensionTemplate", "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
 
-       
-		String repository = configuration.getRepositoryPath();
-        
-		if (repository == null) {    return;    }
+
+        String repository = configuration.getRepositoryPath();
+
+        if (repository == null) {    return;    }
 
 
-		try {
-            
-			ConfigurationContext configurationCtx = ConfigurationContextFactory
-					.createConfigurationContextFromFileSystem(repository, null);
-			AxisConfiguration axisConfiguration = configurationCtx
-					.getAxisConfiguration();
+        try {
 
-			for (Iterator iterator = axisConfiguration.getModules().values()
-					.iterator(); iterator.hasNext();) {
-		
+            ConfigurationContext configurationCtx = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(repository, null);
+            AxisConfiguration axisConfiguration = configurationCtx
+                    .getAxisConfiguration();
+
+            for (Iterator iterator = axisConfiguration.getModules().values()
+                    .iterator(); iterator.hasNext();) {
+
                 AxisModule axisModule = (AxisModule) iterator.next();
-				String[] namespaces = axisModule.getSupportedPolicyNamespaces();
+                String[] namespaces = axisModule.getSupportedPolicyNamespaces();
 
-				if (namespaces == null) {
-					continue;
-				}
-                
+                if (namespaces == null) {
+                    continue;
+                }
+
                 Module module = axisModule.getModule();
                 if (!(module instanceof ModulePolicyExtension)) {
                     continue;
                 }
-                
+
                 PolicyExtension ext = ((ModulePolicyExtension) module).getPolicyExtension();
 
-				for (int i = 0; i < namespaces.length; i++) {
-					ns2Exts.put(namespaces[i], ext);
-				}
-			}
+                for (int i = 0; i < namespaces.length; i++) {
+                    namespace2ExtsMap.put(namespaces[i], ext);
+                }
+            }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err
-					.println("cannot create repository : policy will not be supported");
-		}
-	}
+        } catch (Exception e) {
+            System.err
+                    .println("cannot create repository : policy will not be supported");
+        }
+    }
 
-	public void engage(CodeGenConfiguration configuration) {
+    public void engage(CodeGenConfiguration configuration) {
 
+        Map namespace2ExtMap = new HashMap();
          //initialize
-        init(configuration);
+        init(configuration,namespace2ExtMap);
 
         Document document = getEmptyDocument();
-		Element rootElement = document.createElement("module-codegen-policy-extensions");
-        
+        Element rootElement = document.createElement("module-codegen-policy-extensions");
+
         AxisOperation axisOperation;
         QName opName;
         PolicyInclude policyInclude;
         Policy policy;
 
-        
-        for (Iterator iterator = axisService.getOperations(); iterator.hasNext(); ) {
+
+        for (Iterator iterator = configuration.getAxisService().getOperations(); iterator.hasNext(); ) {
             axisOperation = (AxisOperation) iterator.next();
             opName = axisOperation.getName();
-            
+
             policyInclude = axisOperation.getPolicyInclude();
             policy = policyInclude.getEffectivePolicy();
-            
+
             if (policy != null) {
-            	processPolicies(document, rootElement, policy, opName);
+                processPolicies(document, rootElement, policy, opName,namespace2ExtMap);
             }
         }
-        
+
         configuration.putProperty("module-codegen-policy-extensions", rootElement);
-	}
+    }
 
-	private void processPolicies(Document document, Element rootElement,
-			Policy policy, QName opName) {
-        
-		if (!policy.isNormalized()) {
-			policy = (Policy) policy.normalize();
-		}
+    /**
+     * Process policies
+     * @param document
+     * @param rootElement
+     * @param policy
+     * @param opName
+     */
+    private void processPolicies(Document document, Element rootElement,
+                                 Policy policy, QName opName,Map ns2Exts) {
 
-		HashMap map = new HashMap();
+        if (!policy.isNormalized()) {
+            policy = (Policy) policy.normalize();
+        }
 
-		ExactlyOne XOR = (ExactlyOne) policy.getTerms()
-				.get(0);
-		All iAND = (All) XOR.getTerms().get(
-				0);
+        HashMap map = new HashMap();
+
+        ExactlyOne XOR = (ExactlyOne) policy.getTerms()
+                .get(0);
+        All iAND = (All) XOR.getTerms().get(
+                0);
         All AND = new All();
         AND.addTerms(iAND.getTerms());
 
-		for (Iterator iterator = AND.getTerms().iterator(); iterator.hasNext();) {
+        for (Iterator iterator = AND.getTerms().iterator(); iterator.hasNext();) {
 
-			All nAND = new All();
-			PrimitiveAssertion pa = (PrimitiveAssertion) iterator.next();
+            All nAND = new All();
+            PrimitiveAssertion pa = (PrimitiveAssertion) iterator.next();
 
-			String namespace = pa.getName().getNamespaceURI();
-			nAND.addTerm(pa);
+            String namespace = pa.getName().getNamespaceURI();
+            nAND.addTerm(pa);
 
-			while (iterator.hasNext()) {
-				pa = (PrimitiveAssertion) iterator.next();
+            while (iterator.hasNext()) {
+                pa = (PrimitiveAssertion) iterator.next();
 
-				if (namespace.equals(pa.getName().getNamespaceURI())) {
-					nAND.addTerm(pa);
-				}
-			}
+                if (namespace.equals(pa.getName().getNamespaceURI())) {
+                    nAND.addTerm(pa);
+                }
+            }
 
-			map.put(namespace, nAND);
-			AND.getTerms().removeAll(nAND.getTerms());
+            map.put(namespace, nAND);
+            AND.getTerms().removeAll(nAND.getTerms());
 
-			iterator = AND.getTerms().iterator();
-		}
+            iterator = AND.getTerms().iterator();
+        }
 
-		for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
-			String namespace = (String) iterator.next();
+        for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
+            String namespace = (String) iterator.next();
             PolicyExtension policyExtension = (PolicyExtension) ns2Exts.get(namespace);
-            
+
 //			AxisModule axisModule = (AxisModule) ns2modules.get(namespace);
 
-			if (policyExtension == null) {
-				System.err.println("cannot find a PolicyExtension to process "
-						+ namespace + "type assertions");
-				continue;
-			}
+            if (policyExtension == null) {
+                System.err.println("cannot find a PolicyExtension to process "
+                        + namespace + "type assertions");
+                continue;
+            }
 
-			Policy nPolicy = new Policy();
-			ExactlyOne nXOR = new ExactlyOne();
-			nPolicy.addTerm(nXOR);
+            Policy nPolicy = new Policy();
+            ExactlyOne nXOR = new ExactlyOne();
+            nPolicy.addTerm(nXOR);
 
-			All nAND = (All) map
-					.get(namespace);
-			nXOR.addTerm(nAND);
-            
-			policyExtension.addMethodsToStub(document, rootElement, opName, nPolicy);
-		}
-	}
+            All nAND = (All) map
+                    .get(namespace);
+            nXOR.addTerm(nAND);
 
-	private Document getEmptyDocument() {
-		try {
-			DocumentBuilder documentBuilder = DocumentBuilderFactory
-					.newInstance().newDocumentBuilder();
+            policyExtension.addMethodsToStub(document, rootElement, opName, nPolicy);
+        }
+    }
 
-			return documentBuilder.newDocument();
-		} catch (ParserConfigurationException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	class MTOMPolicyExtension implements PolicyExtension {
-        
+    private Document getEmptyDocument() {
+        try {
+            DocumentBuilder documentBuilder = DocumentBuilderFactory
+                    .newInstance().newDocumentBuilder();
+
+            return documentBuilder.newDocument();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    class MTOMPolicyExtension implements PolicyExtension {
+
         private boolean setOnce = false;
-        
-		public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
-            
+        private CodeGenConfiguration configuration;
+
+        public MTOMPolicyExtension(CodeGenConfiguration configuration) {
+            this.configuration = configuration;
+        }
+
+        public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
+
             if (!setOnce) {
                  Object plainBase64PropertyMap = configuration.getProperty(Constants.PLAIN_BASE_64_PROPERTY_KEY);
                  configuration.putProperty(Constants.BASE_64_PROPERTY_KEY, plainBase64PropertyMap);
-                
+
                  setOnce = true;
             }
-                       
+
             Element optimizeContent = document.createElement("optimizeContent");
             Element opNameElement = document.createElement("opName");
-            
+
             opNameElement.setAttribute("ns-url", operationName.getNamespaceURI());
             opNameElement.setAttribute("localName", operationName.getLocalPart());
-            
+
             optimizeContent.appendChild(opNameElement);
-            
+
             element.appendChild(optimizeContent);
-		}
-	}
-    
+        }
+    }
+
     class EncodePolicyExtension implements PolicyExtension {
-    	public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
+        public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
             // TODO implement encoding
         }
     }
