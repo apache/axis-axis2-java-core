@@ -53,7 +53,7 @@ public class HttpTransportProperties {
         this.protocol = protocol;
     }
 
-    public class ProxyProperties {
+    public static class ProxyProperties {
         protected int proxyPort = -1;
         protected String domain;
         protected String passWord;
@@ -115,7 +115,7 @@ public class HttpTransportProperties {
             this.userName = userName;
         }
     }
-    public class BasicAuthentication{
+    public static class BasicAuthentication{
         private String host;
         private int port = -1;
         private String realm;
@@ -162,7 +162,7 @@ public class HttpTransportProperties {
             this.password = password;
         }
     }
-    public class NTLMAuthentication{
+    public static class NTLMAuthentication{
         private String host;
         private int port = -1;
         private String realm;
