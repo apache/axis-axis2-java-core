@@ -141,12 +141,27 @@
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
-            <artifactId>axis2</artifactId>
+            <artifactId>axis2-core</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-saaj</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-saaj</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-common</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
