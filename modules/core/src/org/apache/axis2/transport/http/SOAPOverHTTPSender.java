@@ -22,6 +22,7 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.httpclient.Header;
@@ -195,8 +196,8 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         }
 
         public void writeRequest(OutputStream out) throws IOException {
-            Boolean gzip = (Boolean) msgCtxt.getOptions().getProperty(HTTPConstants.MC_GZIP_REQUEST);
-            if(gzip != null && gzip.booleanValue() && chunked) {
+            Object gzip = msgCtxt.getOptions().getProperty(HTTPConstants.MC_GZIP_REQUEST);
+            if(gzip != null && JavaUtils.isTrueExplicitly(gzip) && chunked) {
                 out = new GZIPOutputStream(out);
             }
             try {

@@ -395,11 +395,8 @@ public class Utils {
     }
 
     public static boolean isExplicitlyTrue(MessageContext messageContext, String propertyName) {
-        Boolean flag = (Boolean) messageContext.getProperty(propertyName);
-        if (flag != null) {
-            return flag.booleanValue();
-        }
-        return false;
+        Object flag = messageContext.getProperty(propertyName);
+        return JavaUtils.isTrueExplicitly(flag);
     }
 
     /**

@@ -27,6 +27,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HeaderElement;
@@ -613,8 +614,8 @@ public abstract class AbstractHTTPSender {
 
     protected HttpClient getHttpClient(MessageContext msgContext) {
         HttpClient httpClient = null;
-        Boolean reuse = (Boolean) msgContext.getOptions().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
-        if (reuse != null && reuse.booleanValue()) {
+        Object reuse = msgContext.getOptions().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
+        if (reuse != null && JavaUtils.isTrueExplicitly(reuse)) {
             httpClient = (HttpClient) msgContext.getConfigurationContext().getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
             if (httpClient == null) {
                 MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();

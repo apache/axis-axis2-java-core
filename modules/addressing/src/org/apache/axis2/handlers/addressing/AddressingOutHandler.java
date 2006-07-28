@@ -27,6 +27,7 @@ import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
@@ -50,16 +51,15 @@ public class AddressingOutHandler extends AddressingHandler {
         String namespace = addressingNamespace;
 
         // it should be able to disable addressing by some one.
-        Boolean
-                property = (Boolean) msgContext.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+        Object property = msgContext.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         if (property == null && msgContext.getOperationContext() != null) {
             // check in the IN message context, if available
             MessageContext inMsgCtxt = msgContext.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             if (inMsgCtxt != null) {
-                property = (Boolean) inMsgCtxt.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
+                property = inMsgCtxt.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
             }
         }
-        if (property != null && property.booleanValue()) {
+        if (property != null && JavaUtils.isTrueExplicitly(property)) {
             log.debug("Addressing is disabled .....");
             return;
         }
@@ -113,8 +113,8 @@ public class AddressingOutHandler extends AddressingHandler {
         // headers if there are any (this was the case so far).
         Object replaceHeadersParam = msgContext.getProperty(REPLACE_ADDRESSING_HEADERS);
         boolean replaceHeaders = false;
-        if (replaceHeadersParam != null && replaceHeadersParam instanceof Boolean) {
-            replaceHeaders = ((Boolean) replaceHeadersParam).booleanValue();
+        if (replaceHeadersParam != null) {
+            replaceHeaders = JavaUtils.isTrueExplicitly(replaceHeadersParam);
         }
 
         // processing WSA To
