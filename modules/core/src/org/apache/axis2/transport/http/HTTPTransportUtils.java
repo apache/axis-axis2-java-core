@@ -123,7 +123,6 @@ public class HTTPTransportUtils {
             soapAction = soapAction.substring(1, soapAction.length() - 1);
         }
 
-        msgContext.setWSAAction(soapAction);
         msgContext.setSoapAction(soapAction);
         msgContext.setTo(new EndpointReference(requestURI));
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
@@ -168,7 +167,6 @@ public class HTTPTransportUtils {
             }
 
             // fill up the Message Contexts
-            msgContext.setWSAAction(soapActionHeader);
             msgContext.setSoapAction(soapActionHeader);
             msgContext.setTo(new EndpointReference(requestURI));
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);

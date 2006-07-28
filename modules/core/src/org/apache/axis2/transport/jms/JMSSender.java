@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
@@ -502,7 +503,10 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             soapActionString = msgCtx.getWSAAction();
         }
 
-        if (soapActionString == null) {
+        Object disableSoapAction =
+            msgCtx.getOptions().getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+        
+        if (soapActionString == null || JavaUtils.isTrueExplicitly(disableSoapAction)) {
             soapActionString = "";
         }
 

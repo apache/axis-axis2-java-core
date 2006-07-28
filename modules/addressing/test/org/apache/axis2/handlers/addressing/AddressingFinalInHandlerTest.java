@@ -168,6 +168,85 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         }
     }
     
+    public void testDifferentSoapActionProcessing() {
+        String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
+        MessageContext mc = new MessageContext();
+        
+        try {
+            mc.setSoapAction("http://ws.apache.org/tests/differentAction");
+            basicExtractAddressingInformationFromHeaders(testfile, mc);
+            fail("An AxisFault should have been thrown due to the soapaction being different to the ws-a action.");            
+        }
+        catch (AxisFault af) {
+            //Test passed.
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());                        
+        }
+    }
+    
+    public void testSameSoapAction() {
+        String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
+        MessageContext mc = new MessageContext();
+        
+        try {
+            mc.setSoapAction("http://ws.apache.org/tests/action");
+            basicExtractAddressingInformationFromHeaders(testfile, mc);
+        }
+        catch (AxisFault af) {
+            af.printStackTrace();
+            log.error(af.getMessage());
+            fail("An unexpected AxisFault was thrown while testing with a soapaction and ws-a action that are the same.");            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());                        
+        }        
+    }
+    
+    public void testEmptySoapAction() {
+        String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
+        MessageContext mc = new MessageContext();
+        
+        try {
+            mc.setSoapAction("");
+            basicExtractAddressingInformationFromHeaders(testfile, mc);
+        }
+        catch (AxisFault af) {
+            af.printStackTrace();
+            log.error(af.getMessage());
+            fail("An unexpected AxisFault was thrown while testing with an empty soapaction.");            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());                        
+        }
+    }
+    
+    public void testNullSoapAction() {
+        String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
+        MessageContext mc = new MessageContext();
+        
+        try {
+            mc.setSoapAction(null);
+            basicExtractAddressingInformationFromHeaders(testfile, mc);
+        }
+        catch (AxisFault af) {
+            af.printStackTrace();
+            log.error(af.getMessage());
+            fail("An unexpected AxisFault was thrown while testing with a null soapaction.");            
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            fail(" An Exception has occured " + e.getMessage());                        
+        }
+    }
+    
     private void assertEPRHasCorrectMetadata(EndpointReference epr){
     	ArrayList metadata = epr.getMetaData();
     	if(metadata != null){

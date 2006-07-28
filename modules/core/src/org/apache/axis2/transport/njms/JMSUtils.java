@@ -24,6 +24,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
@@ -249,9 +250,15 @@ public class JMSUtils {
     private static String getSOAPAction(MessageContext msgCtx) {
         String soapActionString = msgCtx.getSoapAction();
 
-        if (soapActionString == null ||
-            soapActionString.trim().length() == 0) {
+        if (soapActionString == null || soapActionString.trim().length() == 0) {
             soapActionString = msgCtx.getWSAAction();
+        }
+
+        Object disableSoapAction =
+            msgCtx.getOptions().getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+        
+        if (soapActionString == null || JavaUtils.isTrueExplicitly(disableSoapAction)) {
+            soapActionString = "";
         }
 
         return soapActionString;

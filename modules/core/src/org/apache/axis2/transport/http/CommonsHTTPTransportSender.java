@@ -268,8 +268,10 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 soapActionString = msgContext.getWSAAction();
             }
 
-
-            if (soapActionString == null) {
+            Object disableSoapAction =
+                msgContext.getOptions().getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+            
+            if (soapActionString == null || JavaUtils.isTrueExplicitly(disableSoapAction)) {
                 soapActionString = "\"\"";
             } else if (soapActionString.startsWith("\"")) {  // SOAPAction string must be a quoted string
                 soapActionString = "\"" + soapActionString + "\"";

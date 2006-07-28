@@ -144,8 +144,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 messageContextOptions.setMessageId(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
             } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
-                messageContextOptions.setAction(soapHeaderBlock.getText());
-                soapHeaderBlock.setProcessed();
+                extractActionInformation(messageContextOptions, soapHeaderBlock, namespace, messageContext);
             } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
             }
@@ -265,6 +264,24 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         extractToEprReferenceParameters(epr, header, namespace);
         soapHeaderBlock.setProcessed();
 
+    }
+    
+    //We assume that any action that already exists in the message context must be the
+    //soapaction. We compare that action to the WS-Addressing action, and if they are
+    //different we throw a fault.
+    private void extractActionInformation(Options messageContextOptions, SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, MessageContext messageContext) throws AxisFault {
+        String soapAction = messageContextOptions.getAction();
+        
+        if (soapAction != null && !"".equals(soapAction)) {
+            if (!soapAction.equals(soapHeaderBlock.getText())) {
+                throwFault(messageContext, WSA_ACTION, Final.FAULT_INVALID_HEADER, null);
+            }
+        }
+        else {
+            messageContextOptions.setAction(soapHeaderBlock.getText());            
+        }
+        
+        soapHeaderBlock.setProcessed();        
     }
 
     /**

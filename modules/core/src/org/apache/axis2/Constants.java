@@ -230,6 +230,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         /** @deprecated please use org.apache.axis2.addressing.AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES */
         public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
 
+        // if this property is set to Boolean.TRUE then the SOAPAction header, if present,
+        // will NOT be set to the value of Options.getAction(). The empty value, "", will
+        // be used instead.
+        public static final String DISABLE_SOAP_ACTION = "disableSoapAction";
+
         /**
          * Field CHARACTER_SET_ENCODING
          */
