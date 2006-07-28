@@ -18,6 +18,7 @@
 package org.apache.axis2;
 
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
 
 /**
  * This class *may* be implemented by any service which require some information from Axis2 engine,
@@ -26,8 +27,16 @@ import org.apache.axis2.context.OperationContext;
 public interface Service {
 
     /**
+     * this will be called during the initialization of the service. If the service is in the application scope, then this
+     * method will be called when the system starts up. Else will be called when the first request comes.
+     * @param sc
+     */
+    public void init(ServiceContext sc);
+
+    /**
      * This will pass the operation context to the service implementation class and will be called
      * by the in-built Axis2 message receivers.
+     *
      * @param operationContext
      */
     public void setOperationContext(OperationContext operationContext);
