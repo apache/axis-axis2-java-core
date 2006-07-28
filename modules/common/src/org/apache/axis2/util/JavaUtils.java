@@ -179,4 +179,132 @@ public class JavaUtils {
 
         return name;
     }    // capitalizeFirstChar
+
+    /**
+     * Tests the String 'value':
+     *   return 'false' if its 'false', '0', or 'no' - else 'true'
+     * 
+     * Follow in 'C' tradition of boolean values:
+     * false is specific (0), everything else is true;
+     */
+    public static final boolean isTrue(String value) {
+        return !isFalseExplicitly(value);
+    }
+
+    /**
+     * Tests the String 'value':
+     *   return 'true' if its 'true', '1', or 'yes' - else 'false'
+     */
+    public static final boolean isTrueExplicitly(String value) {
+        return value != null  &&
+               (value.equalsIgnoreCase("true")  ||
+                value.equals("1")  ||
+                value.equalsIgnoreCase("yes"));
+    }
+
+    /**
+     * Tests the Object 'value':
+     *   if its null, return default.
+     *   if its a Boolean, return booleanValue()
+     *   if its an Integer,  return 'false' if its '0' else 'true'
+     *   if its a String, return isTrueExplicitly((String)value).
+     *   All other types return 'true'
+     */
+    public static final boolean isTrueExplicitly(Object value, boolean defaultVal) {
+        if ( value == null ) return defaultVal;
+        if ( value instanceof Boolean ) {
+            return ((Boolean)value).booleanValue();
+        }
+        if ( value instanceof Integer ) {
+            return ((Integer)value).intValue() != 0;
+        }
+        if ( value instanceof String ) {
+            return isTrueExplicitly( (String)value );
+        }
+        return true;
+    }
+    
+    public static final boolean isTrueExplicitly(Object value) {
+        return isTrueExplicitly(value, false);
+    }
+
+    /**
+     * Tests the Object 'value':
+     *   if its null, return default.
+     *   if its a Boolean, return booleanValue()
+     *   if its an Integer,  return 'false' if its '0' else 'true'
+     *   if its a String, return 'false' if its 'false', 'no', or '0' - else 'true'
+     *   All other types return 'true'
+     */
+    public static final boolean isTrue(Object value, boolean defaultVal) {
+        return !isFalseExplicitly(value, !defaultVal);
+    }
+    
+    public static final boolean isTrue(Object value) {
+        return isTrue(value, false);
+    }
+    
+    /**
+     * Tests the String 'value':
+     *   return 'true' if its 'false', '0', or 'no' - else 'false'
+     * 
+     * Follow in 'C' tradition of boolean values:
+     * false is specific (0), everything else is true;
+     */
+    public static final boolean isFalse(String value) {
+        return isFalseExplicitly(value);
+    }
+
+    /**
+     * Tests the String 'value':
+     *   return 'true' if its null, 'false', '0', or 'no' - else 'false'
+     */
+    public static final boolean isFalseExplicitly(String value) {
+        return value == null  ||
+               value.equalsIgnoreCase("false")  ||
+               value.equals("0")  ||
+               value.equalsIgnoreCase("no");
+    }
+    
+    /**
+     * Tests the Object 'value':
+     *   if its null, return default.
+     *   if its a Boolean, return !booleanValue()
+     *   if its an Integer,  return 'true' if its '0' else 'false'
+     *   if its a String, return isFalseExplicitly((String)value).
+     *   All other types return 'false'
+     */
+    public static final boolean isFalseExplicitly(Object value, boolean defaultVal) {
+        if ( value == null ) return defaultVal;
+        if ( value instanceof Boolean ) {
+            return !((Boolean)value).booleanValue();
+        }
+        if ( value instanceof Integer ) {
+            return ((Integer)value).intValue() == 0;
+        }
+        if ( value instanceof String ) {
+            return isFalseExplicitly( (String)value );
+        }
+        return false;
+    }
+    
+    public static final boolean isFalseExplicitly(Object value) {
+        return isFalseExplicitly(value, true);
+    }
+
+    /**
+     * Tests the Object 'value':
+     *   if its null, return default.
+     *   if its a Boolean, return booleanValue()
+     *   if its an Integer,  return 'false' if its '0' else 'true'
+     *   if its a String, return 'false' if its 'false', 'no', or '0' - else 'true'
+     *   All other types return 'true'
+     */
+    public static final boolean isFalse(Object value, boolean defaultVal) {
+        return isFalseExplicitly(value, defaultVal);
+    }
+    
+    public static final boolean isFalse(Object value) {
+        return isFalse(value, true);
+    }
 }

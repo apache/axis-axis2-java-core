@@ -41,6 +41,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.JavaUtils;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -103,12 +104,12 @@ public class HTTPTransportUtils {
         boolean enableMTOM = false;
 
         if (msgContext.getParameter(Constants.Configuration.ENABLE_MTOM) != null) {
-            enableMTOM = Constants.VALUE_TRUE.equals(
+            enableMTOM = JavaUtils.isTrueExplicitly( 
                     msgContext.getParameter(Constants.Configuration.ENABLE_MTOM).getValue());
         }
 
         if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
-            enableMTOM = Constants.VALUE_TRUE.equals(
+            enableMTOM = JavaUtils.isTrueExplicitly(
                     msgContext.getProperty(Constants.Configuration.ENABLE_MTOM));
         }
         return enableMTOM;
@@ -317,9 +318,9 @@ public class HTTPTransportUtils {
         Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_REST);
 
         if (parameter != null) {
-            enableREST = Constants.VALUE_TRUE.equals(parameter.getValue());
+            enableREST = JavaUtils.isTrueExplicitly(parameter.getValue());
         } else if (msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
-            enableREST = Constants.VALUE_TRUE.equals(
+            enableREST = JavaUtils.isTrueExplicitly(
                     msgContext.getProperty(Constants.Configuration.ENABLE_REST));
         }
 

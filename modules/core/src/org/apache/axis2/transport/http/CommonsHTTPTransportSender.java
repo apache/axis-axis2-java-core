@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -283,7 +284,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 sender = new RESTSender();
             }
             if (msgContext.getProperty(HTTPConstants.CHUNKED) != null) {
-                chunked = Constants.VALUE_TRUE.equals(msgContext.getProperty(
+                chunked = JavaUtils.isTrueExplicitly(msgContext.getProperty(
                         HTTPConstants.CHUNKED));
             }
 

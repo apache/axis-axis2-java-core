@@ -23,7 +23,6 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.HTTPConstants;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -66,11 +65,11 @@ public class RESTUtil {
             if ("".equals(contentType) || contentType == null) {
                 throw new AxisFault("ContentType should be given to proceed," +
                         " according to WSDL 2.0 HTTP binding rules");
-            } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_TEXT_XML) > -1 ||
-                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1) {
+            } else if (contentType.indexOf(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML) > -1 ||
+                    contentType.indexOf(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1) {
                 soapEnvelope = handleNonURLEncodedContentTypes(msgContext, request,
                         OMAbstractFactory.getSOAP11Factory());
-            } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) {
+            } else if (contentType.indexOf(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) {
                 // 2. Else, Dispatch and find out the operation and the service.
                 // Dispatching can only be done using the RequestURI, as others can not be run in the REST case
                 dispatchAndVerify(msgContext);
@@ -87,15 +86,15 @@ public class RESTUtil {
                         xmlSchemaElement,
                         OMAbstractFactory.getSOAP11Factory());
             } else {
-                throw new AxisFault("Content type should be one of /n " + HTTPConstants.MEDIA_TYPE_TEXT_XML +
-                        "/n " + HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
-                        "/n " + HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
+                throw new AxisFault("Content type should be one of /n " + org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML +
+                        "/n " + org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
+                        "/n " + org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
             }
 
 
             msgContext.setEnvelope(soapEnvelope);
-            msgContext.setProperty(HTTPConstants.HTTP_METHOD, HTTPConstants.HTTP_METHOD_POST);
-            msgContext.setProperty(HTTPConstants.CONTENT_TYPE, contentType);
+            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST);
+            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.CONTENT_TYPE, contentType);
             msgContext.setDoingREST(true);
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream()); 
 
@@ -133,7 +132,7 @@ public class RESTUtil {
                     xmlSchemaElement,
                     OMAbstractFactory.getSOAP11Factory());
             msgContext.setEnvelope(soapEnvelope);
-            msgContext.setProperty(HTTPConstants.HTTP_METHOD, HTTPConstants.HTTP_METHOD_GET);
+            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET);
             msgContext.setDoingREST(true);
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
 
@@ -176,7 +175,7 @@ public class RESTUtil {
             // irrespective of the schema, if the media type is text/xml, all the information
             // should be in the body.
             // I'm assuming here that the user is sending this data according to the schema.
-            if (checkContentType(HTTPConstants.MEDIA_TYPE_TEXT_XML, contentType)) {
+            if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML, contentType)) {
 
                 // If charset is not specified
                 XMLStreamReader xmlreader;
@@ -203,7 +202,7 @@ public class RESTUtil {
                 body.addChild(documentElement);
 
                 // if the media type is multipart/related, get help from Axis2 :)
-            } else if (checkContentType(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
+            } else if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
                 body.addChild(TransportUtils.selectBuilderForMIME(msgCtxt,
                         inputStream,
                         contentType).getDocumentElement());

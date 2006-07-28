@@ -20,7 +20,6 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.HTTPConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
@@ -86,8 +85,8 @@ public class SchemaUtil {
             }
             OMElement bodyFirstChild = soapFactory.createOMElement(bodyFirstChildQName, body);
 
-            if (HTTPConstants.HTTP_METHOD_POST.equals(request.getMethod())
-                || (HTTPConstants.HTTP_METHOD_GET.equals(request.getMethod()))) {
+            if (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST.equals(request.getMethod())
+                || (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET.equals(request.getMethod()))) {
                 XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
                 if (schemaType instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType complexType = ((XmlSchemaComplexType) schemaType);

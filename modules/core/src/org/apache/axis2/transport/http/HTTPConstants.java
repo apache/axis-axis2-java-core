@@ -451,6 +451,9 @@ public class HTTPConstants {
     public static final String HTTP_PROTOCOL_VERSION = "__HTTP_PROTOCOL_VERSION__";
     //to set and get the property from service context
     public static final String COOKIE_STRING = "Cookie";
+    public static final String HTTP_METHOD_GET = "GET";
+    public static final String HTTP_METHOD_POST = "POST";
+    public static final String CONTENT_TYPE = "ContentType";
 
     /**
      * Method getBytes.
