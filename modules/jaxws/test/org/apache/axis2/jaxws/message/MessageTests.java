@@ -48,11 +48,11 @@ import test.ObjectFactory;
 public class MessageTests extends TestCase {
 
 	// String test variables
-    private static final String sampleEnvelopeHeader =
+    private static final String sampleEnvelopeHead =
         "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
         "<soapenv:Header /><soapenv:Body>";
     
-    private static final String sampleEnvelopeFooter = 
+    private static final String sampleEnvelopeTail = 
         "</soapenv:Body></soapenv:Envelope>";
     
     private static final String sampleText =
@@ -62,9 +62,9 @@ public class MessageTests extends TestCase {
 		"</pre:a>";
 	
     private static final String sampleEnvelope = 
-        sampleEnvelopeHeader +
+        sampleEnvelopeHead +
         sampleText +
-        sampleEnvelopeFooter;
+        sampleEnvelopeTail;
         
     private static final String sampleJAXBText = 
         "<echoStringResponse xmlns=\"http://test\">" +
@@ -72,10 +72,16 @@ public class MessageTests extends TestCase {
         "</echoStringResponse>";
     
     private static final String sampleJAXBEnvelope = 
-        sampleEnvelopeHeader + 
+        sampleEnvelopeHead + 
         sampleJAXBText + 
-        sampleEnvelopeFooter;
+        sampleEnvelopeTail;
 
+    private static final String sampleEnvelopeNoHeader =
+        "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+        "<soapenv:Body>" + 
+        sampleText + 
+        "</soapenv:Body></soapenv:Envelope>";
+    
 	private static final QName sampleQName = new QName("urn://sample", "a");
 	
 	private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -262,6 +268,42 @@ public class MessageTests extends TestCase {
 		assertTrue(sampleText.equals(bo.toString()));
 		
 	}
+    
+    /**
+     * Create a Block representing an XMLString, but this time use one that
+     * doesn't have a &lt;soap:Header&gt; element in it.
+     * @throws Exception
+     */
+    public void testStringInflow3() throws Exception {
+        
+        // On inbound, there will already be an OM
+        // which represents the message.  The following code simulates the input
+        // OM
+        StringReader sr = new StringReader(sampleEnvelopeNoHeader);
+        XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
+        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+        OMElement omElement = builder.getSOAPEnvelope();
+        
+        // The JAX-WS layer creates a Message from the OM
+        MessageFactory mf = (MessageFactory)
+            FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.createFrom(omElement);
+        
+        // The next thing that will happen
+        // is the proxy code will ask for the business object (String).
+        XMLStringBlockFactory blockFactory = 
+            (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+        Block block = m.getBodyBlock(0, null, blockFactory);
+        Object bo = block.getBusinessObject(true);
+        assertTrue(bo instanceof String);
+        
+        // The block should be consumed
+        assertTrue(block.isConsumed());
+        
+        // Check the String for accuracy
+        assertTrue(sampleText.equals(bo.toString()));
+        
+    }
     
     /**
      * Create a JAXBBlock containing a JAX-B business object 

@@ -106,11 +106,14 @@ class XMLSpineImpl implements XMLSpine {
 		bodyIterator = null;
 		
 		
-		// Create an OMBlock for each header element
+		// If a header block exists, create an OMBlock for each element
 		// This advances the StAX parser past the header end tag
 		SOAPHeader header = root.getHeader();
-		Iterator it = header.getChildren();
-		advanceIterator(it, headerBlocks, true);
+		if (header != null) {
+            Iterator it = header.getChildren();
+            advanceIterator(it, headerBlocks, true);            
+        }
+
 		
 		SOAPBody body = root.getBody();
 		if (!body.hasFault()) {
