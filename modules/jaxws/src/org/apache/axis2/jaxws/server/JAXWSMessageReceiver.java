@@ -17,16 +17,22 @@
 
 package org.apache.axis2.jaxws.server;
 
+import javax.xml.ws.Provider;
 import javax.xml.ws.Service.Mode;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.param.Parameter;
 import org.apache.axis2.jaxws.param.ParameterFactory;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -36,52 +42,62 @@ import org.apache.axis2.util.Utils;
  */
 public class JAXWSMessageReceiver implements MessageReceiver {
 
-	private static String PARAM_SERVICE_CLASS = "ServiceClass";
+private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
+    
+    private static String PARAM_SERVICE_CLASS = "ServiceClass";
+    
     /**
      * We should have already determined which AxisService we're targetting at
      * this point.  So now, just get the service implementation and invoke
      * the appropriate method.
      */
     public void receive(MessageContext reqMsgContext) throws AxisFault {
+    	if (log.isDebugEnabled()) {
+            log.debug("new request received");
+        }
     	
-    	if(reqMsgContext == null){
-    		throw new  AxisFault("Message Context is null");	
-    	}
-    	
-        // Let's go ahead and create the MessageContext for the response and add
-        // it to the list.
-        MessageContext rspMsgContext = Utils.createOutMessageContext(reqMsgContext);
-        reqMsgContext.getOperationContext().addMessageContext(rspMsgContext);
-        
-        // Get the name of the service impl that was stored as a parameter
+    	//Get the name of the service impl that was stored as a parameter
         // inside of the services.xml.
         AxisService service = reqMsgContext.getAxisService();
-        if(service == null){
-    		throw new AxisFault("Axis service is null");	
-    	}
-        
+        AxisOperation operation = reqMsgContext.getAxisOperation();
+        String mep = operation.getMessageExchangePattern();
         org.apache.axis2.description.Parameter svcClassParam = service.getParameter(PARAM_SERVICE_CLASS);
-        if(svcClassParam == null){
-        	throw new RuntimeException("No service class was found for this AxisService");	
-    	}
-                
+        
         try {
-        	
-        	// Get the appropriate endpoint dispatcher for this service
+            if (svcClassParam == null) { 
+                throw new RuntimeException("No service class was found for this AxisService");
+            }
+            //Get the appropriate endpoint dispatcher for this service
         	EndpointDispatcher endpointDispatcher = new EndpointController(reqMsgContext).getDispatcher();
-        	Object response = endpointDispatcher.execute();
+        	if (log.isDebugEnabled()){
+        		log.debug("MEP: "+ mep);
+        	}
+          	if (isMepInOnly(mep)){
+            	endpointDispatcher.execute();
+            }
+            else{
+	             Object response = endpointDispatcher.execute();
+	             //Let's go ahead and create the MessageContext for the response and add
+	             // it to the list.
+	             MessageContext rspMsgContext = Utils.createOutMessageContext(reqMsgContext);
+	             reqMsgContext.getOperationContext().addMessageContext(rspMsgContext);
+	            	
+	             Parameter rspParam = ParameterFactory.createParameter(response);
+	             SOAPEnvelope rspEnvelope = rspParam.toEnvelope(Mode.PAYLOAD, null);
+	             rspMsgContext.setEnvelope(rspEnvelope);
+	             //Create the AxisEngine for the reponse and send it.
+	             AxisEngine engine = new AxisEngine(rspMsgContext.getConfigurationContext());
+	             engine.send(rspMsgContext);
+            }
             
-            Parameter rspParam = ParameterFactory.createParameter(response);
-            SOAPEnvelope rspEnvelope = rspParam.toEnvelope(Mode.PAYLOAD, null);
-            rspMsgContext.setEnvelope(rspEnvelope);
-            
-            // Create the AxisEngine for the response and send it.
-            AxisEngine engine = new AxisEngine(rspMsgContext.getConfigurationContext());
-            engine.send(rspMsgContext);
         } catch (Exception e) {
         	//TODO: This temp code for alpha till we add fault processing on client code.
+        	// TODO NLS
         	Exception ex = new Exception("Server Side Exception :" +e.getMessage());
             throw AxisFault.makeFault(ex);
         } 
+    }
+    private boolean isMepInOnly(String mep){
+    	return mep.equals(WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY) || mep.equals(WSDL20_2004Constants.MEP_URI_IN_ONLY) || mep.equals(WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY) || mep.equals(WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY);
     }
 }
