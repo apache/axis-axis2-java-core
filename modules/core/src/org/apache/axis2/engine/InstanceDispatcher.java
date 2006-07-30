@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -115,7 +116,7 @@ public class InstanceDispatcher extends AbstractHandler {
         String scope = service.getScope();
         if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
             if (sessionContext == null) {
-                Object obj = msgContext.getProperty(Constants.HTTP_SERVLET_REQUEST);
+                Object obj = msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
                 if (obj != null) {
                     sessionContext = (SessionContext) getSessionContext((HttpServletRequest) obj);
                     msgContext.setSessionContext(sessionContext);

@@ -135,8 +135,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      * Field SINGLE_SERVICE
      */
     public static final String SINGLE_SERVICE = "singleservice";
-    public static final String SERVLET_CONTEXT = "servletContext";
-    public static final String HTTP_SERVLET_REQUEST = "HttpServletRequest";
+
+    /** @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.MC_HTTP_SERVLETCONTEXT */
+    public static final String SERVLET_CONTEXT = "transport.http.servletContext";
+    /** @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.MC_HTTP_SERVLETREQUEST */
+    public static final String HTTP_SERVLET_REQUEST = "transport.http.servletRequest";
+
     public static final String SERVICE_MAP = "servicemap";
     public static final String SERVICE_HANDLERS = "serviceHandlers";
     public static final String SERVICE_GROUP_MAP = "serviceGroupmap";

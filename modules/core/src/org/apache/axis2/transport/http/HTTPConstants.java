@@ -154,6 +154,11 @@ public class HTTPConstants {
     public static String MC_HTTP_SERVLET = "transport.http.servlet";
 
     /**
+     * Field MC_HTTP_SERVLETCONTEXT
+     */
+    public static String MC_HTTP_SERVLETCONTEXT = "transport.http.servletContext";
+
+    /**
      * Field HEADER_USER_AGENT
      */
     public static final String HEADER_USER_AGENT = "User-Agent";

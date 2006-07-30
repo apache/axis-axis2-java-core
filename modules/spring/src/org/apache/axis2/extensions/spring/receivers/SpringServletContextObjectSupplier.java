@@ -22,6 +22,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 
 import javax.servlet.ServletContext;
 
@@ -50,7 +51,7 @@ public class SpringServletContextObjectSupplier {
             String beanName = ((String) implBeanParam.getValue()).trim();
             if (beanName != null) {
                 ServletContext servletContext = (ServletContext) msgContext.getOptions().
-                   getProperty(Constants.SERVLET_CONTEXT);
+                   getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT);
             	if (servletContext == null) {
             		throw new Exception("Axis2 Can't find ServletContext");
                 }

@@ -89,8 +89,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, httpServletRequest.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
-        msgContext.setProperty(Constants.HTTP_SERVLET_REQUEST, httpServletRequest);
-        msgContext.setProperty(Constants.SERVLET_CONTEXT, servletConfig.getServletContext());
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, httpServletRequest);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
 
         return msgContext;
     }
@@ -344,8 +344,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // set the transport Headers
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(req));
         msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
-        msgContext.setProperty(Constants.HTTP_SERVLET_REQUEST, req);
-        msgContext.setProperty(Constants.SERVLET_CONTEXT, servletConfig.getServletContext());
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
         return msgContext;
     }
 
