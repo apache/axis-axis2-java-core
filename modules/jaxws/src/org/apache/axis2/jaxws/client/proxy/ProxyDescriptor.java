@@ -20,6 +20,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import javax.jws.Oneway;
 import javax.jws.SOAPBinding;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -55,6 +56,7 @@ public class ProxyDescriptor {
 	//TODO replace annotation work once endpointDescription is ready
 	private EndpointDescription endpointDescription = null;
 
+	//TODO Need to put validation to check if seiMethod is null;
 	public ProxyDescriptor(Class seiClazz){
 		this.seiClazz = seiClazz;
 	}
@@ -103,38 +105,54 @@ public class ProxyDescriptor {
 	}
 	
 	//TODO: refactor this once PropertyDescriptor is implemented.
-	public Class getRequestWrapperClass() throws ClassNotFoundException{
-		if(getRequestWrapper() == null){
-			return null;
+	public Class getRequestWrapperClass(boolean isAsync) throws ClassNotFoundException{
+		RequestWrapper requestWrapper = getRequestWrapper();
+		String className = null;
+		if(requestWrapper == null){
+			Class clazz = seiMethod.getDeclaringClass();
+			String packageName =clazz.getPackage().getName();
+			String capitalized = toClass(seiMethod.getName());
+			className = packageName+"."+capitalized;
 		}
-		return Class.forName(getRequestWrapper().className(), true, ClassLoader.getSystemClassLoader());
+		if(requestWrapper!=null){
+			className = requestWrapper.className();
+		}
+		return Class.forName(className, true, ClassLoader.getSystemClassLoader());
 	}
 	
 	public String getRequestWrapperClassName(){
 		if(getRequestWrapper()== null){
-			return null;
+			Class clazz = seiMethod.getDeclaringClass();
+			String packageName =clazz.getPackage().getName();
+			String className = toClass(seiMethod.getName());
+			return packageName+"."+className;
 		}
 		return getRequestWrapper().className();
 	}
+	
 	public String getRequestWrapperLocalName(){
 		if(getRequestWrapper() == null){
-			return null;
+			return seiMethod.getName();
 		}
 		return getRequestWrapper().localName();
 	}
 	//TODO remove this once OperationDescription is implemented
-	public Class getResponseWrapperClass() throws ClassNotFoundException{
-		if(getResponseWrapper() == null){
-			return null;
+	public Class getResponseWrapperClass(boolean isAsync) throws ClassNotFoundException{
+		ResponseWrapper responseWrapper = getResponseWrapper();
+		String className = null;
+		if( responseWrapper==null && isAsync){
+			//As per jaxws spec section 2.3.4.4
+			className = toClass(seiMethod.getName()) + "Response";
 		}
-		return Class.forName(getResponseWrapper().className(), true, ClassLoader.getSystemClassLoader());
-	}
-	public String getResponseWrapperClassName(){
-		if(getResponseWrapper()==null){
-			return null;
+		if(responseWrapper == null){
+			return seiMethod.getReturnType();
 		}
-		return getResponseWrapper().className();
+		if(responseWrapper !=null){
+			className = responseWrapper.className();
+		}
+		return Class.forName(className, true, ClassLoader.getSystemClassLoader());
 	}
+
 	public String getResponseWrapperLocalName(){
 		if(getResponseWrapper()==null){
 			return null;
@@ -142,8 +160,15 @@ public class ProxyDescriptor {
 		return getResponseWrapper().localName();
 	}
 	//TODO remove this once OperationDescription is implemented
-	public String getWebResultName(){
-		if(getWebResult()==null){
+	public String getWebResultName(boolean isAsync){
+		WebResult webResult = getWebResult();
+		if(webResult == null &&!isAsync){
+			if(!isOneWay() && !seiMethod.getReturnType().getName().equals("void")){
+				return "return";
+			}
+		}
+		if(webResult == null){
+			//I will return null here and when creating result in ProxyHandler I will check for null and return the wrapperObject if no webResultName found.
 			return null;
 		}
 		return getWebResult().name();
@@ -154,6 +179,10 @@ public class ProxyDescriptor {
 		WebParam[] params = getWebParam();
 		ArrayList<String> names = new ArrayList<String>();
 		for(WebParam webParam:params){
+			//skip asyncHandler, method param name will be asyncHandler as per jaxws specification.
+			if(webParam.name().equals("asyncHandler")){
+				continue;
+			}
 			names.add(webParam.name());
 		}
 		return names;
@@ -170,17 +199,22 @@ public class ProxyDescriptor {
 	public void setSeiMethod(Method seiMethod) {
 		this.seiMethod = seiMethod;
 	}
-	public SOAPBinding getSoapBinding(){
+	public SOAPBinding getSoapBindingOnClazz(){
 		if(soapBinding == null){
 			soapBinding = (SOAPBinding)seiClazz.getAnnotation(SOAPBinding.class);
 		}
 		return soapBinding;
 	}
+	public SOAPBinding getSoapBindingOnMethod(){
+		//TODO who has presendence if there is SOAPBinding on Class and method.
+		return null;
+	}
+	//TODO read soap binding on method too, make sure if Binding style is different from binding style in Clazz throw Exception.
 	public Style getBindingStyle(){
-		if(getSoapBinding()== null){
+		if(getSoapBindingOnClazz()== null){
 			return SOAPBinding.Style.DOCUMENT;
 		}
-		return getSoapBinding().style(); 
+		return getSoapBindingOnClazz().style(); 
 	}
 
 	public Class getSeiClazz() {
@@ -189,5 +223,29 @@ public class ProxyDescriptor {
 
 	public void setSeiClazz(Class seiClazz) {
 		this.seiClazz = seiClazz;
+	}
+	/*
+	 * Convert getString to GetString. Converts method to clazz;
+	 */
+	private String toClass(String method){
+		if(method == null){
+			//Throw exception but I should have check this even before this method is Invoked.
+		}
+		StringBuffer methodName = new StringBuffer(method);
+		return methodName.replace(0,1, methodName.substring(0,1).toUpperCase()).toString();
+	}
+	
+	public String filterAsync(String method){
+		if(method.endsWith("Async")){
+			int index =method.lastIndexOf("Async");
+			return method.substring(0,index);
+		}
+		else{
+			return method;
+		}
+	}
+	
+	public boolean isOneWay(){
+		return seiMethod.isAnnotationPresent(Oneway.class);
 	}
 }

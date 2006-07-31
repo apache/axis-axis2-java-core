@@ -30,21 +30,27 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.AsyncHandler;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 
 
 public class DocLitProxyHandler extends BaseProxyHandler {
@@ -94,7 +100,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		 * and call 
 		 * createDocLitWrapperRequest(od, values);
 		 */
-		Class wrapperClazz = proxyDescriptor.getRequestWrapperClass();
+		Class wrapperClazz = proxyDescriptor.getRequestWrapperClass(isAsync());
 		ArrayList<String> names = proxyDescriptor.getParamNames();
 		String localName = proxyDescriptor.getResponseWrapperLocalName();
 		Map<String, Object> values = getParamValues(names, objects);
@@ -129,12 +135,22 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	 */
 //	TODO Refactor this once OperationDescription is implemented.
 	private Object createDocLitWrappedResponse(Method method, MessageContext response)throws IllegalAccessException, ClassNotFoundException, JAXBWrapperException, JAXBException, javax.xml.stream.XMLStreamException, MessageException, IntrospectionException, NoSuchFieldException, InvocationTargetException{
-		Class wrapperClazz = proxyDescriptor.getResponseWrapperClass();
-		String resultName = proxyDescriptor.getWebResultName();
+		Class wrapperClazz = proxyDescriptor.getResponseWrapperClass(isAsync());
+		String resultName = proxyDescriptor.getWebResultName(isAsync());
 		JAXBContext ctx = JAXBContext.newInstance(new Class[]{wrapperClazz});
-		//TODO: I should go away from using messageAsOM and see if I can fetch Block from messageContext!!
+		//FIXME: I should go away from using messageAsOM when MessageContext start to return jaxbBlock!!
+		/*
+		OMElement om = response.getMessageAsOM();
+		if(om instanceof SOAPEnvelope){
+			SOAPEnvelope env =(SOAPEnvelope) om;
+			SOAPBody body = env.getBody();
+			om = body.getFirstElement();
+		}
 		
-        // Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
+		Block resBlock = createJAXBBlock(om, ctx);
+		*/
+		
+		// Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
         // out of the Message
         JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
         
@@ -142,7 +158,14 @@ public class DocLitProxyHandler extends BaseProxyHandler {
         Block resBlock = responseMsg.getBodyBlock(0, ctx, factory);
 		Object bo = resBlock.getBusinessObject(true);
 		
-        return getWebResultObject(wrapperClazz, bo, resultName);
+		//if wrapperClazz is assignable from bo then return bo;
+		if(resultName==null && wrapperClazz.isAssignableFrom(bo.getClass())){
+			return bo;
+		}
+	
+		return getWebResultObject(wrapperClazz, bo, resultName);
+		
+		
 	}
 	
 	private Block createJAXBBlock(Object jaxbObject, JAXBContext context) throws MessageException{
@@ -157,12 +180,25 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		
 	}
 
-	//TODO: should I unwrap the bo or use property descriptor?
-	private PropertyDescriptor gerPropertyDescriptor(Class returnClazz, String propertyName)throws IntrospectionException, NoSuchFieldException{
+	/*
+	 * this method return property descriptor to read or write the property value.
+	 * It reads all the property descriptor on the java bean. Then determins if java field name is the the actual property who's pd has been requested.
+	 * if true it returns pd.
+	 * Also the propertyName supplied is compared with java field name and if they dont match than xmlElement annotation on JAXB Object is lookedup. if they
+	 * dont match then xmlElement is compared with java field name using lowercases and finally return the pd.
+	 * if property descriptor not found for a perticular property just return null.
+	 */
+	private PropertyDescriptor getPropertyDescriptor(Class returnClazz, String propertyName)throws IntrospectionException, NoSuchFieldException{
 		PropertyDescriptor[] allPds = Introspector.getBeanInfo(returnClazz).getPropertyDescriptors();
 		Field[] fields = returnClazz.getDeclaredFields();
 		for(PropertyDescriptor pd:allPds){
 			for(Field field:fields){
+				if(propertyName == null){
+					//if this happens I will get the first property that has datatype same as return clazz and return its descriptor.
+					if(field.getType() == returnClazz){
+						return pd;
+					}
+				}
 				String javaFieldName = field.getName();
 				String pdName = pd.getDisplayName();
 				if(javaFieldName.equals(pdName)){
@@ -186,13 +222,19 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 				}
 			}
 		}
-		return null;
+		throw new NoSuchFieldException("Could not create WebResult Object for property :"+propertyName+ " on java bean:"+returnClazz);
 	}
 	//TODO: refactor this once PropertyDescriptor is implemented.
 	private Map<String, Object> getParamValues(ArrayList<String> names, Object[] objects){
 		Map<String, Object> values = new Hashtable<String, Object>();
 		int i=0;
 		for(Object obj:objects){
+			//skip AsycHandler Object
+			if(obj instanceof AsyncHandler){
+				i++;
+				continue;
+			}
+			
 			values.put(names.get(i++), obj);
 		}
 		return values;
@@ -211,7 +253,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	 * @throws IllegalAccessException
 	 */
 	private Object getWebResultObject(Class wrapperClazz, Object businessObject, String propertyName) throws NoSuchFieldException, IntrospectionException,InvocationTargetException, IllegalAccessException{
-		PropertyDescriptor pd = gerPropertyDescriptor(wrapperClazz, propertyName);
+		PropertyDescriptor pd = getPropertyDescriptor(wrapperClazz, propertyName);
 		if(pd == null){
 			//TODO: what happens if pd not found.
 		}
@@ -222,7 +264,12 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	
 	private MessageContext initializeRequest(Block messageBlock) throws XMLStreamException, MessageException{
 		MessageContext request = new MessageContext();
-		//request.setMessageAsOM(messageBlock.getOMElement());
+		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+		//FIXME: The protocol should actually come from the binding information included in
+        // either the WSDL or an annotation.
+		Message m = mf.create(Protocol.soap11);
+		m.setBodyBlock(0,messageBlock);
+		request.setMessage(m);
 		request.getProperties().putAll(getRequestContext());
 	
 		return request;

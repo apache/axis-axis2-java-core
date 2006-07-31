@@ -68,7 +68,8 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
         /**
          * static method to create the object
          */
-        public static EchoStringResponse parse(
+        
+    	public static EchoStringResponse parse(
                 javax.xml.stream.XMLStreamReader reader)
                 throws java.lang.Exception {
             EchoStringResponse object = new EchoStringResponse();
@@ -94,7 +95,7 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
                         .setEchoStringReturn(stateMachine1.getText() == null ? null
                                 : org.apache.axis2.databinding.utils.ConverterUtil
                                         .convertToString(stateMachine1
-                                                .getText()));
+                                                .getText().getBytes()));
 
             } catch (javax.xml.stream.XMLStreamException e) {
                 throw new java.lang.Exception(e);
@@ -102,6 +103,7 @@ public  class EchoStringResponse implements org.apache.axis2.databinding.ADBBean
 
             return object;
         }
+        
     }//end of factory class
 
 }

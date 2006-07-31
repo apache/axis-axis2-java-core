@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target (ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebMethod {
-	String OperationName() default "";
+	String operationName() default "";
 	String action() default "";
 	String exclude() default "";
 }

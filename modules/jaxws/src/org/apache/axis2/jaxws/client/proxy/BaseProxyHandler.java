@@ -20,26 +20,33 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.AxisController;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
+import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.sun.xml.bind.v2.runtime.reflect.Lister;
 
 /**
  * ProxyHandler is the java.lang.reflect.InvocationHandler implementation.
@@ -123,6 +130,9 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 		if (log.isDebugEnabled()) {
             log.debug("Attempting to Invoke SEI Method "+ method.getName());
         }
+		
+		//TODO make sure the method is a public method and it is declared in SEI.
+		
 		InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
 		MessageContext requestContext = createRequest(method, args);
 		requestIC.setRequestMessageContext(requestContext);
@@ -131,16 +141,68 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 		try{
 			requestIC.setServiceClient(delegate.getServiceClient());
 		}catch(AxisFault e){
-			throw new WebServiceException(e);
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
-		//TODO: check if the call is OneWay, Async or Sync
-		InvocationContext responseIC = controller.invoke(requestIC);
-		MessageContext responseContext = responseIC.getResponseMessageContext();
-		Object responseObj = createResponse(method, responseContext);
+		//check if the call is OneWay, Async or Sync
+		if(proxyDescriptor.isOneWay() || method.getReturnType().getName().equals("void")){
+			if(log.isDebugEnabled()){
+				log.debug("OneWay Call");
+			}
+			controller.invokeOneWay(requestIC);
+		}
 		
-		return responseObj;
+		if(method.getReturnType().isAssignableFrom(Future.class)){
+			if(log.isDebugEnabled()){
+				log.debug("Async Callback");
+			}
+			//Get AsyncHandler from Objects and sent that to InvokeAsync
+			AsyncHandler asyncHandler = null;
+			for(Object obj:args){
+				if(obj !=null && AsyncHandler.class.isAssignableFrom(obj.getClass())){
+					asyncHandler = (AsyncHandler)obj;
+					break;
+				}
+			}
+			if(asyncHandler == null){
+				throw ExceptionFactory.makeWebServiceException("AynchHandler null for Async callback, Invalid AsyncHandler callback Object");
+			}
+			AsyncListener listener = createProxyListener();
+			requestIC.setAsyncListener(listener);
+			requestIC.setExecutor(delegate.getExecutor());
+			return controller.invokeAsync(requestIC, asyncHandler);
+		}
+		
+		if(method.getReturnType().isAssignableFrom(Response.class)){
+			if(log.isDebugEnabled()){
+				log.debug("Async Polling");
+			}
+			AsyncListener listener = createProxyListener();
+			requestIC.setAsyncListener(listener);
+			requestIC.setExecutor(delegate.getExecutor());
+			return controller.invokeAsync(requestIC);
+		}
+		
+		if(!proxyDescriptor.isOneWay()){
+			InvocationContext responseIC = controller.invoke(requestIC);
+		
+			MessageContext responseContext = responseIC.getResponseMessageContext();
+			Object responseObj = createResponse(method, responseContext);
+			return responseObj;
+		}
+		return null;
 	}
 	
+	private AsyncListener createProxyListener(){
+		ProxyAsyncListener listener = new ProxyAsyncListener();
+		listener.setHandler(this);
+		return listener;
+	}
+	
+	protected boolean isAsync(){
+		String methodName = proxyDescriptor.getSeiMethod().getName();
+		Class returnType = proxyDescriptor.getSeiMethod().getReturnType();
+		return methodName.endsWith("Async") && (returnType.isAssignableFrom(Response.class) || returnType.isAssignableFrom(Future.class));
+	}
 	/**
 	 * Create request context for the method call. This request context will be used by InvocationController to route the method call to axis engine.
 	 * @param method
@@ -192,6 +254,10 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 			soapAction = wsdl.getSOAPAction(serviceName, portName);
 		}
 		super.initRequestContext(endPointAddress, soapAddress, soapAction);
+	}
+
+	protected ServiceDelegate getDelegate() {
+		return delegate;
 	}
 
 }
