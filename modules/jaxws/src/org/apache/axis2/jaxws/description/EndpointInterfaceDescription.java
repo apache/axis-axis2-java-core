@@ -18,6 +18,18 @@
 
 package org.apache.axis2.jaxws.description;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+
 /**
  * 
  */
@@ -51,5 +63,21 @@ TBD
 
  */
 public class EndpointInterfaceDescription {
+    EndpointDescription parentEndpointDescription;
+    Hashtable<QName, OperationDescription> operationDescriptions = new Hashtable<QName, OperationDescription>();
+    
+    
+    EndpointInterfaceDescription(EndpointDescription parent) {
+        parentEndpointDescription = parent;
+        
+        AxisService axisService = parentEndpointDescription.getServiceDescription().getAxisService();
+        ArrayList publishedOperations = axisService.getPublishedOperations();
+        Iterator operationsIterator = publishedOperations.iterator();
+        while (operationsIterator.hasNext()) {
+            AxisOperation operation = (AxisOperation) operationsIterator.next();
+            operationDescriptions.put(operation.getName(), new OperationDescription(operation, this));
+        }
+        
+    }
 
 }

@@ -48,6 +48,7 @@ import org.apache.axis2.jaxws.client.factory.DescriptorFactory;
 import org.apache.axis2.jaxws.client.factory.ProxyHandlerFactory;
 import org.apache.axis2.jaxws.client.proxy.BaseProxyHandler;
 import org.apache.axis2.jaxws.client.proxy.ProxyDescriptor;
+import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.handler.PortInfoImpl;
@@ -76,9 +77,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     		throw ExceptionFactory.makeWebServiceException("Invalid Service QName, Service Name cannot be null or empty");
     	}
 
-        serviceDescription = new ServiceDescription(url, serviceQname, clazz);
+        serviceDescription = DescriptionFactory.createServiceDescription(url, serviceQname, clazz);
         if (isValidWSDLLocation()) {
             if(!isServiceDefined(serviceQname)){
+            	// TODO NLS
                 throw new WebServiceException("Service " + serviceQname + " not defined in WSDL");
             }
             readPorts();
@@ -101,6 +103,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	}
     	
     	if(bindingId!=null && !bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING)){
+    		// TODO NLS
     		throw new UnsupportedOperationException("Only SOAP11HTTP_BINDING supported at this time.");
     	}
         
@@ -117,7 +120,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     		port.setBindingID(bindingId);
     		port.setEndPointAddress(endpointAddress);
     		*/
-    		
+    		// TODO NLS
     		throw new WebServiceException("Port is already added");
     	}
     }
@@ -283,7 +286,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     }
     
     public void setExecutor(Executor executor) {
-        // TODO Auto-generated method stub
         this.executor = executor;
         if(executor == null){
         	this.executor = getDefaultExecutor();

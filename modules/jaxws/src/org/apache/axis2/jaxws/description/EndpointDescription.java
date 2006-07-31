@@ -26,9 +26,6 @@ import javax.wsdl.Port;
 import javax.xml.namespace.QName;
 
 
-/**
- * 
- */
 /*
 Working-design information.
 
@@ -51,13 +48,15 @@ Properties available to JAXWS runtime: TBD
 
  */
 /*
- * TODO: EndpointDescription should be created AxisService objects and not directly from WSDL
+ * TODO: EndpointDescription should be created via AxisService objects and not directly from WSDL
  * IMPORTANT NOTE: Axis2 currently only supports 1 service and 1 port under that service.  When that is
  * fixed, that will probably have an impact on this class.  In particular, I think this should be created 
  * somehow from an AxisService/AxisPort combination, and not directly from the WSDL.
  */
 public class EndpointDescription {
+    private ServiceDescription parentServiceDescription;
     private QName portQName;
+    private EndpointInterfaceDescription endpointInterfaceDescription;
     // TODO: This needs to be a collection of handler descriptions; use JAX-WS Appendix B Handler Chain Configuration File Schema as a starting point
     private ArrayList<String> handlerList = new ArrayList<String>();
     
@@ -69,13 +68,19 @@ public class EndpointDescription {
      * @param wsdlPort The WSDL Port tag for this EndpointDescription.
      * @param definition The WSDL Definition target namespace used to create the port QName
      */
-    EndpointDescription(Port wsdlPort, Definition definition) {
+    EndpointDescription(Port wsdlPort, Definition definition, ServiceDescription parent) {
+        parentServiceDescription = parent;
         String localPart = wsdlPort.getName();
         String namespace = definition.getTargetNamespace();
         portQName = new QName(namespace, localPart);
+        endpointInterfaceDescription = new EndpointInterfaceDescription(this);
     }
     public QName getPortQName() {
         return portQName;
+    }
+    
+    public ServiceDescription getServiceDescription() {
+        return parentServiceDescription;
     }
     
     /**

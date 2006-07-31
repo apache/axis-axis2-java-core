@@ -18,6 +18,8 @@
 
 package org.apache.axis2.jaxws.description;
 
+import org.apache.axis2.description.AxisOperation;
+
 /**
  * 
  */
@@ -56,5 +58,19 @@ TBD
 
  */
 public class OperationDescription {
+    private EndpointInterfaceDescription parentEndpointInterfaceDescription;
+    private AxisOperation axisOperation;
+    
+    OperationDescription(AxisOperation operation, EndpointInterfaceDescription parent) {
+        parentEndpointInterfaceDescription = parent;
+        axisOperation = operation;       
+    }
 
+    public EndpointInterfaceDescription getEndpointInterfaceDescription() {
+        return parentEndpointInterfaceDescription;
+    }
+    
+    public AxisOperation getAxisOperation() {
+        return axisOperation;
+    }
 }

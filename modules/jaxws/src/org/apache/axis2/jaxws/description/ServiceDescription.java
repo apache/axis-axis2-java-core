@@ -78,7 +78,7 @@ JAX-WS Annotations:
 TBD
 
 Properties available to JAXWS runtime:
-getJAXInterface(QName port) Needed by HandlerResolver
+getEndpointDescription(QName port) Needed by HandlerResolver
 TBD
 
  */
@@ -104,9 +104,9 @@ public class ServiceDescription {
      * @param serviceQName  The name of the service in the WSDL.  This can not be null since a 
      *   javax.xml.ws.Service can not be created with a null service QName.
      * @param serviceClass  The JAX-WS service class.  This could be an instance of
-     *   javax.xml.ws.Service or a generated service subclass thereof.
+     *   javax.xml.ws.Service or a generated service subclass thereof.  This will not be null.
      */
-    public ServiceDescription(URL wsdlURL, QName serviceQName, Class serviceClass) {
+    ServiceDescription(URL wsdlURL, QName serviceQName, Class serviceClass) {
         if (serviceQName == null) {
         	// TODO NLS
             throw ExceptionFactory.makeWebServiceException("Invalid Service QName; cannot be null");
@@ -222,7 +222,7 @@ public class ServiceDescription {
             Iterator portIterator = ports.values().iterator();
             while (portIterator.hasNext()) {
                 Port wsdlPort = (Port) portIterator.next();
-                EndpointDescription endpointDescription = new EndpointDescription(wsdlPort, definition);
+                EndpointDescription endpointDescription = new EndpointDescription(wsdlPort, definition, this);
                 QName portQName = endpointDescription.getPortQName();
                 endpointDescriptions.put(portQName, endpointDescription); 
             }
