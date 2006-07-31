@@ -206,7 +206,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                     writeMessageWithCommons(msgContext, epr, dataOut, format);
                 }
             } else {
-                sendUsingOutputStream(msgContext, format, dataOut);
+                if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
+                    sendUsingOutputStream(msgContext, format, dataOut);
+                }
+                else {
+                    throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+                }
             }
 
             if (msgContext.getOperationContext() != null) {

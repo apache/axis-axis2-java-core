@@ -7,7 +7,11 @@ import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -33,6 +37,7 @@ import java.util.Iterator;
 
 public class AddressingSubmissionInHandler extends AddressingInHandler {
 
+    private static final Log log = LogFactory.getLog(AddressingSubmissionInHandler.class);
     private static final long serialVersionUID = 365417374773955107L;
 
     public AddressingSubmissionInHandler() {
@@ -106,5 +111,25 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
                 throwFault(messageContext, WSA_MESSAGE_ID, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
             }
         }
+    }
+    
+    protected void setDefaults(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) {
+        //The none URI is not defined in the 2004/08 spec, but it is used here anyway
+        //as a flag to indicate the correct semantics to apply, i.e. in the 2004/08 spec
+        //the absence of a ReplyTo header indicates that a response is NOT required.
+        if (!alreadyFoundAddrHeader.contains(WSA_REPLY_TO)) {
+            Options messageContextOptions = messageContext.getOptions();
+            EndpointReference epr = messageContextOptions.getReplyTo();
+            
+            if (epr == null) {
+                epr = new EndpointReference("");
+                messageContextOptions.setReplyTo(epr);
+            }
+            
+            if (log.isTraceEnabled())
+                log.trace("setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
+            
+            epr.setAddress(Final.WSA_NONE_URI);
+        }        
     }
 }

@@ -159,11 +159,16 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         
         // check for the presence of madatory addressing headers
         checkForMandatoryHeaders(checkedHeaderNames, messageContext);
-
+         
+        // provide default values for headers that have not been found.
+        setDefaults(checkedHeaderNames, messageContext);
+         
         return messageContextOptions;
     }
     
     protected abstract void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault;
+
+    protected abstract void setDefaults(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault;
 
     private boolean checkDuplicateHeaders(String addressingHeaderName, ArrayList checkedHeaderNames, ArrayList duplicateHeaderNames) {//throws AxisFault {
     	// If the header name has been seen before then we should return true and add it to the list

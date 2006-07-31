@@ -34,7 +34,6 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -109,7 +108,6 @@ public class Utils {
 
         // write the Message to the Wire
         TransportOutDescription transportOut = newmsgCtx.getTransportOut();
-        TransportSender sender = transportOut.getSender();
 
         //there may be instance where you want to send the response to replyTo
         //and this default behaviour should happen if somebody (e.g. a module) has not already provided
@@ -118,7 +116,8 @@ public class Utils {
             if (newmsgCtx.isServerSide() && newmsgCtx.getTo() != null) {
                 String replyToAddress = newmsgCtx.getTo().getAddress();
                 if (!(AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(replyToAddress)
-                        || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(replyToAddress))) {
+                        || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(replyToAddress)
+                        || AddressingConstants.Final.WSA_NONE_URI.equals(replyToAddress))) {
                     URI uri = new URI(replyToAddress);
                     String scheme = uri.getScheme();
                     if (!transportOut.getName().getLocalPart().equals(scheme)) {

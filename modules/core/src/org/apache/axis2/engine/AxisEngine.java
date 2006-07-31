@@ -52,6 +52,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -235,15 +238,30 @@ public class AxisEngine {
             faultContext.setTo(processingContext.getReplyTo());
         }
 
-        if (faultTo == null || AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
-                || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(faultTo.getAddress())
-                || AddressingConstants.Final.WSA_NONE_URI.equals(faultTo.getAddress())) {
-            Object writer = processingContext.getProperty(MessageContext.TRANSPORT_OUT);
-            if (writer != null) {
-                faultContext.setProperty(MessageContext.TRANSPORT_OUT, writer);
-            } else {
-                throw new AxisFault(Messages.getMessage("nowhereToSendError"));
+        //Determine that we have the correct transport available.
+        TransportOutDescription transportOut = faultContext.getTransportOut();
+
+        try {
+            if (faultContext.isServerSide() && faultContext.getTo() != null) {
+                String replyToAddress = faultContext.getTo().getAddress();
+                if (!(AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(replyToAddress)
+                        || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(replyToAddress)
+                        || AddressingConstants.Final.WSA_NONE_URI.equals(replyToAddress))) {
+                    URI uri = new URI(replyToAddress);
+                    String scheme = uri.getScheme();
+                    if (!transportOut.getName().getLocalPart().equals(scheme)) {
+                        ConfigurationContext configurationContext = faultContext.getConfigurationContext();
+                        transportOut = configurationContext.getAxisConfiguration()
+                                .getTransportOut(new QName(scheme));
+                        if (transportOut == null) {
+                            throw new AxisFault("Can not find the transport sender : " + scheme);
+                        }
+                        faultContext.setTransportOut(transportOut);
+                    }
+                }
             }
+        } catch (URISyntaxException urise) {
+            throw new AxisFault(urise);
         }
 
         faultContext.setOperationContext(processingContext.getOperationContext());
@@ -251,9 +269,6 @@ public class AxisEngine {
         faultContext.setServerSide(true);
 
         SOAPEnvelope envelope;
-
-        faultContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                processingContext.getProperty(Constants.OUT_TRANSPORT_INFO));
 
         if (processingContext.isSOAP11()) {
             envelope = OMAbstractFactory.getSOAP11Factory().getDefaultFaultEnvelope();
@@ -266,6 +281,8 @@ public class AxisEngine {
         extractFaultInformationFromMessageContext(processingContext, envelope.getBody().getFault(),
                 e);
         faultContext.setEnvelope(envelope);
+        faultContext.setProperty(MessageContext.TRANSPORT_OUT,
+                processingContext.getProperty(MessageContext.TRANSPORT_OUT));
         faultContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 processingContext.getProperty(Constants.OUT_TRANSPORT_INFO));
 

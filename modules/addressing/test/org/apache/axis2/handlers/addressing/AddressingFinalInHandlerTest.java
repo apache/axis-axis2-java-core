@@ -90,7 +90,10 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     
     public void testMessageWithOmittedFaultTo() {
         try {
-            testMessageWithOmittedHeaders("noFaultTo");
+            Options options = testMessageWithOmittedHeaders("noFaultTo");
+            EndpointReference epr = options.getFaultTo();
+            
+            assertNull("The FaultTo endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -106,7 +109,10 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     
     public void testMessageWithOmittedFrom() {
         try {
-            testMessageWithOmittedHeaders("noFrom");
+            Options options = testMessageWithOmittedHeaders("noFrom");
+            EndpointReference epr = options.getFrom();
+            
+            assertNull("The From endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -122,7 +128,10 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     
     public void testMessageWithOmittedMessageID() {
         try {
-            testMessageWithOmittedHeaders("noMessageID");
+            Options options = testMessageWithOmittedHeaders("noMessageID");
+            String messageID = options.getMessageId();
+            
+            assertNull("The message id is not null.", messageID);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -138,7 +147,11 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     
     public void testMessageWithOmittedReplyTo() {
         try {
-            testMessageWithOmittedHeaders("noReplyTo");
+            Options options = testMessageWithOmittedHeaders("noReplyTo");
+            EndpointReference epr = options.getReplyTo();
+            String address = epr.getAddress();
+            
+            assertEquals("The address of the ReplyTo endpoint reference is not the anonymous URI.", AddressingConstants.Final.WSA_ANONYMOUS_URL, address);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -154,7 +167,10 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     
     public void testMessageWithOmittedTo() {
         try {
-            testMessageWithOmittedHeaders("noTo");
+            Options options = testMessageWithOmittedHeaders("noTo");
+            EndpointReference epr = options.getTo();
+            
+            assertNull("The To endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
             af.printStackTrace();

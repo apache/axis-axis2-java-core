@@ -158,11 +158,13 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         }
     }
     
-    protected void testMessageWithOmittedHeaders(String testName) throws Exception {
+    protected Options testMessageWithOmittedHeaders(String testName) throws Exception {
         String testfile = "omitted-header-messages/"+versionDirectory+"/"+testName+"Message.xml";
         
         MessageContext mc = new MessageContext();
         basicExtractAddressingInformationFromHeaders(testfile, mc);
+        
+        return mc.getOptions();
     }
     
     public void testExtractAddressingInformationFromHeadersInvalidCardinalityReplyTo() {

@@ -9,6 +9,9 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.AxisEngine;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -34,6 +37,7 @@ import java.util.Iterator;
 
 public class AddressingFinalInHandler extends AddressingInHandler {
 
+    private static final Log log = LogFactory.getLog(AddressingFinalInHandler.class);
     private static final long serialVersionUID = -4020680449342946484L;
 
     public AddressingFinalInHandler() {
@@ -95,5 +99,25 @@ public class AddressingFinalInHandler extends AddressingInHandler {
             throwFault(messageContext, WSA_ACTION, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
         } 
     }
-
+    
+    protected void setDefaults(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) {
+        //According to the WS-Addressing spec, we should default the wsa:To header to the
+        //anonymous URL. Doing that, however, might prevent a different value from being
+        //used instead, such as the transport URL.
+        
+        if (!alreadyFoundAddrHeader.contains(WSA_REPLY_TO)) {
+            Options messageContextOptions = messageContext.getOptions();
+            EndpointReference epr = messageContextOptions.getReplyTo();
+            
+            if (epr == null) {
+                epr = new EndpointReference("");
+                messageContextOptions.setReplyTo(epr);
+            }
+            
+            if (log.isTraceEnabled())
+                log.trace("setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
+            
+            epr.setAddress(Final.WSA_ANONYMOUS_URL);
+        }        
+    }
 }

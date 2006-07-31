@@ -18,6 +18,7 @@ package org.apache.axis2.handlers.addressing;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -70,7 +71,10 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
     
     public void testMessageWithOmittedFaultTo() {
         try {
-            testMessageWithOmittedHeaders("noFaultTo");
+            Options options = testMessageWithOmittedHeaders("noFaultTo");
+            EndpointReference epr = options.getFaultTo();
+            
+            assertNull("The FaultTo endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -86,7 +90,10 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
     
     public void testMessageWithOmittedFrom() {
         try {
-            testMessageWithOmittedHeaders("noFrom");
+            Options options = testMessageWithOmittedHeaders("noFrom");
+            EndpointReference epr = options.getFrom();
+            
+            assertNull("The From endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -117,7 +124,10 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
     
     public void testMessageWithOmittedMessageIDReplyToAndFaultTo() {
         try {
-            testMessageWithOmittedHeaders("noMessageIDNoReplyToNoFaultTo");
+            Options options = testMessageWithOmittedHeaders("noMessageIDNoReplyToNoFaultTo");
+            String messageID = options.getMessageId();
+            
+            assertNull("The message id is not null.", messageID);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -133,7 +143,11 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
     
     public void testMessageWithOmittedReplyTo() {
         try {
-            testMessageWithOmittedHeaders("noReplyTo");
+            Options options = testMessageWithOmittedHeaders("noReplyTo");
+            EndpointReference epr = options.getReplyTo();
+            String address = epr.getAddress();
+            
+            assertEquals("The address of the ReplyTo endpoint reference is not the none URI.", AddressingConstants.Final.WSA_NONE_URI, address);
         }
         catch (AxisFault af) {
             af.printStackTrace();

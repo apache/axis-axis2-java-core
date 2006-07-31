@@ -88,16 +88,18 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
 
         if (epr != null) {
-            out = openTheConnection(epr, msgContext);
-
-            OutputStream newOut = startSendWithToAddress(msgContext, out);
-
-            if (newOut != null) {
-                out = newOut;
+            if (!epr.getAddress().equals(AddressingConstants.Final.WSA_NONE_URI)) {
+                out = openTheConnection(epr, msgContext);
+    
+                OutputStream newOut = startSendWithToAddress(msgContext, out);
+    
+                if (newOut != null) {
+                    out = newOut;
+                }
+    
+                writeMessage(msgContext, out);
+                finalizeSendWithToAddress(msgContext, out);
             }
-
-            writeMessage(msgContext, out);
-            finalizeSendWithToAddress(msgContext, out);
         } else {
             out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
 
@@ -107,7 +109,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 finalizeSendWithOutputStreamFromIncomingConnection(msgContext, out);
             } else {
                 throw new AxisFault(
-                        "Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No where to send");
+                        "Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
             }
         }
 
