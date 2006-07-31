@@ -61,6 +61,7 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
 
 
             responseMessageContext.setServerSide(false);
+            responseMessageContext.setMessageID(msgctx.getMessageID());
             addMessageContext(responseMessageContext);
 
             //sending the message

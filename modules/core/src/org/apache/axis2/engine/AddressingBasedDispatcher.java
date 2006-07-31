@@ -119,6 +119,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                         msgctx.getConfigurationContext().getOperationContext(msgctx.getRelatesTo().getValue());
 
                 if (operationContext != null) {
+                    operationContext.addMessageContext(msgctx);
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
