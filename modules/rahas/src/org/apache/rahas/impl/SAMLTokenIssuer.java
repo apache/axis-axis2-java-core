@@ -51,9 +51,12 @@ import org.opensaml.SAMLSubject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
+
 import java.security.Principal;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.util.Arrays;
@@ -193,9 +196,9 @@ public class SAMLTokenIssuer implements TokenIssuer {
         }
         
         if(keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY) || 
-                         keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY)) {
+                         keyType.endsWith(RahasConstants.KEY_TYPE_PUBLIC_KEY)) {
             assertion = createHoKAssertion(config, request, doc, crypto,
-                    creationTime, expirationTime, keyType, secret, principal);
+                    creationTime, expirationTime, keyType, secret, principal, clientCert);
         } else  if(keyType.endsWith(RahasConstants.KEY_TYPE_BEARER)) {
             assertion = createBearerAssertion(config, request, doc, crypto, creationTime, expirationTime, principal);
         } else {
@@ -282,16 +285,6 @@ public class SAMLTokenIssuer implements TokenIssuer {
     }
     
 
-    /**
-     * @param config
-     * @param request
-     * @param doc
-     * @param crypto
-     * @param creationTime
-     * @param expirationTime
-     * @param principal
-     * @return
-     */
     private SAMLAssertion createBearerAssertion(SAMLTokenIssuerConfig config,
             OMElement request, Document doc, Crypto crypto, Date creationTime,
             Date expirationTime, Principal principal) throws TrustException {
@@ -302,7 +295,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 //TODO: Find the email address
                 String subjectNameId = "rcuhtihf@apache.org";
                 SAMLNameIdentifier nameId = new SAMLNameIdentifier(subjectNameId, null, SAMLNameIdentifier.FORMAT_EMAIL);
-                return createAuthAssertion(SAMLSubject.CONF_BEARER, nameId, config, crypto, creationTime, expirationTime);
+                return createAuthAssertion(doc, SAMLSubject.CONF_BEARER, nameId, null, config, crypto, creationTime, expirationTime);
             } else {
                 throw new TrustException("samlUnsupportedPrincipal", new String[]{principal.getClass().getName()});
             }
@@ -313,46 +306,73 @@ public class SAMLTokenIssuer implements TokenIssuer {
 
     private SAMLAssertion createHoKAssertion(SAMLTokenIssuerConfig config,
             OMElement request, Document doc, Crypto crypto, Date creationTime,
-            Date expirationTime, String keyType, byte[] secret, Principal principal)
+            Date expirationTime, String keyType, byte[] secret,
+            Principal principal, X509Certificate clientCert)
             throws TrustException {
         
-        Element encryptedKeyElem = null;
-        X509Certificate serviceCert = null;
-        try {
-            
-            //Get ApliesTo to figureout which service to issue the token for
-            serviceCert = getServiceCert(request, config, crypto);
-
-            //Ceate the encrypted key
-            WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
+        
+        if(keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY)) {
+            Element encryptedKeyElem = null;
+            X509Certificate serviceCert = null;
+            try {
+                
+                //Get ApliesTo to figureout which service to issue the token for
+                serviceCert = getServiceCert(request, config, crypto);
     
-            //Use thumbprint id
-            encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
-
-            //SEt the encryption cert
-            encrKeyBuilder.setUseThisCert(serviceCert);
-            
-            //set keysize
-            encrKeyBuilder.setKeySize(secret.length*8);
-            
-            //Set key encryption algo
-            encrKeyBuilder.setKeyEncAlgo(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15);
-            
-            //Build
-            encrKeyBuilder.prepare(doc, crypto);
-            
-            //Extract the base64 encoded secret value
-            System.arraycopy(encrKeyBuilder.getEphemeralKey(), 0, secret, 0, secret.length);
-            
-            //Extract the Encryptedkey DOM element 
-            encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
-        } catch (WSSecurityException e) {
-            throw new TrustException(
-                    "errorInBuildingTheEncryptedKeyForPrincipal",
-                    new String[] { serviceCert.getSubjectDN().getName()}, e);
+                //Ceate the encrypted key
+                WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
+        
+                //Use thumbprint id
+                encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+    
+                //SEt the encryption cert
+                encrKeyBuilder.setUseThisCert(serviceCert);
+                
+                //set keysize
+                encrKeyBuilder.setKeySize(secret.length*8);
+                
+                //Set key encryption algo
+                encrKeyBuilder.setKeyEncAlgo(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15);
+                
+                //Build
+                encrKeyBuilder.prepare(doc, crypto);
+                
+                //Extract the base64 encoded secret value
+                System.arraycopy(encrKeyBuilder.getEphemeralKey(), 0, secret, 0, secret.length);
+                
+                //Extract the Encryptedkey DOM element 
+                encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
+            } catch (WSSecurityException e) {
+                throw new TrustException(
+                        "errorInBuildingTheEncryptedKeyForPrincipal",
+                        new String[] { serviceCert.getSubjectDN().getName()}, e);
+            }
+            return this.createAttributeAssertion(doc, encryptedKeyElem, 
+                    config, crypto, creationTime, expirationTime);
+        } else {
+            try {
+                String subjectNameId = principal.getName();
+                SAMLNameIdentifier nameId = new SAMLNameIdentifier(subjectNameId, null, SAMLNameIdentifier.FORMAT_EMAIL);
+                
+                //Create the ds:KeyValue element with the ds:X509Data
+                byte[] clientCertBytes = clientCert.getEncoded();
+                String base64Cert = Base64.encode(clientCertBytes);
+                
+                Text base64CertText = doc.createTextNode(base64Cert);
+                Element x509CertElem = doc.createElementNS(WSConstants.SIG_NS, "X509Certificate");
+                x509CertElem.appendChild(base64CertText);
+                Element x509DataElem = doc.createElementNS(WSConstants.SIG_NS, "X509Data");
+                x509DataElem.appendChild(x509CertElem);
+                Element keyValueElem = doc.createElementNS(WSConstants.SIG_NS, "KeyValue");
+                keyValueElem.appendChild(x509DataElem);
+                
+                return this.createAuthAssertion(doc, SAMLSubject.CONF_HOLDER_KEY, nameId, keyValueElem, config, crypto, creationTime, expirationTime);
+            } catch (SAMLException e) {
+                throw new TrustException("samlAssertionCreationError", e);
+            } catch (CertificateEncodingException e) {
+                throw new TrustException("samlAssertionCreationError", e);
+            }
         }
-        return this.createAttributeAssertion(doc, encryptedKeyElem, 
-                config, crypto, creationTime, expirationTime);
     }
     
     /**
@@ -475,13 +495,22 @@ public class SAMLTokenIssuer implements TokenIssuer {
      * @param expirationTime
      * @return
      */
-    private SAMLAssertion createAuthAssertion(String confMethod,
-            SAMLNameIdentifier subjectNameId, SAMLTokenIssuerConfig config,
+    private SAMLAssertion createAuthAssertion(Document doc, String confMethod,
+            SAMLNameIdentifier subjectNameId, Element keyInfoContent, SAMLTokenIssuerConfig config,
             Crypto crypto, Date notBefore, Date notAfter) throws TrustException {
         try {
             String[] confirmationMethods = new String[]{confMethod};
             
-            SAMLSubject subject = new SAMLSubject(subjectNameId, Arrays.asList(confirmationMethods), null, null);
+            Element keyInfoElem = null;
+            if(keyInfoContent != null) {
+                keyInfoElem = doc.createElementNS(WSConstants.SIG_NS, "KeyInfo");
+                ((OMElement)keyInfoContent).declareNamespace(WSConstants.SIG_NS, WSConstants.SIG_PREFIX);
+                ((OMElement)keyInfoContent).declareNamespace(WSConstants.ENC_NS, WSConstants.ENC_PREFIX);
+                
+                keyInfoElem.appendChild(keyInfoContent);
+            }
+            
+            SAMLSubject subject = new SAMLSubject(subjectNameId, Arrays.asList(confirmationMethods), null, keyInfoElem);
             
             SAMLAuthenticationStatement authStmt = new SAMLAuthenticationStatement(
                     subject,
