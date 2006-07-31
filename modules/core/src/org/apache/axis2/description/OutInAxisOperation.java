@@ -283,6 +283,10 @@ class OutInAxisOperationClient implements OperationClient {
                     SOAPEnvelope resEnvelope = response.getEnvelope();
                     if (resEnvelope.getBody().hasFault()) {
                         SOAPFault soapFault = resEnvelope.getBody().getFault();
+
+                        //we need to call engine.receiveFault
+                        AxisEngine engine = new AxisEngine(mc.getConfigurationContext());
+                        engine.receiveFault(response);
                         if (options.isExceptionToBeThrownOnSOAPFault()) {
                             // does the SOAPFault has a detail element for Excpetion
 

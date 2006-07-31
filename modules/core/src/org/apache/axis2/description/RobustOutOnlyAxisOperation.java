@@ -86,6 +86,8 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
             }
             if (envelope != null) {
                 if (envelope.getBody().hasFault()) {
+                    //receiving a fault
+                    engine.receiveFault(responseMessageContext);
                     SOAPFault soapFault = envelope.getBody().getFault();
                     throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
                             soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
