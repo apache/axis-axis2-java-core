@@ -78,6 +78,19 @@ public class EndpointReferenceTypeTest extends TestCase {
         }
     }
     
+    public void testHasAnonymousAddress(){
+        // Default EndpointReference does not has 'anonymous address'
+        assertFalse(endpointReference.hasAnonymousAddress());
+        
+        // EndpointReference with 2005/08 Anonymous address
+        EndpointReference epr200508anon = new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
+        assertTrue(epr200508anon.hasAnonymousAddress());
+        
+        // EndpointReference with 2004/08 Anonymous address
+        EndpointReference epr200408anon = new EndpointReference(AddressingConstants.Submission.WSA_ANONYMOUS_URL);
+        assertTrue(epr200408anon.hasAnonymousAddress());
+    }
+    
     public void testToAndFromOM() throws Exception{
         OMFactory omf = OMAbstractFactory.getOMFactory();
         OMNamespace ns1 = omf.createOMNamespace("http://uri1","prefix1");

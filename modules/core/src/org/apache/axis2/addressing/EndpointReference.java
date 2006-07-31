@@ -120,6 +120,20 @@ public class EndpointReference implements Serializable {
     }
 
     /**
+     * hasAnonymousAddress
+     * 
+     * @return true if address is 'Anonymous URI' from either supported addressing version
+     */
+    public boolean hasAnonymousAddress(){
+        boolean result  = (AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(address) ||
+                           AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address));
+        if(log.isTraceEnabled()){
+            log.trace("hasAnonymousAddress: "+address+" is Anonymous: "+result);
+        }
+        return result;
+    }
+    
+    /**
      * @param localName
      * @param ns
      * @param value
