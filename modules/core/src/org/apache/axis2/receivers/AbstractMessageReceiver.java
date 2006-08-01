@@ -64,6 +64,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
+        saveTCCL(msgContext);
         try {
             AxisService service =
                     msgContext.getOperationContext().getServiceContext().getAxisService();
@@ -95,6 +96,8 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
+        } finally {
+            restoreTCCL();
         }
     }
 

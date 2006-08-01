@@ -87,9 +87,7 @@ provide an Application Context to Axis2, with a bean ref 'applicationContext' :
 
 <p>Lets move now to the Axis2 services.xml file. Note that while we are using RawXMLINOutMessageReceiver 
 as the Message Receiver, currently all Message Receviers extend AbstractMessageReceiver and therefore are 
-automatically supported. IMPORTANT: The SpringBeanName referenced MUST be placed in the Threaded Context 
-Classloader (TCCL) - in a typical servlet container that simply is WEB-INF/lib or WEB-INF/classes. This is 
-because Spring uses the TCCL, and loads its beans from there. Inside the AAR, unfortunately, won't work. </p>
+automatically supported.</p>
 
 <p>If the service is running in a Servlet Container, ie, Axis2 will be able to get a hold of 
 ServletContext, the services.xml for the example would be using SpringServletContextObjectSupplier such as: </p>
