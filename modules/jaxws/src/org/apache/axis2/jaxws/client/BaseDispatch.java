@@ -25,12 +25,8 @@ import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAPBody;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.AxisController;
 import org.apache.axis2.jaxws.BindingProvider;
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -38,9 +34,6 @@ import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.param.Parameter;
-import org.apache.axis2.jaxws.param.ParameterFactory;
-import org.apache.axis2.jaxws.param.ParameterUtils;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
@@ -207,15 +200,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
     }
   
     public Response invokeAsync(Object obj)throws WebServiceException{
-        if(obj == null){
-            throw new WebServiceException("Dispatch Cannot Invoke SEI with null object");
-        }
-        try{
-            Parameter param = ParameterFactory.createParameter(obj);
-            return axisController.invokeAsync(param, requestContext);
-        }catch(Exception e){
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
+        throw new UnsupportedOperationException("Async (polling) invocations are not yet supported.");
     }
     
     //FIXME: This needs to be moved up to the BindingProvider and should actually
@@ -256,31 +241,4 @@ public abstract class BaseDispatch<T> extends BindingProvider
     public void setMode(Mode m) {
         mode = m;
     }    
-    
-    /* 
-     * FIXME: This is temporary until more of the Message Model is available.
-     */
-    protected OMElement toOM(Parameter param, String soapVersion){
-        SOAPEnvelope env = ParameterUtils.toEnvelope(mode, soapVersion, param);
-        System.out.println(">> Generated envelope [" + env.toString() + "]");
-        
-        SOAPBody body = env.getBody();
-        //SOAPHeader soapHeader = env.getHeader();
-        //addHeadersToServiceClient(soapHeader);
-        return body.getFirstElement();
-    }
-    
-    /*
-     * FIXME: This is temporary until more of the Message Model is available. 
-     */
-    protected Parameter fromOM(OMElement element, Parameter response, String soapVersion){
-        response.fromOM(element);
-
-        // Convert param toEnvelope since ServiceClient always send xml string.
-        // toEnvelope() in Parameter is coded just to handle this.
-        SOAPEnvelope env = response.toEnvelope(null, soapVersion);
-        
-        response.fromEnvelope(mode, env);
-        return response;
-    }
 }

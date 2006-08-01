@@ -17,11 +17,21 @@
 
 package org.apache.axis2.jaxws.server;
 
+import org.apache.axis2.jaxws.core.MessageContext;
+
 /**
- * All endpoint dispatcher types must extend this class
- *
+ * The EndpointDispatcher is an abstraction for the object that will be doing
+ * the invocation of an endpoints target Java object.  
  */
 public abstract class EndpointDispatcher {
-	public abstract Object execute() throws Exception;
+
+    /**
+     * Invoke the target endpoint synchronously 
+     * 
+     * @param mc
+     * @return
+     * @throws Exception
+     */
+    public abstract MessageContext invoke(MessageContext mc) throws Exception;
 
 }

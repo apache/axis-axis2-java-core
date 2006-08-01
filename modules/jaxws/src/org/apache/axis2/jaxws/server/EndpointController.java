@@ -14,132 +14,137 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.jaxws.server;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import javax.xml.ws.Provider;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.jaxws.param.ParameterFactory;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.core.InvocationContext;
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-
+/**
+ * The EndpointController is the server side equivalent to the
+ * InvocationController on the client side.  It is an abstraction of the server
+ * side endpoint invocation that encapsulates all of the Axis2 semantics.
+ * 
+ * Like the InvocationController, this class is responsible for invoking the 
+ * JAX-WS application handler chain along with taking all of the provided 
+ * information and setting up what's needed to perform the actual invocation 
+ * of the endpoint.
+ *
+ */
 public class EndpointController {
-	private static String PARAM_SERVICE_CLASS = "ServiceClass";
-	private MessageContext msgContext = null;
     
-    /**
-     * @param _msgContext
-     */
-    public EndpointController(MessageContext _msgContext) {
-		this.msgContext = _msgContext;
-	}
+    private static final Log log = LogFactory.getLog(EndpointController.class);
+	private static final String PARAM_SERVICE_CLASS = "ServiceClass";
 
-	/**
-     * Get OMElement from message context
-     * 
-     * @return ome
+    public EndpointController() {}
+
+    /**
+     * This method is used to start the JAX-WS invocation of a target endpoint.
+     * It takes an InvocationContext, which must have a MessageContext specied
+     * for the request.  Once the invocation is complete, the information will
+     * be stored  
      */
-    private OMElement getOMElement() throws Exception{
-        SOAPEnvelope env = msgContext.getEnvelope();
-        SOAPBody body = env.getBody();
-        OMElement ome = body.getFirstElement();
-       
-        return ome;
+    public InvocationContext invoke(InvocationContext ic) {
+        try {
+            MessageContext requestMsgCtx = ic.getRequestMessageContext();
+            org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
+                requestMsgCtx.getAxisMessageContext();
+            
+            // As the request comes in, the SOAP message will first exist only
+            // on the Axis2 MessageContext.  We need to get it from there and 
+            // wrap it with the JAX-WS Message model abstraction.  This will 
+            // allow us to get the params out in a number of forms later on.
+            SOAPEnvelope soapEnv = axisRequestMsgCtx.getEnvelope();
+            if (soapEnv == null) {
+                throw ExceptionFactory.makeWebServiceException("SOAP cannot be null");
+            }
+            
+            MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+            Message requestMsg = msgFactory.createFrom(soapEnv);
+            requestMsgCtx.setMessage(requestMsg);
+            
+            // Get the appropriate EndpointDispatcher instance based on the 
+            // information availabe in the MessageContext.
+            EndpointDispatcher dispatcher = getDispatcher(axisRequestMsgCtx);
+            
+            MessageContext responseMsgContext = dispatcher.invoke(requestMsgCtx);
+            
+            // The response MessageContext should be set on the InvocationContext
+            ic.setResponseMessageContext(responseMsgContext);
+        } catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException("Error while invoking EndpointDispather", e);
+        }
+        
+        return ic;
     }
     
-    /**
-     * Given a MessageContext, get the contents out and turn them into a Parameter
-     * instance based on what the Provider expects.
-     * 
-     * @param msgContext
-     * @return
-     */
-    private org.apache.axis2.jaxws.param.Parameter getParam(Class _class) throws Exception{
-        Class<?> clazz = getClassType(_class);  
-        org.apache.axis2.jaxws.param.Parameter param = ParameterFactory.createParameter(clazz);        
-        return param;
-    }
-	
-	/**
-	 * Get the appropriate dispatcher for a given service endpoint.
-	 * 
-	 * @return EndpointDispatcher
-	 * @throws Exception
+    /*
+	 * Get the appropriate dispatcher for a given service endpoint.  If the 
+     * target endpoint implements the javax.xml.ws.Provider<T> interface, then
+     * the ProviderDispatcher should be returned.  Other wise, it should be
+     * the JavaBeanDispatcher.
 	 */
-	public EndpointDispatcher getDispatcher() throws Exception {
+	private EndpointDispatcher getDispatcher(org.apache.axis2.context.MessageContext msgContext) throws Exception {
 		EndpointDispatcher dispatcherInstance = null;
-    	AxisService as = msgContext.getAxisService();
+    	
+        // The PARAM_SERVICE_CLASS property that is set on the AxisService
+        // will tell us what the implementation
+        AxisService as = msgContext.getAxisService();
     	Parameter asp = as.getParameter(PARAM_SERVICE_CLASS);
     	
-    	Class cls = getImplClass(as,asp);
-    	if(cls.getSuperclass().isInstance(Provider.class)){
+        // If there was no implementation class, we should not go any further
+        if (asp == null) {
+            throw ExceptionFactory.makeWebServiceException("No service class configured for this endpoint");
+        }
+        
+        // Load the service implementation class  
+    	Class cls = getImplClass(as.getClassLoader(), asp);
+        
+        // Check to see whether the class that was specified is an instance
+        // of the javax.xml.ws.Provider.  If not, stop processing.
+    	if(cls.getSuperclass().isInstance(Provider.class)) {
     		ProviderDispatcher pd = new ProviderDispatcher(cls);
-    		if(pd.getProvider() != null){
-    			org.apache.axis2.jaxws.param.Parameter param = getParam(cls);
-    			param.fromOM(getOMElement());
-    			pd.setParam(param);
-    		}
     		dispatcherInstance = pd;
     	}
+        else {
+            throw ExceptionFactory.makeWebServiceException("Error loading Provider " +
+                    "implementation; class must implement javax.xml.ws.Provider");
+        }
     	
     	return dispatcherInstance;
     }
 	
-	/**
-	 * @param as
-	 * @param asp
-	 * @return Class
+	/*
+     * Tries to load the implementation class that was specified for the
+     * target endpoint using the supplied ClassLoader.  
 	 */
-	private Class getImplClass(AxisService as, Parameter asp){
+	private Class getImplClass(ClassLoader cl, Parameter param){
 		Class _class = null;
+        
+        // TODO: What should be done if the supplied ClassLoader is null?
 		try{
-			String className = ((String) asp.getValue()).trim();
-			_class = Class.forName(className, true, as.getClassLoader());
+			String className = ((String) param.getValue()).trim();
 			
+            if (log.isDebugEnabled()) {
+                log.debug("Attempting to load service impl class: " + className);
+            }
+            
+            _class = Class.forName(className, true, cl);
 		}catch(java.lang.ClassNotFoundException cnf ){
-			cnf.printStackTrace();
+			throw ExceptionFactory.makeWebServiceException("Unable to load service implementation class.");
 		}
 		
 		return _class;
 	}
 	
-    /**
-     * 
-     * @param _class
-     * @return
-     * @throws Exception
-     */
-    private Class<?> getClassType(Class _class)throws Exception{
-
-    	Class classType = null;
-    	
-    	Type[] giTypes = _class.getGenericInterfaces();
-    	for(Type giType : giTypes){
-    		ParameterizedType paramType = null;
-    		try{
-    			paramType = (ParameterizedType)giType;
-    		}catch(ClassCastException e){
-    			throw new Exception("Provider based SEI Class has to implement javax.xml.ws.Provider as javax.xml.ws.Provider<String>, javax.xml.ws.Provider<SOAPMessage>, javax.xml.ws.Provider<Source> or javax.xml.ws.Provider<JAXBContext>");
-    		}
-    		Class interfaceName = (Class)paramType.getRawType();
-    		System.out.println(">> Intereface name is [" + interfaceName.getName() + "]");
-    		
-    		if(interfaceName == javax.xml.ws.Provider.class){
-    			if(paramType.getActualTypeArguments().length > 1){
-    				throw new Exception("Provider cannot have more than one Generic Types defined as Per JAX-WS Specification");
-    			}
-    			classType = (Class)paramType.getActualTypeArguments()[0];
-    		}
-    	}
-        return classType;
-    }
-
 }

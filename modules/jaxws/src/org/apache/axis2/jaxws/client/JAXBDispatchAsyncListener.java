@@ -19,15 +19,12 @@ package org.apache.axis2.jaxws.client;
 import javax.xml.bind.JAXBContext;
 import javax.xml.ws.Service.Mode;
 
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
-import org.apache.axis2.jaxws.param.JAXBParameter;
-import org.apache.axis2.jaxws.param.ParameterUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**

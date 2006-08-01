@@ -5,7 +5,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Block;
@@ -13,9 +12,6 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
-import org.apache.axis2.jaxws.param.Parameter;
-import org.apache.axis2.jaxws.param.ParameterFactory;
-import org.apache.axis2.jaxws.param.ParameterUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
