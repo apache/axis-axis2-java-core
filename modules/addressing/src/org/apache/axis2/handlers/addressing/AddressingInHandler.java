@@ -27,6 +27,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.AddressingHelper.FinalFaults;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.Utils;
@@ -154,7 +155,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         // This means that if for example there are multiple MessageIDs and a FaultTo, the FaultTo will be respected.
         if(!duplicateHeaderNames.isEmpty()){
         	// Simply choose the first problem header we came across as we can only fault for one of them.
-        	throwFault(messageContext,(String)duplicateHeaderNames.get(0),Final.FAULT_INVALID_HEADER, Final.FAULT_INVALID_CARDINALITY);
+            FinalFaults.triggerInvalidCardinalityFault(messageContext, (String)duplicateHeaderNames.get(0));
         }
         
         // check for the presence of madatory addressing headers
@@ -181,25 +182,6 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     		checkedHeaderNames.add(addressingHeaderName);
     	}
     	return shouldIgnore;
-    }
-
-    protected void throwFault(MessageContext messageContext, String addressingHeaderName, String faultCode, String faultSubCode) throws AxisFault {
-        Map faultInformation = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
-        if (faultInformation == null) {
-            faultInformation = new HashMap();
-            messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
-        }
-
-        if(messageContext.getMessageID() != null) {
-            faultInformation.put(AddressingConstants.WSA_RELATES_TO,messageContext.getMessageID());
-        }
-        
-        faultInformation.put(Final.FAULT_HEADER_PROB_HEADER_QNAME, WSA_DEFAULT_PREFIX + ":" + addressingHeaderName);
-        faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
-        if (!messageContext.isSOAP11()) {
-            Utils.setFaultCode(messageContext, faultCode, faultSubCode);
-        }
-        throw new AxisFault("A header representing a Message Addressing Property is not valid and the message cannot be processed", WSA_DEFAULT_PREFIX + ":" + faultCode);
     }
 
     protected abstract void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header, String namespace);
@@ -279,7 +261,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         
         if (soapAction != null && !"".equals(soapAction)) {
             if (!soapAction.equals(soapHeaderBlock.getText())) {
-                throwFault(messageContext, WSA_ACTION, Final.FAULT_INVALID_HEADER, null);
+                FinalFaults.triggerActionMismatchFault(messageContext);
             }
         }
         else {

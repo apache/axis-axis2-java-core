@@ -7,6 +7,7 @@ import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingHelper.FinalFaults;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
@@ -96,7 +97,7 @@ public class AddressingFinalInHandler extends AddressingInHandler {
     
     protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
         if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
-            throwFault(messageContext, WSA_ACTION, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null);
+            FinalFaults.triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
         } 
     }
     

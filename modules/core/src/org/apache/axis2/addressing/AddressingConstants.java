@@ -46,6 +46,7 @@ public interface AddressingConstants {
 
     // ====================== WSDL Binding Constants ========================
     public static final String USING_ADDRESSING = "UsingAddressing";
+    public static final String ANONYMOUS = "Anonymous";
     
     // ====================== Addressing Requirement Levels ==================
     // These are used to represent the requirement level on WS-Addressing indicated
@@ -97,10 +98,17 @@ public interface AddressingConstants {
         public static final String FAULT_HEADER_PROB_HEADER = "ProblemHeader";
         public static final String FAULT_HEADER_DETAIL = "FaultDetail";
         public static final String FAULT_INVALID_HEADER = "InvalidAddressingHeader";
+        public static final String FAULT_INVALID_HEADER_REASON = "A header representing a Message Addressing Property is not valid and the message cannot be processed";
         public static final String FAULT_ADDRESSING_HEADER_REQUIRED = "MessageAddressingHeaderRequired";
+        public static final String FAULT_ADDRESSING_HEADER_REQUIRED_REASON = "A required header representing a Message Addressing Property is not present";
         public static final String FAULT_INVALID_CARDINALITY = "InvalidCardinality";
+        public static final String FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED = "OnlyAnonymousAddressSupported";
+        public static final String FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED = "OnlyNonAnonymousAddressSupported";
+        public static final String FAULT_ACTION_NOT_SUPPORTED = "ActionNotSupported";
+        public static final String FAULT_ACTION_NOT_SUPPORTED_REASON = "The [action] cannot be processed at the receiver.";
 
         public static final QName WSAW_USING_ADDRESSING = new QName(WSAW_NAMESPACE,USING_ADDRESSING);
+        public static final QName WSAW_ANONYMOUS = new QName(WSAW_NAMESPACE,USING_ADDRESSING);
     }
 
 
