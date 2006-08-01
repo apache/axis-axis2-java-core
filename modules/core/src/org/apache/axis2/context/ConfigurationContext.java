@@ -333,7 +333,7 @@ public class ConfigurationContext extends AbstractContext {
                 if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
                         getServiceGroupContextTimoutInterval()) {
                     sgCtxtMapKeyIter.remove();
-                    cleanupServiceContextes(serviceGroupContext);
+                    cleanupServiceContexts(serviceGroupContext);
                 }
             }
         }
@@ -347,7 +347,7 @@ public class ConfigurationContext extends AbstractContext {
         this.listenerManager = listenerManager;
     }
 
-    private void cleanupServiceContextes(ServiceGroupContext serviceGroupContext) {
+    private void cleanupServiceContexts(ServiceGroupContext serviceGroupContext) {
         Iterator serviceContecxtes = serviceGroupContext.getServiceContexts();
         while (serviceContecxtes.hasNext()) {
             ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
@@ -365,14 +365,14 @@ public class ConfigurationContext extends AbstractContext {
             while (applicationScopeSgs.hasNext()) {
                 ServiceGroupContext serviceGroupContext =
                         (ServiceGroupContext) applicationScopeSgs.next();
-                cleanupServiceContextes(serviceGroupContext);
+                cleanupServiceContexts(serviceGroupContext);
             }
         }
         if (serviceGroupContextMap.size() > 0) {
             Iterator sopaSessionSgs = serviceGroupContextMap.values().iterator();
             while (sopaSessionSgs.hasNext()) {
                 ServiceGroupContext serviceGroupContext = (ServiceGroupContext) sopaSessionSgs.next();
-                cleanupServiceContextes(serviceGroupContext);
+                cleanupServiceContexts(serviceGroupContext);
             }
         }
     }

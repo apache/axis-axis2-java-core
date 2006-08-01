@@ -22,6 +22,7 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.MultiParentClassLoader;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -31,11 +32,29 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 
 import java.lang.reflect.Method;
+import java.net.URL;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SERVICE_CLASS = "ServiceClass";
     public static final String SERVICE_OBJECT_SUPPLIER = "ServiceObjectSupplier";
     public static final String SCOPE = "scope";
+
+    protected void saveTCCL(MessageContext msgContext) {
+        if (msgContext.getAxisService() != null &&
+                msgContext.getAxisService().getClassLoader() != null) {
+            Thread.currentThread().setContextClassLoader(new MultiParentClassLoader(new URL[]{}, new ClassLoader[]{
+                    msgContext.getAxisService().getClassLoader(),
+                    Thread.currentThread().getContextClassLoader(),
+            }));
+        }
+    }
+
+    protected void restoreTCCL() {
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        if (tccl != null && tccl instanceof MultiParentClassLoader) {
+            Thread.currentThread().setContextClassLoader(((MultiParentClassLoader) tccl).getParents()[1]);
+        }
+    }
 
     /**
      * Method makeNewServiceObject.

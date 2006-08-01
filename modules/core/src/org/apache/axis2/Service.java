@@ -40,4 +40,10 @@ public interface Service {
      * @param operationContext
      */
     public void setOperationContext(OperationContext operationContext);
+
+    /**
+     * This method is called when the service is destroyed.
+     * @param sc
+     */
+    public void destroy(ServiceContext sc);
 }

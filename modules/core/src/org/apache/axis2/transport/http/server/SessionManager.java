@@ -81,14 +81,14 @@ public class SessionManager {
                 if (serviceGroupContext != null) {
                     while (serviceGroupContext.hasNext()) {
                         ServiceGroupContext groupContext = (ServiceGroupContext) serviceGroupContext.next();
-                        cleanupServiceContextes(groupContext);
+                        cleanupServiceContexts(groupContext);
                     }
                 }
             }
         }
     }
 
-    private void cleanupServiceContextes(final ServiceGroupContext serviceGroupContext) {
+    private void cleanupServiceContexts(final ServiceGroupContext serviceGroupContext) {
         for (Iterator it = serviceGroupContext.getServiceContexts(); it.hasNext(); ) {
             ServiceContext serviceContext = (ServiceContext) it.next();
             try {
