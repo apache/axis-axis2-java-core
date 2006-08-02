@@ -27,6 +27,7 @@ import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
+import org.apache.axis2.jaxws.i18n.JaxwsMessageBundleTests;
 import org.apache.axis2.jaxws.message.BlockTests;
 import org.apache.axis2.jaxws.message.MessageTests;
 import org.apache.axis2.jaxws.message.SAAJConverterTests;
@@ -56,6 +57,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(WSDLDescriptionTests.class);
         
         suite.addTestSuite(HandlerChainProcessorTests.class);
+        suite.addTestSuite(JaxwsMessageBundleTests.class);
         
         suite.addTestSuite(StringProviderTests.class);
         suite.addTestSuite(SourceProviderTests.class);

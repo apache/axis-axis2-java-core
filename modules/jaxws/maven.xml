@@ -292,5 +292,16 @@
             </ant:sourcepath>
         </ant:javadoc>
     </goal>
+	
+	    <postGoal name="java:jar-resources">
+	      <tstamp>
+	        <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
+	      </tstamp>
+	      <replace dir="${maven.build.dest}/org/apache/axis2/jaxws/i18n">
+	        <include name="resource*.properties"/>
+	        <replacefilter token="#today#" value="${build.time}"/>
+	        <replacefilter token="#axisVersion#" value="${pom.currentVersion}"/>
+	      </replace> 
+	    </postGoal>
 
 </project>
