@@ -119,7 +119,13 @@ public class PWCallback implements CallbackHandler {
                         return;
 
                 	}
+                    
+                    if(pc.getIdentifer().equals("joe") && pc.getPassword().equals("eoj")) {
 
+                        return;
+
+                    }
+                    
                     if (pc.getPassword().equals("sirhC")) {
 
                         return;
@@ -159,6 +165,10 @@ public class PWCallback implements CallbackHandler {
                 } else if(pc.getIdentifer().equals("Ron")) {
 
                     pc.setPassword("noR");
+
+                } else if(pc.getIdentifer().equals("joe")) {
+
+                    pc.setPassword("eoj");
 
                 } else if(pc.getIdentifer().equals("ip")) {
                     

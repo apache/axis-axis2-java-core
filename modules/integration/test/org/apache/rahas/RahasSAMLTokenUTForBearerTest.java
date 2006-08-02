@@ -17,7 +17,6 @@
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.security.sc.PWCallback;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.opensaml.XML;
@@ -58,8 +57,8 @@ public class RahasSAMLTokenUTForBearerTest extends TestClient {
     public OutflowConfiguration getClientOutflowConfiguration() {
         OutflowConfiguration ofc = new OutflowConfiguration();
 
-        ofc.setActionItems("Timestamp UsernameToken");
-        ofc.setUser("Ron");
+        ofc.setActionItems("UsernameToken Timestamp");
+        ofc.setUser("joe");
         ofc.setPasswordCallbackClass(PWCallback.class.getName());
         return ofc;
     }

@@ -31,7 +31,7 @@
 	
 	<parameter name="InflowSecurity">
       <action>
-        <items>Timestamp UsernameToken</items>
+        <items>UsernameToken Timestamp</items>
 		<passwordCallbackClass xmlns="">org.apache.rahas.PWCallback</passwordCallbackClass>
       </action>
     </parameter>

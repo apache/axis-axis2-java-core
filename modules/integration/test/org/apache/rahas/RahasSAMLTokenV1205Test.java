@@ -59,7 +59,7 @@ public class RahasSAMLTokenV1205Test extends TestClient {
     public OutflowConfiguration getClientOutflowConfiguration() {
         OutflowConfiguration ofc = new OutflowConfiguration();
 
-        ofc.setActionItems("Timestamp Signature");
+        ofc.setActionItems("Signature Encrypt Timestamp");
         ofc.setUser("alice");
         ofc.setSignaturePropFile("rahas-sec.properties");
         ofc.setPasswordCallbackClass(PWCallback.class.getName());
@@ -69,7 +69,7 @@ public class RahasSAMLTokenV1205Test extends TestClient {
     public InflowConfiguration getClientInflowConfiguration() {
         InflowConfiguration ifc = new InflowConfiguration();
 
-        ifc.setActionItems("Timestamp Signature");
+        ifc.setActionItems("Signature Encrypt Timestamp");
         ifc.setPasswordCallbackClass(PWCallback.class.getName());
         ifc.setSignaturePropFile("rahas-sec.properties");
         

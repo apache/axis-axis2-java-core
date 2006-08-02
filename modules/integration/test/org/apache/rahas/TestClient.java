@@ -62,6 +62,7 @@ public abstract class TestClient extends TestCase {
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             Options options = new Options();
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
+//            options.setTo(new EndpointReference("http://127.0.0.1:" + 9090 + "/axis2/services/UTSAMLHoK"));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setAction(this.getRequestAction());
             

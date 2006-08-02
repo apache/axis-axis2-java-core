@@ -56,8 +56,8 @@ public class RahasSAMLTokenUTForBearerV1205Test extends TestClient {
     public OutflowConfiguration getClientOutflowConfiguration() {
         OutflowConfiguration ofc = new OutflowConfiguration();
 
-        ofc.setActionItems("Timestamp UsernameToken");
-        ofc.setUser("Ron");
+        ofc.setActionItems("UsernameToken Timestamp");
+        ofc.setUser("joe");
         ofc.setPasswordCallbackClass(PWCallback.class.getName());
         return ofc;
     }

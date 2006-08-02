@@ -31,15 +31,19 @@
 	
 	<parameter name="InflowSecurity">
       <action>
-        <items>Timestamp Signature</items>
+        <items>Signature Encrypt Timestamp</items>
         <signaturePropFile>issuer.properties</signaturePropFile>
+		<decryptionPropFile>issuer.properties</decryptionPropFile>
+		<passwordCallbackClass xmlns="">org.apache.rahas.PWCallback</passwordCallbackClass>
       </action>
     </parameter>
 
     <parameter name="OutflowSecurity">
       <action>
-        <items>Timestamp Signature</items>
+        <items>Signature Encrypt Timestamp</items>
         <user>ip</user>
+		<encryptionUser>useReqSigCert</encryptionUser>
+		<signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
         <signaturePropFile xmlns="">issuer.properties</signaturePropFile>
 	    <passwordCallbackClass xmlns="">org.apache.rahas.PWCallback</passwordCallbackClass>
       </action>
