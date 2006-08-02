@@ -22,7 +22,12 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.MessageReceiver;
@@ -38,16 +43,14 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collection;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
 
     protected static final Log log = LogFactory.getLog(AxisConfigBuilder.class);
-
-    private List moduleList = new ArrayList();
 
     public AxisConfigBuilder(InputStream serviceInputStream,
                              AxisConfiguration axisConfiguration) {
@@ -81,7 +84,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             Iterator moduleitr =
                     config_element.getChildrenWithName(new QName(DeploymentConstants.TAG_MODULE));
 
-            processModuleRefs(moduleitr);
+            processModuleRefs(moduleitr, axisConfig);
 
             // Proccessing Transport Senders
             Iterator trs_senders = config_element.getChildrenWithName(new QName(TAG_TRANSPORT_SENDER));
@@ -160,13 +163,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     /**
      * Update the list of modules that is required to be engaged globally.
      */
-    protected void processModuleRefs(Iterator moduleRefs) {
+    protected void processModuleRefs(Iterator moduleRefs, AxisConfiguration config) {
+        List globalModules = config.getGlobalModules();
         while (moduleRefs.hasNext()) {
             OMElement moduleref = (OMElement) moduleRefs.next();
             OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
             String refName = moduleRefAttribute.getAttributeValue();
 
-            moduleList.add(new QName(refName));
+            globalModules.add(new QName(refName));
         }
     }
 
@@ -394,12 +398,5 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
         Class phaseClass = axisConfig.getSystemClassLoader().loadClass(className);
         return (Phase) phaseClass.newInstance();
-    }
-
-    /**
-     * Gets the list of modules that is required to be engaged globally.
-     */
-    protected Collection getGlobalModules() {
-        return moduleList;
     }
 }

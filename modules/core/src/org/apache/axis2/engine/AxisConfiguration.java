@@ -65,6 +65,11 @@ public class AxisConfiguration extends AxisDescription {
     private HashMap allservices = new HashMap();
 
     /**
+     * Stores the module specified in the server.xml at the document parsing time.
+     */
+    private List globalModuleList;
+
+    /**
      * Field engagedModules
      */
     private final List engagedModules;
@@ -108,6 +113,7 @@ public class AxisConfiguration extends AxisDescription {
     public AxisConfiguration() {
         moduleConfigmap = new HashMap();
         engagedModules = new ArrayList();
+        globalModuleList = new ArrayList();
         messageReceivers = new HashMap();
         outPhases = new ArrayList();
         inFaultPhases = new ArrayList();
@@ -482,6 +488,10 @@ public class AxisConfiguration extends AxisDescription {
         return engagedModules;
     }
 
+    public List getGlobalModules() {
+        return globalModuleList;
+    }
+    
     public Hashtable getFaultyModules() {
         return faultyModules;
     }

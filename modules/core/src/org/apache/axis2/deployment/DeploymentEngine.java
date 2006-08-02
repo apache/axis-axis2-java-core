@@ -64,11 +64,6 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     private List wsToUnDeploy = new ArrayList();
 
-    /**
-     * Stores the module specified in the server.xml at the document parsing time.
-     */
-    private List moduleList = new ArrayList();
-
     //to keep the web resource location if any
     private String webLocationString = null;
 
@@ -308,16 +303,6 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         }
         return axisConfig.getMessageReceiver(mepURL);
-    }
-
-    /**
-     * Adds module references to the list while parsing the axis2.xml file.
-     * time none of module availble (they load after parsing the document)
-     *
-     * @param moduleName <code>QName</code>
-     */
-    public void addModule(QName moduleName) {
-        moduleList.add(moduleName);
     }
 
     private void addNewModule(AxisModule modulemetadata) throws AxisFault {
@@ -738,7 +723,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * Checks if the modules, referred by server.xml, exist or that they are deployed.
      */
     public void engageModules() throws AxisFault {
-        for (Iterator iterator = moduleList.iterator(); iterator.hasNext();) {
+        for (Iterator iterator = axisConfig.getGlobalModules().iterator(); iterator.hasNext();) {
             QName name = (QName) iterator.next();
             axisConfig.engageModule(name);
         }
@@ -766,7 +751,6 @@ public class DeploymentEngine implements DeploymentConstants {
     public AxisConfiguration populateAxisConfiguration(InputStream in) throws DeploymentException {
         axisConfig = new AxisConfiguration();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig);
-        moduleList.addAll(builder.getGlobalModules());
         builder.populateConfig();
         try {
             if (in != null) {
@@ -1000,9 +984,5 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void setWebLocationString(String webLocationString) {
         this.webLocationString = webLocationString;
-    }
-
-    public List getModuleList() {
-        return moduleList;
     }
 }
