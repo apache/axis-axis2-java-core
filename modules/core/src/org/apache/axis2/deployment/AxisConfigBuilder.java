@@ -40,17 +40,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Collection;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
 
     protected static final Log log = LogFactory.getLog(AxisConfigBuilder.class);
 
-    private DeploymentEngine engine;
+    private List moduleList = new ArrayList();
 
-    public AxisConfigBuilder(InputStream serviceInputStream, DeploymentEngine engine,
+    public AxisConfigBuilder(InputStream serviceInputStream,
                              AxisConfiguration axisConfiguration) {
         super(serviceInputStream, axisConfiguration);
-        this.engine = engine;
     }
 
     public void populateConfig() throws DeploymentException {
@@ -157,9 +158,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     }
 
     /**
-     * Gets the list of modules that is required to be engaged globally.
-     *
-     * @param moduleRefs <code>java.util.Iterator</code>
+     * Update the list of modules that is required to be engaged globally.
      */
     protected void processModuleRefs(Iterator moduleRefs) {
         while (moduleRefs.hasNext()) {
@@ -167,7 +166,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
             String refName = moduleRefAttribute.getAttributeValue();
 
-            engine.addModule(new QName(refName));
+            moduleList.add(new QName(refName));
         }
     }
 
@@ -395,5 +394,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
         Class phaseClass = axisConfig.getSystemClassLoader().loadClass(className);
         return (Phase) phaseClass.newInstance();
+    }
+
+    /**
+     * Gets the list of modules that is required to be engaged globally.
+     */
+    protected Collection getGlobalModules() {
+        return moduleList;
     }
 }

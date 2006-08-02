@@ -765,7 +765,8 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public AxisConfiguration populateAxisConfiguration(InputStream in) throws DeploymentException {
         axisConfig = new AxisConfiguration();
-        AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
+        AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig);
+        moduleList.addAll(builder.getGlobalModules());
         builder.populateConfig();
         try {
             if (in != null) {
