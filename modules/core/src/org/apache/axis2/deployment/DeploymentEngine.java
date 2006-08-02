@@ -63,7 +63,6 @@ public class DeploymentEngine implements DeploymentConstants {
      * Stores all the web Services to undeploy.
      */
     private List wsToUnDeploy = new ArrayList();
-    private PhasesInfo phasesinfo = new PhasesInfo();    // to store phases list in axis2.xml
 
     /**
      * Stores the module specified in the server.xml at the document parsing time.
@@ -514,7 +513,6 @@ public class DeploymentEngine implements DeploymentConstants {
             throws DeploymentException {
         AxisModule axismodule;
         try {
-            this.setPhasesinfo(config.getPhasesInfo());
             currentArchiveFile = new ArchiveFileData(modulearchive, TYPE_MODULE, false);
             axismodule = new AxisModule();
             ArchiveReader archiveReader = new ArchiveReader();
@@ -612,7 +610,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         Iterator operations = service.getOperations();
                                         while (operations.hasNext()) {
                                             AxisOperation axisOperation = (AxisOperation) operations.next();
-                                            phasesinfo.setOperationPhases(axisOperation);
+                                            axisConfig.getPhasesInfo().setOperationPhases(axisOperation);
                                         }
                                     }
                                 }
@@ -769,7 +767,6 @@ public class DeploymentEngine implements DeploymentConstants {
         axisConfig = new AxisConfiguration();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, this, axisConfig);
         builder.populateConfig();
-        axisConfig.setPhasesinfo(phasesinfo);
         try {
             if (in != null) {
                 in.close();
@@ -816,10 +813,11 @@ public class DeploymentEngine implements DeploymentConstants {
      * @throws DeploymentException
      */
     private void validateSystemPredefinedPhases() throws DeploymentException {
-        axisConfig.setInPhasesUptoAndIncludingPostDispatch(phasesinfo.getGlobalInflow());
-        axisConfig.setInFaultPhases(phasesinfo.getGlobalInFaultPhases());
-        axisConfig.setGlobalOutPhase(phasesinfo.getGlobalOutPhaseList());
-        axisConfig.setOutFaultPhases(phasesinfo.getOUT_FaultPhases());
+        PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
+        axisConfig.setInPhasesUptoAndIncludingPostDispatch(phasesInfo.getGlobalInflow());
+        axisConfig.setInFaultPhases(phasesInfo.getGlobalInFaultPhases());
+        axisConfig.setGlobalOutPhase(phasesInfo.getGlobalOutPhaseList());
+        axisConfig.setOutFaultPhases(phasesInfo.getOUT_FaultPhases());
     }
 
     /**
@@ -858,10 +856,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public AxisModule getModule(QName moduleName) throws AxisFault {
         return axisConfig.getModule(moduleName);
-    }
-
-    public PhasesInfo getPhasesinfo() {
-        return phasesinfo;
     }
 
     public boolean isHotUpdate() {
@@ -949,10 +943,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 antiJARLocking = true;
             }
         }
-    }
-
-    public void setPhasesinfo(PhasesInfo phasesinfo) {
-        this.phasesinfo = phasesinfo;
     }
 
     /**

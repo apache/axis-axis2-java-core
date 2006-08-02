@@ -695,7 +695,7 @@ public class AxisConfiguration extends AxisDescription {
         outFaultPhases = list;
     }
 
-    public void setPhasesinfo(PhasesInfo phasesInfo) {
+    public void setPhasesInfo(PhasesInfo phasesInfo) {
         this.phasesinfo = phasesInfo;
     }
 

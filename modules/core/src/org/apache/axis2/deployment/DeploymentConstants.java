@@ -33,6 +33,7 @@ public interface DeploymentConstants {
     int TYPE_DEFAULT= -1;                // is it a service
     int TYPE_MODULE = 1;                // is it a module
 
+    String TAG_AXISCONFIG = "axisconfig";
     String TAG_PHASE_ORDER = "phaseOrder";
     String TAG_PHASE = "phase";
     String TAG_PARAMETER = "parameter";

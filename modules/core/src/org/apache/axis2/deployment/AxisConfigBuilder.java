@@ -57,6 +57,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         try {
             OMElement config_element = buildOM();
 
+            if(!TAG_AXISCONFIG.equals(config_element.getLocalName())) {
+                throw new DeploymentException(Messages.getMessage("badelementfound",TAG_AXISCONFIG,config_element.getLocalName()));
+            }
             // processing Parameters
             // Processing service level parameters
             Iterator itr = config_element.getChildrenWithName(new QName(TAG_PARAMETER));
@@ -257,7 +260,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
      * @param phaserders
      */
     private void processPhaseOrders(Iterator phaserders) throws DeploymentException {
-        PhasesInfo info = engine.getPhasesinfo();
+        PhasesInfo info = axisConfig.getPhasesInfo();
 
         while (phaserders.hasNext()) {
             OMElement phaseOrders = (OMElement) phaserders.next();
