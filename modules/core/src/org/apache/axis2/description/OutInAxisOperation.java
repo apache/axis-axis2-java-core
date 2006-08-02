@@ -274,6 +274,10 @@ class OutInAxisOperationClient implements OperationClient {
             AxisEngine engine = new AxisEngine(cc);
             mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
             engine.send(mc);
+            
+            // Options object reused so soapAction needs to be removed so
+            // that soapAction+wsa:Action on response don't conflict
+            options.setAction("");
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
@@ -354,6 +358,10 @@ class OutInAxisOperationClient implements OperationClient {
         responseMessageContext.setTransportIn(msgctx.getTransportIn());
         responseMessageContext.setTransportOut(msgctx.getTransportOut());
 
+        // Options object reused above so soapAction needs to be removed so
+        // that soapAction+wsa:Action on response don't conflict
+        responseMessageContext.setSoapAction("");
+        
         if (responseMessageContext.getEnvelope() == null) {
             // If request is REST we assume the responseMessageContext is REST, so
             // set the variable

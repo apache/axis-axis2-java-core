@@ -17,6 +17,14 @@
 
 package org.apache.axis2.engine;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -35,9 +43,9 @@ import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -50,14 +58,6 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()
@@ -131,30 +131,6 @@ public class AxisEngine {
                             "mustunderstandfailed",
                             prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
                 }
-            }
-        }
-    }
-
-    /*
-     * Check that if the wsaddressing="required" attribute exists on the service
-     * definition or <wsaw:UsingAddressing wsdl:required="true" /> was found in the
-     * WSDL that WS-Addressing headers were found on the inbound message
-     */
-    private void checkUsingAddressing(MessageContext msgContext)
-            throws AxisFault {
-        String addressingFlag = msgContext.getAxisService().getWSAddressingFlag();
-        if (log.isTraceEnabled())
-            log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
-        if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
-            Object flag = msgContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-            if (log.isTraceEnabled())
-                log.trace("checkUsingAddressing: WS_ADDRESSING_VERSION=" + flag);
-            if (flag == null) {
-                String message = Messages.getMessage("wsaddressingrequirednotpresent");
-                AxisFault af = new AxisFault(message);
-                af.printStackTrace();
-                log.debug(message, af);
-                throw af;
             }
         }
     }
@@ -511,8 +487,6 @@ public class AxisEngine {
             // invoke the Message Receivers
             checkMustUnderstand(msgContext);
 
-            checkUsingAddressing(msgContext);
-
             MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
 
             receiver.receive(msgContext);
@@ -606,8 +580,6 @@ public class AxisEngine {
 
             // invoke the Message Receivers
             checkMustUnderstand(msgContext);
-
-            checkUsingAddressing(msgContext);
 
             MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
 

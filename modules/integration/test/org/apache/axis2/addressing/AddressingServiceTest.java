@@ -229,7 +229,7 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
                 fail("Should have received a specific fault");
             }catch(AxisFault af){
                 af.printStackTrace();
-                assertEquals("WS-Addressing required but not found.", af.getMessage());
+                assertEquals(Final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON, af.getMessage());
             }
         }finally {
             if (sender != null)
