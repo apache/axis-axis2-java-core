@@ -55,8 +55,13 @@ import org.apache.axis2.jaxws.handler.PortInfoImpl;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
+/**
+ * The ServiceDelegate serves as the backing implementation for all of the 
+ * methods in the {@link javax.xml.ws.Service} API.  This is the plug 
+ * point for the client implementation. 
+ */
 public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
-	private Executor executor;
+    private Executor executor;
     private Map<QName, org.apache.axis2.jaxws.handler.PortData> ports;
 
     private ServiceDescription serviceDescription;
