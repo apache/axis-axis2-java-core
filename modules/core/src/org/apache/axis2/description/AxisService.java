@@ -344,7 +344,27 @@ public class AxisService extends AxisDescription {
             axisOperation.setSoapAction("urn:" + axisOperation.getName().getLocalPart());
         }
         addChild(axisOperation);
-        operationsAliasesMap.put(axisOperation.getName().getLocalPart(), axisOperation);
+
+        String operationName = axisOperation.getName().getLocalPart();
+
+        /*
+           Some times name of the operation can be different from the name of the first child of the SOAPBody.
+           This will put the correct mapping associating that name with  the operation. This will be useful especially for
+           the SOAPBodyBasedDispatcher
+         */
+
+        Iterator axisMessageIter = axisOperation.getChildren();
+        AxisMessage axisMessage;
+
+        while (axisMessageIter.hasNext()) {
+            axisMessage = (AxisMessage) axisMessageIter.next();
+            String messageName = axisMessage.getName();
+            if (messageName != null && !messageName.equals(operationName)) {
+                operationsAliasesMap.put(messageName, axisOperation);
+            }
+        }
+
+        operationsAliasesMap.put(operationName, axisOperation);
         String action = axisOperation.getSoapAction();
         if (action.length() > 0) {
             operationsAliasesMap.put(action, axisOperation);
@@ -760,6 +780,7 @@ public class AxisService extends AxisDescription {
 
         return axisOperation;
     }
+
 
     /**
      * Returns the AxisOperation which has been mapped to the given action.
