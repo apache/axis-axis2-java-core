@@ -483,94 +483,6 @@ public class DeploymentEngine implements DeploymentConstants {
         wsToUnDeploy.add(file);
     }
 
-    /**
-     * Builds ModuleDescription for a given module archive file. This does not
-     * called the init method since there is no refernce to configuration context
-     * so who ever create module usieng this has to called module.init if it is
-     * required
-     *
-     * @param modulearchive : Actual module archive file
-     * @param config        : AxisConfiguration : for get classs loders etc..
-     * @return
-     * @throws DeploymentException
-     */
-    public AxisModule buildModule(File modulearchive, AxisConfiguration config)
-            throws DeploymentException {
-        AxisModule axismodule;
-        try {
-            currentArchiveFile = new ArchiveFileData(modulearchive, TYPE_MODULE, false);
-            axismodule = new AxisModule();
-            ArchiveReader archiveReader = new ArchiveReader();
-
-            currentArchiveFile.setClassLoader(false, config.getModuleClassLoader());
-            axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());
-            archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(), this, axismodule,
-                    false, config);
-            ClassLoader moduleClassLoader = axismodule.getModuleClassLoader();
-            Flow inflow = axismodule.getInFlow();
-
-            if (inflow != null) {
-                Utils.addFlowHandlers(inflow, moduleClassLoader);
-            }
-
-            Flow outFlow = axismodule.getOutFlow();
-
-            if (outFlow != null) {
-                Utils.addFlowHandlers(outFlow, moduleClassLoader);
-            }
-
-            Flow faultInFlow = axismodule.getFaultInFlow();
-
-            if (faultInFlow != null) {
-                Utils.addFlowHandlers(faultInFlow, moduleClassLoader);
-            }
-
-            Flow faultOutFlow = axismodule.getFaultOutFlow();
-
-            if (faultOutFlow != null) {
-                Utils.addFlowHandlers(faultOutFlow, moduleClassLoader);
-            }
-        } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault);
-        }
-
-        currentArchiveFile = null;
-
-        return axismodule;
-    }
-
-    /**
-     * Fills an axisservice object using services.xml. First creates
-     * an axisservice object using WSDL and then fills it using the given services.xml.
-     * Loads all the required class and builds the chains, finally adds the
-     * servicecontext to EngineContext and axisservice into EngineConfiguration.
-     *
-     * @param axisService
-     * @param serviceInputStream
-     * @param classLoader
-     * @return Returns AxisService.
-     * @throws DeploymentException
-     */
-    public AxisService buildService(AxisService axisService, InputStream serviceInputStream,
-                                    ClassLoader classLoader, AxisConfiguration axisConfig)
-            throws DeploymentException {
-        try {
-            currentArchiveFile = new ArchiveFileData(TYPE_SERVICE, "", antiJARLocking);
-            currentArchiveFile.setClassLoader(classLoader);
-
-            ServiceBuilder builder = new ServiceBuilder(serviceInputStream, axisConfig,
-                    axisService);
-
-            builder.populateService(builder.buildOM());
-        } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault);
-        } catch (XMLStreamException e) {
-            throw new DeploymentException(e);
-        }
-
-        return axisService;
-    }
-
     public void doDeploy() {
         if (wsToDeploy.size() > 0) {
             for (int i = 0; i < wsToDeploy.size(); i++) {
@@ -668,8 +580,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 AxisModule metaData = new AxisModule();
                                 metaData.setModuleClassLoader(currentArchiveFile.getClassLoader());
                                 metaData.setParent(axisConfig);
-                                archiveReader.readModuleArchive(currentArchiveFile.getAbsolutePath(),
-                                        this, metaData, explodedDir,
+                                archiveReader.readModuleArchive(currentArchiveFile, metaData, explodedDir,
                                         axisConfig);
                                 metaData.setFileName(currentArchiveFile.getFile().toURL());
                                 addNewModule(metaData);

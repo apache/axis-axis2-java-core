@@ -7,6 +7,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.*;
@@ -21,6 +23,7 @@ import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -394,5 +397,91 @@ public class Utils {
         } catch (IOException e) {
             throw new AxisFault(e);
         }
+    }
+
+    /**
+     * Builds ModuleDescription for a given module archive file. This does not
+     * called the init method since there is no refernce to configuration context
+     * so who ever create module usieng this has to called module.init if it is
+     * required
+     *
+     * @param modulearchive : Actual module archive file
+     * @param config        : AxisConfiguration : for get classs loders etc..
+     * @return
+     * @throws org.apache.axis2.deployment.DeploymentException
+     */
+    public static AxisModule buildModule(File modulearchive, DeploymentEngine engine, AxisConfiguration config)
+            throws DeploymentException {
+        AxisModule axismodule;
+        try {
+            ArchiveFileData currentArchiveFile = new ArchiveFileData(modulearchive, DeploymentConstants.TYPE_MODULE, false);
+            axismodule = new AxisModule();
+            ArchiveReader archiveReader = new ArchiveReader();
+
+            currentArchiveFile.setClassLoader(false, config.getModuleClassLoader());
+            axismodule.setModuleClassLoader(currentArchiveFile.getClassLoader());
+            archiveReader.readModuleArchive(currentArchiveFile, axismodule,
+                    false, config);
+            ClassLoader moduleClassLoader = axismodule.getModuleClassLoader();
+            Flow inflow = axismodule.getInFlow();
+
+            if (inflow != null) {
+                Utils.addFlowHandlers(inflow, moduleClassLoader);
+            }
+
+            Flow outFlow = axismodule.getOutFlow();
+
+            if (outFlow != null) {
+                Utils.addFlowHandlers(outFlow, moduleClassLoader);
+            }
+
+            Flow faultInFlow = axismodule.getFaultInFlow();
+
+            if (faultInFlow != null) {
+                Utils.addFlowHandlers(faultInFlow, moduleClassLoader);
+            }
+
+            Flow faultOutFlow = axismodule.getFaultOutFlow();
+
+            if (faultOutFlow != null) {
+                Utils.addFlowHandlers(faultOutFlow, moduleClassLoader);
+            }
+        } catch (AxisFault axisFault) {
+            throw new DeploymentException(axisFault);
+        }
+        return axismodule;
+    }
+
+    /**
+     * Fills an axisservice object using services.xml. First creates
+     * an axisservice object using WSDL and then fills it using the given services.xml.
+     * Loads all the required class and builds the chains, finally adds the
+     * servicecontext to EngineContext and axisservice into EngineConfiguration.
+     *
+     * @param axisService
+     * @param serviceInputStream
+     * @param classLoader
+     * @return Returns AxisService.
+     * @throws DeploymentException
+     */
+    public AxisService buildService(AxisService axisService, InputStream serviceInputStream,
+                                    ClassLoader classLoader, AxisConfiguration axisConfig,
+                                    boolean antiJARLocking)
+            throws DeploymentException {
+        try {
+            ArchiveFileData currentArchiveFile = new ArchiveFileData(DeploymentConstants.TYPE_SERVICE, "", antiJARLocking);
+            currentArchiveFile.setClassLoader(classLoader);
+
+            ServiceBuilder builder = new ServiceBuilder(serviceInputStream, axisConfig,
+                    axisService);
+
+            builder.populateService(builder.buildOM());
+        } catch (AxisFault axisFault) {
+            throw new DeploymentException(axisFault);
+        } catch (XMLStreamException e) {
+            throw new DeploymentException(e);
+        }
+
+        return axisService;
     }
 }

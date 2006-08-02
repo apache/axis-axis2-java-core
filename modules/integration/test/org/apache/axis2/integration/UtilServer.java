@@ -24,11 +24,18 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.deployment.repository.util.ArchiveFileData;
+import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.Flow;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
@@ -184,7 +191,7 @@ public class UtilServer {
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(
                         "target/test-resources/integrationRepo", null);
-        AxisModule axisModule = deploymentEngine.buildModule(file,
+        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
 
@@ -217,7 +224,7 @@ public class UtilServer {
         ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem(
                 "target/test-resources/integrationRepo",
                 "target/test-resources/integrationRepo/conf/axis2.xml");
-        AxisModule axisModule = deploymentEngine.buildModule(file,
+        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
         return configContext;
@@ -238,7 +245,7 @@ public class UtilServer {
 
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome, null);
-        AxisModule axisModule = deploymentEngine.buildModule(file,
+        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
                 configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);

@@ -22,6 +22,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -138,7 +139,7 @@ public class UtilServer {
 
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
-        AxisModule axisModule = deploymentEngine.buildModule(file,
+        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
 
@@ -154,7 +155,7 @@ public class UtilServer {
         DeploymentEngine deploymentEngine = new DeploymentEngine();
 
         ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
-        AxisModule axisModule = deploymentEngine.buildModule(file,
+        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
         configContext.getAxisConfiguration().engageModule(new QName("addressing"));
@@ -169,7 +170,7 @@ public class UtilServer {
 
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome, null);
-        AxisModule axisModule = deploymentEngine.buildModule(file,
+        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
                 configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);
@@ -180,4 +181,5 @@ public class UtilServer {
         return new ServiceGroupContext(configContext, (AxisServiceGroup) service.getParent())
                 .getServiceContext(service);
     }
+
 }

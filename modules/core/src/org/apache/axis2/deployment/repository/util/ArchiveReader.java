@@ -22,7 +22,6 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.DeploymentErrorMsgs;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.DescriptionBuilder;
@@ -338,7 +337,7 @@ public class ArchiveReader implements DeploymentConstants {
         return servicesMap;
     }
 
-    public void readModuleArchive(String filename, DeploymentEngine engine,
+    public void readModuleArchive(ArchiveFileData archiveFile,
                                   AxisModule module, boolean explodedDir,
                                   AxisConfiguration axisConfig)
             throws DeploymentException {
@@ -348,7 +347,7 @@ public class ArchiveReader implements DeploymentConstants {
         if (!explodedDir) {
             ZipInputStream zin;
             try {
-                zin = new ZipInputStream(new FileInputStream(filename));
+                zin = new ZipInputStream(new FileInputStream(archiveFile.getAbsolutePath()));
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equalsIgnoreCase(MODULE_XML)) {
@@ -358,7 +357,7 @@ public class ArchiveReader implements DeploymentConstants {
                         module.setName(
                                 new QName(
                                         DescriptionBuilder.getShortFileName(
-                                                engine.getCurrentFileItem().getServiceName())));
+                                                archiveFile.getServiceName())));
                         builder.populateModule();
                         break;
                     }
@@ -367,15 +366,15 @@ public class ArchiveReader implements DeploymentConstants {
                 if (!foundmoduleXML) {
                     throw new DeploymentException(
                             Messages.getMessage(
-                                    DeploymentErrorMsgs.MODULE_XML_MISSING, filename));
+                                    DeploymentErrorMsgs.MODULE_XML_MISSING, archiveFile.getAbsolutePath()));
                 }
             } catch (Exception e) {
                 throw new DeploymentException(e);
             }
         } else {
-            File file = new File(filename, MODULE_XML);
+            File file = new File(archiveFile.getAbsolutePath(), MODULE_XML);
 
-            if (file.exists() || (file = new File(filename, MODULE_XML.toLowerCase())).exists()) {
+            if (file.exists() || (file = new File(archiveFile.getAbsolutePath(), MODULE_XML.toLowerCase())).exists()) {
                 InputStream in;
                 try {
                     in = new FileInputStream(file);
@@ -384,7 +383,7 @@ public class ArchiveReader implements DeploymentConstants {
                     module.setName(
                             new QName(
                                     DescriptionBuilder.getShortFileName(
-                                            engine.getCurrentFileItem().getServiceName())));
+                                            archiveFile.getServiceName())));
                     builder.populateModule();
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
@@ -393,7 +392,7 @@ public class ArchiveReader implements DeploymentConstants {
             } else {
                 throw new DeploymentException(
                         Messages.getMessage(
-                                DeploymentErrorMsgs.MODULE_XML_MISSING, filename));
+                                DeploymentErrorMsgs.MODULE_XML_MISSING, archiveFile.getAbsolutePath()));
             }
         }
     }
