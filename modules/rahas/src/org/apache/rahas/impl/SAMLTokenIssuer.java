@@ -392,10 +392,15 @@ public class SAMLTokenIssuer implements TokenIssuer {
         
         if(address != null && !"".equals(address)) {
             String alias = (String)config.trustedServices.get(address);;
-            return (X509Certificate)crypto.getCertificates(alias)[0];
+            if(alias != null) {
+                return (X509Certificate)crypto.getCertificates(alias)[0];
+            } else {
+                alias = (String)config.trustedServices.get("*");
+                return (X509Certificate)crypto.getCertificates(alias)[0];
+            }
         } else {
-            //Return the STS cert
-            return (X509Certificate)crypto.getCertificates(config.issuerKeyAlias)[0];
+            String alias = (String)config.trustedServices.get("*");
+            return (X509Certificate)crypto.getCertificates(alias)[0];
         }
         
     }

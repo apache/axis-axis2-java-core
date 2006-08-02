@@ -63,6 +63,8 @@ public abstract class TestClient extends TestCase {
             Options options = new Options();
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
 //            options.setTo(new EndpointReference("http://127.0.0.1:" + 9090 + "/axis2/services/UTSAMLHoK"));
+//            options.setTo(new EndpointReference("http://127.0.0.1:" + 9090 + "/axis2/services/MutualCertsSAMLHoK"));
+//            options.setTo(new EndpointReference("http://127.0.0.1:" + 9090 + "/axis2/services/UTSAMLBearer"));
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setAction(this.getRequestAction());
             
