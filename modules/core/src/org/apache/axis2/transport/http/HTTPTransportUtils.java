@@ -23,11 +23,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPProcessingException;
+import org.apache.axiom.soap.*;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
@@ -40,8 +36,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -104,7 +100,7 @@ public class HTTPTransportUtils {
         boolean enableMTOM = false;
 
         if (msgContext.getParameter(Constants.Configuration.ENABLE_MTOM) != null) {
-            enableMTOM = JavaUtils.isTrueExplicitly( 
+            enableMTOM = JavaUtils.isTrueExplicitly(
                     msgContext.getParameter(Constants.Configuration.ENABLE_MTOM).getValue());
         }
 
@@ -313,11 +309,7 @@ public class HTTPTransportUtils {
             return true;
         }
 
-        Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_REST);
-
-        if (parameter != null) {
-            enableREST = JavaUtils.isTrueExplicitly(parameter.getValue());
-        } else if (msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
+        if (msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
             enableREST = JavaUtils.isTrueExplicitly(
                     msgContext.getProperty(Constants.Configuration.ENABLE_REST));
         }
