@@ -11,6 +11,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -212,6 +213,48 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
         sender.setOptions(options);
         sender.engageModule(new QName("addressing"));
         
+        return sender;
+    }
+    
+    public void testUsingAddressingRequired() throws Exception{
+        echoService.setWSAddressingFlag("required");
+
+        OMElement method = createEchoOMElement("this message should cause a fault.");
+        ServiceClient sender = null;
+
+        try {
+            sender = createNoAddressingServiceClient();
+            try{
+                sender.sendReceive(operationName,method);
+                fail("Should have received a specific fault");
+            }catch(AxisFault af){
+                af.printStackTrace();
+                assertEquals("WS-Addressing required but not found.", af.getMessage());
+            }
+        }finally {
+            if (sender != null)
+                sender.finalizeInvoke();
+        }
+    }
+
+    private ServiceClient createNoAddressingServiceClient() throws AxisFault{
+        AxisService service =
+            Utils.createSimpleServiceforClient(serviceName,
+                    Echo.class.getName(),
+                    operationName);
+
+        ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
+        ServiceClient sender = null;
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setAction(operationName.getLocalPart());
+        options.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
+        options.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION, Boolean.TRUE);
+
+        sender = new ServiceClient(configcontext, service);
+        sender.setOptions(options);
+
         return sender;
     }
 }
