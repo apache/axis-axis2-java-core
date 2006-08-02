@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.core.controller;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -27,8 +29,10 @@ import javax.xml.ws.Response;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.BindingProvider;
@@ -72,10 +76,12 @@ public class AxisInvocationController implements InvocationController {
         // Check to make sure we at least have a valid InvocationContext
         // and request MessageContext
         if (ic == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot invoke; InvocationContext was null");
+            throw ExceptionFactory.makeWebServiceException("Cannot invoke; " +
+                    "InvocationContext was null");
         }
         if (ic.getRequestMessageContext() == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot invoke; request MessageContext was null");
+            throw ExceptionFactory.makeWebServiceException("Cannot invoke; " +
+                    "request MessageContext was null");
         }
         
         // Get the request MessageContext
@@ -93,10 +99,13 @@ public class AxisInvocationController implements InvocationController {
         ServiceClient svcClient = ic.getServiceClient();
         OperationClient opClient = createOperationClient(svcClient, operationName);
         
+        setupProperties(requestMsgCtx.getProperties(), opClient.getOptions());
+        
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
-            String targetUrl = (String) requestMsgCtx.getProperties().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+            String targetUrl = (String) requestMsgCtx.getProperties().get(
+                    BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
             EndpointReference toEPR = new EndpointReference(targetUrl);
             opClient.getOptions().setTo(toEPR);
             
@@ -190,6 +199,8 @@ public class AxisInvocationController implements InvocationController {
         ServiceClient svcClient = ic.getServiceClient();
         OperationClient opClient = createOperationClient(svcClient, ServiceClient.ANON_OUT_ONLY_OP);
         
+        setupProperties(requestMsgCtx.getProperties(), opClient.getOptions());
+        
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
@@ -254,6 +265,8 @@ public class AxisInvocationController implements InvocationController {
         
         ServiceClient svcClient = ic.getServiceClient();
         OperationClient opClient = createOperationClient(svcClient, ServiceClient.ANON_OUT_IN_OP);
+        
+        setupProperties(requestMsgCtx.getProperties(), opClient.getOptions());
         
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
@@ -428,6 +441,31 @@ public class AxisInvocationController implements InvocationController {
             return msg;
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
+    
+    /*
+     * TODO: This is a first pass at filtering the properties that are set on the 
+     * RequestContext.  Right now it's called during the invoke, but needs to be 
+     * moved over to when the property is set.  This should not be in the path
+     * of performance.
+     */
+    private void setupProperties(Map<String, Object> properties, Options ops) {
+        for (Iterator<String> it = properties.keySet().iterator(); it.hasNext(); ) {
+            String key = it.next();
+            Object value = properties.get(key);
+            
+            if (key.equals(Constants.QOS_WSRM_ENABLE)) {
+                key = "Sandesha2AppProcessingDone";
+                value = !(Boolean) value;
+                value = value.toString();
+            }
+            else if (key.equals(Constants.QOS_WSADDRESSING_ENABLE)) {
+                key = AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES;
+                value = !(Boolean) value;
+            }
+            
+            ops.setProperty(key, value);
         }
     }
 }

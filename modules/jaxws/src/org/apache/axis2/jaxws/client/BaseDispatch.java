@@ -25,6 +25,7 @@ import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.AxisController;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.core.InvocationContext;
@@ -32,11 +33,11 @@ import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
+import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.util.Constants;
-import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,10 +51,16 @@ public abstract class BaseDispatch<T> extends BindingProvider
     
     protected InvocationController ic;
     protected ServiceDelegate serviceDelegate;
+    protected ServiceClient serviceClient;
     protected Mode mode;
+    protected PortData port;
     
-    protected BaseDispatch() {
+    protected BaseDispatch(PortData p) {
         super();
+        
+        port = p;
+        ic = new AxisInvocationController();
+        setRequestContext();
     }
     
     protected BaseDispatch(AxisController ac) {
@@ -99,7 +106,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
-        invocationContext.setServiceClient(axisController.getServiceClient());
+        invocationContext.setServiceClient(serviceClient);
         
         // Create the MessageContext to hold the actual request message and its
         // associated properties
@@ -135,7 +142,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
        
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
-        invocationContext.setServiceClient(axisController.getServiceClient());
+        invocationContext.setServiceClient(serviceClient);
        
         // Create the MessageContext to hold the actual request message and its
         // associated properties
@@ -165,7 +172,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
-        invocationContext.setServiceClient(axisController.getServiceClient());
+        invocationContext.setServiceClient(serviceClient);
         
         // Create the MessageContext to hold the actual request message and its
         // associated properties
@@ -206,21 +213,24 @@ public abstract class BaseDispatch<T> extends BindingProvider
     //FIXME: This needs to be moved up to the BindingProvider and should actually
     //be called "initRequestContext()" or something like that.
     protected void setRequestContext(){
-        String endPointAddress = axisController.getEndpointAddress();
-        WSDLWrapper wsdl =  axisController.getWSDLContext();
-        QName serviceName = axisController.getServiceName();
-        QName portName = axisController.getPortName();
+        String endPointAddress = port.getEndpointAddress();
+        //WSDLWrapper wsdl =  axisController.getWSDLContext();
+        //QName serviceName = axisController.getServiceName();
+        //QName portName = axisController.getPortName();
+        
+        
         if(endPointAddress != null && !"".equals(endPointAddress)){
             getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endPointAddress);
-        }else if(wsdl != null){
-            String soapAddress = wsdl.getSOAPAddress(serviceName, portName);
-            getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, soapAddress);
         }
+        //else if(wsdl != null){
+        //    String soapAddress = wsdl.getSOAPAddress(serviceName, portName);
+        //    getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, soapAddress);
+        //}
         
-        if(wsdl != null){
-            String soapAction = wsdl.getSOAPAction(serviceName, portName);
-            getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, soapAction);
-        }
+        //if(wsdl != null){
+        //    String soapAction = wsdl.getSOAPAction(serviceName, portName);
+        //    getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, soapAction);
+        //}
         
         getRequestContext().put(Constants.QOS_WSADDRESSING_ENABLE, Boolean.FALSE);
         getRequestContext().put(Constants.QOS_WSRM_ENABLE, Boolean.FALSE);
@@ -234,11 +244,20 @@ public abstract class BaseDispatch<T> extends BindingProvider
         serviceDelegate = sd;
     }
     
+    public void setServiceClient(ServiceClient sc) {
+        serviceClient = sc;
+    }
+    
     public Mode getMode() {
         return mode;
     }
     
     public void setMode(Mode m) {
         mode = m;
-    }    
+    }
+
+    public PortData getPort() {
+        return port;
+    }
+
 }

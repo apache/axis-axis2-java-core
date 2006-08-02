@@ -20,6 +20,7 @@ import javax.xml.bind.JAXBContext;
 
 import org.apache.axis2.jaxws.AxisController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -32,8 +33,8 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
 
     private JAXBContext jaxbContext;
     
-    public JAXBDispatch() {
-        super();
+    public JAXBDispatch(PortData pd) {
+        super(pd);
     }
     
     public JAXBDispatch(AxisController ac) {

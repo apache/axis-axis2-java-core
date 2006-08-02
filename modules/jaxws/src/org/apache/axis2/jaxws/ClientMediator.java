@@ -50,24 +50,24 @@ public class ClientMediator {
 	}
 
     public <T> JAXBDispatch<T> createJAXBDispatch(JAXWSClientContext<T> clientContext){
-
+/*
         if (clientContext == null) {
             throw ExceptionFactory.makeWebServiceException(
                     "Internal Error ... JAXWSClientContext not found");
         }
         this.clientContext = clientContext;
-        /*
+        
          * create Axis Controller, this will route all the calls from Dispatch to
          * Axis Engine eiter using ServiceClient or instantiating
          * AxisEngine.
-         */
+         
         try{
             AxisController axisController = buildAxisController();
             axisController.setClientContext(clientContext);
             
             JAXBDispatch<T> dispatch = new JAXBDispatch<T>(axisController);
             if (clientContext.getServiceMode() != null) {
-            dispatch.setMode(clientContext.getServiceMode());
+                dispatch.setMode(clientContext.getServiceMode());
             }
             else {
                 dispatch.setMode(Service.Mode.PAYLOAD);
@@ -77,27 +77,29 @@ public class ClientMediator {
             return dispatch;
         }catch(AxisFault e){
             throw new WebServiceException(e.getMessage());
-        }
+        }*/
+        
+        return null;
     }
     
     public <T> XMLDispatch<T> createXMLDispatch(JAXWSClientContext<T> clientContext){
 
-		if (clientContext == null) {
+/*		if (clientContext == null) {
 			throw new WebServiceException(
 					"Internal Error ... JAXWSClientContext not found");
 		}
 		this.clientContext = clientContext;
-		/*
+		
 		 * create Axis Controller, this will route all the calls from Dispatch to
 		 * Axis Engine eiter using ServiceClient or instantiating
 		 * AxisEngine.
-		 */
+		 
 		try{
 			AxisController axisController = buildAxisController();
 			axisController.setClientContext(clientContext);
 			XMLDispatch<T> dispatch = new XMLDispatch<T>(axisController);
             if (clientContext.getServiceMode() != null) {
-            dispatch.setMode(clientContext.getServiceMode());
+                dispatch.setMode(clientContext.getServiceMode());
             }
             else {
                 dispatch.setMode(Service.Mode.PAYLOAD);
@@ -106,7 +108,9 @@ public class ClientMediator {
 			return dispatch;
 		}catch(AxisFault e){
 			throw new WebServiceException(e.getMessage());
-		}
+		}*/
+        
+        return null;
 	}
 
 	// Add required parameter to this method.
