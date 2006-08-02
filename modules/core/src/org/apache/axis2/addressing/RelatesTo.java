@@ -57,10 +57,13 @@ public class RelatesTo implements Serializable {
     }
 
     /**
-     * Method getRelationshipType
+     * Method getRelationshipType. If the relationship type has not been set it returns
+     * the default value {@link AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE}
      */
     public String getRelationshipType() {
-        return relationshipType;
+        return (relationshipType != null ?
+                    relationshipType :
+                    AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE);
     }
 
     /**

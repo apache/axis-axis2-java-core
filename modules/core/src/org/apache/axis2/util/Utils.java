@@ -79,10 +79,7 @@ public class Utils {
         }
 
         newmsgCtx.setFaultTo(oldOptions.getTo());
-        newmsgCtx.addRelatesTo(
-                new RelatesTo(
-                        oldOptions.getMessageId(),
-                        AddressingConstants.Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+        newmsgCtx.addRelatesTo(new RelatesTo(oldOptions.getMessageId())); //Uses the default relationship type
                 
         AxisOperation ao = inMessageContext.getAxisOperation();
         if(ao!=null && ao.getOutputAction()!=null){

@@ -199,12 +199,7 @@ public class Options {
         for(int i=0;relationships != null && i<relationships.size();i++) {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
-            if((type.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE) ||
-                    type.equals(AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE))
-                    && relationshipType == null) {
-                return relatesTo;
-            }
-            if(relationshipType != null && relationshipType.equals(type)) {
+            if(relationshipType.equals(type)) {
                 return relatesTo;
             }
         }
@@ -222,10 +217,8 @@ public class Options {
         for(int i=0;relationships != null && i<relationships.size();i++) {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
-            if(relationshipType == null) {
-                return relatesTo;
-            }else if (relationshipType.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)
-                    || relationshipType.equals(AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE)) {
+            if (relationshipType.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)
+                || relationshipType.equals(AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE)) {
                 return relatesTo;
             }
         }
