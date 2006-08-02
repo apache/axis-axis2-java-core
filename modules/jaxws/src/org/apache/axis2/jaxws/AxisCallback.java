@@ -24,6 +24,8 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.util.ThreadContextMigratorUtil;
 
 /**
  * The AxisCallback is the touch point for asynchronous invocations 
@@ -49,6 +51,9 @@ public class AxisCallback extends Callback {
         responseMsgCtx = new MessageContext(axisMsgCtx);
         
         try {
+            //REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
+            ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisMsgCtx);
+          
             OMElement responseEnv = result.getResponseEnvelope();
             
             MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);

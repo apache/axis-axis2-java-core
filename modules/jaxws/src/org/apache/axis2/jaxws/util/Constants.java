@@ -43,4 +43,6 @@ public class Constants {
     
     public static final QName QNAME_WSADDRESSING_MODULE = new QName("", "addressing");
     public static final QName QNAME_WSRM_MODULE = new QName("", "sandesha2");
+    
+    public static final String THREAD_CONTEXT_MIGRATOR_LIST_ID = "JAXWS-ThreadContextMigrator-List";
 }

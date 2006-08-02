@@ -29,6 +29,8 @@ import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,6 +74,9 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
                 throw new RuntimeException("No service class was found for this AxisService");
             }
             
+            //This assumes that we are on the ultimate execution thread
+            ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+            
             //Get the appropriate endpoint dispatcher for this service
         	EndpointController endpointCtlr = new EndpointController();
           	
@@ -99,11 +104,20 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
                 
                 OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
                 opCtx.addMessageContext(axisResponseMsgCtx);
+            
+                //This assumes that we are on the ultimate execution thread
+                ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
                 
                 //Create the AxisEngine for the reponse and send it.
                 AxisEngine engine = new AxisEngine(axisResponseMsgCtx.getConfigurationContext());
                 engine.send(axisResponseMsgCtx);
+                
+                //This assumes that we are on the ultimate execution thread
+                ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
             }
+
+            //This assumes that we are on the ultimate execution thread
+            ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
             
         } catch (Exception e) {
         	//TODO: This temp code for alpha till we add fault processing on client code.

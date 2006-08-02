@@ -42,6 +42,7 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -123,11 +124,18 @@ public class AxisInvocationController implements InvocationController {
 
                 // Set the Axis2 request MessageContext
                 opClient.addMessageContext(axisRequestMsgCtx);
+
+                //This assumes that we are on the ultimate execution thread
+                ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
                 opClient.execute(true);
+                ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
                 
                 // Collect the response MessageContext and envelope
                 org.apache.axis2.context.MessageContext axisResponseMsgCtx = 
                     opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                
+                //This assumes that we are on the ultimate execution thread
+                ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
                 
                 SOAPEnvelope rspEnvelope = axisResponseMsgCtx.getEnvelope();
                 Message responseMsg = null;
