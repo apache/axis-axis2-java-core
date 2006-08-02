@@ -278,9 +278,11 @@ public abstract class AxisOperation extends AxisDescription
         return operation;
     }
 
+    
+    
 
     /**
-     * Creates a new operation context if there is not one already.
+     * Returns as existing OperationContext related to this message if one exists.
      *
      * @param msgContext
      * @return Returns OperationContext.
@@ -294,21 +296,20 @@ public abstract class AxisOperation extends AxisDescription
             return operationContext;
         }
 
-        if (null == msgContext.getRelatesTo()) {
-            return null;
-        } else {
-
-            // So this message is part of an ongoing MEP
+        // If this message is not related to another one, or it is but not one emitted
+        // from the same operation, don't further look for an operation context or fault.
+        if (null != msgContext.getRelatesTo()) {
+            // So this message may be part of an ongoing MEP
             ConfigurationContext configContext = msgContext.getConfigurationContext();
 
             operationContext =
                     configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
-            if (null == operationContext) {
-                throw new AxisFault("cannot Correalte Msg " + this.getName().toString() + " for the " + msgContext.getRelatesTo().getValue());
-            }
+            if (null == operationContext && log.isDebugEnabled()) {
+            	log.debug("Cannot correlate inbound message RelatesTo value ["+msgContext.getRelatesTo()+"] to in-progree MEP");
+        	}
         }
-
+        
         return operationContext;
     }
 
