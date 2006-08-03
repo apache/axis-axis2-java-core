@@ -29,14 +29,11 @@ import java.net.URL;
 *
 */
 
-public class URLBasedAxisConfigurator implements AxisConfigurator {
+public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisConfigurator {
 
 	private static final Log log = LogFactory.getLog(URLBasedAxisConfigurator.class);
     private URL axis2xml;
     private URL repositoy;
-    private DeploymentEngine deploymentEngine;
-    private AxisConfiguration axisConfiguration;
-    ;
 
     public URLBasedAxisConfigurator(URL axis2xml, URL repositoy) throws AxisFault {
         this.axis2xml = axis2xml;
@@ -44,7 +41,6 @@ public class URLBasedAxisConfigurator implements AxisConfigurator {
     }
 
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
-        deploymentEngine = new DeploymentEngine();
         InputStream axis2xmlStream;
         try {
             if (axis2xml == null) {
@@ -53,53 +49,53 @@ public class URLBasedAxisConfigurator implements AxisConfigurator {
             } else {
                 axis2xmlStream = axis2xml.openStream();
             }
-            axisConfiguration = deploymentEngine.populateAxisConfiguration(axis2xmlStream);
+            axisConfig = populateAxisConfiguration(axis2xmlStream);
             if (repositoy == null) {
-                Parameter axis2repoPara = axisConfiguration.getParameter(DeploymentConstants.AXIS2_REPO);
+                Parameter axis2repoPara = axisConfig.getParameter(DeploymentConstants.AXIS2_REPO);
                 if (axis2repoPara != null) {
                     String repoValue = (String) axis2repoPara.getValue();
                     if (repoValue != null && !"".equals(repoValue.trim())) {
                         if (repoValue.startsWith("file://")) {
                             // we treat this case specialy , by assuming file is
                             // locate in the local machine
-                            deploymentEngine.loadRepository(repoValue);
+                            loadRepository(repoValue);
                         } else {
-                            deploymentEngine.loadRepositoryFromURL(new URL(repoValue));
+                            loadRepositoryFromURL(new URL(repoValue));
                         }
                     }
                 } else {
                     log.info("No repository found , module will be loded using class path");
-                    deploymentEngine.loadFromClassPath();
+                    loadFromClassPath();
                 }
             } else {
-                deploymentEngine.loadRepositoryFromURL(repositoy);
+                loadRepositoryFromURL(repositoy);
             }
 
         } catch (IOException e) {
             throw new AxisFault(e.getMessage());
         }
-        return axisConfiguration;
+        return axisConfig;
     }
 
     //to load services
     public void loadServices() {
         try {
             if (repositoy == null) {
-                Parameter axis2repoPara = axisConfiguration.getParameter(DeploymentConstants.AXIS2_REPO);
+                Parameter axis2repoPara = axisConfig.getParameter(DeploymentConstants.AXIS2_REPO);
                 if (axis2repoPara != null) {
                     String repoValue = (String) axis2repoPara.getValue();
                     if (repoValue != null && !"".equals(repoValue.trim())) {
                         if (repoValue.startsWith("file://")) {
                             // we treat this case specialy , by assuming file is
                             // locate in the local machine
-                            deploymentEngine.loadServices();
+                            super.loadServices();
                         } else {
-                            deploymentEngine.loadServicesFromUrl(new URL(repoValue));
+                            loadServicesFromUrl(new URL(repoValue));
                         }
                     }
                 }
             } else {
-                deploymentEngine.loadServices();
+                super.loadServices();
             }
         } catch (MalformedURLException e) {
             log.info(e);
@@ -108,6 +104,6 @@ public class URLBasedAxisConfigurator implements AxisConfigurator {
 
     //To engage globally listed modules
     public void engageGlobalModules() throws AxisFault {
-        deploymentEngine.engageModules();
+        engageModules();
     }
 }

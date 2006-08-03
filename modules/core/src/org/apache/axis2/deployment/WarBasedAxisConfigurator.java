@@ -37,13 +37,10 @@ import java.net.URL;
  * This allows the location of the axis2.xml and the module repository to be different from the default locations.
  * The init parameters support alternate file, or URL values for both of these.
  */
-public class WarBasedAxisConfigurator implements AxisConfigurator {
+public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisConfigurator {
 
-    private AxisConfiguration axisConfig;
     private static final Log log = LogFactory.getLog(WarBasedAxisConfigurator.class);
     private ServletConfig config;
-    private DeploymentEngine deploymentEngine;
-
 
     /**
      * The name of the init parameter (axis2.xml.path) that can be used to override the default location for the axis2.xml file. When both this init parameter, and the axis2.xml.url init parameters are not specified in the axis servlet init-parameter, the default location of ${app}/WEB-INF/conf/axis2.xml is used.
@@ -87,7 +84,6 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
     public WarBasedAxisConfigurator(ServletConfig svconfig) {
         try {
             this.config = svconfig;
-            deploymentEngine = new DeploymentEngine();
             InputStream axis2Stream = null;
 
             try {
@@ -105,7 +101,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                     String axisurl = config.getInitParameter(PARAM_AXIS2_XML_URL);
                     if (axisurl != null) {
                         axis2Stream = new URL(axisurl).openStream();
-                        axisConfig = deploymentEngine.populateAxisConfiguration(axis2Stream);
+                        axisConfig = populateAxisConfiguration(axis2Stream);
                         log.debug("loading axis2.xml from URL: " + axisurl);
                     }
                 }
@@ -127,7 +123,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 axis2Stream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
-            axisConfig = deploymentEngine.populateAxisConfiguration(axis2Stream);
+            axisConfig = populateAxisConfiguration(axis2Stream);
 
             // when the module is an unpacked war file,
             // we can set the web location path in the deployment engine.
@@ -136,7 +132,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
             if (webpath != null && !"".equals(webpath)) {
                 log.debug("setting web location string: " + webpath);
                 File weblocation = new File(webpath);
-                deploymentEngine.setWebLocationString(weblocation.getAbsolutePath());
+                setWebLocationString(weblocation.getAbsolutePath());
             } // if webpath not null
 
 
@@ -178,7 +174,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
             if (repository == null) {
                 repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_PATH);
                 if (repository != null) {
-                    deploymentEngine.loadRepository(repository);
+                    loadRepository(repository);
                     log.debug("loaded repository from path: " + repository);
                 }
             }
@@ -186,7 +182,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
             if (repository == null) {
                 repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_URL);
                 if (repository != null) {
-                    deploymentEngine.loadRepositoryFromURL(new URL(repository));
+                    loadRepositoryFromURL(new URL(repository));
                     log.debug("loaded repository from url: " + repository);
                 }
             }
@@ -197,7 +193,7 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                     repository = config.getServletContext().getRealPath("/WEB-INF");
                 }
                 if (repository != null) {
-                    deploymentEngine.loadRepository(repository);
+                    loadRepository(repository);
                     log.debug("loaded repository from /WEB-INF folder (unpacked war)");
                 }
             }
@@ -206,19 +202,19 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
                 URL url = config.getServletContext().getResource("/WEB-INF/");
                 if (url != null) {
                     repository = url.toString();
-                    deploymentEngine.loadRepositoryFromURL(url);
+                    loadRepositoryFromURL(url);
                     log.debug("loaded repository from /WEB-INF/ folder (URL)");
                 }
             }
 
             if (repository == null) {
-                deploymentEngine.loadFromClassPath();
+                loadFromClassPath();
                 log.debug("loaded repository from classpath");
             }
 
         } catch (Exception ex) {
             log.error(ex + ": loading repository from classpath");
-            deploymentEngine.loadFromClassPath();
+            loadFromClassPath();
         }
         return axisConfig;
     }
@@ -237,31 +233,28 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
 
             repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_PATH);
             if (repository != null) {
-                deploymentEngine.loadServices();
+                super.loadServices();
                 log.debug("loaded services from path: " + repository);
+                return;
             }
 
-            if (repository == null) {
-                repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_URL);
-                if (repository != null) {
-                    deploymentEngine.loadServicesFromUrl(new URL(repository));
-                    log.debug("loaded services from URL: " + repository);
-                }
+            repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_URL);
+            if (repository != null) {
+                loadServicesFromUrl(new URL(repository));
+                log.debug("loaded services from URL: " + repository);
+                return;
             }
 
-            if (repository == null) {
-                if (config.getServletContext().getRealPath("") != null) {
-                    deploymentEngine.loadServices();
-                    log.debug("loaded services from webapp");
-                }
-            } // else
+            if (config.getServletContext().getRealPath("") != null) {
+                super.loadServices();
+                log.debug("loaded services from webapp");
+                return;
+            }
 
-            if (repository == null) {
-                URL url = config.getServletContext().getResource("/WEB-INF/");
-                if (url != null) {
-                    deploymentEngine.loadServicesFromUrl(url);
-                    log.debug("loaded services from /WEB-INF/ folder (URL)");
-                }
+            URL url = config.getServletContext().getResource("/WEB-INF/");
+            if (url != null) {
+                loadServicesFromUrl(url);
+                log.debug("loaded services from /WEB-INF/ folder (URL)");
             }
         } catch (MalformedURLException e) {
             log.info(e.getMessage());
@@ -270,6 +263,6 @@ public class WarBasedAxisConfigurator implements AxisConfigurator {
 
     //To engage globally listed modules
     public void engageGlobalModules() throws AxisFault {
-        deploymentEngine.engageModules();
+        engageModules();
     }
 }

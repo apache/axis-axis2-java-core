@@ -21,6 +21,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.FileSystemConfigurator;
 import org.apache.axis2.deployment.URLBasedAxisConfigurator;
+import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -59,6 +60,9 @@ public class ConfigurationContextFactory {
             AxisConfigurator axisConfigurator) throws AxisFault {
         AxisConfiguration axisConfig = axisConfigurator.getAxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+        if(axisConfigurator instanceof DeploymentEngine) {
+            ((DeploymentEngine)axisConfigurator).setConfigContext(configContext);
+        }
         //To override context path
         setContextPath(axisConfig, configContext);
         //To check whether transport level session managment is require or not

@@ -31,7 +31,7 @@ import java.io.InputStream;
 *
 */
 
-public class FileSystemConfigurator implements AxisConfigurator {
+public class FileSystemConfigurator extends DeploymentEngine implements AxisConfigurator {
 
 	private static final Log log = LogFactory.getLog(FileSystemConfigurator.class);
     /**
@@ -39,8 +39,6 @@ public class FileSystemConfigurator implements AxisConfigurator {
      */
     private String axis2xml = null;
     private String repoLocation = null;
-    private DeploymentEngine deploymentEngine;
-    private AxisConfiguration axisConfiguration;
 
     /**
      * Load an AxisConfiguration from the repository directory specified
@@ -91,8 +89,6 @@ public class FileSystemConfigurator implements AxisConfigurator {
         }
 
         this.axis2xml = axis2xml;
-
-        deploymentEngine = new DeploymentEngine();
     }
 
     /**
@@ -110,28 +106,27 @@ public class FileSystemConfigurator implements AxisConfigurator {
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 axis2xmlSream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
-            axisConfiguration = deploymentEngine.populateAxisConfiguration(axis2xmlSream);
+            axisConfig = populateAxisConfiguration(axis2xmlSream);
         } catch (FileNotFoundException e) {
             throw new AxisFault("System can not find the given axis2.xml " + axis2xml);
         }
-        Parameter axis2repoPara = axisConfiguration.getParameter(DeploymentConstants.AXIS2_REPO);
+        Parameter axis2repoPara = axisConfig.getParameter(DeploymentConstants.AXIS2_REPO);
         if (axis2repoPara != null) repoLocation = (String) axis2repoPara.getValue();
         if (!(repoLocation == null || "".equals(repoLocation))) {
-            deploymentEngine.loadRepository(repoLocation);
+            loadRepository(repoLocation);
         } else {
-            deploymentEngine.loadFromClassPath();
+            loadFromClassPath();
         }
-        return axisConfiguration;
+        return axisConfig;
     }
 
     public void engageGlobalModules() throws AxisFault {
-        deploymentEngine.engageModules();
+        engageModules();
     }
 
     public void loadServices() {
         if (!(repoLocation == null || "".equals(repoLocation))) {
-            deploymentEngine.loadServices();
+            super.loadServices();
         }
-
     }
 }

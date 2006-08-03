@@ -20,6 +20,7 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.WSInfo;
@@ -28,7 +29,13 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -38,7 +45,15 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -72,16 +87,11 @@ public class DeploymentEngine implements DeploymentConstants {
      * this ref will pass to engine when it call start()
      * method
      */
-    private AxisConfiguration axisConfig;
-    private ArchiveFileData currentArchiveFile;
+    protected AxisConfiguration axisConfig;
+    
+    protected ConfigurationContext configContext;
+    
     private RepositoryListener repoListener;
-
-
-    /**
-     * Default constructor is needed to deploy module and service programatically.
-     */
-    public DeploymentEngine() {
-    }
 
     public void loadServices() {
         repoListener.checkServices();
@@ -143,7 +153,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     ArrayList servicelist = populateService(serviceGroup,
                             servicesURL,
                             fileUrl.substring(0, fileUrl.indexOf(".aar")));
-                    addServiceGroup(serviceGroup, servicelist, servicesURL);
+                    addServiceGroup(serviceGroup, servicelist, servicesURL, null);
                 }
             }
         } catch (MalformedURLException e) {
@@ -338,7 +348,8 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void addServiceGroup(AxisServiceGroup serviceGroup,
                                  ArrayList serviceList,
-                                 URL serviceLocation)
+                                 URL serviceLocation,
+                                 ArchiveFileData currentArchiveFile)
             throws AxisFault {
         serviceGroup.setParent(axisConfig);
         // module from services.xml at serviceGroup level
@@ -401,12 +412,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     AxisModule module = axisConfig.getModule(moduleName);
 
                     if (module != null) {
-//                        ArrayList controlops = opDesc.engageModule(module, axisConfig);
                         opDesc.engageModule(module, axisConfig);
-//                        for (int j = 0; j < controlops.size(); j++) {
-//                            AxisOperation axisOperation = (AxisOperation) controlops.get(j);
-//                            contolops.add(axisOperation);
-//                        }
                     } else {
                         throw new DeploymentException(
                                 Messages.getMessage(
@@ -415,10 +421,6 @@ public class DeploymentEngine implements DeploymentConstants {
                     }
                 }
             }
-//            for (int i = 0; i < contolops.size(); i++) {
-//                AxisOperation axisOperation = (AxisOperation) contolops.get(i);
-//                axisService.addOperation(axisOperation);
-//            }
             contolops.clear();
         }
         axisConfig.addServiceGroup(serviceGroup);
@@ -486,7 +488,7 @@ public class DeploymentEngine implements DeploymentConstants {
     public void doDeploy() {
         if (wsToDeploy.size() > 0) {
             for (int i = 0; i < wsToDeploy.size(); i++) {
-                currentArchiveFile = (ArchiveFileData) wsToDeploy.get(i);
+                ArchiveFileData currentArchiveFile = (ArchiveFileData) wsToDeploy.get(i);
                 boolean explodedDir = currentArchiveFile.getFile().isDirectory();
                 int type = currentArchiveFile.getType();
                 try {
@@ -518,7 +520,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                         currentArchiveFile.getAbsolutePath(), currentArchiveFile,
                                         sericeGroup, explodedDir, wsdlservice,
                                         axisConfig);
-                                addServiceGroup(sericeGroup, serviceList, currentArchiveFile.getFile().toURL());
+                                addServiceGroup(sericeGroup, serviceList, currentArchiveFile.getFile().toURL(), currentArchiveFile);
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
                                         currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
@@ -746,10 +748,6 @@ public class DeploymentEngine implements DeploymentConstants {
         return fileName;
     }
 
-    public ArchiveFileData getCurrentFileItem() {
-        return currentArchiveFile;
-    }
-
     public AxisModule getModule(QName moduleName) throws AxisFault {
         return axisConfig.getModule(moduleName);
     }
@@ -895,5 +893,9 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void setWebLocationString(String webLocationString) {
         this.webLocationString = webLocationString;
+    }
+
+    public void setConfigContext(ConfigurationContext configContext) {
+        this.configContext = configContext;
     }
 }
