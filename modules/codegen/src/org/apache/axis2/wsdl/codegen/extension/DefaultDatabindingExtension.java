@@ -38,6 +38,9 @@ public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
             }
             return;
         }
+        //the mapper has not been populated yet. since this extension is
+        //registered for -d none, we have to generate a new type mapper
+        //that serves only the default types
         if (mapper ==null){
             configuration.setTypeMapper(new DefaultTypeMapper());
         }

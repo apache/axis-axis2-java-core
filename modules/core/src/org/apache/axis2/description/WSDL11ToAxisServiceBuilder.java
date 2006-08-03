@@ -244,14 +244,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
 
     private Map populateSchemaMap(Types wsdl4jTypes) {
-        List typesExtensibilityElements = wsdl4jTypes.getExtensibilityElements();
         Map schemaMap = new HashMap();
-        for (int i = 0; i < typesExtensibilityElements.size(); i++) {
-            Object o = typesExtensibilityElements.get(i);
-            if (o instanceof Schema) {
-                Schema s = (Schema) o;
-                String targetNamespace = s.getElement().getAttribute(TRAGET_NAMESPACE);
-                schemaMap.put(targetNamespace, s.getElement());
+        if (wsdl4jTypes!=null){
+            List typesExtensibilityElements = wsdl4jTypes.getExtensibilityElements();
+            for (int i = 0; i < typesExtensibilityElements.size(); i++) {
+                Object o = typesExtensibilityElements.get(i);
+                if (o instanceof Schema) {
+                    Schema s = (Schema) o;
+                    String targetNamespace = s.getElement().getAttribute(TRAGET_NAMESPACE);
+                    schemaMap.put(targetNamespace, s.getElement());
+                }
             }
         }
         return schemaMap;
