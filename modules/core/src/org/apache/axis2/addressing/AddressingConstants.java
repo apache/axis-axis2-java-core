@@ -75,7 +75,7 @@ public interface AddressingConstants {
         public static final String WSA_NAMESPACE =
                 "http://www.w3.org/2005/08/addressing";
         public static final String WSAW_NAMESPACE =
-                "http://www.w3.org/2005/08/addressing/wsdl";
+                "http://www.w3.org/2006/05/addressing/wsdl";
         public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE =
                 "http://www.w3.org/2005/08/addressing/reply";
         public static final String WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE = "IsReferenceParameter";
