@@ -49,7 +49,7 @@ import org.apache.axis2.context.MessageContext;
  * migrateThreadToContext(req)
  * cleanupContext(rsp)
  * migrateContextToThread(rsp)
- * Note: there is no corresponding cleanupContext(rsp); one of the inbound
+ * Note: there is no corresponding cleanupThread(rsp); one of the inbound
  *       cases would need to handle this
  * 
  * If a fault occurs during execution of one of the migrators, it will be
