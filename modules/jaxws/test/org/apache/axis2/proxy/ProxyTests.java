@@ -71,6 +71,7 @@ public class ProxyTests extends TestCase {
 			System.out.println("---------------------------------------");
 		}catch(Exception e){ 
 			e.printStackTrace(); 
+            fail("Exception received" + e);
 		}
 	}
 	
@@ -97,6 +98,7 @@ public class ProxyTests extends TestCase {
 			System.out.println("---------------------------------------");
 		}catch(Exception e){ 
 			e.printStackTrace(); 
+            fail("Exception received" + e);
 		}
 	}
 	public void testTwoWay(){
@@ -118,6 +120,7 @@ public class ProxyTests extends TestCase {
 			System.out.println("Response =" + response);
 		}catch(Exception e){ 
 			e.printStackTrace(); 
+            fail("Exception received" + e);
 		}
 	}
 	
@@ -150,6 +153,7 @@ public class ProxyTests extends TestCase {
 			
 		}catch(Exception e){ 
 			e.printStackTrace(); 
+            fail("Exception received" + e);
 		}
 	}
 	

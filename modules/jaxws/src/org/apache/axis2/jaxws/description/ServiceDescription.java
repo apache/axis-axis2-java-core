@@ -17,6 +17,8 @@
 package org.apache.axis2.jaxws.description;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -83,6 +85,9 @@ TBD
 
  */
 
+/**
+ * 
+ */
 public class ServiceDescription {
     private AxisService axisService;
 
@@ -125,6 +130,8 @@ public class ServiceDescription {
         this.serviceClass = serviceClass;
         
         setupWsdlDefinition();
+        // TODO: (JLB) Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
+        //       Possibly defer creation of AxisService to the getPort() call?
         setupAxisService();
         buildDescriptionHierachy();
     }
@@ -133,10 +140,54 @@ public class ServiceDescription {
     /*=======================================================================*/
     // START of public accessor methods
     
+    /**
+     * Updates the ServiceDescription based on the SEI class and its annotations.
+     * @param sei
+     * @param portQName
+     */
+    public void updateEndpointInterfaceDescription(Class sei, QName portQName) {
+        
+        if (getEndpointDescription(portQName) != null) {
+            // TODO: (JLB) Implement validating SEI against existing port built from WSDL
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+        else {
+            // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
+            // TODO: (JLB) Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
+            EndpointDescription endpointDescription = new EndpointDescription(sei, portQName, this);
+            addEndpointDescription(endpointDescription);
+        }
+    }
+    
+    public EndpointDescription[] getEndpointDescriptions() {
+        return endpointDescriptions.values().toArray(new EndpointDescription[0]);
+    }
     public EndpointDescription getEndpointDescription(QName portQName) {
         return endpointDescriptions.get(portQName);
     }
-    
+    /**
+     * Return the EndpointDescriptions corresponding to the SEI class.  Note that
+     * this will return NULL unless the Descriptions were built by introspection on the SEI
+     * and its annotations.
+     * @param seiClass
+     * @return
+     */
+    public EndpointDescription[] getEndpointDescription(Class seiClass) {
+        EndpointDescription[] returnEndpointDesc = null;
+        ArrayList<EndpointDescription> matchingEndpoints = new ArrayList<EndpointDescription>();
+        Enumeration<EndpointDescription> endpointEnumeration = endpointDescriptions.elements();
+        while (endpointEnumeration.hasMoreElements()) {
+            EndpointDescription endpointDescription = endpointEnumeration.nextElement();
+            Class endpointSEIClass = endpointDescription.getEndpointInterfaceDescription().getSEIClass(); 
+            if (endpointSEIClass != null && endpointSEIClass.equals(seiClass)) {
+                matchingEndpoints.add(endpointDescription);
+            }
+        }
+        if (matchingEndpoints.size() > 0) {
+            returnEndpointDesc = matchingEndpoints.toArray(new EndpointDescription[0]);
+        }
+        return returnEndpointDesc;
+    }
     public AxisService getAxisService() {
         return axisService;
     }
@@ -144,7 +195,10 @@ public class ServiceDescription {
     // END of public accessor methods
     /*=======================================================================*/
     /*=======================================================================*/
-    
+    private void addEndpointDescription(EndpointDescription endpoint) {
+        endpointDescriptions.put(endpoint.getPortQName(), endpoint);
+    }
+
     private void setupWsdlDefinition() {
         // Note that there may be no WSDL provided, for example when called from 
         // Service.create(QName serviceName).
@@ -182,6 +236,9 @@ public class ServiceDescription {
     }
     
     private void buildAxisServiceFromNoWSDL() {
+        // TODO: (JLB) Refactor this; probably just remove it
+        System.out.println("JLB: No WSDL provided; don't create any Axis Descriptions yet");
+        if (true) return;
         // Patterned after ServiceClient.createAnonymousService()
         String serviceName = null;
         if (serviceQName != null) {
@@ -223,8 +280,7 @@ public class ServiceDescription {
             while (portIterator.hasNext()) {
                 Port wsdlPort = (Port) portIterator.next();
                 EndpointDescription endpointDescription = new EndpointDescription(wsdlPort, definition, this);
-                QName portQName = endpointDescription.getPortQName();
-                endpointDescriptions.put(portQName, endpointDescription); 
+                addEndpointDescription(endpointDescription); 
             }
         }
     }

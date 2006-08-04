@@ -14,17 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.client.factory;
-
-import org.apache.axis2.jaxws.client.proxy.ProxyDescriptor;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 
 
-public class DescriptorFactory{
+package org.apache.axis2.jaxws.description;
 
-	public ProxyDescriptor create(Class seiClass, ServiceDescription serviceDescription) {
-		// TODO Auto-generated method stub
-		return new ProxyDescriptor(seiClass, serviceDescription);
-	}
+import javax.xml.namespace.QName;
+
+/**
+ * 
+ */
+public class DescriptionUtils {
+    
+    public static boolean isEmpty(String string) {
+        return (string == null || "".equals(string));
+    }
+    
+    public static boolean isEmpty(QName qname) {
+        return qname == null || isEmpty(qname.getLocalPart());
+    }
 
 }

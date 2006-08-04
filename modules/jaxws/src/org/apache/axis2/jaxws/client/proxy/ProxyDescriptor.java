@@ -16,11 +16,9 @@
  */
 package org.apache.axis2.jaxws.client.proxy;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import javax.jws.Oneway;
 import javax.jws.SOAPBinding;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -57,14 +55,17 @@ public class ProxyDescriptor {
 	private EndpointDescription endpointDescription = null;
 
 	//TODO Need to put validation to check if seiMethod is null;
-	public ProxyDescriptor(Class seiClazz){
+	public ProxyDescriptor(Class seiClazz, ServiceDescription serviceDescription){
 		this.seiClazz = seiClazz;
+        this.serviceDescription = serviceDescription;
+        // TODO: (JLB) Does this need to be more robust; can there be > 1 endpoints; if so, how choose which one?
+        this.endpointDescription = serviceDescription.getEndpointDescription(seiClazz)[0];
 	}
 	
 	//TODO remove this once OperationDescription is implemented
 	public RequestWrapper getRequestWrapper() {
 		if(requestWrapper == null){
-			requestWrapper = seiMethod.getAnnotation(RequestWrapper.class);
+			requestWrapper = operationDescription.getRequestWrapper();
 		}
 		return requestWrapper;
 	}
@@ -72,7 +73,7 @@ public class ProxyDescriptor {
 	//TODO remove this once OperationDescription is implemented
 	public ResponseWrapper getResponseWrapper() {
 		if(responseWrapper == null){
-			responseWrapper = seiMethod.getAnnotation(ResponseWrapper.class);
+			responseWrapper = operationDescription.getResponseWrapper();
 		}
 		return responseWrapper;
 	}
@@ -80,18 +81,7 @@ public class ProxyDescriptor {
 	//TODO remove this once OperationDescription is implemented
 	public WebParam[] getWebParam() {
 		if(webParam == null){
-			Annotation[][] paramAnnotation = seiMethod.getParameterAnnotations();
-			ArrayList<WebParam> webParamList = new ArrayList<WebParam>();
-			for(Annotation[] pa:paramAnnotation){
-				for(Annotation webParam:pa){
-					if(webParam.annotationType()==WebParam.class){
-						webParamList.add((WebParam)webParam);
-					}
-				}
-			}
-			webParam = new WebParam[webParamList.size()];
-			webParamList.toArray(webParam);
-			
+			webParam = operationDescription.getWebParam();
 		}
 		return webParam;
 	}
@@ -99,12 +89,13 @@ public class ProxyDescriptor {
 	//TODO remove this once OperationDescription is implemented
 	public WebResult getWebResult(){
 		if(webResult == null){
-			webResult = seiMethod.getAnnotation(WebResult.class);
+			webResult = operationDescription.getWebResult();
 		}
 		return webResult;
 	}
 	
 	//TODO: refactor this once PropertyDescriptor is implemented.
+    // TODO: (JLB) Move to OperationDescription?
 	public Class getRequestWrapperClass(boolean isAsync) throws ClassNotFoundException{
 		RequestWrapper requestWrapper = getRequestWrapper();
 		String className = null;
@@ -120,6 +111,7 @@ public class ProxyDescriptor {
 		return Class.forName(className, true, ClassLoader.getSystemClassLoader());
 	}
 	
+    // TODO: (JLB) Move to OperationDescription?
 	public String getRequestWrapperClassName(){
 		if(getRequestWrapper()== null){
 			Class clazz = seiMethod.getDeclaringClass();
@@ -130,6 +122,7 @@ public class ProxyDescriptor {
 		return getRequestWrapper().className();
 	}
 	
+    // TODO: (JLB) Move to OperationDescription?
 	public String getRequestWrapperLocalName(){
 		if(getRequestWrapper() == null){
 			return seiMethod.getName();
@@ -137,6 +130,7 @@ public class ProxyDescriptor {
 		return getRequestWrapper().localName();
 	}
 	//TODO remove this once OperationDescription is implemented
+    // TODO: (JLB) Move to OperationDescription?
 	public Class getResponseWrapperClass(boolean isAsync) throws ClassNotFoundException{
 		ResponseWrapper responseWrapper = getResponseWrapper();
 		String className = null;
@@ -160,6 +154,7 @@ public class ProxyDescriptor {
 		return getResponseWrapper().localName();
 	}
 	//TODO remove this once OperationDescription is implemented
+    // TODO: (JLB) Move to OperationDescription?
 	public String getWebResultName(boolean isAsync){
 		WebResult webResult = getWebResult();
 		if(webResult == null &&!isAsync){
@@ -173,7 +168,7 @@ public class ProxyDescriptor {
 		}
 		return getWebResult().name();
 	}
-	
+    // TODO: (JLB) Move to OperationDescription?
 	public ArrayList<String> getParamNames(){
 		//TODO what if the param itself is a holder class;
 		WebParam[] params = getWebParam();
@@ -198,16 +193,17 @@ public class ProxyDescriptor {
 	}
 	public void setSeiMethod(Method seiMethod) {
 		this.seiMethod = seiMethod;
+        operationDescription = endpointDescription.getEndpointInterfaceDescription().getOperation(seiMethod);
 	}
 	public SOAPBinding getSoapBindingOnClazz(){
 		if(soapBinding == null){
-			soapBinding = (SOAPBinding)seiClazz.getAnnotation(SOAPBinding.class);
+			soapBinding = endpointDescription.getEndpointInterfaceDescription().getSoapBinding();
 		}
 		return soapBinding;
 	}
 	public SOAPBinding getSoapBindingOnMethod(){
 		//TODO who has presendence if there is SOAPBinding on Class and method.
-		return null;
+		return operationDescription.getSoapBinding();
 	}
 	//TODO read soap binding on method too, make sure if Binding style is different from binding style in Clazz throw Exception.
 	public Style getBindingStyle(){
@@ -216,14 +212,15 @@ public class ProxyDescriptor {
 		}
 		return getSoapBindingOnClazz().style(); 
 	}
-
 	public Class getSeiClazz() {
 		return seiClazz;
 	}
-
 	public void setSeiClazz(Class seiClazz) {
 		this.seiClazz = seiClazz;
 	}
+    public boolean isOneWay(){
+        return operationDescription.isOneWay();
+    }
 	/*
 	 * Convert getString to GetString. Converts method to clazz;
 	 */
@@ -243,9 +240,5 @@ public class ProxyDescriptor {
 		else{
 			return method;
 		}
-	}
-	
-	public boolean isOneWay(){
-		return seiMethod.isAnnotationPresent(Oneway.class);
 	}
 }

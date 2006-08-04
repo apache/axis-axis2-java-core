@@ -247,38 +247,42 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         /* TODO Check to see if WSDL Location is provided.
          * if not check WebService annotation's WSDLLocation
          * if both are not provided then throw exception.
+         * (JLB): I'm not sure lack of WSDL should cause an exception
          */
         
-        if(!isValidWSDLLocation()){
-            //TODO: Should I throw Exception if no WSDL
-            //throw ExceptionFactory.makeWebServiceException("WSLD Not found");
-        }
-        if(sei == null){
-            // TODO NLS
-            throw ExceptionFactory.makeWebServiceException("Invalid Service Endpoint Interface Class");
-        }
-        /*TODO: if portQname is null then fetch it from annotation. 
-         * if portQname is provided then add that to the ports table.
-         */
-        if(portName!=null){
-            String address = "";
-            if(isValidWSDLLocation()){
-                address = getWSDLWrapper().getSOAPAddress(serviceQname, portName);
-            }
-            if(ports.get(portName)==null){
-                addPort(portName, null, address);
-            }
-        }
-        DescriptorFactory df = (DescriptorFactory)FactoryRegistry.getFactory(DescriptorFactory.class);
-        ProxyDescriptor pd = df.create(sei);
-        pd.setPort(ports.get(portName));
-        ProxyHandlerFactory phf =(ProxyHandlerFactory) FactoryRegistry.getFactory(ProxyHandlerFactory.class);
-        BaseProxyHandler proxyHandler = phf.create(pd, this);
+    	if(!isValidWSDLLocation()){
+    		//TODO: Should I throw Exception if no WSDL
+    		//throw ExceptionFactory.makeWebServiceException("WSLD Not found");
+    	}
+    	if(sei == null){
+    		// TODO NLS
+    		throw ExceptionFactory.makeWebServiceException("Invalid Service Endpoint Interface Class");
+    	}
+    	/*TODO: if portQname is null then fetch it from annotation. 
+    	 * if portQname is provided then add that to the ports table.
+    	 */
+        // TODO: (JLB) Move the annotation processing to the DescriptionFactory
+        DescriptionFactory.updateEndpointInterface(serviceDescription, sei, portName);
         
-        Class[] seiClazz = new Class[]{sei, BindingProvider.class};
-        Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
-        
-        return sei.cast(proxyClass);
+    	if(portName!=null){
+    		String address = "";
+    		if(isValidWSDLLocation()){
+    			address = getWSDLWrapper().getSOAPAddress(serviceQname, portName);
+    		}
+    		if(ports.get(portName)==null){
+    			addPort(portName, null, address);
+    		}
+    	}
+    	DescriptorFactory df = (DescriptorFactory)FactoryRegistry.getFactory(DescriptorFactory.class);
+    	ProxyDescriptor pd = df.create(sei, serviceDescription);
+    	pd.setPort(ports.get(portName));
+    	ProxyHandlerFactory phf =(ProxyHandlerFactory) FactoryRegistry.getFactory(ProxyHandlerFactory.class);
+    	BaseProxyHandler proxyHandler = phf.create(pd, this);
+    	
+    	Class[] seiClazz = new Class[]{sei, BindingProvider.class};
+    	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
+    	
+    	return sei.cast(proxyClass);
     }
     
     /*

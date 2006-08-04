@@ -21,9 +21,12 @@ package org.apache.axis2.jaxws.description;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jws.WebService;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.xml.namespace.QName;
+
+import org.apache.axis2.jaxws.ExceptionFactory;
 
 
 /*
@@ -53,6 +56,11 @@ Properties available to JAXWS runtime: TBD
  * fixed, that will probably have an impact on this class.  In particular, I think this should be created 
  * somehow from an AxisService/AxisPort combination, and not directly from the WSDL.
  */
+// TODO: (JLB) With Lori's change to name WSDL11 services as the port, this might mean that the EndpointDescription corresponds to 
+//       the AxisService rather than the ServiceDescription.
+/**
+ * 
+ */
 public class EndpointDescription {
     private ServiceDescription parentServiceDescription;
     private QName portQName;
@@ -75,12 +83,50 @@ public class EndpointDescription {
         portQName = new QName(namespace, localPart);
         endpointInterfaceDescription = new EndpointInterfaceDescription(this);
     }
+    
+    /**
+     * Create from an annotated SEI class.
+     * @param sei
+     * @param portName May be null; if so the annotation is used
+     * @param parent
+     */
+    EndpointDescription(Class sei, QName portName, ServiceDescription parent) {
+        parentServiceDescription = parent;
+
+        // Per JSR-181, the @WebService annotation is required.
+        // TODO: (JLB) Tests that do/do not include this annotation
+        WebService webServiceAnnotation = (WebService) sei.getAnnotation(WebService.class);
+        if (webServiceAnnotation == null) {
+            // TODO: NLS
+            ExceptionFactory.makeWebServiceException("Invalid SEI " + sei + "; must contain @WebService annotation");
+        }
+
+        // TODO: (JLB) Process other @WebService values
+
+        // If portName not specified, get it from the annotation
+        // TODO: (JLB) If the portName is specified, should we verify it against the annotation?
+        // TODO: (JLB) Add tests: null portName, !null portName, portName != annotation value
+        if (portName == null) {
+            String name = webServiceAnnotation.name();
+            String tns = webServiceAnnotation.targetNamespace();
+            // TODO: (JLB) Check for name &/| tns null or empty string
+            // TODO: (JLB) Add tests for same
+            portName = new QName(tns, name);
+        }
+        portQName = portName;        
+        
+        endpointInterfaceDescription = new EndpointInterfaceDescription(sei, this);
+    }
     public QName getPortQName() {
         return portQName;
     }
     
     public ServiceDescription getServiceDescription() {
         return parentServiceDescription;
+    }
+    
+    public EndpointInterfaceDescription getEndpointInterfaceDescription() {
+        return endpointInterfaceDescription;
     }
     
     /**

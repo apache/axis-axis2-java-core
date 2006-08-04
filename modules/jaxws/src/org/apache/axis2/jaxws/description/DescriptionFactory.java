@@ -18,9 +18,14 @@
 
 package org.apache.axis2.jaxws.description;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 
+import javax.jws.WebService;
 import javax.xml.namespace.QName;
+
+import org.apache.axis2.jaxws.ExceptionFactory;
 
 /**
  * Creates the JAX-WS metadata descritpion hierachy from some combinations of
@@ -37,8 +42,16 @@ public class DescriptionFactory {
         return new ServiceDescription(wsdlURL, serviceQName, serviceClass);
     }
     
-    public static ServiceDescription updateEndpointInterface(ServiceDescription serviceDescription, Class seiClass) {
-        // TODO: Implement this method
+    /**
+     * Update an existing ServiceDescription with an annotated SEI
+     * @param serviceDescription
+     * @param seiClass 
+     * @param portName Can be null
+     * @return
+     */
+    public static ServiceDescription updateEndpointInterface(ServiceDescription serviceDescription, Class sei, QName portQName) {
+        
+        serviceDescription.updateEndpointInterfaceDescription(sei, portQName);
         return serviceDescription;
     }
 

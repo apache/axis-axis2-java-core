@@ -18,10 +18,13 @@
 
 package org.apache.axis2.jaxws.description;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import javax.jws.SOAPBinding;
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
@@ -29,6 +32,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.ExceptionFactory;
 
 /**
  * 
@@ -63,21 +67,114 @@ TBD
 
  */
 public class EndpointInterfaceDescription {
-    EndpointDescription parentEndpointDescription;
-    Hashtable<QName, OperationDescription> operationDescriptions = new Hashtable<QName, OperationDescription>();
+    private EndpointDescription parentEndpointDescription;
+    private ArrayList<OperationDescription> operationDescriptions = new ArrayList<OperationDescription>();
+    private Class seiClass;
     
+    void addOperation(OperationDescription operation) {
+        // TODO: This does not support overloaded operations.  While not supported by WS-I, it IS supported by JAX-WS (p11).
+        //       Note that this also requires support in Axis2; currently WSDL11ToAxisServiceBuilder.populateOperations does not
+        //       support overloaded methods in the WSDL; the operations are stored on AxisService as children in a HashMap with the wsdl
+        //       operation name as the key.
+        // TODO: (JLB) Could make this a List collection and allow lookups on seiMethod (what Proxy might use) as a workaround for now.
+        operationDescriptions.add(operation);
+    }
     
+    EndpointInterfaceDescription(Class sei, EndpointDescription parent) {
+        // Per JSR-181 all methods on the SEI are mapped to operations regardless
+        // of whether they include an @WebMethod annotation.  That annotation may
+        // be present to customize the mapping, but is not required (p14)
+        // TODO: (JLB) Testcases that do and do not include @WebMethod anno
+        seiClass = sei;
+        
+        Method[] seiMethods = seiClass.getMethods();
+        for (Method method:seiMethods) {
+            if (!Modifier.isPublic(method.getModifiers())) {
+                // JSR-181 says methods must be public (p14)
+                // TODO NLS
+                ExceptionFactory.makeWebServiceException("SEI methods must be public");
+            }
+            // TODO: (JLB) other validation per JSR-181
+            
+            OperationDescription operation = new OperationDescription(method, this);
+            addOperation(operation);
+        }
+
+    }
+    
+    public OperationDescription[] getOperations() {
+        return operationDescriptions.toArray(new OperationDescription[0]);
+    }
+    
+    /**
+     * Return an array of Operations given an operation QName.  Note that an array is returned
+     * since a WSDL operation may be overloaded per JAX-WS.
+     * @param operationQName
+     * @return
+     */
+    public OperationDescription[] getOperation(QName operationQName) {
+        OperationDescription[] returnOperations = null;
+        if (!DescriptionUtils.isEmpty(operationQName)) {
+            ArrayList<OperationDescription> matchingOperations = new ArrayList<OperationDescription>();
+            OperationDescription[] allOperations = getOperations();
+            for (OperationDescription operation:allOperations) {
+                if (operation.getName().equals(operationQName)) {
+                    matchingOperations.add(operation);
+                }
+            }
+            // Only return an array if there's anything in it
+            if (matchingOperations.size() > 0) {
+                returnOperations = matchingOperations.toArray(new OperationDescription[0]);
+            }
+        }
+        return returnOperations;
+    }
+    
+    /**
+     * Return an OperationDescription for the corresponding SEI method.  Note that this ONLY works
+     * if the OperationDescriptions were created from introspecting an SEI.  If the were created with a WSDL
+     * then use the getOperation(QName) method, which can return > 1 operation.
+     * @param seiMethod The java.lang.Method from the SEI for which an OperationDescription is wanted
+     * @return
+     */
+    public OperationDescription getOperation(Method seiMethod) {
+        OperationDescription returnOperation = null;
+        if (seiMethod != null) {
+            OperationDescription[] allOperations = getOperations();
+            for (OperationDescription operation:allOperations) {
+                if (operation.getSEIMethod() != null && operation.getSEIMethod().equals(seiMethod)) {
+                    returnOperation = operation;
+                }
+            }
+        }
+        return returnOperation;
+    }
+    
+    /**
+     * Build from AxisService
+     * @param parent
+     */
     EndpointInterfaceDescription(EndpointDescription parent) {
         parentEndpointDescription = parent;
         
         AxisService axisService = parentEndpointDescription.getServiceDescription().getAxisService();
-        ArrayList publishedOperations = axisService.getPublishedOperations();
-        Iterator operationsIterator = publishedOperations.iterator();
-        while (operationsIterator.hasNext()) {
-            AxisOperation operation = (AxisOperation) operationsIterator.next();
-            operationDescriptions.put(operation.getName(), new OperationDescription(operation, this));
+        if (axisService != null) {
+            ArrayList publishedOperations = axisService.getPublishedOperations();
+            Iterator operationsIterator = publishedOperations.iterator();
+            while (operationsIterator.hasNext()) {
+                AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+                addOperation(new OperationDescription(axisOperation, this));
+            }
         }
         
+    }
+    public Class getSEIClass() {
+        return seiClass;
+    }
+    // Annotation-realted getters
+    public SOAPBinding getSoapBinding(){
+        // TODO: (JLB) Test with sei Null, not null, SOAP Binding annotated, not annotated
+        return (seiClass != null ? (SOAPBinding) seiClass.getAnnotation(SOAPBinding.class) : null);
     }
 
 }

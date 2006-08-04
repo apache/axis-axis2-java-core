@@ -46,7 +46,7 @@ import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sun.xml.bind.v2.runtime.reflect.Lister;
+// import com.sun.xml.bind.v2.runtime.reflect.Lister;
 
 /**
  * ProxyHandler is the java.lang.reflect.InvocationHandler implementation.

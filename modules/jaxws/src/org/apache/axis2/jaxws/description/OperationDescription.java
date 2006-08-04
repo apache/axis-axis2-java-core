@@ -18,6 +18,19 @@
 
 package org.apache.axis2.jaxws.description;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+
+import javax.jws.Oneway;
+import javax.jws.SOAPBinding;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
+import javax.xml.namespace.QName;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
+
 import org.apache.axis2.description.AxisOperation;
 
 /**
@@ -60,7 +73,25 @@ TBD
 public class OperationDescription {
     private EndpointInterfaceDescription parentEndpointInterfaceDescription;
     private AxisOperation axisOperation;
+    private QName operationName;
+    private Method seiMethod;
+    private WebMethod webMethodAnnotation;
     
+    OperationDescription(Method method, EndpointInterfaceDescription parent) {
+        // TODO: (JLB) Look for WebMethod anno; get name and action off of it
+        parentEndpointInterfaceDescription = parent;
+        seiMethod = method;
+        webMethodAnnotation = seiMethod.getAnnotation(WebMethod.class);
+        
+        // Per JSR-181, if @WebMethod specifies and operation name, use that.  Otherwise
+        // default is the Java method name
+        String methodName;
+        if (webMethodAnnotation != null && webMethodAnnotation.operationName() != null && !"".equals(webMethodAnnotation.operationName()))
+            methodName = webMethodAnnotation.operationName();
+        else
+            methodName = method.getName();
+        this.operationName = new QName(methodName);
+    }
     OperationDescription(AxisOperation operation, EndpointInterfaceDescription parent) {
         parentEndpointInterfaceDescription = parent;
         axisOperation = operation;       
@@ -73,4 +104,49 @@ public class OperationDescription {
     public AxisOperation getAxisOperation() {
         return axisOperation;
     }
+    
+    public QName getName() {
+        return operationName;
+    }
+    
+    /**
+     * Note this will return NULL unless the operation was built via introspection on the SEI.
+     * In other words, it will return null if the operation was built with WSDL.
+     * @return
+     */
+    public Method getSEIMethod() {
+        return seiMethod;
+    }
+
+    // Annotation-related getters
+    // TODO: (JLB) Should the getters return processed information rather than the actual annotations?
+    // TODO: (JLB) These should cache the information rather than re-getting it each time.
+    public RequestWrapper getRequestWrapper() {
+        return seiMethod.getAnnotation(RequestWrapper.class);
+    }
+    public ResponseWrapper getResponseWrapper() {
+        return seiMethod.getAnnotation(ResponseWrapper.class);
+    }
+    public WebParam[] getWebParam() {
+        Annotation[][] paramAnnotation = seiMethod.getParameterAnnotations();
+        ArrayList<WebParam> webParamList = new ArrayList<WebParam>();
+        for(Annotation[] pa:paramAnnotation){
+            for(Annotation webParam:pa){
+                if(webParam.annotationType() == WebParam.class){
+                    webParamList.add((WebParam)webParam);
+                }
+            }
+        }
+        return webParamList.toArray(new WebParam[0]);
+    }
+    public WebResult getWebResult() {
+        return seiMethod.getAnnotation(WebResult.class);
+    }
+    public SOAPBinding getSoapBinding() {
+        return seiMethod.getAnnotation(SOAPBinding.class);
+    }
+    public boolean isOneWay() {
+        return seiMethod.isAnnotationPresent(Oneway.class);
+    }
+
 }
