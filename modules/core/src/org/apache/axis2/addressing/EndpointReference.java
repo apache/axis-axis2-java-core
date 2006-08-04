@@ -268,9 +268,9 @@ public class EndpointReference implements Serializable {
             OMNamespace wsaNS = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_DEFAULT_PREFIX);
             OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS, wsaNS, epr);
             addressE.setText(address);
-            OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);
-
+            
             if (this.metaData != null) {
+                OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);
                 Iterator metadata = this.metaData.iterator();
                 while (metadata.hasNext()) {
                     metadataE.addChild((OMNode) metadata.next());
