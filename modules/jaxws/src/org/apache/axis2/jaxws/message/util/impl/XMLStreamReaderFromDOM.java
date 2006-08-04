@@ -29,6 +29,7 @@ import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.CharacterData;
@@ -77,7 +78,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 	 */
 	public Object getProperty(String key) throws IllegalArgumentException {
 		if (key == null) {
-			throw new IllegalArgumentException(ERR_1);
+			throw new IllegalArgumentException(Messages.getMessage("XMLSRErr1"));
 		}
 		return null;
 	}
@@ -87,7 +88,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 	 */
 	public int next() throws XMLStreamException {
 		if (!hasNext()) {
-			throw new XMLStreamException(ERR_2);
+			throw new XMLStreamException(Messages.getMessage("XMLSRErr"));
 		}
 		getNext();
 		cursor = nextCursor;
@@ -102,15 +103,15 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 			throws XMLStreamException {
 		try {
 			if (event != this.event) {
-				throw new XMLStreamException(ERR_3 + " expected " + event + " found " + this.event);
+				throw new XMLStreamException(Messages.getMessage("XMLSRErr3", String.valueOf(event), String.valueOf(this.event)));
 			}
 			if (namespace != null && 
 				!namespace.equals(cursor.getNamespaceURI())) {
-				throw new XMLStreamException(ERR_3 + " expected " + namespace + " found " + this.cursor.getNamespaceURI());
+				throw new XMLStreamException(Messages.getMessage("XMLSRErr3", namespace, this.cursor.getNamespaceURI()));
 			}
 			if (localPart != null &&
 	            !localPart.equals(cursor.getLocalName())) {
-				throw new XMLStreamException(ERR_3 + " expected " + localPart + " found " + this.cursor.getLocalName());
+				throw new XMLStreamException(Messages.getMessage("XMLSRErr3", localPart ,this.cursor.getLocalName()));
 			}
 		} catch (XMLStreamException e) {
 			throw e;
@@ -136,13 +137,13 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 					    event == XMLStreamReader.COMMENT) {
 			     	 // whitespace
 			     } else {
-			    	 throw new XMLStreamException(ERR_4 + "getElementText()");
+			    	 throw new XMLStreamException(Messages.getMessage("XMLSRErr4","getElementText()"));
 			     }
 			     next();
 			 }
 			 return buffer.toString();
 		} 
-		throw new XMLStreamException(ERR_4 + "getElementText()");
+		throw new XMLStreamException(Messages.getMessage("XMLSRErr4","getElementText()"));
 	}
 
 	/* (non-Javadoc)
@@ -161,7 +162,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 		    event == XMLStreamReader.END_ELEMENT) {
 			return event;
 		} 
-		throw new XMLStreamException(ERR_4 + "nextTag()");
+		throw new XMLStreamException(Messages.getMessage("XMLSRErr4","nextTag()"));
 	}
 
 	/* (non-Javadoc)
@@ -185,7 +186,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 		if (cursor instanceof Element) {
 			return getNamespaceContext().getNamespaceURI(prefix);
 		}
-		throw new IllegalStateException(ERR_4 + "getNamespaceURI(String)");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4","getNamespaceURI(String)"));
 	}
 
 	/* (non-Javadoc)
@@ -242,7 +243,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 			}
 			return attrs;
 		}
-		throw new IllegalStateException(ERR_4 + "getAttributes()");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4", "getAttributes()"));
 	}
 	/* (non-Javadoc)
 	 * @see javax.xml.stream.XMLStreamReader#getAttributeValue(java.lang.String, java.lang.String)
@@ -251,7 +252,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 		if (event == XMLStreamReader.START_ELEMENT) {
 			return ((Element)cursor).getAttributeNS(namespace, localPart);
 		} 
-		throw new IllegalStateException(ERR_4 + "getAttributeValue(String, String)");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4","getAttributeValue(String, String)"));
 	}
 
 	/* (non-Javadoc)
@@ -324,7 +325,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 			List list = getNamespaceDeclarations();
 			return list.size();
 		}
-		throw new IllegalStateException(ERR_4 + "getNamespaceCount()");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4","getNamespaceCount()"));
 	}
 
 	/* (non-Javadoc)
@@ -335,7 +336,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 			List list = getNamespaceDeclarations();
 			return ((NamespaceDeclare) list.get(index)).getPrefix();
 		}
-		throw new IllegalStateException(ERR_4 + "getNamespacePrefix(int)");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4", "getNamespacePrefix(int)"));
 	}
 
 	/* (non-Javadoc)
@@ -346,7 +347,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 			List list = getNamespaceDeclarations();
 			return ((NamespaceDeclare) list.get(index)).getURI();
 		}
-		throw new IllegalStateException(ERR_4 + "getNamespaceURI(int)");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4","getNamespaceURI(int)"));
 	}
 
 	/* (non-Javadoc)
@@ -387,7 +388,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 		    event == XMLStreamReader.COMMENT) {
 			return ((CharacterData) cursor).getData();
 		}
-		throw new IllegalStateException(ERR_4 + "getText()");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4","getText()"));
 	}
 
 	/* (non-Javadoc)
@@ -456,7 +457,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 		if (cursor instanceof Element) {
 			return new QName(cursor.getNamespaceURI(), cursor.getLocalName());
 		}
-		throw new IllegalStateException(ERR_4 + "getName()");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4","getName()"));
 	}
 
 	/* (non-Javadoc)
@@ -466,7 +467,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 		if (cursor instanceof Element) {
 			return cursor.getLocalName();
 		}
-		throw new IllegalStateException(ERR_4 + "getLocalName()");
+		throw new IllegalStateException(Messages.getMessage("XMLSRErr4","getLocalName()"));
 	}
 
 	/* (non-Javadoc)
@@ -563,10 +564,10 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 			break;
 		}
 		case XMLStreamReader.ATTRIBUTE: {
-			throw new IllegalStateException(ERR_5 + "ATTRIBUTE");
+			throw new IllegalStateException(Messages.getMessage("XMLSRErr5","ATTRIBUTE"));
 		}
 		case XMLStreamReader.NAMESPACE: {
-			throw new IllegalStateException(ERR_5 + "NAMESPACE");
+			throw new IllegalStateException(Messages.getMessage("XMLSRErr5","NAMESPACE"));
 		}
 		case XMLStreamReader.END_ELEMENT: 
 		case XMLStreamReader.CHARACTERS:
@@ -599,7 +600,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 			nextEvent = -1;
 		}
 		default:	
-			throw new IllegalStateException(ERR_5 + event);
+			throw new IllegalStateException(Messages.getMessage("XMLSRErr5", String.valueOf(event)));
 		}
 		
 	}
@@ -723,10 +724,4 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 		return cursor;
 	}
 	
-	// TODO NLS 
-	private static final String ERR_1 = "The method getProperty was called with a null key";
-	private static final String ERR_2 = "There are no more events";
-	private static final String ERR_3 = "The require() method failed";
-	private static final String ERR_4 = "Failure occured in method ";
-	private static final String ERR_5 = "The following event is not supported in getNext():";
 }

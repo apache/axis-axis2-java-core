@@ -54,6 +54,7 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.handler.PortInfoImpl;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
@@ -80,15 +81,13 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	mediator = new ClientMediator();
 
         if(!isValidServiceName()){
-        	// TODO NLS
-    		throw ExceptionFactory.makeWebServiceException("Invalid Service QName, Service Name cannot be null or empty");
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", ""));
     	}
 
         serviceDescription = DescriptionFactory.createServiceDescription(url, serviceQname, clazz);
         if (isValidWSDLLocation()) {
             if(!isServiceDefined(serviceQname)){
-            	// TODO NLS
-                throw new WebServiceException("Service " + serviceQname + " not defined in WSDL");
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", serviceQname.toString(), url.toString()));
             }
             readPorts();
         }
@@ -105,22 +104,16 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     public void addPort(QName portName, String bindingId, String endpointAddress)
         throws WebServiceException {
     	if(portName == null ){
-    		// TODO NLS
-    		throw ExceptionFactory.makeWebServiceException("Invalid port, port cannot be null");
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr2"));
     	}
-    	if("".equals(portName)){
-    		// TODO NLS
-    		throw ExceptionFactory.makeWebServiceException("Invalid port name");
-    	}
+    	
     	if (endpointAddress == null) {
-    		// TODO NLS
-    		throw ExceptionFactory.makeWebServiceException("Invalid endpointAddress," +
-                    " endpointAddress cannot be null");
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr1", portName.toString(), "null"));
     	}
     	
     	if(bindingId!=null && !bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING)){
-    		// TODO NLS
-    		throw new UnsupportedOperationException("Only SOAP11HTTP_BINDING supported at this time.");
+    		// TODO Is this the correct exception. Shouldn't this be a WebServiceException ?
+    		throw new UnsupportedOperationException(Messages.getMessage("addPortErr0", portName.toString()));
     	}
         
         if (bindingId == null) {
@@ -136,8 +129,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     		port.setBindingID(bindingId);
     		port.setEndPointAddress(endpointAddress);
     		*/
-    		// TODO NLS
-    		throw new WebServiceException("Port is already added");
+    		throw new WebServiceException(Messages.getMessage("addPortDup", portName.toString()));
     	}
     }
 
@@ -147,19 +139,17 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      */
     public <T> Dispatch<T> createDispatch(QName qname, Class<T> clazz, Mode mode) throws WebServiceException {
     	if(qname == null){
-    		// TODO NLS
-    		throw ExceptionFactory.makeWebServiceException("Failed to create Dispatch port cannot be null.");
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail0"));
     	}
     	
     	if(!isPortValid(qname)){
-    		// TODO NLS
-    		throw ExceptionFactory.makeWebServiceException("Failed to create Dispatch, Port "+qname+" not found, add port to Service before calling dispatch.");
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail1", qname.toString()));
     	}
     	
         PortData portData = (PortData) ports.get(qname);
     	
         if(portData == null){
-    		throw ExceptionFactory.makeWebServiceException("Could not find Port info"); 
+        	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail2", qname.toString())); 
     	}
     	
     	addBinding(portData.getBindingID());
@@ -193,16 +183,11 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      */
     public Dispatch<java.lang.Object> createDispatch(QName qname, JAXBContext context, Mode mode) {
         if (qname == null) {
-        	// TODO NLS
-            throw ExceptionFactory.makeWebServiceException("Dispatch creation " +
-                    "failed.  Port QName cannot be null.");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail0"));
         }
         
         if (!isPortValid(qname)) {
-        	// TODO NLS
-            throw ExceptionFactory.makeWebServiceException("Dispatch creation " +
-                    "failed.  Port " + qname + " was not found.  Make sure the " +
-                    "port has been added to the Service.");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail1", qname.toString()));
         }
         
         PortData portData = (PortData) ports.get(qname);
@@ -250,19 +235,20 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
          * (JLB): I'm not sure lack of WSDL should cause an exception
          */
         
+
     	if(!isValidWSDLLocation()){
     		//TODO: Should I throw Exception if no WSDL
     		//throw ExceptionFactory.makeWebServiceException("WSLD Not found");
     	}
     	if(sei == null){
-    		// TODO NLS
-    		throw ExceptionFactory.makeWebServiceException("Invalid Service Endpoint Interface Class");
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("getPortInvalidSEI", portName.toString(), "null"));
     	}
     	/*TODO: if portQname is null then fetch it from annotation. 
     	 * if portQname is provided then add that to the ports table.
     	 */
         // TODO: (JLB) Move the annotation processing to the DescriptionFactory
         DescriptionFactory.updateEndpointInterface(serviceDescription, sei, portName);
+
         
     	if(portName!=null){
     		String address = "";
@@ -335,7 +321,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      */
     public void setExecutor(Executor e) {
         if (e == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot set Executor to null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("cannotSetExcutorToNull"));
         }
         
         executor = e;
@@ -373,8 +359,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                 serviceClient = new ServiceClient(configCtx, axisSvc);
             }
         } catch (AxisFault e) {
-            throw ExceptionFactory.makeWebServiceException("An error occured " +
-                    "while creating the ServiceClient", e);
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("serviceClientCreateError"), e);
         }
         
         return serviceClient;        

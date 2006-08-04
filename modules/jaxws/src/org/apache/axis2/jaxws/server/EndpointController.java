@@ -24,6 +24,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -66,7 +67,7 @@ public class EndpointController {
             // allow us to get the params out in a number of forms later on.
             SOAPEnvelope soapEnv = axisRequestMsgCtx.getEnvelope();
             if (soapEnv == null) {
-                throw ExceptionFactory.makeWebServiceException("SOAP cannot be null");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr1"));
             }
             
             MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
@@ -82,7 +83,7 @@ public class EndpointController {
             // The response MessageContext should be set on the InvocationContext
             ic.setResponseMessageContext(responseMsgContext);
         } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException("Error while invoking EndpointDispather", e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
         
         return ic;
@@ -104,7 +105,7 @@ public class EndpointController {
     	
         // If there was no implementation class, we should not go any further
         if (asp == null) {
-            throw ExceptionFactory.makeWebServiceException("No service class configured for this endpoint");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr2"));
         }
         
         // Load the service implementation class  
@@ -117,8 +118,7 @@ public class EndpointController {
     		dispatcherInstance = pd;
     	}
         else {
-            throw ExceptionFactory.makeWebServiceException("Error loading Provider " +
-                    "implementation; class must implement javax.xml.ws.Provider");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr3", cls.getName()));
         }
     	
     	return dispatcherInstance;
@@ -132,8 +132,9 @@ public class EndpointController {
 		Class _class = null;
         
         // TODO: What should be done if the supplied ClassLoader is null?
+		String className = null;
 		try{
-			String className = ((String) param.getValue()).trim();
+			className = ((String) param.getValue()).trim();
 			
             if (log.isDebugEnabled()) {
                 log.debug("Attempting to load service impl class: " + className);
@@ -141,7 +142,7 @@ public class EndpointController {
             
             _class = Class.forName(className, true, cl);
 		}catch(java.lang.ClassNotFoundException cnf ){
-			throw ExceptionFactory.makeWebServiceException("Unable to load service implementation class.");
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr4", className));
 		}
 		
 		return _class;

@@ -41,13 +41,7 @@ public class JaxwsMessageBundleTests extends TestCase {
         final String str = "This is a test string 01";
         String tempStr = Messages.getMessage("test01");
         // Check the String for accuracy
-        if (tempStr != null) {
-            System.out.println("tempStr is " + tempStr);
-            assertTrue(tempStr.equals(str));
-        } else {
-            System.out.println("String is NULL");
-        }
-        
+        assertTrue(str.equals(tempStr));
     }
 
 }

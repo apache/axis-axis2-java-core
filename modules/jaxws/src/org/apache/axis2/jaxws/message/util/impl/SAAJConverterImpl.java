@@ -26,6 +26,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
@@ -37,6 +38,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
@@ -89,7 +91,8 @@ public class SAAJConverterImpl implements SAAJConverter {
 			// to build the SOAPElements
 			XMLStreamReader reader = omEnvelope.getXMLStreamReaderWithoutCaching();
 			
-			buildSOAPTree(soapEnvelope, soapEnvelope, null, reader, false);
+			NameCreator nc = new NameCreator(soapEnvelope);
+			buildSOAPTree(nc, soapEnvelope, null, reader, false);
 		} catch (MessageException e) {
 			throw e;
 		} catch (SOAPException e) {
@@ -131,16 +134,46 @@ public class SAAJConverterImpl implements SAAJConverter {
 	 * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, javax.xml.soap.SOAPElement)
 	 */
 	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent) throws MessageException {
-		XMLStreamReader reader = omElement.getXMLStreamReaderWithoutCaching();
+		XMLStreamReader reader = null;
+		
+		// If the OM element is not attached to a parser (builder), then the OM
+		// is built and you cannot ask for XMLStreamReaderWithoutCaching.
+		// This is probably a bug in OM.  You should be able to ask the OM whether
+		// caching is supported.
+		if (omElement.getBuilder() == null) {
+			reader = omElement.getXMLStreamReader();
+		} else {
+			reader = omElement.getXMLStreamReaderWithoutCaching();
+		}
 		SOAPElement env = parent;
 		while (env != null && !(env instanceof SOAPEnvelope)) {
 			env = env.getParentElement();
 		}
 		if (env == null) {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageException("SOAPEnvelope is needed!");
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("SAAJConverterErr1"));
 		}
-		return buildSOAPTree((SOAPEnvelope) env, null, parent, reader, false);
+		NameCreator nc = new NameCreator((SOAPEnvelope) env);
+		return buildSOAPTree(nc, null, parent, reader, false);
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, javax.xml.soap.SOAPElement, javax.xml.soap.SOAPFactory)
+	 */
+	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent, SOAPFactory sf) throws MessageException {
+		XMLStreamReader reader = null;
+		
+		// If the OM element is not attached to a parser (builder), then the OM
+		// is built and you cannot ask for XMLStreamReaderWithoutCaching.
+		// This is probably a bug in OM.  You should be able to ask the OM whether
+		// caching is supported.
+		if (omElement.getBuilder() == null) {
+			reader = omElement.getXMLStreamReader();
+		} else {
+			reader = omElement.getXMLStreamReaderWithoutCaching();
+		}
+		NameCreator nc = new NameCreator(sf);
+		return buildSOAPTree(nc, null, parent, reader, false);
 	}
 
 	/**
@@ -148,13 +181,13 @@ public class SAAJConverterImpl implements SAAJConverter {
 	 * Either the root or the parent is null.
 	 * If the root is null, a new element is created under the parent using information from the reader
 	 * If the parent is null, the existing root is updated with the information from the reader
-	 * @param envelope SOAPEnvelope (used only to create Name objects)
+	 * @param nc NameCreator
 	 * @param root SOAPElement (the element that represents the data in the reader)
 	 * @param parent (the parent of the element represented by the reader)
 	 * @param reader XMLStreamReader. the first START_ELEMENT matches the root
 	 * @param quitAtBody - true if quit reading after the body START_ELEMENT
 	 */
-	protected SOAPElement buildSOAPTree(SOAPEnvelope envelope, 
+	protected SOAPElement buildSOAPTree(NameCreator nc, 
 					SOAPElement root, 
 					SOAPElement parent, 
 					XMLStreamReader reader, 
@@ -168,10 +201,10 @@ public class SAAJConverterImpl implements SAAJConverter {
 					
 					// The first START_ELEMENT defines the prefix and attributes of the root
 					if (parent == null) {
-						updateTagData(envelope, root, reader);
+						updateTagData(nc, root, reader);
 						parent = root;
 					} else {
-						parent = createElementFromTag(envelope, parent, reader);
+						parent = createElementFromTag(nc, parent, reader);
 						if (root == null) {
 							root = parent;
 						}
@@ -251,12 +284,12 @@ public class SAAJConverterImpl implements SAAJConverter {
 	
 	/**
 	 * Create SOAPElement from the current tag data
-	 * @param envelope SOAPEnvelope 
+	 * @param nc NameCreator
 	 * @param parent SOAPElement for the new SOAPElement
 	 * @param reader XMLStreamReader whose cursor is at the START_ELEMENT
 	 * @return
 	 */
-	protected SOAPElement createElementFromTag(SOAPEnvelope envelope, 
+	protected SOAPElement createElementFromTag(NameCreator nc, 
 					SOAPElement parent, 
 					XMLStreamReader reader) 
 		throws SOAPException {
@@ -266,11 +299,11 @@ public class SAAJConverterImpl implements SAAJConverter {
 		// createElement creates the proper child element.
 		QName qName = reader.getName();
 		String prefix = reader.getPrefix();
-		Name name = envelope.createName(qName.getLocalPart(), prefix, qName.getNamespaceURI());
+		Name name = nc.createName(qName.getLocalPart(), prefix, qName.getNamespaceURI());
 		SOAPElement child = createElement(parent, name);
 		
 		// Update the tag data on the child
-		updateTagData(envelope, child, reader);
+		updateTagData(nc, child, reader);
 		return child;
 	}
 	
@@ -317,11 +350,11 @@ public class SAAJConverterImpl implements SAAJConverter {
 	
 	/**
 	 * update the tag data of the SOAPElement
-	 * @param envelope SOAPEnvelope
+	 * @param NameCreator nc
 	 * @param element SOAPElement
 	 * @param reader XMLStreamReader whose cursor is at START_ELEMENT
 	 */
-	protected void updateTagData(SOAPEnvelope envelope, 
+	protected void updateTagData(NameCreator nc, 
 			SOAPElement element, 
 			XMLStreamReader reader) throws SOAPException {
 		String prefix = reader.getPrefix();
@@ -346,18 +379,18 @@ public class SAAJConverterImpl implements SAAJConverter {
 		}
 		
 		// Add attributes 
-		addAttributes(envelope, element, reader);
+		addAttributes(nc, element, reader);
 		
 		return;
 	}
 	
 	/** add attributes
-	 * @param envelope SOAPEnvelope
+	 * @param NameCreator nc
 	 * @param element SOAPElement which is the target of the new attributes
 	 * @param reader XMLStreamReader whose cursor is at START_ELEMENT
 	 * @throws SOAPException
 	 */
-	protected void addAttributes(SOAPEnvelope envelope, 
+	protected void addAttributes(NameCreator nc, 
 			SOAPElement element, 
 			XMLStreamReader reader) throws SOAPException {
 		
@@ -367,7 +400,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 			QName qName = reader.getAttributeName(i);
 			String prefix = reader.getAttributePrefix(i);
 			String value = reader.getAttributeValue(i);
-			Name name = envelope.createName(qName.getLocalPart(), prefix, qName.getNamespaceURI());
+			Name name = nc.createName(qName.getLocalPart(), prefix, qName.getNamespaceURI());
 			element.addAttribute(name, value);
 		}
 	}
@@ -376,6 +409,41 @@ public class SAAJConverterImpl implements SAAJConverter {
 		// Review We need NLS for this message, but this code will probably 
 		// be added to JAX-WS.  So for now we there is no NLS.
 		// TODO NLS
-		throw ExceptionFactory.makeMessageException("Unexpected XMLStreamReader event:" + event);
+		throw ExceptionFactory.makeMessageException(Messages.getMessage("SAAJConverterErr2", event));
+	}
+	
+	/**
+	 * A Name can be created from either a SOAPEnvelope or SOAPFactory.
+	 * Either one or the other is available when the converter is called. 
+	 * NameCreator provides a level of abstraction which simplifies the code.
+	 */
+	protected class NameCreator {
+		private SOAPEnvelope env = null;
+		private SOAPFactory sf = null;
+		
+		public NameCreator(SOAPEnvelope env) {
+			this.env = env;
+		}
+		
+		public NameCreator(SOAPFactory sf) {
+			this.sf = sf;
+		}
+		
+		/**
+		 * Creates a Name
+		 * @param localName
+		 * @param prefix
+		 * @param uri
+		 * @return Name
+		 */
+		public Name createName(String localName, String prefix, String uri)
+			throws SOAPException{
+			if (sf != null) {
+				return sf.createName(localName, prefix, uri);
+			} else {
+				return env.createName(localName, prefix, uri);
+			}
+		}
+		
 	}
 }

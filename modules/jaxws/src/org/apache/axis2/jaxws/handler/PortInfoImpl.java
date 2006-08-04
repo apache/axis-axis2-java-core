@@ -19,6 +19,8 @@ package org.apache.axis2.jaxws.handler;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axis2.jaxws.i18n.Messages;
+
 public class PortInfoImpl implements PortData {
 	private QName serviceName = null;
 	private QName portName = null;
@@ -34,14 +36,18 @@ public class PortInfoImpl implements PortData {
 	 */
 	public PortInfoImpl(QName serviceName, QName portName, String bindingId, String serviceEndpoint) {
 		super();
-		if (serviceName == null)
-			throw new WebServiceException("serviceName cannot be null");
-		if (portName == null)
-			throw new WebServiceException("portName cannot be null");
-		if (bindingId == null)
-			throw new WebServiceException("bindingId cannot be null");
-		if (serviceEndpoint == null)
-			throw new WebServiceException("serviceEndpoint cannot be null");
+		if (serviceName == null) {
+			throw new WebServiceException(Messages.getMessage("portInfoErr0", "<null>"));
+		}
+		if (portName == null) {
+			throw new WebServiceException(Messages.getMessage("portInfoErr1", "<null>"));
+		}
+		if (bindingId == null) {
+			throw new WebServiceException(Messages.getMessage("portInfoErr2", "<null>"));
+		}
+		if (serviceEndpoint == null) {
+			throw new WebServiceException(Messages.getMessage("portInfoErr3", "<null>"));
+		}
 		this.serviceName = serviceName;
 		this.portName = portName;
 		this.bindingId = bindingId;

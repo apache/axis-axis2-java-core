@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.param.JAXBParameter;
 import org.apache.axis2.jaxws.param.Parameter;
 import org.apache.axis2.jaxws.param.ParameterFactory;
@@ -167,8 +168,7 @@ public class Dispatch<T> extends BindingProvider implements javax.xml.ws.Dispatc
     
    public void invokeOneWay(Object obj) throws WebServiceException{
        if(obj == null){
-    	   // TODO NLS
-           throw ExceptionFactory.makeWebServiceException("Dispatch Cannot Invoke SEI with null object");
+           throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvokeErr1"));
         }
         try{
             Parameter param = ParameterFactory.createParameter(obj);
@@ -180,7 +180,7 @@ public class Dispatch<T> extends BindingProvider implements javax.xml.ws.Dispatc
    
     public Future<?> invokeAsync(Object obj, AsyncHandler asynchandler) throws WebServiceException {
        if(obj == null){
-           throw ExceptionFactory.makeWebServiceException("Dispatch Cannot Invoke SEI with null object");
+    	   throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvokeErr2"));
        }
        try{
            Parameter param = ParameterFactory.createParameter(obj);
@@ -192,8 +192,7 @@ public class Dispatch<T> extends BindingProvider implements javax.xml.ws.Dispatc
   
     public Response invokeAsync(Object obj)throws WebServiceException{
         if(obj == null){
-        	// TODO NLS
-            throw ExceptionFactory.makeWebServiceException("Dispatch Cannot Invoke SEI with null object");
+        	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvokeErr2"));
         }
         try{
             Parameter param = ParameterFactory.createParameter(obj);

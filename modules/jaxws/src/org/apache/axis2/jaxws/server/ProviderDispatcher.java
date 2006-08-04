@@ -29,6 +29,7 @@ import javax.xml.ws.Provider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -109,8 +110,7 @@ public class ProviderDispatcher extends EndpointDispatcher{
             responseParamValue = providerInstance.invoke(input);
         } catch (Exception e) {
             e.printStackTrace();
-            throw ExceptionFactory.makeWebServiceException("An error occured " +
-                    "while invoking the target endpoint", e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
 
         // Create the response MessageContext from the returned value
@@ -194,8 +194,7 @@ public class ProviderDispatcher extends EndpointDispatcher{
     	
         if(!isValidProviderType(clazz)){
     		//TODO This will change once deployment code it in place
-    		throw new Exception("Invalid Provider implementation. Only String, " +
-                    "Source, and SOAPMessage are supported by JAX-WS ");
+    		throw new Exception(Messages.getMessage("InvalidProvider", clazz.getName()));
     	}
         
         Provider provider = null;
@@ -213,7 +212,7 @@ public class ProviderDispatcher extends EndpointDispatcher{
     	}
     	
         if (provider == null) {
-            throw ExceptionFactory.makeWebServiceException("Unable to create Provider instance.");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("InvalidProviderCreate", clazz.getName()));
         }
         
     	return provider;

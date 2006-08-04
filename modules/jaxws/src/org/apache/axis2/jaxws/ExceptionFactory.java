@@ -25,6 +25,7 @@ import javax.xml.ws.http.HTTPException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.commons.logging.Log;
@@ -85,7 +86,7 @@ public class ExceptionFactory {
 			// This is not a good situation, an exception occurred while building the exception.
 			// This should never occur!  For now log the problem and rethrow...we may revisit this later
 			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while creating exception", re);
+				log.debug(Messages.getMessage("exceptionDuringExceptionFlow"), re);
 			}
 			throw re;
 		}
@@ -110,7 +111,7 @@ public class ExceptionFactory {
 			// This is not a good situation, an exception occurred while building the exception.
 			// This should never occur!  For now log the problem and rethrow...we may revisit this later
 			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while creating exception", re);
+				log.debug(Messages.getMessage("exceptionDuringExceptionFlow"), re);
 			}
 			throw re;
 		}
@@ -135,7 +136,7 @@ public class ExceptionFactory {
 			// This is not a good situation, an exception occurred while building the exception.
 			// This should never occur!  For now log the problem and rethrow...we may revisit this later
 			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while creating exception", re);
+				log.debug(Messages.getMessage("exceptionDuringExceptionFlow"), re);
 			}
 			throw re;
 		}
@@ -160,7 +161,7 @@ public class ExceptionFactory {
 			// This is not a good situation, an exception occurred while building the exception.
 			// This should never occur!  For now log the problem and rethrow...we may revisit this later
 			if (log.isDebugEnabled()) {
-				log.debug("Exception occurred while creating exception", re);
+				log.debug(Messages.getMessage("exceptionDuringExceptionFlow"), re);
 			}
 			throw re;
 		}

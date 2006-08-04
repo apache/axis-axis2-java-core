@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -56,11 +57,10 @@ public class MessageImpl implements Message {
 		super();
 		this.protocol = protocol;
 		if (protocol.equals(Protocol.unknown)) {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageException("Protocol unknown is not supported");
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("ProtocolIsNotKnown"));
 		} else if (protocol.equals(Protocol.rest)) {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageException("Protocol rest is not supported");
+			// TODO Need REST support
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
 		}
 		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
 		xmlPart = factory.create(protocol);
@@ -82,7 +82,7 @@ public class MessageImpl implements Message {
 	 */
 	public SOAPMessage getAsSOAPMessage() throws MessageException {
 		// TODO Missing implementation
-		throw ExceptionFactory.makeMessageException("Not Implemented Yet");
+		throw ExceptionFactory.makeMessageException(Messages.getMessage("MethodNotImplemented", "MessageImpl.getAsSOAPMessage()"));
 	}
 
 	/* (non-Javadoc)

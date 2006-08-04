@@ -44,6 +44,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.handler.PortData;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.param.JAXBParameter;
@@ -169,9 +170,8 @@ public class AxisController {
             //return response.getValue();
             return buildResponse(axisResponse, response).getValue();
         }catch(AxisFault e){
-        	//TODO
-        	String todo = "Fault processing not supported for Alpha, we are only printing the fault node from soap fault.";
-            throw ExceptionFactory.makeWebServiceException(e.getMessage() + " " + todo);
+        	// TODO Add Fault Processing
+        	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("faultProcessingNotSupported", e.getMessage()), e);
             
         }       
     }
@@ -197,9 +197,9 @@ public class AxisController {
             
             serviceClient.fireAndForget(ServiceClient.ANON_OUT_ONLY_OP, toOM(param));
         } catch(AxisFault e) {
-        	
-        	String todo = "Fault processing not supported for Alpha, we are only printing the fault node from soap fault.";
-            throw ExceptionFactory.makeWebServiceException(e.getMessage() + " " + todo);
+        	// TODO Add Fault Processing
+        	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("faultProcessingNotSupported", e.getMessage()), e);
+
         }
     }
     
@@ -259,10 +259,10 @@ public class AxisController {
                 getExecutor().submit(response).get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                throw ExceptionFactory.makeWebServiceException(e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(e);
             } catch (ExecutionException e) {
                 e.printStackTrace();
-                throw ExceptionFactory.makeWebServiceException(e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(e);
             }
             
             //TODO: Need to figure out who/when the Listener should be shutdown
@@ -270,9 +270,8 @@ public class AxisController {
             //itself to see if any other responses are outstanding.
             return response;
         }catch(AxisFault e){
-        	
-        	String todo = "Fault processing not supported for Alpha, we are only printing the fault node from soap fault.";
-            throw ExceptionFactory.makeWebServiceException(e.getMessage() + " " + todo);
+        	// TODO Add Fault Processing
+        	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("faultProcessingNotSupported", e.getMessage()), e);
         }
     }
     

@@ -39,6 +39,7 @@ import org.apache.axis2.description.RobustOutOnlyAxisOperation;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
@@ -113,16 +114,13 @@ public class ServiceDescription {
      */
     ServiceDescription(URL wsdlURL, QName serviceQName, Class serviceClass) {
         if (serviceQName == null) {
-        	// TODO NLS
-            throw ExceptionFactory.makeWebServiceException("Invalid Service QName; cannot be null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr0"));
         }
         if (serviceClass == null) {
-        	// TODO NLS
-            throw ExceptionFactory.makeWebServiceException("Invalid Service Class; cannot be null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr1", "null"));
         }
         if (!javax.xml.ws.Service.class.isAssignableFrom(serviceClass)) {
-        	// TODO NLS
-            throw ExceptionFactory.makeWebServiceException("Invalid Service Class; must be assignable to javax.xml.ws.Service");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr1", serviceClass.getName()));
         }
         
         this.wsdlURL = wsdlURL;
@@ -206,9 +204,7 @@ public class ServiceDescription {
             try {
                 wsdlWrapper = new WSDL4JWrapper(this.wsdlURL);
             } catch (WSDLException e) {
-                // TODO NLS
-                e.printStackTrace();
-                throw ExceptionFactory.makeWebServiceException("caught WSDL Exception" + e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
             }
         }
     }
@@ -230,8 +226,8 @@ public class ServiceDescription {
         try {
             axisService = serviceBuilder.populateService();
         } catch (AxisFault e) {
-            // TODO NLS
-            log.warn("ServiceDescription: Caught exception creating AxisService", e);
+            // TODO We should not swallow a fault here.
+            log.warn(Messages.getMessage("warnAxisFault", e.toString()));
         }
     }
     
@@ -270,8 +266,7 @@ public class ServiceDescription {
         Definition definition = wsdlWrapper.getDefinition();
         Service service = definition.getService(serviceQName);
         if (service == null) {
-        	// TODO NLS
-            throw ExceptionFactory.makeWebServiceException("Service QName not found in WSDL");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr2", serviceQName.toString()));
         }
         
         Map ports = service.getPorts();

@@ -39,6 +39,7 @@ import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
 import org.apache.axis2.jaxws.message.Message;
@@ -50,6 +51,7 @@ import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 
 /**
  * The <tt>AxisInvocationController</tt> is an implementation of the 
@@ -76,12 +78,10 @@ public class AxisInvocationController implements InvocationController {
         // Check to make sure we at least have a valid InvocationContext
         // and request MessageContext
         if (ic == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot invoke; " +
-                    "InvocationContext was null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr1"));
         }
         if (ic.getRequestMessageContext() == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot invoke; " +
-                    "request MessageContext was null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr2"));
         }
         
         // Get the request MessageContext
@@ -258,10 +258,10 @@ public class AxisInvocationController implements InvocationController {
         // Check to make sure we at least have a valid InvocationContext
         // and request MessageContext
         if (ic == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot invoke; InvocationContext was null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr1"));
         }
         if (ic.getRequestMessageContext() == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot invoke; request MessageContext was null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr3"));
         }
         
         // Setup the MessageContext for the response
@@ -316,7 +316,7 @@ public class AxisInvocationController implements InvocationController {
                 wrapper.setAsyncHandler(callback);
             }
             else {
-                throw ExceptionFactory.makeWebServiceException("Cannot call asynchronous invoke with null callback");
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr4"));
             }
             
             try {
@@ -361,10 +361,10 @@ public class AxisInvocationController implements InvocationController {
                 future.get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                throw ExceptionFactory.makeWebServiceException(e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(e);
             } catch (ExecutionException e) {
                 e.printStackTrace();
-                throw ExceptionFactory.makeWebServiceException(e.getMessage());
+                throw ExceptionFactory.makeWebServiceException(e);
             }
             
             return wrapper;
@@ -382,7 +382,7 @@ public class AxisInvocationController implements InvocationController {
             log.debug("Invocation pattern: async (polling)");
         }
         
-        throw ExceptionFactory.makeWebServiceException("Aysnchronous polling invocations are not supported yet.");
+        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("AsyncPollingNotSupported"));
     }
     
     /**
@@ -421,10 +421,10 @@ public class AxisInvocationController implements InvocationController {
      */
     private OperationClient createOperationClient(ServiceClient sc, QName operation) {
         if (sc == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot create OperationClient, ServiceClient was null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICCreateOpClientErr1"));
         }
         if (operation == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot create OperationClient, QName was null");
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICCreateOpClientErr2"));
         }
         
         if (log.isDebugEnabled()) {

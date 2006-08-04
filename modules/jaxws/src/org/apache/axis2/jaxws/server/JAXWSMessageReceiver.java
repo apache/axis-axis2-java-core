@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
@@ -71,7 +72,7 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
         
         try {
             if (svcClassParam == null) { 
-                throw new RuntimeException("No service class was found for this AxisService");
+                throw new RuntimeException(Messages.getMessage("JAXWSMessageReceiverNoServiceClass"));
             }
             
             //This assumes that we are on the ultimate execution thread

@@ -36,6 +36,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 
 
@@ -54,16 +55,12 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 			ArrayList<String> childNames) throws JAXBWrapperException{
 		try{
 			if(jaxbObject == null){
-				throw new JAXBWrapperException("input JAXB Object cannot be null");
+				throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr1"));
 			}
 			if(childNames == null){
-				throw new JAXBWrapperException("Input childNames cannot be null");
+				throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr2"));
 			}
 			ArrayList<Object> objList = new ArrayList<Object>();
-			if(jaxbObject == null){
-				
-				throw new JAXBWrapperException(new NullPointerException("UnWrap cannot continue, input parameter jaxbObject is null "));
-			}
 			Map<String , PropertyInfo> pdTable = createPropertyDescriptors(jaxbObject.getClass(), childNames);
 			for(String childName:childNames){
 				PropertyInfo propInfo = pdTable.get(childName);
@@ -93,10 +90,10 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 		
 		try{
 			if(childNames == null|| childObjects == null){
-				throw new JAXBWrapperException("Input Child Name or Child Object values cannot be null");
+				throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr3"));
 			}
 			if(childNames.size() != childObjects.size()){
-				throw new JAXBWrapperException("Input ChildNames should be same as input childObjects ");
+				throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr4"));
 			}
 			Map<String, PropertyInfo> pdTable = createPropertyDescriptors(jaxbClass, childNames);
 			Object jaxbObject = jaxbClass.newInstance();
@@ -143,7 +140,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 		Map<String, PropertyDescriptor>  jaxbClassPds = filterDescriptors(pds, jaxbClass);
 		Field field[] = jaxbClass.getDeclaredFields();
 		if(field.length != childNames.size()){
-			throw new JAXBWrapperException("Number of field defined in JAXBClass ["+jaxbClass+"] is not equal to the input ChildNames and Child Objects provided to map");
+			throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr4", jaxbClass.getName()));
 		}
 		pds=null;
 		
@@ -155,7 +152,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 			if(pd == null){
 				pd = jaxbClassPds.get(fieldName);
 				if(pd == null){
-					throw new JAXBWrapperException("No Such Field [ChildName: "+childName+ "]");
+					throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr4", jaxbClass.getName(), childName));
 				}	
 			}
 			propInfo = new PropertyInfo(fieldName, pd);

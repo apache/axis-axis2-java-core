@@ -36,6 +36,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -222,7 +223,9 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 				}
 			}
 		}
-		throw new NoSuchFieldException("Could not create WebResult Object for property :"+propertyName+ " on java bean:"+returnClazz);
+		
+		// TODO Shouldn't this be a WebServiceException ?
+		throw new NoSuchFieldException(Messages.getMessage("noWebResultForProperty", propertyName, returnClazz.getName()));
 	}
 	//TODO: refactor this once PropertyDescriptor is implemented.
 	private Map<String, Object> getParamValues(ArrayList<String> names, Object[] objects){

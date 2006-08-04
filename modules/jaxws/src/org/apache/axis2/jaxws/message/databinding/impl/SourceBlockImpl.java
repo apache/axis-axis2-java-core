@@ -33,6 +33,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.databinding.SourceBlock;
@@ -95,7 +96,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 			// Okay, these are supported Source objects
 		} else {
 			// TODO NLS
-			throw ExceptionFactory.makeMessageException("Unexpected Source:" + busObject.getClass());
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
 		}
 	}
 	
@@ -164,7 +165,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 			return busObject;
 		} else {
 			// TODO Missing Impl
-			throw ExceptionFactory.makeMessageInternalException("Missing Code...Need to make a copy of the Source", null);
+			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("SourceMissingSupport", busObject.getClass().getName()), null);
 		}
 	}
 	

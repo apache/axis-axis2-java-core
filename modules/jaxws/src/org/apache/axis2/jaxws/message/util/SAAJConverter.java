@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message.util;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPFactory;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -57,12 +58,29 @@ public interface SAAJConverter {
 		throws MessageException;
 	
 	/**
-	 * Convert omElement into a SOAPElement and add it to the parent SOAPElement
+	 * Convert omElement into a SOAPElement and add it to the parent SOAPElement.
+	 * This method requires that the parent element have an ancestor that is a
+	 * SOAPEnvelope. 
+	 * If this is not the case use the toSAAJ(OMElement, SOAPElement, SOAPFactory) method
 	 * @param omElement
 	 * @param parent SOAPElement
 	 * @return SOAPElement that was added to the parent.
 	 * @throws MessageException
+	 * @see toSAAJ(OMElement, SOAPElement, SOAPFactory)
 	 */
 	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent)
 		throws MessageException;
+	
+	/**
+	 * Convert omElement into a SOAPElement and add it to the parent SOAPElement.
+	 * @param omElement
+	 * @param parent SOAPElement
+	 * @param sf SOAPFactory that is used to create Name objects
+	 * @return SOAPElement that was added to the parent.
+	 * @throws MessageException
+	 * * @see toSAAJ(OMElement, SOAPElement)
+	 */
+	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent, SOAPFactory sf)
+		throws MessageException;
+	
 }

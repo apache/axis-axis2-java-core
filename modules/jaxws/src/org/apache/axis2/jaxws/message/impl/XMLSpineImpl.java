@@ -35,6 +35,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
@@ -93,8 +94,8 @@ class XMLSpineImpl implements XMLSpine {
 		} else if (root.getNamespace().getName().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
 			protocol = Protocol.soap12;
 		} else {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageInternalException("unrecognized protocol", null);
+			// TODO Support for REST
+			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("RESTIsNotSupported"), null);
 		}
 	} 
 
@@ -124,8 +125,8 @@ class XMLSpineImpl implements XMLSpine {
 			advanceIterator(bodyIterator, bodyBlocks, false);
 		} else {
 			// Process the Fault
-			// TODO NLS
-			throw ExceptionFactory.makeMessageException("Not Implemented Yet");
+			// TODO Add Fault Processing
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("SOAPFaultIsNotImplemented"));
 		}
 		return;
 	}
@@ -174,8 +175,8 @@ class XMLSpineImpl implements XMLSpine {
 		} else if (protocol == Protocol.soap12) {
 			soapFactory = new SOAP11Factory();
 		} else {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageInternalException("unsupported protocol", null);
+			// TODO REST Support is needed
+			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("RESTIsNotSupported"), null);
 		}
 		return soapFactory;
 	}
@@ -213,13 +214,11 @@ class XMLSpineImpl implements XMLSpine {
 	}
 
 	public javax.xml.soap.SOAPEnvelope getAsSOAPEnvelope() throws MessageException {
-		// TODO NLS
-		throw ExceptionFactory.makeMessageInternalException("Should never be called", null);
+		throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("NeverCalled", "XMLSpineImpl.getAsSOAPEnvelope()"), null);
 	}
 
 	public OMElement getAsOMElement() throws MessageException {
-		// TODO NLS
-		throw ExceptionFactory.makeMessageInternalException("Should never be called", null);
+		throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("NeverCalled", "XMLSpineImpl.getAsOMElement()"), null);
 	}
 
 	/* (non-Javadoc)
@@ -313,7 +312,7 @@ class XMLSpineImpl implements XMLSpine {
 	}
 
 	public String traceString(String indent) {
-		// TODO Auto-generated method stub
+		// TODO Trace String Support
 		return null;
 	}
 	

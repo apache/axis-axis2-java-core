@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -105,8 +106,7 @@ public abstract class BlockImpl implements Block {
 	 */
 	public Object getBusinessObject(boolean consume) throws XMLStreamException, MessageException {
 		if (consumed) {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageException("The block is already consumed");
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (busObject != null) {
 			busObject =  _getBOFromBO(busObject, busContext, consume);
@@ -164,8 +164,7 @@ public abstract class BlockImpl implements Block {
 	public XMLStreamReader getXMLStreamReader(boolean consume) throws XMLStreamException, MessageException {
 		XMLStreamReader newReader = null;
 		if (consumed) {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageException("The block is already consumed");
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (omElement != null) {
 			if (consume) {
@@ -187,8 +186,7 @@ public abstract class BlockImpl implements Block {
 		OMElement newOMElement = null;
 		boolean consume =true;  // get the OM consumes the message
 		if (consumed) {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageException("The block is already consumed");
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (omElement != null) {
 			newOMElement = omElement;
@@ -232,8 +230,7 @@ public abstract class BlockImpl implements Block {
 
 	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
 		if (consumed) {
-			// TODO NLS
-			throw ExceptionFactory.makeMessageException("The block is already consumed");
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (omElement != null) {
 			if (consume) {
@@ -258,7 +255,7 @@ public abstract class BlockImpl implements Block {
 	}
 	
 	public String traceString(String indent) {
-		// TODO Auto-generated method stub
+		// TODO add trace string
 		return null;
 	}
 	

@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
@@ -105,7 +106,7 @@ public abstract class BaseProxyHandler extends BindingProvider implements
             log.debug("Attemping to invoke Method: " +method.getName());
         }
 		if(!isValidMethodCall(method)){
-			throw new WebServiceException("Invalid Method-"+method.getName()+ " Method not found in javax.xml.ws.BindingProvider or "+axisController.getClientContext().getClazz() );
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr1",method.getName(), axisController.getClientContext().getClazz().getName()));
 		}
 		
 		if(isBindingProviderInvoked(method)){

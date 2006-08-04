@@ -12,6 +12,7 @@ import javax.xml.ws.handler.soap.SOAPHandler;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 /* 
@@ -98,10 +99,10 @@ public class HandlerResolverImpl implements HandlerResolver {
 				protocolHandlers.add((SOAPHandler)handlerClass);
 			else if (Handler.class.isAssignableFrom(handlerClass.getClass())) {
 				// TODO: NLS better error message
-				throw ExceptionFactory.makeWebServiceException("cannot implement Handler directly");
+				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr1", handlerClass.getClass().getName()));
 			} else {
 				// TODO: NLS better error message
-				throw ExceptionFactory.makeWebServiceException("Some error");
+				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr2", handlerClass.getClass().getName()));
 			}
 		}
 		

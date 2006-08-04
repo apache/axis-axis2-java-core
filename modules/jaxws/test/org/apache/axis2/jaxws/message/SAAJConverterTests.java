@@ -23,13 +23,17 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
@@ -150,4 +154,25 @@ public class SAAJConverterTests extends TestCase {
 		om = converter.toOM(se);
 		assertTrue(om.getLocalName().equals("a"));
 	}
+	
+	/**
+	 * @testStrategy: Create an OMElement, without using a builder.  Verification of AXIS2-970
+	 */
+    public void test3() throws Exception {
+    	
+//    	 Step 1: Get the SAAJConverter object from the Factory
+		SAAJConverterFactory f = (SAAJConverterFactory) 
+			FactoryRegistry.getFactory(SAAJConverterFactory.class);
+		SAAJConverter converter = f.getSAAJConverter();
+		
+		// Stept 2: Create OM and parent SOAPElement
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace wrapNs = fac.createOMNamespace("namespace", "prefix");
+        OMElement ome = fac.createOMElement("localname", wrapNs);
+        SOAPFactory sf = SOAPFactory.newInstance();
+        SOAPElement se = sf.createElement("name");
+        
+        // Step 3: Do the conversion
+        converter.toSAAJ(ome, se, sf);
+    }
 }

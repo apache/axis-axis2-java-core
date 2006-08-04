@@ -12,6 +12,7 @@ import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 
 
 public class HandlerChainProcessor {
@@ -67,8 +68,7 @@ public class HandlerChainProcessor {
 		for (Handler handlerClass : handlers) {
 			if (LogicalHandler.class.isAssignableFrom(handlerClass.getClass())) {
 				if (protocolHandlersStarted)
-					// TODO: NLS better error message
-					throw ExceptionFactory.makeWebServiceException("All logical handlers must come before all protocol handlers");
+					throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr0", handlerClass.getClass().getName()));
 				else {
 					logicalLength++;
 				}
@@ -76,11 +76,9 @@ public class HandlerChainProcessor {
 			else if (SOAPHandler.class.isAssignableFrom(handlerClass.getClass()))
 				protocolHandlersStarted = true;
 			else if (Handler.class.isAssignableFrom(handlerClass.getClass())) {
-				// TODO: NLS better error message
-				throw ExceptionFactory.makeWebServiceException("cannot implement Handler directly");
+				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr1", handlerClass.getClass().getName()));
 			} else {
-				// TODO: NLS better error message
-				throw ExceptionFactory.makeWebServiceException("Some error");
+				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr2", handlerClass.getClass().getName()));
 			}
 
 		}
