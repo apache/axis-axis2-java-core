@@ -231,7 +231,11 @@ public class AxisInvocationController implements InvocationController {
                 // AxisService/AxisOperation that they are tied to.
                 axisRequestMsgCtx.setServiceContext(svcClient.getServiceContext());
                 opClient.addMessageContext(axisRequestMsgCtx);
+
+                //This assumes that we are on the ultimate execution thread
+                ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
                 opClient.execute(true);
+                ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
             } catch (AxisFault e) {
                 throw ExceptionFactory.makeWebServiceException(e);
             } catch (MessageException e) {
@@ -333,7 +337,9 @@ public class AxisInvocationController implements InvocationController {
                 axisRequestMsgCtx.setServiceContext(svcClient.getServiceContext());
                 opClient.addMessageContext(axisRequestMsgCtx);
                 opClient.setCallback(axisCallback);
+                ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
                 opClient.execute(false);
+                ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
             } catch (AxisFault e) {
                 throw ExceptionFactory.makeWebServiceException(e);
             } catch (MessageException e) {
