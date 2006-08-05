@@ -17,9 +17,8 @@
 package org.apache.ws.security.policy.model;
 
 import org.apache.ws.security.policy.Constants;
-import org.apache.ws.security.policy.WSSPolicyException;
 
-public class SymmetricAsymmetricBindingBase extends Binding {
+public abstract class SymmetricAsymmetricBindingBase extends Binding {
 
     private String protectionOrder = Constants.SIGN_BEFORE_ENCRYPTING;
     
@@ -54,14 +53,13 @@ public class SymmetricAsymmetricBindingBase extends Binding {
     /**
      * @param protectionOrder The protectionOrder to set.
      */
-    public void setProtectionOrder(String protectionOrder)
-            throws WSSPolicyException {
+    public void setProtectionOrder(String protectionOrder) {
         if(Constants.ENCRYPT_BEFORE_SIGNING.equals(protectionOrder) ||
            Constants.SIGN_BEFORE_ENCRYPTING.equals(protectionOrder)) {
             this.protectionOrder = protectionOrder;
         } else {
-            throw new WSSPolicyException("Incorrect protection order value : "
-                    + protectionOrder);
+//            throw new WSSPolicyException("Incorrect protection order value : "
+//                    + protectionOrder);
         }
     }
 

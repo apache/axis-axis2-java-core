@@ -16,10 +16,8 @@
 
 package org.apache.ws.security.policy.model;
 
-import org.apache.ws.security.policy.WSSPolicyException;
-
 public interface AlgorithmWrapper {
 
-    public void setAlgorithmSuite(AlgorithmSuite algorithmSuite) throws WSSPolicyException;
+    public void setAlgorithmSuite(AlgorithmSuite algorithmSuite);
     
 }

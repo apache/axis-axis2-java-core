@@ -16,6 +16,17 @@
 
 package org.apache.ws.security.policy.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.security.policy.Constants;
+
 public class X509Token extends Token {
 
     private boolean requireKeyIdentifierReference;
@@ -27,7 +38,9 @@ public class X509Token extends Token {
     private boolean requireThumbprintReference;
     
     private String tokenVersionAndType;
-
+    
+    private List x509Tokens = new ArrayList();
+    
     /**
      * @return Returns the requireEmbeddedTokenReference.
      */
@@ -99,6 +112,27 @@ public class X509Token extends Token {
     public void setTokenVersionAndType(String tokenVersionAndType) {
         this.tokenVersionAndType = tokenVersionAndType;
     }
+    
+    public Iterator getOptions() {
+        return x509Tokens.iterator();
+    }
+    
+    public void addOption(X509Token token) {
+        x509Tokens.add(token);
+    }
+
+    public QName getName() {
+        return Constants.X509_TOKEN;
+    }
+
+    public PolicyComponent normalize() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        throw new UnsupportedOperationException();
+    }
+    
     
     
 }

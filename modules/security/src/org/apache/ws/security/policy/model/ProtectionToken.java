@@ -16,11 +16,22 @@
 
 package org.apache.ws.security.policy.model;
 
-import org.apache.ws.security.policy.WSSPolicyException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-public class ProtectionToken extends PolicyEngineData implements TokenWrapper {
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.security.policy.Constants;
+
+public class ProtectionToken extends AbstractSecurityAssertion implements TokenWrapper {
     
     private Token protectionToken;
+    
+    private List protectionTokens = new ArrayList();
 
     /**
      * @return Returns the protectionToken.
@@ -36,8 +47,30 @@ public class ProtectionToken extends PolicyEngineData implements TokenWrapper {
         this.protectionToken = protectionToken;
     }
 
-    public void setToken(Token tok) throws WSSPolicyException {
+    public void setToken(Token tok) {
         this.setProtectionToken(tok);
+    }
+    
+    public Iterator getOptions() {
+        return protectionTokens.iterator();
+    }
+    
+    public void addOption(ProtectionToken protectionToken) {
+        protectionTokens.add(protectionToken);
+    }
+
+    public QName getName() {
+        return Constants.PROTECTION_TOKEN;
+    }
+
+    public PolicyComponent normalize() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        // TODO Auto-generated method stub
+        
     }
     
     

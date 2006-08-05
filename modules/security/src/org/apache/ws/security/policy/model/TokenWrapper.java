@@ -16,9 +16,7 @@
 
 package org.apache.ws.security.policy.model;
 
-import org.apache.ws.security.policy.WSSPolicyException;
-
 public interface TokenWrapper {
 
-    public void setToken(Token tok) throws WSSPolicyException;
+    public void setToken(Token tok);
 }
