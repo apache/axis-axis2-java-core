@@ -53,7 +53,8 @@ public class SavanModule implements Module  {
 	public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault {
 		ConfigurationManager configurationManager = new ConfigurationManager ();
 		try {
-			configurationManager.configure();
+			ClassLoader moduleClassLoader = module.getModuleClassLoader();
+			configurationManager.configure(moduleClassLoader);
 		} catch (SavanException e) {
 			log.error ("Exception thrown while trying to configure the Savan module",e);
 		}

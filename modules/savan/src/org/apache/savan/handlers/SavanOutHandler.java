@@ -19,6 +19,7 @@ package org.apache.savan.handlers;
 import java.util.Iterator;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
@@ -54,6 +55,10 @@ public class SavanOutHandler extends AbstractHandler {
 				
 				//building the publication envelope
 				msgContext.getEnvelope().build();
+				
+				//this tell addressing to polulate the SOAP envelope with the new values set in the options object
+				//(i.e. by removing old headers) every time the message sent through it.
+				msgContext.setProperty(AddressingConstants.REPLACE_ADDRESSING_HEADERS, new Boolean (true));
 				
 				PublicationReport report = new PublicationReport();
 				Iterator iterator = store.retrieveAll();

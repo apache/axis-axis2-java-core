@@ -20,8 +20,11 @@ package org.apache.savan.subscribers;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;
+import org.apache.savan.module.SavanModule;
 import org.apache.savan.publication.PublicationReport;
 import org.apache.savan.subscription.ExpirationBean;
 import org.apache.savan.util.CommonUtil;
@@ -31,6 +34,8 @@ import org.apache.savan.util.CommonUtil;
  *
  */
 public abstract class LeafSubscriber extends AbstractSubscriber {
+	
+	private static final Log log = LogFactory.getLog(LeafSubscriber.class);
 	
 	/**
 	 * The time at which further notification of messages should be avaoded
@@ -71,7 +76,10 @@ public abstract class LeafSubscriber extends AbstractSubscriber {
 		
 		if (expired) {
 			String message = "Cant notify the listner since the subscription has been expired";
-			throw new SavanException (message);
+			log.debug(message);
+			
+			//TODO inform in some other manner than sending an exception.
+//			throw new SavanException (message);
 		}
 		
 		doProtocolSpecificPublication (publication);

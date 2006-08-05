@@ -2,13 +2,13 @@
 
     <inflow>
         <handler name="SavanInHandler" class="org.apache.savan.handlers.SavanInHandler">
-            <order phase="OpPhase"/>
+            <order phase="OperationInPhase"/>
         </handler>
     </inflow>
     
     <outflow>
         <handler name="SavanOutHandler" class="org.apache.savan.handlers.SavanOutHandler">
-            <order phase="OpPhase"/>
+            <order phase="OperationOutPhase"/>
         </handler>
     </outflow>
 

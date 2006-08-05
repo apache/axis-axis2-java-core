@@ -88,9 +88,13 @@ public class ConfigurationManager {
 	 * @throws SavanException
 	 */
 	public void configure () throws SavanException {
-		System.out.println("new");
-		InputStream in = getClass().getClassLoader().
-					getResourceAsStream(SavanConstants.CONFIG_FILE);
+		ClassLoader classLoader = getClass().getClassLoader();
+
+		configure(classLoader);
+	}
+	
+	public void configure (ClassLoader classLoader) throws SavanException {
+		InputStream in = classLoader.getResourceAsStream(SavanConstants.CONFIG_FILE);
 
 		if (in==null)
 			throw new SavanException ("Cannot find the savan configuration file. Initialation cannot continue.");
