@@ -18,26 +18,24 @@ package sample.eventing;
 
 import java.util.Random;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.savan.publication.client.PublicationClient;
+import org.apache.savan.storage.SubscriberStore;
+import org.apache.savan.util.CommonUtil;
 
 public class PublisherService {
   
-	ConfigurationContext configurationContext = null;
+	ServiceContext serviceContext = null;
 	
 	public void init(ServiceContext serviceContext) throws AxisFault {
 		System.out.println("Eventing Service INIT called");
-		configurationContext = serviceContext.getConfigurationContext();
+		this.serviceContext = serviceContext;
 		
 		PublisherThread thread = new PublisherThread ();
 		thread.start();
@@ -55,32 +53,28 @@ public class PublisherService {
 		
 		public void run () {
 			try {
-				
-				ServiceClient sc = new ServiceClient (configurationContext,null);
-				Options options = new Options ();
-				sc.setOptions(options);
-				
-				//if already engaged, axis2 will neglect this engagement.
-				sc.engageModule( new QName("savan"));
-				
-				options.setTo(new EndpointReference ("http://dummyTargetEPR/"));
-				options.setAction("DummyAction");
-				
 				while (true) {
 					
 					Thread.sleep(5000);
 					
 					//publishing
 					System.out.println("Publishing next publication...");
-					sc.fireAndForget(getNextPublicationEnvelope ());
+					
+					SubscriberStore store = (SubscriberStore) CommonUtil.getSubscriberStore(serviceContext.getAxisService());
+					if (store==null)
+						throw new Exception ("Cant find the Savan subscriber store");
+					
+					SOAPEnvelope envelope = getNextPublicationEnvelope ();
+					PublicationClient.sendPublication(envelope,serviceContext.getConfigurationContext(),store);
 				}
+				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
-		public OMElement getNextPublicationEnvelope () {
+		public SOAPEnvelope getNextPublicationEnvelope () {
 			SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
 			OMNamespace namespace = factory.createOMNamespace(publicationNamespaceValue,"ns1");
 			OMElement publicationElement = factory.createOMElement(Publication,namespace);
@@ -91,7 +85,10 @@ public class PublisherService {
 			OMElement publishMethod = factory.createOMElement("publish",namespace);
 			publishMethod.addChild(publicationElement);
 			
-			return publishMethod;
+			SOAPEnvelope envelope = factory.getDefaultEnvelope();
+			envelope.getBody().addChild(publishMethod);
+			
+			return envelope;
 		}
 	}
 }

@@ -34,16 +34,16 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.databinding.types.Duration;
 import org.apache.savan.eventing.client.EventingClient;
 import org.apache.savan.eventing.client.EventingClientBean;
+import org.apache.savan.eventing.client.SubscriptionStatus;
 
 public class Client {
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     
     private final int MIN_OPTION = 1;
-    private final int MAX_OPTION = 6;
+    private final int MAX_OPTION = 9;
     
     private final String SUBSCRIBER_1_ID = "subscriber1";
     private final String SUBSCRIBER_2_ID = "subscriber2";
@@ -164,7 +164,6 @@ public class Client {
 			performAction (selectedOption);
 			
 		}
-		
 	}
 	
 	private void displayMenu () {
@@ -174,7 +173,9 @@ public class Client {
 		System.out.println("Press 4 to unsubscribe Listner Service 1");
 		System.out.println("Press 5 to unsubscribe Listner Service 2");
 		System.out.println("Press 6 to unsubscribe both listner services");
-		System.out.println("Press 7 to Exit");
+		System.out.println("Press 7 to to get the status of the subscription to Service 1");
+		System.out.println("Press 8 to to get the status of the subscription to Service 2");
+		System.out.println("Press 9 to Exit");
 	}
 	
 	private int getIntInput () throws IOException {
@@ -197,7 +198,7 @@ public class Client {
 			CLIENT_REPO = repo;
 			AXIS2_XML = repo + File.separator + "axis2.xml";
 		} else {
-			throw new AxisFault ("Please specify the client repository as a program argument.Use '-h' for help.");
+//			throw new AxisFault ("Please specify the client repository as a program argument.Use '-h' for help.");
 		}
 		
 		ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(CLIENT_REPO,AXIS2_XML);
@@ -237,6 +238,12 @@ public class Client {
 			doUnsubscribe(SUBSCRIBER_2_ID);
 			break;
 		case 7:
+			doGetStatus(SUBSCRIBER_1_ID);
+			break;
+		case 8:
+			doGetStatus(SUBSCRIBER_2_ID);
+			break;
+		case 9:
 			System.exit(0);
 			break;
 		default:
@@ -257,10 +264,12 @@ public class Client {
 		}
 	
 		bean.setDeliveryEPR(new EndpointReference (subscribingAddress));
+	
+		//uncomment following to set an expiration time of 10 minutes.
+//		Date date = new Date ();
+//		date.setMinutes(date.getMinutes()+10);
+//		bean.setExpirationTime(date);
 		
-		Date date = new Date ();
-		date.setMinutes(date.getMinutes()+1);
-		bean.setExpirationTime(date);
 		eventingClient.subscribe(bean,ID);
 		Thread.sleep(1000);   //TODO remove if not sequired
 	}
@@ -270,6 +279,14 @@ public class Client {
 		Thread.sleep(1000);   //TODO remove if not sequired
 	}
 	
+	private void doGetStatus (String ID) throws Exception {
+		SubscriptionStatus status  = eventingClient.getSubscriptionStatus(ID);
+		Thread.sleep(1000);   //TODO remove if not sequired
+		
+		String statusValue = status.getExpirationValue();
+		System.out.println("Status of the subscriber '" + ID +"' is" + statusValue);
+	}
+	
 	private OMElement getDummyMethodRequestElement() {
 		OMFactory fac = OMAbstractFactory.getOMFactory();
 		OMNamespace namespace = fac.createOMNamespace(applicationNamespaceName,"ns1");
@@ -277,4 +294,5 @@ public class Client {
 
 		return dummyMethodElem;
 	}
+	
 }
