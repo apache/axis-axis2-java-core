@@ -556,6 +556,16 @@ public abstract class AxisOperation extends AxisDescription
         this.soapAction = soapAction;
     }
 
+    public String getInputAction(){
+        String result = getSoapAction();
+        if(result==null || "".equals(result)){
+            if(wsamappingList!=null && !wsamappingList.isEmpty()){
+                result = wsamappingList.get(0).toString();
+            }
+        }
+        return result;
+    }
+    
     public String getOutputAction() {
         return outputAction;
     }

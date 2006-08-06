@@ -329,10 +329,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                             + ":" + inaxisMessage.getName(), null);
                     addPolicyAsExtElement(PolicyInclude.INPUT_POLICY,
                             inaxisMessage.getPolicyInclude(), input, fac);
-                    if (axisOperation.getWsamappingList() != null && axisOperation.getWsamappingList().size() > 0) {
-                        String action = axisOperation.getWsamappingList().get(0).toString();
-                        addWSAWActionAttribute(input, action);
-                    }
+                    addWSAWActionAttribute(input, axisOperation.getInputAction());
                     operation.addChild(input);
                 }
             }
@@ -513,7 +510,7 @@ public class AxisService2OM implements Java2WSDLConstants {
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME,
                     wsdl);
             binding.addChild(operation);
-            String soapAction = axisOperation.getSoapAction();
+            String soapAction = axisOperation.getInputAction();
             if (soapAction == null) {
                 soapAction = "";
             }
@@ -640,7 +637,7 @@ public class AxisService2OM implements Java2WSDLConstants {
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME,
                     wsdl);
             binding.addChild(operation);
-            String soapAction = axisOperation.getSoapAction();
+            String soapAction = axisOperation.getInputAction();
             if (soapAction == null) {
                 soapAction = "";
             }
