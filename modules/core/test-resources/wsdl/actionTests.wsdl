@@ -3,7 +3,7 @@
 	xmlns:tns="http://ws.apache.org/axis2/actiontest/"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="actionTests"
-	xmlns:wsaw="http://www.w3.org/2005/08/addressing/wsdl"
+	xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
 	targetNamespace="http://ws.apache.org/axis2/actiontest/">
 	<wsdl:types>
 	</wsdl:types>
