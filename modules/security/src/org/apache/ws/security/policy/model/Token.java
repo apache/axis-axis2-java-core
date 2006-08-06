@@ -17,8 +17,9 @@
 package org.apache.ws.security.policy.model;
 
 import org.apache.ws.security.policy.Constants;
+import org.apache.ws.security.policy.WSSPolicyException;
 
-public abstract class Token extends AbstractSecurityAssertion {
+public class Token extends PolicyEngineData {
 
     /**
      * Inclusiong property of a TokenAssertion
@@ -40,14 +41,14 @@ public abstract class Token extends AbstractSecurityAssertion {
     /**
      * @param inclusion The inclusion to set.
      */
-    public void setInclusion(String inclusion)  {
+    public void setInclusion(String inclusion) throws WSSPolicyException {
         if(Constants.INCLUDE_ALWAYS.equals(inclusion) || 
            Constants.INCLUDE_ALWAYS_TO_RECIPIENT.equals(inclusion) ||
            Constants.INCLUDE_NEVER.equals(inclusion) ||
            Constants.INCLUDE_ONCE.equals(inclusion)) {
             this.inclusion = inclusion;
         } else {
-//            throw new WSSPolicyException("Incorrect inclusion value: " + inclusion);
+            throw new WSSPolicyException("Incorrect inclusion value: " + inclusion);
         }
     }
     

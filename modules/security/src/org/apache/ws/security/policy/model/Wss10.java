@@ -16,7 +16,7 @@
 
 package org.apache.ws.security.policy.model;
 
-public class Wss10 {
+public class Wss10 extends PolicyEngineData {
     
     private boolean mustSupportRefKeyIdentifier;
     private boolean MustSupportRefIssuerSerial;

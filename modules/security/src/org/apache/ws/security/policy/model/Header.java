@@ -16,7 +16,7 @@
 
 package org.apache.ws.security.policy.model;
 
-public class Header {
+public class Header extends PolicyEngineData {
 
     private String name;
     private String namespace;

@@ -16,29 +16,19 @@
 
 package org.apache.ws.security.policy.model;
 
-import org.apache.ws.security.policy.WSSPolicyException;
+import java.util.ArrayList;
 
-public class ProtectionToken extends PolicyEngineData implements TokenWrapper {
+public class RootPolicyEngineData extends PolicyEngineData {
+
+    private ArrayList topLevelPEDs = new ArrayList();
     
-    private Token protectionToken;
-
-    /**
-     * @return Returns the protectionToken.
-     */
-    public Token getProtectionToken() {
-        return protectionToken;
-    }
-
-    /**
-     * @param protectionToken The protectionToken to set.
-     */
-    public void setProtectionToken(Token protectionToken) {
-        this.protectionToken = protectionToken;
-    }
-
-    public void setToken(Token tok) throws WSSPolicyException {
-        this.setProtectionToken(tok);
+    public void addTopLevelPED(PolicyEngineData ped) {
+        if(!topLevelPEDs.contains(ped)) {
+            this.topLevelPEDs.add(ped);
+        }
     }
     
-    
+    public ArrayList getTopLevelPEDs() {
+        return this.topLevelPEDs;
+    }
 }

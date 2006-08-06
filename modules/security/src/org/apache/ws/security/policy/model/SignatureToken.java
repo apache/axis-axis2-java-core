@@ -16,7 +16,9 @@
 
 package org.apache.ws.security.policy.model;
 
-public class SignatureToken implements TokenWrapper {
+import org.apache.ws.security.policy.WSSPolicyException;
+
+public class SignatureToken extends PolicyEngineData implements TokenWrapper {
 
     private Token signatureToken;
 
@@ -37,7 +39,7 @@ public class SignatureToken implements TokenWrapper {
     /* (non-Javadoc)
      * @see org.apache.ws.security.policy.TokenWrapper#setToken(org.apache.ws.security.policy.Token)
      */
-    public void setToken(Token tok) {
+    public void setToken(Token tok) throws WSSPolicyException {
         this.setSignatureToken(tok);
     }
     

@@ -16,14 +16,14 @@
 
 package org.apache.ws.security.policy.model;
 
-public abstract class Binding extends AbstractSecurityAssertion implements AlgorithmWrapper {
+import org.apache.ws.security.policy.WSSPolicyException;
+
+public class Binding extends PolicyEngineData implements AlgorithmWrapper {
 
     private AlgorithmSuite algorithmSuite;
     private boolean includeTimestamp;
     private Layout layout = new Layout();
-    private SupportingToken signedSupportingToken;
-    private SupportingToken signedEndorsingSupportingTokens;
-        
+    
     /**
      * @return Returns the algorithmSuite.
      */
@@ -62,28 +62,7 @@ public abstract class Binding extends AbstractSecurityAssertion implements Algor
     /**
      * @param layout The layout to set.
      */
-    public void setLayout(Layout layout) {
+    public void setLayout(Layout layout) throws WSSPolicyException {
         this.layout = layout;
     }
-
-    public SupportingToken getSignedEndorsingSupportingTokens() {
-        return signedEndorsingSupportingTokens;
-    }
-
-    public void setSignedEndorsingSupportingTokens(
-            SupportingToken signedEndorsingSupportingTokens) {
-        this.signedEndorsingSupportingTokens = signedEndorsingSupportingTokens;
-    }
-
-    public SupportingToken getSignedSupportingToken() {
-        return signedSupportingToken;
-    }
-
-    public void setSignedSupportingToken(SupportingToken signedSupportingToken) {
-        this.signedSupportingToken = signedSupportingToken;
-    }
-    
-    
-    
-    
 }

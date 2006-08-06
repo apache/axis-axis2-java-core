@@ -16,26 +16,13 @@
 
 package org.apache.ws.security.policy.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.neethi.PolicyComponent;
-import org.apache.ws.security.policy.Constants;
-
 /**
  *
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
-public class HttpsToken extends Token {
+public class HttpsToken extends PolicyEngineData {
 
     private Token httpsToken;
-    
-    private List httpsTokens = new ArrayList();
 
     /**
      * @return Returns the httpsToken.
@@ -50,27 +37,6 @@ public class HttpsToken extends Token {
     public void setHttpsToken(Token httpsToken) {
         this.httpsToken = httpsToken;
     }
-    
-    public Iterator getOptions() {
-        return httpsTokens.iterator();
-    }
-    
-    public void addOption(HttpsToken httpsToken) {
-        httpsTokens.add(httpsToken);
-    }
-
-    public QName getName() {
-        return Constants.HTTPS_TOKEN;
-    }
-
-    public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
-    }
-    
     
 
 }

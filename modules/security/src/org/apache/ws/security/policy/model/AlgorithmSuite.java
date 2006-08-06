@@ -15,17 +15,10 @@
  */
 package org.apache.ws.security.policy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.neethi.PolicyComponent;
 import org.apache.ws.security.policy.Constants;
+import org.apache.ws.security.policy.WSSPolicyException;
 
-public class AlgorithmSuite extends AbstractSecurityAssertion {
+public class AlgorithmSuite extends PolicyEngineData {
     
     private String symmetricSignature = Constants.HMAC_SHA1;
     
@@ -61,8 +54,6 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
     
     private String xPath;
     
-    private List algorithmSuites;
-        
 //    public AlgorithmSuite (String algoSuite) throws WSSPolicyException {
 //        this.setAlgorithmSuite(algoSuite);
 //    }
@@ -88,7 +79,7 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
      * @see Constants#ALGO_SUITE_TRIPLE_DES_SHA256
      * @see Constants#ALGO_SUITE_TRIPLE_DES_SHA256_RSA15
      */
-    public void setAlgorithmSuite(String algoSuite) {
+    public void setAlgorithmSuite(String algoSuite) throws WSSPolicyException {
         //TODO: Optimize this :-)
         if(Constants.ALGO_SUITE_BASIC256.equals(algoSuite)) {
             this.digest = Constants.SHA1;
@@ -219,7 +210,7 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
             this.signatureKeyDerivation = Constants.P_SHA1_L192;
             this.minimumSymmetricKeyLength = 192;
         } else {
-//            throw new WSSPolicyException("Invalid algorithm suite : " + algoSuite);
+            throw new WSSPolicyException("Invalid algorithm suite : " + algoSuite);
         }
     }
 
@@ -324,7 +315,7 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
     /**
      * @param c14n The c14n to set.
      */
-    public void setC14n(String c14n) {
+    public void setC14n(String c14n) throws WSSPolicyException {
             this.c14n = c14n;
     }
 
@@ -338,7 +329,7 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
     /**
      * @param soapNormalization The soapNormalization to set.
      */
-    public void setSoapNormalization(String soapNormalization) {
+    public void setSoapNormalization(String soapNormalization) throws WSSPolicyException {
             this.soapNormalization = soapNormalization;
     }
 
@@ -352,7 +343,7 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
     /**
      * @param strTransform The strTransform to set.
      */
-    public void setStrTransform(String strTransform) {
+    public void setStrTransform(String strTransform) throws WSSPolicyException {
             this.strTransform = strTransform;
     }
 
@@ -366,30 +357,8 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
     /**
      * @param path The xPath to set.
      */
-    public void setXPath(String path) {
+    public void setXPath(String path) throws WSSPolicyException{
         xPath = path;
     }
     
-    public List getOptions() {
-        return algorithmSuites;
-    }
-    
-    public void addOption(AlgorithmSuite algorithmSuite) {
-        if (algorithmSuites == null) {
-            algorithmSuites = new ArrayList();
-        }
-        algorithmSuites.add(algorithmSuite);
-    }
-
-    public QName getName() {
-        return Constants.ALGORITHM_SUITE;
-    }
-    
-    public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
-    }
-    
-    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
-    }
 }

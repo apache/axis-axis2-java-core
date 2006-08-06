@@ -16,21 +16,12 @@
 
 package org.apache.ws.security.policy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.neethi.PolicyComponent;
 import org.apache.ws.security.policy.Constants;
+import org.apache.ws.security.policy.WSSPolicyException;
 
-public class Layout extends AbstractSecurityAssertion  {
+public class Layout extends PolicyEngineData {
    
     private String value = Constants.LAYOUT_LAX;
-    
-    private List layouts;
 
     /**
      * @return Returns the value.
@@ -42,37 +33,16 @@ public class Layout extends AbstractSecurityAssertion  {
     /**
      * @param value The value to set.
      */
-    public void setValue(String value) {
+    public void setValue(String value) throws WSSPolicyException{
         if(Constants.LAYOUT_LAX.equals(value) ||
                 Constants.LAYOUT_STRICT.equals(value) ||
                 Constants.LAYOUT_LAX_TIMESTAMP_FIRST.equals(value) ||
                 Constants.LAYOUT_LAX_TIMESTAMP_LAST.equals(value)) {
                  this.value = value;
              } else {
-//                 throw new WSSPolicyException("Incorrect layout value : " + value);
+                 throw new WSSPolicyException("Incorrect layout value : " + value);
              }
     }
     
-    public List getOptions() {
-        return layouts;
-    }
     
-    public void addOption(Layout layout) {
-        if (layouts == null) {
-            layouts = new ArrayList();
-        }
-        layouts.add(layout);
-    }
-
-    public QName getName() {
-        return Constants.LAYOUT;
-    }
-
-    public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
-    }
-
-    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
-    }
 }
