@@ -52,7 +52,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * The <tt>AxisInvocationController</tt> is an implementation of the 
  * {@link org.apache.axis2.jaxws.core.controller.InvocationController}
@@ -125,6 +124,14 @@ public class AxisInvocationController implements InvocationController {
                 org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
                     requestMsgCtx.getAxisMessageContext();
                 axisRequestMsgCtx.setEnvelope(requestOM);
+                
+                // For now, just take all of the properties that were in the 
+                // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
+                axisRequestMsgCtx.setProperty(Options.COPY_PROPERTIES, Boolean.TRUE);
+                axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
+                if (log.isDebugEnabled()) {
+                    log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
+                }
                 
                 // Setting the ServiceContext will create the association between 
                 // the OperationClient it's MessageContexts and the 
@@ -223,6 +230,14 @@ public class AxisInvocationController implements InvocationController {
                 
                 org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
                     requestMsgCtx.getAxisMessageContext();
+                
+                // For now, just take all of the properties that were in the 
+                // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
+                axisRequestMsgCtx.setProperty(Options.COPY_PROPERTIES, Boolean.TRUE);
+                axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
+                if (log.isDebugEnabled()) {
+                    log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
+                }
                 
                 axisRequestMsgCtx.setEnvelope(requestOM);
                 
@@ -330,6 +345,14 @@ public class AxisInvocationController implements InvocationController {
                 org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
                     requestMsgCtx.getAxisMessageContext();
                 axisRequestMsgCtx.setEnvelope(requestOM);
+                
+                // For now, just take all of the properties that were in the 
+                // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
+                axisRequestMsgCtx.setProperty(Options.COPY_PROPERTIES, Boolean.TRUE);
+                axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
+                if (log.isDebugEnabled()) {
+                    log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
+                }
                 
                 // Setting the ServiceContext will create the association between 
                 // the OperationClient it's MessageContexts and the 
