@@ -32,8 +32,6 @@
         <handler name="AddressingSubmissionInHandler" class="org.apache.axis2.handlers.addressing.AddressingSubmissionInHandler">
             <order phase="PreDispatch"/>
         </handler>
-        <handler name="AddressingWSDLValidationHandler" class="org.apache.axis2.handlers.addressing.AddressingWSDLValidationHandler">
-            <order phase="Dispatch" after="InstanceDispatcher" />
-        </handler>
+        <!-- AddressingWSDLValidationHandler not present on the INfaultflow so that we don't get faults bouncing around forever -->
     </INfaultflow>
 </module>

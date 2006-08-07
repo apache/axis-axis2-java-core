@@ -69,6 +69,8 @@ public interface AddressingConstants {
     // So you will not see Addressing Headers in the OUT path.
     public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
 
+    public static final String WSAW_ANONYMOUS_PARAMETER_NAME = "wsawAnonymous";
+    
     public interface Final {
 
         // ====================== Addressing 1.0 Final Version Constants ====================
