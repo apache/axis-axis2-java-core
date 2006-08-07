@@ -41,6 +41,7 @@
         <xsl:variable name="originalName" select="@originalName"/>
         <xsl:variable name="nsprefix" select="@nsprefix"/>
         <xsl:variable name="extension" select="@extension"/>
+        <xsl:variable name="restriction" select="@restriction"/>
         <xsl:variable name="mapperClass" select="@mapperClass"/>
     <!-- write the class header. this should be done only when unwrapped -->
 
@@ -57,7 +58,7 @@
             *  <xsl:value-of select="$name"/> bean class
             */
         </xsl:if>
-        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if>
+        public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
         implements org.apache.axis2.databinding.ADBBean{
         <xsl:choose>
             <xsl:when test="@type">/* This type was generated from the piece of schema that had
@@ -99,75 +100,77 @@
             <xsl:variable name="varName">local<xsl:value-of select="$javaName"/></xsl:variable>
             <xsl:variable name="settingTracker">local<xsl:value-of select="$javaName"/>Tracker</xsl:variable>
 
-
-            /**
-            * field for <xsl:value-of select="$javaName"/>
-            <xsl:if test="@attribute">* This was an Attribute!</xsl:if>
-            <xsl:if test="@array">* This was an Array!</xsl:if>
-            */
-
-            protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
-           <!-- Generate a tracker only if the min occurs is zero, which means if the user does
-                not bother to set that value, we do not send it -->
-           <xsl:if test="$min=0 or $choice">
-           /*  This tracker boolean wil be used to detect whether the user called the set method
-               for this attribute. It will be used to determine whether to include this field
-               in the serialized XML
-           */
-           protected boolean <xsl:value-of select="$settingTracker"/> = false ;
-           </xsl:if>
-
+			<xsl:choose>
+            <xsl:when test="@removed">
+           
            /**
            * Auto generated getter method
-           * @return <xsl:value-of select="$propertyType"/>
+           * Overridden from <xsl:value-of select="$restriction"/>
+           *
+           * @throws RuntimeException
            */
            public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
-               return <xsl:value-of select="$varName"/>;
+               throw new java.lang.RuntimeException();
            }
+           
+           /**
+           * Auto generated setter method
+           * Overridden from <xsl:value-of select="$restriction"/>
+           *
+           * @param param <xsl:value-of select="$javaName"/>
+           * @throws RuntimeException
+           */
+           public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+           	   throw new java.lang.RuntimeException();
+           }
+               
+           </xsl:when>
+           <xsl:otherwise>
+               <xsl:choose>
+                  <xsl:when test="(@restricted) and (@occuranceChanged) and (not(@typeChanged))">
+               		 <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
-           <!-- When generating the setters, we have to cater differently for the array!-->
-            <xsl:choose>
-               <xsl:when test="@array">
-                   <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
-
-                   <!-- generate the validator Method, this is specifiacally for validating the arrays-->
-                  /**
-                   * validate the array for <xsl:value-of select="$javaName"/>
-                   */
-                  protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+                     <!-- generate the validator Method, this is specifiacally for validating the arrays-->
+                     /**
+                     * Validate the array for <xsl:value-of select="$javaName"/>
+                     * Overridden from <xsl:value-of select="$restriction"/>
+                     */
+                     protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                      <xsl:if test="not(@unbound)">
                           if (param.length &gt; <xsl:value-of select="@maxOccurs"/>){
                             throw new java.lang.RuntimeException();
                           }
-                      </xsl:if>
-                      <xsl:if test="$min!=0">
+                     </xsl:if>
+                     <xsl:if test="$min!=0">
                           if (param.length &lt; <xsl:value-of select="$min"/>){
                             throw new java.lang.RuntimeException();
                           }
-                      </xsl:if>
-                  }
+                     </xsl:if>
+                     }
 
 
-                 /**
-                  * Auto generated setter method
-                  * @param param <xsl:value-of select="$javaName"/>
-                  */
-                  public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                   <!-- call the validator-->
-                   validate<xsl:value-of select="$javaName"/>(param);
+                     /**
+                     * Auto generated setter method
+                     * Overridden from <xsl:value-of select="$restriction"/>
+                     *
+                     * @param param <xsl:value-of select="$javaName"/>
+                     */
+                     public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+                     <!-- call the validator-->
+                  		  validate<xsl:value-of select="$javaName"/>(param);
 
-                   <xsl:if test="$choice">
-                       clearAllSettingTrackers();
-                   </xsl:if>
-                   <xsl:if test="$min=0 or $choice">
-                       <!-- the updating of setting tracker for null values should
-                            happen if the attribute is marked as nillable. Else
-                            the user can set a null value and it is never marked
-                            as set
-                       -->
-                       <xsl:choose>
-                          <xsl:when test="not(@nillable) and not(@primitive)">
+                     <xsl:if test="$choice">
+                          clearAllSettingTrackers();
+                     </xsl:if>
+                     <xsl:if test="$min=0 or $choice">
+                        <!-- the updating of setting tracker for null values should
+                             happen if the attribute is marked as nillable. Else
+                             the user can set a null value and it is never marked
+                             as set
+                        -->
+                        <xsl:choose>
+                           <xsl:when test="not(@nillable) and not(@primitive)">
                               if (param !=null){
                               //update the setting tracker
                               <xsl:value-of select="$settingTracker"/> = true;
@@ -177,69 +180,164 @@
                                //update the setting tracker
                               <xsl:value-of select="$settingTracker"/> = true;
                            </xsl:otherwise>
-                       </xsl:choose>
-                   </xsl:if>
-                  this.<xsl:value-of select="$varName"/>=param;
-                  }
+                        </xsl:choose>
+                     </xsl:if>
+                          this.<xsl:value-of select="$varName"/>=param;
+                     }
+                  </xsl:when>
+                  <xsl:otherwise>
+               
+            		/**
+            		* field for <xsl:value-of select="$javaName"/>
+            		<xsl:if test="@attribute">
+            		* This was an Attribute!</xsl:if>
+            		<xsl:if test="@array">
+            		* This was an Array!</xsl:if>
+            		<xsl:if test="@typeChanged">
+            		* Type of this field is a subtype of its original.</xsl:if>
+            		<xsl:if test="(@rewrite) and (@occuranceChanged)">
+            		* This field was an array in <xsl:value-of select="$restriction"/>.</xsl:if> 
+            		*/
 
-                   <!--
+            		protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
+           			<!-- Generate a tracker only if the min occurs is zero, which means if the user does
+               		not bother to set that value, we do not send it -->
+           			<xsl:if test="$min=0 or $choice">
+           			/*  This tracker boolean wil be used to detect whether the user called the set method
+              		*   for this attribute. It will be used to determine whether to include this field
+               		*   in the serialized XML
+           			*/
+           			protected boolean <xsl:value-of select="$settingTracker"/> = false ;
+           			</xsl:if>
 
-                       we special case the 'array' scenario and generate a
-                       convenience method for adding elements one by one to
-                       the array. The current implementation is somewhat
-                       inefficient but gets the job done.Since a primitive
-                       cannot be treated as an object it has to be ignored!
+           			/**
+           			* Auto generated getter method
+           			* @return <xsl:value-of select="$propertyType"/>
+           			*/
+           			public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
+               			return <xsl:value-of select="$varName"/>;
+           			}
 
-                 -->
-                 <xsl:if test="not(@primitive)">
-                 /**
-                 * Auto generated add method for the array for convenience
-                 * @param param <xsl:value-of select="$basePropertyType"/>
-                 */
-                 public void add<xsl:value-of select="$javaName"/>(<xsl:value-of select="$basePropertyType"/> param){
-                   if (<xsl:value-of select="$varName"/> == null){
-                       <xsl:value-of select="$varName"/> = new <xsl:value-of select="$propertyType"/>{};
-                   }
+           			<!-- When generating the setters, we have to cater differently for the array!-->
+            		<xsl:choose>
+               			<xsl:when test="@array">
+                   		<xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
-                    <xsl:if test="$choice">
-                           clearAllSettingTrackers();
-                    </xsl:if>
-                    <xsl:if test="$min=0 or $choice">
-                         //update the setting tracker
-                         <xsl:value-of select="$settingTracker"/> = true;
-                    </xsl:if>
 
-                   java.util.List list =
+                   		<!-- generate the validator Method, this is specifiacally for validating the arrays-->
+                  		/**
+                   		* validate the array for <xsl:value-of select="$javaName"/>
+                   		*/
+                  		protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+                     	<xsl:if test="not(@unbound)">
+                          if (param.length &gt; <xsl:value-of select="@maxOccurs"/>){
+                            throw new java.lang.RuntimeException();
+                          }
+                      	</xsl:if>
+                      	<xsl:if test="$min!=0">
+                          if (param.length &lt; <xsl:value-of select="$min"/>){
+                            throw new java.lang.RuntimeException();
+                          }
+                      	</xsl:if>
+                  		}
+
+
+                 		/**
+                  		* Auto generated setter method
+                  		* @param param <xsl:value-of select="$javaName"/>
+                  		*/
+                  		public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+                  		<!-- call the validator-->
+                   			validate<xsl:value-of select="$javaName"/>(param);
+
+                   		<xsl:if test="$choice">
+                       		clearAllSettingTrackers();
+                   		</xsl:if>
+                   		<xsl:if test="$min=0 or $choice">
+                       		<!-- the updating of setting tracker for null values should
+                            	 happen if the attribute is marked as nillable. Else
+                                 the user can set a null value and it is never marked
+                                 as set
+                       		-->
+                       		<xsl:choose>
+                          		<xsl:when test="not(@nillable) and not(@primitive)">
+                              	if (param !=null){
+                              	//update the setting tracker
+                              	<xsl:value-of select="$settingTracker"/> = true;
+                               	}
+                           		</xsl:when>
+                           		<xsl:otherwise>
+                               	//update the setting tracker
+                              	<xsl:value-of select="$settingTracker"/> = true;
+                           		</xsl:otherwise>
+                       		</xsl:choose>
+                   		</xsl:if>
+                  				this.<xsl:value-of select="$varName"/>=param;
+                  		}
+
+                   		<!--
+
+                       	we special case the 'array' scenario and generate a
+                       	convenience method for adding elements one by one to
+                       	the array. The current implementation is somewhat
+                       	inefficient but gets the job done.Since a primitive
+                       	cannot be treated as an object it has to be ignored!
+
+                 		-->
+                 		<xsl:if test="not(@primitive)">
+                 		/**
+                 		* Auto generated add method for the array for convenience
+                 		* @param param <xsl:value-of select="$basePropertyType"/>
+                 		*/
+                 		public void add<xsl:value-of select="$javaName"/>(<xsl:value-of select="$basePropertyType"/> param){
+                   			if (<xsl:value-of select="$varName"/> == null){
+                       		<xsl:value-of select="$varName"/> = new <xsl:value-of select="$propertyType"/>{};
+                   			}
+
+                    	<xsl:if test="$choice">
+                           	clearAllSettingTrackers();
+                    	</xsl:if>
+                    	<xsl:if test="$min=0 or $choice">
+                         	//update the setting tracker
+                        	<xsl:value-of select="$settingTracker"/> = true;
+                    	</xsl:if>
+
+                   		java.util.List list =
                         org.apache.axis2.databinding.utils.ConverterUtil.toList(<xsl:value-of select="$varName"/>);
-                   list.add(param);
-                   this.<xsl:value-of select="$varName"/> =
-                     (<xsl:value-of select="$propertyType"/>)list.toArray(
+                   		list.add(param);
+                   		this.<xsl:value-of select="$varName"/> =
+                     	(<xsl:value-of select="$propertyType"/>)list.toArray(
                         new <xsl:value-of select="$basePropertyType"/>[list.size()]);
 
-                 }
-                 </xsl:if>
-                     <!-- end of special casing for the array-->
+                 		}
+                 		</xsl:if>
+                     	<!-- end of special casing for the array-->
 
-               </xsl:when>
-                <!-- Non array setter method-->
-                <xsl:otherwise>
-                    /**
-                   * Auto generated setter method
-                   * @param param <xsl:value-of select="$javaName"/>
-                   */
-                   public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                    <xsl:if test="$choice">
-                        clearAllSettingTrackers();
-                    </xsl:if>
-                    <xsl:if test="$min=0 or $choice">
-                    //update the setting tracker
-                    <xsl:value-of select="$settingTracker"/> = true;
-                    </xsl:if>
-                   this.<xsl:value-of select="$varName"/>=param;
-                   }
-                </xsl:otherwise>
+               			</xsl:when>
+                		<!-- Non array setter method-->
+                		<xsl:otherwise>
+                    	/**
+                   		* Auto generated setter method
+                   		* @param param <xsl:value-of select="$javaName"/>
+                   		*/
+                   		public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+                    	<xsl:if test="$choice">
+                        	clearAllSettingTrackers();
+                    	</xsl:if>
+                    	<xsl:if test="$min=0 or $choice">
+                    		//update the setting tracker
+                    	<xsl:value-of select="$settingTracker"/> = true;
+                    	</xsl:if>
+                   			this.<xsl:value-of select="$varName"/>=param;
+                   		}
+                		</xsl:otherwise>
+            		</xsl:choose>
+			
+				  </xsl:otherwise>
+               </xsl:choose>
+            
+			</xsl:otherwise>
             </xsl:choose>
-
 
              <!-- end of xsl:if for not(@inherited) -->
             </xsl:if>

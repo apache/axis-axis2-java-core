@@ -836,7 +836,7 @@ public class SchemaCompiler {
         if (content instanceof XmlSchemaComplexContent){
             processComplexContent((XmlSchemaComplexContent)content,metaInfHolder,parentSchema);
         }else if (content instanceof XmlSchemaSimpleContent){
-            processSimpleContent((XmlSchemaSimpleContent)content,metaInfHolder);
+            processSimpleContent((XmlSchemaSimpleContent)content,metaInfHolder,parentSchema);
         }
     }
 
@@ -893,9 +893,38 @@ public class SchemaCompiler {
             //Note  - this is no array! so the array boolean is false
 
         }else if (content instanceof XmlSchemaComplexContentRestriction){
-            //todo handle complex restriction here
-            throw new SchemaCompilationException(
-                    SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Complex Content"));
+        	// to handle extension we need to attach the extended items to the base type
+            // and create a new type
+            XmlSchemaComplexContentRestriction restriction = (XmlSchemaComplexContentRestriction)
+                    content;
+
+            //process the base type if it has not been processed yet
+            if (!isAlreadyProcessed(restriction.getBaseTypeName())){
+                //pick the relevant basetype from the schema and process it
+                XmlSchemaType type=  parentSchema.getTypeByName(restriction.getBaseTypeName());
+                if (type instanceof XmlSchemaComplexType) {
+                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+                    if (complexType.getName() != null) {
+                        processNamedComplexSchemaType(complexType,parentSchema);
+                    } else {
+                        //this is not possible. The restriction should always
+                        //have a name
+                        throw new SchemaCompilationException("Unnamed complex type used in restriction");//Internationlize this
+                    }
+                } else if (type instanceof XmlSchemaSimpleType) {
+                    
+                	throw new SchemaCompilationException("Not a valid restriction, complex content restriction base type cannot be a simple type.");
+                }
+            }
+
+            copyMetaInfoHierarchy(metaInfHolder,restriction.getBaseTypeName(),parentSchema);
+
+            //process the particle of this node
+            processParticle(restriction.getParticle(),metaInfHolder,parentSchema);
+
+            metaInfHolder.setRestriction(true);
+            metaInfHolder.setRestrictionClassName(findClassName(restriction.getBaseTypeName(),false));
+            //Note  - this is no array! so the array boolean is false
         }
     }
 
@@ -970,14 +999,54 @@ public class SchemaCompiler {
      * @param metaInfHolder
      * @throws SchemaCompilationException
      */
-    private void processSimpleContent(XmlSchemaSimpleContent simpleContent,BeanWriterMetaInfoHolder metaInfHolder)
+    private void processSimpleContent(XmlSchemaSimpleContent simpleContent,BeanWriterMetaInfoHolder metaInfHolder,XmlSchema parentSchema)
             throws SchemaCompilationException{
         XmlSchemaContent content;
         content = simpleContent.getContent();
         if (content instanceof XmlSchemaSimpleContentExtension){
-            //todo - handle simple type extension here
-            throw new SchemaCompilationException(
-                    SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content Extension"));
+        	XmlSchemaSimpleContentExtension extension = (XmlSchemaSimpleContentExtension)content;
+
+        	//process the base type if it has not been processed yet
+        	if (!isAlreadyProcessed(extension.getBaseTypeName())){
+        		//pick the relevant basetype from the schema and process it
+        		XmlSchemaType type=  parentSchema.getTypeByName(extension.getBaseTypeName());
+        		if (type instanceof XmlSchemaComplexType) {
+        			XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+        			if (complexType.getName() != null) {
+        				processNamedComplexSchemaType(complexType,parentSchema);
+        			} else {
+        				//this is not possible. The extension should always
+        				//have a name
+        				throw new SchemaCompilationException("Unnamed complex type used in extension");//Internationlize this
+        			}
+        		} else if (type instanceof XmlSchemaSimpleType) {
+        			//process simple type
+        			processSimpleSchemaType((XmlSchemaSimpleType)type,null);
+        		}
+        	}
+        	
+        	//process extension base type
+        	ProcessSimpleExtensionbaseType(extension.getBaseTypeName(),metaInfHolder);
+        	
+        	//process attributes 
+            XmlSchemaObjectCollection attribs = extension.getAttributes();
+            Iterator attribIterator = attribs.getIterator();
+            while (attribIterator.hasNext()) {
+                Object attr = attribIterator.next();
+                if (attr instanceof XmlSchemaAttribute) {
+                    processAttribute((XmlSchemaAttribute) attr, metaInfHolder);
+
+                }
+            }
+            
+            //process any attribute
+            XmlSchemaAnyAttribute anyAtt = extension.getAnyAttribute();
+            if (anyAtt != null) {
+                processAnyAttribute(metaInfHolder,anyAtt);
+            }
+            
+            
+        	
         }else if (content instanceof XmlSchemaSimpleContentRestriction){
             //todo - Handle simple type restriction here
             throw new SchemaCompilationException(
@@ -986,6 +1055,23 @@ public class SchemaCompiler {
         }
     }
 
+    public void ProcessSimpleExtensionbaseType(QName extBaseType,BeanWriterMetaInfoHolder metaInfHolder) {
+    	
+        //find the class name
+        String className = findClassName(extBaseType, false);
+
+        //this means the schema type actually returns a different QName
+        if (changedTypeMap.containsKey(extBaseType)) {
+        	metaInfHolder.registerMapping(extBaseType,
+                    (QName) changedTypeMap.get(extBaseType),
+                    className,SchemaConstants.ELEMENT_TYPE);
+        } else {
+        	metaInfHolder.registerMapping(extBaseType,
+        			extBaseType,
+                    className,SchemaConstants.ELEMENT_TYPE);
+        }
+    }
+    
     /**
      * Handle any attribute
      * @param metainf

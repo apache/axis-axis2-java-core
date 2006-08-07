@@ -38,7 +38,9 @@ public class BeanWriterMetaInfoHolder {
     protected boolean choice = false;
 
     protected boolean extension = false;
+    protected boolean restriction = false;
     private String extensionClassName = "";
+    private String restrictionClassName = "";
     protected Map elementToSchemaQNameMap = new LinkedHashMap();
     protected Map elementToJavaClassMap = new LinkedHashMap();
     protected Map specialTypeFlagMap = new LinkedHashMap();
@@ -147,6 +149,38 @@ public class BeanWriterMetaInfoHolder {
         this.extension = extension;
     }
 
+    public String getRestrictionClassName() {
+        return restrictionClassName;
+    }
+    
+    /**
+     * Sets the restriction base class name. Valid only when the isRestriction
+     * returns true.
+     *
+     * @param restrictionClassName
+     */
+    public void setRestrictionClassName(String restrictionClassName) {
+        this.restrictionClassName = restrictionClassName;
+    }
+    
+    /**
+     * Gets the restriction status.
+     *
+     * @return Returns boolean.
+     */
+    public boolean isRestriction() {
+        return restriction;
+    }
+    
+    /**
+     * Sets the restriction status.
+     *
+     * @param restriction
+     */
+    public void setRestriction(boolean restriction) {
+        this.restriction = restriction;
+    }
+    
     /**
      * Gets the ordered status.
      *

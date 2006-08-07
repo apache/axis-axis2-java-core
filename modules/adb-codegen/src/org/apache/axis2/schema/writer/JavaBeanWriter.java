@@ -469,6 +469,11 @@ public class JavaBeanWriter implements BeanWriter {
                     .getExtensionClassName(), rootElt);
 
         }
+        if (metainf.isRestriction()) {
+            XSLTUtils.addAttribute(model, "restriction", metainf
+                    .getRestrictionClassName(), rootElt);
+
+        }
         //add the mapper class name
         XSLTUtils.addAttribute(model, "mapperClass", getFullyQualifiedMapperClassName(), rootElt);
 
@@ -525,18 +530,33 @@ public class JavaBeanWriter implements BeanWriter {
                                     Document model, Element rootElt, ArrayList propertyNames,
                                     Map typeMap, boolean isInherited) throws SchemaCompilationException {
         // go in the loop and add the part elements
-        QName[] qNames;
+    	QName[] qName;
+    	String javaClassNameForElement;
+        ArrayList missingQNames = new ArrayList();
+        ArrayList qNames = new ArrayList();
+        
+        BeanWriterMetaInfoHolder parentMetaInf = metainf.getParent();
+        
         if (metainf.isOrdered()) {
-            qNames = metainf.getOrderedQNameArray();
+            qName = metainf.getOrderedQNameArray();
         } else {
-            qNames = metainf.getQNameArray();
+            qName= metainf.getQNameArray();
         }
-
+        
+        for (int i = 0; i < qName.length; i++) {
+        	qNames.add(qName[i]);
+        }
+        //adding missing QNames to the end, including elements & attributes.
+        if (metainf.isRestriction()) {
+        	addMissingQNames(metainf, qNames, missingQNames);
+        }
         QName name;
-        for (int i = 0; i < qNames.length; i++) {
+
+        for (int i = 0; i < qNames.size(); i++) {
+        	name = (QName) qNames.get(i);
             Element property = XSLTUtils.addChildElement(model, "property",
                     rootElt);
-            name = qNames[i];
+            name = (QName)qNames.get(i);
             String xmlName = name.getLocalPart();
             XSLTUtils.addAttribute(model, "name", xmlName, property);
             XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(),
@@ -544,13 +564,23 @@ public class JavaBeanWriter implements BeanWriter {
             String javaName = makeUniqueJavaClassName(propertyNames, xmlName);
             XSLTUtils.addAttribute(model, "javaname", javaName, property);
 
-            String javaClassNameForElement = metainf.getClassNameForQName(name);
-
+            if (metainf.isRestriction() && missingQNames.contains(name)) {
+            	javaClassNameForElement = parentMetaInf.getClassNameForQName(name);
+            }
+            else {
+            	javaClassNameForElement = metainf.getClassNameForQName(name);
+            }
+            
             if (javaClassNameForElement == null) {
                 throw new SchemaCompilationException(SchemaCompilerMessages
                         .getMessage("schema.typeMissing"));
             }
-
+            
+            if (metainf.isRestriction() && typeChanged(name, missingQNames, metainf)) {
+            	XSLTUtils.addAttribute(model, "typeChanged", "yes", property);
+            	//XSLTUtils.addAttribute(model, "restricted", "yes", property);
+            }
+            
             XSLTUtils.addAttribute(model, "type", javaClassNameForElement,
                     property);
 
@@ -590,6 +620,11 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "shorttypename", shortTypeName,
                     property);
 
+            if (metainf.isRestriction() && missingQNames.contains(name)) {
+            	//XSLTUtils.addAttribute(model, "restricted", "yes", property);
+            	XSLTUtils.addAttribute(model, "removed", "yes", property);
+            }
+            
             if (isInherited) {
                 XSLTUtils.addAttribute(model, "inherited", "yes", property);
             }
@@ -606,6 +641,18 @@ public class JavaBeanWriter implements BeanWriter {
             long minOccurs = metainf.getMinOccurs(name);
             XSLTUtils
                     .addAttribute(model, "minOccurs", minOccurs + "", property);
+            
+            //in the case the original element is an array but the derived one is not.
+            if (metainf.isRestriction() && !missingQNames.contains(name) &&
+               (parentMetaInf.getArrayStatusForQName(name) && !metainf.getArrayStatusForQName(name))) {
+            	XSLTUtils.addAttribute(model, "rewrite", "yes", property);
+            	XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
+            }
+            else if (metainf.isRestriction() && !missingQNames.contains(name) &&
+            		(minOccursChanged(name, missingQNames, metainf) || maxOccursChanged(name, missingQNames, metainf))) {
+            	XSLTUtils.addAttribute(model, "restricted", "yes", property);
+            	XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
+            }
 
             if (metainf.getArrayStatusForQName(name)) {
 
@@ -627,6 +674,162 @@ public class JavaBeanWriter implements BeanWriter {
         }
     }
 
+    private void addMissingQNames(BeanWriterMetaInfoHolder metainf, ArrayList qName, ArrayList missingQNames) {
+    	
+    	QName[] qNames;
+        QName[] pQNames;
+        //ArrayList missingQNames = new ArrayList();
+            		
+        BeanWriterMetaInfoHolder parentMetaInf = metainf.getParent();
+        
+        if (metainf.isOrdered()) {
+            qNames = metainf.getOrderedQNameArray();
+        } else {
+            qNames = metainf.getQNameArray();
+        }
+        
+        if (parentMetaInf.isOrdered()) {
+            pQNames = parentMetaInf.getOrderedQNameArray();
+        } else {
+            pQNames = parentMetaInf.getQNameArray();
+        }
+        
+        
+        for (int i=0; i < pQNames.length; i++) {
+       		if (qNameNotFound(pQNames[i], metainf)) {
+       			missingQNames.add(pQNames[i]);
+       		}
+       	}
+       	//adding missing QNames to the end of list.
+        if (!missingQNames.isEmpty()) {
+       		for (int i=0; i < missingQNames.size(); i++) {
+       			qName.add(missingQNames.get(i));
+       		}
+       	}
+        //return qName;
+    }
+    
+    private boolean qNameNotFound(QName qname, BeanWriterMetaInfoHolder metainf) {
+    	
+    	boolean found = false;
+    	QName[] qNames;
+    	
+    	if (metainf.isOrdered()) {
+        	qNames = metainf.getOrderedQNameArray();
+        } else {
+        	qNames = metainf.getQNameArray();
+        }
+        
+        for (int j = 0; j < qNames.length; j++) {
+        	if (qname.getLocalPart().equals(qNames[j].getLocalPart())) {
+        			found = true;
+        	}
+        }
+        return !found;
+    }
+    
+    private boolean typeChanged(QName qname, ArrayList missingQNames, BeanWriterMetaInfoHolder metainf) {
+    	
+    	boolean typeChanged = false;
+    	QName[] pQNames;
+    	
+    	BeanWriterMetaInfoHolder parentMetainf = metainf.getParent(); 
+        
+    	if (!missingQNames.contains(qname)) {
+    		
+    		if (parentMetainf.isOrdered()) {
+    			pQNames = parentMetainf.getOrderedQNameArray();
+    		} else {
+    			pQNames = parentMetainf.getQNameArray();
+    		}
+    		
+    		for (int j = 0; j < pQNames.length; j++) {
+    			if (qname.getLocalPart().equals(pQNames[j].getLocalPart())) {
+    				
+    				String javaClassForParentElement = parentMetainf.getClassNameForQName(pQNames[j]);
+    				String javaClassForElement = metainf.getClassNameForQName(qname);
+    				
+    				if (!javaClassForParentElement.equals(javaClassForElement)) {
+    					if (javaClassForParentElement.endsWith("[]")) {
+    						if ((javaClassForParentElement.substring(0,javaClassForParentElement.indexOf('['))).equals(javaClassForElement)) {
+    						continue;
+    						}
+    					}
+    					else if (javaClassForElement.endsWith("[]")) {
+    						if ((javaClassForElement.substring(0,javaClassForElement.indexOf('['))).equals(javaClassForParentElement)) {
+    							continue;
+    						}
+    					}
+    					else {
+    						typeChanged = true;
+    					}
+    				}
+    			}
+    		}
+    	}
+        return typeChanged;
+    }
+    
+    private boolean minOccursChanged(QName qname, ArrayList missingQNames, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+    	
+    	boolean minChanged = false;
+    	QName[] pQNames;
+    	
+    	BeanWriterMetaInfoHolder parentMetainf = metainf.getParent(); 
+        	
+    	if (!missingQNames.contains(qname)) {
+    		
+    		if (parentMetainf.isOrdered()) {
+    			pQNames = parentMetainf.getOrderedQNameArray();
+    		} else {
+    			pQNames = parentMetainf.getQNameArray();
+    		}
+    		
+    		for (int j = 0; j < pQNames.length; j++) {
+    			if (qname.getLocalPart().equals(pQNames[j].getLocalPart())) {
+    				
+    				if (metainf.getMinOccurs(qname) > parentMetainf.getMinOccurs(pQNames[j])) {
+    					minChanged = true;
+    				}
+    				else if(metainf.getMinOccurs(qname) < parentMetainf.getMinOccurs(pQNames[j])) {
+    					throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("minOccurs Wrong!")); 
+    				}
+    				
+    			}
+    		}
+    	}
+        return minChanged;
+    }
+    
+    private boolean maxOccursChanged(QName qname, ArrayList missingQNames, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
+    	
+    	boolean maxChanged = false;
+    	QName[] pQNames;
+    	
+    	BeanWriterMetaInfoHolder parentMetainf = metainf.getParent();
+    	
+    	if (!missingQNames.contains(qname)) {	
+    		if (parentMetainf.isOrdered()) {
+    			pQNames = parentMetainf.getOrderedQNameArray();
+    		} else {
+    			pQNames = parentMetainf.getQNameArray();
+    		}
+    		
+    		for (int j = 0; j < pQNames.length; j++) {
+    			if (qname.getLocalPart().equals(pQNames[j].getLocalPart())) {
+    				
+    				if (metainf.getMaxOccurs(qname) < parentMetainf.getMaxOccurs(pQNames[j])) {
+    					maxChanged = true;
+    				}
+    				else if(metainf.getMaxOccurs(qname) > parentMetainf.getMaxOccurs(pQNames[j])) {
+    					throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("maxOccurs Wrong!")); 
+    				}
+    			}
+    		}
+    	}
+        return maxChanged;
+    }
+    
     /**
      * Test whether the given class name matches the default
      * 
@@ -899,4 +1102,7 @@ public class JavaBeanWriter implements BeanWriter {
 
 
     }
+    
 }
+
+
