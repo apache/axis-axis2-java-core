@@ -281,7 +281,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
                 return;
             } else {
                 throw new AxisFault(
-                        "WSDoAllReceiver: Request does not contain required Security header");
+                        "WSDoAllReceiver: Incoming message does not contain required Security header");
             }
         }
 
