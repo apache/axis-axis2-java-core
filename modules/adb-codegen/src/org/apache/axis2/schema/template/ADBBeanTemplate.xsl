@@ -584,12 +584,17 @@
 
 
 
-                              if (<xsl:value-of select="$varName"/>[i]==null){
-                                  // write the nil attribute
-                                  writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
-                              }else{
+                            <xsl:if test="not(@primitive)">
+                                if (<xsl:value-of select="$varName"/>[i]==null){
+                                    // write the nil attribute
+                                    writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                }else{
+                                   xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+                                }
+                            </xsl:if>
+                            <xsl:if test="@primitive">
                                  xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
-                              }
+                            </xsl:if>
                               xmlWriter.writeEndElement();
                             }
                             <!--we've opened a bracket for the nulls - fix it here-->
