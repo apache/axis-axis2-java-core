@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 
@@ -26,9 +27,14 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axiom.om.OMElement;
@@ -44,6 +50,8 @@ import org.apache.axis2.jaxws.message.util.DOMReader;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+
+import com.ibm.jvm.util.ByteArrayOutputStream;
 
 /**
  * SourceBlock
@@ -142,13 +150,39 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 			// We had some problems with testers producing DOMSources w/o Namespaces.  
 			// It's easy to catch this here.
 			if (element.getLocalName() == null) {
-				// TODO NLS
-				throw new XMLStreamException(ExceptionFactory.makeMessageException("The DOMSource must be Namespace Aware"));
+				throw new XMLStreamException(ExceptionFactory.makeMessageException(Messages.getMessage("JAXBSourceNamespaceErr")));
 			}
 			return new DOMReader((Element) ((DOMSource)busObj).getNode());
 		} 
-		return inputFactory.createXMLStreamReader((Source) busObj);
+		
+		if(busObj instanceof StreamSource){
+			return inputFactory.createXMLStreamReader((Source) busObj);
+		}
+		//TODO: For GM we need to only use this approach when absolutely necessary.  
+        // For example, we don't want to do this if this is a (1.6) StaxSource or if the installed parser provides 
+        // a better solution.
+		//TODO: Uncomment this code if woodstock parser handles JAXBSource and SAXSource correctly.
+		//return inputFactory.createXMLStreamReader((Source) busObj);
+		return _slow_getReaderFromSource((Source)busObj);
 	}
+	
+	/**
+     * Creates an XMLStreamReader from a Source using a slow but proven algorithm.
+     */
+   private XMLStreamReader _slow_getReaderFromSource(Source src) throws XMLStreamException {
+	   try{
+           ByteArrayOutputStream out = new ByteArrayOutputStream();
+           Result result = new StreamResult(out);
+           Transformer transformer =  TransformerFactory.newInstance().newTransformer();
+           transformer.transform(src, result); 
+	        XMLInputFactory inputfactory = XMLInputFactory.newInstance();
+	        ByteArrayInputStream bytes = new ByteArrayInputStream(out.toByteArray());
+	        return inputfactory.createXMLStreamReader(bytes);
+	   }catch(TransformerException e){
+		   throw new XMLStreamException(e);
+	   }
+  
+   }
 
 	@Override
 	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException {

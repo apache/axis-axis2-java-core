@@ -64,6 +64,13 @@
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
     	</java>
+    	<ant:echo>Generating java from jaxbsource</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -p org.test.dispatch.jaxbsource ${schema.source.dir}/jaxbsource.xsd"/>
+    	</java>
     	
        <!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>

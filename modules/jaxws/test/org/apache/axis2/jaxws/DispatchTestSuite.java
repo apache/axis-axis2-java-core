@@ -34,7 +34,7 @@ public class DispatchTestSuite {
         // FIXME: Add this test in
         
         suite.addTestSuite(JAXBDispatch.class);
-        
+        suite.addTestSuite(JAXBSourceDispatch.class);
         return suite;
     }
 

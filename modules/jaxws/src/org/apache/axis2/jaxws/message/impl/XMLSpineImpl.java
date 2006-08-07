@@ -34,6 +34,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
@@ -173,7 +174,7 @@ class XMLSpineImpl implements XMLSpine {
 		if (protocol == Protocol.soap11) {
 			soapFactory = new SOAP11Factory();
 		} else if (protocol == Protocol.soap12) {
-			soapFactory = new SOAP11Factory();
+			soapFactory = new SOAP12Factory();
 		} else {
 			// TODO REST Support is needed
 			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("RESTIsNotSupported"), null);

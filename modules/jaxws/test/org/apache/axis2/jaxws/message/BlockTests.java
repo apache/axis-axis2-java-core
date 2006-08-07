@@ -17,12 +17,15 @@
 package org.apache.axis2.jaxws.message;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,14 +33,21 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
@@ -896,7 +906,79 @@ public class BlockTests extends TestCase {
 		assertTrue(sampleText.equals(newText));
 		
 	}
-    
+    /*
+     * Testing JAXBSource, Creating Source Block using JAXBSource and then
+     * Serializing it.
+     */
+	public void testJAXBSourceInFlow1()throws Exception{
+		//  Create a jaxb object
+		try{
+	        ObjectFactory factory = new ObjectFactory();
+	        EchoString jaxb = factory.createEchoString(); 
+	        jaxb.setInput("Hello World");
+	        JAXBContext jbc = JAXBContext.newInstance("test");
+	        JAXBSource src = new JAXBSource(jbc.createMarshaller(), jaxb);
+	        BlockFactory f = (SourceBlockFactory)
+				FactoryRegistry.getFactory(SourceBlockFactory.class);
+	        
+	        Block block =f.createFrom(src, null, null);
+	        
+	        MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+	        Message msg = mf.create(Protocol.soap11);
+	        msg.setBodyBlock(0,block);
+	        org.apache.axiom.soap.SOAPEnvelope env = (org.apache.axiom.soap.SOAPEnvelope)msg.getAsOMElement();
+	        // Serialize the Envelope using the same mechanism as the 
+	        // HTTP client.
+	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	        env.serializeAndConsume(baos, new OMOutputFormat());
+	        
+	        // To check that the output is correct, get the String contents of the 
+	        // reader
+	        String newText = baos.toString();
+	        System.out.println(newText);
+	        assertTrue(block.isConsumed());
+		}catch(Exception e){
+			e.printStackTrace();
+		}     
+	}
+	
+	public void testJAXBSourceOutflow() throws Exception {
+		
+		//Sample text for JAXBSource
+		String echoSample = "<echoString xmlns=\"http://test\"><input xmlns=\"http://test\">Hello World</input></echoString>";
+		
+        // Get the BlockFactory
+        SourceBlockFactory f = (SourceBlockFactory)
+            FactoryRegistry.getFactory(SourceBlockFactory.class);
+        //Create a JAXBSource
+        
+        JAXBContext jbc = JAXBContext.newInstance("test");
+        Unmarshaller u = jbc.createUnmarshaller();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(echoSample.getBytes());
+        EchoString jaxb = (EchoString)u.unmarshal(inputStream);
+        JAXBSource src = new JAXBSource(jbc.createMarshaller(), jaxb);
+        
+        // Create a Block using the sample string as the content.  This simulates
+        // what occurs on the outbound JAX-WS dispatch<Source> client
+        Block block = f.createFrom(src, null, null);
+        
+        // We didn't pass in a qname, so the following should return false
+        assertTrue(!block.isQNameAvailable());
+        
+        // Assuming no handlers are installed, the next thing that will happen
+        // is a XMLStreamReader will be requested...to go to OM.   At this point the
+        // block should be consumed.
+        XMLStreamReader reader = block.getXMLStreamReader(true);
+        
+        // The block should be consumed
+        assertTrue(block.isConsumed());
+        
+        // To check that the output is correct, get the String contents of the 
+        // reader
+        Reader2Writer r2w = new Reader2Writer(reader);
+        String newText = r2w.getAsString();
+        assertTrue(echoSample.equals(newText));
+    }
     /**
      * Create a Block representing a DOMSource instance and simulate an 
      * outbound flow
