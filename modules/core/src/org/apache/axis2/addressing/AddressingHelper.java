@@ -30,6 +30,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,6 +78,78 @@ public class AddressingHelper {
             return isReplyRedirected(messageContext);
         }else{
             return !faultTo.hasAnonymousAddress(); 
+        }
+    }
+    
+    /**
+     * Extract the Parameter repreesnting the Anonymous flag from the AxisOperation
+     * and return the String value. Return the default of "optional" if not specified.
+     * @param axisOperation
+     * @return
+     */
+    public static String getAnonymousParameterValue(AxisOperation axisOperation){
+        String value = Utils.getParameterValue(axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME));
+        if(log.isDebugEnabled()){
+            log.debug("getAnonymousParameterValue: value: '"+value+"'");
+        }
+        if(value == null || "".equals(value.trim())){
+            value = "optional";
+        }
+        return value.trim();
+    }
+    
+    /**
+     * Set the value of an existing unlocked Parameter representing Anonymous or add a new one if one
+     * does not exist. If a locked Parameter of the same name already exists the method will trace and
+     * return.
+     * @param axisOperation
+     * @param value
+     */
+    public static void setAnonymousParameterValue(AxisOperation axisOperation, String value){
+        if(value == null){
+            if(log.isDebugEnabled()){
+                log.debug("setAnonymousParameterValue: value passed in is null. return");
+            }
+            return;
+        }
+        
+        Parameter param = axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
+        // If an existing parameter exists
+        if(param !=null){
+            if(log.isDebugEnabled()){
+                log.debug("setAnonymousParameterValue: Parameter already exists");
+            }
+            // and is not locked
+            if(!param.isLocked()){
+                if(log.isDebugEnabled()){
+                    log.debug("setAnonymousParameterValue: Parameter not locked. Setting value: "+value);
+                }
+                // set the value
+                param.setValue(value);
+            }
+        }else{
+            // otherwise, if no Parameter exists
+            if(log.isDebugEnabled()){
+                log.debug("setAnonymousParameterValue: Parameter does not exist");
+            }
+            // Create new Parameter with correct name/value
+            param = new Parameter();
+            param.setName(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
+            param.setValue(value);
+            try{
+                if(log.isDebugEnabled()){
+                    log.debug("setAnonymousParameterValue: Adding parameter with value: "+value);
+                }
+                // and add it to the AxisOperation object
+                axisOperation.addParameter(param);
+            }catch(AxisFault af){
+                // This should not happen. AxisFault is only ever thrown when a locked Parameter
+                // of the same name already exists and this should be dealt with by the outer
+                // if statement.
+                if(log.isDebugEnabled()){
+                    log.debug("setAnonymousParameterValue: addParameter failed: "+af.getMessage());
+                }
+            }
         }
     }
     

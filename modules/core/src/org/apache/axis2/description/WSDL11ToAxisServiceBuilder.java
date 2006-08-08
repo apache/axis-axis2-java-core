@@ -4,6 +4,7 @@ import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
@@ -1492,7 +1493,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                     .setWSAddressingFlag(AddressingConstants.ADDRESSING_OPTIONAL);
                         }
                     }
-
+                } else if (AddressingConstants.Final.WSAW_ANONYMOUS.equals(unknown.getElementType())) {
+                    if (originOfExtensibilityElements.equals(BINDING_OPERATION)) {
+                        AxisOperation axisOperation = (AxisOperation) description;
+                        String anonymousValue = unknown.getElement().getTextContent();
+                        AddressingHelper.setAnonymousParameterValue(axisOperation, anonymousValue);
+                    }
                 } else {
 
                     // Ignore this element - it is a totally unknown element
