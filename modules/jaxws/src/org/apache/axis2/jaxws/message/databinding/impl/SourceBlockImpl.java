@@ -16,9 +16,16 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringReader;
-import java.lang.reflect.Constructor;
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.databinding.SourceBlock;
+import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.impl.BlockImpl;
+import org.apache.axis2.jaxws.message.util.DOMReader;
+import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.w3c.dom.Element;
 
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
@@ -36,22 +43,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.MessageInternalException;
-import org.apache.axis2.jaxws.message.databinding.SourceBlock;
-import org.apache.axis2.jaxws.message.databinding.XMLStringBlock;
-import org.apache.axis2.jaxws.message.factory.BlockFactory;
-import org.apache.axis2.jaxws.message.impl.BlockImpl;
-import org.apache.axis2.jaxws.message.util.DOMReader;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-
-import com.ibm.jvm.util.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Constructor;
 
 /**
  * SourceBlock
