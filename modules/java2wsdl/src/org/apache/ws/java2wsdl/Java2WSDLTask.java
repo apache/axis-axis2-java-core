@@ -68,10 +68,8 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
                             Java2WSDLConstants.OUTPUT_LOCATION_OPTION,
                             outputLocation);
 
-            // Classpath URI
-            addToOptionMap(	optionMap,
-                            Java2WSDLConstants.CLASSPATH_OPTION,
-                            classpathURI);
+            String[] jars = classpathURI.split(";");
+            optionMap.put(Java2WSDLConstants.CLASSPATH_OPTION, new Java2WSDLCommandLineOption(Java2WSDLConstants.CLASSPATH_OPTION, jars));
 
             // Target namespace
             addToOptionMap(	optionMap,
