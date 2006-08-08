@@ -287,9 +287,10 @@ public class SchemaCompiler {
         //Note that these are processed recursively!
 
         //add the schema to the loaded schema list
-        if (!loadedSchemaMap.containsKey(schema.getTargetNamespace())) {
-            loadedSchemaMap.put(schema.getTargetNamespace(), schema);
+        if (loadedSchemaMap.containsKey(schema.getTargetNamespace())) {
+            return;
         }
+        loadedSchemaMap.put(schema.getTargetNamespace(), schema);
 
         XmlSchemaObjectCollection includes = schema.getIncludes();
         if (includes != null) {
