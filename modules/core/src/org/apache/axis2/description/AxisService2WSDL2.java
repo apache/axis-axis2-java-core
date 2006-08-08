@@ -8,7 +8,6 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.namespace.QName;
@@ -211,9 +210,9 @@ public class AxisService2WSDL2 implements WSDL2Constants {
 
                 String direction = faultMessage.getDirection();
                 OMElement faultElement = null;
-                if (MessageLabel.OUT.toString().equalsIgnoreCase(direction)) {
+                if (MESSAGE_LABEL_OUT.equalsIgnoreCase(direction)) {
                   faultElement = fac.createOMElement(OUT_FAULT, null, operationElement);
-                }else if (MessageLabel.IN.toString().equalsIgnoreCase(direction)) {
+                }else if (MESSAGE_LABEL_IN.equalsIgnoreCase(direction)) {
                   faultElement = fac.createOMElement(IN_FAULT, null, operationElement);
                 } else {
                     return;

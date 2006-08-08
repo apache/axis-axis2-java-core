@@ -34,7 +34,6 @@ import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -88,13 +87,18 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         setPolicyRegistryFromService(axisService);
     }
 
-    public WSDL20ToAxisServiceBuilder(DescriptionElement descriptionElement,
-                                      QName serviceName, String interfaceName) {
+    public WSDL20ToAxisServiceBuilder(String wsdlUri,
+                                      String name, String interfaceName)  throws Exception  {
+        WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
+        DescriptionElement descriptionElement = wsdlReader.readWSDL(wsdlUri);
         savedTargetNamespace = descriptionElement.getTargetNamespace()
                 .toString();
         namespacemap = descriptionElement.getNamespaces();
         this.description = descriptionElement.toComponent();
-        this.serviceName = serviceName;
+        this.serviceName = null;
+        if(name != null) {
+            serviceName = new QName(descriptionElement.getTargetNamespace().toString(), name);
+        }
         this.interfaceName = interfaceName;
         this.axisService = new AxisService();
         setPolicyRegistryFromService(axisService);

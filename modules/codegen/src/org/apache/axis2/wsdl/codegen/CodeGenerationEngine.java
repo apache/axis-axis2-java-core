@@ -30,7 +30,6 @@ import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.woden.wsdl20.xml.DescriptionElement;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -88,21 +87,11 @@ public class CodeGenerationEngine {
 
             if(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                     equals(configuration.getWSDLVersion())){
-
-                //its WSDL 2.0
-                org.apache.woden.WSDLReader wsdlReader = org.apache.woden.WSDLFactory.newInstance().newWSDLReader();
-                //TODO Check whether this does the networ downloading
-                DescriptionElement description = wsdlReader.readWSDL(wsdlUri);
-                QName serviceQname = null;
-                if (configuration.getServiceName()!=null){
-                    serviceQname = new QName(description.getTargetNamespace().toString(), configuration.getServiceName());
-                }
                 configuration.setAxisService(
-                        new WSDL20ToAxisServiceBuilder(description,
-                                serviceQname,
+                        new WSDL20ToAxisServiceBuilder(wsdlUri,
+                                configuration.getServiceName(),
                                 configuration.getPortName()).
                                 populateService());
-
             }else{
                 //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
