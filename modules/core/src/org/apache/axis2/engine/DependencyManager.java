@@ -81,18 +81,23 @@ public class DependencyManager {
     public static void initServiceClass(Object obj,
                                         ServiceContext serviceContext) throws AxisFault {
         try {
-            Class classToLoad = obj.getClass();
-            // We can not call classToLoad.getDeclaredMethed() , since there
-            //  can be insatnce where mutiple services extends using one class
-            // just for init and other reflection methods
-            Method[] methods = classToLoad.getMethods();
+            if (obj instanceof Service) {
+                Service service = (Service) obj;
+                service.init(serviceContext);
+            } else {
+                Class classToLoad = obj.getClass();
+                // We can not call classToLoad.getDeclaredMethed() , since there
+                //  can be insatnce where mutiple services extends using one class
+                // just for init and other reflection methods
+                Method[] methods = classToLoad.getMethods();
 
-            for (int i = 0; i < methods.length; i++) {
-                if (SERVICE_INIT_METHOD.equals(methods[i].getName())
-                        && (methods[i].getParameterTypes().length == 1)
-                        && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
-                    methods[i].invoke(obj, new Object[]{serviceContext});
-                    break;
+                for (int i = 0; i < methods.length; i++) {
+                    if (SERVICE_INIT_METHOD.equals(methods[i].getName())
+                            && (methods[i].getParameterTypes().length == 1)
+                            && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
+                        methods[i].invoke(obj, new Object[]{serviceContext});
+                        break;
+                    }
                 }
             }
         } catch (SecurityException e) {
@@ -144,17 +149,22 @@ public class DependencyManager {
             Object obj = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
             if (obj != null) {
                 Class classToLoad = obj.getClass();
-                // We can not call classToLoad.getDeclaredMethed() , since there
-                //  can be insatnce where mutiple services extends using one class
-                // just for init and other reflection methods
-                Method[] methods = classToLoad.getMethods();
+                if (obj instanceof Service) {
+                    Service service = (Service) obj;
+                    service.destroy(serviceContext);
+                } else {
+                    // We can not call classToLoad.getDeclaredMethed() , since there
+                    //  can be insatnce where mutiple services extends using one class
+                    // just for init and other reflection methods
+                    Method[] methods = classToLoad.getMethods();
 
-                for (int i = 0; i < methods.length; i++) {
-                    if (SERVICE_DESTROY_METHOD.equals(methods[i].getName())
-                            && (methods[i].getParameterTypes().length == 1)
-                            && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
-                        methods[i].invoke(obj, new Object[]{serviceContext});
-                        break;
+                    for (int i = 0; i < methods.length; i++) {
+                        if (SERVICE_DESTROY_METHOD.equals(methods[i].getName())
+                                && (methods[i].getParameterTypes().length == 1)
+                                && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
+                            methods[i].invoke(obj, new Object[]{serviceContext});
+                            break;
+                        }
                     }
                 }
             }

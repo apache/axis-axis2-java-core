@@ -17,12 +17,10 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
-import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -491,7 +489,7 @@ public class AxisConfiguration extends AxisDescription {
     public List getGlobalModules() {
         return globalModuleList;
     }
-    
+
     public Hashtable getFaultyModules() {
         return faultyModules;
     }

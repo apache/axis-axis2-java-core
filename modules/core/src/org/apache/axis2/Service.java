@@ -29,6 +29,7 @@ public interface Service {
     /**
      * this will be called during the initialization of the service. If the service is in the application scope, then this
      * method will be called when the system starts up. Else will be called when the first request comes.
+     *
      * @param sc
      */
     public void init(ServiceContext sc);
@@ -42,8 +43,10 @@ public interface Service {
     public void setOperationContext(OperationContext operationContext);
 
     /**
-     * This method is called when the service is destroyed.
+     * If the service is in the application scope, then this
+     * method will be called when the system shoutdown up. Else will be called when ever session finshes.
+     *
      * @param sc
      */
-    public void destroy(ServiceContext sc);
+    void destroy(ServiceContext sc);
 }

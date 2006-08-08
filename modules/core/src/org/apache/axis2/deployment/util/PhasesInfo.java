@@ -120,16 +120,19 @@ public class PhasesInfo {
          */
         ArrayList globalPhaseList = new ArrayList();
 
+        boolean messageOut = false;
         for (int i = 0; i < OUTPhases.size(); i++) {
             Phase phase = (Phase) OUTPhases.get(i);
             String phaseName = phase.getPhaseName();
-
-            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName)
-                    || PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+            if (!messageOut) {
+                if (PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+                    messageOut = true;
+                    globalPhaseList.add(copyPhase(phase));
+                }
+            } else {
                 globalPhaseList.add(copyPhase(phase));
             }
         }
-
         return globalPhaseList;
     }
 
@@ -147,12 +150,16 @@ public class PhasesInfo {
 
     public ArrayList getOUT_FaultPhases() throws DeploymentException {
         ArrayList globalPhaseList = new ArrayList();
+        boolean messageOut = false;
         for (int i = 0; i < OUT_FaultPhases.size(); i++) {
             Phase phase = (Phase) OUT_FaultPhases.get(i);
             String phaseName = phase.getPhaseName();
-
-            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName)
-                    || PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+            if (!messageOut) {
+                if (PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+                    messageOut = true;
+                    globalPhaseList.add(copyPhase(phase));
+                }
+            } else {
                 globalPhaseList.add(copyPhase(phase));
             }
         }
