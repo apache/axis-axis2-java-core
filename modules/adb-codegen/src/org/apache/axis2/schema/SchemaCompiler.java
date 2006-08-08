@@ -209,6 +209,26 @@ public class SchemaCompiler {
                 );
             }
 
+            // Fix up the imported schemas when all the schemas are
+            // defined in the same file and import each other.
+            for (int i = 0; i < schemalist.size(); i++) {
+                schema = (XmlSchema) schemalist.get(i);
+                XmlSchemaObjectCollection includes = schema.getIncludes();
+                if (includes != null) {
+                    Iterator tempIterator = includes.getIterator();
+                    while (tempIterator.hasNext()) {
+                        Object o = tempIterator.next();
+                        if (o instanceof XmlSchemaImport) {
+                            XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
+                            if (schema1 == null) {
+                                ((XmlSchemaImport) o).setSchema(
+                                        (XmlSchema) availableSchemaMap.get(((XmlSchemaImport) o).getNamespace()));
+                            }
+                        }
+                    }
+                }
+            }
+
             //set a mapper package if not avaialable
             if (writer.getExtensionMapperPackageName()==null){
                 //get the first schema from the list and take that namespace as the
@@ -1223,7 +1243,7 @@ public class SchemaCompiler {
                     // register the mapping if we found the referenced element
                     // else throw an exception
                     if (refElement == null) {
-                        throw new SchemaCompilationException("Referenced element not found!");
+                        throw new SchemaCompilationException("Referenced element " + referencedQName  + " not found!");
                     }
                     metainfHolder.registerMapping(referencedQName,
                             refElement.getSchemaTypeName()
