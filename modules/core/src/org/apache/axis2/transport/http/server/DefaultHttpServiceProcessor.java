@@ -37,6 +37,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis2.Constants;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
@@ -191,15 +192,23 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
                 msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
 
                 MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
-
-                response.setStatusLine(new StatusLine(ver, 500, "Internal server error"));
+                // If the fault is not going along the back channel we should be 202ing
+                if(AddressingHelper.isFaultRedirected(msgContext)){
+                    response.setStatusLine(new StatusLine(ver, 202, "Accepted"));
+                }else{
+                    response.setStatusLine(new StatusLine(ver, 500, "Internal server error"));
+                }
                 engine.sendFault(faultContext);
                 response.setEntity(outbuffer);
             } catch (Exception ex) {
-                response.setStatusLine(new StatusLine(ver, 500, "Internal server error"));
-                StringEntity entity = new StringEntity(ex.getMessage());
-                entity.setContentType("text/plain");
-                response.setEntity(entity);
+                if(AddressingHelper.isFaultRedirected(msgContext)){
+                    response.setStatusLine(new StatusLine(ver, 202, "Accepted"));
+                }else{
+                    response.setStatusLine(new StatusLine(ver, 500, "Internal server error"));
+                    StringEntity entity = new StringEntity(ex.getMessage());
+                    entity.setContentType("text/plain");
+                    response.setEntity(entity);
+                }
             }
         }
         

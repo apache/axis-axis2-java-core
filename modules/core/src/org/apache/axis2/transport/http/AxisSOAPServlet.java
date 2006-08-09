@@ -16,12 +16,14 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.transport.http.util.SOAPUtil;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.AxisFault;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.StatusLine;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,7 +56,12 @@ public class AxisSOAPServlet extends AxisServlet {
         } catch (Exception e) {
             log.error(e);
             if (msgCtx != null) {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                // If the fault is not going along the back channel we should be 202ing
+                if(AddressingHelper.isFaultRedirected(msgCtx)){
+                    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                }else{
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
                 handleFault(msgCtx, resp.getOutputStream(), new AxisFault(e));
             } else {
                 throw new ServletException(e);
