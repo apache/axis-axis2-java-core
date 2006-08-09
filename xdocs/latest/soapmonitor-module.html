@@ -37,7 +37,10 @@ axis2.xml file.</p>
 <source><pre>    &lt;module ref="soapmonitor"/&gt;</pre>
 </source>
 <p>Then in the axis2.xml file define your phase orders for 'soapmonitorPhase'
-referenced in the module.xml of soapmonitor.mar:</p>
+referenced in the module.xml of soapmonitor.mar . Below is an example and should _NOT_ 
+be copied exactly, since the default phases change occasionally. The important point here 
+is that 'soapmonitorPhase' should be placed under the 'user can add his own phases to this area' 
+comment in the 'inflow', 'outflow', 'INfaultflow', and 'Outfaultflow' sections. </p>
 <pre>    &lt;phaseOrder type="inflow"&gt;
         &lt;!--  System pre defined phases       --&gt;
         &lt;phase name="TransportIn"/&gt;
@@ -106,7 +109,7 @@ to web.xml (the SOAPMonitorPort is configurable) :</p>
           &lt;param-name&gt;SOAPMonitorPort&lt;/param-name&gt;
           &lt;param-value&gt;5001&lt;/param-value&gt;
        &lt;/init-param&gt;
-       &lt;load-on-startup&gt;100&lt;/load-on-startup&gt;
+       &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
     &lt;/servlet&gt;
 
     &lt;servlet-mapping&gt;
@@ -117,6 +120,8 @@ to web.xml (the SOAPMonitorPort is configurable) :</p>
 <p>Finally, compile the applet classes and place them at the root of the war
 - for example axis2/SOAPMonitorApplet*.class/WEB-INF :</p>
 <pre>javac -classpath axis2-soapmonitor.jar SOAPMonitorApplet.java</pre>
+
+<p>Alternatively, you can get the compiled applet classes from the axis2-soapmonitor-*.jar .</p>
 
 <p>With a Web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor (e.g.
 http://localhost:8080/axis2/SOAPMonitor) substituting the correct values for
