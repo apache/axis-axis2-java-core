@@ -63,6 +63,7 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(StringProviderTests.class);
         suite.addTestSuite(SourceProviderTests.class);
+        suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);
         
         suite.addTestSuite(ExceptionFactoryTests.class);

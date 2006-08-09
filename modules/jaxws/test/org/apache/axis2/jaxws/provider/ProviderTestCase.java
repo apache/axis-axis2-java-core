@@ -24,6 +24,7 @@ public abstract class ProviderTestCase extends TestCase {
 
     public QName portName = new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     public String providerResourceDir = "test-resources"+File.separator+"provider";
+    public String imageResourceDir = "test-resources"+File.separator+"image";
     public String basedir = null;
     
 	protected void setUp() throws Exception {
@@ -44,6 +45,7 @@ public abstract class ProviderTestCase extends TestCase {
             basedir = new File(".").getAbsolutePath();
         }
         providerResourceDir = new File(basedir, providerResourceDir).getAbsolutePath();
+        imageResourceDir = new File(basedir, imageResourceDir).getAbsolutePath();
     }
     
 }

@@ -57,6 +57,13 @@
         	<classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd"/>
         </java>
+        <ant:echo>Generating java from samplemtom.xsd</ant:echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+        	<jvmarg line="${maven.junit.jvmargs}"/>
+        	<classpath refid="maven.dependency.classpath"/>
+        	<classpath location="${compiled.classes.dir}"/>
+            <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd"/>
+        </java>
     	<ant:echo>Generating java from ProxyDocLitWrapped.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
     		<jvmarg line="${maven.junit.jvmargs}"/>
@@ -116,6 +123,20 @@
 			</ant:fileset>
 			<ant:fileset dir="target/classes">
                 <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/JAXBProviderService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/provider/jaxb/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/provider/jaxb">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/schema/classes">
+                <ant:include name="org/test/mtom/**"/>
 			</ant:fileset>
 		</ant:copy>
         <!-- ================================================================ -->
