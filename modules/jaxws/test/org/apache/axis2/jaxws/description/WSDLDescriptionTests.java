@@ -45,8 +45,10 @@ public class WSDLDescriptionTests extends TestCase {
             setupDone = true;
             String namespaceURI= "http://ws.apache.org/axis2/tests";
             String localPart = "EchoService";
-            service = Service.create(getWSDLURL(), new QName(namespaceURI, localPart));
-            serviceDelegate = getServiceDelegate(service);
+            URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+            assertNotNull(wsdlURL);
+            service = Service.create(wsdlURL, new QName(namespaceURI, localPart));
+            serviceDelegate = DescriptionTestUtils.getServiceDelegate(service);
             serviceDescription = serviceDelegate.getServiceDescription();
         }
     }
@@ -73,44 +75,4 @@ public class WSDLDescriptionTests extends TestCase {
         EndpointDescription endpointDescription = serviceDescription.getEndpointDescription(validPortQname);
         assertNull("EndpointDescription should not be found", endpointDescription);
     }
-    
-    /*
-     * ========================================================================
-     * Test utility methods
-     * ========================================================================
-     */
-
-    private URL getWSDLURL() {
-        URL wsdlURL = null;
-        // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
-        String basedir = System.getProperty("basedir");
-        String urlString = "file://localhost/" + basedir + "/test-resources/wsdl/WSDLTests.wsdl";
-        try {
-            wsdlURL = new URL(urlString);
-        } catch (Exception e) {
-            fail("Caught exception creating WSDL URL :" + urlString + "; exception: " + e.toString());
-        }
-        return wsdlURL;
-    }
-
-    private ServiceDelegate getServiceDelegate(Service service) {
-        // Need to get to the private Service._delegate field in order to get to the ServiceDescription to test
-        ServiceDelegate returnServiceDelegate = null;
-        try {
-            Field serviceDelgateField = service.getClass().getDeclaredField("_delegate");
-            serviceDelgateField.setAccessible(true);
-            returnServiceDelegate = (ServiceDelegate) serviceDelgateField.get(service);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return returnServiceDelegate;
-    }
-
 }

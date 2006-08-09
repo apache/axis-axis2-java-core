@@ -44,10 +44,12 @@ public class WSDLTests extends TestCase {
  
         String namespaceURI= "http://ws.apache.org/axis2/tests";
         String localPart = "EchoService";
-        service = Service.create(getWSDLURL(), new QName(namespaceURI, localPart));
+        URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+        assertNotNull(wsdlURL);
+        service = Service.create(wsdlURL, new QName(namespaceURI, localPart));
         assertNotNull("Service not created", service);
 
-        serviceDelegate = getServiceDelegate(service);
+        serviceDelegate = DescriptionTestUtils.getServiceDelegate(service);
         assertNotNull("ServiceDelegate not created", serviceDelegate);
         
         ServiceDescription serviceDescription = serviceDelegate.getServiceDescription();
@@ -63,7 +65,9 @@ public class WSDLTests extends TestCase {
         String namespaceURI= "http://ws.apache.org/axis2/tests";
         String localPart = "BADEchoService";
         try {
-            service = Service.create(getWSDLURL(), new QName(namespaceURI, localPart));
+            URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+            assertNotNull(wsdlURL);
+            service = Service.create(wsdlURL, new QName(namespaceURI, localPart));
             fail("Exception should have been thrown for invalid Service name");
         }
         catch (WebServiceException e) {
@@ -93,38 +97,5 @@ public class WSDLTests extends TestCase {
             // but we are verifying expected behavior.
         }
         
-    }
-    
-    private URL getWSDLURL() {
-        URL wsdlURL = null;
-        // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
-        String basedir = System.getProperty("basedir");
-        String urlString = "file://localhost/" + basedir + "/test-resources/wsdl/WSDLTests.wsdl";
-        try {
-            wsdlURL = new URL(urlString);
-        } catch (Exception e) {
-            fail("Caught exception creating WSDL URL :" + urlString + "; exception: " + e.toString());
-        }
-        return wsdlURL;
-    }
-
-    private ServiceDelegate getServiceDelegate(Service service) {
-        // Need to get to the private Service._delegate field in order to get to the ServiceDescription to test
-        ServiceDelegate returnServiceDelegate = null;
-        try {
-            Field serviceDelgateField = service.getClass().getDeclaredField("_delegate");
-            serviceDelgateField.setAccessible(true);
-            returnServiceDelegate = (ServiceDelegate) serviceDelgateField.get(service);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return returnServiceDelegate;
     }
 }

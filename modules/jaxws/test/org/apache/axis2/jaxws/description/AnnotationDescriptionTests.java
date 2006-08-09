@@ -65,7 +65,7 @@ public class AnnotationDescriptionTests extends TestCase {
         String namespaceURI= "http://ws.apache.org/axis2/tests";
         String localPart = "EchoServiceAnnotated";
         Service service = Service.create(null,  new QName(namespaceURI, localPart));
-        ServiceDelegate serviceDelegate = getServiceDelegate(service);
+        ServiceDelegate serviceDelegate = DescriptionTestUtils.getServiceDelegate(service);
         ServiceDescription serviceDescription = serviceDelegate.getServiceDescription();
         String portLocalPart = "EchoServiceAnnotatedPort";
         QName portQName = new QName(namespaceURI, portLocalPart);
@@ -141,30 +141,4 @@ public class AnnotationDescriptionTests extends TestCase {
         assertNull("EndpointDescription should not be found", endpointDescription);
     }
 */    
-    /*
-     * ========================================================================
-     * Test utility methods
-     * ========================================================================
-     */
-
-    private ServiceDelegate getServiceDelegate(Service service) {
-        // Need to get to the private Service._delegate field in order to get to the ServiceDescription to test
-        ServiceDelegate returnServiceDelegate = null;
-        try {
-            Field serviceDelgateField = service.getClass().getDeclaredField("_delegate");
-            serviceDelgateField.setAccessible(true);
-            returnServiceDelegate = (ServiceDelegate) serviceDelgateField.get(service);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return returnServiceDelegate;
-    }
-
 }
