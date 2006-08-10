@@ -159,7 +159,12 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             log.debug(e);
             if (msgContext != null) {
                 try {
-                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    // If the fault is not going along the back channel we should be 202ing
+                    if(AddressingHelper.isFaultRedirected(msgContext)){
+                        res.setStatus(HttpServletResponse.SC_ACCEPTED);
+                    }else{
+                        res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    }
                     handleFault(msgContext, out, e);
                 } catch (AxisFault e2) {
                     log.info(e2);
