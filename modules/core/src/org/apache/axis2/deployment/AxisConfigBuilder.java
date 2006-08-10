@@ -17,6 +17,15 @@
 
 package org.apache.axis2.deployment;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -36,17 +45,9 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.util.TargetResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
 
@@ -99,6 +100,10 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             // Process Observers
             Iterator obs_ittr = config_element.getChildrenWithName(new QName(TAG_LISTENER));
 
+            // Process TargetResolvers
+            OMElement targetResolvers = config_element.getFirstChildWithName(new QName(TAG_TARGET_RESOLVERS));
+            processTargetResolvers(axisConfig, targetResolvers);
+            
             processObservers(obs_ittr);
 
             // processing Phase orders
@@ -135,6 +140,26 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
+        }
+    }
+
+    private void processTargetResolvers(AxisConfiguration axisConfig, OMElement targetResolvers) {
+        if(targetResolvers != null){
+           Iterator iterator = targetResolvers.getChildrenWithName(new QName(TAG_TARGET_RESOLVER));
+           while(iterator.hasNext()){
+               OMElement targetResolver = (OMElement)iterator.next();
+               OMAttribute classNameAttribute = targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
+               String className = classNameAttribute.getAttributeValue();
+               try {
+                   Class classInstance = Class.forName(className);
+                   TargetResolver tr = (TargetResolver)classInstance.newInstance();
+                   axisConfig.addTargetResolver(tr);
+                } catch (Exception e) {
+                    if(log.isTraceEnabled()){
+                        log.trace("processTargetResolvers: Exception thrown initialising TargetResolver: "+e.getMessage());
+                    }
+                }
+           }
         }
     }
 

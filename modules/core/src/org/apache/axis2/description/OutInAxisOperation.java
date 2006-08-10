@@ -228,6 +228,10 @@ class OutInAxisOperationClient implements OperationClient {
         }
 
         mc.setOptions(options);
+        
+        // do Target Resolution
+        cc.getAxisConfiguration().getTargetResolverChain().resolveTarget(mc);
+        
         // if the transport to use for sending is not specified, try to find it
         // from the URL
         TransportOutDescription transportOut = options.getTransportOut();

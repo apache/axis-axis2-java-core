@@ -318,9 +318,13 @@ class OutOnlyAxisOperationClient implements OperationClient {
             throw new AxisFault(Messages.getMessage("mepiscomplted"));
         }
         ConfigurationContext cc = sc.getConfigurationContext();
-
+        
         // set options on the message context
         mc.setOptions(options);
+        
+        // do Target Resolution
+        cc.getAxisConfiguration().getTargetResolverChain().resolveTarget(mc);
+        
         // setting messge ID if it null
         // if the transport to use for sending is not specified, try to find it
         // from the URL

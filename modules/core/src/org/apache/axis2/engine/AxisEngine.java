@@ -213,6 +213,9 @@ public class AxisEngine {
         } else if (processingContext.getReplyTo() != null) {
             faultContext.setTo(processingContext.getReplyTo());
         }
+        
+        // do Target Resolution
+        faultContext.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(faultContext);
 
         //Determine that we have the correct transport available.
         TransportOutDescription transportOut = faultContext.getTransportOut();

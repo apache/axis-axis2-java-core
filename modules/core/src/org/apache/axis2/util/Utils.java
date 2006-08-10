@@ -67,6 +67,11 @@ public class Utils {
 
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
         newmsgCtx.setTo(oldOptions.getReplyTo());
+        
+        // do Target Resolution
+        newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(newmsgCtx);
+
+        
         newmsgCtx.getOptions().setAction(oldOptions.getAction());
 
         // add the service group id as a reference parameter

@@ -17,10 +17,12 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -105,6 +107,8 @@ public class AxisConfiguration extends AxisDescription {
     //to keep tarck of system start or not
     private boolean start;
 
+    private ArrayList targetResolvers;
+    
     /**
      * Constructor AxisConfigurationImpl.
      */
@@ -124,6 +128,7 @@ public class AxisConfiguration extends AxisDescription {
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         moduleClassLoader = Thread.currentThread().getContextClassLoader();
         this.phasesinfo = new PhasesInfo();
+        targetResolvers = new ArrayList();
     }
 
     public void addMessageReceiver(String mepURL,
@@ -816,5 +821,27 @@ public class AxisConfiguration extends AxisDescription {
 
     public void setStart(boolean start) {
         this.start = start;
+    }
+    
+    /**
+     * getTargetResolverChain returns and instance of
+     * TargetResolver which iterates over the registered
+     * TargetResolvers, calling each one in turn when
+     * resolveTarget is called
+     */
+    public TargetResolver getTargetResolverChain(){
+        TargetResolver result = new TargetResolver(){
+            public void resolveTarget(MessageContext messageContext) {
+                Iterator iter = targetResolvers.iterator();
+                while(iter.hasNext()){
+                    TargetResolver tr = (TargetResolver)iter.next();
+                    tr.resolveTarget(messageContext);
+                }
+            }};
+        return result;
+    }
+    
+    public void addTargetResolver(TargetResolver tr) {
+        targetResolvers.add(tr);
     }
 }
