@@ -412,7 +412,7 @@ public class CStructWriter implements BeanWriter {
             String javaClassNameForElement = metainf.getClassNameForQName(name);
 
             if (javaClassNameForElement == null) {
-                throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.typeMissing"));
+                throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.typeMissing", name.toString()));
             }
 
             int arrayBracketIndex = -1;

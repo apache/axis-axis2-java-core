@@ -33,6 +33,8 @@ import org.apache.axis2.util.XSLTUtils;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -56,6 +58,8 @@ import org.w3c.dom.Element;
  * Java Bean writer for the schema compiler.
  */
 public class JavaBeanWriter implements BeanWriter {
+
+    private static final Log log = LogFactory.getLog(JavaBeanWriter .class);
 
     public static final String WRAPPED_DATABINDING_CLASS_NAME = "WrappedDatabinder";
 
@@ -570,8 +574,9 @@ public class JavaBeanWriter implements BeanWriter {
             }
             
             if (javaClassNameForElement == null) {
-                throw new SchemaCompilationException(SchemaCompilerMessages
-                        .getMessage("schema.typeMissing"));
+                javaClassNameForElement = SchemaCompiler.DEFAULT_CLASS_NAME;
+                log.info(SchemaCompilerMessages
+                        .getMessage("schema.typeMissing", name.toString()));
             }
             
             if (metainf.isRestriction() && typeChanged(name, missingQNames, metainf)) {
