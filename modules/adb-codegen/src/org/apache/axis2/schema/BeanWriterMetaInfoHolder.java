@@ -41,6 +41,8 @@ public class BeanWriterMetaInfoHolder {
     protected boolean restriction = false;
     private String extensionClassName = "";
     private String restrictionClassName = "";
+    private QName extensionBaseType = null; 
+    private QName restrictionBaseType = null; 
     protected Map elementToSchemaQNameMap = new LinkedHashMap();
     protected Map elementToJavaClassMap = new LinkedHashMap();
     protected Map specialTypeFlagMap = new LinkedHashMap();
@@ -49,11 +51,18 @@ public class BeanWriterMetaInfoHolder {
     protected Map qNameOrderMap = new LinkedHashMap();
     protected QName ownQname = null;
     protected String ownClassName = null;
+    
+    protected long lengthFacet = -1;
+    protected long maxExclusiveFacet = -1;
+    protected long minExclusiveFacet = -1;
+    protected long maxInclusiveFacet = -1;
+    protected long minInclusiveFacet = -1;
+    protected long maxLengthFacet = -1;
+    protected long minLengthFacet = -1;
+    protected String enumFacet = null;
+    protected String patternFacet = null;
 
     protected List nillableQNameList  = new ArrayList();
-
-
-
 
     //the parent metainfo holder, useful in handling extensions and
     //restrictions
@@ -179,6 +188,42 @@ public class BeanWriterMetaInfoHolder {
      */
     public void setRestriction(boolean restriction) {
         this.restriction = restriction;
+    }
+    
+    /**
+     * Sets the extension basetype.
+     *
+     * @param extensionBaseType
+     */
+    public void setExtensionBaseType(QName extensionBaseType) {
+        this.extensionBaseType = extensionBaseType;
+    }
+    
+    /**
+     * Checks if it is a extension base type.
+     *
+     * @param extensionBaseType
+     */
+    public boolean isExtensionBaseType(QName extensionBaseType) {
+        return (this.extensionBaseType == extensionBaseType);
+    }
+    
+    /**
+     * Sets the restriction basetype.
+     *
+     * @param restrictionBaseType
+     */
+    public void setRestrictionBaseType(QName restrictionBaseType) {
+        this.restrictionBaseType = restrictionBaseType;
+    }
+    
+    /**
+     * Checks if it is a restriction base type.
+     *
+     * @param restrictionBaseType
+     */
+    public boolean isRestrictionBaseType(QName restrictionBaseType) {
+        return (this.restrictionBaseType == restrictionBaseType);
     }
     
     /**
@@ -479,5 +524,176 @@ public class BeanWriterMetaInfoHolder {
         //when the mask is anded with the status then we should get
         //the mask it self!
         return (mask==(mask & storedStatus));
+    }
+    
+    /**
+     * Sets the length facet.
+     *
+     * @param lengthFacet
+     */
+    public void setLengthFacet(long lengthFacet) {
+    	this.lengthFacet = lengthFacet;
+    }
+    
+    /**
+     * Gets the length facet.
+     *
+     * @return Returns length facet.
+     */
+    public long getLengthFacet() {
+    	return this.lengthFacet;
+    }
+    
+    /**
+     * Sets the maxExclusive.
+     *
+     * @param maxExclusiveFacet
+     */
+    public void setMaxExclusiveFacet(long maxExclusiveFacet) {
+    	this.maxExclusiveFacet = maxExclusiveFacet;
+    }
+    
+    /**
+     * Gets the maxExclusive.
+     *
+     * @return Returns the maxExclusive.
+     */
+    public long getMaxExclusiveFacet() {
+    	return this.maxExclusiveFacet;
+    }
+    
+    /**
+     * Sets the minExclusive.
+     *
+     * @param minExclusiveFacet
+     */
+    public void setMinExclusiveFacet(long minExclusiveFacet) {
+    	this.minExclusiveFacet = minExclusiveFacet;
+    }
+    
+    /**
+     * Gets the minExclusive.
+     *
+     * @return Returns the minExclusive.
+     */
+    public long getMinExclusiveFacet() {
+    	return this.minExclusiveFacet;
+    }
+    
+    /**
+     * Sets the maxInclusive.
+     *
+     * @param maxInclusiveFacet
+     */
+    public void setMaxInclusiveFacet(long maxInclusiveFacet) {
+    	this.maxInclusiveFacet = maxInclusiveFacet;
+    }
+    
+    /**
+     * Gets the maxInclusive.
+     *
+     * @return Returns the maxInclusive.
+     */
+    public long getMaxInclusiveFacet() {
+    	return this.maxInclusiveFacet;
+    }
+    
+    /**
+     * Sets the minInclusive.
+     *
+     * @param minInclusiveFacet
+     */
+    public void setMinInclusiveFacet(long minInclusiveFacet) {
+    	this.minInclusiveFacet = minInclusiveFacet;
+    }
+    
+    /**
+     * Gets the minInclusive.
+     *
+     * @return Returns the minInclusive.
+     */
+    public long getMinInclusiveFacet() {
+    	return this.minInclusiveFacet;
+    }
+    
+    /**
+     * Sets the maxLength.
+     *
+     * @param maxLengthFacet
+     */
+    public void setMaxLengthFacet(long maxLengthFacet) {
+    	this.maxLengthFacet = maxLengthFacet;
+    }
+    
+    /**
+     * Gets the maxLength.
+     *
+     * @return Returns maxLength.
+     */
+    public long getMaxLengthFacet() {
+    	return this.maxLengthFacet;
+    }
+    
+    /**
+     * Sets the minLength.
+     *
+     * @param minLengthFacet
+     */
+    public void setMinLengthFacet(long minLengthFacet) {
+    	this.minLengthFacet = minLengthFacet;
+    }
+    
+    /**
+     * Gets the minLength.
+     *
+     * @return Returns minLength.
+     */
+    public long getMinLengthFacet() {
+    	return this.minLengthFacet;
+    }
+    
+    /**
+     * Sets the enumeration.
+     *
+     * @param enumFacet
+     */
+    public void setEnumFacet(String enumFacet) {
+    	this.enumFacet = enumFacet;
+    }
+    
+    /**
+     * Adds the enumeration.
+     *
+     * @param enumFacet
+     */
+    public void addEnumFacet(String enumFacet) {
+    	this.enumFacet += "|" + enumFacet;
+    }
+    
+    /**
+     * Gets the enumeration.
+     *
+     * @return Returns enumeration.
+     */
+    public String getEnumFacet() {
+    	return this.enumFacet;
+    }
+    
+    /**
+     * Sets the pattern.
+     *
+     * @param patternFacet
+     */
+    public void setPatternFacet(String patternFacet) {
+    	this.patternFacet = patternFacet;
+    }
+    
+    /**
+     * Gets the pattern.
+     *
+     * @return Returns pattern.
+     */
+    public String getPatternFacet() {
+    	return this.patternFacet;
     }
 }

@@ -36,6 +36,15 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchemaPatternFacet;
+import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
+import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
+import org.apache.ws.commons.schema.XmlSchemaMaxExclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMaxInclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -209,26 +218,6 @@ public class SchemaCompiler {
                 );
             }
 
-            // Fix up the imported schemas when all the schemas are
-            // defined in the same file and import each other.
-            for (int i = 0; i < schemalist.size(); i++) {
-                schema = (XmlSchema) schemalist.get(i);
-                XmlSchemaObjectCollection includes = schema.getIncludes();
-                if (includes != null) {
-                    Iterator tempIterator = includes.getIterator();
-                    while (tempIterator.hasNext()) {
-                        Object o = tempIterator.next();
-                        if (o instanceof XmlSchemaImport) {
-                            XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
-                            if (schema1 == null) {
-                                ((XmlSchemaImport) o).setSchema(
-                                        (XmlSchema) availableSchemaMap.get(((XmlSchemaImport) o).getNamespace()));
-                            }
-                        }
-                    }
-                }
-            }
-
             //set a mapper package if not avaialable
             if (writer.getExtensionMapperPackageName()==null){
                 //get the first schema from the list and take that namespace as the
@@ -287,10 +276,9 @@ public class SchemaCompiler {
         //Note that these are processed recursively!
 
         //add the schema to the loaded schema list
-        if (loadedSchemaMap.containsKey(schema.getTargetNamespace())) {
-            return;
+        if (!loadedSchemaMap.containsKey(schema.getTargetNamespace())) {
+            loadedSchemaMap.put(schema.getTargetNamespace(), schema);
         }
-        loadedSchemaMap.put(schema.getTargetNamespace(), schema);
 
         XmlSchemaObjectCollection includes = schema.getIncludes();
         if (includes != null) {
@@ -914,10 +902,7 @@ public class SchemaCompiler {
             //Note  - this is no array! so the array boolean is false
 
         }else if (content instanceof XmlSchemaComplexContentRestriction){
-        	// to handle extension we need to attach the extended items to the base type
-            // and create a new type
-            XmlSchemaComplexContentRestriction restriction = (XmlSchemaComplexContentRestriction)
-                    content;
+        	XmlSchemaComplexContentRestriction restriction = (XmlSchemaComplexContentRestriction) content;
 
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(restriction.getBaseTypeName())){
@@ -1047,7 +1032,7 @@ public class SchemaCompiler {
         	}
         	
         	//process extension base type
-        	ProcessSimpleExtensionbaseType(extension.getBaseTypeName(),metaInfHolder);
+        	processSimpleExtensionBaseType(extension.getBaseTypeName(),metaInfHolder);
         	
         	//process attributes 
             XmlSchemaObjectCollection attribs = extension.getAttributes();
@@ -1066,17 +1051,43 @@ public class SchemaCompiler {
                 processAnyAttribute(metaInfHolder,anyAtt);
             }
             
-            
-        	
         }else if (content instanceof XmlSchemaSimpleContentRestriction){
-            //todo - Handle simple type restriction here
-            throw new SchemaCompilationException(
-                    SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Content Restriction"));
-
+        	XmlSchemaSimpleContentRestriction restriction = (XmlSchemaSimpleContentRestriction) content; 
+			
+        	//process the base type if it has not been processed yet
+        	if (!isAlreadyProcessed(restriction.getBaseTypeName())){
+        		//pick the relevant basetype from the schema and process it
+        		XmlSchemaType type=  parentSchema.getTypeByName(restriction.getBaseTypeName());
+        		if (type instanceof XmlSchemaComplexType) {
+        			XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+        			if (complexType.getName() != null) {
+        				processNamedComplexSchemaType(complexType,parentSchema);
+        			} else {
+        				//this is not possible. The extension should always
+        				//have a name
+        				throw new SchemaCompilationException("Unnamed complex type used in restriction");//Internationlize this
+        			}
+        		} else if (type instanceof XmlSchemaSimpleType) {
+        			//process simple type
+        			processSimpleSchemaType((XmlSchemaSimpleType)type,null);
+        		}
+        	}
+        	//process restriction base type
+        	processSimpleRestrictionBaseType(restriction.getBaseTypeName(),metaInfHolder);
+        	
+			//process facets
+        	XmlSchemaObjectCollection facets = restriction.getFacets();
+        	processFacets(facets,metaInfHolder);
         }
     }
 
-    public void ProcessSimpleExtensionbaseType(QName extBaseType,BeanWriterMetaInfoHolder metaInfHolder) {
+    /**
+    * Process Simple Extension Base Type.
+    *
+    * @param extBaseType
+    * @param metaInfHolder
+    */
+    public void processSimpleExtensionBaseType(QName extBaseType,BeanWriterMetaInfoHolder metaInfHolder) {
     	
         //find the class name
         String className = findClassName(extBaseType, false);
@@ -1093,6 +1104,98 @@ public class SchemaCompiler {
         }
     }
     
+    /**
+     * Process Simple Restriction Base Type.
+     *
+     * @param resBaseType
+     * @param metaInfHolder
+     */
+    public void processSimpleRestrictionBaseType(QName resBaseType,BeanWriterMetaInfoHolder metaInfHolder) {
+    	
+        //find the class name
+        String className = findClassName(resBaseType, false);
+
+        //this means the schema type actually returns a different QName
+        if (changedTypeMap.containsKey(resBaseType)) {
+        	metaInfHolder.registerMapping(resBaseType,
+                    (QName) changedTypeMap.get(resBaseType),
+                    className,SchemaConstants.ELEMENT_TYPE);
+        } else {
+        	metaInfHolder.registerMapping(resBaseType,
+        			resBaseType,
+                    className,SchemaConstants.ELEMENT_TYPE);
+        }
+        
+        metaInfHolder.setRestrictionBaseType(resBaseType);
+    }
+    
+    /**
+     * Process Facets.
+     *
+     * @param facets
+     * @param metaInfHolder
+     */
+    private void processFacets(XmlSchemaObjectCollection facets,BeanWriterMetaInfoHolder metaInfHolder) {
+    	
+    	Iterator facetIterator = facets.getIterator();
+		
+        boolean enumStart = true;
+		while (facetIterator.hasNext()) {
+            Object obj = facetIterator.next();
+            
+            if ( obj instanceof XmlSchemaPatternFacet ) {
+				XmlSchemaPatternFacet pattern = (XmlSchemaPatternFacet) obj;
+				metaInfHolder.setPatternFacet(pattern.getValue().toString());
+			}
+            
+			else if ( obj instanceof XmlSchemaEnumerationFacet ) {
+				XmlSchemaEnumerationFacet enum = (XmlSchemaEnumerationFacet) obj;
+				
+				if ( enumStart ) {
+					metaInfHolder.setEnumFacet(enum.getValue().toString());
+					enumStart = false;
+				}
+				else {
+					metaInfHolder.addEnumFacet(enum.getValue().toString());
+				}
+			}
+			
+			else if ( obj instanceof XmlSchemaLengthFacet ) {
+				XmlSchemaLengthFacet length = (XmlSchemaLengthFacet) obj;
+				metaInfHolder.setLengthFacet(Integer.parseInt(length.toString()));
+			}
+			
+			else if ( obj instanceof XmlSchemaMaxExclusiveFacet ) {
+				XmlSchemaMaxExclusiveFacet maxEx = (XmlSchemaMaxExclusiveFacet) obj;
+				metaInfHolder.setMaxExclusiveFacet(Integer.parseInt(maxEx.toString()));
+			}
+			
+			else if ( obj instanceof XmlSchemaMinExclusiveFacet ) {
+				XmlSchemaMinExclusiveFacet minEx = (XmlSchemaMinExclusiveFacet) obj;
+				metaInfHolder.setMinExclusiveFacet(Integer.parseInt(minEx.toString()));
+			}
+			
+			else if ( obj instanceof XmlSchemaMaxInclusiveFacet ) {
+				XmlSchemaMaxInclusiveFacet maxIn = (XmlSchemaMaxInclusiveFacet) obj;
+				metaInfHolder.setMaxInclusiveFacet(Integer.parseInt(maxIn.toString()));
+			}
+			
+			else if ( obj instanceof XmlSchemaMinInclusiveFacet ) {
+				XmlSchemaMinInclusiveFacet minIn = (XmlSchemaMinInclusiveFacet) obj;
+				metaInfHolder.setMinInclusiveFacet(Integer.parseInt(minIn.toString()));
+			}
+			
+			else if ( obj instanceof XmlSchemaMaxLengthFacet ) {
+				XmlSchemaMaxLengthFacet maxLen = (XmlSchemaMaxLengthFacet) obj;
+				metaInfHolder.setMaxLengthFacet(Integer.parseInt(maxLen.toString()));
+			}
+			
+			else if ( obj instanceof XmlSchemaMinLengthFacet ) {
+				XmlSchemaMinLengthFacet minLen = (XmlSchemaMinLengthFacet) obj;
+				metaInfHolder.setMinLengthFacet(Integer.parseInt(minLen.toString()));
+			}
+        }
+    }
     /**
      * Handle any attribute
      * @param metainf
@@ -1235,19 +1338,8 @@ public class SchemaCompiler {
                     referencedQName = elt.getRefName();
                     boolean arrayStatus = ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue();
                     clazzName = findRefClassName(referencedQName,arrayStatus);
-                    XmlSchemaElement refElement = parentSchema.getElementByName(referencedQName);
-                    
-                    if (refElement == null) {
-                        refElement = lookupImportedSchema(parentSchema, referencedQName);
-                    }
-                    
-                    // register the mapping if we found the referenced element
-                    // else throw an exception
-                    if (refElement == null) {
-                        throw new SchemaCompilationException("Referenced element " + referencedQName  + " not found!");
-                    }
                     metainfHolder.registerMapping(referencedQName,
-                            refElement.getSchemaTypeName()
+                            parentSchema.getElementByName(referencedQName).getSchemaTypeName()
                             , clazzName,
                             arrayStatus ?
                                     SchemaConstants.ARRAY_TYPE :
@@ -1312,34 +1404,7 @@ public class SchemaCompiler {
         //set the ordered flag in the metainf holder
         metainfHolder.setOrdered(order);
     }
-    private XmlSchemaElement lookupImportedSchema(XmlSchema parentSchema, QName referencedQName) {
-        XmlSchemaElement refElement = null;
-        // The referenced element seems to come from an imported
-        // schema.
-        XmlSchemaObjectCollection includes = parentSchema.getIncludes();
-        if (includes != null) {
-            Iterator tempIterator = includes.getIterator();
-            while (tempIterator.hasNext()) {
-                Object o = tempIterator.next();
-                XmlSchema inclSchema = null;
-                if (o instanceof XmlSchemaImport) {
-                    inclSchema = ((XmlSchemaImport) o).getSchema();
-                }
-                if (o instanceof XmlSchemaInclude) {
-                    inclSchema = ((XmlSchemaInclude) o).getSchema();
-                }
-                // get the element from the included schema
-                if (inclSchema != null) {
-                    refElement = inclSchema.getElementByName(referencedQName);
-                }
-                if (refElement != null) {
-                    // we found the referenced element an can break the loop
-                    break;
-                }
-            }
-        }
-        return refElement;
-    }
+
     /**
      * Checks whether a given element is a binary element
      * @param elt
