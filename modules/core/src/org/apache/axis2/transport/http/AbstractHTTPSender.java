@@ -40,6 +40,9 @@ import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.auth.CredentialsProvider;
+import org.apache.commons.httpclient.auth.AuthScheme;
+import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -353,11 +356,22 @@ public abstract class AbstractHTTPSender {
             agent.getState().setCredentials(new AuthScope(
                     ntlmAuthentication.getHost(),
                     ntlmAuthentication.getPort(),
-                    null), defaultCredentials);
+                    AuthScope.ANY_REALM,
+                    AuthScope.ANY_SCHEME), defaultCredentials);
+            setCredentialsProvider(agent, defaultCredentials);
             return true;
         }
         return false;
 
+    }
+
+    private void setCredentialsProvider(HttpClient agent, final Credentials credentials) {
+        agent.getParams().setParameter(CredentialsProvider.PROVIDER, new CredentialsProvider() {
+            public Credentials getCredentials(AuthScheme authScheme, String string, int i, boolean b)
+                    throws CredentialsNotAvailableException {
+                return credentials;
+            }
+        });
     }
 
     private void configServerPreemtiveAuthenticaiton(HttpClient agent,
@@ -385,7 +399,6 @@ public abstract class AbstractHTTPSender {
                     basicAuthentication.getPassword());
             if (basicAuthentication.getPort() == -1 ||
                     basicAuthentication.getHost() == null) {
-
                 agent.getState()
                         .setCredentials(AuthScope.ANY, defaultCredentials);
             } else {
@@ -393,16 +406,19 @@ public abstract class AbstractHTTPSender {
                     agent.getState().setCredentials(new AuthScope(
                             basicAuthentication.getHost(),
                             basicAuthentication.getPort(),
-                            AuthScope.ANY_REALM), defaultCredentials);
+                            AuthScope.ANY_REALM,
+                            AuthScope.ANY_SCHEME), defaultCredentials);
 
                 } else {
                     agent.getState().setCredentials(new AuthScope(
                             basicAuthentication.getHost(),
                             basicAuthentication.getPort(),
-                            basicAuthentication.getRealm()),
+                            basicAuthentication.getRealm(),
+                            AuthScope.ANY_SCHEME),
                             defaultCredentials);
                 }
             }
+            setCredentialsProvider(agent, defaultCredentials);
         }
 
 
