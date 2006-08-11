@@ -26,8 +26,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.addressing.AddressingHelper.FinalFaults;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.Utils;
@@ -155,7 +155,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         // This means that if for example there are multiple MessageIDs and a FaultTo, the FaultTo will be respected.
         if(!duplicateHeaderNames.isEmpty()){
         	// Simply choose the first problem header we came across as we can only fault for one of them.
-            FinalFaults.triggerInvalidCardinalityFault(messageContext, (String)duplicateHeaderNames.get(0));
+            FinalFaultsHelper.triggerInvalidCardinalityFault(messageContext, (String)duplicateHeaderNames.get(0));
         }
         
         // check for the presence of madatory addressing headers
@@ -261,7 +261,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         
         if (soapAction != null && !"".equals(soapAction)) {
             if (!soapAction.equals(soapHeaderBlock.getText())) {
-                FinalFaults.triggerActionMismatchFault(messageContext);
+                FinalFaultsHelper.triggerActionMismatchFault(messageContext);
             }
         }
         else {

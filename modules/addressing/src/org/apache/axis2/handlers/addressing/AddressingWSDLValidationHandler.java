@@ -19,10 +19,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.AddressingHelper.FinalFaults;
+import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,7 +57,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
             if (log.isTraceEnabled())
                 log.trace("checkUsingAddressing: WS_ADDRESSING_VERSION=" + flag);
             if (flag == null) {
-                FinalFaults.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
+                FinalFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
             }
         }
     }
@@ -68,7 +67,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
      * ReplyTo+FaultTo are valid and fault if not.
      */
     private void checkAnonymous(MessageContext msgContext) throws AxisFault {
-        String anonymous = Utils.getParameterValue(msgContext.getAxisOperation().getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME));
+        String anonymous = AddressingHelper.getAnonymousParameterValue(msgContext.getAxisOperation());
         if (log.isTraceEnabled())
             log.trace("checkAnonymous: Anonymous=" + anonymous);
         if("required".equals(anonymous)){
@@ -76,20 +75,20 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
                 EndpointReference anonEPR = new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
                 msgContext.setReplyTo(anonEPR);
                 msgContext.setFaultTo(anonEPR);
-                FinalFaults.triggerOnlyAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_REPLY_TO);
+                FinalFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_REPLY_TO);
             }
             if(AddressingHelper.isFaultRedirected(msgContext)){
                 EndpointReference anonEPR = new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
                 msgContext.setReplyTo(anonEPR);
                 msgContext.setFaultTo(anonEPR);
-                FinalFaults.triggerOnlyAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_FAULT_TO);
+                FinalFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_FAULT_TO);
             }
         }else if("prohibited".equals(anonymous)){
             if(!AddressingHelper.isReplyRedirected(msgContext)){
-                FinalFaults.triggerOnlyNonAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_REPLY_TO);
+                FinalFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_REPLY_TO);
             }
             if(!AddressingHelper.isFaultRedirected(msgContext)){
-                FinalFaults.triggerOnlyNonAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_FAULT_TO);
+                FinalFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_FAULT_TO);
             }
         }
     }
@@ -102,7 +101,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
     private void checkAction(MessageContext msgContext) throws AxisFault{
         if(msgContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION)!=null){
             if((msgContext.getAxisService() == null) || (msgContext.getAxisOperation() == null)){
-                FinalFaults.triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
+                FinalFaultsHelper.triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
             }
         }
     }

@@ -30,6 +30,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
@@ -158,30 +159,19 @@ public class AddressingOutHandler extends AddressingHandler {
     }
 
     private void processFaultsInfoIfPresent(SOAPEnvelope envelope, MessageContext msgContext, OMNamespace addressingNamespaceObject, boolean replaceHeaders) {
-        Map faultInfo = (Map) msgContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
-        if (faultInfo != null) {
-            String faultyHeaderQName = (String) faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
-            if (faultyHeaderQName != null && !"".equals(faultyHeaderQName)) {
-                // add to header
+        OMElement detailElement = FinalFaultsHelper.getDetailElementForAddressingFault(msgContext, addressingNamespaceObject);
+        if(detailElement != null){
+            if(msgContext.isSOAP11()){ // This difference is explained in the WS-Addressing SOAP Binding Spec.
+                // Add detail as a wsa:FaultDetail header
                 SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
-                OMElement probHeaderQName = envelope.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, faultDetail);
-                probHeaderQName.setText(faultyHeaderQName);
-
-                String messageID = (String) faultInfo.get(AddressingConstants.WSA_RELATES_TO);
-                if (messageID != null) {
-                    SOAPHeaderBlock relatesTo = envelope.getHeader().addHeaderBlock(AddressingConstants.WSA_RELATES_TO, addressingNamespaceObject);
-                    relatesTo.setText(messageID);
-                }
-
-                // add to header
+                faultDetail.addChild(detailElement);
+            }else{
+                // Add detail to the Fault in the SOAP Body
                 SOAPFault fault = envelope.getBody().getFault();
                 if (fault != null && fault.getDetail() != null) {
-                    OMElement probHeaderQName2 = envelope.getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject, fault.getDetail());
-                    probHeaderQName2.setText(faultyHeaderQName);
+                    fault.getDetail().addDetailEntry(detailElement);
                 }
-
             }
-
         }
     }
 

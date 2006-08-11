@@ -108,6 +108,7 @@ public interface AddressingConstants {
         public static final String FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED = "OnlyNonAnonymousAddressSupported";
         public static final String FAULT_ACTION_NOT_SUPPORTED = "ActionNotSupported";
         public static final String FAULT_ACTION_NOT_SUPPORTED_REASON = "The [action] cannot be processed at the receiver.";
+        public static final String FAULT_PROBLEM_ACTION_NAME = "ProblemAction";
 
         public static final QName WSAW_USING_ADDRESSING = new QName(WSAW_NAMESPACE,USING_ADDRESSING);
         public static final QName WSAW_ANONYMOUS = new QName(WSAW_NAMESPACE,USING_ADDRESSING);
