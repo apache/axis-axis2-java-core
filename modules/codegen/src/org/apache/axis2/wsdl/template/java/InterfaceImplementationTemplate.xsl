@@ -37,19 +37,19 @@
         public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.Stub
         <xsl:if test="not(@wrapped)">implements <xsl:value-of select="$interfaceName"/></xsl:if>{
         //default axis home being null forces the system to pick up the mars from the axis2 library
+        public static final java.lang.String AXIS2_HOME = null;
         protected static org.apache.axis2.description.AxisOperation[] _operations;
 
         //hashmaps to keep the fault mapping
-        private static java.util.HashMap faultExeptionNameMap = new java.util.HashMap();
-        private static java.util.HashMap faultExeptionClassNameMap = new java.util.HashMap();
-        private static java.util.HashMap faultMessageMap = new java.util.HashMap();
+        private java.util.HashMap faultExeptionNameMap = new java.util.HashMap();
+        private java.util.HashMap faultExeptionClassNameMap = new java.util.HashMap();
+        private java.util.HashMap faultMessageMap = new java.util.HashMap();
 
 	
-    static {
+    private void populateAxisService(){
 
-     //To populate AxisService
      //creating the Service with a unique name
-     _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>" + new Object().hashCode());
+     _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>" + this.hashCode());
 	<xsl:if test="@policy">
 	/*
 	 * setting the endpont policy
@@ -99,7 +99,7 @@
         }
 
     //populates the faults
-     static {
+    private void populateFaults(){
          <xsl:for-each select="method">
            <xsl:for-each select="fault/param">
               faultExeptionNameMap.put( new javax.xml.namespace.QName(
@@ -128,6 +128,9 @@
    public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
         java.lang.String targetEndpoint)
         throws java.lang.Exception {
+         //To populate AxisService
+         populateAxisService();
+         populateFaults();
 
         _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
         configurationContext = _serviceClient.getServiceContext().getConfigurationContext();
