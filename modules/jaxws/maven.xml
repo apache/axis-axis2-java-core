@@ -139,6 +139,15 @@
                 <ant:include name="org/test/mtom/**"/>
 			</ant:fileset>
 		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/SOAP12Service/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/dispatch/server/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/dispatch/server">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+		</ant:copy>
+		
         <!-- ================================================================ -->
         <!--- Proxy endpoint Service Samples -->
         <!-- ================================================================ -->

@@ -63,6 +63,7 @@ public class ProviderDispatcher extends EndpointDispatcher{
 	private Class providerType = null;
     private Provider providerInstance = null;
     private Message message = null;
+    private Protocol messageProtocol;
 
 	/**
 	 * Constructor
@@ -92,6 +93,10 @@ public class ProviderDispatcher extends EndpointDispatcher{
         Object requestParamValue = null;
         Message message = mc.getMessage();
         if (message != null) {
+            // Save off the protocol info so we can use it when creating
+            // the response message.
+            messageProtocol = message.getProtocol();
+            
             BlockFactory factory = createBlockFactory(providerType);
             Block block = message.getBodyBlock(0, null, factory);
             requestParamValue = block.getBusinessObject(true);
@@ -176,7 +181,7 @@ public class ProviderDispatcher extends EndpointDispatcher{
         MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(
                 MessageFactory.class);
         
-        Message message = msgFactory.create(Protocol.soap11);
+        Message message = msgFactory.create(messageProtocol);
             
         // Since we know this isn't going to be a JAX-B block, it's ok if
         // the context is null.  The QName can be null for now as well.

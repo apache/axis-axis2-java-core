@@ -111,7 +111,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr1", portName.toString(), "null"));
     	}
     	
-    	if(bindingId!=null && !bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING)){
+    	if(bindingId!=null && !(bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
+                bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING))){
     		// TODO Is this the correct exception. Shouldn't this be a WebServiceException ?
     		throw new UnsupportedOperationException(Messages.getMessage("addPortErr0", portName.toString()));
     	}
@@ -119,6 +120,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         if (bindingId == null) {
             bindingId = DEFAULT_BINDING_ID;
         }
+        
     	if(!ports.containsKey(portName)){	
     		PortData port = new PortInfoImpl(serviceQname, portName, bindingId, endpointAddress);
     		ports.put(portName, port);
@@ -147,18 +149,14 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	}
     	
         PortData portData = (PortData) ports.get(qname);
-    	
         if(portData == null){
         	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail2", qname.toString())); 
     	}
     	
-    	addBinding(portData.getBindingID());
+    	// FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
+        addBinding(portData.getBindingID());
     	
-    	//JAXWSClientContext<T> clientContext = createClientContext(portData, clazz, mode);
-        
         XMLDispatch<T> dispatch = new XMLDispatch<T>(portData);
-        
-        
         if (mode != null) {
             dispatch.setMode(mode);
         }
@@ -166,8 +164,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             dispatch.setMode(Service.Mode.PAYLOAD);
         }
         
-        //XMLDispatch<T> dispatch = mediator.createXMLDispatch(clientContext);
-
         if (serviceClient == null)
             serviceClient = getServiceClient();
         

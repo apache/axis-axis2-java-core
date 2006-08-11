@@ -26,12 +26,14 @@ import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.ServiceDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
+import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
 import org.apache.axis2.jaxws.i18n.JaxwsMessageBundleTests;
 import org.apache.axis2.jaxws.message.BlockTests;
 import org.apache.axis2.jaxws.message.MessageTests;
 import org.apache.axis2.jaxws.message.SAAJConverterTests;
+import org.apache.axis2.jaxws.message.SOAP12Tests;
 import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.provider.*;
 import org.apache.axis2.proxy.ProxyTests;
@@ -46,12 +48,13 @@ public class JAXWSTest extends TestCase {
         
         // Add each of the test suites
         suite = DispatchTestSuite.addTestSuites(suite);
-        
+        suite.addTestSuite(SOAP12Dispatch.class);
         
         suite.addTestSuite(BlockTests.class);
         suite.addTestSuite(MessageTests.class);
         suite.addTestSuite(SAAJConverterTests.class);
         suite.addTestSuite(XMLStreamReaderSplitterTests.class);
+        suite.addTestSuite(SOAP12Tests.class);
         
         suite.addTestSuite(WSDLTests.class);
         suite.addTestSuite(ServiceDescriptionTests.class);

@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
+import org.apache.axis2.jaxws.message.util.ProtocolUtil;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,10 +43,6 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     
     private Class type;
     private Class blockFactoryType;
-    
-    //public XMLDispatch() {
-    //    super();
-    //}
     
     public XMLDispatch(PortData pd) {
         super(pd);
@@ -90,9 +87,10 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
                 block = factory.createFrom(value, null, null);
                 
-                // FIXME: The protocol should actually come from the binding information included in
-                // either the WSDL or an annotation.
-                message = mf.create(Protocol.soap11);
+                // The protocol of the Message that is created should be based
+                // on the binding information available.
+                Protocol proto = ProtocolUtil.getProtocolForBinding(port.getBindingID());               
+                message = mf.create(proto);
                 message.setBodyBlock(0, block);
             } catch (XMLStreamException e) {
                 e.printStackTrace();
@@ -102,8 +100,8 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         }
         else if (mode.equals(Mode.MESSAGE)) {
             try {
-                QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
-                block = factory.createFrom(value, null, soapEnvQname);
+                //QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
+                block = factory.createFrom(value, null, null);
                 
                 MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
                 message = mf.createFrom(block.getXMLStreamReader(true));
