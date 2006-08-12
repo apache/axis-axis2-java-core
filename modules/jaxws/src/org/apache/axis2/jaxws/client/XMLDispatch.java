@@ -17,7 +17,8 @@
 package org.apache.axis2.jaxws.client;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.ws.Service.Mode;
 
@@ -27,10 +28,10 @@ import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.ProtocolUtil;
@@ -75,6 +76,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         }
         
         Block block = null;
+        
         blockFactoryType = getBlockFactory(value);
         BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
         if (log.isDebugEnabled()) {
@@ -92,23 +94,24 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 Protocol proto = ProtocolUtil.getProtocolForBinding(port.getBindingID());               
                 message = mf.create(proto);
                 message.setBodyBlock(0, block);
-            } catch (XMLStreamException e) {
-                e.printStackTrace();
-            } catch (MessageException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+            	throw ExceptionFactory.makeWebServiceException(e);
             }
         }
         else if (mode.equals(Mode.MESSAGE)) {
             try {
-                //QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
-                block = factory.createFrom(value, null, null);
-                
-                MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
-                message = mf.createFrom(block.getXMLStreamReader(true));
-            } catch (XMLStreamException e) {
-                e.printStackTrace();
-            } catch (MessageException e) {
-                e.printStackTrace();
+            	MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+            	// If the value contains just the xml data, then you can create the Message directly from the 
+            	// Block.  If the value contains attachments, you need to do more.  
+            	// TODO For now the only value that contains Attachments is SOAPMessage
+            	if (value instanceof SOAPMessage) {
+            		message = mf.createFrom((SOAPMessage) value);
+            	} else {
+            		block = factory.createFrom(value, null, null);
+            		message = mf.createFrom(block, null);
+            	}
+            } catch (Exception e) {
+            	throw ExceptionFactory.makeWebServiceException(e);
             }
         }
 
@@ -125,32 +128,32 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         
         try {
             if (mode.equals(Mode.PAYLOAD)) {
-                    BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
-                    block = message.getBodyBlock(0, null, factory);
-            }
-            else if (mode.equals(Mode.MESSAGE)) {
-                    // TODO: Make this conversion more efficient
-                    OMElement messageOM = message.getAsOMElement();
-                    QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
+				BlockFactory factory = (BlockFactory) FactoryRegistry
+						.getFactory(blockFactoryType);
+				block = message.getBodyBlock(0, null, factory);
+				value = block.getBusinessObject(true);
+				
+			} else if (mode.equals(Mode.MESSAGE)) {
+			   if (blockFactoryType.equals(SOAPEnvelopeBlockFactory.class)) {
+				   // This is an indication that we are in SOAPMessage Dispatch
+				   // Return the SOAPMessage
+				   value = message.getAsSOAPMessage();
+				   
+			   } else {
+				   // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock.  
+				   // This is not performant. Scheu 
+				   OMElement messageOM = message.getAsOMElement();
+				   String stringValue = messageOM.toString();  
+				   QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
                     
-                    XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-                    Block stringBlock = stringFactory.createFrom(messageOM.toString(), null, soapEnvQname);
-                    
-                    BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
-                    block = factory.createFrom(stringBlock, null);
-            }
-
-            if (log.isDebugEnabled()) {
-                if (block == null) {
-                    log.debug("Block type: " + block.getClass());
-                    log.debug("Block contents: " + block.traceString(""));
-                }
-                else {
-                    log.debug("A null block was created");
-                }
-            }
-
-            value = block.getBusinessObject(true);
+				   XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+				   Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
+				   BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
+				   block = factory.createFrom(stringBlock, null);
+				   value = block.getBusinessObject(true);
+			   }
+			}
+            
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("An error occured while creating the block");
@@ -176,6 +179,14 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         else if (Source.class.isAssignableFrom(o.getClass())) {
             System.out.println(">> returning SourceBlockFactory");
             return SourceBlockFactory.class;
+        }
+        else if (SOAPMessage.class.isAssignableFrom(o.getClass())) {
+            System.out.println(">> returning SOAPMessageFactory");
+            return SOAPEnvelopeBlockFactory.class;
+        } 
+        else if (SOAPEnvelope.class.isAssignableFrom(o.getClass())) {
+            System.out.println(">> returning SOAPEnvelope");
+            return SOAPEnvelopeBlockFactory.class;
         }
         
         System.out.println(">> ERROR: Factory not found");

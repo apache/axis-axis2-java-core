@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.message.factory;
 
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -49,6 +50,13 @@ public interface XMLPartFactory {
 	 */
 	public XMLPart createFrom(OMElement omElement) throws XMLStreamException, MessageException;
 	
+	/**
+	 * create XMLPart from SOAPEnvelope
+	 * @param soapEnvelope SOAPEnvelope
+	 * @throws MessageException
+	 */
+	public XMLPart createFrom(SOAPEnvelope soapEnvelope) throws XMLStreamException, MessageException;
+
 	/**
 	 * create empty XMLPart of the specified protocol
 	 * @param protocol

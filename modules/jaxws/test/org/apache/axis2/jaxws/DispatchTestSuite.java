@@ -31,8 +31,7 @@ public class DispatchTestSuite {
         suite.addTestSuite(StreamSourceDispatch.class);
         suite.addTestSuite(DOMSourceDispatch.class);
         suite.addTestSuite(SAXSourceDispatch.class);
-        // FIXME: Add this test in
-        
+        suite.addTestSuite(SOAPMessageDispatch.class);
         suite.addTestSuite(JAXBDispatch.class);
         suite.addTestSuite(JAXBSourceDispatch.class);
         return suite;

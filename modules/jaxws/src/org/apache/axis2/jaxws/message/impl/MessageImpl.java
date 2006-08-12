@@ -16,9 +16,13 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -36,6 +40,8 @@ import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+
+import com.ibm.jvm.util.ByteArrayOutputStream;
 
 /**
  * MessageImpl
@@ -76,13 +82,65 @@ public class MessageImpl implements Message {
 		xmlPart = factory.createFrom(root);
 		protocol = xmlPart.getProtocol();
 	}
+	
+	/**
+	 * Message is constructed by the MessageFactory.
+	 * This constructor creates a message from the specified root.
+	 * @param root
+	 */
+	MessageImpl(SOAPEnvelope root) throws MessageException, XMLStreamException  {
+		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
+		xmlPart = factory.createFrom(root);
+		protocol = xmlPart.getProtocol();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.Message#getAsSOAPMessage()
 	 */
 	public SOAPMessage getAsSOAPMessage() throws MessageException {
-		// TODO Missing implementation
-		throw ExceptionFactory.makeMessageException(Messages.getMessage("MethodNotImplemented", "MessageImpl.getAsSOAPMessage()"));
+
+		// TODO: 
+		// This is a non performant way to create SOAPMessage. I will serialize
+		// the xmlpart content and then create an InputStream of byte.
+		// Finally create SOAPMessage using this InputStream.
+		// The real solution may involve using non-spec, implementation
+		// constructors to create a Message from an Envelope
+		try {
+			// Get OMElement from XMLPart.
+			OMElement element = xmlPart.getAsOMElement();
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			element.serialize(outStream);
+
+			// Create InputStream
+			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
+					.toByteArray());
+			MessageFactory mf = MessageFactory.newInstance();
+
+			// Create soapMessage object from Message Factory using the input
+			// stream created from OM.
+
+			// TODO should we read the MIME Header from JAXWS MessageContext.
+			// For now I will create a default header
+			MimeHeaders defaultHeader = new MimeHeaders();
+
+			// FIXME: Need to toggle based on SOAP 1.1 or SOAP 1.2
+			defaultHeader.addHeader("Content-type", "text/xml; charset=UTF-8");
+			SOAPMessage soapMessage = mf.createMessage(defaultHeader, inStream);
+			return soapMessage;
+		} catch (Exception e) {
+			throw ExceptionFactory.makeMessageException(e);
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsBlock(java.lang.Object,
+	 *      org.apache.axis2.jaxws.message.factory.BlockFactory)
+	 */
+	public Block getAsBlock(Object context, BlockFactory blockFactory) throws MessageException, XMLStreamException {
+		return xmlPart.getAsBlock(context, blockFactory);
 	}
 
 	/* (non-Javadoc)

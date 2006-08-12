@@ -40,7 +40,6 @@ import org.apache.axis2.jaxws.message.util.Reader2Writer;
  *   _getBOFromReader
  *   _getReaderFromBO
  *   _outputFromBO
- *   _getQName
  * 
  * In addtion, the derived class may want to override the following:
  *   _getBOFromBO ...if the BusinessObject is consumed when read (i.e. it is an InputSource)

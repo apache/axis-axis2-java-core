@@ -37,6 +37,9 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
  * 	* BusinessObject
  * 	* StAX object
  * 
+ * Note that the whole Message can also be thought of as a Block.  Thus a Message
+ * can be createFrom a Block and written as a Block.
+ * 
  * In addition, each of the accessors has a consume parameter.  If
  * consume is true, the Block is no longer valid after the message is called.
  * (i.e. the implementation does not need to cache the information)

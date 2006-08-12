@@ -59,6 +59,16 @@ public class XMLPartImpl extends  XMLPartBase {
 		super(root);
 	}
 	
+	/**
+	 * XMLPart should be constructed via the XMLPartFactory.
+	 * This constructor creates an XMLPart from the specified root.
+	 * @param root
+	 * @throws MessageException
+	 */
+	XMLPartImpl(SOAPEnvelope root) throws MessageException {
+		super(root);
+	}
+	
 	@Override
 	protected OMElement _convertSE2OM(SOAPEnvelope se) throws MessageException {
 		return getSAAJConverter().toOM(se);

@@ -95,6 +95,20 @@ public interface XMLPart {
 	public OMElement getAsOMElement() throws MessageException;
 	
 	/**
+	 * getAsBlock
+	 * Get the entire xml part as a Block
+	 * The BlockFactory and object context are passed in to help create the 
+	 * proper kind of block.
+	 * 
+	 * @return Block
+	 * @throws MessageException
+	 */
+	public Block getAsBlock(
+			Object context, 
+			BlockFactory blockFactory)  
+		throws MessageException, XMLStreamException;
+	
+	/**
 	 * getNumBodyBlocks
 	 * @return number of body blocks
 	 * @throws MessageException

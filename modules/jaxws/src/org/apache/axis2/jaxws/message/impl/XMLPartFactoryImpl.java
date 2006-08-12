@@ -62,4 +62,11 @@ public class XMLPartFactoryImpl implements XMLPartFactory {
 		return new XMLPartImpl(protocol);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.soap.SOAPEnvelope)
+	 */
+	public XMLPart createFrom(javax.xml.soap.SOAPEnvelope soapEnvelope) throws XMLStreamException, MessageException {
+		return new XMLPartImpl(soapEnvelope);
+	}
+
 }

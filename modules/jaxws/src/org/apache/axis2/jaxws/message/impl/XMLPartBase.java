@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message.impl;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -33,6 +34,7 @@ import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 
 /**
  * XMLPartBase class for an XMLPart
@@ -125,6 +127,25 @@ public abstract class XMLPartBase implements XMLPart {
 		}
 	}
 	
+	/**
+	 * XMLPart should be constructed via the XMLPartFactory.
+	 * This constructor creates an XMLPart from the specified root.
+	 * @param root
+	 * @throws MessageException
+	 */
+	XMLPartBase(SOAPEnvelope root) throws MessageException {
+		content = root;
+		contentType = SOAPENVELOPE;
+		String ns = root.getNamespaceURI();
+		if (ns.equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+			protocol = Protocol.soap11;
+		} else if (ns.equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+			protocol = Protocol.soap12;
+		} else {
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
+		}
+	}
+	
 	private void setContent(Object content, int contentType) {
 		this.content = content;
 		this.contentType = contentType;
@@ -193,6 +214,25 @@ public abstract class XMLPartBase implements XMLPart {
 
 	public SOAPEnvelope getAsSOAPEnvelope() throws MessageException {
 		return getContentAsSOAPEnvelope();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsBlock(java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+	 */
+	public Block getAsBlock(Object context, BlockFactory blockFactory) throws MessageException, XMLStreamException {
+		
+		// Get the content as the specfied block.  There is some optimization here to prevent unnecessary copies.
+		// More optimization may be added later.
+		Block block = null;
+		if (contentType == OM) {
+			block = blockFactory.createFrom((OMElement) content, context, null);
+		} else if (contentType == SOAPENVELOPE && 
+			blockFactory instanceof SOAPEnvelopeBlockFactory)	{
+			block = blockFactory.createFrom((SOAPEnvelope) content, null, null );
+		} else {
+			block = blockFactory.createFrom(getAsOMElement(), null, null);
+		}
+		return block;
 	}
 
 	public Protocol getProtocol() {

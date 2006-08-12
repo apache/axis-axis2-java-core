@@ -221,6 +221,12 @@ class XMLSpineImpl implements XMLSpine {
 	public OMElement getAsOMElement() throws MessageException {
 		throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("NeverCalled", "XMLSpineImpl.getAsOMElement()"), null);
 	}
+	
+	
+
+	public Block getAsBlock(Object context, BlockFactory blockFactory) throws MessageException, XMLStreamException {
+		throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("NeverCalled", "XMLSpineImpl.getAsBlock()"), null);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getNumBodyBlocks()
