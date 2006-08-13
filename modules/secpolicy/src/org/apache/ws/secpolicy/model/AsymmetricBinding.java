@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-package org.apache.ws.secpolicy.model;
+package org.apache.ws.security.secpolicy.model;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.security.secpolicy.Constants;
 
 public class AsymmetricBinding extends SymmetricAsymmetricBindingBase {
     
     private InitiatorToken initiatorToken;
     
     private RecipientToken recipientToken;
+    
+    private List asymmetricBindings = new  ArrayList();
     
     /**
      * @return Returns the initiatorToken.
@@ -46,6 +59,24 @@ public class AsymmetricBinding extends SymmetricAsymmetricBindingBase {
     public void setRecipientToken(RecipientToken recipientToken) {
         this.recipientToken = recipientToken;
     }
+    
+    public Iterator getOptions() {
+        return asymmetricBindings.iterator();
+    }
+    
+    public void addOption(AsymmetricBinding asymmetricBinding) {
+        asymmetricBindings.add(asymmetricBinding);
+    }
+    public QName getName() {
+        return Constants.ASYMMETRIC_BINDING;
+    }
+    public PolicyComponent normalize() {
+        throw new UnsupportedOperationException();
+    }
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        throw new UnsupportedOperationException();
+    }
+    
     
     
 }

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.ws.secpolicy.model;
-
-import org.apache.ws.secpolicy.WSSPolicyException;
+package org.apache.ws.security.secpolicy.model;
 
 public class EncryptionToken implements TokenWrapper {
 
@@ -39,7 +37,7 @@ public class EncryptionToken implements TokenWrapper {
     /* (non-Javadoc)
      * @see org.apache.ws.security.policy.TokenWrapper#setToken(org.apache.ws.security.policy.Token)
      */
-    public void setToken(Token tok) throws WSSPolicyException {
+    public void setToken(Token tok)  {
         this.setEncryptionToken(tok);
     }
     

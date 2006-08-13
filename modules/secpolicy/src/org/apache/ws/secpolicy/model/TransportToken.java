@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package org.apache.ws.secpolicy.model;
+package org.apache.ws.security.secpolicy.model;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.neethi.Assertion;
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.security.secpolicy.Constants;
 
 
-public class TransportToken {
+public class TransportToken implements Assertion {
 
     private Token transportToken;
-
+    
+    private ArrayList transportTokens = new ArrayList();
 
     /**
      * @return Returns the transportToken.
@@ -35,4 +47,37 @@ public class TransportToken {
     public void setTransportToken(Token transportToken) {
         this.transportToken = transportToken;
     }
+    
+    public Iterator getOptions() {
+        return transportTokens.iterator();
+    }
+    
+    public void addOption(TransportToken transportToken) {
+        transportTokens.add(transportToken);
+    }
+
+    public QName getName() {
+        return new QName(Constants.SP_NS, "TransportToken");
+    }
+
+    public boolean isOptional() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public PolicyComponent normalize() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public short getType() {
+        return Assertion.ASSERTION;
+    }
+
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    
 }

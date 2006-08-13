@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package org.apache.ws.secpolicy.model;
+package org.apache.ws.security.secpolicy.model;
 
 import java.util.ArrayList;
 
-public class SignedEncryptedElements {
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.security.secpolicy.Constants;
+
+public class SignedEncryptedElements extends AbstractSecurityAssertion {
 
     private ArrayList xPathExpressions = new ArrayList();
     private String xPathVersion;
@@ -63,6 +70,22 @@ public class SignedEncryptedElements {
      */
     public boolean isSignedElemets() {
         return signedElemets;
+    }
+
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        throw new UnsupportedOperationException();
+        
+    }
+
+    public QName getName() {
+        if (signedElemets) {
+            return Constants.SIGNED_ELEMENTS;
+        } 
+        return Constants.ENCRYPTED_ELEMENTS;
+    }
+
+    public PolicyComponent normalize() {
+        throw new UnsupportedOperationException();
     }
     
     

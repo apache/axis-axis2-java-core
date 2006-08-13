@@ -26,7 +26,44 @@
     <description>Axis2 : WS-Security Policy implementation</description>
 
     <dependencies>
-
+    	<dependency>
+			<groupId>ws-commons</groupId>
+			<artifactId>axiom</artifactId>
+			<version>${axiom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${stax.impl.groupid}</groupId>
+			<artifactId>${stax.impl.artifactid}</artifactId>
+			<version>${stax.impl.version}</version>
+			<properties>
+				<module>true</module>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>stax</groupId>
+			<artifactId>stax-api</artifactId>
+			<version>${stax.api.version}</version>
+			<properties>
+				<module>true</module>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${commons.logging.version}</version>
+			<properties>
+				<module>true</module>
+			</properties>
+		</dependency>
+    	<dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>neethi</artifactId>
+            <version>${neethi.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+	
     </dependencies>
     <!-- build information for the project -->
     <build>

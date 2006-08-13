@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.apache.ws.secpolicy.model;
+package org.apache.ws.security.secpolicy.model;
 
-import org.apache.ws.secpolicy.WSSPolicyException;
-
-public class Binding implements AlgorithmWrapper {
+public abstract class Binding extends AbstractSecurityAssertion implements AlgorithmWrapper {
 
     private AlgorithmSuite algorithmSuite;
     private boolean includeTimestamp;
     private Layout layout = new Layout();
-    
+    private SupportingToken signedSupportingToken;
+    private SupportingToken signedEndorsingSupportingTokens;
+        
     /**
      * @return Returns the algorithmSuite.
      */
@@ -62,7 +62,28 @@ public class Binding implements AlgorithmWrapper {
     /**
      * @param layout The layout to set.
      */
-    public void setLayout(Layout layout) throws WSSPolicyException {
+    public void setLayout(Layout layout) {
         this.layout = layout;
     }
+
+    public SupportingToken getSignedEndorsingSupportingTokens() {
+        return signedEndorsingSupportingTokens;
+    }
+
+    public void setSignedEndorsingSupportingTokens(
+            SupportingToken signedEndorsingSupportingTokens) {
+        this.signedEndorsingSupportingTokens = signedEndorsingSupportingTokens;
+    }
+
+    public SupportingToken getSignedSupportingToken() {
+        return signedSupportingToken;
+    }
+
+    public void setSignedSupportingToken(SupportingToken signedSupportingToken) {
+        this.signedSupportingToken = signedSupportingToken;
+    }
+    
+    
+    
+    
 }

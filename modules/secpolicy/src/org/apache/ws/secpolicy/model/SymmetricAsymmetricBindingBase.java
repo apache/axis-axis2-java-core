@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.ws.secpolicy.model;
+package org.apache.ws.security.secpolicy.model;
 
-import org.apache.ws.secpolicy.Constants;
-import org.apache.ws.secpolicy.WSSPolicyException;
+import org.apache.ws.security.secpolicy.Constants;
 
-public class SymmetricAsymmetricBindingBase extends Binding {
+public abstract class SymmetricAsymmetricBindingBase extends Binding {
 
     private String protectionOrder = Constants.SIGN_BEFORE_ENCRYPTING;
     
@@ -54,14 +53,13 @@ public class SymmetricAsymmetricBindingBase extends Binding {
     /**
      * @param protectionOrder The protectionOrder to set.
      */
-    public void setProtectionOrder(String protectionOrder)
-            throws WSSPolicyException {
+    public void setProtectionOrder(String protectionOrder) {
         if(Constants.ENCRYPT_BEFORE_SIGNING.equals(protectionOrder) ||
            Constants.SIGN_BEFORE_ENCRYPTING.equals(protectionOrder)) {
             this.protectionOrder = protectionOrder;
         } else {
-            throw new WSSPolicyException("Incorrect protection order value : "
-                    + protectionOrder);
+//            throw new WSSPolicyException("Incorrect protection order value : "
+//                    + protectionOrder);
         }
     }
 

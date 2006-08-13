@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.ws.secpolicy.model;
-
-import org.apache.ws.secpolicy.WSSPolicyException;
+package org.apache.ws.security.secpolicy.model;
 
 public interface TokenWrapper {
 
-    public void setToken(Token tok) throws WSSPolicyException;
+    public void setToken(Token tok);
 }

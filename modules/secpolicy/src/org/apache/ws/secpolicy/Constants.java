@@ -1,20 +1,6 @@
-/*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package org.apache.ws.security.secpolicy;
 
-package org.apache.ws.secpolicy;
+import javax.xml.namespace.QName;
 
 public class Constants {
 
@@ -164,4 +150,51 @@ public class Constants {
     public final static String SNT = "http://www.w3.org/TR/soap12-n11n";
 
     public final static String STRT10 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#STR-Transform";
+    
+    
+    public static final QName INCLUDE_TOKEN = new QName(SP_NS, "IncludeToken");
+    
+    public static final QName TRANSPORT_BINDING = new QName(SP_NS, "TransportBinding");
+    
+    public static final QName ALGORITHM_SUITE = new QName(SP_NS, "AlgorithmSuite");
+        
+    public static final QName LAYOUT = new QName(SP_NS, "Layout");
+    
+    public static final QName INCLUDE_TIMESTAMP = new QName(SP_NS, "IncludeTimestamp");
+    
+    public static final QName TRANSPORT_TOKEN = new QName(SP_NS, "TransportToken");
+        
+    public static final QName HTTPS_TOKEN = new QName(Constants.SP_NS, "HttpsToken");
+    
+    public static final QName SIGNED_PARTS = new QName(Constants.SP_NS, "SignedParts");
+    
+    public static final QName USERNAME_TOKEN = new QName(Constants.SP_NS, "UsernameToken");
+    
+    public static final QName WSS_USERNAME_TOKEN10 = new QName(Constants.SP_NS, "WssUsernameToken10");
+    
+    public static final QName WSS_USERNAME_TOKEN11 = new QName(Constants.SP_NS, "WssUsernameToken11");
+    
+    public static final QName ENCRYPTED_PARTS = new QName(Constants.SP_NS, "EncryptedParts");
+    
+    public static final QName SIGNED_ELEMENTS = new QName(Constants.SP_NS, "SignedElements");
+    
+    public static final QName ENCRYPTED_ELEMENTS = new QName(Constants.SP_NS, "EncryptedElements");
+    
+    public static final QName X509_TOKEN = new QName(Constants.SP_NS, "X509Token");
+    
+    public static final QName SUPPORIING_TOKENS = new QName(Constants.SP_NS, "SupportingTokens");
+    
+    public static final QName SIGNED_SUPPORTING_TOKENS = new QName(Constants.SP_NS, "SignedSupportingTokens");
+    
+    public static final QName ENDORSING_SUPPORTING_TOKENS = new QName(Constants.SP_NS, "EndorsingSupportingTokens");
+    
+    public static final QName SIGNED_ENDORSING_SUPPORTING_TOKENS = new QName(Constants.SP_NS, "SignedEndorsingSupportingTokens");
+    
+    public static final QName PROTECTION_TOKEN = new QName(Constants.SP_NS, "ProtectionToken");
+    
+    public static final QName ASYMMETRIC_BINDING = new QName(Constants.SP_NS, "AsymmetricBinding");
+    
+    public static final QName SYMMETRIC_BINDING = new QName(Constants.SP_NS, "SymmetricBinding");
+        
 }
+

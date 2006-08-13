@@ -40,7 +40,7 @@ public class WSSCodegenPolicyExtension implements PolicyExtension {
             }
             
             processor.processPolicy(policy);
-            
+                
             RootPolicyEngineData data = processor.getRootPED();
             
             WSS4JConfig wss4jConfig = WSS4JConfigBuilder.build(data.getTopLevelPEDs(), false);

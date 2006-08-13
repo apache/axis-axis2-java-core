@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package org.apache.ws.secpolicy.model;
+package org.apache.ws.security.secpolicy.model;
 
 import java.util.ArrayList;
 
-public class SignedEncryptedParts {
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.security.secpolicy.Constants;
+
+public class SignedEncryptedParts extends AbstractSecurityAssertion {
 
     private boolean body;
     
@@ -64,7 +71,19 @@ public class SignedEncryptedParts {
     public boolean isSignedParts() {
         return signedParts;
     }
-    
-    
-    
+
+    public QName getName() {
+        if (signedParts) {
+            return Constants.SIGNED_PARTS;
+        }
+        return Constants.ENCRYPTED_PARTS;
+    }
+
+    public PolicyComponent normalize() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        throw new UnsupportedOperationException();
+    }    
 }
