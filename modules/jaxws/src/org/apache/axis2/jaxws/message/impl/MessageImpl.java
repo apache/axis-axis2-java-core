@@ -41,7 +41,7 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
-import com.ibm.jvm.util.ByteArrayOutputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * MessageImpl
