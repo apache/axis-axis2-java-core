@@ -242,13 +242,13 @@ public class DeploymentEngine implements DeploymentConstants {
                 InputStream wsdlStream = serviceClassLoader.getResourceAsStream(metainf + "/service.wsdl");
                 if (wsdlStream == null) {
                     wsdlStream = serviceClassLoader.getResourceAsStream(metainf + "/" + serviceName + ".wsdl");
-                    if (wsdlStream != null) {
-                        WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
-                                new WSDL11ToAxisServiceBuilder(wsdlStream, null, null);
-                        axisService = wsdl2AxisServiceBuilder.populateService();
-                        axisService.setWsdlfound(true);
-                        axisService.setName(serviceName);
-                    }
+                }
+                if (wsdlStream != null) {
+                    WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
+                            new WSDL11ToAxisServiceBuilder(wsdlStream, null, null);
+                    axisService = wsdl2AxisServiceBuilder.populateService();
+                    axisService.setWsdlfound(true);
+                    axisService.setName(serviceName);
                 }
                 if (axisService == null) {
                     axisService = new AxisService(serviceName);
