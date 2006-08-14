@@ -345,7 +345,7 @@
                         <xsl:when test="(@restrictionBaseType)">
                    		
                    		<xsl:if test="(@patternFacet)">
-                    		if ( param.matches( <xsl:value-of select="$patternFacet"/> ) {  
+                    		if ( param.matches( "<xsl:value-of select="$patternFacet"/>" ) {  
                    				this.<xsl:value-of select="$varName"/>=param;
                    			}
                    			else {
@@ -354,7 +354,7 @@
                    		</xsl:if>
 						
 						<xsl:if test="(@enumFacet)">
-                    		if ( param.matches( <xsl:value-of select="$enumFacet"/> ) {  
+                    		if ( param.matches( "<xsl:value-of select="$enumFacet"/>" ) {  
                    				this.<xsl:value-of select="$varName"/>=param;
                    			}
                    			else {

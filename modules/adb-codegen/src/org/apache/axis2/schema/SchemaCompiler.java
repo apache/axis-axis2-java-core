@@ -651,6 +651,27 @@ public class SchemaCompiler {
         }
         return generatedTypeName;
     }
+    
+    /**
+     * Generate a unique attribute Qname using the ref name
+     * @param attrRefName
+     * @param parentSchema
+     * @return Returns the generated attribute name
+     */
+    private QName generateAttributeQName(QName attrRefName, XmlSchema parentSchema) {
+    	
+    	if (typeCounter==Integer.MAX_VALUE){
+            typeCounter = 0;
+        }
+        QName generatedAttrName = new QName(attrRefName.getNamespaceURI(),
+        		attrRefName.getLocalPart() + typeCounter++);
+        
+        while (parentSchema.getTypeByName(generatedAttrName)!= null){
+            generatedAttrName = new QName(attrRefName.getNamespaceURI(),
+            		attrRefName.getLocalPart() + typeCounter++);
+        }
+        return generatedAttrName;
+    }
 
     /**
      * Finds whether a given class is already made
@@ -813,7 +834,7 @@ public class SchemaCompiler {
         while (attribIterator.hasNext()) {
             Object o = attribIterator.next();
             if (o instanceof XmlSchemaAttribute) {
-                processAttribute((XmlSchemaAttribute) o, metaInfHolder);
+                processAttribute((XmlSchemaAttribute) o, metaInfHolder,parentSchema);
 
             }
         }
@@ -1040,7 +1061,7 @@ public class SchemaCompiler {
             while (attribIterator.hasNext()) {
                 Object attr = attribIterator.next();
                 if (attr instanceof XmlSchemaAttribute) {
-                    processAttribute((XmlSchemaAttribute) attr, metaInfHolder);
+                    processAttribute((XmlSchemaAttribute) attr, metaInfHolder,parentSchema);
 
                 }
             }
@@ -1224,16 +1245,43 @@ public class SchemaCompiler {
      * @param att
      * @param metainf
      */
-    public void processAttribute(XmlSchemaAttribute att, BeanWriterMetaInfoHolder metainf) {
+    public void processAttribute(XmlSchemaAttribute att, BeanWriterMetaInfoHolder metainf, XmlSchema parentSchema) 
+                throws SchemaCompilationException {
+    	
         //for now we assume (!!!) that attributes refer to standard types only
         QName schemaTypeName = att.getSchemaTypeName();
-        if (baseSchemaTypeMap.containsKey(schemaTypeName)) {
-            metainf.registerMapping(att.getQName(),
-                    schemaTypeName,
-                    baseSchemaTypeMap.get(schemaTypeName).toString(), SchemaConstants.ATTRIBUTE_TYPE);
-        } else {
-            //todo his attribute refers to a custom type, probably one of the extended simple types.
-            //todo handle it here
+        if (schemaTypeName != null) {
+        	if (baseSchemaTypeMap.containsKey(schemaTypeName)) {
+        		if (att.getQName() != null) {
+        			metainf.registerMapping(att.getQName(),schemaTypeName,
+        					baseSchemaTypeMap.get(schemaTypeName).toString(), SchemaConstants.ATTRIBUTE_TYPE);
+        		} 
+        	}
+        } else if (att.getRefName() != null) {
+        	XmlSchema currentParentSchema = resolveParentSchema(att.getRefName(),parentSchema);
+        	QName attrQname = generateAttributeQName(att.getRefName(),parentSchema);
+        	
+        	XmlSchemaObjectCollection items = currentParentSchema.getItems();
+        	Iterator itemIterator = items.getIterator();
+            
+        	while (itemIterator.hasNext()) {
+                Object attr = itemIterator.next();
+                
+                if (attr instanceof XmlSchemaAttribute) {
+                	XmlSchemaAttribute attribute  = (XmlSchemaAttribute) attr;
+                	
+                	if (attribute.getName().equals(att.getRefName().getLocalPart())) {
+                		QName attrTypeName = attribute.getSchemaTypeName();
+                		
+                		metainf.registerMapping(attrQname,attrQname,
+                    			baseSchemaTypeMap.get(attrTypeName).toString(), SchemaConstants.ATTRIBUTE_TYPE);
+                	}
+                }
+            }
+        	
+    	} else {
+    		//todo his attribute refers to a custom type, probably one of the extended simple types.
+    		//todo handle it here
         }
     }
 
@@ -1338,12 +1386,47 @@ public class SchemaCompiler {
                     referencedQName = elt.getRefName();
                     boolean arrayStatus = ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue();
                     clazzName = findRefClassName(referencedQName,arrayStatus);
-                    metainfHolder.registerMapping(referencedQName,
-                            parentSchema.getElementByName(referencedQName).getSchemaTypeName()
-                            , clazzName,
-                            arrayStatus ?
-                                    SchemaConstants.ARRAY_TYPE :
-                                    SchemaConstants.ELEMENT_TYPE);
+                    XmlSchemaElement refElement = parentSchema.getElementByName(referencedQName);
+                    
+                    if (refElement == null) {
+                    	// The referenced element seems to come from an imported
+                    	// schema.
+                        XmlSchemaObjectCollection includes = parentSchema.getIncludes();
+                        if (includes != null) {
+                            Iterator tempIterator = includes.getIterator();
+                            while (tempIterator.hasNext()) {
+                                Object o = tempIterator.next();
+                                XmlSchema inclSchema = null;
+                                if (o instanceof XmlSchemaImport) {
+                                    inclSchema = ((XmlSchemaImport) o).getSchema();
+                                }
+                                if (o instanceof XmlSchemaInclude) {
+                                    inclSchema = ((XmlSchemaInclude) o).getSchema();
+                                }
+                                // get the element from the included schema
+                                if (inclSchema != null) {
+                                	refElement = inclSchema.getElementByName(referencedQName);
+                                }
+                                if (refElement != null) {
+                                	// we found the referenced element an can break the loop
+                                	break;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // register the mapping if we found the referenced element
+                    // else throw an exception
+                    if (refElement != null) {
+                        metainfHolder.registerMapping(referencedQName,
+                                refElement.getSchemaTypeName()
+                                , clazzName,
+                                arrayStatus ?
+                                        SchemaConstants.ARRAY_TYPE :
+                                        SchemaConstants.ELEMENT_TYPE);                    	
+                    } else {
+                    	throw new SchemaCompilationException("Referenced element not found!");
+                    }
                 }
 
 
