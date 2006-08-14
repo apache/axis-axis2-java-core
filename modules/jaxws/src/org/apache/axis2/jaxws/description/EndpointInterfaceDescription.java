@@ -72,11 +72,6 @@ public class EndpointInterfaceDescription {
     private Class seiClass;
     
     void addOperation(OperationDescription operation) {
-        // TODO: This does not support overloaded operations.  While not supported by WS-I, it IS supported by JAX-WS (p11).
-        //       Note that this also requires support in Axis2; currently WSDL11ToAxisServiceBuilder.populateOperations does not
-        //       support overloaded methods in the WSDL; the operations are stored on AxisService as children in a HashMap with the wsdl
-        //       operation name as the key.
-        // TODO: (JLB) Could make this a List collection and allow lookups on seiMethod (what Proxy might use) as a workaround for now.
         operationDescriptions.add(operation);
     }
     
@@ -100,6 +95,31 @@ public class EndpointInterfaceDescription {
             addOperation(operation);
         }
 
+    }
+
+    /**
+     * Return the OperationDescriptions corresponding to a particular Java method name.
+     * Note that an array is returned because a method could be overloaded.
+     * 
+     * @param javaMethodName String representing a Java Method Name
+     * @return
+     */
+    public OperationDescription[] getOperation(String javaMethodName) {
+        if (javaMethodName == null) {
+            return null;
+        }
+        
+        ArrayList<OperationDescription> matchingOperations = new ArrayList<OperationDescription>();
+        for (OperationDescription operation:getOperations()) {
+            if (javaMethodName.equals(operation.getJavaMethodName())) {
+                matchingOperations.add(operation);
+            }
+        }
+        
+        if (matchingOperations.size() == 0)
+            return null;
+        else
+            return matchingOperations.toArray(new OperationDescription[0]);
     }
     
     public OperationDescription[] getOperations() {

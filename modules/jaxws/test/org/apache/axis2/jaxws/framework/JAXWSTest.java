@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
 
 import org.apache.axis2.jaxws.DispatchTestSuite;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
+import org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests;
 import org.apache.axis2.jaxws.description.ServiceDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
@@ -60,6 +61,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ServiceDescriptionTests.class);
         suite.addTestSuite(WSDLDescriptionTests.class);
         suite.addTestSuite(AnnotationDescriptionTests.class);
+        suite.addTestSuite(AnnotationServiceImplDescriptionTests.class);
         
         suite.addTestSuite(HandlerChainProcessorTests.class);
         suite.addTestSuite(JaxwsMessageBundleTests.class);

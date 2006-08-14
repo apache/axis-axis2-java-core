@@ -25,6 +25,7 @@ import java.net.URL;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 
 /**
@@ -53,6 +54,11 @@ public class DescriptionFactory {
         
         serviceDescription.updateEndpointInterfaceDescription(sei, portQName);
         return serviceDescription;
+    }
+    
+    // TODO: (JLB) Taking an AxisService is only temporary; the AxisService should be created when creating the ServiceDesc
+    public static ServiceDescription createServiceDescriptionFromServiceImpl(Class serviceImplClass, AxisService axisService) {
+        return new ServiceDescription(serviceImplClass, axisService);
     }
 
 }

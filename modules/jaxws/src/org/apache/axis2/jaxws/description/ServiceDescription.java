@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
+import javax.jws.WebService;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
@@ -35,6 +36,7 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.RobustOutOnlyAxisOperation;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AbstractDispatcher;
@@ -94,7 +96,11 @@ public class ServiceDescription {
 
     private URL wsdlURL;
     private QName serviceQName;
-    private Class serviceClass;
+    
+    // Only ONE of the following will be set in a ServiceDescription, depending on whether this Description
+    // was created from a service-requester or service-provider flow. 
+    private Class serviceClass;         // A service-requester generated service or generic service class
+    private Class serviceImplClass;     // A service-provider service implementation class
     
     // TODO: Possibly remove Definition and delegate to the Defn on the AxisSerivce set as a paramater by WSDLtoAxisServicBuilder?
     private WSDLWrapper wsdlWrapper; 
@@ -102,6 +108,8 @@ public class ServiceDescription {
     private Hashtable<QName, EndpointDescription> endpointDescriptions = new Hashtable<QName, EndpointDescription>();
     
     private static final Log log = LogFactory.getLog(AbstractDispatcher.class);
+
+    public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.ServiceDescription";
     
     /**
      * ServiceDescription contains the metadata (e.g. WSDL, annotations) relating to a Service.
@@ -126,6 +134,7 @@ public class ServiceDescription {
         this.wsdlURL = wsdlURL;
         this.serviceQName = serviceQName;
         this.serviceClass = serviceClass;
+
         
         setupWsdlDefinition();
         // TODO: (JLB) Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
@@ -133,6 +142,54 @@ public class ServiceDescription {
         setupAxisService();
         buildDescriptionHierachy();
     }
+
+    ServiceDescription(Class serviceImplClass, AxisService axisService) {
+        this.serviceImplClass = serviceImplClass;
+        this.axisService = axisService;
+        // Add a reference to this ServiceDescription object to the AxisService
+        if (axisService != null) {
+            Parameter parameter = new Parameter();
+            parameter.setName(AXIS_SERVICE_PARAMETER);
+            parameter.setValue(this);
+            // TODO: (JLB) What to do if AxisFault
+            try {
+                axisService.addParameter(parameter);
+            } catch (AxisFault e) {
+                // TODO: (JLB) Throwing wrong exception
+                e.printStackTrace();
+                throw new UnsupportedOperationException("Can't add AxisService param: " + e);
+            }
+        }
+        // Look for @WebService
+        // If @WebService.endpointInterface != null, use that
+        // Else use the public (including inherited) methods
+        WebService webServiceAnnotation = (WebService) this.serviceImplClass.getAnnotation(WebService.class);
+
+        // TODO: (JLB) Initial code path requires the @WebService annotation
+        if (webServiceAnnotation == null) {
+            throw new UnsupportedOperationException("TEMPORARY CODE: ServiceImpl bean must have @WebServiceAnnotation");
+        }
+        if (webServiceAnnotation.endpointInterface() == null) {
+            throw new UnsupportedOperationException("TEMPORARY CODE: ServiceImpl bean must have @WebServiceAnnotation.endpointInterface set");
+        }
+        
+        // TODO: (JLB) Using Class.forName() is probably not the best long-term way to get the SEI class from the annotation
+        Class seiClass = null;
+        try {
+            seiClass = Class.forName(webServiceAnnotation.endpointInterface());
+        } catch (ClassNotFoundException e) {
+            // TODO: (JLB) Throwing wrong exception
+            e.printStackTrace();
+            throw new UnsupportedOperationException("Can't create SEI class: " + e);
+        }
+        // Create the EndpointDescription hierachy from the SEI annotations; Since the PortQName is null, 
+        // it will be set to the annotation value.
+        EndpointDescription endpointDescription = new EndpointDescription(seiClass, null, this);
+        addEndpointDescription(endpointDescription);
+
+    }
+
+
     
     /*=======================================================================*/
     /*=======================================================================*/
@@ -232,23 +289,23 @@ public class ServiceDescription {
     }
     
     private void buildAxisServiceFromNoWSDL() {
-        // TODO: (JLB) Refactor this; probably just remove it
-        System.out.println("JLB: No WSDL provided; don't create any Axis Descriptions yet");
-        if (true) return;
-        // Patterned after ServiceClient.createAnonymousService()
-        String serviceName = null;
-        if (serviceQName != null) {
-            serviceName = serviceQName.getLocalPart();
-        }
-        else {
-            serviceName = ServiceClient.ANON_SERVICE;
-        }
-        // Make this service name unique.  The Axis2 engine assumes that a service it can not find is a client-side service.
-        // See org.apache.axis2.client.ServiceClient.configureServiceClient()
-        axisService = new AxisService(serviceName + this.hashCode());
-        axisService.addOperation(new RobustOutOnlyAxisOperation(ServiceClient.ANON_ROBUST_OUT_ONLY_OP));
-        axisService.addOperation(new OutOnlyAxisOperation(ServiceClient.ANON_OUT_ONLY_OP));
-        axisService.addOperation(new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP));
+        // TODO: (JLB) Refactor this; probably just remove this method
+//        if (true) return;
+//        
+//        // Patterned after ServiceClient.createAnonymousService()
+//        String serviceName = null;
+//        if (serviceQName != null) {
+//            serviceName = serviceQName.getLocalPart();
+//        }
+//        else {
+//            serviceName = ServiceClient.ANON_SERVICE;
+//        }
+//        // Make this service name unique.  The Axis2 engine assumes that a service it can not find is a client-side service.
+//        // See org.apache.axis2.client.ServiceClient.configureServiceClient()
+//        axisService = new AxisService(serviceName + this.hashCode());
+//        axisService.addOperation(new RobustOutOnlyAxisOperation(ServiceClient.ANON_ROBUST_OUT_ONLY_OP));
+//        axisService.addOperation(new OutOnlyAxisOperation(ServiceClient.ANON_OUT_ONLY_OP));
+//        axisService.addOperation(new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP));
     }
     
     private void buildDescriptionHierachy() {

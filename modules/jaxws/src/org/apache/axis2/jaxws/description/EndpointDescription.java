@@ -109,8 +109,7 @@ public class EndpointDescription {
         if (portName == null) {
             String name = webServiceAnnotation.name();
             String tns = webServiceAnnotation.targetNamespace();
-            // TODO: (JLB) Check for name &/| tns null or empty string
-            // TODO: (JLB) Add tests for same
+            // TODO: (JLB) Check for name &/| tns null or empty string and add tests for same
             portName = new QName(tns, name);
         }
         portQName = portName;        

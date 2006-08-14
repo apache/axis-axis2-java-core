@@ -70,6 +70,15 @@ String getResponseWrapper JAXB Class
 TBD
 
  */
+// TODO: Axis2 does not support overloaded operations, although EndpointInterfaceDescription.addOperation() does support overloading
+//       of methods represented by OperationDescription classes.  However, the AxisOperation contained in an OperationDescription
+//       does NOT support overloaded methods.
+//
+//       While overloading is not supported by WS-I, it IS supported by JAX-WS (p11).
+//       Note that this requires support in Axis2; currently WSDL11ToAxisServiceBuilder.populateOperations does not
+//       support overloaded methods in the WSDL; the operations are stored on AxisService as children in a HashMap with the wsdl
+//       operation name as the key.
+
 public class OperationDescription {
     private EndpointInterfaceDescription parentEndpointInterfaceDescription;
     private AxisOperation axisOperation;
@@ -109,6 +118,25 @@ public class OperationDescription {
         return operationName;
     }
     
+    // Java-related getters
+    public String getJavaMethodName() {
+        String returnString = null;
+        if (seiMethod != null) {
+            returnString = seiMethod.getName();
+        }
+        return returnString;
+    }
+    public String[] getJavaParameters() {
+        ArrayList<String> returnParameters = new ArrayList<String>();
+        if (seiMethod != null) {
+            Class[] paramaters = seiMethod.getParameterTypes();
+            for (Class param:paramaters) {
+                returnParameters.add(param.getName());
+            }
+        }
+        // TODO: (JLB) This is different than the rest, which return null instead of an empty array
+        return returnParameters.toArray(new String[0]);
+    }
     /**
      * Note this will return NULL unless the operation was built via introspection on the SEI.
      * In other words, it will return null if the operation was built with WSDL.
@@ -119,7 +147,8 @@ public class OperationDescription {
     }
 
     // Annotation-related getters
-    // TODO: (JLB) Should the getters return processed information rather than the actual annotations?
+    // TODO: (JLB) The getters should return processed information rather than the actual annotations?
+    // TODO: (JLB) Should there be protected getters to return annotations and WSDL constructs directly
     // TODO: (JLB) These should cache the information rather than re-getting it each time.
     public RequestWrapper getRequestWrapper() {
         return seiMethod.getAnnotation(RequestWrapper.class);

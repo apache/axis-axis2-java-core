@@ -14,7 +14,7 @@
     xmlns:intf="http://ws-policy.tests">
     	  
   <types>
-    <schema targetNamespace="http://xmlsoap.org/Echo"
+    <schema targetNamespace="http://ws.apache.org/axis2/tests"
          xmlns="http://www.w3.org/2001/XMLSchema">
       <complexType name="echo">
         <sequence>
