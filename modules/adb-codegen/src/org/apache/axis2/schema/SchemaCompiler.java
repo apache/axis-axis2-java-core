@@ -1149,14 +1149,14 @@ public class SchemaCompiler {
 			}
             
 			else if ( obj instanceof XmlSchemaEnumerationFacet ) {
-				XmlSchemaEnumerationFacet enum = (XmlSchemaEnumerationFacet) obj;
+				XmlSchemaEnumerationFacet enumeration = (XmlSchemaEnumerationFacet) obj;
 				
 				if ( enumStart ) {
-					metaInfHolder.setEnumFacet(enum.getValue().toString());
+					metaInfHolder.setEnumFacet(enumeration.getValue().toString());
 					enumStart = false;
 				}
 				else {
-					metaInfHolder.addEnumFacet(enum.getValue().toString());
+					metaInfHolder.addEnumFacet(enumeration.getValue().toString());
 				}
 			}
 			
