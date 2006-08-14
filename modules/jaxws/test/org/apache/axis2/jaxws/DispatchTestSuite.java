@@ -31,7 +31,7 @@ public class DispatchTestSuite {
         suite.addTestSuite(StreamSourceDispatch.class);
         suite.addTestSuite(DOMSourceDispatch.class);
         suite.addTestSuite(SAXSourceDispatch.class);
-        //suite.addTestSuite(SOAPMessageDispatch.class);
+        suite.addTestSuite(SOAPMessageDispatch.class);
         suite.addTestSuite(JAXBDispatch.class);
         suite.addTestSuite(JAXBSourceDispatch.class);
         return suite;
