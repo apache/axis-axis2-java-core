@@ -38,6 +38,9 @@ import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * MessageContext holds service specific state information.
@@ -477,6 +480,42 @@ public class MessageContext extends AbstractContext {
 
         // tough
         return null;
+    }
+
+    /**
+     * Retrieves all property values. The order of search is as follows: search in
+     * my own options and then look in my context hierarchy. Since its possible
+     * that the entire hierarchy is not present, it will start at whatever level
+     * has been set and start there.
+     * The returned map is unmodifiable, so any changes to the properties have
+     * to be done by calling {@link #setProperty(String, Object)}. In addition,
+     * any changes to the properties are not reflected on this map.
+     *
+     * @return An unmodifiable map containing the combination of all available
+     *         properties or an empty map.
+     */
+    public Map getProperties() {
+        final Map resultMap = new HashMap();
+
+        // My own context hierarchy may not all be present. So look for whatever
+        // nearest level is present and add the properties
+        // We have to access the contexts in reverse order, in order to allow
+        // a nearer context to overwrite values from a more distant context
+        if (configurationContext != null) {
+            resultMap.putAll(configurationContext.getProperties());
+        }
+        if (serviceGroupContext != null) {
+            resultMap.putAll(serviceGroupContext.getProperties());
+        }
+        if (serviceContext != null) {
+            resultMap.putAll(serviceContext.getProperties());
+        }
+        if (operationContext != null) {
+            resultMap.putAll(operationContext.getProperties());
+        }
+        // and now add options
+        resultMap.putAll(options.getProperties());
+        return Collections.unmodifiableMap(resultMap);
     }
 
     /**
