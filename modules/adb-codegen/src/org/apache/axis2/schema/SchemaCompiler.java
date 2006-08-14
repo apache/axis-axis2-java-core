@@ -1443,7 +1443,7 @@ public class SchemaCompiler {
                                         SchemaConstants.ARRAY_TYPE :
                                         SchemaConstants.ELEMENT_TYPE);                    	
                     } else {
-                    	throw new SchemaCompilationException("Referenced element not found!");
+                    	throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.referencedElementNotFound",referencedQName.toString()));
                     }
                 }
 
