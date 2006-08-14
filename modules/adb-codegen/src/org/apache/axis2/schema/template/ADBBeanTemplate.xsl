@@ -1055,7 +1055,7 @@
                                       return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(MY_QNAME);
                                 }else{
                                    return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(MY_QNAME,
-                                       new Object[]{
+                                       new java.lang.Object[]{
                                       org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
                                        org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                                        },
@@ -1063,7 +1063,7 @@
                                 }
                             </xsl:when>
                             <xsl:otherwise> return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(MY_QNAME,
-                            new Object[]{
+                            new java.lang.Object[]{
                             org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
                             org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>)
                             },
@@ -2579,7 +2579,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                       return new org.apache.axis2.databinding.utils.reader.NullXMLStreamReader(bean.MY_QNAME);
                                 }else{
                                    return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(bean.MY_QNAME,
-                                       new Object[]{
+                                       new java.lang.Object[]{
                                       org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
                                        org.apache.axis2.databinding.utils.ConverterUtil.convertToString(bean.<xsl:value-of select="$varName"/>)
                                        },
@@ -2587,7 +2587,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 }
                             </xsl:when>
                             <xsl:otherwise> return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(bean.MY_QNAME,
-                            new Object[]{
+                            new java.lang.Object[]{
                             org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
                             org.apache.axis2.databinding.utils.ConverterUtil.convertToString(bean.<xsl:value-of select="$varName"/>)
                             },
