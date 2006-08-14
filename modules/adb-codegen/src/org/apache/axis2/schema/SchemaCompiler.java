@@ -710,10 +710,11 @@ public class SchemaCompiler {
     /**
      * Finds a class name from the given Qname
      *
-     * @param schemaType
-     * @return
+     * @param qName
+     * @param isArray
+     * @return FQCN
      */
-    private String findClassName(QName qName, boolean isArray) {
+    private String findClassName(QName qName, boolean isArray) throws SchemaCompilationException {
 
         //find the class name
         String className;
@@ -724,6 +725,10 @@ public class SchemaCompiler {
         } else if (baseSchemaTypeMap.containsKey(qName)) {
             className = (String) baseSchemaTypeMap.get(qName);
         } else {
+            if(isSOAP_ENC(qName.getNamespaceURI())) {
+                throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.soapencoding.error", qName.toString())); 
+                
+            }
             // We seem to have failed in finding a class name for the
             //contained schema type. We better set the default then
             //however it's better if the default can be set through the
@@ -740,7 +745,20 @@ public class SchemaCompiler {
         }
         return className;
     }
-
+    /**
+     * Returns true if SOAP_ENC Namespace.
+     *
+     * @param s a string representing the URI to check
+     * @return true if <code>s</code> matches a SOAP ENCODING namespace URI,
+     *         false otherwise
+     */
+    public static boolean isSOAP_ENC(String s) {
+        if (s.equals(Constants.URI_SOAP11_ENC))
+            return true;
+        if (s.equals(Constants.URI_SOAP12_ENC))
+            return true;
+        return false;
+    }
 
     /**
      * Process a schema element which has been refered to by an element
@@ -1108,7 +1126,7 @@ public class SchemaCompiler {
     * @param extBaseType
     * @param metaInfHolder
     */
-    public void processSimpleExtensionBaseType(QName extBaseType,BeanWriterMetaInfoHolder metaInfHolder) {
+    public void processSimpleExtensionBaseType(QName extBaseType,BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
     	
         //find the class name
         String className = findClassName(extBaseType, false);
@@ -1131,22 +1149,22 @@ public class SchemaCompiler {
      * @param resBaseType
      * @param metaInfHolder
      */
-    public void processSimpleRestrictionBaseType(QName resBaseType,BeanWriterMetaInfoHolder metaInfHolder) {
-    	
+    public void processSimpleRestrictionBaseType(QName resBaseType,BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
+
         //find the class name
         String className = findClassName(resBaseType, false);
 
         //this means the schema type actually returns a different QName
         if (changedTypeMap.containsKey(resBaseType)) {
-        	metaInfHolder.registerMapping(resBaseType,
+            metaInfHolder.registerMapping(resBaseType,
                     (QName) changedTypeMap.get(resBaseType),
                     className,SchemaConstants.ELEMENT_TYPE);
         } else {
-        	metaInfHolder.registerMapping(resBaseType,
-        			resBaseType,
+            metaInfHolder.registerMapping(resBaseType,
+                    resBaseType,
                     className,SchemaConstants.ELEMENT_TYPE);
         }
-        
+
         metaInfHolder.setRestrictionBaseType(resBaseType);
     }
     
