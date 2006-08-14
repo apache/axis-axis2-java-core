@@ -241,11 +241,19 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                             .getProperty(Constants.OUT_TRANSPORT_INFO);
 
             if (transportInfo != null) {
-                boolean soap11 = msgContext.isSOAP11();
+                String contentType;
 
-                format.setSOAP11(soap11);
+                Object contentTypeObject = msgContext.getProperty(Constants.Configuration.CONTENT_TYPE);
+                if (contentTypeObject != null) {
+                    contentType = (String) contentTypeObject;
+                } else if (msgContext.isDoingREST()) {
+                    contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+                } else {
+                    contentType = format.getContentType();
+                    format.setSOAP11(msgContext.isSOAP11());
+                }
 
-                String contentType = format.getContentType();
+
                 String encoding = contentType + "; charset="
                         + format.getCharSetEncoding();
 
