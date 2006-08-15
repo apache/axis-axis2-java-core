@@ -1551,6 +1551,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         throw new AxisFault("message " + soapHeader.getMessage() + " not found in the WSDL ");
                     }
                     Part msgPart = msg.getPart(soapHeader.getPart());
+                    if (msgPart == null) {
+                        //todo i18n this
+                        throw new AxisFault("message part " + soapHeader.getPart() + " not found in the WSDL ");
+                    }
                     headerMessage.setElement(msgPart.getElementName());
                 }
                 headerMessage.setMessage(soapHeader.getMessage());
