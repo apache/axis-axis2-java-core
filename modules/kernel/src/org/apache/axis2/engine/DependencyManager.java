@@ -18,7 +18,6 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Service;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -49,7 +48,7 @@ public class DependencyManager {
             // if this service is implementing the o.a.a.Service interface, then use that fact to invoke the
             // proper method.
             if (obj instanceof Service) {
-                ((Service) obj).setOperationContext(opCtx);
+                ((org.apache.axis2.engine.Service) obj).setOperationContext(opCtx);
             } else {
                 Class classToLoad = obj.getClass();
 
@@ -81,8 +80,8 @@ public class DependencyManager {
     public static void initServiceClass(Object obj,
                                         ServiceContext serviceContext) throws AxisFault {
         try {
-            if (obj instanceof Service) {
-                Service service = (Service) obj;
+            if (obj instanceof org.apache.axis2.engine.Service) {
+                Service service = (org.apache.axis2.engine.Service) obj;
                 service.init(serviceContext);
             } else {
                 Class classToLoad = obj.getClass();
@@ -150,7 +149,7 @@ public class DependencyManager {
             if (obj != null) {
                 Class classToLoad = obj.getClass();
                 if (obj instanceof Service) {
-                    Service service = (Service) obj;
+                    org.apache.axis2.engine.Service service = (Service) obj;
                     service.destroy(serviceContext);
                 } else {
                     // We can not call classToLoad.getDeclaredMethed() , since there
