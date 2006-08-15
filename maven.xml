@@ -353,7 +353,6 @@
             <!-- adding the tool classes. This is needed to get the ant task -->
             <fileset dir="modules/tool/target/classes"/>
             <fileset dir="modules/saaj/target/classes"/>
-            <fileset dir="modules/common/target/classes"/>
             <fileset dir="modules/addressing/target/classes"/>
             <fileset dir="modules/codegen/target/classes"/>
             <fileset dir="modules/adb/target/classes"/>
@@ -375,7 +374,6 @@
         <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/java2wsdl/target/classes"/>
             <fileset dir="modules/core/target/classes/"/>
-            <fileset dir="modules/common/target/classes/"/>
         </jar>
     </goal>
 
@@ -394,7 +392,6 @@
         <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/java2wsdl/target/classes"/>
             <fileset dir="modules/core/target/classes/"/>
-            <fileset dir="modules/common/target/classes/"/>
         </jar>
 
         <!-- Copy the adb jar -->
@@ -572,7 +569,6 @@
         <jar destfile="target/temp/min/bin/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/java2wsdl/target/classes"/>
             <fileset dir="modules/core/target/classes/"/>
-            <fileset dir="modules/common/target/classes/"/>
         </jar>
 
         <!-- Copy the adb jar -->
@@ -608,7 +604,6 @@
                 <ant:include name="**/etc/**"/>
                 <ant:include name="**/modules/java2wsdl/**"/>
                 <ant:include name="**/modules/core/**"/>
-                <ant:include name="**/modules/common/**"/>
                 <ant:include name="**/modules/adb/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
@@ -688,7 +683,6 @@
         <jar destfile="${std.bin.temp.dir}/lib/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/java2wsdl/target/classes/"/>
             <fileset dir="modules/core/target/classes/"/>
-            <fileset dir="modules/common/target/classes/"/>
         </jar>
 
         <ant:copy toDir="${std.bin.temp.dir}/lib">
@@ -853,7 +847,7 @@
         <ant:mkdir dir="${min_dep_cache}"/>
         <j:if test="${minDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${min_dep_cache}"
-                              mods="core,common,adb,java2wsdl"/>
+                              mods="core,adb,java2wsdl"/>
             <property name="minDeps.uptodate" value="yes"/>
         </j:if>
 
@@ -942,7 +936,6 @@
                 <ant:pathelement location="modules/codegen/src"/>
                 <ant:pathelement location="modules/xmlbeans/src"/>
                 <ant:pathelement location="modules/java2wsdl/src"/>
-                <ant:pathelement location="modules/common/src"/>
                 <ant:pathelement location="modules/core/src"/>
                 <ant:pathelement location="modules/jaxws/src"/>
                 <ant:pathelement location="modules/jibx/src"/>
@@ -1027,12 +1020,10 @@
         <jar destfile="${destdir}/axis2-kernel-${pom.currentVersion}.jar">
             <fileset dir="modules/java2wsdl/target/classes/"/>
             <fileset dir="modules/core/target/classes/"/>
-            <fileset dir="modules/common/target/classes/"/>
         </jar>
 
         <ant:copy toDir="${destdir}">
             <ant:fileset file="modules/core/target/axis2-core-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/common/target/axis2-common-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>

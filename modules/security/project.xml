@@ -41,11 +41,6 @@
             <artifactId>axiom-dom</artifactId>
             <version>${axiom.version}</version>
         </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-common</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
   <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>

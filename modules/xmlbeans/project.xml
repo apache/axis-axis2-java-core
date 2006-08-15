@@ -40,11 +40,6 @@
 
         <dependency>
             <groupId>axis2</groupId>
-            <artifactId>axis2-common</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>

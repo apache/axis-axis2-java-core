@@ -165,11 +165,6 @@
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-common</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
             <groupId>annogen</groupId>
             <artifactId>annogen</artifactId>
             <version>${annogen.version}</version>

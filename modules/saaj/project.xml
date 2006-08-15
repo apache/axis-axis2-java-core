@@ -122,11 +122,6 @@
         </dependency>
         <!-- external JARs -->
         <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-common</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>${commons.logging.version}</version>
