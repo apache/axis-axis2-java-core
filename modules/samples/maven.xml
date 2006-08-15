@@ -317,7 +317,6 @@
 		<ant:copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/samples/security/lib/"/>
 		<ant:copy file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar" todir="target/samples/security/lib/"/>
 		<ant:copy file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar" todir="target/samples/security/lib/"/>
-		<ant:copy file="${maven.repo.local}/commons-discovery/jars/commons-discovery-${commons.discovery.version}.jar" todir="target/samples/security/lib/"/>
     </j:if>
     <ant:copy file="resources/security/README.txt" tofile="target/samples/security/README.txt"/>
     <ant:copy file="resources/security/build.xml" tofile="target/samples/security/build.xml"/>

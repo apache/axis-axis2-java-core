@@ -206,14 +206,6 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
-            <version>${commons.discovery.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>${commons.httpclient.version}</version>
