@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public abstract class
         Stub {
 
-    protected static AxisService _service;
+    protected AxisService _service;
     protected ArrayList modules = new ArrayList();
 
 
