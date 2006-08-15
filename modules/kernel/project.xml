@@ -20,8 +20,8 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <name>Apache Axis 2.0 - Core</name>
-    <id>axis2-core</id>
+    <name>Apache Axis 2.0 - Kernel</name>
+    <id>axis2-kernel</id>
     <groupId>axis2</groupId>
     <description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,</description>
 

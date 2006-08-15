@@ -28,7 +28,7 @@
     <dependencies>
         <dependency>
             <groupId>axis2</groupId>
-            <artifactId>axis2-core</artifactId>
+            <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>

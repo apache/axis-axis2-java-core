@@ -394,11 +394,11 @@
             <mkdir dir="target/test-resources/repository-client/conf"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/samples/modules/addressing-${addressing_version}.mar"/>
-            <copy file="../core/conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/test-resources/samples/conf/axis2.xml"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/repository-client/modules/addressing-${addressing_version}.mar"/>
-            <copy file="../core/conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/test-resources/repository-client/conf/axis2.xml"/>
             <mkdir dir="target/toWar/services/"/>
 
@@ -455,7 +455,7 @@
             <mkdir dir="target/test-resources/integrationRepo/conf"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/integrationRepo/modules/addressing-${addressing_version}.mar"/>
-            <copy file="../core/conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/test-resources/integrationRepo/conf/axis2.xml"/>
 
 
@@ -486,7 +486,7 @@
                       tofile="target/groovyRepo/services/groovyService.aar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/groovyRepo/modules/addressing-${addressing_version}.mar"/>
-            <copy file="../core/conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/groovyRepo/conf/axis2.xml"/>
 
             <!-- Spring resources -->
@@ -504,7 +504,7 @@
                   tofile="target/test-resources/default_security_client_repo/modules/rampart-${rampart_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/default_security_client_repo/modules/addressing-${addressing_version}.mar"/>
-            <copy file="../core/conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/test-resources/default_security_client_repo/conf/axis2.xml"/>
 
             <!-- Scenario 1 -->
@@ -883,15 +883,15 @@
             <mkdir dir="target/Repository/modules"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/Repository/modules/addressing-${addressing_version}.mar"/>
-            <copy file="../core/conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/Repository/conf/axis2.xml"/>
            
            <mkdir dir="target/perf2/build/repo/conf"/>
            <mkdir dir="target/perf/build/repo/conf"/>
 
-           <copy file="../core/conf/axis2.xml"
+           <copy file="../kernel/conf/axis2.xml"
                   tofile="target/perf2/build/repo/conf/axis2.xml"/>
-<copy file="../core/conf/axis2.xml"
+<copy file="../kernel/conf/axis2.xml"
                   tofile="target/perf/build/repo/conf/axis2.xml"/>
 
 <mkdir dir="target/perf2/build/repo/modules"/>
@@ -914,46 +914,4 @@
             </j:jelly>
         </j:if>
     </postGoal>
-
-    <postGoal name="test:test">
-        <attainGoal name="mail-tests"/>
-    </postGoal>
-
-    <goal name="mail-tests">
-        <!--       TODO call the Mail tests if the mail jar is presents
-       <j:if test="${maven.repo.local}/j2ee/jars/mail.jar">
-           <ant:ant antfile="script/mail-test.xml" inheritall="true" inheritrefs="true" dir="."/>
-        </j:if>
-        maven -Dtestcase=org.foo.bar.MyTest test:single-test
-        -->
-    </goal>
-
-    <!-- ================================================================ -->
-    <!--- Google Mail Sample -->
-    <!-- ================================================================ -->
-
-    <goal name="test-mail">
-        <echo message="running Mail tests"/>
-        <echo message="${maven.repo.local}"/>
-        <junit printsummary="yes" haltonfailure="yes">
-            <classpath>
-                <fileset dir="${maven.repo.local}">
-                    <include name="j2ee/jars/***.jar"/>
-                    <include name="axis/jars/axis2-core-0.9.jar"/>
-                    <include name="axis/jars/axis2-xml-0.9.jar"/>
-                    <include name="axis/jars/axis2-wsdl-0.9.jar"/>
-                    <include name="axis/jars/axis-wsdl4j-1.2.jar"/>
-                    <include name="commons-logging/jars/commons-logging-1.0.3.jar"/>
-                    <include name="stax/jars/stax-1.1.2-dev.jar"/>
-                    <include name="stax/jars/stax-api-1.0.jar"/>
-                </fileset>
-                <pathelement location="target/test-classes"/>
-                <path refid="maven.dependency.classpath"/>
-            </classpath>
-            <formatter type="plain"/>
-            <test name="org.apache.axis2.mail.MailetRequestResponseRawXMLTest"/>
-            <test name="org.apache.axis2.mail.MailOneWayRawXMLTest"/>
-            <test name="org.apache.axis2.mail.MailRequestResponseRawXMLTest"/>
-        </junit>
-    </goal>
 </project>

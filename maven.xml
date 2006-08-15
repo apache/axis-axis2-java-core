@@ -92,16 +92,16 @@
            | Uses 4 properties to control which modules will be include:
            |
            | module.types      Comma seperated list of module types (ie. specs or modules)
-           | module.includes   Comma seperated list of module names (ie. common, core, ...)
+           | module.includes   Comma seperated list of module names (ie. kernel, adb, ...)
            | modules           Same as module.includes, module.includes initializes to this value
            | module.excludes   Comma seperated list of module names to exclude
            |
            | The end result is that modules.reactor.includes is set to the project.xml files
            | to include.  This is the value the reactor will use.
            |
-           | Example, to only build the common and core modules:
+           | Example, to only build the kernel and adb modules:
            |
-           | maven -Dmodules=common,core
+           | maven -Dmodules=kernel, adb
          -->
 
         <j:if test="${context.getVariable('module.types') == null}">
@@ -349,7 +349,7 @@
 
         <jar destfile="target/lib/axis2-${pom.currentVersion}.jar">
             <fileset dir="modules/java2wsdl/target/classes"/>
-            <fileset dir="modules/core/target/classes"/>
+            <fileset dir="modules/kernel/target/classes"/>
             <!-- adding the tool classes. This is needed to get the ant task -->
             <fileset dir="modules/tool/target/classes"/>
             <fileset dir="modules/saaj/target/classes"/>
@@ -368,15 +368,6 @@
         <macros:copy-deps copyToDir="target/lib" mods="*"/>
     </goal>
 
-    <goal name="create-kernel">
-        <ant:mkdir dir="target/temp/war/lib"/>
-        <!-- Create axis2-core.jar -->
-        <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
-            <fileset dir="modules/java2wsdl/target/classes"/>
-            <fileset dir="modules/core/target/classes/"/>
-        </jar>
-    </goal>
-
     <!-- ================================================================ -->
     <!--- Create the War -->
     <!-- ================================================================ -->
@@ -386,13 +377,15 @@
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/conf"/>
 
-        <attainGoal name="create-kernel"/>
+        <!-- Copy the java2wsdl jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
+        </ant:copy>
 
-        <!-- Create axis2-core.jar -->
-        <jar destfile="target/temp/war/lib/axis2-kernel-${pom.currentVersion}.jar">
-            <fileset dir="modules/java2wsdl/target/classes"/>
-            <fileset dir="modules/core/target/classes/"/>
-        </jar>
+        <!-- Copy the kernel jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/kernel/target/axis2-kernel-${pom.currentVersion}.jar"/>
+        </ant:copy>
 
         <!-- Copy the adb jar -->
         <ant:copy toDir="target/temp/war/lib">
@@ -462,7 +455,7 @@
 
         <!-- copy the axis2.xml into conf directoy -->
         <ant:copy toDir="target/temp/war/toWEB-INF/conf">
-            <ant:fileset file="modules/core/conf/axis2.xml"/>
+            <ant:fileset file="modules/kernel/conf/axis2.xml"/>
         </ant:copy>
         <ant:copy toDir="target/temp/war/axis2-web">
             <ant:fileset dir="modules/webapp">
@@ -485,10 +478,10 @@
                 <ant:exclude name="**servlet**"/>
                 <ant:exclude name="ant*.jar"/>
             </ant:lib>
-            <ant:classes dir="modules/core/conf">
+            <ant:classes dir="modules/kernel/conf">
                 <ant:include name="*.properties"/>
             </ant:classes>
-            <!--  <ant:webinf dir="modules/core/src/org/apache/axis2/deployment">
+            <!--  <ant:webinf dir="modules/kernel/src/org/apache/axis2/deployment">
                <ant:include name="*.xml"/>
            </ant:webinf> -->
             <ant:webinf dir="target/temp/war/toWEB-INF"/>
@@ -565,11 +558,15 @@
             <ant:fileset file="NOTICE.txt"/>
         </ant:copy>
 
-        <!-- Create axis2-core.jar -->
-        <jar destfile="target/temp/min/bin/lib/axis2-kernel-${pom.currentVersion}.jar">
-            <fileset dir="modules/java2wsdl/target/classes"/>
-            <fileset dir="modules/core/target/classes/"/>
-        </jar>
+        <!-- Copy the java2wsdl jar -->
+        <ant:copy toDir="target/temp/min/bin/lib">
+            <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
+        <!-- Copy the kernel jar -->
+        <ant:copy toDir="target/temp/min/bin/lib">
+            <ant:fileset file="modules/kernel/target/axis2-kernel-${pom.currentVersion}.jar"/>
+        </ant:copy>
 
         <!-- Copy the adb jar -->
         <ant:copy toDir="target/temp/min/bin/lib">
@@ -603,7 +600,7 @@
             <ant:fileset dir=".">
                 <ant:include name="**/etc/**"/>
                 <ant:include name="**/modules/java2wsdl/**"/>
-                <ant:include name="**/modules/core/**"/>
+                <ant:include name="**/modules/kernel/**"/>
                 <ant:include name="**/modules/adb/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
@@ -679,13 +676,9 @@
             </fileset>
         </ant:delete>
 
-        <!-- Create axis2-kernel.jar -->
-        <jar destfile="${std.bin.temp.dir}/lib/axis2-kernel-${pom.currentVersion}.jar">
-            <fileset dir="modules/java2wsdl/target/classes/"/>
-            <fileset dir="modules/core/target/classes/"/>
-        </jar>
-
         <ant:copy toDir="${std.bin.temp.dir}/lib">
+            <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/kernel/target/axis2-kernel-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
@@ -759,8 +752,7 @@
             <ant:fileset dir=".">
                 <ant:include name="**/etc/**"/>
                 <ant:include name="**/modules/java2wsdl/**"/>
-                <ant:include name="**/modules/core/**"/>
-                <ant:include name="**/modules/common/**"/>
+                <ant:include name="**/modules/kernel/**"/>
                 <ant:include name="**/modules/adb/**"/>
                 <ant:include name="**/modules/codegen/**"/>
                 <ant:include name="**/modules/webapp/**"/>
@@ -847,7 +839,7 @@
         <ant:mkdir dir="${min_dep_cache}"/>
         <j:if test="${minDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${min_dep_cache}"
-                              mods="core,adb,java2wsdl"/>
+                              mods="kernel,adb,java2wsdl"/>
             <property name="minDeps.uptodate" value="yes"/>
         </j:if>
 
@@ -936,7 +928,7 @@
                 <ant:pathelement location="modules/codegen/src"/>
                 <ant:pathelement location="modules/xmlbeans/src"/>
                 <ant:pathelement location="modules/java2wsdl/src"/>
-                <ant:pathelement location="modules/core/src"/>
+                <ant:pathelement location="modules/kernel/src"/>
                 <ant:pathelement location="modules/jaxws/src"/>
                 <ant:pathelement location="modules/jibx/src"/>
                 <ant:pathelement location="modules/jaxbri/src"/>
@@ -1016,14 +1008,9 @@
         <ant:property name="destdir" value="target/jars"/>
         <ant:mkdir dir="${destdir}"/>
 
-        <!-- Create axis2-core.jar -->
-        <jar destfile="${destdir}/axis2-kernel-${pom.currentVersion}.jar">
-            <fileset dir="modules/java2wsdl/target/classes/"/>
-            <fileset dir="modules/core/target/classes/"/>
-        </jar>
-
         <ant:copy toDir="${destdir}">
-            <ant:fileset file="modules/core/target/axis2-core-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/kernel/target/axis2-kernel-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
