@@ -1,9 +1,12 @@
 package org.apache.ws.java2wsdl.utils;
 
-import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

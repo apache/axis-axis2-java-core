@@ -1,12 +1,31 @@
 package org.apache.ws.java2wsdl;
 
-import org.apache.ws.commons.schema.*;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaForm;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.java2wsdl.bytecode.MethodTable;
 import org.apache.ws.java2wsdl.utils.TypeTable;
-import org.codehaus.jam.*;
+import org.codehaus.jam.JClass;
+import org.codehaus.jam.JMethod;
+import org.codehaus.jam.JParameter;
+import org.codehaus.jam.JProperty;
+import org.codehaus.jam.JamClassIterator;
+import org.codehaus.jam.JamService;
+import org.codehaus.jam.JamServiceFactory;
+import org.codehaus.jam.JamServiceParams;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Locale;
+import java.util.Map;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

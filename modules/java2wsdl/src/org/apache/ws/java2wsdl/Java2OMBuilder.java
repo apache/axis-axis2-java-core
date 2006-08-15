@@ -1,14 +1,4 @@
-package org.apache.ws.java2wsdl; 
-
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
+package org.apache.ws.java2wsdl;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -19,6 +9,15 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JMethod;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

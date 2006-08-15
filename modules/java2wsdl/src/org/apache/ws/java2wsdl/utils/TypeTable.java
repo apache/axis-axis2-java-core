@@ -4,7 +4,11 @@ import org.apache.axiom.om.OMElement;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

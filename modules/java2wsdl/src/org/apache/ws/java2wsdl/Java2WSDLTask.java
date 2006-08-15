@@ -1,12 +1,12 @@
 package org.apache.ws.java2wsdl;
 
 import org.apache.tools.ant.AntClassLoader;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

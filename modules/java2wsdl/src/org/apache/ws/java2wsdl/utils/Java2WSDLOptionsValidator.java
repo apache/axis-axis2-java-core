@@ -1,6 +1,5 @@
 package org.apache.ws.java2wsdl.utils;
 
-import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
