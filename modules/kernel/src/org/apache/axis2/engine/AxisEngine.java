@@ -421,7 +421,11 @@ public class AxisEngine {
         // Allow handlers to override the sendStacktraceDetailsWithFaults setting from the Configuration to allow
         // WS-* protocol faults to not include the exception.
         boolean sendStacktraceDetailsWithFaults = false;
-        Object flagFromContext = context.getOperationContext().getProperty(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
+        OperationContext oc = context.getOperationContext();
+        Object flagFromContext = null;
+        if(oc!=null){
+            flagFromContext = context.getOperationContext().getProperty(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
+        }
         if(flagFromContext!=null){
             sendStacktraceDetailsWithFaults = JavaUtils.isTrue(flagFromContext);
         }else{
