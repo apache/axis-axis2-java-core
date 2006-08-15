@@ -55,6 +55,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -417,8 +418,16 @@ public class AxisEngine {
             }
         }
 
-        Parameter param = context.getParameter(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
-        boolean sendStacktraceDetailsWithFaults = param != null && ((String) param.getValue()).equalsIgnoreCase("true");
+        // Allow handlers to override the sendStacktraceDetailsWithFaults setting from the Configuration to allow
+        // WS-* protocol faults to not include the exception.
+        boolean sendStacktraceDetailsWithFaults = false;
+        Object flagFromContext = context.getOperationContext().getProperty(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
+        if(flagFromContext!=null){
+            sendStacktraceDetailsWithFaults = JavaUtils.isTrue(flagFromContext);
+        }else{
+            Parameter param = context.getParameter(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
+            sendStacktraceDetailsWithFaults = JavaUtils.isTrue(param);    
+        }
 
         Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
         if (faultDetail != null) {
