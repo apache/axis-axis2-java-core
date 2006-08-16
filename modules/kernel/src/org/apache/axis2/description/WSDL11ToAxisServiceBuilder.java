@@ -59,7 +59,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     protected static final Log log =
             LogFactory.getLog(WSDL11ToAxisServiceBuilder.class);
 
-    private String portName;
+    protected String portName;
 
     private static final String BINDING = "Binding";
 
@@ -83,7 +83,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private static final String BINDING_OPERATION_OUTPUT = "Binding.Operation.Output";
 
-    private Definition wsdl4jDefinition = null;
+    protected Definition wsdl4jDefinition = null;
 
     private WSDLLocator customWSLD4JResolver;
 
@@ -102,6 +102,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private static int prefixCounter = 0;
     public static final String NAMESPACE_URI = "namespace";
     public static final String TRAGET_NAMESPACE = "targetNamespace";
+    
+    /**
+     * keep track of whether setup code related to the entire wsdl is complete.
+     * Note that WSDL11ToAllAxisServices will call setup multiple times, so this
+     * field is used to make subsequent calls no-ops.
+     */
+    private boolean setupComplete = false;
+
+    private Map schemaMap = null;
 
     /**
      * constructor taking in the service name and the port name
@@ -161,9 +170,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
     public AxisService populateService() throws AxisFault {
         try {
-            if (wsdl4jDefinition == null) {
-                wsdl4jDefinition = readInTheWSDLFile(in);
-            }
+            setup();
             // Setting wsdl4jdefintion to axisService , so if some one want
             // to play with it he can do that by getting the parameter
             Parameter wsdldefintionParamter = new Parameter();
@@ -178,16 +185,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService.setTargetNamespace(wsdl4jDefinition
                     .getTargetNamespace());
 
-            //adding ns in the original WSDL
-            processPoliciesInDefintion(wsdl4jDefinition);
-
-            //process the imports
-            processImports(wsdl4jDefinition);
             axisService.setNameSpacesMap(wsdl4jDefinition.getNamespaces());
 
-            Types wsdl4jTypes = wsdl4jDefinition.getTypes();
-
-            Map schemaMap = populateSchemaMap(wsdl4jTypes);
             Binding binding = findBinding(wsdl4jDefinition);
 
             // create new Schema extensions element for wrapping
@@ -196,6 +195,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             //we might have modified the schemas by now so the addition should
             //happen here
+            Types wsdl4jTypes = wsdl4jDefinition.getTypes();
             if (null != wsdl4jTypes) {
                 this.copyExtensibleElements(
                         wsdl4jTypes.getExtensibilityElements(),
@@ -214,7 +214,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     }
                 }
             }
-            // copy the documentation element contentto the description
+            // copy the documentation element content to the description
             Element documentationElement = wsdl4jDefinition.getDocumentationElement();
             if (documentationElement != null) {
                 Node firstChild = documentationElement.getFirstChild();
@@ -235,7 +235,43 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw new AxisFault(e);
         }
     }
+    
+    /**
+     * contains all code which gathers non-service specific information from the wsdl.
+     * <p>
+     * After all the setup completes successfully, the setupComplete field is set so that
+     * any subsequent calls to setup() will result in a no-op.
+     * Note that subclass WSDL11ToAllAxisServicesBuilder will call populateService for
+     * each port in the WSDL.  Separating the non-service specific information here allows
+     * WSDL11ToAllAxisServicesBuilder to only do this work 1 time per WSDL, instead of for
+     * each port on each service.
+     * @throws WSDLException if readInTheWSDLFile fails
+     */
+    protected void setup() throws WSDLException {
+        if (setupComplete) { // already setup, just do nothing and return
+            return;
+        }
+        if (wsdl4jDefinition == null) {
+            wsdl4jDefinition = readInTheWSDLFile(in);
+        }
+        if (wsdl4jDefinition == null) {
+            return; // can't continue without wsdl
+        }
+        // adding ns in the original WSDL
+        processPoliciesInDefintion(wsdl4jDefinition);
 
+        // process the imports
+        processImports(wsdl4jDefinition);
+
+        // setup the schemaMap
+        schemaMap = populateSchemaMap(wsdl4jDefinition.getTypes());
+
+        setupComplete = true; // if any part of setup fails, don't mark setupComplete
+        return;
+    }
+    
+
+    
     /**
      * Populate a map of targetNamespace vs DOM schema element
      * This is used to grab the correct schema element when adding

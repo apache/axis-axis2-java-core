@@ -64,7 +64,7 @@ import java.util.Map;
 
 public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
-    private Description description;
+    protected Description description;
 
     private String wsdlURI;
 
@@ -72,11 +72,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     // woden.
     private static String RPC = "rpc";
 
-    private String interfaceName;
+    protected String interfaceName;
 
     private String savedTargetNamespace;
 
     private Map namespacemap;
+    
+    private HashMap stringBasedNamespaceMap;
+    
+    private boolean setupComplete = false;
 
     public WSDL20ToAxisServiceBuilder(InputStream in, QName serviceName,
                                       String interfaceName) {
@@ -117,34 +121,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     public AxisService populateService() throws AxisFault {
 
         try {
-            if (description == null) {
-
-                DescriptionElement descriptionElement = null;
-                if (wsdlURI != null && !"".equals(wsdlURI)) {
-                    descriptionElement = readInTheWSDLFile(wsdlURI);
-                } else if (in != null) {
-
-                    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-                    documentBuilderFactory.setNamespaceAware(true);
-                    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-                    Document document = documentBuilder.parse(in);
-
-                    WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
-                    WSDLSource wsdlSource = reader.createWSDLSource();
-                    wsdlSource.setSource(document.getDocumentElement());
-//                    wsdlSource.setBaseURI(new URI(getBaseUri()));
-                    descriptionElement = reader.readWSDL(wsdlSource);
-                } else {
-                    throw new AxisFault("No resources found to read the wsdl");
-                }
-
-                savedTargetNamespace = descriptionElement.getTargetNamespace()
-                        .toString();
-                namespacemap = descriptionElement.getNamespaces();
-                this.description = descriptionElement.toComponent();
-
-            }
-
+            setup();
             // Setting wsdl4jdefintion to axisService , so if some one want
             // to play with it he can do that by getting the parameter
             Parameter wsdlDescriptionParamter = new Parameter();
@@ -173,13 +150,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             // Create the namespacemap
 
-            HashMap stringBasedNamespaceMap = new HashMap();
-            Iterator iterator = namespacemap.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = (String) iterator.next();
-                stringBasedNamespaceMap.put(key, (namespacemap.get(key))
-                        .toString());
-            }
             axisService.setNameSpacesMap(stringBasedNamespaceMap);
             // TypeDefinition[] typeDefinitions =
             // description.getTypeDefinitions();
@@ -230,7 +200,69 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw new AxisFault(e);
         }
     }
+    
+    /**
+     * contains all code which gathers non-service specific information from the
+     * wsdl.
+     * <p>
+     * After all the setup completes successfully, the setupComplete field is
+     * set so that any subsequent calls to setup() will result in a no-op. Note
+     * that subclass WSDL20ToAllAxisServicesBuilder will call populateService
+     * for each endpoint in the WSDL. Separating the non-service specific
+     * information here allows WSDL20ToAllAxisServicesBuilder to only do this
+     * work 1 time per WSDL, instead of for each endpoint on each service.
+     * 
+     * @throws AxisFault
+     */
+    protected void setup() throws AxisFault {
+        if (setupComplete == true) { // already setup, just do nothing and return
+            return;
+        }
+        try {
+            if (description == null) {
 
+                DescriptionElement descriptionElement = null;
+                if (wsdlURI != null && !"".equals(wsdlURI)) {
+                    descriptionElement = readInTheWSDLFile(wsdlURI);
+                } else if (in != null) {
+
+                    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+                            .newInstance();
+                    documentBuilderFactory.setNamespaceAware(true);
+                    DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                    Document document = documentBuilder.parse(in);
+
+                    WSDLReader reader = DOMWSDLFactory.newInstance().newWSDLReader();
+                    WSDLSource wsdlSource = reader.createWSDLSource();
+                    wsdlSource.setSource(document.getDocumentElement());
+                    // wsdlSource.setBaseURI(new URI(getBaseUri()));
+                    descriptionElement = reader.readWSDL(wsdlSource);
+                } else {
+                    throw new AxisFault("No resources found to read the wsdl");
+                }
+
+                savedTargetNamespace = descriptionElement.getTargetNamespace().toString();
+                namespacemap = descriptionElement.getNamespaces();
+                this.description = descriptionElement.toComponent();
+
+            }
+            // Create the namespacemap
+
+            stringBasedNamespaceMap = new HashMap();
+            Iterator iterator = namespacemap.keySet().iterator();
+            while (iterator.hasNext()) {
+                String key = (String) iterator.next();
+                stringBasedNamespaceMap.put(key, (namespacemap.get(key)).toString());
+            }
+
+            setupComplete = true;
+        } catch (AxisFault e) {
+            throw e; // just rethrow AxisFaults
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+    }
+    
     private void processBinding(Binding binding, Description description)
             throws Exception {
         if (binding != null) {
@@ -482,6 +514,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             for (int i = 0; i < services.length; i++) {
                 if (serviceName.equals(services[i].getName())) {
                     service = services[i];
+                    break;  // found it. Stop looking.
                 }
             }
             if (service == null) {
@@ -504,8 +537,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             for (int i = 0; i < endpoints.length; ++i) {
-                if (this.interfaceName.equals(endpoints[i])) {
+                if (this.interfaceName.equals(endpoints[i].getName().toString())) {
                     endpoint = endpoints[i];
+                    break;  // found it.  Stop looking
                 }
             }
             if (endpoint == null) {
