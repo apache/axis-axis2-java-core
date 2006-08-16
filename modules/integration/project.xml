@@ -368,7 +368,17 @@
         <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
         <sourceDirectory>src</sourceDirectory>
         <unitTestSourceDirectory>test</unitTestSourceDirectory>
-
+    <sourceModifications>
+      <sourceModification>
+        <className>fakeClazz</className>
+        <property/>
+        <directory/>
+        <includes/>
+        <excludes>
+            <exclude>**/SOAP12Testing/**/*.java</exclude>
+        </excludes>
+      </sourceModification>
+    </sourceModifications>
         <unitTest>
             <includes>
                 <include>**/*Test.class</include>
