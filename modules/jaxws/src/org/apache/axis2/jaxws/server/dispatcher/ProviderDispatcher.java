@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.jaxws.server;
+package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -54,12 +54,11 @@ import org.apache.commons.logging.LogFactory;
  * javax.xml.transform.Source
  *
  */
-public class ProviderDispatcher extends EndpointDispatcher{
+public class ProviderDispatcher extends JavaDispatcher{
 	
     private static Log log = LogFactory.getLog(ProviderDispatcher.class);
     
     private BlockFactory blockFactory = null;
-    private Class svcImplClass = null;
 	private Class providerType = null;
     private Provider providerInstance = null;
     private Message message = null;
@@ -71,7 +70,7 @@ public class ProviderDispatcher extends EndpointDispatcher{
 	 * @param _class
 	 */
 	public ProviderDispatcher(Class _class) {
-		this.svcImplClass = _class;
+		super(_class);
 	}
     
     /* (non-Javadoc)
@@ -204,16 +203,16 @@ public class ProviderDispatcher extends EndpointDispatcher{
         
         Provider provider = null;
     	if(clazz == String.class){
-    		provider = (Provider<String>) this.svcImplClass.newInstance();
+    		provider = (Provider<String>) serviceImplClass.newInstance();
     	}
         else if(clazz == Source.class){
-    		provider = (Provider<Source>) this.svcImplClass.newInstance();
+    		provider = (Provider<Source>) serviceImplClass.newInstance();
     	}
         else if(clazz == SOAPMessage.class){
-    		provider = (Provider<SOAPMessage>) this.svcImplClass.newInstance();
+    		provider = (Provider<SOAPMessage>) serviceImplClass.newInstance();
     	}
         else if(clazz == JAXBContext.class){
-    		provider = (Provider<JAXBContext>)this.svcImplClass.newInstance();
+    		provider = (Provider<JAXBContext>) serviceImplClass.newInstance();
     	}
     	
         if (provider == null) {
@@ -231,7 +230,7 @@ public class ProviderDispatcher extends EndpointDispatcher{
 
     	Class providerType = null;
     	
-    	Type[] giTypes = this.svcImplClass.getGenericInterfaces();
+    	Type[] giTypes = serviceImplClass.getGenericInterfaces();
     	for(Type giType : giTypes){
     		ParameterizedType paramType = null;
     		try{

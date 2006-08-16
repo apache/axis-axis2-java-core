@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.jaxws.server;
+package org.apache.axis2.jaxws.server.dispatcher;
 
 import org.apache.axis2.jaxws.core.MessageContext;
 
@@ -23,15 +23,15 @@ import org.apache.axis2.jaxws.core.MessageContext;
  * The EndpointDispatcher is an abstraction for the object that will be doing
  * the invocation of an endpoints target Java object.  
  */
-public abstract class EndpointDispatcher {
+public interface EndpointDispatcher {
 
     /**
      * Invoke the target endpoint synchronously 
      * 
      * @param mc
      * @return
-     * @throws Exception
      */
-    public abstract MessageContext invoke(MessageContext mc) throws Exception;
+    public MessageContext invoke(MessageContext mc)
+        throws Exception;
 
 }

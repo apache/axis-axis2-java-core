@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.message.SAAJConverterTests;
 import org.apache.axis2.jaxws.message.SOAP12Tests;
 import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.provider.*;
+import org.apache.axis2.jaxws.sample.AddressBookTests;
 import org.apache.axis2.proxy.ProxyTests;
 
 public class JAXWSTest extends TestCase {
@@ -73,6 +74,8 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(ExceptionFactoryTests.class);
 
+        suite.addTestSuite(AddressBookTests.class);
+        
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {

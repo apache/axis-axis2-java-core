@@ -162,6 +162,19 @@
                 <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>
+		
+        <!-- ================================================================ -->
+        <!--- Java Bean Endpoint Samples -->
+        <!-- ================================================================ -->
+		<ant:copy toDir="target/test-classes/services/AddressBookService/">
+		  <ant:fileset dir="target/test-classes">
+		    <ant:include name="org/apache/axis2/jaxws/sample/addressbook/**"/>
+		  </ant:fileset>
+		  <ant:fileset dir="test/org/apache/axis2/jaxws/sample/addressbook">
+		    <ant:include name="META-INF/**"/>
+		  </ant:fileset>
+		</ant:copy>
+		
 	</preGoal>
 
     <!-- Create the API and Impl jars --> 

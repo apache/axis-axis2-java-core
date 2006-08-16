@@ -18,16 +18,17 @@ package org.apache.axis2.jaxws.server;
 
 import javax.xml.ws.Provider;
 
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
+import org.apache.axis2.jaxws.server.dispatcher.JavaBeanDispatcher;
+import org.apache.axis2.jaxws.server.dispatcher.ProviderDispatcher;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,25 +59,13 @@ public class EndpointController {
     public InvocationContext invoke(InvocationContext ic) {
         try {
             MessageContext requestMsgCtx = ic.getRequestMessageContext();
-            org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
-                requestMsgCtx.getAxisMessageContext();
+
+            String implClassName = getServiceImplClassName(requestMsgCtx);
             
-            // As the request comes in, the SOAP message will first exist only
-            // on the Axis2 MessageContext.  We need to get it from there and 
-            // wrap it with the JAX-WS Message model abstraction.  This will 
-            // allow us to get the params out in a number of forms later on.
-            SOAPEnvelope soapEnv = axisRequestMsgCtx.getEnvelope();
-            if (soapEnv == null) {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr1"));
-            }
+            Class implClass = loadServiceImplClass(implClassName, 
+                    requestMsgCtx.getClassLoader());
             
-            MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
-            Message requestMsg = msgFactory.createFrom(soapEnv);
-            requestMsgCtx.setMessage(requestMsg);
-            
-            // Get the appropriate EndpointDispatcher instance based on the 
-            // information availabe in the MessageContext.
-            EndpointDispatcher dispatcher = getDispatcher(axisRequestMsgCtx);
+            EndpointDispatcher dispatcher = getEndpointDispatcher(implClass);
             
             MessageContext responseMsgContext = dispatcher.invoke(requestMsgCtx);
             
@@ -90,62 +79,52 @@ public class EndpointController {
     }
     
     /*
-	 * Get the appropriate dispatcher for a given service endpoint.  If the 
-     * target endpoint implements the javax.xml.ws.Provider<T> interface, then
-     * the ProviderDispatcher should be returned.  Other wise, it should be
-     * the JavaBeanDispatcher.
+	 * Get the appropriate EndpointDispatcher for a given service endpoint.
 	 */
-	private EndpointDispatcher getDispatcher(org.apache.axis2.context.MessageContext msgContext) throws Exception {
-		EndpointDispatcher dispatcherInstance = null;
-    	
-        // The PARAM_SERVICE_CLASS property that is set on the AxisService
-        // will tell us what the implementation
-        AxisService as = msgContext.getAxisService();
-    	Parameter asp = as.getParameter(PARAM_SERVICE_CLASS);
-    	
-        // If there was no implementation class, we should not go any further
-        if (asp == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr2"));
-        }
-        
-        // Load the service implementation class  
-    	Class cls = getImplClass(as.getClassLoader(), asp);
-        
-        // Check to see whether the class that was specified is an instance
-        // of the javax.xml.ws.Provider.  If not, stop processing.
-    	if(cls.getSuperclass().isInstance(Provider.class)) {
-    		ProviderDispatcher pd = new ProviderDispatcher(cls);
-    		dispatcherInstance = pd;
+	private EndpointDispatcher getEndpointDispatcher(Class serviceImplClass) 
+        throws Exception {
+        if(Provider.class.isAssignableFrom(serviceImplClass)) {
+    		return new ProviderDispatcher(serviceImplClass);
     	}
         else {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr3", cls.getName()));
+            return new JavaBeanDispatcher(serviceImplClass);
         }
-    	
-    	return dispatcherInstance;
     }
 	
 	/*
      * Tries to load the implementation class that was specified for the
-     * target endpoint using the supplied ClassLoader.  
+     * target endpoint
 	 */
-	private Class getImplClass(ClassLoader cl, Parameter param){
-		Class _class = null;
+	private Class loadServiceImplClass(String className, ClassLoader cl) {
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to load service impl class: " + className);
+        }    
         
-        // TODO: What should be done if the supplied ClassLoader is null?
-		String className = null;
-		try{
-			className = ((String) param.getValue()).trim();
-			
-            if (log.isDebugEnabled()) {
-                log.debug("Attempting to load service impl class: " + className);
-            }
-            
-            _class = Class.forName(className, true, cl);
-		}catch(java.lang.ClassNotFoundException cnf ){
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("EndpointControllerErr4", className));
+        try {
+		    //TODO: What should be done if the supplied ClassLoader is null?
+            Class _class = Class.forName(className, true, cl);
+            return _class;
+		} catch(ClassNotFoundException cnf ){
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
+                    "EndpointControllerErr4", className));
 		}
-		
-		return _class;
 	}
+    
+    private String getServiceImplClassName(MessageContext mc) {
+        // The PARAM_SERVICE_CLASS property that is set on the AxisService
+        // will tell us what the service implementation class is.
+        org.apache.axis2.context.MessageContext axisMsgContext = mc.getAxisMessageContext();
+        AxisService as = axisMsgContext.getAxisService();
+        Parameter param = as.getParameter(PARAM_SERVICE_CLASS);
+        
+        // If there was no implementation class, we should not go any further
+        if (param == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
+                    "EndpointControllerErr2"));
+        }
+        
+        String className = ((String) param.getValue()).trim();
+        return className;
+    }
 	
 }

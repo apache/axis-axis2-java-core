@@ -19,10 +19,17 @@ package org.apache.axis2.jaxws.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.Service.Mode;
 
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
  * The <code>org.apache.axis2.jaxws.core.MessageContext</code> is
@@ -41,6 +48,8 @@ public class MessageContext {
     private org.apache.axis2.context.MessageContext axisMsgCtx;
     private Map<String, Object> properties;
     private ServiceDescription serviceDesc;
+    private OperationDescription operationDesc;
+    private QName operationName;    //FIXME: This should become the OperationDescription
     private Message message;
     private Mode mode;
         
@@ -52,6 +61,21 @@ public class MessageContext {
     public MessageContext(org.apache.axis2.context.MessageContext mc) {
         axisMsgCtx = mc;
         properties = new HashMap<String, Object>();
+        
+        //If the Axis2 MessageContext that was passed in already had a SOAPEnvelope
+        //set on it, grab that and create a JAX-WS Message out of it.
+        SOAPEnvelope soapEnv = mc.getEnvelope();
+        if (soapEnv != null) {
+            MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+            Message newMessage = null;
+            try {
+                newMessage = msgFactory.createFrom(soapEnv);
+            } catch (Exception e) {
+                throw ExceptionFactory.makeWebServiceException("Could not create new Message");
+            }
+            
+            message = newMessage;
+        }
     }
     
     public Map<String, Object> getProperties() {   
@@ -66,6 +90,14 @@ public class MessageContext {
         serviceDesc = sd;
     }
     
+    public OperationDescription getOperationDescription() {
+        return operationDesc;
+    }
+    
+    public void setOperationDescription(OperationDescription od) {
+        operationDesc = od;
+    }
+    
     public Mode getMode() {
         return mode;
     }
@@ -74,8 +106,14 @@ public class MessageContext {
         mode = m;
     }
     
-    public String getOperationName() {
-        return null;
+    //FIXME: This should become the OperationDescription
+    public QName getOperationName() {
+        return operationName;
+    }
+    
+    //FIXME: This should become the OperationDescription
+    public void setOperationName(QName op) {
+        operationName = op;
     }
     
     public void setMessage(Message msg) {
@@ -88,5 +126,13 @@ public class MessageContext {
     
     public org.apache.axis2.context.MessageContext getAxisMessageContext() {
         return axisMsgCtx;
+    }
+    
+    public ClassLoader getClassLoader() {
+        AxisService svc = axisMsgCtx.getAxisService();
+        if (svc != null)
+            return svc.getClassLoader();
+        else
+            return null;
     }
 }

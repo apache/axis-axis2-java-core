@@ -28,6 +28,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.util.Constants;
@@ -78,12 +79,18 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
             //This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
             
-            //Get the appropriate endpoint dispatcher for this service
+            //We'll need an instance of the EndpointController to actually
+            //drive the invocation.
+            //TODO: More work needed to determine the lifecycle of this thing
         	EndpointController endpointCtlr = new EndpointController();
           	
             InvocationContext ic = new InvocationContextImpl();
             MessageContext requestMsgCtx = new MessageContext(axisRequestMsgCtx);
             ic.setRequestMessageContext(requestMsgCtx);
+            
+            //TODO:Once we the JAX-WS MessageContext one of the next things that
+            //needs to be done here is setting up all of the javax.xml.ws.* 
+            //properties for the MessageContext.
             
             if (isMepInOnly(mep)) {
             	endpointCtlr.invoke(ic);
@@ -128,6 +135,11 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
     }
     
     private boolean isMepInOnly(String mep){
-    	return mep.equals(WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY) || mep.equals(WSDL20_2004Constants.MEP_URI_IN_ONLY) || mep.equals(WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY) || mep.equals(WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY);
+    	boolean inOnly = mep.equals(WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY) || 
+            mep.equals(WSDL20_2004Constants.MEP_URI_IN_ONLY) || 
+            mep.equals(WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY) || 
+            mep.equals(WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY);
+        return inOnly;
     }
+
 }
