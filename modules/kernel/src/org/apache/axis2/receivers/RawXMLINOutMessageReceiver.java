@@ -99,7 +99,6 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                     result = (OMElement) method.invoke(obj, args);
 
                 AxisService service = msgContext.getAxisService();
-                service.getTargetNamespace();
                 result.declareNamespace(service.getTargetNamespace(),
                         service.getTargetNamespacePrefix());
                 OMElement bodyContent;
