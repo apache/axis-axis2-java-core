@@ -294,7 +294,6 @@ public class ConverterUtil {
             return null;
         }
     }
-
     public static YearMonth convertToGYearMonth(String s) {
         return new YearMonth(s);
     }
@@ -331,6 +330,11 @@ public class ConverterUtil {
                 Base64.decode(s)
         );
         return new DataHandler(byteArrayDataSource);
+    }
+    
+    public static javax.activation.DataHandler convertToDataHandler(String s)
+    		throws Exception{
+    	return convertToBase64Binary(s);
     }
 
     /**
@@ -444,6 +448,10 @@ public class ConverterUtil {
         return new Id(s);
     }
 
+    public static Id convertToId(String s) {
+    	return convertToID(s);
+    }
+        
     public static Language convertToLanguage(String s) {
         return new Language(s);
     }
@@ -485,6 +493,10 @@ public class ConverterUtil {
         return new BigInteger(s);
     }
 
+    public static BigInteger convertToBigInteger(String s) throws Exception {
+    	return convertToInteger(s);
+    }
+    
     public static byte convertToByte(String s) throws Exception {
         return Byte.parseByte(s);
     }
