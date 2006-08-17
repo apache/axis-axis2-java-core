@@ -30,6 +30,7 @@ import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 
 import org.apache.commons.logging.Log;
@@ -51,10 +52,25 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        String namespace = addressingNamespace;
+        // if another handler has already processed the addressing headers, do not do anything here.
+        if (JavaUtils.isTrueExplicitly(msgContext.getProperty(IS_ADDR_INFO_ALREADY_PROCESSED))) {
+            if(log.isDebugEnabled()) {
+                log.debug("Another handler has processed the addressing headers. Nothing to do here.");
+            }
 
-        // if there is some one who has already found addressing, do not do anything here.
-        if (msgContext.getProperty(WS_ADDRESSING_VERSION) != null) {
+            return;
+        }
+        
+        // check whether someone has explicitly set which addressing handler should run.
+        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
+        if (namespace == null) { 
+            namespace = addressingNamespace;
+        }
+        else if (!namespace.equals(addressingNamespace)) {
+            if(log.isDebugEnabled()) {
+                log.debug("This addressing handler does not match the specified namespace, " + namespace);
+            }
+
             return;
         }
 
@@ -62,6 +78,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         if(msgContext.isHeaderPresent()) {
             header = msgContext.getEnvelope().getHeader();
         }
+        
         // if there are not headers put a flag to disable addressing temporary
         if (header == null) {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
@@ -82,6 +99,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 				log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
 			}
             extractAddressingInformation(header, msgContext, addressingHeaders, namespace);
+            msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
         } else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
 			if(log.isDebugEnabled()) {

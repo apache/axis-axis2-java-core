@@ -22,6 +22,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,10 +54,10 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
         if (log.isTraceEnabled())
             log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
         if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
-            Object flag = msgContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+            Object flag = msgContext.getProperty(AddressingConstants.IS_ADDR_INFO_ALREADY_PROCESSED);
             if (log.isTraceEnabled())
                 log.trace("checkUsingAddressing: WS_ADDRESSING_VERSION=" + flag);
-            if (flag == null) {
+            if (JavaUtils.isFalseExplicitly(flag)) {
                 FinalFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
             }
         }
