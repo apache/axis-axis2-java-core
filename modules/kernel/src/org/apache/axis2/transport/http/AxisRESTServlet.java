@@ -15,8 +15,12 @@
  */
 package org.apache.axis2.transport.http;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.util.RESTUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -30,19 +34,44 @@ import java.io.IOException;
  */
 public class AxisRESTServlet extends AxisServlet {
 
+    private static final Log log = LogFactory.getLog(AxisSOAPServlet.class);
+
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
-
-        new RESTUtil(configContext).processGetRequest(createMessageContext(req, resp),
-                                                      req,
-                                                      resp);
+        MessageContext messageContext = null;
+        try {
+            messageContext = createMessageContext(req, resp);
+            new RESTUtil(configContext).processGetRequest(messageContext,
+                    req,
+                    resp);
+        } catch (Exception e) {
+            log.error(e);
+            if (messageContext != null) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                handleFault(messageContext, resp.getOutputStream(), new AxisFault(e));
+            } else {
+                throw new ServletException(e);
+            }
+        }
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        new RESTUtil(configContext).processPostRequest(createMessageContext(req, resp),
-                                                       req,
-                                                       resp);
+        MessageContext messageContext = null;
+        try {
+            messageContext = createMessageContext(req, resp);
+            new RESTUtil(configContext).processPostRequest(messageContext,
+                    req,
+                    resp);
+        } catch (Exception e) {
+            log.error(e);
+            if (messageContext != null) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                handleFault(messageContext, resp.getOutputStream(), new AxisFault(e));
+            } else {
+                throw new ServletException(e);
+            }
+        }
     }
 
     public void init(ServletConfig config) throws ServletException {
@@ -54,7 +83,7 @@ public class AxisRESTServlet extends AxisServlet {
     }
 
     public void init() throws ServletException {
-        if(this.servletConfig != null){
+        if (this.servletConfig != null) {
             init(this.servletConfig);
         }
     }
