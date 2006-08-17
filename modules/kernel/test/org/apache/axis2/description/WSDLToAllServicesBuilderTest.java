@@ -42,8 +42,8 @@ import junit.framework.TestCase;
  */
 public class WSDLToAllServicesBuilderTest extends TestCase {
     private static final String[] expectedService11 = {
-        "EchoServicePortTwo", 
         "EchoServicePortOne",
+        "EchoServicePortTwo", 
         "EchoServicePortThree"};
     private static final String[] expectedService20 = {
         "echoService1$echoServiceSOAPBinding_http", 
