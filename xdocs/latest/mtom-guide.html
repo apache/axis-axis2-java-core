@@ -191,7 +191,7 @@ is not enabled". One can also create binary content nodes which will not be
 optimized at any case. They will be serialized and send as Base64 Strings.</p>
 <source><pre>        //create an OMText node with the above DataHandler and set "optimized" to false
         //This data will be send as Base64 encoded string regardless of MTOM is enabled or not
-        javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataHandler("someLocation"));
+        javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("someLocation"));
         OMText textData = fac.createOMText(dataHandler, false); 
         image.addChild(textData);</pre>
 </source><a name="22"></a>
