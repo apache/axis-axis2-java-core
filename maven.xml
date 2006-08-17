@@ -762,6 +762,7 @@
                 <ant:include name="**/modules/addressing/**"/>
                 <ant:include name="**/modules/samples/**"/>
                 <ant:include name="**/modules/spring/**"/>
+                <ant:include name="**/modules/tool/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
