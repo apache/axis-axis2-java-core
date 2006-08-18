@@ -382,7 +382,7 @@
                         <xsl:when test="(@restrictionBaseType)">
                    		
                    		<xsl:if test="(@patternFacet)">
-                    		if ( param.matches( "<xsl:value-of select="$patternFacet"/>" ) {  
+                    		if ( param.matches( "<xsl:value-of select="$patternFacet"/>" )) {  
                    				this.<xsl:value-of select="$varName"/>=param;
                    			}
                    			else {
