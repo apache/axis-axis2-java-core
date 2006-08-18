@@ -16,8 +16,8 @@
 package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.OMNodeEx;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -31,6 +31,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.RequestURIBasedDispatcher;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchemaElement;
@@ -65,11 +66,11 @@ public class RESTUtil {
             if ("".equals(contentType) || contentType == null) {
                 throw new AxisFault("ContentType should be given to proceed," +
                         " according to WSDL 2.0 HTTP binding rules");
-            } else if (contentType.indexOf(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML) > -1 ||
-                    contentType.indexOf(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1) {
+            } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_TEXT_XML) > -1 ||
+                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1) {
                 soapEnvelope = handleNonURLEncodedContentTypes(msgContext, request,
                         OMAbstractFactory.getSOAP11Factory());
-            } else if (contentType.indexOf(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) {
+            } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) {
                 // 2. Else, Dispatch and find out the operation and the service.
                 // Dispatching can only be done using the RequestURI, as others can not be run in the REST case
                 dispatchAndVerify(msgContext);
@@ -86,9 +87,9 @@ public class RESTUtil {
                         xmlSchemaElement,
                         OMAbstractFactory.getSOAP11Factory());
             } else {
-                throw new AxisFault("Content type should be one of /n " + org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML +
-                        "/n " + org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
-                        "/n " + org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
+                throw new AxisFault("Content type should be one of /n " + HTTPConstants.MEDIA_TYPE_TEXT_XML +
+                        "/n " + HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
+                        "/n " + HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
             }
 
 
