@@ -537,20 +537,20 @@
                                 <xsl:when test="@nillable">
                                     if (<xsl:value-of select="$varName"/>==null){
 
-				        java.lang.String namespace = "<xsl:value-of select="$namespace"/>";
+				        java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
 
-					if (! namespace.equals("")) {
-						java.lang.String prefix = xmlWriter.getPrefix(namespace);
+					if (! namespace2.equals("")) {
+						java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
-						if (prefix == null) {
-							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+						if (prefix2 == null) {
+							prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-							xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-							xmlWriter.writeNamespace(prefix, namespace);
-							xmlWriter.setPrefix(prefix, namespace);
+							xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
+							xmlWriter.writeNamespace(prefix2, namespace2);
+							xmlWriter.setPrefix(prefix2, namespace2);
 
 						} else {
-							xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
+							xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
 						}
 
 					} else {
