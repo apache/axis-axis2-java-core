@@ -109,7 +109,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 if (axis2Stream == null) {
                     // both the axis2.xml.path and axis2.xml.url init parameters were not present
                     // try to find the default /WEB-INF/conf/axis2.xml
-                    axis2Stream = config.getServletContext().getResourceAsStream("WEB-INF/conf/axis2.xml");
+                    axis2Stream = config.getServletContext().getResourceAsStream("/WEB-INF/conf/axis2.xml");
                     log.debug("trying to load axis2.xml from module: /WEB-INF/conf/axis2.xml");
                 }
             } // try
