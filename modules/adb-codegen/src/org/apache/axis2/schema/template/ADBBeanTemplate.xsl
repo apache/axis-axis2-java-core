@@ -1430,11 +1430,11 @@
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
                                     java.lang.String content = reader.getElementText();
-                                    <xsl:if test="not(//enumFacet)">
+                                    <xsl:if test="not(enumFacet)">
                                     object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                                     </xsl:if>
-                                    <xsl:if test="(//enumFacet)">
+                                    <xsl:if test="(enumFacet)">
                                     object = <xsl:value-of select="$name"/>.fromString(content);
                                     </xsl:if>
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
