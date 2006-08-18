@@ -1206,37 +1206,37 @@ public class SchemaCompiler {
 			
 			else if ( obj instanceof XmlSchemaLengthFacet ) {
 				XmlSchemaLengthFacet length = (XmlSchemaLengthFacet) obj;
-				metaInfHolder.setLengthFacet(Integer.parseInt(length.toString()));
+				metaInfHolder.setLengthFacet(Integer.parseInt(length.getValue().toString()));
 			}
 			
 			else if ( obj instanceof XmlSchemaMaxExclusiveFacet ) {
 				XmlSchemaMaxExclusiveFacet maxEx = (XmlSchemaMaxExclusiveFacet) obj;
-				metaInfHolder.setMaxExclusiveFacet(Integer.parseInt(maxEx.toString()));
+				metaInfHolder.setMaxExclusiveFacet(Integer.parseInt(maxEx.getValue().toString()));
 			}
 			
 			else if ( obj instanceof XmlSchemaMinExclusiveFacet ) {
 				XmlSchemaMinExclusiveFacet minEx = (XmlSchemaMinExclusiveFacet) obj;
-				metaInfHolder.setMinExclusiveFacet(Integer.parseInt(minEx.toString()));
+				metaInfHolder.setMinExclusiveFacet(Integer.parseInt(minEx.getValue().toString()));
 			}
 			
 			else if ( obj instanceof XmlSchemaMaxInclusiveFacet ) {
 				XmlSchemaMaxInclusiveFacet maxIn = (XmlSchemaMaxInclusiveFacet) obj;
-				metaInfHolder.setMaxInclusiveFacet(Integer.parseInt(maxIn.toString()));
+				metaInfHolder.setMaxInclusiveFacet(Integer.parseInt(maxIn.getValue().toString()));
 			}
 			
 			else if ( obj instanceof XmlSchemaMinInclusiveFacet ) {
 				XmlSchemaMinInclusiveFacet minIn = (XmlSchemaMinInclusiveFacet) obj;
-				metaInfHolder.setMinInclusiveFacet(Integer.parseInt(minIn.toString()));
+				metaInfHolder.setMinInclusiveFacet(Integer.parseInt(minIn.getValue().toString()));
 			}
 			
 			else if ( obj instanceof XmlSchemaMaxLengthFacet ) {
 				XmlSchemaMaxLengthFacet maxLen = (XmlSchemaMaxLengthFacet) obj;
-				metaInfHolder.setMaxLengthFacet(Integer.parseInt(maxLen.toString()));
+				metaInfHolder.setMaxLengthFacet(Integer.parseInt(maxLen.getValue().toString()));
 			}
 			
 			else if ( obj instanceof XmlSchemaMinLengthFacet ) {
 				XmlSchemaMinLengthFacet minLen = (XmlSchemaMinLengthFacet) obj;
-				metaInfHolder.setMinLengthFacet(Integer.parseInt(minLen.toString()));
+				metaInfHolder.setMinLengthFacet(Integer.parseInt(minLen.getValue().toString()));
 			}
         }
     }
