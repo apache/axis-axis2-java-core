@@ -33,4 +33,19 @@ public class DescriptionUtils {
         return qname == null || isEmpty(qname.getLocalPart());
     }
 
+    /**
+     * Creat a java class name given a java method name (i.e. capitalize the first letter)
+     * @param name
+     * @return
+     */
+    public static String javaMethodtoClassName(String methodName) {
+        String className = null;
+        if(methodName != null){
+            StringBuffer buildClassName = new StringBuffer(methodName);
+            buildClassName.replace(0, 1, methodName.substring(0,1).toUpperCase());
+            className = buildClassName.toString();
+        }
+        return className;
+    }
+
 }

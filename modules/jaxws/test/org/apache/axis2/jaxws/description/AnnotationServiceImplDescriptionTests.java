@@ -18,6 +18,8 @@
 
 package org.apache.axis2.jaxws.description;
 
+import javax.jws.SOAPBinding;
+
 import junit.framework.TestCase;
 
 import org.apache.axis2.description.AxisService;
@@ -65,6 +67,23 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNotNull(paramTypes);
         assertEquals(paramTypes.length, 1);
         assertEquals("javax.xml.ws.Holder", paramTypes[0]);
+        
+        // Test RequestWrapper annotations
+        assertEquals(operations[0].getRequestWrapperLocalName(), "Echo");
+        assertEquals(operations[0].getRequestWrapperTargetNamespace(), "http://ws.apache.org/axis2/tests");
+        assertEquals(operations[0].getRequestWrapperClassName(), "org.apache.ws.axis2.tests.Echo");
+        
+        // Test ResponseWrapper annotations
+        assertEquals(operations[0].getResponseWrapperLocalName(), "EchoResponse");
+        assertEquals(operations[0].getResponseWrapperTargetNamespace(), "http://ws.apache.org/axis2/tests");
+        assertEquals(operations[0].getResponseWrapperClassName(), "org.apache.ws.axis2.tests.EchoResponse");
+        
+        // Test SOAPBinding default; that annotation is not present in the SEI
+        // Note that annotation could occur on the operation or the type
+        // (although on this SEI it doesn't occur either place).
+        assertEquals(SOAPBinding.Style.DOCUMENT, operations[0].getSoapBindingStyle());
+        assertEquals(SOAPBinding.Style.DOCUMENT, endpointIntfDesc.getSoapBindingStyle());
+        
     }
     
     public void testAxisServiceBackpointer() {
@@ -107,11 +126,21 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals(operations[0].getJavaMethodName(), "invokeAsync");
         assertEquals(operations[1].getJavaMethodName(), "invokeAsync");
         
-        // Check the parameters for each operation
+        // Check the Java parameters, WebParam names, and WebResult (actually lack thereof) for each of these operations
+        
+        // Note regarding WebParam names:
+        // Unlike the Java paramaters, the WebParam names will remove the JAX-WS AsyncHandler
+        // parameter.  That is because it is NOT part of the contract, and thus it is NOT part of
+        // the JAXB object constructed for the method invocation.  The AsyncHandler is part of the 
+        // JAX-WS programming model to support an asynchronous callback to receive the response.
+        
+        // Note regarding WebResult annotation:
+        // The async methods on this SEI do not carry a WebResult annotations.
         boolean twoArgSignatureChecked = false;
         boolean oneArgSignatureChecked = false;
         for (OperationDescription operation:operations) {
             String[] checkParams = operation.getJavaParameters();
+            String[] webParamNames = operation.getWebParamNames();
             if (checkParams.length == 1) {
                 // Check the one arguement signature
                 if (oneArgSignatureChecked) {
@@ -119,7 +148,14 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                 }
                 else {
                     oneArgSignatureChecked = true;
+                    // Check the Java parameter
                     assertEquals(checkParams[0], "java.lang.String");
+                    // Check the WebParam Names (see note above) 
+                    assertEquals(1, webParamNames.length);
+                    assertEquals("invoke_str", webParamNames[0]);
+                    // Check the lack of a WebResult annotation
+                    assertEquals(false, operation.isWebResultAnnotationSpecified());
+                    assertEquals(null, operation.getWebResultName());
                 }
             }
             else if (checkParams.length == 2) {
@@ -129,25 +165,22 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                 }
                 else {
                     twoArgSignatureChecked = true;
+                    // Check the Java parameter
                     assertEquals(checkParams[0], "java.lang.String" );
                     assertEquals(checkParams[1], "javax.xml.ws.AsyncHandler");
+                    // Check the WebParam Names (see note above) 
+                    assertEquals(1, webParamNames.length);
+                    assertEquals("invoke_str", webParamNames[0]);
+                    // Check the lack of a WebResult annotation
+                    assertEquals(false, operation.isWebResultAnnotationSpecified());
+                    assertEquals(null, operation.getWebResultName());
                 }
             }
             else {
                 fail("Wrong number of parameters returned");
             }
-            
         }
 
-        // Test for a method with no parameters which also is not overloaded
-        operations = endpointIntfDesc.getOperation("oneWayVoid");
-        assertNotNull(operations);
-        assertEquals(operations.length, 1);
-        assertEquals(operations[0].getJavaMethodName(), "oneWayVoid");
-        String[] checkEmptyParams = operations[0].getJavaParameters();
-        assertNotNull(checkEmptyParams);
-        assertEquals(checkEmptyParams.length, 0);
-        
         // Test for a method with parameters of primitive types.  Note
         // this method IS overloaded
         operations = endpointIntfDesc.getOperation("twoWayHolderAsync");
@@ -161,6 +194,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         boolean threeArgSignatureChecked = false;
         for (OperationDescription operation:operations) {
             String[] checkParams = operation.getJavaParameters();
+            String[] webParamNames = operation.getWebParamNames();
             if (checkParams.length == 3) {
                 // Check the one arguement signature
                 if (threeArgSignatureChecked) {
@@ -171,6 +205,13 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     assertEquals(checkParams[0], "java.lang.String");
                     assertEquals(checkParams[1], "int");
                     assertEquals(checkParams[2], "javax.xml.ws.AsyncHandler");
+                    // Check the WebParam Names (see note above) 
+                    assertEquals(2, webParamNames.length);
+                    assertEquals("twoWayHolder_str", webParamNames[0]);
+                    assertEquals("twoWayHolder_int", webParamNames[1]);
+                    // Check the lack of a WebResult annotation
+                    assertEquals(false, operation.isWebResultAnnotationSpecified());
+                    assertEquals(null, operation.getWebResultName());
                 }
             }
             else if (checkParams.length == 2) {
@@ -182,11 +223,38 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     twoArgSignatureChecked = true;
                     assertEquals(checkParams[0], "java.lang.String" );
                     assertEquals(checkParams[1], "int");
+                    // Check the WebParam Names (see note above) 
+                    assertEquals(2, webParamNames.length);
+                    assertEquals("twoWayHolder_str", webParamNames[0]);
+                    assertEquals("twoWayHolder_int", webParamNames[1]);
+                    // Check the lack of a WebResult annotation
+                    assertEquals(false, operation.isWebResultAnnotationSpecified());
+                    assertEquals(null, operation.getWebResultName());
                 }
             }
             else {
                 fail("Wrong number of parameters returned");
             }
         }
+
+        // Test for a one-way, void method with no parameters which also is not overloaded
+        operations = endpointIntfDesc.getOperation("oneWayVoid");
+        assertNotNull(operations);
+        assertEquals(operations.length, 1);
+        assertEquals(operations[0].getJavaMethodName(), "oneWayVoid");
+        String[] checkEmptyParams = operations[0].getJavaParameters();
+        assertNotNull(checkEmptyParams);
+        assertEquals(checkEmptyParams.length, 0);
+        assertEquals(true, operations[0].isOneWay());
+        assertEquals(false, operations[0].isWebResultAnnotationSpecified());
+        assertEquals(null, operations[0].getWebResultName());
+        
+        // Test two-way method for lack of OneWay annotation and WebResult annotation
+        operations = endpointIntfDesc.getOperation("invoke");
+        assertNotNull(operations);
+        assertEquals(1, operations.length);
+        assertEquals(false, operations[0].isOneWay());
+        assertEquals(true, operations[0].isWebResultAnnotationSpecified());
+        assertEquals("return_str", operations[0].getWebResultName());
     }
 }

@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -150,12 +151,9 @@ public class JavaBeanDispatcher extends JavaDispatcher {
             
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
             
-            WebParam[] webParams = opDesc.getWebParam();
-            ArrayList<String> elements = new ArrayList<String>();
-            for (int i = 0; i < webParams.length; ++i) {
-                elements.add(webParams[i].name());
-            }
-            
+            String[] webParamNames = opDesc.getWebParamNames();
+            ArrayList<String> elements = new ArrayList<String>(Arrays.asList(webParamNames));
+
             Object param = wrapper.getBusinessObject(true);
             Object[] contents = wrapperTool.unWrap(param, elements);
             return contents;
@@ -211,9 +209,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     private JAXBContext createJAXBContext(OperationDescription opDesc) {
         // This will only support Doc/Lit Wrapped params for now.
         try {
-            RequestWrapper wrapper = opDesc.getRequestWrapper();
-            if (wrapper != null) {
-                String wrapperClass = wrapper.className();
+            String wrapperClass = opDesc.getRequestWrapperClassName();
+            if (wrapperClass != null) {
                 String wrapperPkg = wrapperClass.substring(0, wrapperClass.lastIndexOf("."));
                 JAXBContext jbc = JAXBContext.newInstance(wrapperPkg);
                 return jbc;
@@ -233,19 +230,19 @@ public class JavaBeanDispatcher extends JavaDispatcher {
             BlockFactory bfactory = (BlockFactory) FactoryRegistry.getFactory(
                     JAXBBlockFactory.class);
             
-            String responseWrapper = opDesc.getResponseWrapper().className();
+            String responseWrapper = opDesc.getResponseWrapperClassName();
             Class responseWrapperClass = Class.forName(responseWrapper);
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
 
-            WebResult webResult = opDesc.getWebResult();
+            String webResult = opDesc.getWebResultName();
             ArrayList<String> responseParams = new ArrayList<String>();
-            responseParams.add(webResult.name());
+            responseParams.add(webResult);
  
             ArrayList<String> elements = new ArrayList<String>();
-            elements.add(webResult.name());
+            elements.add(webResult);
             
             Map<String, Object> responseParamValues = new HashMap<String, Object>();
-            responseParamValues.put(webResult.name(), response);
+            responseParamValues.put(webResult, response);
             
             Object wrapper = wrapperTool.wrap(responseWrapperClass, 
                     responseWrapper, responseParams, responseParamValues);

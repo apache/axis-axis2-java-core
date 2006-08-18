@@ -71,6 +71,12 @@ public class EndpointInterfaceDescription {
     private ArrayList<OperationDescription> operationDescriptions = new ArrayList<OperationDescription>();
     private Class seiClass;
     
+    // Annotations and cached values
+    private SOAPBinding         soapBindingAnnotation;
+    // TODO: (JLB) Should this be using the jaxws annotation values or should that be wrappered?
+    private javax.jws.SOAPBinding.Style soapBindingStyle;
+
+    
     void addOperation(OperationDescription operation) {
         operationDescriptions.add(operation);
     }
@@ -104,6 +110,7 @@ public class EndpointInterfaceDescription {
      * @param javaMethodName String representing a Java Method Name
      * @return
      */
+    // TODO: (JLB) This is confusing; somet getOperations use the QName from the WSDL or annotation; this one uses the java method name; rename this signature I think; add on that takes a String but does a QName lookup against the WSDL/Annotation
     public OperationDescription[] getOperation(String javaMethodName) {
         if (javaMethodName == null) {
             return null;
@@ -192,9 +199,29 @@ public class EndpointInterfaceDescription {
         return seiClass;
     }
     // Annotation-realted getters
-    public SOAPBinding getSoapBinding(){
+    
+    // ========================================
+    // SOAP Binding annotation realted methods
+    // ========================================
+    SOAPBinding getSoapBinding(){
         // TODO: (JLB) Test with sei Null, not null, SOAP Binding annotated, not annotated
-        return (seiClass != null ? (SOAPBinding) seiClass.getAnnotation(SOAPBinding.class) : null);
+        if (soapBindingAnnotation == null && seiClass != null) {
+            soapBindingAnnotation = (SOAPBinding) seiClass.getAnnotation(SOAPBinding.class);
+        }
+        return soapBindingAnnotation;
     }
+    
+    public javax.jws.SOAPBinding.Style getSoapBindingStyle() {
+        if (soapBindingStyle == null) {
+            if (getSoapBinding() != null && getSoapBinding().style() != null) {
+                soapBindingStyle = getSoapBinding().style();
+            }
+            else {
+                soapBindingStyle = javax.jws.SOAPBinding.Style.DOCUMENT;
+            }
+        }
+        return soapBindingStyle;
+    }
+
 
 }
