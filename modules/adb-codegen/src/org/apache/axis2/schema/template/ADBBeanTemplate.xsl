@@ -504,12 +504,14 @@
                                                      xmlWriter);
                         </xsl:when>
                          <xsl:when test="@any and @array">
+							 if (<xsl:value-of select="$varName"/> != null) {
                              for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
                               writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
                                                      <xsl:value-of select="$varName"/>[i].getLocalName(),
                                                      <xsl:value-of select="$varName"/>[i].getAttributeValue(),
                                                   xmlWriter);
                              }
+							 }
                          </xsl:when>
                         <!-- there can never be attribute arrays in the normal case-->
                         <xsl:otherwise>
@@ -1159,6 +1161,9 @@
                 </xsl:if>
 
                 <!-- populate attributes here!!!. The attributes are part of an element, not part of a type -->
+				// Note all attributes that were handled. Used to differ normal attributes
+				// from anyAttributes.
+				java.util.Vector handledAttributes = new java.util.Vector();
                 <xsl:for-each select="property[@attribute]">
                     <xsl:variable name="propertyName" select="@name"/>
                     <xsl:variable name="propertyType" select="@type"/>
@@ -1169,6 +1174,8 @@
                     <xsl:variable name="namespace" select="@nsuri"/>
                     <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
 
+					<xsl:if test="$propertyName != 'extraAttributes'">
+					// handle attribute "<xsl:value-of select="$propertyName"/>"
                     java.lang.String <xsl:value-of select="$attribName"/> =
                       reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                    if (<xsl:value-of select="$attribName"/>!=null){
@@ -1176,6 +1183,30 @@
                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
                                 <xsl:value-of select="$attribName"/>));
                     }
+					handledAttributes.add("<xsl:value-of select="$propertyName"/>");
+					</xsl:if>
+					
+					<!-- Handle anyAttributes here -->
+					<xsl:if test="$propertyName = 'extraAttributes'">
+						// now run through all any or extra attributes
+						// which were not reflected until now
+						for (int i=0; i &lt; reader.getAttributeCount(); i++) {
+							if (!handledAttributes.contains(reader.getAttributeLocalName(i))) {
+								// this is an anyAttribute and we create
+								// an OMAttribute for this
+								org.apache.axiom.om.impl.llom.OMAttributeImpl attr = 
+									new org.apache.axiom.om.impl.llom.OMAttributeImpl(
+											reader.getAttributeLocalName(i),
+											new org.apache.axiom.om.impl.dom.NamespaceImpl(
+												reader.getAttributeNamespace(i), reader.getAttributePrefix(i)),
+											reader.getAttributeValue(i),
+											org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+								
+								// and add it to the extra attributes
+								object.addExtraAttributes(attr);
+							}
+						}
+					</xsl:if>
 
                 </xsl:for-each>
 
@@ -1780,6 +1811,14 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                              }
                          </xsl:when>
                         <!-- there can never be attribute arrays in the normal case-->
+                         <xsl:when test="@optional">
+ 							// optional attribute <xsl:value-of select="$propertyName"/>
+ 							if (<xsl:value-of select="$varName"/> != null) {
+								writeAttribute("<xsl:value-of select="$namespace"/>",
+                                               "<xsl:value-of select="$propertyName"/>",
+                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);							
+							}
+                         </xsl:when>
                         <xsl:otherwise>
                              writeAttribute("<xsl:value-of select="$namespace"/>",
                                                      "<xsl:value-of select="$propertyName"/>",

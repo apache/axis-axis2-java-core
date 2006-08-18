@@ -696,13 +696,13 @@ public class SchemaCompiler {
         if (processedElementRefMap.get(name)!=null){
             className =(String)processedElementRefMap.get(name);
 
-            if (isArray) {
+            //if (isArray) {
                 //append the square braces that say this is an array
                 //hope this works for all cases!!!!!!!
                 //todo this however is a thing that needs to be
                 //todo fixed to get complete language support
-                className = className + "[]";
-            }
+            //    className = className + "[]";
+            //}
         }
         return className;
 
@@ -1278,6 +1278,12 @@ public class SchemaCompiler {
         		if (att.getQName() != null) {
         			metainf.registerMapping(att.getQName(),schemaTypeName,
         					baseSchemaTypeMap.get(schemaTypeName).toString(), SchemaConstants.ATTRIBUTE_TYPE);
+
+            		// add optional attribute status if set
+            		String use = att.getUse().getValue();
+            		if (use.indexOf("optional") != -1) {
+            			metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+            		}        			
         		} 
         	}
         } else if (att.getRefName() != null) {
@@ -1296,8 +1302,19 @@ public class SchemaCompiler {
                 	if (attribute.getName().equals(att.getRefName().getLocalPart())) {
                 		QName attrTypeName = attribute.getSchemaTypeName();
                 		
+                		Object type = baseSchemaTypeMap.get(attrTypeName);
+                		if (type != null) {
                 		metainf.registerMapping(attrQname,attrQname,
-                    			baseSchemaTypeMap.get(attrTypeName).toString(), SchemaConstants.ATTRIBUTE_TYPE);
+                        			type.toString(), SchemaConstants.ATTRIBUTE_TYPE);                			
+
+                    		// add optional attribute status if set
+                    		String use = att.getUse().getValue();
+                    		if (use.indexOf("optional") != -1) {
+                    			metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                    		}        			
+                		} else {
+                			// TODO: This is no standard type - handle custom types here!
+                		}
                 	}
                 }
             }

@@ -88,7 +88,7 @@ public class SchemaConstants {
     public static final int ARRAY_TYPE = 0x04;
     public static final int ANY_TYPE = 0x08;
     public static final int BINARY_TYPE = 0x10;
-
+    public static final int OPTIONAL_TYPE = 0x20;
 
     public static class SchemaPropertyNames{
 

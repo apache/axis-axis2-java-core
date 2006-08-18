@@ -611,6 +611,10 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "nillable", "yes", property);
             }
 
+            if (metainf.getOptionalAttributeStatusForQName(name)) {
+            	XSLTUtils.addAttribute(model, "optional", "yes", property);
+            }
+
             String shortTypeName;
             if (metainf.getSchemaQNameForQName(name) != null) {
                 // see whether the QName is a basetype

@@ -369,6 +369,18 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
+     * Gets whether a given QName has the optional attribute status.
+     * 
+     * @param qName QName of attribute
+     * @return Returns <code>true</code> if attribute has optional status
+     */
+    public boolean getOptionalAttributeStatusForQName(QName qName) {
+        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        return state != null && getStatus(state.intValue(),
+                SchemaConstants.OPTIONAL_TYPE);    	
+    }
+    
+    /**
      * Clears the whole set of tables.
      */
     public void clearTables() {
