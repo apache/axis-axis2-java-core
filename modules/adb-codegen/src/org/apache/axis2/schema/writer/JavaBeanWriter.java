@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Iterator;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
@@ -255,8 +255,13 @@ public class JavaBeanWriter implements BeanWriter {
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap,
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
-        throw new SchemaCompilationException(SchemaCompilerMessages
-                .getMessage("schema.notimplementedxception"));
+        try {
+            QName qName = simpleType.getQName();
+
+            return process(qName, metainf, typeMap, true);
+        } catch (Exception e) {
+            throw new SchemaCompilationException(e);
+        }
     }
 
     /**
@@ -702,8 +707,31 @@ public class JavaBeanWriter implements BeanWriter {
             	XSLTUtils.addAttribute(model, "minInFacet", metainf.getMinInclusiveFacet() + "", property);
             }
             
-            if (metainf.isRestrictionBaseType(name) && metainf.getEnumFacet() != null) {
-            	XSLTUtils.addAttribute(model, "enumFacet", metainf.getEnumFacet(), property);
+            if (metainf.isRestrictionBaseType(name) && !metainf.getEnumFacet().isEmpty()) {
+                boolean validJava = true;    // Assume all enum values are valid ids
+
+                Iterator iterator = metainf.getEnumFacet().iterator();
+                // Walk the values looking for invalid ids
+                while(iterator.hasNext()) {
+                    String value = (String) iterator.next();
+                    if (!JavaUtils.isJavaId(value)) {
+                        validJava = false;
+                    }
+                }
+                
+                int id = 0;
+                iterator = metainf.getEnumFacet().iterator();
+                while(iterator.hasNext()) {
+                    Element enumFacet = XSLTUtils.addChildElement(model, "enumFacet", property);
+                    String attribValue = (String) iterator.next();
+                    XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
+                    if(validJava) {
+                        XSLTUtils.addAttribute(model, "id", attribValue , enumFacet);
+                    } else {
+                        id++;
+                        XSLTUtils.addAttribute(model, "id", "value" + id, enumFacet);
+                    }
+                }
             }
             
             if (metainf.isRestrictionBaseType(name) && metainf.getPatternFacet() != null) {

@@ -777,7 +777,8 @@ public class SchemaCompiler {
         } else if (schemaType instanceof XmlSchemaSimpleType) {
             //process simple type
             processSimpleSchemaType((XmlSchemaSimpleType) schemaType,
-                    xsElt);
+                    xsElt,
+                    parentSchema);
         }
     }
 
@@ -836,6 +837,18 @@ public class SchemaCompiler {
             throws SchemaCompilationException {
         writer.write(complexType, processedTypemap, metaInfHolder);
         processedTypeMetaInfoMap.put(complexType.getQName(),metaInfHolder);
+    }
+
+    /**
+     * Writes a complex type
+     * @param simpleType
+     * @param metaInfHolder
+     * @throws SchemaCompilationException
+     */
+    private void writeSimpleType(XmlSchemaSimpleType simpleType, BeanWriterMetaInfoHolder metaInfHolder)
+            throws SchemaCompilationException {
+        writer.write(simpleType, processedTypemap, metaInfHolder);
+        processedTypeMetaInfoMap.put(simpleType.getQName(),metaInfHolder);
     }
 
     private BeanWriterMetaInfoHolder processComplexType(XmlSchemaComplexType complexType,XmlSchema parentSchema) throws SchemaCompilationException {
@@ -919,7 +932,7 @@ public class SchemaCompiler {
                     }
                 } else if (type instanceof XmlSchemaSimpleType) {
                     //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType)type,null);
+                    processSimpleSchemaType((XmlSchemaSimpleType)type,null,parentSchema);
                 }
             }
 
@@ -1066,7 +1079,7 @@ public class SchemaCompiler {
         			}
         		} else if (type instanceof XmlSchemaSimpleType) {
         			//process simple type
-        			processSimpleSchemaType((XmlSchemaSimpleType)type,null);
+        			processSimpleSchemaType((XmlSchemaSimpleType)type,null, parentSchema);
         		}
         	}
         	
@@ -1108,15 +1121,15 @@ public class SchemaCompiler {
         			}
         		} else if (type instanceof XmlSchemaSimpleType) {
         			//process simple type
-        			processSimpleSchemaType((XmlSchemaSimpleType)type,null);
+        			processSimpleSchemaType((XmlSchemaSimpleType)type,null, parentSchema);
         		}
         	}
         	//process restriction base type
         	processSimpleRestrictionBaseType(restriction.getBaseTypeName(),metaInfHolder);
         	
-			//process facets
-        	XmlSchemaObjectCollection facets = restriction.getFacets();
-        	processFacets(facets,metaInfHolder);
+//			//process facets
+//        	XmlSchemaObjectCollection facets = restriction.getFacets();
+//        	processFacets(facets,metaInfHolder);
         }
     }
 
@@ -1178,7 +1191,6 @@ public class SchemaCompiler {
     	
     	Iterator facetIterator = facets.getIterator();
 		
-        boolean enumStart = true;
 		while (facetIterator.hasNext()) {
             Object obj = facetIterator.next();
             
@@ -1189,14 +1201,7 @@ public class SchemaCompiler {
             
 			else if ( obj instanceof XmlSchemaEnumerationFacet ) {
 				XmlSchemaEnumerationFacet enumeration = (XmlSchemaEnumerationFacet) obj;
-				
-				if ( enumStart ) {
-					metaInfHolder.setEnumFacet(enumeration.getValue().toString());
-					enumStart = false;
-				}
-				else {
-					metaInfHolder.addEnumFacet(enumeration.getValue().toString());
-				}
+				metaInfHolder.addEnumFacet(enumeration.getValue().toString());
 			}
 			
 			else if ( obj instanceof XmlSchemaLengthFacet ) {
@@ -1522,32 +1527,53 @@ public class SchemaCompiler {
      * @param simpleType
      */
     private void processSimpleSchemaType(XmlSchemaSimpleType simpleType,
-                                         XmlSchemaElement xsElt) throws SchemaCompilationException{
+                                         XmlSchemaElement xsElt,
+                                         XmlSchema parentSchema) throws SchemaCompilationException{
+
+        if (processedTypemap.containsKey(simpleType.getQName())
+                || baseSchemaTypeMap.containsKey(simpleType.getQName())) {
+            return;
+        }
+
+        // Must do this up front to support recursive types
+        String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(simpleType.getQName());
+        processedTypemap.put(simpleType.getQName(), fullyQualifiedClassName);
+
+        //register that in the schema metainfo bag
+        simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                fullyQualifiedClassName);
+
+        BeanWriterMetaInfoHolder metaInfHolder = processSimpleType(simpleType, parentSchema);
+        //add this information to the metainfo holder
+        metaInfHolder.setOwnQname(simpleType.getQName());
+        metaInfHolder.setOwnClassName(fullyQualifiedClassName);
+        //write the class. This type mapping would have been populated right now
+        //Note - We always write classes for named complex types
+        writeSimpleType(simpleType, metaInfHolder);
+    }
+
+    private BeanWriterMetaInfoHolder processSimpleType(XmlSchemaSimpleType simpleType,XmlSchema parentSchema) throws SchemaCompilationException {
+        BeanWriterMetaInfoHolder metaInfHolder = new BeanWriterMetaInfoHolder();
+
         // handle the restriction
         XmlSchemaSimpleTypeContent content = simpleType.getContent();
         if (content != null) {
             if (content instanceof XmlSchemaSimpleTypeRestriction) {
                 XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction) content;
+                
                 QName baseTypeName = restriction.getBaseTypeName();
                 //check whether the base type is one of the base schema types
                 if (baseSchemaTypeMap.containsKey(baseTypeName)) {
-                    //this is a basic xsd datatype. Populate the map and populate
-                    //the mappings map
-                    String className = (String) baseSchemaTypeMap.get(baseTypeName);
-                    this.simpleTypesMap.put(simpleType.getQName(), className);
-                    //set the old schema type QName and the new schema type QName
-                    this.changedTypeMap.put(simpleType.getQName(), baseTypeName);
-                    //add the class name to the meta info map
-                    simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
-                            className);
-
-                    //add an additional flag saying that this is a primitive type
-                    simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_PRIMITVE_KEY,
-                            Boolean.TRUE);
+                    //process restriction base type
+                    processSimpleRestrictionBaseType(restriction.getBaseTypeName(),metaInfHolder);
+        	
+                    //process facets
+                    XmlSchemaObjectCollection facets = restriction.getFacets();
+                    processFacets(facets,metaInfHolder);
                 } else {
                     //recurse
                     if (restriction.getBaseType() != null) {
-                        processSimpleSchemaType(restriction.getBaseType(),xsElt);
+                        processSimpleSchemaType(restriction.getBaseType(), null, parentSchema);
                     }
                 }
             }else if (content instanceof XmlSchemaSimpleTypeUnion) {
@@ -1560,10 +1586,8 @@ public class SchemaCompiler {
                 throw new SchemaCompilationException(
                         SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type List"));
             }
-
         }
-
-
+        return metaInfHolder;
     }
 
 

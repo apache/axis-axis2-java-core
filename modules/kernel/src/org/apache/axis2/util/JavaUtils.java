@@ -307,4 +307,15 @@ public class JavaUtils {
     public static final boolean isFalse(Object value) {
         return isFalse(value, true);
     }
+
+    public static boolean isJavaId(String id) {
+        if (id == null || id.equals("") || isJavaKeyword(id))
+            return false;
+        if (!Character.isJavaIdentifierStart(id.charAt(0)))
+            return false;
+        for (int i=1; i<id.length(); i++)
+            if (!Character.isJavaIdentifierPart(id.charAt(i)))
+                return false;
+        return true;
+    }
 }

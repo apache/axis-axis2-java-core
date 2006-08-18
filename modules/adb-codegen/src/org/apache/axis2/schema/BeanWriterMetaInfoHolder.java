@@ -59,7 +59,7 @@ public class BeanWriterMetaInfoHolder {
     protected long minInclusiveFacet = -1;
     protected long maxLengthFacet = -1;
     protected long minLengthFacet = -1;
-    protected String enumFacet = null;
+    protected ArrayList enumFacet = new ArrayList();
     protected String patternFacet = null;
 
     protected List nillableQNameList  = new ArrayList();
@@ -657,7 +657,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @param enumFacet
      */
-    public void setEnumFacet(String enumFacet) {
+    public void setEnumFacet(ArrayList enumFacet) {
     	this.enumFacet = enumFacet;
     }
     
@@ -667,7 +667,7 @@ public class BeanWriterMetaInfoHolder {
      * @param enumFacet
      */
     public void addEnumFacet(String enumFacet) {
-    	this.enumFacet += "|" + enumFacet;
+    	this.enumFacet.add(enumFacet);
     }
     
     /**
@@ -675,7 +675,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @return Returns enumeration.
      */
-    public String getEnumFacet() {
+    public List getEnumFacet() {
     	return this.enumFacet;
     }
     

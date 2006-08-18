@@ -108,7 +108,6 @@
            	<xsl:variable name="minExFacet"><xsl:value-of select="@minExFacet"/></xsl:variable>
            	<xsl:variable name="maxInFacet"><xsl:value-of select="@maxInFacet"/></xsl:variable>
            	<xsl:variable name="minInFacet"><xsl:value-of select="@minInFacet"/></xsl:variable>
-           	<xsl:variable name="enumFacet"><xsl:value-of select="@enumFacet"/></xsl:variable>
            	<xsl:variable name="patternFacet"><xsl:value-of select="@patternFacet"/></xsl:variable>
             
 			
@@ -212,7 +211,45 @@
             		*/
 
             		protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
-           			<!-- Generate a tracker only if the min occurs is zero, which means if the user does
+                    <xsl:if test="enumFacet">
+                    private static java.util.HashMap _table_ = new java.util.HashMap();
+
+                    // Constructor
+                    protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value) {
+                        <xsl:value-of select="$varName" /> = value;
+                        _table_.put(<xsl:value-of select="$varName" />, this);
+                    }
+
+                    <xsl:for-each select="enumFacet">
+                        public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> = 
+                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$javaName"/>("<xsl:value-of select="@value"/>");
+                        public static final <xsl:value-of select="$name"/><xsl:text> </xsl:text><xsl:value-of select="@id"/> = 
+                            new <xsl:value-of select="$name"/>(_<xsl:value-of select="@id"/>);
+                    </xsl:for-each>
+
+                        public <xsl:value-of select="$propertyType"/> getValue() { return <xsl:value-of select="$varName" />;}
+                        public static <xsl:value-of select="$name"/> fromValue(<xsl:value-of select="$propertyType"/> value)
+                              throws java.lang.IllegalArgumentException {
+                            <xsl:value-of select="$name"/> enumeration = (<xsl:value-of select="$name"/>)
+                                _table_.get(value);
+                            if (enumeration==null) throw new java.lang.IllegalArgumentException();
+                            return enumeration;
+                        }
+                        public static <xsl:value-of select="$name"/> fromString(java.lang.String value)
+                              throws java.lang.IllegalArgumentException {
+                            try {
+                                return fromValue(new <xsl:value-of select="$propertyType"/>(value));
+                            } catch (Exception e) {
+                                throw new java.lang.IllegalArgumentException();
+                            }
+                        }
+                        public boolean equals(java.lang.Object obj) {return (obj == this);}
+                        public int hashCode() { return toString().hashCode();}
+                        public java.lang.String toString() { return <xsl:value-of select="$varName" />.toString();}
+                        
+                    </xsl:if>    
+                    <xsl:if test="not(enumFacet)">
+                    <!-- Generate a tracker only if the min occurs is zero, which means if the user does
                		not bother to set that value, we do not send it -->
            			<xsl:if test="$min=0 or $choice">
            			/*  This tracker boolean wil be used to detect whether the user called the set method
@@ -353,15 +390,6 @@
                    			}
                    		</xsl:if>
 						
-						<xsl:if test="(@enumFacet)">
-                    		if ( param.matches( "<xsl:value-of select="$enumFacet"/>" ) {  
-                   				this.<xsl:value-of select="$varName"/>=param;
-                   			}
-                   			else {
-                   				throw new java.lang.RuntimeException();
-                   			}
-                   		</xsl:if>
-						
 						<xsl:if test="(@lenFacet)">
                     		if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {  
                    				this.<xsl:value-of select="$varName"/>=param;
@@ -399,8 +427,9 @@
                    		}
                 		</xsl:otherwise>
             		</xsl:choose>
+                    </xsl:if>
 			
-				  </xsl:otherwise>
+                  </xsl:otherwise>
                </xsl:choose>
             
 			</xsl:otherwise>
@@ -1092,7 +1121,8 @@
         *                If this object is a complex type, the reader is positioned at the end element of its outer element
         */
         public static <xsl:value-of select="$name"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
-            <xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();
+            <xsl:if test="not(//enumFacet)"><xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();</xsl:if>
+            <xsl:if test="//enumFacet"><xsl:value-of select="$name"/> object = null;</xsl:if>
             int event;
             try {
                 <!-- Advance to our start element, or if we are a complex type, to our first property start element or the outer end element if no properties -->
@@ -1400,8 +1430,13 @@
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
                                     java.lang.String content = reader.getElementText();
+                                    <xsl:if test="not(//enumFacet)">
                                     object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
+                                    </xsl:if>
+                                    <xsl:if test="(//enumFacet)">
+                                    object = <xsl:value-of select="$name"/>.fromString(content);
+                                    </xsl:if>
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
