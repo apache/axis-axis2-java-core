@@ -222,30 +222,36 @@ public class AddressingOutHandler extends AddressingHandler {
     }
 
     private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, String namespace, boolean replaceHeaders) {
-        EndpointReference epr;
+        EndpointReference epr = null;
         if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject, replaceHeaders))
         {
-            epr = messageContextOptions.getReplyTo();
-            if (epr == null) {//optional
-                ServiceContext serviceContext = msgContext.getServiceContext();
-                if (serviceContext != null &&
-                        serviceContext.getMyEPR() != null) {
-                    epr = serviceContext.getMyEPR();
-                } else {
-                    // setting anonymous URI. Defaulting to Final.
-                    epr = new EndpointReference(anonymousURI);
-                }
-            } else if ("".equals(epr.getAddress())) {
-                ServiceContext serviceContext = msgContext.getServiceContext();
-                if (serviceContext != null &&
-                        serviceContext.getMyEPR() != null) {
-                    epr.setAddress(serviceContext.getMyEPR().getAddress());
-                } else {
-                    // setting anonymous URI. Defaulting to Final.
-                    epr.setAddress(anonymousURI);
-                }
-            }
-            addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope, addressingNamespaceObject, namespace, replaceHeaders);
+        	epr = messageContextOptions.getReplyTo();
+	        if(msgContext.isServerSide()){	        	
+	            if (epr == null) {//optional
+	                ServiceContext serviceContext = msgContext.getServiceContext();
+	                if (serviceContext != null &&
+	                        serviceContext.getMyEPR() != null) {
+	                    epr = serviceContext.getMyEPR();
+	                } else {
+	                    // setting anonymous URI. Defaulting to Final.
+	                    epr = new EndpointReference(anonymousURI);
+	                }
+	            } else if ("".equals(epr.getAddress())) {
+	                ServiceContext serviceContext = msgContext.getServiceContext();
+	                if (serviceContext != null &&
+	                        serviceContext.getMyEPR() != null) {
+	                    epr.setAddress(serviceContext.getMyEPR().getAddress());
+	                } else {
+	                    // setting anonymous URI. Defaulting to Final.
+	                    epr.setAddress(anonymousURI);
+	                }
+	            }
+        	}else{
+        		if(epr == null){
+        			epr = new EndpointReference(anonymousURI);
+        		}
+        	}
+	        addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope, addressingNamespaceObject, namespace, replaceHeaders);
         }
     }
 
