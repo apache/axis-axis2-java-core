@@ -135,7 +135,6 @@
 				</java>
 			 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test1"
 						 target="jar.client"/>
-		    <!--
 			<ant:echo>Running codegen for Enterprise WSDL - take 2</ant:echo>
 				<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 					<classpath refid="maven.dependency.classpath"/>
@@ -160,7 +159,6 @@
 				</java>
 			 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/enterprise-test4"
 						 target="jar.server"/>
-            -->
 			<ant:echo>Running codegen for eBaySvc WSDL</ant:echo>
 				<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 					<classpath refid="maven.dependency.classpath"/>

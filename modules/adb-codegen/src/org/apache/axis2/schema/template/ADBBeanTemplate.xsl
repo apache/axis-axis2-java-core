@@ -1121,8 +1121,8 @@
         *                If this object is a complex type, the reader is positioned at the end element of its outer element
         */
         public static <xsl:value-of select="$name"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
-            <xsl:if test="not(//enumFacet)"><xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();</xsl:if>
-            <xsl:if test="//enumFacet"><xsl:value-of select="$name"/> object = null;</xsl:if>
+            <xsl:if test="not(property/enumFacet)"><xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();</xsl:if>
+            <xsl:if test="property/enumFacet"><xsl:value-of select="$name"/> object = null;</xsl:if>
             int event;
             try {
                 <!-- Advance to our start element, or if we are a complex type, to our first property start element or the outer end element if no properties -->
