@@ -1596,12 +1596,12 @@ public class SchemaCompiler {
             }else if (content instanceof XmlSchemaSimpleTypeUnion) {
                 //Todo - Handle unions here
                 throw new SchemaCompilationException(
-                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type Union"));
+                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type Union in " + simpleType.getQName()));
 
             }else if (content instanceof XmlSchemaSimpleTypeList){
                 //todo - Handle lists here
                 throw new SchemaCompilationException(
-                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type List"));
+                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror","Simple Type List in " + simpleType.getQName()));
             }
         }
         return metaInfHolder;
