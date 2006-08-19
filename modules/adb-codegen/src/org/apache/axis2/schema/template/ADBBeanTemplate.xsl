@@ -223,6 +223,8 @@
                     <xsl:for-each select="enumFacet">
                         public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> = 
                             org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$javaName"/>("<xsl:value-of select="@value"/>");
+                    </xsl:for-each>
+                    <xsl:for-each select="enumFacet">
                         public static final <xsl:value-of select="$name"/><xsl:text> </xsl:text><xsl:value-of select="@id"/> = 
                             new <xsl:value-of select="$name"/>(_<xsl:value-of select="@id"/>);
                     </xsl:for-each>
