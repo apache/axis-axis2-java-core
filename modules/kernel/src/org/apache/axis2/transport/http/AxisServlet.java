@@ -67,13 +67,14 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private String contextPath;
 
 
-    protected MessageContext createAndSetInitialParamsToMsgCtxt(MessageContext msgContext, HttpServletResponse httpServletResponse,
-                                                                HttpServletRequest httpServletRequest)
-            throws AxisFault {
+    protected MessageContext
+            createAndSetInitialParamsToMsgCtxt(MessageContext msgContext,
+                                               HttpServletResponse resp,
+                                               HttpServletRequest req) throws AxisFault {
         msgContext = new MessageContext();
         if (axisConfiguration.isManageTransportSession()) {
             // We need to create this only if transport session is enabled.
-            Object sessionContext = getSessionContext(httpServletRequest);
+            Object sessionContext = getSessionContext(req);
             msgContext.setSessionContext((SessionContext) sessionContext);
         }
 
@@ -83,14 +84,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setTransportOut(axisConfiguration.getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
 
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                new ServletBasedOutTransportInfo(httpServletResponse));
-        msgContext.setProperty(MessageContext.REMOTE_ADDR, httpServletRequest.getRemoteAddr());
+                               new ServletBasedOutTransportInfo(resp));
+        msgContext.setProperty(MessageContext.REMOTE_ADDR, req.getRemoteAddr());
+        msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
-                getTransportHeaders(httpServletRequest));
-        msgContext.setProperty(SESSION_ID, httpServletRequest.getSession().getId());
-        msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, httpServletRequest.getRequestURL().toString());
+                               getTransportHeaders(req));
+        msgContext.setProperty(SESSION_ID, req.getSession().getId());
+        msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, req.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, httpServletRequest);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
 
         return msgContext;
@@ -143,14 +145,14 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             // adding ServletContext into msgContext;
             out = res.getOutputStream();
             HTTPTransportUtils.processHTTPPostRequest(msgContext, req.getInputStream(), out,
-                    req.getContentType(), req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
-                    req.getRequestURL().toString());
+                                                      req.getContentType(), req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                                                      req.getRequestURL().toString());
 
             Object contextWritten =
                     msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
             res.setContentType("text/xml; charset="
-                    + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+                               + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 res.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -160,9 +162,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             if (msgContext != null) {
                 try {
                     // If the fault is not going along the back channel we should be 202ing
-                    if(AddressingHelper.isFaultRedirected(msgContext)){
+                    if (AddressingHelper.isFaultRedirected(msgContext)) {
                         res.setStatus(HttpServletResponse.SC_ACCEPTED);
-                    }else{
+                    } else {
                         res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     }
                     handleFault(msgContext, out, e);
@@ -177,9 +179,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             if (msgContext != null) {
                 try {
                     // If the fault is not going along the back channel we should be 202ing
-                    if(AddressingHelper.isFaultRedirected(msgContext)){
+                    if (AddressingHelper.isFaultRedirected(msgContext)) {
                         res.setStatus(HttpServletResponse.SC_ACCEPTED);
-                    }else{
+                    } else {
                         res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     }
                     handleFault(msgContext, out, new AxisFault(t.toString(), t));
@@ -272,7 +274,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (sessionContext == null) {
             sessionContext = new SessionContext(null);
             httpServletRequest.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                    sessionContext);
+                                                         sessionContext);
         }
         return sessionContext;
     }
@@ -320,7 +322,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
         }
         return new EndpointReference("http://" + ip + ":" + port + '/' +
-                contextPath + "/" + SERVICE_PATH + "/" + serviceName);
+                                     contextPath + "/" + SERVICE_PATH + "/" + serviceName);
     }
 
     protected MessageContext createMessageContext(HttpServletRequest req,
@@ -348,8 +350,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             requestURI = requestURI.replaceFirst("rest", SERVICE_PATH);
         }
         msgContext.setTo(new EndpointReference(requestURI));
+        msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));
+        msgContext.setProperty(MessageContext.REMOTE_ADDR, req.getRemoteAddr());
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                new ServletBasedOutTransportInfo(resp));
+                               new ServletBasedOutTransportInfo(resp));
 //        msgContext.setProperty(MessageContext.TRANSPORT_OUT, resp.getOutputStream());
 
         // set the transport Headers
