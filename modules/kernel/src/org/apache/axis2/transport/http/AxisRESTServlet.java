@@ -34,42 +34,46 @@ import java.io.IOException;
  */
 public class AxisRESTServlet extends AxisServlet {
 
-    private static final Log log = LogFactory.getLog(AxisSOAPServlet.class);
+    private static final Log log = LogFactory.getLog(AxisRESTServlet.class);
 
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
-        MessageContext messageContext = null;
-        try {
-            messageContext = createMessageContext(req, resp);
-            new RESTUtil(configContext).processGetRequest(messageContext,
-                    req,
-                    resp);
-        } catch (Exception e) {
-            log.error(e);
-            if (messageContext != null) {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                handleFault(messageContext, resp.getOutputStream(), new AxisFault(e));
-            } else {
-                throw new ServletException(e);
+        if (!disableREST && !disableSeperateEndpointForREST) {
+            MessageContext messageContext = null;
+            try {
+                messageContext = createMessageContext(req, resp);
+                new RESTUtil(configContext).processGetRequest(messageContext,
+                        req,
+                        resp);
+            } catch (Exception e) {
+                log.error(e);
+                if (messageContext != null) {
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    handleFault(messageContext, resp.getOutputStream(), new AxisFault(e));
+                } else {
+                    throw new ServletException(e);
+                }
             }
         }
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        MessageContext messageContext = null;
-        try {
-            messageContext = createMessageContext(req, resp);
-            new RESTUtil(configContext).processPostRequest(messageContext,
-                    req,
-                    resp);
-        } catch (Exception e) {
-            log.error(e);
-            if (messageContext != null) {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                handleFault(messageContext, resp.getOutputStream(), new AxisFault(e));
-            } else {
-                throw new ServletException(e);
+        if (!disableREST && !disableSeperateEndpointForREST) {
+            MessageContext messageContext = null;
+            try {
+                messageContext = createMessageContext(req, resp);
+                new RESTUtil(configContext).processPostRequest(messageContext,
+                        req,
+                        resp);
+            } catch (Exception e) {
+                log.error(e);
+                if (messageContext != null) {
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    handleFault(messageContext, resp.getOutputStream(), new AxisFault(e));
+                } else {
+                    throw new ServletException(e);
+                }
             }
         }
     }

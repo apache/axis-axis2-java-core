@@ -228,6 +228,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         
         public static final String DRILL_DOWN_TO_ROOT_CAUSE_FOR_FAULT_REASON = "drillDownToRootCauseForFaultReason";
 
+        public static final String ENABLE_REST_IN_AXIS2_MAIN_SERVLET = "enableRESTInAxis2MainServlet";
+
+        public static final String DISABLE_REST = "disableREST";
+
+        public static final String DISABLE_SEPARATE_ENDPOINT_FOR_REST = "disableSeparateEndpointForREST";
+
         // this will contain the keys of all the properties that will be in the message context
         public static final String TRANSPORT_URL = "TransportURL";
 

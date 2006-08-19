@@ -25,6 +25,19 @@
     <!--Set the flag to true if you want to enable transport level session mangment-->
     <parameter name="manageTransportSession" locked="false">false</parameter>
 
+    <!--Following two parameters will be used to handle REST in Axis2. The default settings will make Axis2 to have two-->
+    <!--different endpoints, one for REST (AxisRESTServlet) one for SOAP message handling (AxisServlet). But following-->
+    <!--parameters help to tweak the message handling of two main servlets. -->
+
+    <!-- If the enableRESTInAxis2MainServlet is true, then Axis2MainServlet will handle both SOAP and REST messages -->
+    <parameter name="enableRESTInAxis2MainServlet" locked="true">true</parameter>
+
+    <!-- Following parameter will completely disable REST handling in both the servlets-->
+    <parameter name="disableREST" locked="true">false</parameter>
+
+    <!-- This will disable the separate servlet we have for REST handling. -->
+    <parameter name="disableSeparateEndpointForREST" locked="true">false</parameter>
+
 
 
     <!-- ================================================= -->
