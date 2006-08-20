@@ -52,7 +52,16 @@ public class AxisCallback extends Callback {
         
         try {
             //REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
-            ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisMsgCtx);
+            // TODO: Remove workaround for WS-Addressing running in thin client (non-server) environment
+            try {
+                ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisMsgCtx);
+            }
+            catch (Throwable t) {
+                // TODO: Remove writes to stdout
+                System.out.println("JAX-WS AxisCallback caught throwable from ThreadContextMigratorUtil " + t);
+                System.out.println("...caused by " + t.getCause());
+                t.printStackTrace();
+            }
           
             OMElement responseEnv = result.getResponseEnvelope();
             

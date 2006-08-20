@@ -34,6 +34,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -47,6 +49,7 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -306,6 +309,12 @@ public class AxisInvocationController implements InvocationController {
                     || opClient.getOptions().isUseSeparateListener()) {
                 opClient.getOptions().setUseSeparateListener(true);
                 opClient.getOptions().setTransportInProtocol("http");
+                // Setup the response callback receiver to receive the async response
+                // This logic is based on org.apache.axis2.client.ServiceClient.sendReceiveNonBlocking(...)
+                AxisOperation op = opClient.getOperationContext().getAxisOperation();
+                MessageReceiver messageReceiver = op.getMessageReceiver();
+                if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver))
+                    op.setMessageReceiver(new CallbackReceiver());
             }
             
             // There should be an AsyncListener that is configured and set on the
