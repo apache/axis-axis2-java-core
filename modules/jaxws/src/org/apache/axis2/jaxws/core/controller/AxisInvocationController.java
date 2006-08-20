@@ -455,7 +455,7 @@ public class AxisInvocationController implements InvocationController {
         }
         
         try {
-            OperationClient client = sc.createClient(ServiceClient.ANON_OUT_IN_OP);
+            OperationClient client = sc.createClient(operation);
             return client;
         } catch (AxisFault e) {
             //TODO: NLS and ExceptionFactory

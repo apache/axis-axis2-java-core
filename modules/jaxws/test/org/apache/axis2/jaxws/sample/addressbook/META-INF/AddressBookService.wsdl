@@ -18,13 +18,16 @@
            <element name="firstName" nillable="false" type="xsd:string"/>
            <element name="lastName" nillable="false" type="xsd:string"/>
            <element name="phone" nillable="true" type="xsd:string"/>
+           <element name="street" nillable="true" type="xsd:string"/>
+           <element name="city" nillable="true" type="xsd:string"/>
+           <element name="state" nillable="true" type="xsd:string"/>
          </sequence>
        </complexType>
     
        <element name="addEntry">
          <complexType>
            <sequence>
-             <element name="entry" nillable="true" type="impl:AddressBookEntry"/>
+             <element name="entry" nillable="false" type="impl:AddressBookEntry"/>
            </sequence>
          </complexType>
        </element>
@@ -32,7 +35,24 @@
        <element name="addEntryResponse">
          <complexType>
            <sequence>
-             <element name="status" nillable="true" type="xsd:boolean"/>
+             <element name="status" nillable="false" type="xsd:boolean"/>
+           </sequence>
+         </complexType>
+       </element>
+
+       <element name="findEntryByName">
+         <complexType>
+           <sequence>
+             <element name="firstname" nillable="false" type="xsd:string"/>
+             <element name="lastname" nillable="false" type="xsd:string"/>
+           </sequence>
+         </complexType>
+       </element>
+       
+       <element name="findEntryByNameResponse">
+         <complexType>
+           <sequence>
+             <element name="entry" nillable="false" type="impl:AddressBookEntry"/>
            </sequence>
          </complexType>
        </element>
@@ -48,26 +68,47 @@
     <wsdl:part element="impl:addEntryResponse" name="parameters"/>
   </wsdl:message>
 
+ <wsdl:message name="findEntryByNameRequest">
+    <wsdl:part element="impl:findEntryByName" name="parameters"/>
+  </wsdl:message>
+ 
+  <wsdl:message name="findEntryByNameResponse">
+    <wsdl:part element="impl:findEntryByNameResponse" name="parameters"/>
+  </wsdl:message>
+
   <wsdl:portType name="AddressBook">
     <wsdl:operation name="addEntry">
       <wsdl:input message="impl:addEntryRequest" name="addEntryRequest"/>
       <wsdl:output message="impl:addEntryResponse" name="addEntryResponse"/>
     </wsdl:operation>
+    
+    <wsdl:operation name="findEntryByName">
+      <wsdl:input message="impl:findEntryByNameRequest" name="findEntryByNameRequest"/>
+      <wsdl:output message="impl:findEntryByNameResponse" name="findEntryByNameResponse"/>
+    </wsdl:operation>
   </wsdl:portType>
 
   <wsdl:binding name="AddressBookSoap" type="impl:AddressBook">
     <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    
     <wsdl:operation name="addEntry">
       <wsdlsoap:operation soapAction=""/>
-
       <wsdl:input name="addEntryRequest">
         <wsdlsoap:body use="literal"/>
       </wsdl:input>
-
       <wsdl:output name="addEntryResponse">
         <wsdlsoap:body use="literal"/>
       </wsdl:output>
+    </wsdl:operation>
 
+    <wsdl:operation name="findEntryByName">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="findEntryByNameRequest">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findEntryByNameResponse">
+        <wsdlsoap:body use="literal"/>
+      </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
 

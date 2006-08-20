@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for addEntry element declaration.
+ * <p>Java class for findEntryByNameResponse element declaration.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;element name="addEntry">
+ * &lt;element name="findEntryByNameResponse">
  *   &lt;complexType>
  *     &lt;complexContent>
  *       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
@@ -48,8 +48,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "entry"
 })
-@XmlRootElement(name = "addEntry")
-public class AddEntry {
+@XmlRootElement(name = "findEntryByNameResponse")
+public class FindEntryByNameResponse {
 
     @XmlElement(namespace = "http://org/apache/axis2/jaxws/sample/addressbook", required = true)
     protected AddressBookEntry entry;

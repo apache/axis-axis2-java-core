@@ -1,4 +1,19 @@
-
+/*
+ * Copyright 2006 The Apache Software Foundation.
+ * Copyright 2006 International Business Machines Corp.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.axis2.jaxws.sample.addressbook;
 
 import javax.xml.bind.annotation.XmlRegistry;
@@ -30,11 +45,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AddEntryResponse }
+     * Create an instance of {@link FindEntryByName }
      * 
      */
-    public AddEntryResponse createAddEntryResponse() {
-        return new AddEntryResponse();
+    public FindEntryByName createFindEntryByName() {
+        return new FindEntryByName();
     }
 
     /**
@@ -51,6 +66,22 @@ public class ObjectFactory {
      */
     public AddressBookEntry createAddressBookEntry() {
         return new AddressBookEntry();
+    }
+
+    /**
+     * Create an instance of {@link AddEntryResponse }
+     * 
+     */
+    public AddEntryResponse createAddEntryResponse() {
+        return new AddEntryResponse();
+    }
+
+    /**
+     * Create an instance of {@link FindEntryByNameResponse }
+     * 
+     */
+    public FindEntryByNameResponse createFindEntryByNameResponse() {
+        return new FindEntryByNameResponse();
     }
 
 }
