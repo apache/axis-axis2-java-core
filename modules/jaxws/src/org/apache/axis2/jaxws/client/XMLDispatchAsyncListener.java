@@ -11,6 +11,7 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
@@ -58,16 +59,23 @@ public class XMLDispatchAsyncListener extends AsyncListener {
         }
         else if (mode.equals(Mode.MESSAGE)) {
             try {
-                OMElement messageOM = message.getAsOMElement();
-                QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
-                
-                XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-                Block stringBlock = stringFactory.createFrom(messageOM.toString(), null, soapEnvQname);
-                
-                BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
-                Block block = factory.createFrom(stringBlock, null);
-                
-                value = block.getBusinessObject(true);
+                if (blockFactoryType.equals(SOAPEnvelopeBlockFactory.class)) {
+                    // This is an indication that we are in SOAPMessage Dispatch
+                    // Return the SOAPMessage
+                    value = message.getAsSOAPMessage();
+                } 
+                else {
+                    OMElement messageOM = message.getAsOMElement();
+                    QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
+        
+                    XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+                    Block stringBlock = stringFactory.createFrom(messageOM.toString(), null, soapEnvQname);
+       
+                    BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
+                    Block block = factory.createFrom(stringBlock, null);
+
+                    value = block.getBusinessObject(true);
+                }
             } catch (MessageException e) {
                 e.printStackTrace();
             } catch (XMLStreamException e) {

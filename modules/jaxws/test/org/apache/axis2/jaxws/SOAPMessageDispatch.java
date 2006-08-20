@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -54,11 +55,41 @@ public class SOAPMessageDispatch extends TestCase {
 		SOAPMessage msgObject = factory.createMessage(null, inputStream);
 
 		//Invoke the Dispatch
-		System.out.println(">> Invoking sync Dispatch");
+		System.out.println(">> Invoking Async Dispatch");
 		SOAPMessage response = dispatch.invoke(msgObject);
 
 		assertNotNull("dispatch invoke returned null", response);
 		response.writeTo(System.out);
+		System.out.println("-----------------------------------------");
+	}
+	
+	public void testSOAPMessageASyncCallbackMessageMode() throws Exception {
+		
+        String basedir = new File(".").getAbsolutePath();
+        String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
+        
+		System.out.println("---------------------------------------");
+		System.out.println("test: " + getName());
+		//Initialize the JAX-WS client artifacts
+		Service svc = Service.create(serviceName);
+		svc.addPort(portName, null, url);
+		Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName,
+				SOAPMessage.class, Service.Mode.MESSAGE);
+
+		//Create SOAPMessage Object no attachments here.
+		FileInputStream inputStream = new FileInputStream(messageResource);
+		MessageFactory factory = MessageFactory.newInstance();
+		SOAPMessage msgObject = factory.createMessage(null, inputStream);
+		CallbackHandler<SOAPMessage> ch = new CallbackHandler<SOAPMessage>();
+		//Invoke the Dispatch
+		System.out.println(">> Invoking sync Dispatch");
+		Future<?> monitor = dispatch.invokeAsync(msgObject, ch);
+
+		assertNotNull("dispatch invokeAsync returned null Future<?>", monitor);
+		while (!monitor.isDone()) {
+            System.out.println(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
 	}
 
 }

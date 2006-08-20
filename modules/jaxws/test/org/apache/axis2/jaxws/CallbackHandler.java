@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws;
 
 import java.io.StringWriter;
 
+import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
@@ -40,6 +41,12 @@ public class CallbackHandler<T> implements AsyncHandler <T> {
         try{
             T res = (T) response.get();
             
+            if(res instanceof SOAPMessage){
+            	SOAPMessage message = (SOAPMessage) res;
+            	message.writeTo(System.out);
+            	
+            }
+            
             if(res instanceof String){
                 System.out.println("Response [" + res + "]");
             }
@@ -53,6 +60,7 @@ public class CallbackHandler<T> implements AsyncHandler <T> {
                 
                 System.out.println(responseText);
             }
+            System.out.println("---------------------------------------------");
         }catch(Exception e){
             e.printStackTrace();
         }
