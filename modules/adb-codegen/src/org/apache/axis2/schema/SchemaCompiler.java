@@ -1125,11 +1125,7 @@ public class SchemaCompiler {
         		}
         	}
         	//process restriction base type
-        	processSimpleRestrictionBaseType(restriction.getBaseTypeName(),metaInfHolder);
-        	
-//			//process facets
-//        	XmlSchemaObjectCollection facets = restriction.getFacets();
-//        	processFacets(facets,metaInfHolder);
+        	processSimpleRestrictionBaseType(restriction.getBaseTypeName(), restriction.getBaseTypeName(),metaInfHolder);
         }
     }
 
@@ -1162,18 +1158,18 @@ public class SchemaCompiler {
      * @param resBaseType
      * @param metaInfHolder
      */
-    public void processSimpleRestrictionBaseType(QName resBaseType,BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
+    public void processSimpleRestrictionBaseType(QName qName, QName resBaseType,BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
 
         //find the class name
         String className = findClassName(resBaseType, false);
 
         //this means the schema type actually returns a different QName
         if (changedTypeMap.containsKey(resBaseType)) {
-            metaInfHolder.registerMapping(resBaseType,
+            metaInfHolder.registerMapping(qName,
                     (QName) changedTypeMap.get(resBaseType),
                     className,SchemaConstants.ELEMENT_TYPE);
         } else {
-            metaInfHolder.registerMapping(resBaseType,
+            metaInfHolder.registerMapping(qName,
                     resBaseType,
                     className,SchemaConstants.ELEMENT_TYPE);
         }
@@ -1582,7 +1578,7 @@ public class SchemaCompiler {
                 //check whether the base type is one of the base schema types
                 if (baseSchemaTypeMap.containsKey(baseTypeName)) {
                     //process restriction base type
-                    processSimpleRestrictionBaseType(restriction.getBaseTypeName(),metaInfHolder);
+                    processSimpleRestrictionBaseType(simpleType.getQName(), restriction.getBaseTypeName(),metaInfHolder);
         	
                     //process facets
                     XmlSchemaObjectCollection facets = restriction.getFacets();
