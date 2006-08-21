@@ -132,7 +132,8 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                 }
             }
         } else {
-            throw new AxisFault("Axis2 transport error : " + postMethod.getStatusText(), SOAP12Constants.FAULT_CODE_SENDER);
+            throw new AxisFault(Messages.getMessage("httpTransportError",
+                String.valueOf(postMethod.getStatusCode()), postMethod.getStatusText()), SOAP12Constants.FAULT_CODE_SENDER);
         }
 
         throw new AxisFault(Messages.getMessage("transportError",
