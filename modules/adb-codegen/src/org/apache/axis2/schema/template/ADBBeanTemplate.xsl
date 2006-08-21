@@ -382,44 +382,45 @@
                    		
                    		<xsl:choose>
                         <xsl:when test="(@restrictionBaseType)">
-                   		
-                   		<xsl:if test="(@patternFacet)">
-                    		if ( param.matches( "<xsl:value-of select="$patternFacet"/>" )) {  
-                   				this.<xsl:value-of select="$varName"/>=param;
-                   			}
-                   			else {
-                   				throw new java.lang.RuntimeException();
-                   			}
-                   		</xsl:if>
-						
-						<xsl:if test="(@lenFacet)">
-                    		if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {  
-                   				this.<xsl:value-of select="$varName"/>=param;
-                   			}
-                   			else {
-                   				throw new java.lang.RuntimeException();
-                   			}
-                   		</xsl:if>
-                   		
-                   		<xsl:if test="(@maxLenFacet) or (@minLenFacet)">
-                    		if ( <xsl:if test="(@minLenFacet)"> <xsl:value-of select="$minLenFacet"/> &lt; </xsl:if> param.length() <xsl:if test="(@maxLenFacet)"> &gt; <xsl:value-of select="$maxLenFacet"/> = </xsl:if> ) {  
-                   				this.<xsl:value-of select="$varName"/>=param;
-                   			}
-                   			else {
-                   				throw new java.lang.RuntimeException();
-                   			}
-                   		</xsl:if>
-                   		
-                   		<xsl:if test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
-                    		if ( <xsl:if test="(@minExFacet)"> <xsl:value-of select="$minExFacet"/> &lt; </xsl:if> <xsl:if test="(@minInFacet)"> <xsl:value-of select="$minInFacet"/> &lt;= </xsl:if> param <xsl:if test="(@maxExFacet)"> &gt; <xsl:value-of select="$maxExFacet"/> </xsl:if> <xsl:if test="(@maxInFacet)"> &gt;= <xsl:value-of select="$maxInFacet"/> </xsl:if> ) {
-                    	 
-                   				this.<xsl:value-of select="$varName"/>=param;
-                   			}
-                   			else {
-                   				throw new java.lang.RuntimeException();
-                   			}
-                   		</xsl:if>
-						</xsl:when>
+                           <xsl:choose>
+                            <xsl:when test="(@patternFacet)">
+                                if ( param.matches( "<xsl:value-of select="$patternFacet"/>" )) {  
+                                    this.<xsl:value-of select="$varName"/>=param;
+                                }
+                                else {
+                                    throw new java.lang.RuntimeException();
+                                }
+                            </xsl:when>
+                            <xsl:when test="(@lenFacet)">
+                                if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {  
+                                    this.<xsl:value-of select="$varName"/>=param;
+                                }
+                                else {
+                                    throw new java.lang.RuntimeException();
+                                }
+                            </xsl:when>
+                            <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
+                                if ( <xsl:if test="(@minLenFacet)"> <xsl:value-of select="$minLenFacet"/> &lt; </xsl:if> param.length() <xsl:if test="(@maxLenFacet)"> &gt; <xsl:value-of select="$maxLenFacet"/> = </xsl:if> ) {  
+                                    this.<xsl:value-of select="$varName"/>=param;
+                                }
+                                else {
+                                    throw new java.lang.RuntimeException();
+                                }
+                            </xsl:when>
+                            <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
+                                if ( <xsl:if test="(@minExFacet)"> <xsl:value-of select="$minExFacet"/> &lt; </xsl:if> <xsl:if test="(@minInFacet)"> <xsl:value-of select="$minInFacet"/> &lt;= </xsl:if> param <xsl:if test="(@maxExFacet)"> &gt; <xsl:value-of select="$maxExFacet"/> </xsl:if> <xsl:if test="(@maxInFacet)"> &gt;= <xsl:value-of select="$maxInFacet"/> </xsl:if> ) {
+                             
+                                    this.<xsl:value-of select="$varName"/>=param;
+                                }
+                                else {
+                                    throw new java.lang.RuntimeException();
+                                }
+                            </xsl:when>
+                            <xsl:otherwise>
+                                 this.<xsl:value-of select="$varName"/>=param;
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        </xsl:when>
 						
 						<xsl:otherwise>
 								this.<xsl:value-of select="$varName"/>=param;
