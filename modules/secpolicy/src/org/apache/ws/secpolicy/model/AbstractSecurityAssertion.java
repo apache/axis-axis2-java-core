@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ws.security.secpolicy.model;
+package org.apache.ws.secpolicy.model;
 
 import org.apache.neethi.Assertion;
 

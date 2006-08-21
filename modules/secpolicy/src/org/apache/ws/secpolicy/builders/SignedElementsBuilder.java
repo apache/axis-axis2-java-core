@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ws.security.secpolicy.builders;
+package org.apache.ws.secpolicy.builders;
 
 import java.util.Iterator;
 
@@ -24,8 +24,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
 import org.apache.neethi.builders.AssertionBuilder;
-import org.apache.ws.security.secpolicy.Constants;
-import org.apache.ws.security.secpolicy.model.SignedEncryptedElements;
+import org.apache.ws.secpolicy.Constants;
+import org.apache.ws.secpolicy.model.SignedEncryptedElements;
 
 public class SignedElementsBuilder implements AssertionBuilder {
 

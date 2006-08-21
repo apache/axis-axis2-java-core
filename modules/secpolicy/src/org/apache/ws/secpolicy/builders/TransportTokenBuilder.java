@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ws.security.secpolicy.builders;
+package org.apache.ws.secpolicy.builders;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,9 +27,9 @@ import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.XmlPrimtiveAssertion;
 import org.apache.neethi.builders.AssertionBuilder;
-import org.apache.ws.security.secpolicy.Constants;
-import org.apache.ws.security.secpolicy.model.HttpsToken;
-import org.apache.ws.security.secpolicy.model.TransportToken;
+import org.apache.ws.secpolicy.Constants;
+import org.apache.ws.secpolicy.model.HttpsToken;
+import org.apache.ws.secpolicy.model.TransportToken;
 
 public class TransportTokenBuilder implements AssertionBuilder {
     

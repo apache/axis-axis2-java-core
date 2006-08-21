@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ws.security.secpolicy.builders;
+package org.apache.ws.secpolicy.builders;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,12 +26,12 @@ import org.apache.neethi.AssertionBuilderFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.builders.AssertionBuilder;
-import org.apache.ws.security.secpolicy.Constants;
-import org.apache.ws.security.secpolicy.model.AlgorithmSuite;
-import org.apache.ws.security.secpolicy.model.SignedEncryptedElements;
-import org.apache.ws.security.secpolicy.model.SignedEncryptedParts;
-import org.apache.ws.security.secpolicy.model.SupportingToken;
-import org.apache.ws.security.secpolicy.model.Token;
+import org.apache.ws.secpolicy.Constants;
+import org.apache.ws.secpolicy.model.AlgorithmSuite;
+import org.apache.ws.secpolicy.model.SignedEncryptedElements;
+import org.apache.ws.secpolicy.model.SignedEncryptedParts;
+import org.apache.ws.secpolicy.model.SupportingToken;
+import org.apache.ws.secpolicy.model.Token;
 
 public class SupportingTokensBuilder implements AssertionBuilder {
 

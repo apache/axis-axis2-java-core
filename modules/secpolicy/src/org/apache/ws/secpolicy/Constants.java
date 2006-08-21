@@ -1,4 +1,4 @@
-package org.apache.ws.security.secpolicy;
+package org.apache.ws.secpolicy;
 
 import javax.xml.namespace.QName;
 

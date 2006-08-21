@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.ws.security.secpolicy.model;
+package org.apache.ws.secpolicy.model;
 
 public abstract class Binding extends AbstractSecurityAssertion implements AlgorithmWrapper {
 

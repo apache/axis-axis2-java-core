@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ws.security.secpolicy.model;
+package org.apache.ws.secpolicy.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.neethi.PolicyComponent;
-import org.apache.ws.security.secpolicy.Constants;
+import org.apache.ws.secpolicy.Constants;
 
 public class AlgorithmSuite extends AbstractSecurityAssertion {
     

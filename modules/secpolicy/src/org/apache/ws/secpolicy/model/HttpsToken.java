@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.ws.security.secpolicy.model;
+package org.apache.ws.secpolicy.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,7 +25,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.neethi.PolicyComponent;
-import org.apache.ws.security.secpolicy.Constants;
+import org.apache.ws.secpolicy.Constants;
 
 /**
  *

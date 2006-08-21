@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.ws.security.secpolicy.model;
+package org.apache.ws.secpolicy.model;
 
-import org.apache.ws.security.secpolicy.Constants;
+import org.apache.ws.secpolicy.Constants;
 
 public abstract class Token extends AbstractSecurityAssertion {
 
