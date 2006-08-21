@@ -47,7 +47,7 @@ import org.apache.axis2.context.MessageContext;
  * 
  * [req/rsp outbound (both sync and async)]
  * migrateThreadToContext(req)
- * cleanupContext(rsp)
+ * cleanupContext(req)
  * migrateContextToThread(rsp)
  * Note: there is no corresponding cleanupThread(rsp); one of the inbound
  *       cases would need to handle this
