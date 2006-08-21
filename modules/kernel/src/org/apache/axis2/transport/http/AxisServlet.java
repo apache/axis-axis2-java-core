@@ -169,9 +169,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         MessageContext msgContext;
         OutputStream out = res.getOutputStream();
 
-        String contentType = req.getContentType();
-
-        if (!disableREST && enableRESTInAxis2MainServlet && isRESTContentType(contentType)) {
+        if (!disableREST && enableRESTInAxis2MainServlet && isRESTRequest(req)) {
             msgContext = createMessageContext(req, res);
             try {
                 new RESTUtil(configContext).processPostRequest(msgContext,
@@ -452,11 +450,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * - application/x-www-form-urlencoded
      * as REST content types in this servlet.
      *
-     * @param contentType
+     * @param request
      */
-    private boolean isRESTContentType(String contentType) {
-        return (contentType.indexOf(HTTPConstants.MEDIA_TYPE_TEXT_XML) > -1) ||
-                (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1);
+    private boolean isRESTRequest(HttpServletRequest request) {
+        String contentType = request.getContentType();
+        String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 
+        return ((soapActionHeader == null) ||
+                (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) );
     }
 }
