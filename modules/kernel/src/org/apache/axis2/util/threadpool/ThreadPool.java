@@ -37,8 +37,18 @@ public class ThreadPool implements ThreadFactory {
     protected static long SLEEP_INTERVAL = 1000;
     private static boolean shutDown;
     protected ThreadPoolExecutor executor;
-
+    
+    //integers that define the pool size, with the default values set.
+    private int corePoolSize = 5;
+    private int maxPoolSize = Integer.MAX_VALUE;
+    
     public ThreadPool() {
+        setExecutor(createDefaultExecutor("Axis2 Task", Thread.NORM_PRIORITY, true));
+    }
+    
+    public ThreadPool(int corePoolSize,int maxPoolSize) {
+    	this.corePoolSize = corePoolSize;
+    	this.maxPoolSize = maxPoolSize;
         setExecutor(createDefaultExecutor("Axis2 Task", Thread.NORM_PRIORITY, true));
     }
 
@@ -85,7 +95,7 @@ public class ThreadPool implements ThreadFactory {
     protected ThreadPoolExecutor createDefaultExecutor(final String name,
                                                        final int priority,
                                                        final boolean daemon) {
-        ThreadPoolExecutor rc = new ThreadPoolExecutor(5, Integer.MAX_VALUE, 10,
+        ThreadPoolExecutor rc = new ThreadPoolExecutor(corePoolSize , maxPoolSize , 10,
                 TimeUnit.SECONDS, new SynchronousQueue(),
                 new edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory() {
             public Thread newThread(Runnable runnable) {
