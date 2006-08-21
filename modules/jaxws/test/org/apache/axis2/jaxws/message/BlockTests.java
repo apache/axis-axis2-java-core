@@ -945,7 +945,7 @@ public class BlockTests extends TestCase {
 	public void testJAXBSourceOutflow() throws Exception {
 		
 		//Sample text for JAXBSource
-		String echoSample = "<echoString xmlns=\"http://test\"><input xmlns=\"http://test\">Hello World</input></echoString>";
+		String echoSample = "<echoString xmlns=\"http://test\"><input>Hello World</input></echoString>";
 		
         // Get the BlockFactory
         SourceBlockFactory f = (SourceBlockFactory)
