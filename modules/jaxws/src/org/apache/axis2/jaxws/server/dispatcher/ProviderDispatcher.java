@@ -239,7 +239,6 @@ public class ProviderDispatcher extends JavaDispatcher{
     			throw new Exception("Provider based SEI Class has to implement javax.xml.ws.Provider as javax.xml.ws.Provider<String>, javax.xml.ws.Provider<SOAPMessage>, javax.xml.ws.Provider<Source> or javax.xml.ws.Provider<JAXBContext>");
     		}
     		Class interfaceName = (Class)paramType.getRawType();
-    		System.out.println(">> Intereface name is [" + interfaceName.getName() + "]");
     		
     		if(interfaceName == javax.xml.ws.Provider.class){
     			if(paramType.getActualTypeArguments().length > 1){
