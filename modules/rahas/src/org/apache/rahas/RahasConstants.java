@@ -51,6 +51,7 @@ public class RahasConstants {
     public static final String REQUEST_SECURITY_TOKEN_RESPONSE_COLLECTION_LN = "RequestSecurityTokenResponseCollection";
     public static final String REQUESTED_SECURITY_TOKEN_LN = "RequestedSecurityToken";
     public final static String BINARY_SECRET_LN = "BinarySecret";
+    public final static String COMPUTED_KEY_ALGO_LN = "ComputedKeyAlgorithm";
     public final static String REQUESTED_ATTACHED_REFERENCE_LN = "RequestedAttachedReference";
     public final static String REQUESTED_UNATTACHED_REFERENCE_LN = "RequestedUnattachedReference";
     public final static String KEY_SIZE_LN = "KeySize";
@@ -91,7 +92,9 @@ public class RahasConstants {
         
         //Token types
         public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
-        
+
+        //ComputedKey algos
+        public final static String COMPUTED_KEY_PSHA1 =  WST_NS_05_02 + "/CK/PSHA1";
     }
     
     public class V_05_12 { 
@@ -119,6 +122,9 @@ public class RahasConstants {
         
         //Token types
         public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/12/sc/sct";
+        
+        //ComputedKey algos
+        public final static String COMPUTED_KEY_PSHA1 =  WST_NS_05_12 + "/CK/PSHA1";
         
     }
     

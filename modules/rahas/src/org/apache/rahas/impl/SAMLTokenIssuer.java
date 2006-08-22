@@ -281,6 +281,10 @@ public class SAMLTokenIssuer implements TokenIssuer {
         
         // Unet the DOM impl to DOOM
         DocumentBuilderFactoryImpl.setDOOMRequired(false);
+        
+        System.out.println("---------------ISSUED SOAP Env : START---------------");
+        System.out.println(env);
+        System.out.println("---------------ISSUED SOAP Env : END---------------");
         return env;
     }
     
@@ -388,6 +392,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
             SAMLTokenIssuerConfig config, Crypto crypto)
             throws WSSecurityException, TrustException {
 
+//        return (X509Certificate)crypto.getCertificates("bob")[0];
         String address = this.getServiceAddress(request);
         
         if(address != null && !"".equals(address)) {

@@ -136,6 +136,17 @@ public class TrustUtil {
         return elem;
     }
     
+    public static OMElement createComputedKeyAlgorithm(
+            int version, 
+            OMElement parent,
+            String algoId) throws TrustException {
+        String ns = getWSTNamespace(version);
+        OMElement elem = createOMElement(parent, ns,
+                RahasConstants.COMPUTED_KEY_ALGO_LN, RahasConstants.WST_PREFIX);
+        elem.setText(algoId);
+        return elem;
+    }
+    
     public static OMElement createRequestedUnattachedRef(
             int version, OMElement parent,
             String refUri, String refValueType) throws TrustException {

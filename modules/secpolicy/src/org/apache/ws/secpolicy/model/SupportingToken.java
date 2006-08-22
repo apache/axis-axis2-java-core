@@ -26,16 +26,16 @@ import org.apache.neethi.Assertion;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
-public class SupportingToken implements AlgorithmWrapper, TokenWrapper,
-        Assertion {
+public class SupportingToken extends AbstractSecurityAssertion implements
+        AlgorithmWrapper, TokenWrapper, Assertion {
 
     /**
      * Type of SupportingToken
-     * 
-     * @see SupportingToken#SUPPORTING
-     * @see SupportingToken#ENDORSING
-     * @see SupportingToken#SIGNED
-     * @see SupportingToken#SIGNED_ENDORSING
+     *
+     * @see Constants#SUPPORTING_TOKEN_SUPPORTING
+     * @see Constants#SUPPORTING_TOKEN_SIGNED
+     * @see Constants#SUPPORTING_TOKEN_ENDORSING
+     * @see Constants#SUPPORTING_TOKEN_SIGNED_ENDORSING
      */
     private int type;
 

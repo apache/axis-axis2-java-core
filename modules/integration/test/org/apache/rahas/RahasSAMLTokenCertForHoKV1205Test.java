@@ -20,6 +20,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
+import org.apache.xml.security.encryption.XMLCipher;
+import org.apache.xml.security.utils.EncryptionConstants;
 import org.opensaml.XML;
 
 import javax.xml.namespace.QName;
@@ -39,10 +41,11 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
             tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
             
             TrustUtil.createAppliesToElement(rstElem,
-                    "http://localhost:5555/axis2/services/SecureService");
+                    "http://207.200.37.116/Ping/Scenario4");
             TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12,
                     rstElem, RahasConstants.KEY_TYPE_PUBLIC_KEY);
             TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, rstElem, 256);
+            
             
             return rstElem;
             
@@ -53,12 +56,24 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
     public OutflowConfiguration getClientOutflowConfiguration() {
         OutflowConfiguration ofc = new OutflowConfiguration();
 
+//        ofc.setActionItems("Timestamp Signature Encrypt");
         ofc.setActionItems("Signature Encrypt Timestamp");
         ofc.setUser("alice");
         ofc.setEncryptionUser("ip");
         ofc.setSignaturePropFile("rahas-sec.properties");
         ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
+        ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
+        ofc.setEncryptionKeyTransportAlgorithm(XMLCipher.RSA_OAEP);
+        ofc.setEncryptionSymAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256);
         ofc.setPasswordCallbackClass(PWCallback.class.getName());
+        ofc.setEnableSignatureConfirmation(false);
+//        ofc.setSignatureParts("{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;" +
+//                                "{Element}{" + RahasConstants.WSA_NS + "}To;" +
+//                                "{Element}{" + RahasConstants.WSA_NS + "}ReplyTo;" +
+//                                "{Element}{" + RahasConstants.WSA_NS + "}MessageID;" +
+//                                "{Element}{" + RahasConstants.WSA_NS + "}Action;" +
+//                                "{Element}{" + WSConstants.WSU_NS + "}Timestamp");
+        
         return ofc;
     }
 
@@ -68,6 +83,7 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
         ifc.setActionItems("Signature Encrypt Timestamp");
         ifc.setPasswordCallbackClass(PWCallback.class.getName());
         ifc.setSignaturePropFile("rahas-sec.properties");
+        ifc.setEnableSignatureConfirmation(false);
         
         return ifc;
     }
@@ -83,6 +99,7 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
         assertNotNull("RequestedSecurityToken missing", rst);
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);
+        
     }
 
     public String getRequestAction() {
