@@ -18,12 +18,15 @@ package org.apache.ws.secpolicy.builders;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.builders.AssertionBuilder;
+import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.ProtectionToken;
 import org.apache.ws.secpolicy.model.Token;
 
@@ -41,7 +44,11 @@ public class ProtectionTokenBuilder implements AssertionBuilder {
         
         return protectionToken;
     }
-    
+        
+    public QName getKnownElement() {
+        return Constants.PROTECTION_TOKEN;
+    }
+
     private void processAlternative(List assertions, ProtectionToken parent) {
         ProtectionToken protectionToken = new ProtectionToken();
         

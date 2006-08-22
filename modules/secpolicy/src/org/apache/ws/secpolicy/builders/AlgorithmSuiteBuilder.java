@@ -126,6 +126,10 @@ public class AlgorithmSuiteBuilder implements AssertionBuilder {
             }    
         }
         
-        target.addOption(algorithmSuite);
+        target.addConfiguration(algorithmSuite);
+    }
+
+    public QName getKnownElement() {
+        return Constants.ALGORITHM_SUITE;
     }
 }

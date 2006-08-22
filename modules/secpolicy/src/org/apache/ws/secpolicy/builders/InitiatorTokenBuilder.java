@@ -25,46 +25,45 @@ import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
-import org.apache.neethi.XmlPrimtiveAssertion;
 import org.apache.neethi.builders.AssertionBuilder;
 import org.apache.ws.secpolicy.Constants;
-import org.apache.ws.secpolicy.model.HttpsToken;
-import org.apache.ws.secpolicy.model.TransportToken;
+import org.apache.ws.secpolicy.model.InitiatorToken;
+import org.apache.ws.secpolicy.model.Token;
 
-public class TransportTokenBuilder implements AssertionBuilder {
-    
-   
-    
-    public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
-        TransportToken transportToken = new TransportToken();
+public class InitiatorTokenBuilder implements AssertionBuilder {
+
+    public Assertion build(OMElement element, AssertionBuilderFactory factory)
+            throws IllegalArgumentException {
+        InitiatorToken initiatorToken = new InitiatorToken();
         
         Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
         policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
-            processAlternative((List) iterator.next(), transportToken);
+            processAlternative((List) iterator.next(), initiatorToken);
         }
         
-        return transportToken;
-    }
-        
-    public QName getKnownElement() {
-        return Constants.TRANSPORT_TOKEN;
+        return initiatorToken;
     }
     
-    private void processAlternative(List assertions, TransportToken parent) {
-        TransportToken transportToken = new TransportToken();
+    private void processAlternative(List assertions, InitiatorToken parent) {
+        
+        InitiatorToken initiatorToken = new InitiatorToken();
+        Object token;
         
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
-            XmlPrimtiveAssertion primtive = (XmlPrimtiveAssertion) iterator.next();
-            QName qname = primtive.getName();
+            token = iterator.next();
             
-            if (Constants.HTTPS_TOKEN.equals(qname)) {
-                HttpsToken httpsToken = new HttpsToken();
-                transportToken.setTransportToken(httpsToken);
+            if (token instanceof Token) {
+                parent.setInitiatorToken((Token) token);
             }
         }
         
-        parent.addConfiguration(transportToken);
+        parent.addConfiguration(initiatorToken);
     }
+
+    public QName getKnownElement() {
+        return Constants.INITIATOR_TOKEN;
+    }
+
 }

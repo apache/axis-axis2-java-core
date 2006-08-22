@@ -17,7 +17,6 @@
 package org.apache.ws.secpolicy.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -25,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.neethi.PolicyComponent;
+import org.apache.ws.secpolicy.Constants;
 
 public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
 
@@ -34,7 +34,7 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
     
     private ProtectionToken protectionToken;
     
-    private List symmetricBindings = new ArrayList();
+    private List symmetricBindings = null;
     
     /**
      * @return Returns the encryptionToken.
@@ -91,28 +91,33 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
         this.signatureToken = signatureToken;
     }
     
-    public Iterator getOptions() {
-        return symmetricBindings.iterator();
+    public List getConfigurations() {
+        return symmetricBindings;
     }
     
-    public void addOption(SymmetricBinding symmetricBinding) {
+    public SymmetricBinding getDefaultConfiguration() {
+        if (symmetricBindings != null) {
+            return (SymmetricBinding) symmetricBindings.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(SymmetricBinding symmetricBinding) {
+        if (symmetricBindings == null) {
+            symmetricBindings = new ArrayList();
+        }
         symmetricBindings.add(symmetricBinding);
     }
 
     public QName getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return Constants.SYMMETRIC_BINDING;
     }
 
     public PolicyComponent normalize() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO Auto-generated method stub
-        
+        throw new UnsupportedOperationException();        
     }
-    
-    
 }

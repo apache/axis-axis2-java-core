@@ -46,10 +46,13 @@ public class TransportBindingBuilder implements AssertionBuilder {
             processAlternative((List) iterator.next(), transportBinding, factory);
         }
         
-        
         return transportBinding;
     }
     
+    public QName getKnownElement() {
+        return Constants.TRANSPORT_BINDING;
+    }
+
     private void processAlternative(List assertionList, TransportBinding parent, AssertionBuilderFactory factory) {
         TransportBinding transportBinding = new TransportBinding();
         
@@ -77,6 +80,6 @@ public class TransportBindingBuilder implements AssertionBuilder {
                 transportBinding.setSignedEndorsingSupportingTokens((SupportingToken) primitive);
             }
         }
-        parent.addOption(transportBinding);
+        parent.addConfiguration(transportBinding);
     }
 }

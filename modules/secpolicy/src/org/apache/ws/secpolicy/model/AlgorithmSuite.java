@@ -370,11 +370,18 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
         xPath = path;
     }
     
-    public List getOptions() {
+    public List getConfigurations() {
         return algorithmSuites;
     }
     
-    public void addOption(AlgorithmSuite algorithmSuite) {
+    public AlgorithmSuite getDefaultConfiguration() {
+        if (algorithmSuites != null) {
+            return (AlgorithmSuite) algorithmSuites.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(AlgorithmSuite algorithmSuite) {
         if (algorithmSuites == null) {
             algorithmSuites = new ArrayList();
         }

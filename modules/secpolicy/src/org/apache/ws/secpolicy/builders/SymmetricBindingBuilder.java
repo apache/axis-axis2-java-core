@@ -23,48 +23,49 @@ import javax.xml.namespace.QName;
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
-import org.apache.neethi.Policy;
-import org.apache.neethi.PolicyEngine;
-import org.apache.neethi.XmlPrimtiveAssertion;
 import org.apache.neethi.builders.AssertionBuilder;
 import org.apache.ws.secpolicy.Constants;
-import org.apache.ws.secpolicy.model.HttpsToken;
-import org.apache.ws.secpolicy.model.TransportToken;
+import org.apache.ws.secpolicy.model.EncryptionToken;
+import org.apache.ws.secpolicy.model.ProtectionToken;
+import org.apache.ws.secpolicy.model.SignatureToken;
+import org.apache.ws.secpolicy.model.SymmetricBinding;
 
-public class TransportTokenBuilder implements AssertionBuilder {
-    
-   
-    
+public class SymmetricBindingBuilder implements AssertionBuilder {
+
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
-        TransportToken transportToken = new TransportToken();
+        SymmetricBinding symmetricBinding = new SymmetricBinding();
         
-        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
-        policy = (Policy) policy.normalize(false);
         
-        for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
-            processAlternative((List) iterator.next(), transportToken);
-        }
-        
-        return transportToken;
+        return symmetricBinding;
     }
-        
+
     public QName getKnownElement() {
-        return Constants.TRANSPORT_TOKEN;
+        return Constants.SYMMETRIC_BINDING;
     }
     
-    private void processAlternative(List assertions, TransportToken parent) {
-        TransportToken transportToken = new TransportToken();
+    private void processAlternatives(List assertions, SymmetricBinding parent) {
+        SymmetricBinding symmetricBinding = new SymmetricBinding();
+        
+        Assertion assertion;
+        QName name;
         
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
-            XmlPrimtiveAssertion primtive = (XmlPrimtiveAssertion) iterator.next();
-            QName qname = primtive.getName();
+            assertion = (Assertion) iterator.next();
+            name = assertion.getName();
             
-            if (Constants.HTTPS_TOKEN.equals(qname)) {
-                HttpsToken httpsToken = new HttpsToken();
-                transportToken.setTransportToken(httpsToken);
+            if (Constants.ENCRYPTION_TOKEN.equals(name)) {
+                symmetricBinding.setEncryptionToken((EncryptionToken) assertion);
+                
+            } else if (Constants.SIGNATURE_TOKEN.equals(name)) {
+                symmetricBinding.setSignatureToken((SignatureToken) assertion);
+                
+            } else if (Constants.PROTECTION_TOKEN.equals(name)) {
+                symmetricBinding.setProtectionToken((ProtectionToken) assertion);
+                
             }
         }
         
-        parent.addConfiguration(transportToken);
+        parent.addConfiguration(symmetricBinding);
+        
     }
 }

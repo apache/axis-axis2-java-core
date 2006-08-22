@@ -30,8 +30,8 @@ import org.apache.ws.secpolicy.model.SignedEncryptedParts;
 
 public class SignedPartsBuilder implements AssertionBuilder {
     public static final QName HEADER = new QName(Constants.SP_NS, "Header");
-    public static final QName NAME = new QName(Constants.SP_NS, "Name");
-    public static final QName NAMESPACE = new QName(Constants.SP_NS, "Namespace");
+    public static final QName NAME = new QName("Name");
+    public static final QName NAMESPACE = new QName("Namespace");
     public static final QName BODY = new QName(Constants.SP_NS, "Body");
         
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
@@ -43,7 +43,11 @@ public class SignedPartsBuilder implements AssertionBuilder {
         
         return signedEncryptedParts;
     }
-    
+       
+    public QName getKnownElement() {
+        return Constants.SIGNED_PARTS;
+    }
+
     private void processElement(OMElement element, SignedEncryptedParts parent) {
         
         QName name = element.getQName();
@@ -56,6 +60,8 @@ public class SignedPartsBuilder implements AssertionBuilder {
             
             OMAttribute namespaceAttribute = element.getAttribute(NAMESPACE);
             header.setNamespace(namespaceAttribute.getAttributeValue());
+            
+            parent.addHeader(header);
             
         } else if (BODY.equals(name)) {
             parent.setBody(true);            

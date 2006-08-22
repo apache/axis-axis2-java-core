@@ -16,15 +16,20 @@
 
 package org.apache.ws.secpolicy.model;
 
-import org.apache.neethi.PolicyComponent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.secpolicy.Constants;
+
 public class RecipientToken extends AbstractSecurityAssertion implements TokenWrapper {
     
     private Token receipientToken;
+    private ArrayList recipientTokens = null;
 
     /**
      * @return Returns the receipientToken.
@@ -39,6 +44,24 @@ public class RecipientToken extends AbstractSecurityAssertion implements TokenWr
     public void setReceipientToken(Token receipientToken) {
         this.receipientToken = receipientToken;
     }
+    
+    public List getConfigurations() {
+        return recipientTokens;
+    }
+    
+    public RecipientToken getDefaultConfiguration() {
+        if (recipientTokens != null) {
+            return (RecipientToken) recipientTokens.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(RecipientToken recipientToken) {
+        if (recipientTokens == null) {
+            recipientTokens = new ArrayList();
+        }
+        recipientTokens.add(recipientToken);
+    }
 
     /* (non-Javadoc)
      * @see org.apache.ws.security.policy.TokenWrapper#setToken(org.apache.ws.security.policy.Token)
@@ -47,29 +70,15 @@ public class RecipientToken extends AbstractSecurityAssertion implements TokenWr
         this.setReceipientToken(tok);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#getName()
-     */
     public QName getName() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        return Constants.RECIPIENT_TOKEN;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#normalize()
-     */
     public PolicyComponent normalize() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        throw new UnsupportedOperationException();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.PolicyComponent#serialize(javax.xml.stream.XMLStreamWriter)
-     */
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
-    }
-    
-    
+        throw new UnsupportedOperationException();
+    }    
 }

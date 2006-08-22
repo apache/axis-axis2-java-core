@@ -61,7 +61,11 @@ public class UsernameTokenBuilder implements AssertionBuilder {
         
         return usernameToken;
     }
-    
+        
+    public QName getKnownElement() {
+        return Constants.USERNAME_TOKEN;
+    }
+
     private void processAlternative(List assertions, UsernameToken parent) {
         UsernameToken usernameToken = new UsernameToken();
         usernameToken.setInclusion(parent.getInclusion());
@@ -77,6 +81,6 @@ public class UsernameTokenBuilder implements AssertionBuilder {
                 usernameToken.setUseUTProfile11(true);
             }
         }
-        parent.addOption(usernameToken);
+        parent.addConfiguration(usernameToken);
     }
 }

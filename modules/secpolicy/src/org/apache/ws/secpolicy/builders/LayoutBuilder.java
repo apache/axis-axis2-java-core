@@ -49,6 +49,10 @@ public class LayoutBuilder implements AssertionBuilder {
         return layout;
     }
     
+    public QName getKnownElement() {
+        return Constants.LAYOUT;
+    }
+
     public void processAlternative(List assertions, Layout parent) {
         Layout layout = new Layout();
         
@@ -67,7 +71,7 @@ public class LayoutBuilder implements AssertionBuilder {
             }
             
         }
-        parent.addOption(layout);
+        parent.addCofiguration(layout);
     }
 
 }

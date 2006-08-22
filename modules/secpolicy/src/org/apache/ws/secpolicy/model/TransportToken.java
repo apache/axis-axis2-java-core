@@ -48,11 +48,18 @@ public class TransportToken implements Assertion {
         this.transportToken = transportToken;
     }
     
-    public Iterator getOptions() {
+    public Iterator getConfigurations() {
         return transportTokens.iterator();
     }
     
-    public void addOption(TransportToken transportToken) {
+    public TransportToken getDefaultConfiguration() {
+        if (transportTokens != null) {
+            return (TransportToken) transportTokens.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(TransportToken transportToken) {
         transportTokens.add(transportToken);
     }
 
@@ -61,13 +68,11 @@ public class TransportToken implements Assertion {
     }
 
     public boolean isOptional() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     public PolicyComponent normalize() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public short getType() {
@@ -75,7 +80,7 @@ public class TransportToken implements Assertion {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException();
         
     }
     

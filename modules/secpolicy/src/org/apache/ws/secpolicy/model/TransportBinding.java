@@ -46,11 +46,18 @@ public class TransportBinding extends Binding {
         this.transportToken = transportToken;
     }
     
-    public List getOptions() {
+    public List getConfigurations() {
         return transportBindings;
     }
     
-    public void addOption(TransportBinding transportBinding) {
+    public TransportBinding getDefaultConfiguration() {
+        if (transportBindings != null) {
+            return (TransportBinding) transportBindings.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(TransportBinding transportBinding) {
         if (transportBindings == null) {
             transportBindings = new ArrayList();
         }

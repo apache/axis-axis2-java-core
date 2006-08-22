@@ -46,11 +46,18 @@ public class UsernameToken extends Token {
         this.useUTProfile11 = useUTProfile11;
     }
     
-    public List getOptions() {
+    public List getConfigurations() {
         return usernameTokens;
     }
     
-    public void addOption(UsernameToken usernameToken) {
+    public UsernameToken getDefaultConfiguration() {
+        if (usernameTokens != null) {
+            return (UsernameToken) usernameTokens.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(UsernameToken usernameToken) {
         if (usernameTokens == null) {
             usernameTokens= new ArrayList();
         }

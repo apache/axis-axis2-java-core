@@ -58,7 +58,11 @@ public class SupportingTokensBuilder implements AssertionBuilder {
         
         return supportingToken;
     }
-    
+   
+    public QName getKnownElement() {
+        return Constants.SUPPORIING_TOKENS;
+    }
+
     private void processAlternative(List assertions, SupportingToken parent) {
         SupportingToken supportingToken = new SupportingToken(parent.getTokenType());
         

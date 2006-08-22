@@ -17,7 +17,6 @@
 package org.apache.ws.secpolicy.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -51,11 +50,18 @@ public class HttpsToken extends Token {
         this.httpsToken = httpsToken;
     }
     
-    public Iterator getOptions() {
-        return httpsTokens.iterator();
+    public List getConfigurations() {
+        return httpsTokens;
     }
     
-    public void addOption(HttpsToken httpsToken) {
+    public HttpsToken getDefaultConfiguration() {
+        if (httpsTokens != null) {
+            return (HttpsToken) httpsTokens.get(0);
+        }
+        return null;
+    }
+        
+    public void addConfiguration(HttpsToken httpsToken) {
         httpsTokens.add(httpsToken);
     }
 

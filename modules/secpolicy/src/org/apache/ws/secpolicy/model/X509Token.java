@@ -39,7 +39,7 @@ public class X509Token extends Token {
     
     private String tokenVersionAndType;
     
-    private List x509Tokens = new ArrayList();
+    private List x509Tokens = null;
     
     /**
      * @return Returns the requireEmbeddedTokenReference.
@@ -113,11 +113,23 @@ public class X509Token extends Token {
         this.tokenVersionAndType = tokenVersionAndType;
     }
     
-    public Iterator getOptions() {
+    public Iterator getConfigurations() {
         return x509Tokens.iterator();
     }
     
-    public void addOption(X509Token token) {
+    public X509Token getDefualtConfiguration() {
+        
+        if (x509Tokens != null) {
+            return (X509Token) x509Tokens.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(X509Token token) {
+        
+        if (x509Tokens == null) {
+            x509Tokens = new ArrayList();
+        }
         x509Tokens.add(token);
     }
 
@@ -132,7 +144,5 @@ public class X509Token extends Token {
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
-    
-    
-    
+       
 }

@@ -152,6 +152,8 @@ public class Constants {
     public final static String STRT10 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#STR-Transform";
     
     
+    
+    
     public static final QName INCLUDE_TOKEN = new QName(SP_NS, "IncludeToken");
     
     public static final QName TRANSPORT_BINDING = new QName(SP_NS, "TransportBinding");
@@ -166,6 +168,8 @@ public class Constants {
         
     public static final QName HTTPS_TOKEN = new QName(Constants.SP_NS, "HttpsToken");
     
+    public static final QName SIGNATURE_TOKEN = new QName(Constants.SP_NS, "SignatureToken");
+        
     public static final QName SIGNED_PARTS = new QName(Constants.SP_NS, "SignedParts");
     
     public static final QName USERNAME_TOKEN = new QName(Constants.SP_NS, "UsernameToken");
@@ -180,6 +184,8 @@ public class Constants {
     
     public static final QName ENCRYPTED_ELEMENTS = new QName(Constants.SP_NS, "EncryptedElements");
     
+    public static final QName ENCRYPTION_TOKEN = new QName(Constants.SP_NS, "EncryptionToken");
+        
     public static final QName X509_TOKEN = new QName(Constants.SP_NS, "X509Token");
     
     public static final QName SUPPORIING_TOKENS = new QName(Constants.SP_NS, "SupportingTokens");
@@ -195,6 +201,53 @@ public class Constants {
     public static final QName ASYMMETRIC_BINDING = new QName(Constants.SP_NS, "AsymmetricBinding");
     
     public static final QName SYMMETRIC_BINDING = new QName(Constants.SP_NS, "SymmetricBinding");
+    
+    public static final QName INITIATOR_TOKEN = new QName(Constants.SP_NS, "InitiatorToken");
+    
+    public static final QName RECIPIENT_TOKEN = new QName(Constants.SP_NS, "RecipientToken");
+    
+    public static final QName REQUIRE_KEY_IDENTIFIRE_REFERENCE = new QName(Constants.SP_NS, "RequireKeyIdentifireReference");
+    
+    public static final QName REQUIRE_ISSUER_SERIAL_REFERENCE = new QName(Constants.SP_NS, "RequireIssuerSerializerReference");
+    
+    public static final QName REQUIRE_EMBEDDED_TOKEN_REFERENCE = new QName(Constants.SP_NS, "RequireEmbeddedTokenReference");
+    
+    public static final QName REQUIRE_THUMBPRINT_REFERENCE = new QName(Constants.SP_NS, "RequireThumbprintReference");
+    
+    public static final QName WSS_X509_V1_TOKEN_10 = new QName(Constants.SP_NS, "WssX509V1Token10");
+    
+    public static final QName WSS_X509_V3_TOKEN_10 = new QName(Constants.SP_NS, "WssX509V3Token10");
+    
+    public static final QName WSS_X509_PKCS7_TOKEN_10 = new QName(Constants.SP_NS, "WssX509Pkcs7Token10");
+    
+    public static final QName WSS_X509_PKI_PATH_V1_TOKEN_10 = new QName(Constants.SP_NS, "WssX509PkiPathV1Token10");
+    
+    public static final QName WSS_X509_V1_TOKEN_11 = new QName(Constants.SP_NS, "WssX509V1Token11");
+    
+    public static final QName WSS_X509_V3_TOKEN_11 = new QName(Constants.SP_NS, "WssX509V3Token11");
+    
+    public static final QName WSS_X509_PKCS7_TOKEN_11 = new QName(Constants.SP_NS, "WssX509Pkcs7Token11");
+    
+    public static final QName WSS_X509_PKI_PATH_V1_TOKEN_11 = new QName(Constants.SP_NS, "WssX509PkiPathV1Token11");
+    
+    public static final QName WSS10 = new QName(Constants.SP_NS, "Wss10");
+    
+    public static final QName MUST_SUPPORT_REF_KEY_IDENTIFIER = new QName(Constants.SP_NS, "MustSupportRefKeyIdentifier");
+    
+    public static final QName MUST_SUPPORT_REF_ISSUER_SERIAL = new QName(Constants.SP_NS, "MustSupportRefIssuerSerail");
+    
+    public static final QName MUST_SUPPORT_REF_EXTERNAL_URI = new QName(Constants.SP_NS, "MustSupportRefExternalURI");
+    
+    public static final QName MUST_SUPPORT_REF_EMBEDDED_TOKEN = new QName(Constants.SP_NS, "MustSupportRefEmbeddedToken");
         
+    public static final QName WSS11 = new QName(Constants.SP_NS, "Wss11");    
+    
+    public static final QName MUST_SUPPORT_REF_THUMBPRINT = new QName(Constants.SP_NS, "MustSupportRefThumbprint");
+    
+    public static final QName MUST_SUPPORT_REF_ENCRYPTED_KEY = new QName(Constants.SP_NS, "MustSupportRefEncryptedkey");
+    
+    public static final QName REQUIRE_SIGNATURE_CONFIRMATION = new QName(Constants.SP_NS, "RequireSignatureConfirmation");
+    
 }
+
 

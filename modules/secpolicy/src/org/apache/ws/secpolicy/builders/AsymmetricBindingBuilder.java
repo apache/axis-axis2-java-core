@@ -15,16 +15,79 @@
  */
 package org.apache.ws.secpolicy.builders;
 
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.builders.AssertionBuilder;
+import org.apache.ws.secpolicy.Constants;
+import org.apache.ws.secpolicy.model.AlgorithmSuite;
+import org.apache.ws.secpolicy.model.AsymmetricBinding;
+import org.apache.ws.secpolicy.model.InitiatorToken;
+import org.apache.ws.secpolicy.model.Layout;
+import org.apache.ws.secpolicy.model.RecipientToken;
 
 public class AsymmetricBindingBuilder implements AssertionBuilder {
 
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
-        return null;
         
+        AsymmetricBinding asymmetricBinding =  new AsymmetricBinding();
+        
+        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
+        policy = (Policy) policy.normalize(false);
+        
+        for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
+            processAlternative((List) iterator.next(), asymmetricBinding);
+        }
+        
+        return asymmetricBinding;
+    }
+    
+    private void processAlternative(List assertions, AsymmetricBinding parent) {
+        AsymmetricBinding asymmetricBinding = new AsymmetricBinding();
+        
+        Assertion assertion;
+        QName name;
+        
+        for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
+            assertion = (Assertion) iterator.next();
+            name = assertion.getName();
+            
+            if (Constants.INITIATOR_TOKEN.equals(name)) {
+                asymmetricBinding.setInitiatorToken((InitiatorToken) assertion);
+                
+            } else if (Constants.RECIPIENT_TOKEN.equals(name)){
+                asymmetricBinding.setRecipientToken((RecipientToken) assertion);
+                
+            } else if (Constants.ALGORITHM_SUITE.equals(name)) {
+                asymmetricBinding.setAlgorithmSuite((AlgorithmSuite) assertion);
+            
+            } else if (Constants.LAYOUT.equals(name)) {
+                asymmetricBinding.setLayout((Layout) assertion);
+                
+            } else if (Constants.INCLUDE_TIMESTAMP.equals(name)) {
+                asymmetricBinding.setIncludeTimestamp(true);
+                
+            } else if (Constants.ENCRYPT_BEFORE_SIGNING.equals(name)) {
+                asymmetricBinding.setProtectionOrder(Constants.ENCRYPT_BEFORE_SIGNING);
+                
+            } else if (Constants.SIGN_BEFORE_ENCRYPTING.equals(name)) {
+                asymmetricBinding.setProtectionOrder(Constants.SIGN_BEFORE_ENCRYPTING);
+            }  
+        }
+                
+        parent.addConfiguration(asymmetricBinding);
+    }
+    
+    public QName getKnownElement() {
+        return Constants.ASYMMETRIC_BINDING;
     }
     
 }
+ 

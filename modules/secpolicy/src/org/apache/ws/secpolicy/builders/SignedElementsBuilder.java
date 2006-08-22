@@ -47,7 +47,11 @@ public class SignedElementsBuilder implements AssertionBuilder {
         
         return signedEncryptedElements;
     }
-    
+        
+    public QName getKnownElement() {
+        return Constants.SIGNED_ELEMENTS;
+    }
+
     private void processElement(OMElement element, SignedEncryptedElements parent) {
         QName name = element.getQName();
         if (XPATH.equals(name)) {

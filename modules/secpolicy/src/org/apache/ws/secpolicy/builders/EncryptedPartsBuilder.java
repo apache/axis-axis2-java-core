@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.ws.secpolicy.builders;
 
 import java.util.Iterator;
@@ -28,7 +29,7 @@ import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.Header;
 import org.apache.ws.secpolicy.model.SignedEncryptedParts;
 
-public class EncryptedPartsBuilders implements AssertionBuilder {
+public class EncryptedPartsBuilder implements AssertionBuilder {
 
     public static final QName HEADER = new QName(Constants.SP_NS, "Header");
     public static final QName NAME = new QName(Constants.SP_NS, "Name");
@@ -46,6 +47,10 @@ public class EncryptedPartsBuilders implements AssertionBuilder {
         return signedEncryptedParts;
     }
     
+    public QName getKnownElement() {
+        return Constants.ENCRYPTED_PARTS;
+    }
+
     private void processElement(OMElement element, SignedEncryptedParts parent) {
         
         QName name = element.getQName();

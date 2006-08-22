@@ -16,13 +16,19 @@
 
 package org.apache.ws.secpolicy.model;
 
-import org.apache.neethi.PolicyComponent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.secpolicy.Constants;
+
 public class InitiatorToken extends AbstractSecurityAssertion implements TokenWrapper {
+    
+    private ArrayList initiatorTokens = null;
     
     private Token initiatorToken;
 
@@ -46,30 +52,39 @@ public class InitiatorToken extends AbstractSecurityAssertion implements TokenWr
     public void setToken(Token tok) {
         this.setInitiatorToken(tok);
     }
+    
+    public List getConfigurations() {
+        return initiatorTokens;
+    }
+    
+    public InitiatorToken getDefaultConfiguration() {
+        if (initiatorTokens != null) {
+            return (InitiatorToken) initiatorTokens.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(InitiatorToken initiatorToken) {
+        
+        if (initiatorTokens == null) {
+           initiatorTokens = new ArrayList();
+       }
+       initiatorTokens.add(initiatorToken);
+    }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#getName()
-     */
     public QName getName() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        return Constants.INITIATOR_TOKEN;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#normalize()
-     */
     public PolicyComponent normalize() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        throw new UnsupportedOperationException();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.PolicyComponent#serialize(javax.xml.stream.XMLStreamWriter)
-     */
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        throw new UnsupportedOperationException();
     }
+    
+    
     
     
 }

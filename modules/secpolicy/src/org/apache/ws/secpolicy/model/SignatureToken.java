@@ -16,13 +16,7 @@
 
 package org.apache.ws.secpolicy.model;
 
-import org.apache.neethi.PolicyComponent;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-public class SignatureToken extends AbstractSecurityAssertion implements TokenWrapper {
+public class SignatureToken implements TokenWrapper {
 
     private Token signatureToken;
 
@@ -45,30 +39,6 @@ public class SignatureToken extends AbstractSecurityAssertion implements TokenWr
      */
     public void setToken(Token tok) {
         this.setSignatureToken(tok);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#getName()
-     */
-    public QName getName() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#normalize()
-     */
-    public PolicyComponent normalize() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.neethi.PolicyComponent#serialize(javax.xml.stream.XMLStreamWriter)
-     */
-    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
     }
     
     

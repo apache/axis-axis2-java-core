@@ -17,7 +17,6 @@
 package org.apache.ws.secpolicy.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -60,11 +59,18 @@ public class AsymmetricBinding extends SymmetricAsymmetricBindingBase {
         this.recipientToken = recipientToken;
     }
     
-    public Iterator getOptions() {
-        return asymmetricBindings.iterator();
+    public List getConfigurations() {
+        return asymmetricBindings;
     }
     
-    public void addOption(AsymmetricBinding asymmetricBinding) {
+    public AsymmetricBinding getDefaultConfiguration() {
+        if (asymmetricBindings != null) {
+            return (AsymmetricBinding) asymmetricBindings.get(0);
+        }
+        return null;
+    }
+    
+    public void addConfiguration(AsymmetricBinding asymmetricBinding) {
         asymmetricBindings.add(asymmetricBinding);
     }
     public QName getName() {

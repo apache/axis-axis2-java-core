@@ -16,12 +16,24 @@
 
 package org.apache.ws.secpolicy.model;
 
-public class Wss10 {
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.secpolicy.Constants;
+
+public class Wss10 extends AbstractSecurityAssertion {
     
     private boolean mustSupportRefKeyIdentifier;
     private boolean MustSupportRefIssuerSerial;
     private boolean MustSupportRefExternalURI;
     private boolean MustSupportRefEmbeddedToken;
+    
+    private ArrayList wss10s = null;
     
     /**
      * @return Returns the mustSupportRefEmbeddedToken.
@@ -72,4 +84,33 @@ public class Wss10 {
         this.mustSupportRefKeyIdentifier = mustSupportRefKeyIdentifier;
     }
     
+    public List getConfiguration() {
+        return wss10s;
+    }
+    
+    public Wss10 getDefaultConfiguration() {
+        if (wss10s != null) {
+            wss10s = new ArrayList();
+        }
+        return null;
+    }
+    
+    public void addConfiguration(Wss10 wss10) {
+        if (wss10s == null) {
+            wss10s = new ArrayList();
+        }
+        wss10s.add(wss10);
+    }
+    
+    public QName getName() {
+        return Constants.WSS10;
+    }
+    
+    public PolicyComponent normalize() {
+        throw new UnsupportedOperationException();
+    }
+    
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -53,11 +53,18 @@ public class Layout extends AbstractSecurityAssertion  {
              }
     }
     
-    public List getOptions() {
+    public List getConfigurations() {
         return layouts;
     }
     
-    public void addOption(Layout layout) {
+    public Layout getDefaultConfiguration() {
+        if (layouts != null) {
+            return (Layout) layouts.get(0);
+        }
+        return null;
+    }
+    
+    public void addCofiguration(Layout layout) {
         if (layouts == null) {
             layouts = new ArrayList();
         }
