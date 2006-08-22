@@ -220,17 +220,17 @@ public class PhasesInfo {
     }
 
     public ArrayList getOperationOutFaultPhases() throws DeploymentException {
-        ArrayList oprationOUT_FaultPhases = new ArrayList();
+        ArrayList operationFaultOutPhases = new ArrayList();
         for (int i = 0; i < OUT_FaultPhases.size(); i++) {
             Phase phase = (Phase) OUT_FaultPhases.get(i);
             String phaseName = phase.getPhaseName();
-            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName)
-                    || PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
-            } else {
-                oprationOUT_FaultPhases.add(copyPhase(phase));
+            if (PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+                break;
             }
+            operationFaultOutPhases.add(copyPhase(phase));
+
         }
-        return oprationOUT_FaultPhases;
+        return operationFaultOutPhases;
     }
 
     public ArrayList getOperationOutPhases() throws DeploymentException {
