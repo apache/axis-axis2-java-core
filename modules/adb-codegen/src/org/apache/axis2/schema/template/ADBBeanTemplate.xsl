@@ -109,6 +109,9 @@
            	<xsl:variable name="maxInFacet"><xsl:value-of select="@maxInFacet"/></xsl:variable>
            	<xsl:variable name="minInFacet"><xsl:value-of select="@minInFacet"/></xsl:variable>
            	<xsl:variable name="patternFacet"><xsl:value-of select="@patternFacet"/></xsl:variable>
+            <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
+            <xsl:variable name="shortTypeName"
+               select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
             
 			
 			<xsl:choose>
@@ -222,7 +225,7 @@
 
                     <xsl:for-each select="enumFacet">
                         public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> = 
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$javaName"/>("<xsl:value-of select="@value"/>");
+                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>("<xsl:value-of select="@value"/>");
                     </xsl:for-each>
                     <xsl:for-each select="enumFacet">
                         public static final <xsl:value-of select="$name"/><xsl:text> </xsl:text><xsl:value-of select="@id"/> = 
@@ -1272,7 +1275,9 @@
                                     while (!reader.isStartElement() &amp;&amp; !reader.isEndElement()) reader.next();
                                 </xsl:otherwise>
                             </xsl:choose>
+                            <xsl:if test="not(enumFacet)">
                             if (reader.isStartElement() &amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())){
+                            </xsl:if>
                             <xsl:choose>
                                 <xsl:when test="@array">
                                     <!-- We must be a named type or element with anonymous type. -->
@@ -1476,9 +1481,9 @@
                                     </xsl:if>
                                 </xsl:otherwise>
                             </xsl:choose>
-
+                            <xsl:if test="not(enumFacet)">
                               }  // End of if for expected property start element
-
+                            </xsl:if>
                             <xsl:if test="$ordered and $min!=0">
                                 else{
                                     // A start element we are not expecting indicates an invalid parameter was passed
@@ -1497,14 +1502,16 @@
 
                         <xsl:if test="property[not(@attribute)]">  <!-- this if is needed to skip all this when there are no propoerties-->
                         <xsl:if test="$unordered">
+                          <xsl:if test="not(property/enumFacet)">
                              else{
                                         // A start element we are not expecting indicates an invalid parameter was passed
                                         throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
                              }
+                          </xsl:if>
                              } else reader.next();  <!-- At neither a start nor an end element, skip it -->
                             }  // end of while loop
-                            </xsl:if>
-                          </xsl:if>
+                        </xsl:if>
+                        </xsl:if>
 
 
             } catch (javax.xml.stream.XMLStreamException e) {

@@ -711,7 +711,7 @@ public class JavaBeanWriter implements BeanWriter {
             	XSLTUtils.addAttribute(model, "minInFacet", metainf.getMinInclusiveFacet() + "", property);
             }
             
-            if (metainf.isRestrictionBaseType(name) && !metainf.getEnumFacet().isEmpty()) {
+            if (!metainf.getEnumFacet().isEmpty()) {
                 boolean validJava = true;    // Assume all enum values are valid ids
 
                 Iterator iterator = metainf.getEnumFacet().iterator();
