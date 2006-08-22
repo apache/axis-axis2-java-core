@@ -111,7 +111,7 @@
 
             <target name="compile.all" depends="pre.compile.test">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
-                <javac debug="on">
+                <javac fork="true" memoryInitialSize="256m" memoryMaximumSize="256m" debug="on">
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <xsl:attribute name="srcdir">${src}</xsl:attribute>
                     <classpath>
@@ -124,7 +124,7 @@
             </target>
             <target name="compile.test" depends="pre.compile.test">
                 <xsl:attribute name="if">jars.ok</xsl:attribute>
-                <javac debug="on">
+                <javac fork="true" memoryInitialSize="256m" memoryMaximumSize="256m" debug="on">
                     <xsl:attribute name="destdir">${classes}</xsl:attribute>
                     <src>
                         <xsl:attribute name="path">${src}</xsl:attribute>
