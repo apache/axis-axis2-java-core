@@ -84,6 +84,8 @@ public class AxisRESTServlet extends AxisServlet {
                 (ConfigurationContext) servletContext.getAttribute(CONFIGURATION_CONTEXT);
         servletContext.setAttribute(this.getClass().getName(), this);
         this.servletConfig = config;
+
+        initParams();
     }
 
     public void init() throws ServletException {

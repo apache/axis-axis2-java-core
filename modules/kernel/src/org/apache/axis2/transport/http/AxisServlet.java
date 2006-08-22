@@ -278,26 +278,30 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             agent = new ListingAgent(configContext);
             SERVICE_PATH = configContext.getServicePath();
 
-            // do we need to enable REST in the main servlet so that it handles both REST and SOAP messages
-            Parameter parameter = axisConfiguration.getParameter(Constants.Configuration.ENABLE_REST_IN_AXIS2_MAIN_SERVLET);
-            if (parameter != null) {
-                enableRESTInAxis2MainServlet = !JavaUtils.isFalseExplicitly(parameter.getValue());
-            }
-
-            // do we need to completely disable REST support
-            parameter = axisConfiguration.getParameter(Constants.Configuration.DISABLE_REST);
-            if (parameter != null) {
-                disableREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
-            }
-
-            // Do we need to have a separate endpoint for REST
-            parameter = axisConfiguration.getParameter(Constants.Configuration.DISABLE_SEPARATE_ENDPOINT_FOR_REST);
-            if (parameter != null) {
-                disableREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
-            }
+            initParams();
 
         } catch (Exception e) {
             throw new ServletException(e);
+        }
+    }
+
+    protected void initParams() {
+        // do we need to enable REST in the main servlet so that it handles both REST and SOAP messages
+        Parameter parameter = axisConfiguration.getParameter(Constants.Configuration.ENABLE_REST_IN_AXIS2_MAIN_SERVLET);
+        if (parameter != null) {
+            enableRESTInAxis2MainServlet = !JavaUtils.isFalseExplicitly(parameter.getValue());
+        }
+
+        // do we need to completely disable REST support
+        parameter = axisConfiguration.getParameter(Constants.Configuration.DISABLE_REST);
+        if (parameter != null) {
+            disableREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
+        }
+
+        // Do we need to have a separate endpoint for REST
+        parameter = axisConfiguration.getParameter(Constants.Configuration.DISABLE_SEPARATE_ENDPOINT_FOR_REST);
+        if (parameter != null) {
+            disableSeperateEndpointForREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
         }
     }
 
