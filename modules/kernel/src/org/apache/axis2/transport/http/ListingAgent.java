@@ -86,10 +86,13 @@ public class ListingAgent extends AbstractAgent {
                 //
             }
         }
-        if (httpServletRequest.getParameter("wsdl") != null ||
-             httpServletRequest.getParameter("wsdl2") != null ||
-                httpServletRequest.getParameter("xsd") != null) {
-            processListService(httpServletRequest, httpServletResponse);
+        String query = httpServletRequest.getQueryString();
+        if (query != null) {
+            if (query.indexOf("?wsdl2") > 0 || query.indexOf("?wsdl") > 0 || query.indexOf("?xsd") > 0) {
+                processListService(httpServletRequest, httpServletResponse);
+            } else {
+                super.handle(httpServletRequest, httpServletResponse);
+            }
         } else {
             super.handle(httpServletRequest, httpServletResponse);
         }
@@ -112,7 +115,7 @@ public class ListingAgent extends AbstractAgent {
         processListServices(httpServletRequest, httpServletResponse);
     }
 
-    protected void processListService(HttpServletRequest req,
+    public void processListService(HttpServletRequest req,
                                       HttpServletResponse res)
             throws IOException, ServletException {
 
@@ -120,35 +123,14 @@ public class ListingAgent extends AbstractAgent {
         String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1,
                 filePart.length());
         HashMap services = configContext.getAxisConfiguration().getServices();
-        String wsdl = req.getParameter("wsdl");
-        String wsdl2 = req.getParameter("wsdl2");
-        String xsd = req.getParameter("xsd");
+        String query = req.getQueryString();
+        int wsdl2 = query.indexOf("wsdl2");
+        int wsdl = query.indexOf("wsdl");
+        int xsd = query.indexOf("xsd");
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(serviceName);
             if (serviceObj != null) {
-                if (wsdl != null) {
-                    OutputStream out = res.getOutputStream();
-                    res.setContentType("text/xml");
-                    int ipindex = filePart.indexOf("//");
-                    String ip = null;
-                    if (ipindex >= 0) {
-                        ip = filePart.substring(ipindex + 2, filePart.length());
-                        int seperatorIndex = ip.indexOf(":");
-                        int slashIndex = ip.indexOf("/");
-                        String port = ip.substring(seperatorIndex + 1,
-                                slashIndex);
-                        if ("http".equals(req.getScheme())) {
-                            configContext.setProperty(RUNNING_PORT, port);
-                        }
-                        if (seperatorIndex > 0) {
-                            ip = ip.substring(0, seperatorIndex);
-                        }
-                    }
-                    ((AxisService) serviceObj).printWSDL(out, ip, servicePath);
-                    out.flush();
-                    out.close();
-                    return;
-                } else if (wsdl2 != null) {
+                if (wsdl2 >=0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     int ipindex = filePart.indexOf("//");
@@ -170,7 +152,29 @@ public class ListingAgent extends AbstractAgent {
                     out.flush();
                     out.close();
                     return;
-                } else if (xsd != null) {
+                } else   if (wsdl >=0) {
+                    OutputStream out = res.getOutputStream();
+                    res.setContentType("text/xml");
+                    int ipindex = filePart.indexOf("//");
+                    String ip = null;
+                    if (ipindex >= 0) {
+                        ip = filePart.substring(ipindex + 2, filePart.length());
+                        int seperatorIndex = ip.indexOf(":");
+                        int slashIndex = ip.indexOf("/");
+                        String port = ip.substring(seperatorIndex + 1,
+                                slashIndex);
+                        if ("http".equals(req.getScheme())) {
+                            configContext.setProperty(RUNNING_PORT, port);
+                        }
+                        if (seperatorIndex > 0) {
+                            ip = ip.substring(0, seperatorIndex);
+                        }
+                    }
+                    ((AxisService) serviceObj).printWSDL(out, ip, servicePath);
+                    out.flush();
+                    out.close();
+                    return;
+                } else if (xsd >=0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     AxisService axisService = (AxisService) serviceObj;
@@ -181,9 +185,10 @@ public class ListingAgent extends AbstractAgent {
                     ArrayList schemas = axisService.getSchema();
 
                     //a name is present - try to pump the requested schema
-                    if (!"".equals(xsd)) {
+                    String xsds = req.getParameter("xsd");
+                    if (!"".equals(xsds)) {
                         XmlSchema schema =
-                                (XmlSchema) schemaMappingtable.get(xsd);
+                                (XmlSchema) schemaMappingtable.get(xsds);
                         if (schema != null) {
                             //schema is there - pump it outs
                             schema.write(out);

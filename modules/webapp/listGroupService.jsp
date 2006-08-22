@@ -33,7 +33,7 @@
     serviceName = axisService.getName();
 %><hr>
 
-<h2><font color="blue"><a href="<%=prifix + axisService.getName()%>?wsdl=1.1"><%=serviceName%></a>
+<h2><font color="blue"><a href="<%=prifix + axisService.getName()%>?wsdl"><%=serviceName%></a>
 </font></h2>
 <font color="blue">Service EPR :</font><font color="black"><%=prifix + axisService.getName()%></font>
 <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>

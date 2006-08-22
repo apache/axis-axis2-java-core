@@ -53,7 +53,7 @@
                  AxisService axisService = (AxisService) iterator.next();
                  operations = axisService.getOperations();
                  serviceName = axisService.getName();
-     %><h2><font color="blue"><a href="<%=prifix + axisService.getName()%>?wsdl=1.1"><%=serviceName%></a></font></h2>
+     %><h2><font color="blue"><a href="<%=prifix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
      <font color="blue">Service EPR : <font color="black"><%=prifix + axisService.getName()%></font><br>
          <font color="blue">Service REST epr : <font color="black"><%=restprefix + axisService.getName()%></font>
      <h4>Service Description : <font color="black"><%=axisService.getServiceDescription()%></h4>

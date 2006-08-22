@@ -127,8 +127,16 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // this method is also used to serve for the listServices request.
 
         String requestURI = req.getRequestURI();
-        System.out.println("requestURI = " + requestURI);
-        if (requestURI.endsWith(LIST_SERVICES_SUFIX)) {
+        String query = req.getQueryString();
+
+        // There can be three different request coming to this.
+        // 1. wsdl, wsdl2 and xsd requests
+        // 2. list services requests
+        // 3. REST requests.
+        if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
+                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0)) { // handling meta data exchange stuff
+            agent.processListService(req, resp);
+        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX)) { // handling list services request
             try {
                 agent.handle(req, resp);
             } catch (Exception e) {
@@ -461,6 +469,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 
         return ((soapActionHeader == null) ||
-                (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) );
+                (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
     }
 }
