@@ -25,13 +25,13 @@ import org.apache.axis2.engine.AxisConfiguration;
 
 /**
  * Every module provides an implementation of this class. Modules are in one of
- * three states: "available" and "initialized". All modules that the runtime
+ * two states: "available" or "engaged". All modules that the runtime
  * detects (from the system modules/ directory or from other means) are said to
  * be in the "available" state. If some service indicates a dependency on this
  * module then the module is initialized (once for the life of the system) and
  * the state changes to "initialized".
  * <p/>
- * <p/>Any module which is in the "initialized" state can be engaged as needed
+ * <p/>Any module which is in the "engaged" state can be engaged as needed
  * by the engine to respond to a message. Currently module engagement is done
  * via deployment (using module.xml). In the future we may engage modules
  * programmatically by introducing an engage() method to this interface, thereby
