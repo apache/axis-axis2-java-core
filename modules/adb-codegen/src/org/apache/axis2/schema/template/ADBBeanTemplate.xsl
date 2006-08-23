@@ -890,7 +890,7 @@
          /**
           * Create a prefix
           */
-          private String createPrefix() {
+          private java.lang.String createPrefix() {
                 return "ns" + (int)Math.random();
           }
         };
@@ -2101,7 +2101,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
          /**
           * Create a prefix
           */
-          private String createPrefix() {
+          private java.lang.String createPrefix() {
                 return "ns" + (int)Math.random();
           }
         };
