@@ -1150,6 +1150,12 @@ public class SchemaCompiler {
         			extBaseType,
                     className,SchemaConstants.ELEMENT_TYPE);
         }
+
+        //get the binary state and add that to the status map
+        if (isBinary(extBaseType)){
+            metaInfHolder.addtStatus(extBaseType,
+                    SchemaConstants.BINARY_TYPE);
+        }
     }
     
     /**
@@ -1532,6 +1538,16 @@ public class SchemaCompiler {
     private boolean isBinary(XmlSchemaElement elt) {
         return elt.getSchemaType()!=null &&
                 SchemaConstants.XSD_BASE64.equals(elt.getSchemaType().getQName());
+    }
+
+    /**
+     * Checks whether a given qname is a binary
+     * @param qName
+     * @return
+     */
+    private boolean isBinary(QName qName) {
+        return qName!=null &&
+                SchemaConstants.XSD_BASE64.equals(qName);
     }
 
     /**
