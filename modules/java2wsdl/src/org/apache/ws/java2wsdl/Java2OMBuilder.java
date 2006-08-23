@@ -165,6 +165,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         QName messagePartType = null;
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
+             if (!jmethod.isPublic()) {
+                continue;
+            }
 
             //Request Message
             OMElement requestMessge = fac.createOMElement(
@@ -173,15 +176,13 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     .getSimpleName()
                     + MESSAGE_SUFFIX, null);
             definitions.addChild(requestMessge);
-            
+
             // only if a type for the message part has already been defined
             if ((messagePartType = typeTable.getComplexSchemaType(jmethod
-                    .getSimpleName())) != null) 
-            {
+                    .getSimpleName())) != null) {
                 namespaceURI = messagePartType.getNamespaceURI();
                 // avoid duplicate namespaces
-                if ((namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) 
-                {
+                if ((namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
@@ -190,10 +191,10 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                         PART_ATTRIBUTE_NAME, wsdl);
                 requestMessge.addChild(requestPart);
                 requestPart.addAttribute(ATTRIBUTE_NAME, "part1", null);
-    
+
                 requestPart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                            namespacePrefix + COLON_SEPARATOR
-                                    + jmethod.getSimpleName(), null);
+                        namespacePrefix + COLON_SEPARATOR
+                                + jmethod.getSimpleName(), null);
             }
 
             // only if a type for the message part has already been defined
@@ -205,7 +206,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
-            //Response Message
+                //Response Message
                 OMElement responseMessge = fac.createOMElement(
                         MESSAGE_LOCAL_NAME, wsdl);
                 responseMessge.addAttribute(ATTRIBUTE_NAME, jmethod
@@ -214,10 +215,10 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 definitions.addChild(responseMessge);
                 OMElement responsePart = fac.createOMElement(
                         PART_ATTRIBUTE_NAME, wsdl);
-            responseMessge.addChild(responsePart);
-            responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+                responseMessge.addChild(responsePart);
+                responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
 
-            responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
+                responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
                         namespacePrefix + COLON_SEPARATOR
                                 + jmethod.getSimpleName() + RESPONSE, null);
             }
@@ -247,6 +248,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         //adding message refs
         for (int i = 0; i < method.length; i++) {
             jmethod = method[i];
+            if (!jmethod.isPublic()) {
+                continue;
+            }
             operation = fac.createOMElement(OPERATION_LOCAL_NAME, wsdl);
             portType.addChild(operation);
             operation.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName(),
@@ -314,6 +318,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
+            if (!jmethod.isPublic()) {
+                continue;
+            }
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME,
                     wsdl);
             binding.addChild(operation);
@@ -351,6 +358,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
+            if (!jmethod.isPublic()) {
+                continue;
+            }
             OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME,
                     wsdl);
             binding.addChild(operation);
