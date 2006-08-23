@@ -64,7 +64,7 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
         ofc.setSignatureKeyIdentifier(WSSHandlerConstants.BST_DIRECT_REFERENCE);
         ofc.setEncryptionKeyIdentifier(WSSHandlerConstants.SKI_KEY_IDENTIFIER);
         ofc.setEncryptionKeyTransportAlgorithm(XMLCipher.RSA_OAEP);
-        ofc.setEncryptionSymAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256);
+//        ofc.setEncryptionSymAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256);
         ofc.setPasswordCallbackClass(PWCallback.class.getName());
         ofc.setEnableSignatureConfirmation(false);
 //        ofc.setSignatureParts("{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;" +
