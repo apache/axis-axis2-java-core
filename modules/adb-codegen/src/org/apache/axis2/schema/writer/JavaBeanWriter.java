@@ -580,7 +580,7 @@ public class JavaBeanWriter implements BeanWriter {
             
             if (javaClassNameForElement == null) {
                 javaClassNameForElement = SchemaCompiler.DEFAULT_CLASS_NAME;
-                log.info(SchemaCompilerMessages
+                log.warn(SchemaCompilerMessages
                         .getMessage("schema.typeMissing", name.toString()));
             }
             

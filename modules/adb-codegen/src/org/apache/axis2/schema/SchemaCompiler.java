@@ -45,6 +45,8 @@ import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
 import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
 import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
 import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -75,7 +77,8 @@ import java.util.Properties;
  */
 public class SchemaCompiler {
 
-
+    private static final Log log = LogFactory.getLog(SchemaCompiler .class);
+  
     private CompilerOptions options;
     private HashMap processedTypemap;
 
@@ -734,6 +737,8 @@ public class SchemaCompiler {
             //however it's better if the default can be set through the
             //property file
             className = DEFAULT_CLASS_NAME;
+            log.warn(SchemaCompilerMessages
+                    .getMessage("schema.typeMissing", qName.toString()));
         }
 
         if (isArray) {
