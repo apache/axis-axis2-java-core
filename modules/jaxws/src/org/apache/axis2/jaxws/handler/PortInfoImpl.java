@@ -45,9 +45,6 @@ public class PortInfoImpl implements PortData {
 		if (bindingId == null) {
 			throw new WebServiceException(Messages.getMessage("portInfoErr2", "<null>"));
 		}
-		if (serviceEndpoint == null) {
-			throw new WebServiceException(Messages.getMessage("portInfoErr3", "<null>"));
-		}
 		this.serviceName = serviceName;
 		this.portName = portName;
 		this.bindingId = bindingId;
@@ -69,13 +66,15 @@ public class PortInfoImpl implements PortData {
 	public String getEndpointAddress(){
 		return serviceEndpoint;
 	}
-	
+
 	/* TODO:  I don't think we need the setters, let's leave the commented for now...
-	public void setServiceName(QName serviceName){
-		if (serviceName == null)
-			throw new RuntimeException("serviceName cannot be null");
-		this.serviceName = serviceName;
-	}
+
+    public void setServiceName(QName serviceName){
+        if (serviceName == null)
+            throw new RuntimeException("serviceName cannot be null");
+        this.serviceName = serviceName;
+    }
+    
 	
 	public void setPortName(QName portName){
 		if (portName == null)
@@ -106,8 +105,7 @@ public class PortInfoImpl implements PortData {
 			PortData info = (PortData) obj;
 			if (bindingId.equals(info.getBindingID())
 					&& portName.equals(info.getPortName())
-					&& serviceName.equals(info.getServiceName())
-					&& serviceEndpoint.equals(info.getEndpointAddress())) {
+					&& serviceName.equals(info.getServiceName())) {
 				return true;
 			}
 		}

@@ -107,10 +107,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr2"));
     	}
     	
-    	if (endpointAddress == null) {
-    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr1", portName.toString(), "null"));
-    	}
-    	
     	if(bindingId!=null && !(bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING))){
     		// TODO Is this the correct exception. Shouldn't this be a WebServiceException ?
