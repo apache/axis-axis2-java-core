@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import javax.jws.SOAPBinding;
+import javax.jws.soap.SOAPBinding;
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
@@ -74,7 +74,7 @@ public class EndpointInterfaceDescription {
     // Annotations and cached values
     private SOAPBinding         soapBindingAnnotation;
     // TODO: (JLB) Should this be using the jaxws annotation values or should that be wrappered?
-    private javax.jws.SOAPBinding.Style soapBindingStyle;
+    private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
 
     
     void addOperation(OperationDescription operation) {
@@ -211,13 +211,13 @@ public class EndpointInterfaceDescription {
         return soapBindingAnnotation;
     }
     
-    public javax.jws.SOAPBinding.Style getSoapBindingStyle() {
+    public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
         if (soapBindingStyle == null) {
             if (getSoapBinding() != null && getSoapBinding().style() != null) {
                 soapBindingStyle = getSoapBinding().style();
             }
             else {
-                soapBindingStyle = javax.jws.SOAPBinding.Style.DOCUMENT;
+                soapBindingStyle = javax.jws.soap.SOAPBinding.Style.DOCUMENT;
             }
         }
         return soapBindingStyle;

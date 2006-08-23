@@ -23,10 +23,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import javax.jws.Oneway;
-import javax.jws.SOAPBinding;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
+import javax.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
@@ -103,7 +103,7 @@ public class OperationDescription {
     
     private SOAPBinding         soapBindingAnnotation;
     // TODO: (JLB) Should this be using the jaxws annotation values or should that be wrappered?
-    private javax.jws.SOAPBinding.Style soapBindingStyle;
+    private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
     
     private WebMethod           webMethodAnnotation;
     private String              webMethodOperationName;
@@ -381,13 +381,13 @@ public class OperationDescription {
         return soapBindingAnnotation;
     }
     
-    public javax.jws.SOAPBinding.Style getSoapBindingStyle() {
+    public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
         if (soapBindingStyle == null) {
             if (getSoapBinding() != null && getSoapBinding().style() != null) {
                 soapBindingStyle = getSoapBinding().style();
             }
             else {
-                soapBindingStyle = javax.jws.SOAPBinding.Style.DOCUMENT;
+                soapBindingStyle = javax.jws.soap.SOAPBinding.Style.DOCUMENT;
             }
         }
         return soapBindingStyle;

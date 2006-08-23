@@ -20,10 +20,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.jws.SOAPBinding;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
-import javax.jws.SOAPBinding.Style;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 

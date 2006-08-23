@@ -18,7 +18,7 @@
 
 package org.apache.axis2.jaxws.description;
 
-import javax.jws.SOAPBinding;
+import javax.jws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
 

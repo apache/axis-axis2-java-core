@@ -16,7 +16,7 @@
  */
 package org.apache.axis2.jaxws.client.factory;
 
-import javax.jws.SOAPBinding.Style;
+import javax.jws.soap.SOAPBinding.Style;
 
 
 import org.apache.axis2.jaxws.client.proxy.BaseProxyHandler;
