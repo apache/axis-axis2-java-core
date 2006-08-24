@@ -748,8 +748,13 @@ public class ServiceClient {
      */
     public void cleanup() throws AxisFault {
         if (!createConfigCtx) {
-            configContext.getAxisConfiguration().removeServiceGroup(
-                    ((AxisServiceGroup) axisService.getParent()).getServiceGroupName());
+            String serviceGroupName = ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
+            AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
+            AxisServiceGroup asg = axisConfiguration.getServiceGroup(serviceGroupName);
+            if (asg != null) {
+                axisConfiguration.removeServiceGroup(
+                        serviceGroupName);
+            }
         }
     }
 }
