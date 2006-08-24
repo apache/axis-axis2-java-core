@@ -718,8 +718,12 @@
                             <!-- Note - Assumed to be OMElement-->
                             <xsl:value-of select="$varName"/>.serialize(xmlWriter);
                         </xsl:when>
-
-                        <!-- handle all other cases including the binary case -->
+                        <!-- handle the binary case -->
+                        <xsl:when test="@binary">
+                            org.apache.axiom.om.impl.llom.OMTextImpl binaryTextNode = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                            binaryTextNode.internalSerializeAndConsume(xmlWriter);
+                        </xsl:when>
+                        <!-- handle all other cases -->
                          <xsl:otherwise>
 			 		namespace = "<xsl:value-of select="$namespace"/>";
 
@@ -741,8 +745,6 @@
 						xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
 					}
 
-				<!-- TODO remove the following line -->
-                            //xmlWriter.writeStartElement("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                             xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                             xmlWriter.writeEndElement();
                         </xsl:otherwise>
