@@ -78,6 +78,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private String elementFormDefault = null;
 
     private ArrayList excludeMethods = new ArrayList();
+    
+    private ArrayList extraClasses = null;
 
     public SchemaGenerator(ClassLoader loader, String className,
                            String schematargetNamespace, String schematargetNamespacePrefix)
@@ -101,7 +103,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
         } else {
             this.schema_namespace_prefix = SCHEMA_NAMESPACE_PRFIX;
         }
-        //initializeSchemaMap(this.schemaTargetNameSpace, this.schema_namespace_prefix);
     }
 
     /**
@@ -120,8 +121,13 @@ public class SchemaGenerator implements Java2WSDLConstants {
         //it can posible to add the classLoader as well
         jam_service_parms.addClassLoader(classLoader);
         jam_service_parms.includeClass(className);
+        
+        for ( int count = 0 ; count < getExtraClasses().size() ; ++count )
+        {
+            jam_service_parms.includeClass((String)getExtraClasses().get(count));
+        }
         JamService service = factory.createService(jam_service_parms);
-
+        QName extraSchemaTypeName = null;
         JamClassIterator jClassIter = service.getClasses();
         //all most all the time the ittr will have only one class in it
         while (jClassIter.hasNext()) {
@@ -129,70 +135,82 @@ public class SchemaGenerator implements Java2WSDLConstants {
             // serviceName = jclass.getSimpleName();
             //todo in the future , when we support annotation we can use this
             //JAnnotation[] annotations = jclass.getAnnotations();
-
-            /**
-             * Schema genertaion done in two stage 1. Load all the methods and
-             * create type for methods parameters (if the parameters are Bean
-             * then it will create Complex types for those , and if the
-             * parameters are simple type which decribe in SimpleTypeTable
-             * nothing will happen) 2. In the next stage for all the methods
-             * messages and port types will be creteated
-             */
-            methods = jclass.getDeclaredMethods();
-            //short the elements in the array
-            Arrays.sort(methods);
-
-            // since we do not support overload
-            HashMap uniqueMethods = new HashMap();
-            XmlSchemaComplexType methodSchemaType;
-            XmlSchemaSequence sequence = null;
-
-            for (int i = 0; i < methods.length; i++) {
-                JMethod jMethod = methods[i];
-                String methodName = methods[i].getSimpleName();
-                // no need to think abt this method , since that is system
-                // config method
-                if (excludeMethods.contains(jMethod.getSimpleName())) {
-                    continue;
+            
+            if ( jclass.getQualifiedName().equals(className) )
+            {
+                /**
+                 * Schema genertaion done in two stage 1. Load all the methods and
+                 * create type for methods parameters (if the parameters are Bean
+                 * then it will create Complex types for those , and if the
+                 * parameters are simple type which decribe in SimpleTypeTable
+                 * nothing will happen) 2. In the next stage for all the methods
+                 * messages and port types will be creteated
+                 */
+                methods = jclass.getDeclaredMethods();
+                //short the elements in the array
+                Arrays.sort(methods);
+    
+                // since we do not support overload
+                HashMap uniqueMethods = new HashMap();
+                XmlSchemaComplexType methodSchemaType;
+                XmlSchemaSequence sequence = null;
+    
+                for (int i = 0; i < methods.length; i++) {
+                    JMethod jMethod = methods[i];
+                    String methodName = methods[i].getSimpleName();
+                    // no need to think abt this method , since that is system
+                    // config method
+                    if (excludeMethods.contains(jMethod.getSimpleName())) {
+                        continue;
+                    }
+    
+                    if (uniqueMethods.get(jMethod.getSimpleName()) != null) {
+                        throw new Exception(
+                                " Sorry we don't support methods overloading !!!! ");
+                    }
+    
+                    if (!jMethod.isPublic()) {
+                        // no need to generate Schema for non public methods
+                        continue;
+                    }
+                    uniqueMethods.put(jMethod.getSimpleName(), jMethod);
+                    //create the schema type for the method wrapper
+    
+                    uniqueMethods.put(jMethod.getSimpleName(), jMethod);
+                    JParameter [] paras = jMethod.getParameters();
+                    String parameterNames [] = null;
+                    if (paras.length > 0) {
+                        parameterNames = methodTable.getParameterNames(methodName);
+                        sequence = new XmlSchemaSequence();
+    
+                        methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName());
+                        methodSchemaType.setParticle(sequence);
+                    }
+    
+                    for (int j = 0; j < paras.length; j++) {
+                        JParameter methodParameter = paras[j];
+                        JClass paraType = methodParameter.getType();
+                        generateSchemaForType(sequence, paraType,
+                                (parameterNames != null && parameterNames[j] != null) ? parameterNames[j] : methodParameter.getSimpleName());
+                    }
+                    // for its return type
+                    JClass returnType = jMethod.getReturnType();
+    
+                    if (!returnType.isVoidType()) {
+                        methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName() + RESPONSE);
+                        sequence = new XmlSchemaSequence();
+                        methodSchemaType.setParticle(sequence);
+                        generateSchemaForType(sequence, returnType, "return");
+                    }
                 }
-
-                if (uniqueMethods.get(jMethod.getSimpleName()) != null) {
-                    throw new Exception(
-                            " Sorry we don't support methods overloading !!!! ");
-                }
-
-                if (!jMethod.isPublic()) {
-                    // no need to generate Schema for non public methods
-                    continue;
-                }
-                uniqueMethods.put(jMethod.getSimpleName(), jMethod);
-                //create the schema type for the method wrapper
-
-                uniqueMethods.put(jMethod.getSimpleName(), jMethod);
-                JParameter [] paras = jMethod.getParameters();
-                String parameterNames [] = null;
-                if (paras.length > 0) {
-                    parameterNames = methodTable.getParameterNames(methodName);
-                    sequence = new XmlSchemaSequence();
-
-                    methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName());
-                    methodSchemaType.setParticle(sequence);
-                }
-
-                for (int j = 0; j < paras.length; j++) {
-                    JParameter methodParameter = paras[j];
-                    JClass paraType = methodParameter.getType();
-                    generateSchemaForType(sequence, paraType,
-                            (parameterNames != null && parameterNames[j] != null) ? parameterNames[j] : methodParameter.getSimpleName());
-                }
-                // for its return type
-                JClass returnType = jMethod.getReturnType();
-
-                if (!returnType.isVoidType()) {
-                    methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName() + RESPONSE);
-                    sequence = new XmlSchemaSequence();
-                    methodSchemaType.setParticle(sequence);
-                    generateSchemaForType(sequence, returnType, "return");
+            }
+            else
+            {
+                //generate the schema type for extra classes
+                extraSchemaTypeName = typeTable.getSimpleSchemaTypeName(jclass.getQualifiedName());
+                if (extraSchemaTypeName == null) 
+                {
+                    extraSchemaTypeName = generateSchema(jclass);
                 }
             }
         }
@@ -451,6 +469,18 @@ public class SchemaGenerator implements Java2WSDLConstants {
         } else {
             return new XmlSchemaForm(XmlSchemaForm.QUALIFIED);
         }
+    }
+
+    public ArrayList getExtraClasses() {
+        if ( extraClasses == null )
+        {
+            extraClasses = new ArrayList();
+        }
+        return extraClasses;
+    }
+
+    public void setExtraClasses(ArrayList extraClasses) {
+        this.extraClasses = extraClasses;
     }
 
 }

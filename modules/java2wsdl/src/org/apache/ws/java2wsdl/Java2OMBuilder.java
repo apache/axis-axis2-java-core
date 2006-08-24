@@ -136,13 +136,12 @@ public class Java2OMBuilder implements Java2WSDLConstants {
     private void generateTypes(OMFactory fac, OMElement defintions)
             throws Exception {
         OMElement wsdlTypes = fac.createOMElement("types", wsdl);
-        StringWriter writer = new StringWriter();
-
-        // wrap the Schema elements with this start and end tags to create a
+                // wrap the Schema elements with this start and end tags to create a
         // document root
         // under which the schemas can fall into
 
         for (Iterator iterator = schemaCollection.iterator(); iterator.hasNext();) {
+            StringWriter writer = new StringWriter();
             XmlSchema xmlSchema = (XmlSchema) iterator.next();
             xmlSchema.write(writer);
             String schemaString = writer.toString();

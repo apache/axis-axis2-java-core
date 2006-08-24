@@ -45,8 +45,11 @@ public class Java2WSDL {
         System.out.println("-st <binding style> : style for the WSDL");
         System.out.println("-u <binding use> : use for the WSDL");
         System.out.println("-l <soap address> : address of the port for the WSDL");
-        System.out.println("-efd <unqualified> : Setting for elementFormDefault (defaults to qualified)");
-        System.out.println("-afd <unqualified> : Setting for attributeFormDefault (defaults to qualified)");
+        System.out.println("-efd <qualified/unqualified> : Setting for elementFormDefault (defaults to qualified)");
+        System.out.println("-afd <qualified/unqualified> : Setting for attributeFormDefault (defaults to qualified)");
+        System.out.println("-xc <extra class> : Extra class for which schematype must be generated.  " +
+                           "\t\tUse as : -xc class1 -xc class2 ...");
+        
         System.exit(0);
     }
 

@@ -99,6 +99,7 @@ public interface Java2WSDLConstants {
     String LOCATION_OPTION = "l";
     String ATTR_FORM_DEFAULT_OPTION = "afd";
     String ELEMENT_FORM_DEFAULT_OPTION = "efd";
+    String EXTRA_CLASSES_DEFAULT_OPTION = "xc";
 
     //long option constants
     String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -116,6 +117,7 @@ public interface Java2WSDLConstants {
     String AXIS2_NAMESPACE_PREFIX = "ns1";
     String ATTR_FORM_DEFAULT_OPTION_LONG = "attributeFormDefault";
     String ELEMENT_FORM_DEFAULT_OPTION_LONG = "elementFormDefault";
+    String EXTRA_CLASSES_DEFAULT_OPTION_LONG = "extraClasses";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";
 

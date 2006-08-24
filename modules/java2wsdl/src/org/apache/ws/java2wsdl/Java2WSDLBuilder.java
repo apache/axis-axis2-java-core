@@ -5,6 +5,7 @@ import org.apache.axiom.om.OMElement;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -43,6 +44,7 @@ public class Java2WSDLBuilder {
     private String style = Java2WSDLConstants.DOCUMENT;
     private String use = Java2WSDLConstants.LITERAL;
     private String locationUri = Java2WSDLConstants.DEFAULT_LOCATION_URL;
+    private ArrayList extraClasses;
 
     public String getSchemaTargetNamespace() {
         return schemaTargetNamespace;
@@ -146,6 +148,7 @@ public class Java2WSDLBuilder {
         sg.setExcludeMethods(excludeOpeartion);
         sg.setAttrFormDefault(getAttrFormDefault());
         sg.setElementFormDefault(getElementFormDefault());
+        sg.setExtraClasses(getExtraClasses());
         Collection schemaCollection = sg.generateSchema();
         Java2OMBuilder java2OMBuilder = new Java2OMBuilder(sg.getMethods(),
                 schemaCollection,
@@ -176,6 +179,14 @@ public class Java2WSDLBuilder {
 
     public void setElementFormDefault(String elementFormDefault) {
         this.elementFormDefault = elementFormDefault;
+    }
+
+    public ArrayList getExtraClasses() {
+        return extraClasses;
+    }
+
+    public void setExtraClasses(ArrayList extraClasses) {
+        this.extraClasses = extraClasses;
     }
 }
 
