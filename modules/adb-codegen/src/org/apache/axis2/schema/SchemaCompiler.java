@@ -575,7 +575,10 @@ public class SchemaCompiler {
                             (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement)
                     );
                     //remove the reference from the anon list since we named the type
-                    processedAnonymousComplexTypesMap.remove(referencedElement);
+                    // DEEPAL :- We can not remove the entry from the hashtable ,
+                    // this will fail if there are two reference for the same type
+
+                    //processedAnonymousComplexTypesMap.remove(referencedElement);
 
                     //add this to the processed ref type map
                     this.processedElementRefMap.put(referenceEltQName,findClassName(
