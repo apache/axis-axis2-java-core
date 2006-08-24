@@ -1453,18 +1453,27 @@
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
                                     if (isReaderMTOMAware
-                                      &amp;&amp;
-                                    java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY))){
-                                         //MTOM aware reader - get the datahandler directly and put it in the object
-                                         object.set<xsl:value-of select="$javaName"/>(
-                                         (javax.activation.DataHandler)reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
-                                     }else{
-                                        //Do the usual conversion
-                                        java.lang.String content = reader.getElementText();
-                                        object.set<xsl:value-of select="$javaName"/>(
-                                        org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
-
-                                     }
+                                            &amp;&amp;
+                                            java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
+                                    {
+                                        //MTOM aware reader - get the datahandler directly and put it in the object
+                                        object.setBase64Binary(
+                                                (javax.activation.DataHandler) reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
+                                    } else {
+                                        if (reader.hasText()) {
+                                            //Do the usual conversion
+                                            java.lang.String content = reader.getElementText();
+                                            object.setBase64Binary(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
+                                        } else
+                                        if (reader.getName().equals(new javax.xml.namespace.QName(org.apache.axiom.om.impl.MTOMConstants.XOP_NAMESPACE_URI, org.apache.axiom.om.impl.MTOMConstants.XOP_INCLUDE)))
+                                        {
+                                            String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
+                                            object.setBase64Binary(((org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
+                                        } else {
+                                            throw new org.apache.axiom.om.OMException("Can't find datahandler");
+                                        }
+                                    }
 
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
@@ -2425,19 +2434,27 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
                                     if (isReaderMTOMAware
-                                      &amp;&amp;
-                                    java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY))){
-                                         //MTOM aware reader - get the datahandler directly and put it in the object
-                                         object.set<xsl:value-of select="$javaName"/>(
-                                         (javax.activation.DataHandler)reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
-                                     }else{
-                                        //Do the usual conversion
-                                        java.lang.String content = reader.getElementText();
-                                        object.set<xsl:value-of select="$javaName"/>(
-                                        org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
-
-                                     }
-
+                                            &amp;&amp;
+                                            java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
+                                    {
+                                        //MTOM aware reader - get the datahandler directly and put it in the object
+                                        object.setBase64Binary(
+                                                (javax.activation.DataHandler) reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
+                                    } else {
+                                        if (reader.hasText()) {
+                                            //Do the usual conversion
+                                            java.lang.String content = reader.getElementText();
+                                            object.setBase64Binary(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
+                                        } else
+                                        if (reader.getName().equals(new javax.xml.namespace.QName(org.apache.axiom.om.impl.MTOMConstants.XOP_NAMESPACE_URI, org.apache.axiom.om.impl.MTOMConstants.XOP_INCLUDE)))
+                                        {
+                                            String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
+                                            object.setBase64Binary(((org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
+                                        } else {
+                                            throw new org.apache.axiom.om.OMException("Can't find datahandler");
+                                        }
+                                    }
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
