@@ -1278,7 +1278,9 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                             <xsl:if test="not(enumFacet)">
+                            <xsl:if test="not(@binary)">
                             if (reader.isStartElement() &amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())){
+                            </xsl:if>
                             </xsl:if>
                             <xsl:choose>
                                 <xsl:when test="@array">
@@ -1484,7 +1486,9 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                             <xsl:if test="not(enumFacet)">
+                            <xsl:if test="not(@binary)">
                               }  // End of if for expected property start element
+                            </xsl:if>
                             </xsl:if>
                             <xsl:if test="$ordered and $min!=0">
                                 else{
@@ -1505,10 +1509,12 @@
                         <xsl:if test="property[not(@attribute)]">  <!-- this if is needed to skip all this when there are no propoerties-->
                         <xsl:if test="$unordered">
                           <xsl:if test="not(property/enumFacet)">
+                          <xsl:if test="not(property[@binary])">
                              else{
                                         // A start element we are not expecting indicates an invalid parameter was passed
                                         throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
                              }
+                          </xsl:if>
                           </xsl:if>
                              } else reader.next();  <!-- At neither a start nor an end element, skip it -->
                             }  // end of while loop
