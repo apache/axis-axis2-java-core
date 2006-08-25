@@ -25,6 +25,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
@@ -63,6 +64,9 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
             responseMessageContext.setServerSide(false);
             responseMessageContext.setMessageID(msgctx.getMessageID());
             addMessageContext(responseMessageContext);
+            responseMessageContext.setServiceContext(msgctx.getServiceContext());
+            responseMessageContext.setAxisMessage(
+                    msgctx.getAxisOperation().getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
 
             //sending the message
             engine.send(msgctx);

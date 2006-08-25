@@ -25,16 +25,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.ws.policy.Policy;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -71,7 +64,6 @@ public class MessageContext extends AbstractContext {
 
     /**
      * Field CHARACTER_SET_ENCODING
-     * @deprecated please use org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING
      */
     public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
 
@@ -135,6 +127,8 @@ public class MessageContext extends AbstractContext {
 
     // Are we doing MTOM now?
     private boolean doingMTOM;
+
+    private transient AxisMessage axisMessage;
 
     private transient AxisOperation axisOperation;
 
@@ -676,13 +670,21 @@ public class MessageContext extends AbstractContext {
         return serverSide;
     }
 
+    public AxisMessage getAxisMessage() {
+        return axisMessage;
+    }
+
+    public void setAxisMessage(AxisMessage axisMessage) {
+        this.axisMessage = axisMessage;
+    }
+
     public void setAxisOperation(AxisOperation axisOperation) {
         this.axisOperation = axisOperation;
     }
 
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
-        this.axisServiceGroup = (AxisServiceGroup)this.axisService.getParent();
+        this.axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
     }
 
     public void setAxisServiceGroup(AxisServiceGroup axisServiceGroup) {
@@ -955,6 +957,21 @@ public class MessageContext extends AbstractContext {
     public void setRelationships(RelatesTo[] list) {
         options.setRelationships(list);
     }
+
+
+    public Policy getEffectivePolicy() {
+        if (axisMessage != null) {
+            return axisMessage.getPolicyInclude().getEffectivePolicy();
+        }
+        if (axisOperation != null) {
+            return axisOperation.getPolicyInclude().getEffectivePolicy();
+        }
+        if (axisService != null) {
+            return axisService.getPolicyInclude().getEffectivePolicy();
+        }
+        return configurationContext.getAxisConfiguration().getPolicyInclude().getEffectivePolicy();
+    }
+
 
     public boolean isEngaged(QName moduleName) {
         boolean enegage;

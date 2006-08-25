@@ -226,12 +226,13 @@ class OutInAxisOperationClient implements OperationClient {
         if (mc == null) {
             throw new AxisFault(Messages.getMessage("outmsgctxnull"));
         }
-
+        //setting AxisMessage
+        mc.setAxisMessage(axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
         mc.setOptions(options);
-        
+
         // do Target Resolution
         cc.getAxisConfiguration().getTargetResolverChain().resolveTarget(mc);
-        
+
         // if the transport to use for sending is not specified, try to find it
         // from the URL
         TransportOutDescription transportOut = options.getTransportOut();
@@ -278,7 +279,7 @@ class OutInAxisOperationClient implements OperationClient {
             AxisEngine engine = new AxisEngine(cc);
             mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
             engine.send(mc);
-            
+
             // Options object reused so soapAction needs to be removed so
             // that soapAction+wsa:Action on response don't conflict
             options.setAction("");
@@ -332,11 +333,11 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     /**
+     * @return Returns MessageContext.
+     * @throws AxisFault
      * Sends the message using a two way transport and waits for a response
      *
      * @param msgctx
-     * @return Returns MessageContext.
-     * @throws AxisFault
      */
     protected MessageContext send(MessageContext msgctx) throws AxisFault {
 
@@ -352,6 +353,9 @@ class OutInAxisOperationClient implements OperationClient {
         responseMessageContext.setServerSide(false);
         responseMessageContext.setMessageID(msgctx.getMessageID());
         addMessageContext(responseMessageContext);
+        responseMessageContext.setServiceContext(msgctx.getServiceContext());
+        responseMessageContext.setAxisMessage(
+                axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE));
 
         //sending the message
         engine.send(msgctx);
@@ -365,7 +369,7 @@ class OutInAxisOperationClient implements OperationClient {
         // Options object reused above so soapAction needs to be removed so
         // that soapAction+wsa:Action on response don't conflict
         responseMessageContext.setSoapAction("");
-        
+
         if (responseMessageContext.getEnvelope() == null) {
             // If request is REST we assume the responseMessageContext is REST, so
             // set the variable

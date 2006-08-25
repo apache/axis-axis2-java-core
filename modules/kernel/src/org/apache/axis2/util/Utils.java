@@ -67,11 +67,11 @@ public class Utils {
 
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
         newmsgCtx.setTo(oldOptions.getReplyTo());
-        
+
         // do Target Resolution
         newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(newmsgCtx);
 
-        
+
         newmsgCtx.getOptions().setAction(oldOptions.getAction());
 
         // add the service group id as a reference parameter
@@ -85,14 +85,14 @@ public class Utils {
 
         newmsgCtx.setFaultTo(oldOptions.getTo());
         newmsgCtx.addRelatesTo(new RelatesTo(oldOptions.getMessageId())); //Uses the default relationship type
-                
+
         AxisOperation ao = inMessageContext.getAxisOperation();
-        if(ao!=null && ao.getOutputAction()!=null){
-           newmsgCtx.setWSAAction(ao.getOutputAction());
-        }else{
-           newmsgCtx.setWSAAction(oldOptions.getAction());
+        if (ao.getOutputAction() != null) {
+            newmsgCtx.setWSAAction(ao.getOutputAction());
+        } else {
+            newmsgCtx.setWSAAction(oldOptions.getAction());
         }
-        
+        newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
         newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,

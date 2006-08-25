@@ -24,6 +24,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,7 +43,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      * Field NAME
      */
     public static final QName NAME = new QName("http://ws.apache.org/axis2/", "AbstractDispatcher");
-	private static final Log log = LogFactory.getLog(AbstractDispatcher.class);
+    private static final Log log = LogFactory.getLog(AbstractDispatcher.class);
 
     public AbstractDispatcher() {
         init(new HandlerDescription(NAME));
@@ -99,6 +100,9 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                 }
 
                 msgctx.setAxisOperation(axisOperation);
+                //setting axisMessage into messageContext
+                msgctx.setAxisMessage(axisOperation.getMessage(
+                        WSDLConstants.MESSAGE_LABEL_IN_VALUE));
             }
         }
     }
