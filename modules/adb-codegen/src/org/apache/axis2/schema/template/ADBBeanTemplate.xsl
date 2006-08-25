@@ -1499,7 +1499,7 @@
                               }  // End of if for expected property start element
                             </xsl:if>
                             </xsl:if>
-                            <xsl:if test="$ordered and $min!=0">
+                            <xsl:if test="$ordered and $min!=0 and not(@binary)">
                                 else{
                                     // A start element we are not expecting indicates an invalid parameter was passed
                                     throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
@@ -2472,7 +2472,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
                               }  // End of if for expected property start element
 
-                            <xsl:if test="$ordered and $min!=0">
+                            <xsl:if test="$ordered and $min!=0 and not(@binary)">
                                 else{
                                     // A start element we are not expecting indicates an invalid parameter was passed
                                     throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
@@ -2489,7 +2489,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                         </xsl:if>
 
                         <xsl:if test="property[not(@attribute)]">  <!-- this if is needed to skip all this when there are no propoerties-->
-                        <xsl:if test="$unordered">
+                        <xsl:if test="$unordered and property[not(@binary)]">
                              else{
                                         // A start element we are not expecting indicates an invalid parameter was passed
                                         throw new java.lang.RuntimeException("Unexpected subelement " + reader.getLocalName());
