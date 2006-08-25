@@ -51,7 +51,7 @@
         throw new org.apache.axis2.AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
         }
 
-        String methodName;
+        java.lang.String methodName;
         if(op.getName() != null &amp; (methodName = op.getName().getLocalPart()) != null){
 
         <xsl:for-each select="method">
@@ -220,7 +220,7 @@
         throw new org.apache.axis2.AxisFault("Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
         }
 
-        String methodName;
+        java.lang.String methodName;
         if(op.getName() != null &amp; (methodName = op.getName().getLocalPart()) != null){
 
         <xsl:for-each select="method">

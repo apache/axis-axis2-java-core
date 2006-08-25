@@ -38,11 +38,11 @@
 		<xsl:if test="//security-codegen-policy-extensions/usernametoken-action">
     // auto genenrated stub methods 
     
-    public void setUsername(String username) {
+    public void setUsername(java.lang.String username) {
         _serviceClient.getOptions().setProperty(org.apache.ws.security.handler.WSHandlerConstants.USER, username);
     }
 
-    public void setPassword(String password) {
+    public void setPassword(java.lang.String password) {
         _UTCallback pwCallback = new _UTCallback();
         pwCallback.setPassword(password);
 	_serviceClient
@@ -59,12 +59,12 @@
     private class _UTCallback implements
             javax.security.auth.callback.CallbackHandler {
 
-        private String password;
+        private java.lang.String password;
 
         public _UTCallback() {
         }
 
-        public void setPassword(String password) {
+        public void setPassword(java.lang.String password) {
             this.password = password;
         }
 
@@ -94,7 +94,7 @@
             }
         }
 
-        private String getUsername() {
+        private java.lang.String getUsername() {
             return (String) _serviceClient.getOptions().getProperty(
                     org.apache.ws.security.handler.WSHandlerConstants.USER);
         }
