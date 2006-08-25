@@ -58,7 +58,7 @@ public class ProxyDescriptor {
 	
 	public Class getRequestWrapperClass(boolean isAsync) throws ClassNotFoundException{
 		String className = operationDescription.getRequestWrapperClassName();
-		return Class.forName(className, true, ClassLoader.getSystemClassLoader());
+		return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
 	}
 	
 	public String getRequestWrapperClassName(){
@@ -71,7 +71,7 @@ public class ProxyDescriptor {
 
 	public Class getResponseWrapperClass(boolean isAsync) throws ClassNotFoundException{
 		String className = operationDescription.getResponseWrapperClassName();
-		return Class.forName(className, true, ClassLoader.getSystemClassLoader());
+		return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
 	}
 
 	public String getResponseWrapperLocalName(){
