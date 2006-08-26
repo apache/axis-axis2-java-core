@@ -600,7 +600,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (wsdl4jMessagePart.getElementName() == null) {
                 //this cannot be done - we need to have a
                 //element reference
-                throw new WSDLProcessingException("Element reference missing!");
+                throw new WSDLProcessingException("Element reference missing for " + bindingPartsList.get(0) + "!" );
             }
             inMessage.setElementQName(wsdl4jMessagePart.getElementName());
 

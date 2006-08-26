@@ -1781,6 +1781,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 paramElement = doc.createElement("param");
                 msg = (AxisMessage) faultMessages.get(i);
 
+                if(msg.getElementQName() == null) {
+                    throw new RuntimeException("Element QName is null for " + msg.getName() + "!");
+                }
+
                 //as for the name of a fault, we generate an exception
                 addAttribute(doc, "name",
                         (String) fullyQualifiedFaultClassNameMap.get(msg.getElementQName()),

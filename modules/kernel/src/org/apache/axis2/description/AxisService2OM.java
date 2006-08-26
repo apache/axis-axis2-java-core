@@ -256,6 +256,9 @@ public class AxisService2OM implements Java2WSDLConstants {
                     wsdl);
             messageElement.addChild(messagePart);
             messagePart.addAttribute(ATTRIBUTE_NAME, header.part(), null);
+            if(header.getElement()==null){
+                throw new RuntimeException(ELEMENT_ATTRIBUTE_NAME + " is null for " +  header.getMessage());
+            }
             messagePart.addAttribute(ELEMENT_ATTRIBUTE_NAME, getPrefix(header
                     .getElement().getNamespaceURI())
                     + ":" + header.getElement().getLocalPart(), null);
