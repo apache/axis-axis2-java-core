@@ -94,7 +94,7 @@ public class BeanUtil {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             (Object[]) null);
                     object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
-                    object.add(value == null ? null : value.toString());
+                    object.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if (ptype.isArray()) {
                     Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
                             (Object[]) null);
@@ -102,7 +102,7 @@ public class BeanUtil {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
                             object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
-                            object.add(o == null ? null : o.toString());
+                            object.add(o == null ? null :  SimpleTypeMapper.getStringValue(o));
                         }
                     } else {
                         for (int j = 0; j < value.length; j++) {
@@ -476,7 +476,7 @@ public class BeanUtil {
                     Object o = array[j];
                     if (SimpleTypeMapper.isSimpleType(o)) {
                         objects.add("item" + argCount);
-                        objects.add(o == null ? null : o.toString());
+                        objects.add(o == null ? null :  SimpleTypeMapper.getStringValue(o));
                     } else {
                         objects.add(new QName("item" + argCount));
                         if (o instanceof OMElement) {
@@ -502,7 +502,7 @@ public class BeanUtil {
                     } else {
                         objects.add(partName);
                     }
-                    objects.add(arg.toString());
+                    objects.add(SimpleTypeMapper.getStringValue(arg));
                 } else {
                     if (partName == null) {
                         objects.add(new QName("arg" + argCount));

@@ -189,9 +189,8 @@ public class RepositoryListener implements DeploymentConstants {
                     }
                 }
             }
-        } else {
-            wsInfoList.addWSInfoItem(null, TYPE_DEFAULT);
         }
+        wsInfoList.addWSInfoItem(null, TYPE_DEFAULT);
     }
 
     /**

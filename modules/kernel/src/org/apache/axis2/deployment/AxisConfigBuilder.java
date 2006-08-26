@@ -17,26 +17,12 @@
 
 package org.apache.axis2.deployment;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisObserver;
 import org.apache.axis2.engine.MessageReceiver;
@@ -48,6 +34,14 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class AxisConfigBuilder extends DescriptionBuilder {
 
@@ -62,8 +56,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         try {
             OMElement config_element = buildOM();
 
-            if(!TAG_AXISCONFIG.equals(config_element.getLocalName())) {
-                throw new DeploymentException(Messages.getMessage("badelementfound",TAG_AXISCONFIG,config_element.getLocalName()));
+            if (!TAG_AXISCONFIG.equals(config_element.getLocalName())) {
+                throw new DeploymentException(Messages.getMessage("badelementfound", TAG_AXISCONFIG, config_element.getLocalName()));
             }
             // processing Parameters
             // Processing service level parameters
@@ -103,7 +97,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             // Process TargetResolvers
             OMElement targetResolvers = config_element.getFirstChildWithName(new QName(TAG_TARGET_RESOLVERS));
             processTargetResolvers(axisConfig, targetResolvers);
-            
+
             processObservers(obs_ittr);
 
             // processing Phase orders
@@ -144,22 +138,22 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     }
 
     private void processTargetResolvers(AxisConfiguration axisConfig, OMElement targetResolvers) {
-        if(targetResolvers != null){
-           Iterator iterator = targetResolvers.getChildrenWithName(new QName(TAG_TARGET_RESOLVER));
-           while(iterator.hasNext()){
-               OMElement targetResolver = (OMElement)iterator.next();
-               OMAttribute classNameAttribute = targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
-               String className = classNameAttribute.getAttributeValue();
-               try {
-                   Class classInstance = Class.forName(className);
-                   TargetResolver tr = (TargetResolver)classInstance.newInstance();
-                   axisConfig.addTargetResolver(tr);
+        if (targetResolvers != null) {
+            Iterator iterator = targetResolvers.getChildrenWithName(new QName(TAG_TARGET_RESOLVER));
+            while (iterator.hasNext()) {
+                OMElement targetResolver = (OMElement) iterator.next();
+                OMAttribute classNameAttribute = targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
+                String className = classNameAttribute.getAttributeValue();
+                try {
+                    Class classInstance = Class.forName(className);
+                    TargetResolver tr = (TargetResolver) classInstance.newInstance();
+                    axisConfig.addTargetResolver(tr);
                 } catch (Exception e) {
-                    if(log.isTraceEnabled()){
-                        log.trace("processTargetResolvers: Exception thrown initialising TargetResolver: "+e.getMessage());
+                    if (log.isTraceEnabled()) {
+                        log.trace("processTargetResolvers: Exception thrown initialising TargetResolver: " + e.getMessage());
                     }
                 }
-           }
+            }
         }
     }
 
@@ -336,8 +330,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 if (trsClas != null) {
                     try {
                         String clasName = trsClas.getAttributeValue();
-                        Class receiverClass = Class.forName(clasName, true,
-                                Thread.currentThread().getContextClassLoader());
+                        Class receiverClass;
+                        try {
+                            receiverClass = Class.forName(clasName, true, Thread.currentThread().getContextClassLoader()); // Try the application class loader
+                        } catch (ClassNotFoundException e) {
+                            receiverClass = Class.forName(clasName); // Try the axis2 classloader
+                        }
+
+
                         TransportListener receiver =
                                 (TransportListener) receiverClass.newInstance();
                         transportIN.setReceiver(receiver);
@@ -388,8 +388,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Class sender;
 
                 try {
-                    sender = Class.forName(clasName, true,
-                            Thread.currentThread().getContextClassLoader());
+                    try {
+                        sender = Class.forName(clasName, true, Thread.currentThread().getContextClassLoader()); // Try the application class loader
+                    } catch (ClassNotFoundException e) {
+                        sender = Class.forName(clasName); // Try the axis2 classloader
+                    }
 
                     TransportSender transportSender = (TransportSender) sender.newInstance();
 

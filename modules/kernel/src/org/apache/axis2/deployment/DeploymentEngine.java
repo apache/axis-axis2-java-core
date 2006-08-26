@@ -524,6 +524,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
                                         currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
+                                de.printStackTrace();
                                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(),
                                         de.getMessage()),
@@ -812,7 +813,7 @@ public class DeploymentEngine implements DeploymentConstants {
         String value;
         Parameter parahotdeployment = axisConfig.getParameter(TAG_HOT_DEPLOYMENT);
         Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
-        Parameter paraantiJARLocking = axisConfig.getParameter(TAG_ANTI_JAR_LOCKING);
+//        Parameter paraantiJARLocking = axisConfig.getParameter(TAG_ANTI_JAR_LOCKING);
 
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
@@ -830,8 +831,8 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         }
 
-        if (paraantiJARLocking != null) {
-            value = (String) paraantiJARLocking.getValue();
+        if (parahotupdate != null) {
+            value = (String) parahotupdate.getValue();
 
             if ("true".equalsIgnoreCase(value)) {
                 antiJARLocking = true;

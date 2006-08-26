@@ -102,7 +102,12 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     messageNameSpace = elementQName.getNamespaceURI();
                     OMNamespace namespace = methodElement.getNamespace();
                     if (messageNameSpace != null) {
-                        if (namespace == null || !messageNameSpace.equals(namespace.getNamespaceURI())) {
+                        if (namespace == null) {
+                            throw new AxisFault("namespace mismatch require " +
+                                    messageNameSpace +
+                                    " found none");
+                        }
+                        if (!messageNameSpace.equals(namespace.getNamespaceURI())) {
                             throw new AxisFault("namespace mismatch require " +
                                     messageNameSpace +
                                     " found " + methodElement.getNamespace().getNamespaceURI());
