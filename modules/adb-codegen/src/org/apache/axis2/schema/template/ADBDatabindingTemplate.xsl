@@ -1,5 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
+    <xsl:key name="params" match="//databinders/param" use="@type"/>
+    
     <!-- #################################################################################  -->
     <!-- ############################   ADB template   ##############################  -->
     <xsl:template match="databinders[@dbtype='adb']">
@@ -34,6 +36,7 @@
             <xsl:if test="not($serverside)">
             <xsl:choose>
                 <xsl:when test="$paramcount &gt; 0">
+                    <xsl:variable name="inputElement" select="../../param[@type!='' and @direction='in' and @opname=$opname]"></xsl:variable>
                     <xsl:variable name="inputElementType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"></xsl:variable>
                     <xsl:variable name="wrappedParameterCount" select="count(../../param[@type!='' and @direction='in' and @opname=$opname]/param)"></xsl:variable>
                      <xsl:choose>
@@ -70,7 +73,8 @@
 
                         </xsl:when>
 						<xsl:otherwise>
-						<!-- Assumption - the parameter is always an ADB element-->
+                            <xsl:if test="generate-id($inputElement) = generate-id(key('params', $inputElementType)[1])">
+                        <!-- Assumption - the parameter is always an ADB element-->
 				    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent){
                     org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
                          <xsl:choose>
@@ -85,7 +89,7 @@
                     </xsl:choose>
                      return emptyEnvelope;
                     }
-
+                             </xsl:if>
 						</xsl:otherwise>
 					 </xsl:choose>
                </xsl:when>
