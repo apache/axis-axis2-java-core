@@ -14,7 +14,7 @@
             };
         </xsl:if>
 
-        <xsl:for-each select="param[@type!='']">
+        <xsl:for-each select="param[not(@type = preceding-sibling::param/@type) and @type!='']">
 
             private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
             org.apache.axiom.om.impl.builder.StAXOMBuilder builder = new org.apache.axiom.om.impl.builder.StAXOMBuilder

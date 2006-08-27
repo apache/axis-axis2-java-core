@@ -15,7 +15,7 @@
 
         <xsl:variable name="firstType"><xsl:value-of select="param[1]/@type"/></xsl:variable>
 
-        <xsl:for-each select="param">
+        <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
             <xsl:if test="@type!=''">
 
                 <xsl:if test="position()=1">

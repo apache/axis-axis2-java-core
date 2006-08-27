@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -1004,7 +1002,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Element createDOMElementforDatabinders(Document doc,boolean isServerside) {
 
         // First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
-        Map parameterMap = new LinkedHashMap();
+        ArrayList parameters = new ArrayList();
 
         for (Iterator operationsIterator = axisService.getOperations();operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
@@ -1020,7 +1018,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     //input
                     addAttribute(doc,"direction","in",inputParamElement[i]);
                     //add the short type name
-                    parameterMap.put(inputParamElement[i].getAttribute("type"),
+                    parameters.add(
                             inputParamElement[i]);
 
                 }
@@ -1031,7 +1029,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 if (outputParamElement != null) {
                     //set the direction as out
                     addAttribute(doc,"direction","out",outputParamElement);
-                    parameterMap.put(outputParamElement.getAttribute("type"), outputParamElement);
+                    parameters.add(outputParamElement);
                 }
             }
 
@@ -1040,9 +1038,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             for (int i = 0; i < faultParamElements.length; i++) {
                 //set the direction as out - all faults are out messages ?
                 addAttribute(doc,"direction","out",faultParamElements[i]);
-                parameterMap.put(
-                        faultParamElements[i].getAttribute("type"),
-                        faultParamElements[i]);
+                parameters.add(faultParamElements[i]);
             }
 
             // process the header parameters
@@ -1053,7 +1049,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             for (int i = 0; i < parameterElementList.size(); i++) {
                 newChild = (Element) parameterElementList.get(i);
-                parameterMap.put(newChild.getAttribute("type"), newChild);
+                parameters.add(newChild);
             }
 
             headerParameterQNameList.clear();
@@ -1063,7 +1059,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             for (int i = 0; i < parameterElementList.size(); i++) {
                 newChild = (Element) parameterElementList.get(i);
-                parameterMap.put(newChild.getAttribute("type"), newChild);
+                parameters.add(newChild);
             }
         }
 
@@ -1102,9 +1098,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //add the method names
         rootElement.appendChild(getOpNames(doc));
-
-        // Now run through the parameters and add them to the root element
-        Collection parameters = parameterMap.values();
 
         for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
             rootElement.appendChild((Element) iterator.next());

@@ -15,7 +15,7 @@
 
         <xsl:variable name="firstType"><xsl:value-of select="param[1]/@type"/></xsl:variable>
 
-        <xsl:for-each select="param">
+        <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
             <xsl:if test="@type!=''">
 
                 private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, org.apache.axiom.soap.SOAPFactory factory, boolean optimizeContent) {
