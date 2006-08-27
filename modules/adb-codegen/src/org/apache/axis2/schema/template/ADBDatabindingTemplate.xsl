@@ -7,7 +7,7 @@
         <xsl:variable name="helpermode"  select="extra/@h"></xsl:variable>
 
         <!--  generate toOM for only non parts and non primitives!!! -->
-        <xsl:for-each select="param[param[not(@type = preceding-sibling::param/@type) and @type!='' and not(@primitive)]]">
+        <xsl:for-each select="param[not(@type = preceding-sibling::param/@type) and @type!='' and not(@primitive)]">
             private  org.apache.axiom.om.OMElement  toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent){
             <xsl:choose>
                     <xsl:when test="$helpermode">
