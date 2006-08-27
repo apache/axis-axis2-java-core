@@ -33,6 +33,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.UUIDGenerator;
@@ -47,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -391,6 +393,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (port == null) {
             port = "8080";
         }
+        
+        if(ip == null) {
+            try {
+                ip = HttpUtils.getIpAddress();
+            } catch (SocketException e) {
+                throw new AxisFault(e);
+            }
+        }
+        
         if (contextPath == null) {
             // HACK ALERT!!! - Is there a better way to get the webapp name?
             try {
