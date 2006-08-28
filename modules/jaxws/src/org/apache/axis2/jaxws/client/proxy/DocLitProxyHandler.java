@@ -35,6 +35,7 @@ import javax.xml.ws.AsyncHandler;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
@@ -56,6 +57,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class DocLitProxyHandler extends BaseProxyHandler {
 	private static Log log = LogFactory.getLog(DocLitProxyHandler.class);
+	private static int SIZE = 1;
 	/**
 	 * @param pd
 	 * @param delegate
@@ -68,7 +70,10 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	protected MessageContext createRequest(Method method, Object[] args) throws ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, javax.xml.stream.XMLStreamException {
 		MessageContext requestCtx = null;
 		if(isDocLitWrapped()){
-			requestCtx = createDocLitWrappedRequest(method, args);
+			return createDocLitWrappedRequest(method, args);
+		}
+		if(isDocLitBare()){
+			return createDocLitNONWrappedRequest(method, args);
 		}
 		return requestCtx;
 	}
@@ -77,7 +82,10 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	protected Object createResponse(Method method, MessageContext responseContext) throws IllegalAccessException, ClassNotFoundException, JAXBWrapperException, JAXBException, javax.xml.stream.XMLStreamException, MessageException, IntrospectionException, NoSuchFieldException, InvocationTargetException{
 		Object result = null;
 		if(isDocLitWrapped()){
-			 result = createDocLitWrappedResponse(method, responseContext);
+			return createDocLitWrappedResponse(method, responseContext);
+		}
+		if(isDocLitBare()){
+			return createDocLitNONWrappedResponse(method, responseContext);
 		}
 		return result;
 	}
@@ -95,12 +103,8 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	 * @throws MessageException
 	 * @throws javax.xml.stream.XMLStreamException
 	 */
-	//TODO Refactor this once OperationDescription is implemented.
 	private MessageContext createDocLitWrappedRequest(Method method, Object[] objects)throws ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, javax.xml.stream.XMLStreamException{
-		/*TODO : getOperationDesc from method name
-		 * and call 
-		 * createDocLitWrapperRequest(od, values);
-		 */
+		
 		Class wrapperClazz = proxyDescriptor.getRequestWrapperClass(isAsync());
 		ArrayList<String> names = proxyDescriptor.getParamNames();
 		String localName = proxyDescriptor.getResponseWrapperLocalName();
@@ -117,6 +121,37 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		return requestCtx;
 		
 	}
+	
+	
+	/**
+	 * CreateDocLitNONWrappedRequest creates a request message context. The input object to a non wrapped wsdl will be a object (mainly a JAXB Object) that will
+	 * have all the payload data or method parameter data already setup. So the message context will be created by converting input object in to a JAXBBlock and
+	 * attaching the Block Message to soap body.
+	 * @param method
+	 * @param objects
+	 * @return
+	 */
+	private MessageContext createDocLitNONWrappedRequest(Method method, Object[] objects) throws JAXBException, MessageException, XMLStreamException{
+		JAXBContext ctx = null;
+		Object requestObject = null;
+		ArrayList<String> names = proxyDescriptor.getParamNames();
+		Map<String, Object> values = getParamValues(names, objects);
+		if(names.size()> SIZE || values.size() > SIZE){
+			throw ExceptionFactory.makeWebServiceException("As per WS-I compliance, Multi part WSDL not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
+		}
+		for(String name:names){
+			requestObject = values.get(name);
+			if(requestObject == null){
+				throw ExceptionFactory.makeWebServiceException("Method Input parameter for NON Wrapped Request cannot be null");
+			}
+		}
+			
+		ctx = JAXBContext.newInstance(new Class[]{requestObject.getClass()});
+		Block reqBlock = createJAXBBlock(requestObject, ctx);
+		MessageContext requestCtx = initializeRequest(reqBlock);
+		return requestCtx;
+	}
+	
 	/**
 	 * CreateDocLitWrappedResponse creates return result that client expects from the method call. It reads response wrapper annotation then reads OM from the
 	 * response message context and creates JAXBBlock from the OMElement on messageContext. It then reads the webresult annotation to gather the return parameter
@@ -134,22 +169,11 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	 * @throws NoSuchFieldException
 	 * @throws InvocationTargetException
 	 */
-//	TODO Refactor this once OperationDescription is implemented.
+
 	private Object createDocLitWrappedResponse(Method method, MessageContext response)throws IllegalAccessException, ClassNotFoundException, JAXBWrapperException, JAXBException, javax.xml.stream.XMLStreamException, MessageException, IntrospectionException, NoSuchFieldException, InvocationTargetException{
 		Class wrapperClazz = proxyDescriptor.getResponseWrapperClass(isAsync());
 		String resultName = proxyDescriptor.getWebResultName(isAsync());
 		JAXBContext ctx = JAXBContext.newInstance(new Class[]{wrapperClazz});
-		//FIXME: I should go away from using messageAsOM when MessageContext start to return jaxbBlock!!
-		/*
-		OMElement om = response.getMessageAsOM();
-		if(om instanceof SOAPEnvelope){
-			SOAPEnvelope env =(SOAPEnvelope) om;
-			SOAPBody body = env.getBody();
-			om = body.getFirstElement();
-		}
-		
-		Block resBlock = createJAXBBlock(om, ctx);
-		*/
 		
 		// Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
         // out of the Message
@@ -159,14 +183,37 @@ public class DocLitProxyHandler extends BaseProxyHandler {
         Block resBlock = responseMsg.getBodyBlock(0, ctx, factory);
 		Object bo = resBlock.getBusinessObject(true);
 		
-		//if wrapperClazz is assignable from bo then return bo;
+		//if ReturnType/WrapperClass is assignable from bo then return bo;
 		if(resultName==null && wrapperClazz.isAssignableFrom(bo.getClass())){
 			return bo;
 		}
-	
+		
+		//if ReturnType is not of same type as JAXBBlock business Object then I will look for resultName in Business Object and return that.
 		return getWebResultObject(wrapperClazz, bo, resultName);
+			
+	}
+	
+	/**
+	 * CreateDocLitNONWrappedResponse creates return result that client expects from the method call. This method reads the method return type
+	 * or uses webResult annotation and creates JAXBBlock from the response context and returns the business object associated with the JAXBBlock.
+	 * @param method
+	 * @param response
+	 * @return
+	 */
+	private Object createDocLitNONWrappedResponse(Method method, MessageContext response) throws IllegalAccessException, JAXBException, MessageException, XMLStreamException, InvocationTargetException, IntrospectionException, NoSuchFieldException{
 		
-		
+		Message responseMsg = response.getMessage();
+		Class returnType = proxyDescriptor.getReturnType(isAsync());
+		JAXBContext ctx = JAXBContext.newInstance(returnType);
+		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+		Block resBlock = responseMsg.getBodyBlock(0, ctx, factory);
+		Object bo = resBlock.getBusinessObject(true);
+		if(returnType.isAssignableFrom(bo.getClass())){
+			return bo;
+		}
+		//If returnType is different than JAXBBlock Business Object, I will look for resultName in BusinessObject and return that.
+		String resultName = proxyDescriptor.getWebResultName(isAsync());
+		return getWebResultObject(returnType, bo, resultName);
 	}
 	
 	private Block createJAXBBlock(Object jaxbObject, JAXBContext context) throws MessageException{
@@ -225,7 +272,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		}
 		
 		// TODO Shouldn't this be a WebServiceException ?
-		throw new NoSuchFieldException(Messages.getMessage("noWebResultForProperty", propertyName, returnClazz.getName()));
+		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("noWebResultForProperty", propertyName, returnClazz.getName()));
 	}
 	//TODO: refactor this once PropertyDescriptor is implemented.
 	private Map<String, Object> getParamValues(ArrayList<String> names, Object[] objects){
@@ -279,13 +326,13 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		
 	}
 	
-	private boolean isDocLitRaw(){
+	private boolean isDocLitBare(){
 		/* TODO: if(EndPoinInterfaceDescriptor.clientCall == Doc/literal) && OperationDescriptor.isWrapped() == false){ 
 		 * return true; 
 		 * else
 		 * return false;
 		 */
-		return false;
+		return proxyDescriptor.isClazzDocLitBare();
 	}
 	
 	private boolean isDocLitWrapped(){
@@ -294,6 +341,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		 * else
 		 * return false;
 		 */
-		return true;
+		return proxyDescriptor.isClazzDocLitWrapped();
 	}
+	
 }

@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.message.SOAP12Tests;
 import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.provider.*;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
+import org.apache.axis2.proxy.ProxyNonWrappedTests;
 import org.apache.axis2.proxy.ProxyTests;
 
 public class JAXWSTest extends TestCase {
@@ -71,7 +72,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SourceProviderTests.class);
         suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);
-        
+        suite.addTestSuite(ProxyNonWrappedTests.class);
         suite.addTestSuite(ExceptionFactoryTests.class);
 
         suite.addTestSuite(AddressBookTests.class);

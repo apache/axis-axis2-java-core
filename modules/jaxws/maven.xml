@@ -71,6 +71,14 @@
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
     	</java>
+        <ant:echo>Generating java from ProxyDocLitnonWrapped.wsdl</ant:echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+			<jvmarg line="${maven.junit.jvmargs}"/>
+			<classpath refid="maven.dependency.classpath"/>
+			<classpath location="${compiled.classes.dir}"/>
+			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl"/>
+		</java>
+
     	<ant:echo>Generating java from jaxbsource</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
     	    <jvmarg line="${maven.junit.jvmargs}"/>
@@ -163,6 +171,17 @@
 			</ant:fileset>
 		</ant:copy>
 		
+		<ant:copy toDir="target/test-classes/services/ProxyDocLitnonWrapped/">
+					<ant:fileset dir="target/test-classes">
+						<ant:include name="org/apache/axis2/jaxws/proxy/doclitnonwrapped/**"/>
+					</ant:fileset>
+					<ant:fileset dir="test/org/apache/axis2/jaxws/proxy/doclitnonwrapped">
+		                <ant:include name="META-INF/**"/>
+					</ant:fileset>
+					<ant:fileset dir="target/classes">
+		                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+					</ant:fileset>
+		</ant:copy>
         <!-- ================================================================ -->
         <!--- Java Bean Endpoint Samples -->
         <!-- ================================================================ -->

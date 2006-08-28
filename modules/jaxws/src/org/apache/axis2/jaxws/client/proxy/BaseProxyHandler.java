@@ -70,8 +70,12 @@ import org.apache.commons.logging.LogFactory;
  * Reads ResponseMsgCtx ->MessageCtx->Message->XMLPart.
  * Converts that to JAXBlock using JAXBBlockFactory and returns the BO from this JAXBBlock.
  * 
- * isWrapped() != true and DocLiteral;
- * TBD
+ * isWrapped() != true and DocLiteral then
+ * ProxyHandler creates the JAXBBlock for the input request creates a 
+ * MessageContext that is then used by IbvocationController to invoke.
+ * Response is read and return object is derived using @Webresult annotation.
+ * A JAXBBlock is created from the Response and the BO from JAXBBlock is
+ * returned.  
  * 
  * RPCLiteral 
  * TBD

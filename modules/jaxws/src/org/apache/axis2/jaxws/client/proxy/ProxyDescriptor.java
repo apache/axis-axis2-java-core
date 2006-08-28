@@ -17,6 +17,8 @@
 package org.apache.axis2.jaxws.client.proxy;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,7 +26,9 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.Style;
+import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.Response;
 import javax.xml.ws.ResponseWrapper;
 
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -80,6 +84,11 @@ public class ProxyDescriptor {
 	}
 
 	public Class getResponseWrapperClass(boolean isAsync) throws ClassNotFoundException{
+		//TODO: Move this logic to OperationDescription. This is a hack right now.
+		if(isAsync){
+			return getReturnType(isAsync);
+		}
+		
 		String className = operationDescription.getResponseWrapperClassName();
 		return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
 	}
@@ -90,7 +99,7 @@ public class ProxyDescriptor {
     public String getWebResultName(boolean isAsync){
         return operationDescription.getWebResultName();
 	}
-
+    // TODO: (JLB) Move to OperationDescription?
 	public ArrayList<String> getParamNames(){
         return new ArrayList<String>(Arrays.asList(operationDescription.getWebParamNames()));
 	}
@@ -107,8 +116,21 @@ public class ProxyDescriptor {
 		this.seiMethod = seiMethod;
         operationDescription = endpointDescription.getEndpointInterfaceDescription().getOperation(seiMethod);
 	}
-
-    //TODO read soap binding on method too, make sure if Binding style is different from binding style in Clazz throw Exception.
+	
+	/*
+	 * This method looks at @SOAPBindingAnnotation on clazz to look for Parameter Style
+	 */
+	public boolean isClazzDocLitBare(){
+		SOAPBinding.ParameterStyle style = endpointDescription.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+		return style == SOAPBinding.ParameterStyle.BARE;
+	}
+	
+	public boolean isClazzDocLitWrapped(){
+		SOAPBinding.ParameterStyle style = endpointDescription.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+		return style == SOAPBinding.ParameterStyle.WRAPPED;
+	}
+	
+	//TODO read soap binding on method too, make sure if Binding style is different from binding style in Clazz throw Exception.
 	public Style getBindingStyle(){
         return endpointDescription.getEndpointInterfaceDescription().getSoapBindingStyle(); 
 	}
@@ -130,5 +152,41 @@ public class ProxyDescriptor {
 		else{
 			return method;
 		}
+	}
+	
+	/**
+	 * In this method I am trying get the return type of the method.
+	 * if SEI method is Async pooling implmentation then return type is actual type in Generic Response, example Response<ClassName>.
+	 * if SEI method is Async Callback implementation then return type is actual type of method parameter type AsyncHandler, example AsyncHandler<ClassName>
+	 * I use java reflection to get the return type.
+	 * @param isAsync
+	 * @return
+	 */
+	public Class getReturnType(boolean isAsync){
+		Class returnType = seiMethod.getReturnType();
+		if(isAsync){
+			//pooling implementation
+			if(Response.class.isAssignableFrom(returnType)){
+				Type type = seiMethod.getGenericReturnType();
+				ParameterizedType pType = (ParameterizedType) type;
+				return (Class)pType.getActualTypeArguments()[0];	
+			}
+			//Callback Implementation
+			else{
+				Type[] type = seiMethod.getGenericParameterTypes();
+				Class parameters[]= seiMethod.getParameterTypes();
+				int i=0;
+				for(Class param:parameters){
+					if(AsyncHandler.class.isAssignableFrom(param)){
+						ParameterizedType pType = (ParameterizedType)type[i];
+						return (Class)pType.getActualTypeArguments()[0];
+					}
+					i++;
+				}
+			}
+			
+		}
+		
+		return returnType;	
 	}
 }

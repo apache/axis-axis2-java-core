@@ -75,7 +75,7 @@ public class EndpointInterfaceDescription {
     private SOAPBinding         soapBindingAnnotation;
     // TODO: Should this be using the jaxws annotation values or should that be wrappered?
     private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
-
+    private javax.jws.soap.SOAPBinding.ParameterStyle soapParameterStyle;
     
     void addOperation(OperationDescription operation) {
         operationDescriptions.add(operation);
@@ -321,6 +321,18 @@ public class EndpointInterfaceDescription {
             }
         }
         return soapBindingStyle;
+    }
+    
+    public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle(){
+    	if (soapParameterStyle == null) {
+            if (getSoapBinding() != null && getSoapBinding().parameterStyle() != null) {
+            	soapParameterStyle = getSoapBinding().parameterStyle();
+            }
+            else {
+            	soapParameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+            }
+        }
+        return soapParameterStyle;
     }
 
 
