@@ -100,7 +100,7 @@
             <xsl:variable name="varName">local<xsl:value-of select="$javaName"/></xsl:variable>
             <xsl:variable name="settingTracker">local<xsl:value-of select="$javaName"/>Tracker</xsl:variable>
 
-			
+
             <xsl:variable name="lenFacet"><xsl:value-of select="@lenFacet"/></xsl:variable>
            	<xsl:variable name="maxLenFacet"><xsl:value-of select="@maxLenFacet"/></xsl:variable>
            	<xsl:variable name="minLenFacet"><xsl:value-of select="@minLenFacet"/></xsl:variable>
@@ -112,11 +112,11 @@
             <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
             <xsl:variable name="shortTypeName"
                select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
-            
-			
+
+
 			<xsl:choose>
             <xsl:when test="@removed">
-           
+
            /**
            * Auto generated getter method
            * Overridden from <xsl:value-of select="$restriction"/>
@@ -126,7 +126,7 @@
            public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
                throw new java.lang.RuntimeException();
            }
-           
+
            /**
            * Auto generated setter method
            * Overridden from <xsl:value-of select="$restriction"/>
@@ -137,7 +137,7 @@
            public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
            	   throw new java.lang.RuntimeException();
            }
-               
+
            </xsl:when>
            <xsl:otherwise>
                <xsl:choose>
@@ -200,7 +200,7 @@
                      }
                   </xsl:when>
                   <xsl:otherwise>
-               
+
             		/**
             		* field for <xsl:value-of select="$javaName"/>
             		<xsl:if test="@attribute">
@@ -210,7 +210,7 @@
             		<xsl:if test="@typeChanged">
             		* Type of this field is a subtype of its original.</xsl:if>
             		<xsl:if test="(@rewrite) and (@occuranceChanged)">
-            		* This field was an array in <xsl:value-of select="$restriction"/>.</xsl:if> 
+            		* This field was an array in <xsl:value-of select="$restriction"/>.</xsl:if>
             		*/
 
             		protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
@@ -224,11 +224,11 @@
                     }
 
                     <xsl:for-each select="enumFacet">
-                        public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> = 
+                        public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> =
                             org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>("<xsl:value-of select="@value"/>");
                     </xsl:for-each>
                     <xsl:for-each select="enumFacet">
-                        public static final <xsl:value-of select="$name"/><xsl:text> </xsl:text><xsl:value-of select="@id"/> = 
+                        public static final <xsl:value-of select="$name"/><xsl:text> </xsl:text><xsl:value-of select="@id"/> =
                             new <xsl:value-of select="$name"/>(_<xsl:value-of select="@id"/>);
                     </xsl:for-each>
 
@@ -243,16 +243,34 @@
                         public static <xsl:value-of select="$name"/> fromString(java.lang.String value)
                               throws java.lang.IllegalArgumentException {
                             try {
-                                return fromValue(new <xsl:value-of select="$propertyType"/>(value));
+                               <xsl:choose>
+                                   <xsl:when test="@primitive">
+                                     return fromValue(org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                       return fromValue(new <xsl:value-of select="$propertyType"/>(value));
+                                   </xsl:otherwise>
+                               </xsl:choose>
+
                             } catch (Exception e) {
                                 throw new java.lang.IllegalArgumentException();
                             }
                         }
                         public boolean equals(java.lang.Object obj) {return (obj == this);}
                         public int hashCode() { return toString().hashCode();}
-                        public java.lang.String toString() { return <xsl:value-of select="$varName" />.toString();}
-                        
-                    </xsl:if>    
+                        public java.lang.String toString() {
+                        <xsl:choose>
+                            <xsl:when test="@primitive">
+                                return <xsl:value-of select="$varName"/> + "";
+                            </xsl:when>
+                            <xsl:otherwise>
+                                return <xsl:value-of select="$varName"/>.toString();
+                            </xsl:otherwise>
+                        </xsl:choose>
+
+                        }
+
+                    </xsl:if>
                     <xsl:if test="not(enumFacet)">
                     <!-- Generate a tracker only if the min occurs is zero, which means if the user does
                		not bother to set that value, we do not send it -->
@@ -382,12 +400,12 @@
                     		//update the setting tracker
                     	<xsl:value-of select="$settingTracker"/> = true;
                     	</xsl:if>
-                   		
+
                    		<xsl:choose>
                         <xsl:when test="(@restrictionBaseType)">
                            <xsl:choose>
                             <xsl:when test="(@patternFacet)">
-                                if ( param.matches( "<xsl:value-of select="$patternFacet"/>" )) {  
+                                if ( param.matches( "<xsl:value-of select="$patternFacet"/>" )) {
                                     this.<xsl:value-of select="$varName"/>=param;
                                 }
                                 else {
@@ -395,7 +413,7 @@
                                 }
                             </xsl:when>
                             <xsl:when test="(@lenFacet)">
-                                if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {  
+                                if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {
                                     this.<xsl:value-of select="$varName"/>=param;
                                 }
                                 else {
@@ -403,7 +421,7 @@
                                 }
                             </xsl:when>
                             <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
-                                if ( <xsl:if test="(@minLenFacet)"> <xsl:value-of select="$minLenFacet"/> &lt; </xsl:if> param.length() <xsl:if test="(@maxLenFacet)"> &gt; <xsl:value-of select="$maxLenFacet"/> = </xsl:if> ) {  
+                                if ( <xsl:if test="(@minLenFacet)"> <xsl:value-of select="$minLenFacet"/> &lt; </xsl:if> param.length() <xsl:if test="(@maxLenFacet)"> &gt; <xsl:value-of select="$maxLenFacet"/> = </xsl:if> ) {
                                     this.<xsl:value-of select="$varName"/>=param;
                                 }
                                 else {
@@ -412,7 +430,7 @@
                             </xsl:when>
                             <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
                                 if ( <xsl:if test="(@minExFacet)"> <xsl:value-of select="$minExFacet"/> &lt; </xsl:if> <xsl:if test="(@minInFacet)"> <xsl:value-of select="$minInFacet"/> &lt;= </xsl:if> param <xsl:if test="(@maxExFacet)"> &gt; <xsl:value-of select="$maxExFacet"/> </xsl:if> <xsl:if test="(@maxInFacet)"> &gt;= <xsl:value-of select="$maxInFacet"/> </xsl:if> ) {
-                             
+
                                     this.<xsl:value-of select="$varName"/>=param;
                                 }
                                 else {
@@ -424,7 +442,7 @@
                             </xsl:otherwise>
                         </xsl:choose>
                         </xsl:when>
-						
+
 						<xsl:otherwise>
 								this.<xsl:value-of select="$varName"/>=param;
 						</xsl:otherwise>
@@ -434,10 +452,10 @@
                 		</xsl:otherwise>
             		</xsl:choose>
                     </xsl:if>
-			
+
                   </xsl:otherwise>
                </xsl:choose>
-            
+
 			</xsl:otherwise>
             </xsl:choose>
 
@@ -454,7 +472,7 @@
      *
      * @param parentQName
      * @param factory
-     * @return
+     * @return org.apache.axiom.om.OMElement
      */
     public org.apache.axiom.om.OMElement getOMElement(
             final javax.xml.namespace.QName parentQName,
@@ -469,10 +487,10 @@
             <xsl:choose>
             <xsl:when test="@type or @anon">
                 <!-- For a type write the passed in QName first-->
-		
+
 		        java.lang.String prefix = parentQName.getPrefix();
                 java.lang.String namespace = parentQName.getNamespaceURI();
-                
+
                 if (namespace != null) {
                     java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
                     if (writerPrefix != null) {
@@ -1193,7 +1211,7 @@
                     }
 					handledAttributes.add("<xsl:value-of select="$propertyName"/>");
 					</xsl:if>
-					
+
 					<!-- Handle anyAttributes here -->
 					<xsl:if test="$propertyName = 'extraAttributes'">
 						// now run through all any or extra attributes
@@ -1202,14 +1220,14 @@
 							if (!handledAttributes.contains(reader.getAttributeLocalName(i))) {
 								// this is an anyAttribute and we create
 								// an OMAttribute for this
-								org.apache.axiom.om.impl.llom.OMAttributeImpl attr = 
+								org.apache.axiom.om.impl.llom.OMAttributeImpl attr =
 									new org.apache.axiom.om.impl.llom.OMAttributeImpl(
 											reader.getAttributeLocalName(i),
 											new org.apache.axiom.om.impl.dom.NamespaceImpl(
 												reader.getAttributeNamespace(i), reader.getAttributePrefix(i)),
 											reader.getAttributeValue(i),
 											org.apache.axiom.om.OMAbstractFactory.getOMFactory());
-								
+
 								// and add it to the extra attributes
 								object.addExtraAttributes(attr);
 							}
@@ -1779,7 +1797,7 @@
 
         </xsl:for-each>
 
-   }   	
+   }
 	</xsl:when>
 	<xsl:otherwise>
 	<!--  Start of helper generation part of the template-->
@@ -1843,7 +1861,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
  							if (<xsl:value-of select="$varName"/> != null) {
 								writeAttribute("<xsl:value-of select="$namespace"/>",
                                                "<xsl:value-of select="$propertyName"/>",
-                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);							
+                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
 							}
                          </xsl:when>
                         <xsl:otherwise>
@@ -2479,7 +2497,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 }
                             </xsl:if>
                         </xsl:for-each>
-                        
+
                         <xsl:if test="$ordered">  <!-- pick up trailing cruft after final property before outer endElement and verify no trailing properties -->
                             while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
                                 reader.next();
@@ -2506,7 +2524,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
             return object;
         }
-	
+
 	 public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName){
 
         <xsl:value-of select="@package"/>.<xsl:value-of select="@name"/> bean =
@@ -2708,8 +2726,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         </xsl:choose>
 
         }
-	
-}	
+
+}
 	</xsl:otherwise>
 	</xsl:choose>
            <!-- end of main template -->
