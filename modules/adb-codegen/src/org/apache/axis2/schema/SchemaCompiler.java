@@ -542,8 +542,7 @@ public class SchemaCompiler {
 
             //process the referenced type. It could be thought that the referenced element replaces this
             //element
-            XmlSchema currentParentSchema = resolveParentSchema(xsElt.getRefName(),parentSchema);
-            XmlSchemaElement referencedElement = currentParentSchema.getElementByName(xsElt.getRefName());
+            XmlSchemaElement referencedElement = getReferencedElement(parentSchema, xsElt.getRefName());
 
             //if the element is referenced, then it should be one of the outer (global) ones
             processElement(referencedElement, parentSchema);
@@ -593,7 +592,7 @@ public class SchemaCompiler {
             QName schemaTypeName = xsElt.getSchemaTypeName();
 
             XmlSchema currentParentSchema = resolveParentSchema(schemaTypeName,parentSchema);
-            XmlSchemaType typeByName = currentParentSchema.getTypeByName(schemaTypeName);
+            XmlSchemaType typeByName = getType(currentParentSchema, schemaTypeName);
 
             if (typeByName!=null){
                 //this type is found in the schema so we can process it
@@ -936,7 +935,7 @@ public class SchemaCompiler {
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(extension.getBaseTypeName())){
                 //pick the relevant basetype from the schema and process it
-                XmlSchemaType type=  parentSchema.getTypeByName(extension.getBaseTypeName());
+                XmlSchemaType type = getType(parentSchema, extension.getBaseTypeName());
                 if (type instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
                     if (complexType.getName() != null) {
@@ -1444,35 +1443,8 @@ public class SchemaCompiler {
                     referencedQName = elt.getRefName();
                     boolean arrayStatus = ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue();
                     clazzName = findRefClassName(referencedQName,arrayStatus);
-                    XmlSchemaElement refElement = parentSchema.getElementByName(referencedQName);
-                    
-                    if (refElement == null) {
-                    	// The referenced element seems to come from an imported
-                    	// schema.
-                        XmlSchemaObjectCollection includes = parentSchema.getIncludes();
-                        if (includes != null) {
-                            Iterator tempIterator = includes.getIterator();
-                            while (tempIterator.hasNext()) {
-                                Object o = tempIterator.next();
-                                XmlSchema inclSchema = null;
-                                if (o instanceof XmlSchemaImport) {
-                                    inclSchema = ((XmlSchemaImport) o).getSchema();
-                                }
-                                if (o instanceof XmlSchemaInclude) {
-                                    inclSchema = ((XmlSchemaInclude) o).getSchema();
-                                }
-                                // get the element from the included schema
-                                if (inclSchema != null) {
-                                	refElement = inclSchema.getElementByName(referencedQName);
-                                }
-                                if (refElement != null) {
-                                	// we found the referenced element an can break the loop
-                                	break;
-                                }
-                            }
-                        }
-                    }
-                    
+                    XmlSchemaElement refElement = getReferencedElement(parentSchema, referencedQName);
+
                     // register the mapping if we found the referenced element
                     // else throw an exception
                     if (refElement != null) {
@@ -1546,6 +1518,68 @@ public class SchemaCompiler {
         metainfHolder.setOrdered(order);
     }
 
+    private XmlSchemaType getType(XmlSchema schema, QName schemaTypeName) throws SchemaCompilationException {
+        schema = resolveParentSchema(schemaTypeName, schema);
+        XmlSchemaType typeByName = schema.getTypeByName(schemaTypeName);
+        if (typeByName == null) {
+            // The referenced element seems to come from an imported
+            // schema.
+            XmlSchemaObjectCollection includes = schema.getIncludes();
+            if (includes != null) {
+                Iterator tempIterator = includes.getIterator();
+                while (tempIterator.hasNext()) {
+                    Object o = tempIterator.next();
+                    XmlSchema inclSchema = null;
+                    if (o instanceof XmlSchemaImport) {
+                        inclSchema = ((XmlSchemaImport) o).getSchema();
+                    }
+                    if (o instanceof XmlSchemaInclude) {
+                        inclSchema = ((XmlSchemaInclude) o).getSchema();
+                    }
+                    // get the element from the included schema
+                    if (inclSchema != null) {
+                        typeByName = inclSchema.getTypeByName(schemaTypeName);
+                    }
+                    if (typeByName != null) {
+                        // we found the referenced element an can break the loop
+                        break;
+                    }
+                }
+            }
+        }
+        return typeByName;
+    }
+    
+    private XmlSchemaElement getReferencedElement(XmlSchema parentSchema, QName referencedQName) {
+        XmlSchemaElement refElement = parentSchema.getElementByName(referencedQName);
+        if (refElement == null) {
+            // The referenced element seems to come from an imported
+            // schema.
+            XmlSchemaObjectCollection includes = parentSchema.getIncludes();
+            if (includes != null) {
+                Iterator tempIterator = includes.getIterator();
+                while (tempIterator.hasNext()) {
+                    Object o = tempIterator.next();
+                    XmlSchema inclSchema = null;
+                    if (o instanceof XmlSchemaImport) {
+                        inclSchema = ((XmlSchemaImport) o).getSchema();
+                    }
+                    if (o instanceof XmlSchemaInclude) {
+                        inclSchema = ((XmlSchemaInclude) o).getSchema();
+                    }
+                    // get the element from the included schema
+                    if (inclSchema != null) {
+                        refElement = inclSchema.getElementByName(referencedQName);
+                    }
+                    if (refElement != null) {
+                        // we found the referenced element an can break the loop
+                        break;
+                    }
+                }
+            }
+        }
+        return refElement;
+    }
     /**
      * Checks whether a given element is a binary element
      * @param elt
