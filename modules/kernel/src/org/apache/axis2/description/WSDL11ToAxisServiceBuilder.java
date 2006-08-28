@@ -595,7 +595,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Part wsdl4jMessagePart = wsdl4jMessage.getPart((String) bindingPartsList.get(0));
             // the part name better be there - if not throw an exception
             if (wsdl4jMessagePart == null) {
-                throw new RuntimeException();
+                throw new WSDLProcessingException("Missing part named \"" + bindingPartsList.get(0) + "\"");
             }
             if (wsdl4jMessagePart.getElementName() == null) {
                 //this cannot be done - we need to have a
