@@ -81,7 +81,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                                 + filePart);
 
                 String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
-                        messageContext.getConfigurationContext().getServicePath());
+                        messageContext.getConfigurationContext().getServiceContextPath());
 
                 if (values[1] != null) {
                     operationName = new QName(values[1]);

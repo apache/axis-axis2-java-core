@@ -60,9 +60,9 @@ public class ConfigurationContext extends AbstractContext {
     private long serviceGroupContextTimoutInterval = 30 * 1000;
 
     //To specify url mapping for services
-    private String servicePath = "services";
+    private String contextRoot = "/axis2";
+    private String serviceContextPath = contextRoot + "/services";
     //To have your own context path
-    private String contextPath = "axis2";
 
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
@@ -121,13 +121,13 @@ public class ConfigurationContext extends AbstractContext {
                         axisServiceGroup = (AxisServiceGroup) messageContext.getAxisService().getParent();
                     }
                     serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
-                            axisServiceGroup);
+                                                                  axisServiceGroup);
                     applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
                 }
                 serviceContext = serviceGroupContext.getServiceContext(axisService);
 
             } else if (!isNull(serviceGroupContextId)
-                    && (getServiceGroupContext(serviceGroupContextId, messageContext) != null)) {
+                       && (getServiceGroupContext(serviceGroupContextId, messageContext) != null)) {
 
                 // SGC is already there
                 serviceGroupContext =
@@ -256,8 +256,8 @@ public class ConfigurationContext extends AbstractContext {
             }
         }
         if (serviceGroupContext == null
-                && msgContext != null
-                && msgContext.getSessionContext() != null) {
+            && msgContext != null
+            && msgContext.getSessionContext() != null) {
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
                     serviceGroupContextId);
         }
@@ -331,7 +331,7 @@ public class ConfigurationContext extends AbstractContext {
                 ServiceGroupContext serviceGroupContext =
                         (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
                 if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
-                        getServiceGroupContextTimoutInterval()) {
+                    getServiceGroupContextTimoutInterval()) {
                     sgCtxtMapKeyIter.remove();
                     cleanupServiceContexts(serviceGroupContext);
                 }
@@ -361,7 +361,8 @@ public class ConfigurationContext extends AbstractContext {
 
     public void cleanupContexts() {
         if (applicationSessionServiceGroupContextTable.size() > 0) {
-            Iterator applicationScopeSgs = applicationSessionServiceGroupContextTable.values().iterator();
+            Iterator applicationScopeSgs =
+                    applicationSessionServiceGroupContextTable.values().iterator();
             while (applicationScopeSgs.hasNext()) {
                 ServiceGroupContext serviceGroupContext =
                         (ServiceGroupContext) applicationScopeSgs.next();
@@ -371,40 +372,42 @@ public class ConfigurationContext extends AbstractContext {
         if (serviceGroupContextMap.size() > 0) {
             Iterator sopaSessionSgs = serviceGroupContextMap.values().iterator();
             while (sopaSessionSgs.hasNext()) {
-                ServiceGroupContext serviceGroupContext = (ServiceGroupContext) sopaSessionSgs.next();
+                ServiceGroupContext serviceGroupContext =
+                        (ServiceGroupContext) sopaSessionSgs.next();
                 cleanupServiceContexts(serviceGroupContext);
             }
         }
     }
 
-    public String getServicePath() {
-        return servicePath;
+    public String getServiceContextPath() {
+        return serviceContextPath;
     }
 
-    public void setServicePath(String servicePath) throws AxisFault {
-        if (servicePath == null || "".equals(servicePath)) {
-            throw new AxisFault("service path can not be null");
+    public void setServiceContextPath(String serviceContextPath) {
+        if (serviceContextPath == null || "".equals(serviceContextPath)) {
+            throw new IllegalArgumentException("service path cannot be null or empty");
         }
-        this.servicePath = servicePath;
-    }
-
-    public String getContextPath() {
-        if (contextPath != null && !"".equals(contextPath)) {
-            return "/" + contextPath + "/" + servicePath;
+        if (contextRoot != null && contextRoot.trim().length() != 0 && !contextRoot.equals("/")) {
+            this.serviceContextPath = contextRoot + "/" + serviceContextPath;
         } else {
-            return "/" + servicePath;
+            this.serviceContextPath = "/" + serviceContextPath;
         }
     }
 
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
+    public String getContextRoot() {
+        return this.contextRoot;
+    }
+
+    public void setContextRoot(String contextRoot) {
+        this.contextRoot = contextRoot;
     }
 
     /**
      * This will be used to fetch the serviceGroupContextTimoutInterval from any place available.
      */
     public long getServiceGroupContextTimoutInterval() {
-        Integer serviceGroupContextTimoutIntervalParam = (Integer) getProperty(Constants.Configuration.CONFIG_CONTEXT_TIMOUT_INTERVAL);
+        Integer serviceGroupContextTimoutIntervalParam =
+                (Integer) getProperty(Constants.Configuration.CONFIG_CONTEXT_TIMOUT_INTERVAL);
         if (serviceGroupContextTimoutIntervalParam != null) {
             serviceGroupContextTimoutInterval = serviceGroupContextTimoutIntervalParam.intValue();
         }

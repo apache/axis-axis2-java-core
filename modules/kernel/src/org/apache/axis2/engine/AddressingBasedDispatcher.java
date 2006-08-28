@@ -77,7 +77,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
             QName serviceName;
             String[] values = Utils.parseRequestURLForServiceAndOperation(address,
-                    messageContext.getConfigurationContext().getServicePath());
+                    messageContext.getConfigurationContext().getServiceContextPath());
             if (values == null) {
                 return null;
             }

@@ -64,7 +64,7 @@ public class ConfigurationContextFactory {
             ((DeploymentEngine) axisConfigurator).setConfigContext(configContext);
         }
         //To override context path
-        setContextPath(axisConfig, configContext);
+        setContextPaths(axisConfig, configContext);
         //To check whether transport level session managment is require or not
         configureTransportSessionManagement(axisConfig);
         init(configContext);
@@ -108,20 +108,21 @@ public class ConfigurationContextFactory {
         }
     }
 
-    private static void setContextPath(AxisConfiguration axisConfig, ConfigurationContext configContext) throws AxisFault {
+    private static void setContextPaths(AxisConfiguration axisConfig,
+                                        ConfigurationContext configContext) {
         // Checking for context path
-        Parameter servicePath = axisConfig.getParameter(Constants.SERVICE_PATH);
-        if (servicePath != null) {
-            String spath = ((String) servicePath.getValue()).trim();
-            if (spath.length() > 0) {
-                configContext.setServicePath(spath);
-            }
-        }
         Parameter contextPath = axisConfig.getParameter(Constants.CONTEXT_PATH);
         if (contextPath != null) {
             String cpath = ((String) contextPath.getValue()).trim();
             if (cpath.length() > 0) {
-                configContext.setContextPath(cpath);
+                configContext.setContextRoot(cpath);
+            }
+        }
+        Parameter servicePath = axisConfig.getParameter(Constants.SERVICE_PATH);
+        if (servicePath != null) {
+            String spath = ((String) servicePath.getValue()).trim();
+            if (spath.length() > 0) {
+                configContext.setServiceContextPath(spath);
             }
         }
     }

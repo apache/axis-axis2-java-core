@@ -31,6 +31,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -58,6 +59,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.SocketException;
 import java.util.*;
 
 /**
@@ -526,7 +528,7 @@ public class AxisService extends AxisDescription {
         AxisOperation axisOperation = getOperation(new QName(operationName));
         if (axisOperation == null) {
             throw new AxisFault(Messages.getMessage("invalidoperation",
-                    operationName));
+                                                    operationName));
         }
         PolicyUtil.writePolicy(axisOperation.getPolicyInclude(), out);
     }
@@ -553,14 +555,21 @@ public class AxisService extends AxisDescription {
                 printWSDLError(out);
             }
         } else {
-            ArrayList eprList = new ArrayList();
-            String[] eprArray = getServiceEprs(requestIP, eprList);
+            String[] eprArray = getEPRs();
             getWSDL(out, eprArray, servicePath);
         }
     }
 
-    private String[] getServiceEprs(String requestIP, ArrayList eprList) throws AxisFault {
+    public String[] getEPRs() throws AxisFault {
+        //TODO: Chinthaka Handle the REST EPRs
+        String requestIP;
+        try {
+            requestIP = HttpUtils.getIpAddress();
+        } catch (SocketException e) {
+            throw new AxisFault("Cannot get local IP address", e);
+        }
         AxisConfiguration axisConfig = getAxisConfiguration();
+        ArrayList eprList = new ArrayList();
         if (enableAllTransports) {
             Iterator transports = axisConfig.getTransportsIn().values().iterator();
             while (transports.hasNext()) {
@@ -569,13 +578,14 @@ public class AxisService extends AxisDescription {
                 if (listener != null) {
                     try {
                         if (listener.getEPRForService(getName(), requestIP) != null) {
-                            String address = listener.getEPRForService(getName(), requestIP).getAddress();
+                            String address =
+                                    listener.getEPRForService(getName(), requestIP).getAddress();
                             if (address != null) {
                                 eprList.add(address);
                             }
                         }
                     } catch (AxisFault axisFault) {
-                        log.info(axisFault.getMessage());
+                        log.warn(axisFault.getMessage());
                     }
                 }
             }
@@ -590,15 +600,16 @@ public class AxisService extends AxisDescription {
                     if (listener != null) {
                         try {
                             if (listener.getEPRForService(getName(), requestIP)
-                                    != null) {
-                                String address = listener.getEPRForService(
-                                        getName(), requestIP).getAddress();
+                                != null) {
+                                String address =
+                                        listener.getEPRForService(getName(),
+                                                                  requestIP).getAddress();
                                 if (address != null) {
                                     eprList.add(address);
                                 }
                             }
                         } catch (AxisFault axisFault) {
-                            log.info(axisFault.getMessage());
+                            log.warn(axisFault.getMessage());
                         }
                     }
                 }
@@ -632,7 +643,7 @@ public class AxisService extends AxisDescription {
     private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
         if (isWsdlfound()) {
             AxisService2OM axisService2WOM = new AxisService2OM(this,
-                    serviceURL, "document", "literal", servicePath);
+                                                                serviceURL, "document", "literal", servicePath);
             try {
                 OMElement wsdlElement = axisService2WOM.generateOM();
                 wsdlElement.serialize(out);
@@ -650,10 +661,10 @@ public class AxisService extends AxisDescription {
     private void printWSDLError(OutputStream out) throws AxisFault {
         try {
             String wsdlntfound = "<error>" +
-                    "<description>Unable to generate WSDL for this service</description>" +
-                    "<reason>Either user has not dropped the wsdl into META-INF or" +
-                    " operations use message receivers other than RPC.</reason>" +
-                    "</error>";
+                                 "<description>Unable to generate WSDL for this service</description>" +
+                                 "<reason>Either user has not dropped the wsdl into META-INF or" +
+                                 " operations use message receivers other than RPC.</reason>" +
+                                 "</error>";
             out.write(wsdlntfound.getBytes());
             out.flush();
             out.close();
@@ -666,16 +677,16 @@ public class AxisService extends AxisDescription {
     public void printWSDL2(OutputStream out) throws AxisFault {
         setWsdlfound(true);
         //pick the endpoint and take it as the epr for the WSDL
-        getWSDL2(out, new String[]{getEndpoint()}, "services");
+        getWSDL2(out, new String[]{getEndpoint()});
     }
 
-    public void printWSDL2(OutputStream out, String requestIP, String servicePath) throws AxisFault {
-        ArrayList eprList = new ArrayList();
-        String[] eprArray = getServiceEprs(requestIP, eprList);
-        getWSDL2(out, eprArray, servicePath);
+    public void printWSDL2(OutputStream out,
+                           String requestIP,
+                           String servicePath) throws AxisFault {
+        getWSDL2(out, getEPRs());
     }
 
-    private void getWSDL2(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
+    private void getWSDL2(OutputStream out, String [] serviceURL) throws AxisFault {
         if (isWsdlfound()) {
             AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
             try {
@@ -935,9 +946,9 @@ public class AxisService extends AxisDescription {
      */
     public void setScope(String scope) {
         if (Constants.SCOPE_APPLICATION.equals(scope) ||
-                Constants.SCOPE_TRANSPORT_SESSION.equals(scope) ||
-                Constants.SCOPE_SOAP_SESSION.equals(scope) ||
-                Constants.SCOPE_REQUEST.equals(scope)) {
+            Constants.SCOPE_TRANSPORT_SESSION.equals(scope) ||
+            Constants.SCOPE_SOAP_SESSION.equals(scope) ||
+            Constants.SCOPE_REQUEST.equals(scope)) {
             this.scope = scope;
         }
     }
@@ -1209,8 +1220,8 @@ public class AxisService extends AxisDescription {
         SchemaGenerator schemaGenerator;
         try {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                    implClass, schemaNameSpace,
-                    axisService.getSchematargetNamespacePrefix());
+                                                  implClass, schemaNameSpace,
+                                                  axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             axisService.setElementFormDefault(false);
             ArrayList excludeOpeartion = new ArrayList();
@@ -1248,10 +1259,10 @@ public class AxisService extends AxisDescription {
                 operation.setMessageReceiver(messageReceiver);
             } catch (IllegalAccessException e) {
                 throw new AxisFault("IllegalAccessException occured during message receiver loading"
-                        + e.getMessage());
+                                    + e.getMessage());
             } catch (InstantiationException e) {
                 throw new AxisFault("InstantiationException occured during message receiver loading"
-                        + e.getMessage());
+                                    + e.getMessage());
             }
             pinfo.setOperationPhases(operation);
             axisService.addOperation(operation);
@@ -1267,7 +1278,7 @@ public class AxisService extends AxisDescription {
             clazz = Class.forName("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
         } catch (ClassNotFoundException e) {
             throw new AxisFault("ClassNotFoundException occured during message receiver loading"
-                    + e.getMessage());
+                                + e.getMessage());
         }
 
         return createService(implClass, axisConfig, clazz);
@@ -1360,12 +1371,12 @@ public class AxisService extends AxisDescription {
                     if (s != null) {
                         calcualteSchemaNames(Arrays.asList(
                                 new XmlSchema[]{s}),
-                                nameTable);
+                                             nameTable);
                         nameTable.put(s,
-                                ("xsd" + count++)
-                                        + (customSchemaNameSuffix != null ?
-                                        customSchemaNameSuffix :
-                                        ""));
+                                      ("xsd" + count++)
+                                      + (customSchemaNameSuffix != null ?
+                                         customSchemaNameSuffix :
+                                         ""));
                     }
 
                 }
@@ -1395,13 +1406,13 @@ public class AxisService extends AxisDescription {
                                 new XmlSchema[]{s}), nameTable);
                         xmlSchemaExternal.setSchemaLocation(
                                 customSchemaNamePrefix == null ?
-                                        //use the default mode
-                                        (getName() +
-                                                "?xsd=" +
-                                                nameTable.get(s)) :
-                                        //custom prefix is present - add the custom prefix
-                                        (customSchemaNamePrefix +
-                                                nameTable.get(s)));
+                                //use the default mode
+                                (getName() +
+                                 "?xsd=" +
+                                 nameTable.get(s)) :
+                                                   //custom prefix is present - add the custom prefix
+                                                   (customSchemaNamePrefix +
+                                                    nameTable.get(s)));
                     }
                 }
             }

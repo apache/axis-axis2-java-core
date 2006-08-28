@@ -103,7 +103,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
             listenerManager.init(configurationContext);
         }
         listenerManager.addListener(trsIn, true);
-        servicePath = configurationContext.getServicePath();
+        servicePath = configurationContext.getServiceContextPath();
     }
 
     /*
@@ -118,7 +118,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
         password = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PASSWORD));
         port = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PORT));
         replyTo = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.RAPLY_TO));
-        servicePath = configurationContext.getServicePath();
+        servicePath = configurationContext.getServiceContextPath();
         if ((user == null) || (host == null) || (password == null) || (port == null)) {
             if (this.user == null) {
                 throw new AxisFault(Messages.getMessage("canNotBeNull", "User"));

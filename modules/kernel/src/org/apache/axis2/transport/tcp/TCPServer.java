@@ -67,7 +67,7 @@ public class TCPServer implements Runnable, TransportListener {
                 listenerManager.init(configContext);
             }
             listenerManager.addListener(trsIn, true);
-            conetxtPath = configContext.getContextPath();
+            conetxtPath = configContext.getServiceContextPath();
 
         } catch (IOException e1) {
             throw new AxisFault(e1);
@@ -91,7 +91,7 @@ public class TCPServer implements Runnable, TransportListener {
         if (param != null) {
             hostAddress = ((String) param.getValue()).trim();
         }
-        conetxtPath = configContext.getContextPath();
+        conetxtPath = configContext.getServiceContextPath();
     }
 
     public static void main(String[] args) throws AxisFault, NumberFormatException {

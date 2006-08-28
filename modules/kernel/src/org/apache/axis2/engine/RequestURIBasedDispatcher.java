@@ -51,7 +51,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         if (toEPR != null) {
             String filePart = toEPR.getAddress();
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
-                    messageContext.getConfigurationContext().getServicePath());
+                    messageContext.getConfigurationContext().getServiceContextPath());
 
             if ((values.length >= 2) && (values[1] != null)) {
                 QName operationName = new QName(values[1]);
@@ -84,7 +84,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             String filePart = toEPR.getAddress();
             //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
-                    messageContext.getConfigurationContext().getServicePath());
+                    messageContext.getConfigurationContext().getServiceContextPath());
 
             if ((values.length >= 1) && (values[0] != null)) {
                 AxisConfiguration registry =

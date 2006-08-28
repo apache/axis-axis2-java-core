@@ -286,7 +286,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             listenerManager.addListener(transportInDescription, true);
             ListenerManager.defaultConfigurationContext = configContext;
             agent = new ListingAgent(configContext);
-            SERVICE_PATH = configContext.getServicePath();
+            SERVICE_PATH = configContext.getServiceContextPath();
 
             initParams();
 
@@ -407,7 +407,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             try {
                 String[] array = servletConfig.getServletContext().getResource("/").toString().split("/");
                 contextPath = array[array.length - 1];
-                configContext.setContextPath(contextPath);
+                configContext.setContextRoot(contextPath);
             } catch (Exception e) {
             }
             if (contextPath == null) {

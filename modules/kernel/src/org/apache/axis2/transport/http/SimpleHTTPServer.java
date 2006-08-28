@@ -82,7 +82,7 @@ public class SimpleHTTPServer implements TransportListener {
         TransportInDescription httpDescription = new TransportInDescription(new QName(Constants.TRANSPORT_HTTP));
         httpDescription.setReceiver(this);
         httpFactory.getListenerManager().addListener(httpDescription, true);
-        contextPath = configurationContext.getContextPath();
+        contextPath = configurationContext.getServiceContextPath();
     }
 
     /**
@@ -110,7 +110,7 @@ public class SimpleHTTPServer implements TransportListener {
             else
                 hostAddress = httpFactory.getHostAddress();
 
-            contextPath = configurationContext.getContextPath();
+            contextPath = configurationContext.getServiceContextPath();
         } catch (Exception e1) {
             throw new AxisFault(e1);
         }

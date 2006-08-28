@@ -1,4 +1,4 @@
-POST /axis/services/EchoSwAService/echoAttachment HTTP/1.0
+POST /axis2/services/EchoSwAService/echoAttachment HTTP/1.0
 Content-Type: multipart/related; type="text/xml"; start="<9D645C8EBB837CE54ABD027A3659535D>"; 	boundary="----=_Part_0_1977511.1123163571138"
 Accept: application/soap+xml, application/dime, multipart/related, text/*
 User-Agent: Axis/1.2.1

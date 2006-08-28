@@ -49,7 +49,7 @@ public class ListingAgent extends AbstractAgent {
 
     public ListingAgent(ConfigurationContext aConfigContext) {
         super(aConfigContext);
-        servicePath = aConfigContext.getServicePath();
+        servicePath = aConfigContext.getServiceContextPath();
     }
 
     private void addTransportListner(String schema, int port) {
@@ -256,7 +256,7 @@ public class ListingAgent extends AbstractAgent {
 
         public void init(ConfigurationContext axisConf,
                          TransportInDescription transprtIn) throws AxisFault {
-            contextPath = axisConf.getContextPath();
+            contextPath = axisConf.getServiceContextPath();
         }
 
         public void start() throws AxisFault {

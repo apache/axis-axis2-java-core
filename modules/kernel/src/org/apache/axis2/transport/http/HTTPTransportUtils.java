@@ -23,10 +23,10 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.*;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
+import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -52,10 +52,14 @@ import java.util.zip.GZIPInputStream;
 public class HTTPTransportUtils {
 
 
-    public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl, Map map,
-                                                            ConfigurationContext configurationContext) throws AxisFault {
-        String[] values = Utils.parseRequestURLForServiceAndOperation(requestUrl,
-                configurationContext.getServicePath());
+    public static SOAPEnvelope
+            createEnvelopeFromGetRequest(String requestUrl,
+                                         Map map,
+                                         ConfigurationContext configCtx) throws AxisFault {
+        String[] values =
+                Utils.parseRequestURLForServiceAndOperation(requestUrl,
+                                                            configCtx.
+                                                                    getServiceContextPath());
 
         if (values == null) {
             return new SOAP11Factory().getDefaultEnvelope();
@@ -63,7 +67,7 @@ public class HTTPTransportUtils {
 
         if ((values[1] != null) && (values[0] != null)) {
             String srvice = values[0];
-            AxisService service = configurationContext.getAxisConfiguration().getService(srvice);
+            AxisService service = configCtx.getAxisConfiguration().getService(srvice);
             if (service == null) {
                 throw new AxisFault("service not found: " + srvice);
             }
@@ -72,10 +76,10 @@ public class HTTPTransportUtils {
             SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
 //            OMNamespace omNs = soapFactory.createOMNamespace(values[0], "services");
             OMNamespace omNs = soapFactory.createOMNamespace(service.getSchematargetNamespace(),
-                    service.getSchematargetNamespacePrefix());
+                                                             service.getSchematargetNamespacePrefix());
             //OMNamespace defualtNs = new OMNamespaceImpl("", null, soapFactory);
             soapFactory.createOMNamespace(service.getSchematargetNamespace(),
-                    service.getSchematargetNamespacePrefix());
+                                          service.getSchematargetNamespacePrefix());
             OMElement opElement = soapFactory.createOMElement(operation, omNs);
             Iterator it = map.keySet().iterator();
 
@@ -125,7 +129,7 @@ public class HTTPTransportUtils {
         msgContext.setServerSide(true);
 
         SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(requestURI,
-                requestParameters, configurationContext);
+                                                                                requestParameters, configurationContext);
 
         if (envelope == null) {
             return false;
@@ -151,14 +155,15 @@ public class HTTPTransportUtils {
             Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
             if (headers != null) {
                 if (HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
-                        HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING.toLowerCase()))) {
+                    HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING.toLowerCase())))
+                {
                     in = new GZIPInputStream(in);
                 }
             }
 
             // remove the starting and trailing " from the SOAP Action
             if ((soapActionHeader != null) && soapActionHeader.startsWith("\"")
-                    && soapActionHeader.endsWith("\"")) {
+                && soapActionHeader.endsWith("\"")) {
                 soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
             }
 
@@ -185,18 +190,18 @@ public class HTTPTransportUtils {
                     // If charset is not specified
                     if (TransportUtils.getCharSetEncoding(contentType) == null) {
                         xmlreader = StAXUtils.createXMLStreamReader(in,
-                                MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                                                    MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                         // Set the encoding scheme in the message context
                         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                               MessageContext.DEFAULT_CHAR_SET_ENCODING);
                     } else {
 
                         // get the type of char encoding
                         String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
 
                         xmlreader = StAXUtils.createXMLStreamReader(in,
-                                charSetEnc);
+                                                                    charSetEnc);
 
                         // Setting the value in msgCtx
                         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
@@ -208,7 +213,7 @@ public class HTTPTransportUtils {
                         // it is SOAP 1.2
                         builder =
                                 new StAXSOAPModelBuilder(xmlreader,
-                                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                                                         SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                         envelope = (SOAPEnvelope) builder.getDocumentElement();
                     } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                         soap11 = true;
@@ -244,11 +249,11 @@ public class HTTPTransportUtils {
 
             if (builder == null) {
                 XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in,
-                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                                                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
                 // Set the encoding scheme in the message context
                 msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                                       MessageContext.DEFAULT_CHAR_SET_ENCODING);
                 builder = new StAXSOAPModelBuilder(
                         xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
@@ -257,7 +262,7 @@ public class HTTPTransportUtils {
             String charsetEncoding = builder.getDocument().getCharsetEncoding();
 
             if ((charsetEncoding != null) && !"".equals(charsetEncoding)
-                    && ! charsetEncoding.equalsIgnoreCase((String) msgContext.getProperty(
+                && ! charsetEncoding.equalsIgnoreCase((String) msgContext.getProperty(
                     Constants.Configuration.CHARACTER_SET_ENCODING))) {
                 String faultCode;
 
@@ -270,7 +275,7 @@ public class HTTPTransportUtils {
 
                 throw new AxisFault(
                         "Character Set Encoding from " + "transport information do not match with "
-                                + "character set encoding in the received SOAP message", faultCode);
+                        + "character set encoding in the received SOAP message", faultCode);
             }
 
             msgContext.setEnvelope(envelope);

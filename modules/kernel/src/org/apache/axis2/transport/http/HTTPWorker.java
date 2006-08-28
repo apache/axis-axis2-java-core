@@ -56,8 +56,8 @@ public class HTTPWorker implements Worker {
             final MessageContext msgContext) throws HttpException, IOException {    
 
         ConfigurationContext configurationContext = msgContext.getConfigurationContext();
-        final String contextPath = configurationContext.getContextPath() + "/";;
-        final String servicePath = configurationContext.getServicePath();;
+        final String contextPath = configurationContext.getContextRoot() + "/";
+        final String servicePath = configurationContext.getServiceContextPath();
 
         HttpVersion ver = request.getRequestLine().getHttpVersion();
         String uri = request.getRequestLine().getUri();

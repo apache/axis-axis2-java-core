@@ -63,7 +63,8 @@ public class EchoRawSwATest extends UtilServerBasedTestCase {
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawSwATest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawSwATest.class),
+                             Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
     protected void setUp() throws Exception {
