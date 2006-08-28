@@ -73,7 +73,7 @@ public class EndpointInterfaceDescription {
     
     // Annotations and cached values
     private SOAPBinding         soapBindingAnnotation;
-    // TODO: (JLB) Should this be using the jaxws annotation values or should that be wrappered?
+    // TODO: Should this be using the jaxws annotation values or should that be wrappered?
     private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
 
     
@@ -82,25 +82,125 @@ public class EndpointInterfaceDescription {
     }
     
     EndpointInterfaceDescription(Class sei, EndpointDescription parent) {
+        seiClass = sei;
+
         // Per JSR-181 all methods on the SEI are mapped to operations regardless
         // of whether they include an @WebMethod annotation.  That annotation may
         // be present to customize the mapping, but is not required (p14)
-        // TODO: (JLB) Testcases that do and do not include @WebMethod anno
-        seiClass = sei;
-        
-        Method[] seiMethods = seiClass.getMethods();
-        for (Method method:seiMethods) {
-            if (!Modifier.isPublic(method.getModifiers())) {
-                // JSR-181 says methods must be public (p14)
-                // TODO NLS
-                ExceptionFactory.makeWebServiceException("SEI methods must be public");
-            }
-            // TODO: (JLB) other validation per JSR-181
-            
+        // TODO:  Testcases that do and do not include @WebMethod anno
+        for (Method method:getSEIMethods(seiClass)) {
             OperationDescription operation = new OperationDescription(method, this);
             addOperation(operation);
         }
+    }
+    
+    private static Method[] getSEIMethods(Class sei) {
+        // Per JSR-181 all methods on the SEI are mapped to operations regardless
+        // of whether they include an @WebMethod annotation.  That annotation may
+        // be present to customize the mapping, but is not required (p14)
+        Method[] seiMethods = sei.getMethods();
+        if (sei != null) {
+            for (Method method:seiMethods) {
+                if (!Modifier.isPublic(method.getModifiers())) {
+                    // JSR-181 says methods must be public (p14)
+                    // TODO NLS
+                    ExceptionFactory.makeWebServiceException("SEI methods must be public");
+                }
+                // TODO: other validation per JSR-181
+            }
+            
+        }
+        return seiMethods;
+    }
+    
+    public void updateWithSEI(Class sei) {
+        if (seiClass != null && seiClass != sei)
+            // TODO: It probably is invalid to try reset the SEI; but this isn't the right error processing
+            throw new UnsupportedOperationException("The seiClass is already set; reseting it is not supported");
+        else if (seiClass != null && seiClass == sei)
+            // We've already done the necessary updates for this SEI
+            return;
+        else if (sei != null) {
+            seiClass = sei;
+            // Update (or possibly add) the OperationDescription for each of the methods on the SEI.
+            for (Method seiMethod:getSEIMethods(seiClass)) {
 
+                if (getOperation(seiMethod) != null) {
+                    // If an OpDesc already exists with this java method set on it, then the OpDesc has already
+                    // been updated for this method, so skip it.
+                    continue;
+                }
+                // At this point (for now at least) the operations were created with WSDL previously.
+                // If they had been created from an annotated class and no WSDL, then the seiClass would have 
+                // already been set so we would have taken other branches in this if test.  (Note this could
+                // change once AxisServices can be built from annotations by the ServiceDescription class).
+                // Since the operations were created from WSDL, they will not have a java method, which
+                // comes from the SEI, set on them yet.
+                //
+                // Another consideration is that currently Axis2 does not support overloaded WSDL operations.
+                // That means there will only be one OperationDesc build from WSDL.  Still another consideration is
+                // that the JAXWS async methods which may exist on the SEI will NOT exist in the WSDL.  An example
+                // of these methods for the WSDL operation:
+                //     String echo(String)
+                // optionally generated JAX-WS SEI methods from the tooling; take note of the annotation specifying the 
+                // operation name
+                //     @WebMethod(operationName="echo" ...)
+                //     Response<String> echoStringAsync(String)
+                //     @WebMethod(operationName="echo" ...)
+                //     Future<?> echoStringAsync(String, AsyncHandler)
+                //
+                // So given all the above, the code does the following based on the operation QName
+                // (which might also be the java method name; see determineOperationQName for details)
+                // (1) If an operationDesc does not exist, add it.
+                // (2) If an operationDesc does exist but does not have a java method set on it, set it
+                // (3) If an operationDesc does exist and has a java method set on it already, add a new one. 
+                //
+                // TODO: May need to change when Axis2 supports overloaded WSDL operations
+                // TODO: May need to change when ServiceDescription can build an AxisService from annotations
+                
+                // Get the QName for this java method and then update (or add) the appropriate OperationDescription
+                // See comments below for imporant notes about the current implementation.
+                // NOTE ON OVERLOADED OPERATIONS
+                // Axis2 does NOT currently support overloading WSDL operations.
+                QName seiOperationQName = OperationDescription.determineOperationQName(seiMethod);
+                OperationDescription[] updateOpDesc = getOperation(seiOperationQName);
+                if (updateOpDesc == null || updateOpDesc.length == 0) {
+                    // This operation wasn't defined in the WSDL.  Note that the JAX-WS async methods
+                    // which are defined on the SEI are not defined as operations in the WSDL.
+                    // Although they usually specific the same OperationName as the WSDL operation, 
+                    // there may be cases where they do not.
+                    // TODO: Is this path an error path, or can the async methods specify different operation names than the 
+                    //       WSDL operation?
+                    OperationDescription operation = new OperationDescription(seiMethod, this);
+                    addOperation(operation);
+                }
+                else { 
+                    // Currently Axis2 does not support overloaded operations.  That means that even if the WSDL
+                    // defined overloaded operations, there would still only be a single AxisOperation, and it
+                    // would be the last operation encounterd.
+                    // HOWEVER the generated JAX-WS async methods (see above) may (will always?) have the same
+                    // operation name and so will come down this path; they need to be added.
+                    // TODO: When Axis2 starts supporting overloaded operations, then this logic will need to be changed
+                    // TODO: Should we verify that these are the async methods before adding them, and treat it as an error otherwise?
+
+                    // Loop through all the opdescs; if one doesn't currently have a java method set, set it
+                    // If all have java methods set, then add a new one.  Assume we'll need to add a new one.
+                    boolean addOpDesc = true;
+                    for (OperationDescription checkOpDesc:updateOpDesc) {
+                        if (checkOpDesc.getSEIMethod() == null) {
+                            // TODO: Should this be checking (somehow) that the signature matches?  Probably not an issue until overloaded WSDL ops are supported.
+                            checkOpDesc.setSEIMethod(seiMethod);
+                            addOpDesc = false;
+                            break;
+                        }
+                    }
+                    if (addOpDesc) {
+                        OperationDescription operation = new OperationDescription(seiMethod, this);
+                        addOperation(operation);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -110,7 +210,7 @@ public class EndpointInterfaceDescription {
      * @param javaMethodName String representing a Java Method Name
      * @return
      */
-    // TODO: (JLB) This is confusing; somet getOperations use the QName from the WSDL or annotation; this one uses the java method name; rename this signature I think; add on that takes a String but does a QName lookup against the WSDL/Annotation
+    // FIXME: This is confusing; some getOperations use the QName from the WSDL or annotation; this one uses the java method name; rename this signature I think; add on that takes a String but does a QName lookup against the WSDL/Annotation
     public OperationDescription[] getOperation(String javaMethodName) {
         if (javaMethodName == null) {
             return null;
@@ -204,7 +304,7 @@ public class EndpointInterfaceDescription {
     // SOAP Binding annotation realted methods
     // ========================================
     SOAPBinding getSoapBinding(){
-        // TODO: (JLB) Test with sei Null, not null, SOAP Binding annotated, not annotated
+        // TODO: Test with sei Null, not null, SOAP Binding annotated, not annotated
         if (soapBindingAnnotation == null && seiClass != null) {
             soapBindingAnnotation = (SOAPBinding) seiClass.getAnnotation(SOAPBinding.class);
         }

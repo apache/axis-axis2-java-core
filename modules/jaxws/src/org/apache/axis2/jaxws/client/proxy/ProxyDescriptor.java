@@ -47,6 +47,16 @@ public class ProxyDescriptor {
     private ServiceDescription serviceDescription= null;
 	private OperationDescription operationDescription= null;
 	private EndpointDescription endpointDescription = null;
+    
+	public ServiceDescription getServiceDescription() {
+     return serviceDescription;   
+    }
+    public OperationDescription getOperationDescription() {
+        return operationDescription;
+    }
+    public EndpointDescription getEndpointDescription() {
+        return endpointDescription;
+    }
 
 	//TODO Need to put validation to check if seiMethod is null;
 	public ProxyDescriptor(Class seiClazz, ServiceDescription serviceDescription){

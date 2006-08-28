@@ -136,6 +136,7 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 		
 		InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
 		MessageContext requestContext = createRequest(method, args);
+        requestContext.setOperationDescription(proxyDescriptor.getOperationDescription());
 		requestIC.setRequestMessageContext(requestContext);
 		InvocationController controller = new AxisInvocationController();
 		//FIXME: Fix based on how InvocationContext changes to get ServiceClient.

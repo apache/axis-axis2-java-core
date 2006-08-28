@@ -94,28 +94,36 @@ public class EndpointDescription {
         parentServiceDescription = parent;
 
         // Per JSR-181, the @WebService annotation is required.
-        // TODO: (JLB) Tests that do/do not include this annotation
+        // TODO: Tests that do/do not include this annotation
         WebService webServiceAnnotation = (WebService) sei.getAnnotation(WebService.class);
         if (webServiceAnnotation == null) {
             // TODO: NLS
             ExceptionFactory.makeWebServiceException("Invalid SEI " + sei + "; must contain @WebService annotation");
         }
 
-        // TODO: (JLB) Process other @WebService values
+        // TODO: Process other @WebService values
 
         // If portName not specified, get it from the annotation
-        // TODO: (JLB) If the portName is specified, should we verify it against the annotation?
-        // TODO: (JLB) Add tests: null portName, !null portName, portName != annotation value
+        // TODO: If the portName is specified, should we verify it against the annotation?
+        // TODO: Add tests: null portName, !null portName, portName != annotation value
         if (portName == null) {
             String name = webServiceAnnotation.name();
             String tns = webServiceAnnotation.targetNamespace();
-            // TODO: (JLB) Check for name &/| tns null or empty string and add tests for same
+            // TODO: Check for name &/| tns null or empty string and add tests for same
             portName = new QName(tns, name);
         }
         portQName = portName;        
         
         endpointInterfaceDescription = new EndpointInterfaceDescription(sei, this);
     }
+    
+    public void updateWithSEI(Class sei) {
+        if (sei != null) {
+            endpointInterfaceDescription.updateWithSEI(sei);
+        }
+        return;
+    }
+    
     public QName getPortQName() {
         return portQName;
     }

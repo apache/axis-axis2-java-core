@@ -45,7 +45,7 @@ public class ProxyTests extends TestCase {
 	private String axisEndpoint = "http://localhost:8080/axis2/services/ProxyDocLitWrappedService";
 	private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped",
 			"ProxyDocLitWrappedPort");
-	private String wsdlLocation = "modules/jaxws/test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
+	private String wsdlLocation = "test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
 	private boolean runningOnAxis = true;
 	
 	public void testInvoke(){
@@ -74,6 +74,32 @@ public class ProxyTests extends TestCase {
             fail("Exception received" + e);
 		}
 	}
+
+    public void testInvokeWithWSDL(){
+        try{ 
+            if(!runningOnAxis){
+                return;
+            }
+            System.out.println("---------------------------------------");
+            File wsdl= new File(wsdlLocation); 
+            URL wsdlUrl = wsdl.toURL(); 
+            Service service = Service.create(wsdlUrl, serviceName);
+            String request = new String("some string request"); 
+            Object proxy =service.getPort(portName, DocLitWrappedProxy.class);
+            System.out.println(">>Invoking Binding Provider property");
+            BindingProvider p = (BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+                
+            DocLitWrappedProxy dwp = (DocLitWrappedProxy)proxy;
+            System.out.println(">> Invoking Proxy Synchronously");
+            String response = dwp.invoke(request);
+            System.out.println("Proxy Response =" + response);
+            System.out.println("---------------------------------------");
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
 	
 	public void testInvokeAsyncCallback(){
 		try{ 

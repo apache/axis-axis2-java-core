@@ -41,6 +41,7 @@ import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
@@ -92,9 +93,20 @@ public class AxisInvocationController implements InvocationController {
         
         // We need the qname of the operation being invoked to know which 
         // AxisOperation the OperationClient should be based on.
-        // TODO: Need to get the operation qname from the MessageContext
-        QName operationName = ServiceClient.ANON_OUT_IN_OP;
-        
+        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
+        // clients do not use operations, so the operationDesc will be null.  In this
+        // case an anonymous AxisService with anoymouns AxisOperations for the supported
+        // MEPs will be created; and it is that anonymous operation name which needs to
+        // be specified
+        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
+        //       If ServiceDesc.axisService is null, then we created an Annon Service and operations in 
+        //       ServiceDelegate.getServiceClient(), and that is what the service client points to.
+        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
+        //       the anonymous AxisOperation on that service.  
+        //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
+        //       i.e the OperationDesc.axisOperation == null
+        QName operationName = getOperationNameToUse(requestMsgCtx, ServiceClient.ANON_OUT_IN_OP);
+
         // TODO: Will the ServiceClient stick around on the InvocationContext
         // or will we need some other mechanism of creating this?
         // Try to create an OperationClient from the passed in ServiceClient
@@ -207,7 +219,24 @@ public class AxisInvocationController implements InvocationController {
         
         // Try to create an OperationClient from the passed in ServiceClient
         ServiceClient svcClient = ic.getServiceClient();
-        OperationClient opClient = createOperationClient(svcClient, ServiceClient.ANON_OUT_ONLY_OP);
+
+        // We need the qname of the operation being invoked to know which 
+        // AxisOperation the OperationClient should be based on.
+        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
+        // clients do not use operations, so the operationDesc will be null.  In this
+        // case an anonymous AxisService with anoymouns AxisOperations for the supported
+        // MEPs will be created; and it is that anonymous operation name which needs to
+        // be specified
+        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
+        //       If ServiceDesc.axisService is null, then we created an Annon Service and operations in 
+        //       ServiceDelegate.getServiceClient(), and that is what the service client points to.
+        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
+        //       the anonymous AxisOperation on that service.  
+        //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
+        //       i.e the OperationDesc.axisOperation == null
+        QName operationName = getOperationNameToUse(requestMsgCtx, ServiceClient.ANON_OUT_ONLY_OP);
+
+        OperationClient opClient = createOperationClient(svcClient, operationName);
         
         setupProperties(requestMsgCtx.getProperties(), opClient.getOptions());
         
@@ -286,7 +315,23 @@ public class AxisInvocationController implements InvocationController {
         MessageContext requestMsgCtx = ic.getRequestMessageContext();
         
         ServiceClient svcClient = ic.getServiceClient();
-        OperationClient opClient = createOperationClient(svcClient, ServiceClient.ANON_OUT_IN_OP);
+        // We need the qname of the operation being invoked to know which 
+        // AxisOperation the OperationClient should be based on.
+        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
+        // clients do not use operations, so the operationDesc will be null.  In this
+        // case an anonymous AxisService with anoymouns AxisOperations for the supported
+        // MEPs will be created; and it is that anonymous operation name which needs to
+        // be specified
+        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
+        //       If ServiceDesc.axisService is null, then we created an Annon Service and operations in 
+        //       ServiceDelegate.getServiceClient(), and that is what the service client points to.
+        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
+        //       the anonymous AxisOperation on that service.  
+        //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
+        //       i.e the OperationDesc.axisOperation == null
+        QName operationName = getOperationNameToUse(requestMsgCtx, ServiceClient.ANON_OUT_IN_OP);
+
+        OperationClient opClient = createOperationClient(svcClient, operationName);
         
         setupProperties(requestMsgCtx.getProperties(), opClient.getOptions());
         
@@ -505,5 +550,34 @@ public class AxisInvocationController implements InvocationController {
             
             ops.setProperty(key, value);
         }
+    }
+    
+    // TODO: This method may need to be removed or refactored when the ServiceDescription can
+    //       create the AxisService hierachy using annotations.  Currently the AxisService hierachy is
+    //       only created under a ServiceDescription if WSDL is supplied
+    private static QName getOperationNameToUse(MessageContext requestMsgCtx, QName defaultOpName) {
+        // We need the qname of the operation being invoked to know which 
+        // AxisOperation the OperationClient should be based on.
+        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
+        // clients do not use operations, so the operationDesc will be null.  In this
+        // case an anonymous AxisService with anoymouns AxisOperations for the supported
+        // MEPs will be created; and it is that anonymous operation name which needs to
+        // be specified
+        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
+        //       If ServiceDesc.axisService is null (which currently happens if no WSDL 
+        //       was supplied when the ServiceDesc is created), then we created an annonymous Service and operations in 
+        //       ServiceDelegate.getServiceClient(), and that is what the service client used in the inovke points to.
+        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
+        //       the anonymous AxisOperation on that service.  
+        //       The check below for this case is that the AxisOperation is null, since all Axis description
+        //       objects (including AxisOperation) are only created if WSDL was use to create the ServiceDesc.
+        //       This will probably need to change once Axis descriptions are also created from annotions.
+        QName operationName = null;
+        OperationDescription opDesc = requestMsgCtx.getOperationDescription();
+        if (opDesc != null && opDesc.getAxisOperation() != null)
+            operationName = opDesc.getName();
+        else 
+            operationName = defaultOpName;
+        return operationName;
     }
 }

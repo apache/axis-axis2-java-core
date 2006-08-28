@@ -102,13 +102,13 @@ public class OperationDescription {
     private String              responseWrapperClassName;
     
     private SOAPBinding         soapBindingAnnotation;
-    // TODO: (JLB) Should this be using the jaxws annotation values or should that be wrappered?
+    // REVIEW: Should this be using the jaxws annotation values or should that be wrappered?
     private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
     
     private WebMethod           webMethodAnnotation;
     private String              webMethodOperationName;
     
-    // TODO: (JLB) Should WebParam annotation be moved to the ParameterDescription?
+    // TODO: Should WebParam annotation be moved to the ParameterDescription?
     private WebParam[]          webParamAnnotations;
     private String[]            webParamNames;
     
@@ -116,16 +116,25 @@ public class OperationDescription {
     private String              webResultName;
     
     OperationDescription(Method method, EndpointInterfaceDescription parent) {
-        // TODO: (JLB) Look for WebMethod anno; get name and action off of it
+        // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;
-        seiMethod = method;
+        setSEIMethod(method);
         webMethodAnnotation = seiMethod.getAnnotation(WebMethod.class);
         
         this.operationName = new QName(getWebMethodOperationName());
     }
     OperationDescription(AxisOperation operation, EndpointInterfaceDescription parent) {
         parentEndpointInterfaceDescription = parent;
-        axisOperation = operation;       
+        axisOperation = operation;
+        this.operationName = axisOperation.getName();
+    }
+
+    public void setSEIMethod(Method method) {
+        if (seiMethod != null)
+            // TODO: This is probably an error, but error processing logic is incorrect
+            throw new UnsupportedOperationException("Can not set an SEI method once it has been set.");
+        else 
+            seiMethod = method;
     }
 
     public EndpointInterfaceDescription getEndpointInterfaceDescription() {
@@ -156,7 +165,7 @@ public class OperationDescription {
                 returnParameters.add(param.getName());
             }
         }
-        // TODO: (JLB) This is different than the rest, which return null instead of an empty array
+        // TODO: This is different than the rest, which return null instead of an empty array
         return returnParameters.toArray(new String[0]);
     }
     /**
@@ -169,23 +178,36 @@ public class OperationDescription {
     }
 
     // Annotation-related getters
-    
+
     // =====================================
     // WebMethod annotation related methods
     // =====================================
     WebMethod getWebMethod() {
         return webMethodAnnotation;
     }
+    
+    static QName determineOperationQName(Method javaMethod) {
+        return new QName(determineOperationName(javaMethod));
+    }
+    
+    private static String determineOperationName(Method javaMethod) {
+        String operationName = null;
+        WebMethod wmAnnotation = javaMethod.getAnnotation(WebMethod.class);
+        // Per JSR-181, if @WebMethod specifies and operation name, use that.  Otherwise
+        // default is the Java method name
+        if (wmAnnotation != null && !DescriptionUtils.isEmpty(wmAnnotation.operationName())) {
+            operationName = wmAnnotation.operationName();
+        }
+        else {
+            operationName = javaMethod.getName();
+        }
+        return operationName;
+        
+    }
+    
     public String getWebMethodOperationName() {
         if (webMethodOperationName == null) {
-            // Per JSR-181, if @WebMethod specifies and operation name, use that.  Otherwise
-            // default is the Java method name
-            if (getWebMethod() != null && !DescriptionUtils.isEmpty(getWebMethod().operationName())) {
-                webMethodOperationName = getWebMethod().operationName();
-            }
-            else {
-                webMethodOperationName = seiMethod.getName();
-            }
+            webMethodOperationName = determineOperationName(seiMethod);
         }
         return webMethodOperationName;
     }
@@ -221,7 +243,7 @@ public class OperationDescription {
             }
             else {
                 // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.3, p. 80]
-                // TODO: (JLB) Get the TNS from the SEI via the endpoint interface desc.
+                // TODO: Get the TNS from the SEI via the endpoint interface desc.
                 throw new UnsupportedOperationException("RequestWrapper.targetNamespace default not implented yet");
             }
         }
@@ -278,7 +300,7 @@ public class OperationDescription {
             }
             else {
                 // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.4, p. 81]
-                // TODO: (JLB) Get the TNS from the SEI via the endpoint interface desc.
+                // TODO: Get the TNS from the SEI via the endpoint interface desc.
                 throw new UnsupportedOperationException("ResponseWrapper.targetNamespace default not implented yet");
             }
         }
@@ -307,7 +329,7 @@ public class OperationDescription {
     // ===========================================
     // WebParam Annotation related methods
     // ===========================================
-    // TODO: (JLB) Should this annotation be moved to ParameterDescription 
+    // TODO: Should this annotation be moved to ParameterDescription 
     WebParam[] getWebParam() {
         if (webParamAnnotations == null) {
             Annotation[][] paramAnnotation = seiMethod.getParameterAnnotations();
@@ -329,7 +351,7 @@ public class OperationDescription {
             ArrayList<String> buildNames = new ArrayList<String>();
             WebParam[] webParams = getWebParam();
             for (WebParam currentParam:webParams) {
-                // TODO: (JLB) Is skipping param names of "asyncHandler" correct?  This came from original ProxyDescription class and ProxyTest fails without this code
+                // TODO: Is skipping param names of "asyncHandler" correct?  This came from original ProxyDescription class and ProxyTest fails without this code
                 //       Due to code in DocLitProxyHandler.getParamValues() which does not add values for AsyncHandler objects.
                 //       It probably DOES need to be skipped, albeit more robustly (check that the type of the param is javax.xml.ws.AsyncHandler also)
                 //       The reason is that the handler is part of the JAX-WS async callback programming model; it is NOT part of the formal params
@@ -357,7 +379,7 @@ public class OperationDescription {
         return getWebResult() != null;
     }
 
-    // TODO: (JLB) This method returns null if the annotation is not specified; others return default values.  I think null is the correct thing to return; change the others
+    // TODO: This method returns null if the annotation is not specified; others return default values.  I think null is the correct thing to return; change the others
     public String getWebResultName() {
         if (isWebResultAnnotationSpecified() && webResultName == null) {
             if (!DescriptionUtils.isEmpty(getWebResult().name())) {

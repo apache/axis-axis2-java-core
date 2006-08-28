@@ -137,12 +137,17 @@ public class ServiceDescription {
 
         
         setupWsdlDefinition();
-        // TODO: (JLB) Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
+        // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
         //       Possibly defer creation of AxisService to the getPort() call?
         setupAxisService();
         buildDescriptionHierachy();
+        addAnonymousAxisOperations();
     }
 
+    // Create the descrpiptions based on the service implementation class
+    // NOTE: Taking an axisService on the call is TEMPORARY!  Eventually the AxisService should be constructed
+    //       based on the annotations in the ServiceImpl class.
+    // TODO: Remove axisService as paramater when the AxisService can be constructed from the annotations
     ServiceDescription(Class serviceImplClass, AxisService axisService) {
         this.serviceImplClass = serviceImplClass;
         this.axisService = axisService;
@@ -151,11 +156,11 @@ public class ServiceDescription {
             Parameter parameter = new Parameter();
             parameter.setName(AXIS_SERVICE_PARAMETER);
             parameter.setValue(this);
-            // TODO: (JLB) What to do if AxisFault
+            // TODO: What to do if AxisFault
             try {
                 axisService.addParameter(parameter);
             } catch (AxisFault e) {
-                // TODO: (JLB) Throwing wrong exception
+                // TODO: Throwing wrong exception
                 e.printStackTrace();
                 throw new UnsupportedOperationException("Can't add AxisService param: " + e);
             }
@@ -165,7 +170,7 @@ public class ServiceDescription {
         // Else use the public (including inherited) methods
         WebService webServiceAnnotation = (WebService) this.serviceImplClass.getAnnotation(WebService.class);
 
-        // TODO: (JLB) Initial code path requires the @WebService annotation
+        // TODO: Initial code path requires the @WebService annotation
         if (webServiceAnnotation == null) {
             throw new UnsupportedOperationException("TEMPORARY CODE: ServiceImpl bean must have @WebServiceAnnotation");
         }
@@ -173,12 +178,12 @@ public class ServiceDescription {
             throw new UnsupportedOperationException("TEMPORARY CODE: ServiceImpl bean must have @WebServiceAnnotation.endpointInterface set");
         }
         
-        // TODO: (JLB) Using Class.forName() is probably not the best long-term way to get the SEI class from the annotation
+        // TODO: Using Class.forName() is probably not the best long-term way to get the SEI class from the annotation
         Class seiClass = null;
         try {
             seiClass = Class.forName(webServiceAnnotation.endpointInterface());
         } catch (ClassNotFoundException e) {
-            // TODO: (JLB) Throwing wrong exception
+            // TODO: Throwing wrong exception
             e.printStackTrace();
             throw new UnsupportedOperationException("Can't create SEI class: " + e);
         }
@@ -187,6 +192,9 @@ public class ServiceDescription {
         EndpointDescription endpointDescription = new EndpointDescription(seiClass, null, this);
         addEndpointDescription(endpointDescription);
 
+        // The anonymous AxisOperations are currently NOT added here.  The reason 
+        // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
+        // are only needed on the client side.
     }
 
 
@@ -203,12 +211,13 @@ public class ServiceDescription {
     public void updateEndpointInterfaceDescription(Class sei, QName portQName) {
         
         if (getEndpointDescription(portQName) != null) {
-            // TODO: (JLB) Implement validating SEI against existing port built from WSDL
-            throw new UnsupportedOperationException("Not implemented yet");
+            // TODO: Refine validating and suplementing WSDL versus annotations
+            EndpointDescription endpointDesc = getEndpointDescription(portQName);
+            endpointDesc.updateWithSEI(sei);
         }
         else {
             // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
-            // TODO: (JLB) Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
+            // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
             EndpointDescription endpointDescription = new EndpointDescription(sei, portQName, this);
             addEndpointDescription(endpointDescription);
         }
@@ -280,6 +289,9 @@ public class ServiceDescription {
     private void buildAxisServiceFromWSDL() {
         // TODO: Change this to use WSDLToAxisServiceBuilder superclass
         WSDL11ToAxisServiceBuilder serviceBuilder = new WSDL11ToAxisServiceBuilder(wsdlWrapper.getDefinition(), serviceQName, null);
+        // TODO: Currently this only builds the client-side AxisService; it needs to do client and server somehow.
+        // Patterned after AxisService.createClientSideAxisService
+        serviceBuilder.setServerSide(false);
         try {
             axisService = serviceBuilder.populateService();
         } catch (AxisFault e) {
@@ -289,7 +301,7 @@ public class ServiceDescription {
     }
     
     private void buildAxisServiceFromNoWSDL() {
-        // TODO: (JLB) Refactor this; probably just remove this method
+        // TODO: Refactor this to create from annotations.
 //        if (true) return;
 //        
 //        // Patterned after ServiceClient.createAnonymousService()
@@ -343,5 +355,24 @@ public class ServiceDescription {
     }
     public URL getWSDLLocation() {
         return wsdlURL;
+    }
+    
+    /**
+     * Adds the anonymous axis operations to the AxisService.  Note that this is only needed on 
+     * the client side, and they are currently used in two cases
+     * (1) For Dispatch clients (which don't use SEIs and thus don't use operations)
+     * (2) TEMPORARLIY for Services created without WSDL (and thus which have no AxisOperations created)
+     *  See the AxisInvocationController invoke methods for more details.
+     *  
+     *   Based on ServiceClient.createAnonymouService
+     */
+    private void addAnonymousAxisOperations() {
+        if (axisService != null) {
+            OutOnlyAxisOperation outOnlyOperation = new OutOnlyAxisOperation(ServiceClient.ANON_OUT_ONLY_OP);
+            axisService.addOperation(outOnlyOperation);
+
+            OutInAxisOperation outInOperation = new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP);
+            axisService.addOperation(outInOperation);
+        }
     }
 }
