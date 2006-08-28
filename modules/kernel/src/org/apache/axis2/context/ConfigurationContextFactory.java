@@ -111,14 +111,14 @@ public class ConfigurationContextFactory {
     private static void setContextPaths(AxisConfiguration axisConfig,
                                         ConfigurationContext configContext) {
         // Checking for context path
-        Parameter contextPath = axisConfig.getParameter(Constants.CONTEXT_PATH);
+        Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
         if (contextPath != null) {
             String cpath = ((String) contextPath.getValue()).trim();
             if (cpath.length() > 0) {
                 configContext.setContextRoot(cpath);
             }
         }
-        Parameter servicePath = axisConfig.getParameter(Constants.SERVICE_PATH);
+        Parameter servicePath = axisConfig.getParameter(Constants.PARAM_SERVICE_PATH);
         if (servicePath != null) {
             String spath = ((String) servicePath.getValue()).trim();
             if (spath.length() > 0) {

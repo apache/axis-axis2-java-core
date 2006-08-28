@@ -70,11 +70,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     /**
      * To chenge the conetext path from axis2/service to something else
      */
-    public static final String CONTEXT_PATH = "contextPath";
+    public static final String PARAM_CONTEXT_ROOT = "contextRoot";
     /**
      * To chenage the service path to somthing else
      */
-    public static final String SERVICE_PATH = "servicePath";
+    public static final String PARAM_SERVICE_PATH = "servicePath";
     //Parameter name for transport session managemntt
     public static final String MANAGE_TRANSPORT_SESSION = "manageTransportSession";
 
