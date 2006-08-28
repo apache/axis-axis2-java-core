@@ -220,7 +220,15 @@
                     // Constructor
                     protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value) {
                         <xsl:value-of select="$varName" /> = value;
-                        _table_.put(<xsl:value-of select="$varName" />, this);
+                        <xsl:choose>
+                                   <xsl:when test="@primitive">
+                                     _table_.put(<xsl:value-of select="$varName" /> + "", this);
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                       _table_.put(<xsl:value-of select="$varName" />, this);
+                                   </xsl:otherwise>
+                               </xsl:choose>
+
                     }
 
                     <xsl:for-each select="enumFacet">
@@ -236,7 +244,15 @@
                         public static <xsl:value-of select="$name"/> fromValue(<xsl:value-of select="$propertyType"/> value)
                               throws java.lang.IllegalArgumentException {
                             <xsl:value-of select="$name"/> enumeration = (<xsl:value-of select="$name"/>)
-                                _table_.get(value);
+                        <xsl:choose>
+                                   <xsl:when test="@primitive">
+                                     _table_.get(value + "");
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                       _table_.get(value);
+                                   </xsl:otherwise>
+                               </xsl:choose>
+
                             if (enumeration==null) throw new java.lang.IllegalArgumentException();
                             return enumeration;
                         }
@@ -1810,7 +1826,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
      *
      * @param parentQName
      * @param factory
-     * @return
+     * @return org.apache.axiom.om.OMElement
      */
     public static org.apache.axiom.om.OMElement getOMElement(
             final <xsl:value-of select="$fullyQualifiedName"/> bean,
