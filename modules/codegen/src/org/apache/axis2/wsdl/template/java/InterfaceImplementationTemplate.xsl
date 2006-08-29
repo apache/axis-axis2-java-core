@@ -36,7 +36,7 @@
         <xsl:variable name="fullyQualifiedClassName"><xsl:value-of select="$package"/>.<xsl:value-of select="@name"/></xsl:variable>
         public class <xsl:value-of select="@name"/> extends org.apache.axis2.client.Stub
         <xsl:if test="not(@wrapped)">implements <xsl:value-of select="$interfaceName"/></xsl:if>{
-        protected static org.apache.axis2.description.AxisOperation[] _operations;
+        protected org.apache.axis2.description.AxisOperation[] _operations;
 
         //hashmaps to keep the fault mapping
         private java.util.HashMap faultExeptionNameMap = new java.util.HashMap();
