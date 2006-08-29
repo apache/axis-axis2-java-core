@@ -192,6 +192,8 @@ public class Constants {
         
     public static final QName X509_TOKEN = new QName(Constants.SP_NS, "X509Token");
     
+    public static final QName ISSUED_TOKEN = new QName(Constants.SP_NS, "IssuedToken");
+    
     public static final QName SUPPORIING_TOKENS = new QName(Constants.SP_NS, "SupportingTokens");
     
     public static final QName SIGNED_SUPPORTING_TOKENS = new QName(Constants.SP_NS, "SignedSupportingTokens");
