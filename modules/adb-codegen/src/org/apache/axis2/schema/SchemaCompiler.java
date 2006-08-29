@@ -964,14 +964,16 @@ public class SchemaCompiler {
 
             //process the particle of this node
             processParticle(extension.getParticle(),metaInfHolder,parentSchema);
+            String className = findClassName(extension.getBaseTypeName(), false);
 
-            //the particle has been processed, However since this is an extension we need to
-            //add the basetype as an extension to the complex type class.
-            // The basetype has been processed already
-            metaInfHolder.setExtension(true);
-            metaInfHolder.setExtensionClassName(findClassName(extension.getBaseTypeName(),false));
-            //Note  - this is no array! so the array boolean is false
-
+            if (!SchemaCompiler.DEFAULT_CLASS_NAME.equals(className)) {
+                //the particle has been processed, However since this is an extension we need to
+                //add the basetype as an extension to the complex type class.
+                // The basetype has been processed already
+                metaInfHolder.setExtension(true);
+                metaInfHolder.setExtensionClassName(className);
+                //Note  - this is no array! so the array boolean is false
+            }
         }else if (content instanceof XmlSchemaComplexContentRestriction){
         	XmlSchemaComplexContentRestriction restriction = (XmlSchemaComplexContentRestriction) content;
 
@@ -998,10 +1000,13 @@ public class SchemaCompiler {
 
             //process the particle of this node
             processParticle(restriction.getParticle(),metaInfHolder,parentSchema);
+            String className = findClassName(restriction.getBaseTypeName(), false);
 
-            metaInfHolder.setRestriction(true);
-            metaInfHolder.setRestrictionClassName(findClassName(restriction.getBaseTypeName(),false));
-            //Note  - this is no array! so the array boolean is false
+            if (!SchemaCompiler.DEFAULT_CLASS_NAME.equals(className)) {
+                metaInfHolder.setRestriction(true);
+                metaInfHolder.setRestrictionClassName(findClassName(restriction.getBaseTypeName(), false));
+                //Note  - this is no array! so the array boolean is false
+            }
         }
     }
 
