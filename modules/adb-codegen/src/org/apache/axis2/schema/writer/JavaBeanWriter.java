@@ -21,6 +21,7 @@ import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.CompilerOptions;
 import org.apache.axis2.schema.SchemaCompilationException;
 import org.apache.axis2.schema.SchemaCompiler;
+import org.apache.axis2.schema.SchemaConstants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.schema.util.PrimitiveTypeFinder;
@@ -257,7 +258,9 @@ public class JavaBeanWriter implements BeanWriter {
                         BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         try {
             QName qName = simpleType.getQName();
-
+            if(qName == null) {
+                qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
+            }
             return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
@@ -365,7 +368,7 @@ public class JavaBeanWriter implements BeanWriter {
                     fullyQualifiedClassName.lastIndexOf('.'));
         }
 
-        String originalName = qName.getLocalPart();
+        String originalName = qName == null ? "" : qName.getLocalPart();
         ArrayList propertyNames = new ArrayList();
 
         if (!templateLoaded) {

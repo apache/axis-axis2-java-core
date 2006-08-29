@@ -112,5 +112,6 @@ public class SchemaConstants {
     public static class SchemaCompilerInfoHolder{
         public static final String CLASSNAME_KEY = "CLASS_NAME";
         public static final String CLASSNAME_PRIMITVE_KEY = "CLASS_NAME_PRIMITIVE";
+        public static final String FAKE_QNAME = "Q_NAME";
     }
 }

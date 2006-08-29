@@ -1447,6 +1447,9 @@ public class SchemaCompiler {
                     referencedQName = elt.getRefName();
                     boolean arrayStatus = ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue();
                     clazzName = findRefClassName(referencedQName,arrayStatus);
+                    if(clazzName == null) {
+                        clazzName = findClassName(referencedQName,arrayStatus);
+                    }
                     XmlSchemaElement refElement = getReferencedElement(parentSchema, referencedQName);
 
                     // register the mapping if we found the referenced element
@@ -1624,8 +1627,16 @@ public class SchemaCompiler {
             return;
         }
 
-        // Must do this up front to support recursive types
-        String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(simpleType.getQName());
+        String fullyQualifiedClassName = null;
+        if(simpleType.getQName() != null) {
+            // Must do this up front to support recursive types
+            fullyQualifiedClassName = writer.makeFullyQualifiedClassName(simpleType.getQName());
+        } else {
+            fullyQualifiedClassName = writer.makeFullyQualifiedClassName(xsElt.getQName());
+            simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME,
+                    new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart()));
+        }
+        
         processedTypemap.put(simpleType.getQName(), fullyQualifiedClassName);
 
         //register that in the schema metainfo bag
@@ -1633,9 +1644,16 @@ public class SchemaCompiler {
                 fullyQualifiedClassName);
 
         BeanWriterMetaInfoHolder metaInfHolder = processSimpleType(simpleType, parentSchema);
+        
+        if(simpleType.getQName() == null) {
+            this.processedAnonymousComplexTypesMap.put(xsElt, metaInfHolder);
+            simpleTypesMap.put(new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart()), fullyQualifiedClassName);
+        }
         //add this information to the metainfo holder
         metaInfHolder.setOwnQname(simpleType.getQName());
-        metaInfHolder.setOwnClassName(fullyQualifiedClassName);
+        if(fullyQualifiedClassName != null) {
+            metaInfHolder.setOwnClassName(fullyQualifiedClassName);
+        }
         //write the class. This type mapping would have been populated right now
         //Note - We always write classes for named complex types
         writeSimpleType(simpleType, metaInfHolder);
@@ -1654,7 +1672,11 @@ public class SchemaCompiler {
                 //check whether the base type is one of the base schema types
                 if (baseSchemaTypeMap.containsKey(baseTypeName)) {
                     //process restriction base type
-                    processSimpleRestrictionBaseType(simpleType.getQName(), restriction.getBaseTypeName(),metaInfHolder);
+                    QName qName = simpleType.getQName();
+                    if(qName == null) {
+                        qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
+                    }
+                    processSimpleRestrictionBaseType(qName, restriction.getBaseTypeName(),metaInfHolder);
         	
                     //process facets
                     XmlSchemaObjectCollection facets = restriction.getFacets();
