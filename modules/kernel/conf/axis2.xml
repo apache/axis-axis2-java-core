@@ -167,11 +167,11 @@
         <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
-                <order phase="Dispatch"/>
+                <order phase="Transport"/>
             </handler>
             <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
-                <order phase="Dispatch"/>
+                <order phase="Transport"/>
             </handler>
         </phase>
         <phase name="Security"/>
@@ -188,7 +188,7 @@
             </handler>
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
-                <order phase="PostDispatch"/>
+                <order phase="Dispatch"/>
             </handler>
         </phase>
         <!--  System pre defined phases       -->

@@ -29,14 +29,9 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -45,15 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -88,9 +75,9 @@ public class DeploymentEngine implements DeploymentConstants {
      * method
      */
     protected AxisConfiguration axisConfig;
-    
+
     protected ConfigurationContext configContext;
-    
+
     private RepositoryListener repoListener;
 
     public void loadServices() {
@@ -372,7 +359,6 @@ public class DeploymentEngine implements DeploymentConstants {
         Iterator services = serviceList.iterator();
 
         while (services.hasNext()) {
-            ArrayList contolops = new ArrayList();
             AxisService axisService = (AxisService) services.next();
             String scope = axisService.getScope();
             if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
@@ -421,13 +407,36 @@ public class DeploymentEngine implements DeploymentConstants {
                     }
                 }
             }
-            contolops.clear();
         }
         axisConfig.addServiceGroup(serviceGroup);
+        startUpService(serviceGroup);
         if (currentArchiveFile != null) {
             addAsWebResources(currentArchiveFile.getFile(),
                     serviceGroup.getServiceGroupName(), serviceGroup);
         }
+    }
+
+    /**
+     * When user adds the “load-on-startup” parameter into services.xml ,
+     * Axis2 will call following method using java reflection.
+     * If user has DB initialization , Thread creation then he can do that at this point.
+     * Public void startUp(ConfigurationContext) {}
+     *
+     * @param serviceGroup
+     */
+    private void startUpService(AxisServiceGroup serviceGroup) {
+        Iterator services = serviceGroup.getServices();
+        while (services.hasNext()) {
+            AxisService axisService = (AxisService) services.next();
+            Parameter load_on_startup = axisService.getParameter(Constants.LOAD_ON_STARTUP);
+            if (load_on_startup != null) {
+                String value = (String) load_on_startup.getValue();
+                if ("true".equals(value.trim())) {
+                    DependencyManager.startService(axisService, configContext);
+                }
+            }
+        }
+
     }
 
     private void addAsWebResources(File in, String serviceFileName, AxisServiceGroup serviceGroup) {

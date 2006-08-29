@@ -136,9 +136,13 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String SINGLE_SERVICE = "singleservice";
 
-    /** @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.MC_HTTP_SERVLETCONTEXT */
+    /**
+     * @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.MC_HTTP_SERVLETCONTEXT
+     */
     public static final String SERVLET_CONTEXT = "transport.http.servletContext";
-    /** @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.MC_HTTP_SERVLETREQUEST */
+    /**
+     * @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.MC_HTTP_SERVLETREQUEST
+     */
     public static final String HTTP_SERVLET_REQUEST = "transport.http.servletRequest";
 
     public static final String SERVICE_MAP = "servicemap";
@@ -192,9 +196,13 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
     public static final String FAULT_INFORMATION_FOR_HEADERS = "FaultHeaders";
 
-    /** @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING */
+    /**
+     * @deprecated Please use org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING
+     */
     public static final String COOKIE_STRING = "Cookie";
     public static final String SESSION_COOKIE = "axis_session";
+
+    public static final String LOAD_ON_STARTUP = "load-on-startup";
 
     /**
      * Addressing Constants
@@ -221,11 +229,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String CONFIG_CONTEXT_TIMOUT_INTERVAL = "ConfigContextTimeoutInterval";
 
         public static final String TRANSPORT_IN_URL = "TransportInURL";
-        
+
         public static final String URL_PARAMETER_LIST = "URLParameterList";
-        
+
         public static final String SEND_STACKTRACE_DETAILS_WITH_FAULTS = "sendStacktraceDetailsWithFaults";
-        
+
         public static final String DRILL_DOWN_TO_ROOT_CAUSE_FOR_FAULT_REASON = "drillDownToRootCauseForFaultReason";
 
         public static final String ENABLE_REST_IN_AXIS2_MAIN_SERVLET = "enableRESTInAxis2MainServlet";
@@ -237,7 +245,9 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         // this will contain the keys of all the properties that will be in the message context
         public static final String TRANSPORT_URL = "TransportURL";
 
-        /** @deprecated please use org.apache.axis2.addressing.AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES */
+        /**
+         * @deprecated please use org.apache.axis2.addressing.AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES
+         */
         public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
 
         // if this property is set to Boolean.TRUE then the SOAPAction header, if present,

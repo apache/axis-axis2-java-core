@@ -18,6 +18,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -38,6 +39,7 @@ import java.util.Iterator;
 public class DependencyManager {
     public final static String MESSAGE_CONTEXT_INJECTION_METHOD = "setOperationContext";
     public final static String SERVICE_INIT_METHOD = "init";
+    public final static String SERVICE_START_METHOD = "startUp";
     public final static String SERVICE_DESTROY_METHOD = "destroy";
 
     public static void configureBusinessLogicProvider(Object obj,
@@ -139,8 +141,34 @@ public class DependencyManager {
                 throw new AxisFault(Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
             }
         }
+    }
 
+    /**
+     * To startup service when user puts load-on-startup parameter
+     */
+    public static void startService(AxisService axisService,
+                                    ConfigurationContext configCtx) {
+        ClassLoader classLoader = axisService.getClassLoader();
+        Parameter implInfoParam = axisService.getParameter(AbstractMessageReceiver.SERVICE_CLASS);
+        if (implInfoParam != null) {
+            try {
+                Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
+                        classLoader);
+                Object serviceImpl = implClass.newInstance();
+                Method[] methods = serviceImpl.getClass().getMethods();
 
+                for (int i = 0; i < methods.length; i++) {
+                    if (SERVICE_START_METHOD.equals(methods[i].getName())
+                            && (methods[i].getParameterTypes().length == 1)
+                            && (methods[i].getParameterTypes()[0] == ConfigurationContext.class)) {
+                        methods[i].invoke(serviceImpl, new Object[]{configCtx});
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                new AxisFault(e);
+            }
+        }
     }
 
     public static void destroyServiceObject(ServiceContext serviceContext) throws AxisFault {

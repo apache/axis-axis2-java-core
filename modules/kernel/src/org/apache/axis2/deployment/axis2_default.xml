@@ -173,7 +173,7 @@
             </handler>
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
-                <order phase="PostDispatch"/>
+                <order phase="Dispatch"/>
             </handler>
         </phase>
         <!--      user can add his own phases to this area  -->
