@@ -1,6 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
-    <xsl:key name="params" match="//databinders/param[@direction='in']" use="@type"/>
+    <xsl:key name="paramsIn" match="//databinders/param[@direction='in']" use="@type"/>
+    <xsl:key name="paramsOut" match="//databinders/param[@direction='out']" use="@type"/>
     
     <!-- #################################################################################  -->
     <!-- ############################   ADB template   ##############################  -->
@@ -73,7 +74,7 @@
 
                         </xsl:when>
 						<xsl:otherwise>
-                            <xsl:if test="generate-id($inputElement) = generate-id(key('params', $inputElementType)[1])">
+                            <xsl:if test="generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1])">
                         <!-- Assumption - the parameter is always an ADB element-->
 				    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="$inputElementType"/> param, boolean optimizeContent){
                     org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
@@ -102,7 +103,10 @@
             <xsl:if test="$serverside">
              <xsl:choose>
                   <xsl:when test="count(../../param[@type!='' and @direction='out' and @opname=$opname])=1">
+                  <xsl:variable name="outElement" select="../../param[@type!='' and @direction='out' and @opname=$opname]"></xsl:variable>
+                  <xsl:variable name="outElementType" select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"></xsl:variable>
                     <!-- Assumption - The ADBBean here is always an element based bean -->
+                    <xsl:if test="generate-id($outElement) = generate-id(key('paramsOut', $outElementType)[1])">
                     private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent){
                       org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
                        <xsl:choose>
@@ -119,6 +123,7 @@
 
                      return emptyEnvelope;
                     }
+                    </xsl:if>
                 </xsl:when>
        </xsl:choose>
             <xsl:if test="count(../../param[@type!='' and @direction='in' and @opname=$opname])=1">
