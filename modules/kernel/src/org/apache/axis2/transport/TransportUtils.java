@@ -165,38 +165,58 @@ public class TransportUtils {
         return value.trim();
     }
 
-    public static StAXBuilder selectBuilderForMIME(MessageContext msgContext, InputStream inStream,
-                                                   String contentTypeString)
-            throws OMException, XMLStreamException, FactoryConfigurationError
-             {
-        StAXBuilder builder = null;
-        Parameter parameter_cache_attachment =
-                msgContext.getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
-        boolean fileCacheForAttachments;
+	public static StAXBuilder selectBuilderForMIME(MessageContext msgContext,
+			InputStream inStream, String contentTypeString) throws OMException,
+			XMLStreamException, FactoryConfigurationError {
+		StAXBuilder builder = null;
+		
+		Object cacheAttachmentProperty = msgContext
+				.getProperty(Constants.Configuration.CACHE_ATTACHMENTS);
+		String cacheAttachmentString = null;
+		boolean fileCacheForAttachments;
 
-        if (parameter_cache_attachment == null) {
-            fileCacheForAttachments = false;
-        } else {
-            fileCacheForAttachments =
-                    (Constants.VALUE_TRUE.equals(parameter_cache_attachment.getValue()));
-        }
+		if (cacheAttachmentProperty != null) {
+			cacheAttachmentProperty = (String) cacheAttachmentProperty;
+			fileCacheForAttachments = (Constants.VALUE_TRUE
+					.equals(cacheAttachmentString));
+		} else {
+			Parameter parameter_cache_attachment = msgContext
+					.getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
+			cacheAttachmentString = (parameter_cache_attachment != null) ? (String) parameter_cache_attachment
+					.getValue()
+					: null;
+		}
+		fileCacheForAttachments = (Constants.VALUE_TRUE
+				.equals(cacheAttachmentString)) ? true : false;
 
-        String attachmentRepoDir = null;
-        String attachmentSizeThreshold = null;
-        Parameter parameter;
+		String attachmentRepoDir = null;
+		String attachmentSizeThreshold = null;
 
-        if (fileCacheForAttachments) {
-            parameter =
-                    msgContext.getParameter(Constants.Configuration.ATTACHMENT_TEMP_DIR);
-            attachmentRepoDir = (parameter == null)
-                    ? ""
-                    : parameter.getValue().toString();
-            parameter =
-                    msgContext.getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
-            attachmentSizeThreshold = (parameter == null)
-                    ? ""
-                    : parameter.getValue().toString();
-        }
+		if (fileCacheForAttachments) {
+			Object attachmentRepoDirProperty = msgContext
+					.getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+
+			if (attachmentRepoDirProperty != null) {
+				attachmentRepoDir = (String) attachmentRepoDirProperty;
+			} else {
+				Parameter attachmentRepoDirParameter = msgContext
+						.getParameter(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+				attachmentRepoDir = (attachmentRepoDirParameter != null) ? (String) attachmentRepoDirParameter
+						.getValue()
+						: null;
+			}
+
+			Object attachmentSizeThresholdProperty = msgContext
+					.getProperty(Constants.Configuration.FILE_SIZE_THRESHOLD);
+			if (attachmentRepoDirProperty == null) {
+				attachmentSizeThreshold = (String) attachmentSizeThresholdProperty;
+			} else {
+				Parameter attachmentSizeThresholdParameter = msgContext
+						.getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
+				attachmentSizeThreshold = attachmentSizeThresholdParameter
+						.getValue().toString();
+			}
+		}
 
         Attachments attachments = new Attachments(inStream, contentTypeString,
                 fileCacheForAttachments, attachmentRepoDir,
