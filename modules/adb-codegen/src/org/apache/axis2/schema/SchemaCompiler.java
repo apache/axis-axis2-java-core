@@ -1430,23 +1430,27 @@ public class SchemaCompiler {
             // process the XmlSchemaElement
             if (child instanceof XmlSchemaElement){
                 XmlSchemaElement elt = (XmlSchemaElement) child;
-                String clazzName;
-                QName referencedQName;
+                QName referencedQName = null;
 
+                
                 if (elt.getQName()!=null){
-                    clazzName = (String) processedElementTypeMap.get(elt.getQName());
                     referencedQName = elt.getQName();
-                    metainfHolder.registerMapping(referencedQName,
-                            elt.getSchemaType()!=null?elt.getSchemaType().getQName():elt.getSchemaTypeName(), //always get the schema type name from the schema it-self
-                            clazzName,
-                            ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
-                                    SchemaConstants.ARRAY_TYPE :
-                                    SchemaConstants.ELEMENT_TYPE);
-
-                }else{ //probably this is referenced
+                    QName schemaTypeQName = elt.getSchemaType()!=null?elt.getSchemaType().getQName():elt.getSchemaTypeName();
+                    if(schemaTypeQName != null) {
+                        String clazzName = (String) processedElementTypeMap.get(elt.getQName());
+                        metainfHolder.registerMapping(referencedQName,
+                                schemaTypeQName, 
+                                clazzName,
+                                ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
+                                        SchemaConstants.ARRAY_TYPE :
+                                        SchemaConstants.ELEMENT_TYPE);
+                    }
+                }
+                
+                if (elt.getRefName()!=null) { //probably this is referenced
                     referencedQName = elt.getRefName();
                     boolean arrayStatus = ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue();
-                    clazzName = findRefClassName(referencedQName,arrayStatus);
+                    String clazzName = findRefClassName(referencedQName,arrayStatus);
                     if(clazzName == null) {
                         clazzName = findClassName(referencedQName,arrayStatus);
                     }
