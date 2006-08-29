@@ -168,6 +168,10 @@ public class Constants {
         
     public static final QName HTTPS_TOKEN = new QName(Constants.SP_NS, "HttpsToken");
     
+    public static final QName SECURITY_CONTEXT_TOKEN = new QName(Constants.SP_NS, "SecurityContextToken");
+    
+    public static final QName SECURE_CONVERSATION_TOKEN = new QName(Constants.SP_NS, "SecureConversationToken");
+    
     public static final QName SIGNATURE_TOKEN = new QName(Constants.SP_NS, "SignatureToken");
         
     public static final QName SIGNED_PARTS = new QName(Constants.SP_NS, "SignedParts");
