@@ -571,7 +571,7 @@ public class JavaBeanWriter implements BeanWriter {
             String javaName = makeUniqueJavaClassName(propertyNames, xmlName);
             XSLTUtils.addAttribute(model, "javaname", javaName, property);
 
-            if (metainf.isRestriction() && missingQNames.contains(name)) {
+            if (parentMetaInf != null && metainf.isRestriction() && missingQNames.contains(name)) {
             	javaClassNameForElement = parentMetaInf.getClassNameForQName(name);
             }
             else {
@@ -650,7 +650,7 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);
             
             //in the case the original element is an array but the derived one is not.
-            if (metainf.isRestriction() && !missingQNames.contains(name) &&
+            if (parentMetaInf != null && metainf.isRestriction() && !missingQNames.contains(name) &&
                (parentMetaInf.getArrayStatusForQName(name) && !metainf.getArrayStatusForQName(name))) {
             	
             	XSLTUtils.addAttribute(model, "rewrite", "yes", property);
@@ -746,8 +746,8 @@ public class JavaBeanWriter implements BeanWriter {
 
     private void addMissingQNames(BeanWriterMetaInfoHolder metainf, ArrayList qName, ArrayList missingQNames) {
     	
-    	QName[] qNames;
-        QName[] pQNames;
+    	QName[] qNames = null;
+        QName[] pQNames = null;
         
         BeanWriterMetaInfoHolder parentMetaInf = metainf.getParent();
         
@@ -757,14 +757,16 @@ public class JavaBeanWriter implements BeanWriter {
             qNames = metainf.getQNameArray();
         }
         
-        if (parentMetaInf.isOrdered()) {
-            pQNames = parentMetaInf.getOrderedQNameArray();
-        } else {
-            pQNames = parentMetaInf.getQNameArray();
+        if (parentMetaInf != null) {
+            if (parentMetaInf.isOrdered()) {
+                pQNames = parentMetaInf.getOrderedQNameArray();
+            } else {
+                pQNames = parentMetaInf.getQNameArray();
+            }
         }
         
         
-        for (int i=0; i < pQNames.length; i++) {
+        for (int i=0; pQNames != null && i < pQNames.length; i++) {
        		if (qNameNotFound(pQNames[i], metainf)) {
        			missingQNames.add(pQNames[i]);
        		}
@@ -804,7 +806,7 @@ public class JavaBeanWriter implements BeanWriter {
     	
     	BeanWriterMetaInfoHolder parentMetainf = metainf.getParent(); 
         
-    	if (!missingQNames.contains(qname)) {
+    	if (parentMetainf != null && !missingQNames.contains(qname)) {
     		
     		if (parentMetainf.isOrdered()) {
     			pQNames = parentMetainf.getOrderedQNameArray();
@@ -846,7 +848,7 @@ public class JavaBeanWriter implements BeanWriter {
     	
     	BeanWriterMetaInfoHolder parentMetainf = metainf.getParent(); 
         	
-    	if (!missingQNames.contains(qname)) {
+    	if (parentMetainf != null && !missingQNames.contains(qname)) {
     		
     		if (parentMetainf.isOrdered()) {
     			pQNames = parentMetainf.getOrderedQNameArray();
@@ -877,7 +879,7 @@ public class JavaBeanWriter implements BeanWriter {
     	
     	BeanWriterMetaInfoHolder parentMetainf = metainf.getParent();
     	
-    	if (!missingQNames.contains(qname)) {	
+    	if (parentMetainf != null && !missingQNames.contains(qname)) {	
     		if (parentMetainf.isOrdered()) {
     			pQNames = parentMetainf.getOrderedQNameArray();
     		} else {
