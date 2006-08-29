@@ -543,6 +543,10 @@ public class SchemaCompiler {
             //process the referenced type. It could be thought that the referenced element replaces this
             //element
             XmlSchemaElement referencedElement = getReferencedElement(parentSchema, xsElt.getRefName());
+            if (referencedElement==null){
+                throw new SchemaCompilationException(
+                        SchemaCompilerMessages.getMessage("schema.referencedElementNotFound", xsElt.getRefName().toString()));
+            }
 
             //if the element is referenced, then it should be one of the outer (global) ones
             processElement(referencedElement, parentSchema);
@@ -1532,6 +1536,9 @@ public class SchemaCompiler {
                     XmlSchema inclSchema = null;
                     if (o instanceof XmlSchemaImport) {
                         inclSchema = ((XmlSchemaImport) o).getSchema();
+                        if(inclSchema == null) {
+                            inclSchema = (XmlSchema) loadedSchemaMap.get(((XmlSchemaImport) o).getNamespace());
+                        }
                     }
                     if (o instanceof XmlSchemaInclude) {
                         inclSchema = ((XmlSchemaInclude) o).getSchema();
@@ -1563,6 +1570,9 @@ public class SchemaCompiler {
                     XmlSchema inclSchema = null;
                     if (o instanceof XmlSchemaImport) {
                         inclSchema = ((XmlSchemaImport) o).getSchema();
+                        if(inclSchema == null) {
+                            inclSchema = (XmlSchema) loadedSchemaMap.get(((XmlSchemaImport) o).getNamespace());
+                        }
                     }
                     if (o instanceof XmlSchemaInclude) {
                         inclSchema = ((XmlSchemaInclude) o).getSchema();
