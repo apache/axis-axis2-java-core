@@ -413,7 +413,7 @@ public class SchemaCompiler {
         }else{
             //this means we did not find any schema type associated with the particular element. we
             //should be throwing an exception here
-            throw new SchemaCompilationException("no type!!");//todo i18n this
+            throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.elementWithNoType", xsElt.getQName().toString()));
         }
 
         if (nillableElementList.contains(xsElt.getQName())){
