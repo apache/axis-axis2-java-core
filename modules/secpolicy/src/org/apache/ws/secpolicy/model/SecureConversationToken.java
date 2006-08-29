@@ -25,8 +25,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
+ * Model class of SecureConversationToken asertion
  */
 public class SecureConversationToken extends SecurityContextToken  {
 

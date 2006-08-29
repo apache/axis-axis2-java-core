@@ -24,8 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
+ * Model class of SecurityContextToken assertion
  */
 public class SecurityContextToken extends Token {
 
