@@ -87,7 +87,7 @@ public class RahasSAMLTokenTest extends TestClient {
             //KeyType
             TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_02, rstElem, RahasConstants.KEY_TYPE_SYMM_KEY);
             
-            TrustUtil.createAppliesToElement(rstElem, "http://localhost:5555/axis2/services/SecureService");
+            TrustUtil.createAppliesToElement(rstElem, "http://localhost:5555/axis2/services/SecureService", this.getWSANamespace());
             
             rstElem = (OMElement)rstElem.detach();
             return rstElem;

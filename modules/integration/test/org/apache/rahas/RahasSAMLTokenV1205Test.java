@@ -44,8 +44,7 @@ public class RahasSAMLTokenV1205Test extends TestClient {
             reqTypeElem.setText(RahasConstants.V_05_12.REQ_TYPE_ISSUE);
             tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
             
-            TrustUtil.createAppliesToElement(rstElem,
-                    "http://localhost:5555/axis2/services/SecureService");
+            TrustUtil.createAppliesToElement(rstElem, "http://localhost:5555/axis2/services/SecureService", this.getWSANamespace());
             TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12,
                     rstElem, RahasConstants.KEY_TYPE_SYMM_KEY);
             TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, rstElem, 256);

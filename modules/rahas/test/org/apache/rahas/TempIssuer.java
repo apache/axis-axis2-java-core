@@ -18,22 +18,8 @@ package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axis2.context.MessageContext;
 
 public class TempIssuer implements TokenIssuer {
-
-    public SOAPEnvelope issue(OMElement request, MessageContext msgCtx) throws TrustException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.rahas.TokenIssuer#getResponseAction(org.apache.axiom.om.OMElement, org.apache.axis2.context.MessageContext)
-     */
-    public String getResponseAction(OMElement request, MessageContext inMsgCtx) throws TrustException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
-    }
 
     /* (non-Javadoc)
      * @see org.apache.rahas.TokenIssuer#setConfigurationFile(java.lang.String)
@@ -51,6 +37,22 @@ public class TempIssuer implements TokenIssuer {
      * @see org.apache.rahas.TokenIssuer#setConfigurationParamName(java.lang.String)
      */
     public void setConfigurationParamName(String configParamName) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.rahas.TokenIssuer#issue(org.apache.rahas.RahasData)
+     */
+    public SOAPEnvelope issue(RahasData data) throws TrustException {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.rahas.TokenIssuer#getResponseAction(org.apache.rahas.RahasData)
+     */
+    public String getResponseAction(RahasData data) throws TrustException {
+        // TODO TODO
+        throw new UnsupportedOperationException("TODO");
     }
 
 }

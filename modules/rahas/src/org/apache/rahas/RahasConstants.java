@@ -16,6 +16,8 @@
 
 package org.apache.rahas;
 
+import org.apache.axis2.addressing.AddressingConstants;
+
 public class RahasConstants {
     
     public final static int VERSION_05_02 = 1;
@@ -36,12 +38,6 @@ public class RahasConstants {
     public final static String WSP_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     public final static String WSP_PREFIX = "wsp";
     
-    public final static String WSA_NS = "http://schemas.xmlsoap.org/ws/2004/08/addressing";
-    public final static String WSA_PREFIX = "wsa";
-    
-    public final static String ENDPOINT_REFERENCE = "EndpointReference";
-    public final static String ADDRESS = "Address";
-
     //Local names
     public final static String REQUEST_TYPE_LN = "RequestType";
     public final static String TOKEN_TYPE_LN = "TokenType";

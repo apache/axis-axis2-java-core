@@ -19,8 +19,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 
-import javax.xml.namespace.QName;
-
 public class TokenRequestDispatcher {
 
     private TokenRequestDispatcherConfig config;
@@ -47,52 +45,11 @@ public class TokenRequestDispatcher {
      */
     public SOAPEnvelope handle(MessageContext inMsgCtx, MessageContext outMsgCtx)
             throws TrustException {
-
-        //figureout the WS-Trust version and get the RST element
-        int version;
-        String ns;
         
-        OMElement rstElem = inMsgCtx.getEnvelope().getBody()
-                .getFirstChildWithName(
-                        new QName(RahasConstants.WST_NS_05_02,
-                                RahasConstants.REQUEST_SECURITY_TOKEN_LN));
-        if(rstElem != null) {
-            version = RahasConstants.VERSION_05_02;
-        } else {
-            rstElem = inMsgCtx.getEnvelope().getBody().getFirstChildWithName(
-                    new QName(RahasConstants.WST_NS_05_12,
-                            RahasConstants.REQUEST_SECURITY_TOKEN_LN));
-            if(rstElem != null) {
-                version = RahasConstants.VERSION_05_12;
-            } else {
-                throw new TrustException(TrustException.INVALID_REQUEST);
-            }
-        }
+        RahasData data = new RahasData(inMsgCtx);
         
-        ns = TrustUtil.getWSTNamespace(version);
-
-        // Get the req type
-        OMElement reqTypeElem = rstElem.getFirstChildWithName(new QName(ns,
-                RahasConstants.REQUEST_TYPE_LN));
-        String reqType = null;
-
-        if (reqTypeElem == null
-                || (reqTypeElem != null && reqTypeElem.getText() != null && ""
-                        .equals(reqTypeElem.getText().trim()))) {
-            throw new TrustException(TrustException.INVALID_REQUEST);
-        } else {
-            reqType = reqTypeElem.getText().trim();
-        }
-        
-        // Get the token type
-        OMElement tokTypeElem = rstElem.getFirstChildWithName(new QName(ns,
-                RahasConstants.TOKEN_TYPE_LN));
-        String tokenType = null;
-
-        if (tokTypeElem != null && tokTypeElem.getText() != null
-                && !"".equals(tokTypeElem.getText().trim())) {
-            tokenType = tokTypeElem.getText().trim();
-        }
+        String reqType = data.getRequestType();
+        String tokenType = data.getTokenType();
         
         if (RahasConstants.V_05_02.REQ_TYPE_ISSUE.equals(reqType) ||
                 RahasConstants.V_05_12.REQ_TYPE_ISSUE.equals(reqType)) {
@@ -104,11 +61,11 @@ public class TokenRequestDispatcher {
                 issuer = config.getIssuer(tokenType.toString());
             }
             
-            SOAPEnvelope response = issuer.issue(rstElem, inMsgCtx);
+            SOAPEnvelope response = issuer.issue(data);
             
             //set the response wsa/soap action in teh out message context
             outMsgCtx.getOptions().setAction(
-                    issuer.getResponseAction(rstElem, inMsgCtx));
+                    issuer.getResponseAction(data));
             
             return response;
         } else if(RahasConstants.V_05_02.REQ_TYPE_VALIDATE.equals(reqType) ||

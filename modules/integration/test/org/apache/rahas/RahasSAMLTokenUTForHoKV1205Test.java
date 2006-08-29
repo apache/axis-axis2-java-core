@@ -17,14 +17,44 @@
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.dom.DocumentImpl;
+import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
+import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.util.Base64;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.WSEncryptionPart;
+import org.apache.ws.security.conversation.dkalgo.P_SHA1;
+import org.apache.ws.security.message.WSSecDKSign;
+import org.apache.ws.security.message.WSSecHeader;
+import org.apache.ws.security.message.WSSecTimestamp;
+import org.apache.ws.security.message.token.SecurityTokenReference;
 import org.apache.ws.security.util.WSSecurityUtil;
+import org.apache.xml.security.signature.XMLSignature;
 import org.opensaml.XML;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import java.util.Vector;
 
 public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
 
@@ -46,7 +76,8 @@ public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
             tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
             
             TrustUtil.createAppliesToElement(rstElem,
-                    "http://localhost:5555/axis2/services/SecureService");
+//                    "https://207.200.37.116/Ping/Scenario1", this.getWSANamespace());
+                    "http://localhost:5555/axis2/services/SecureService", this.getWSANamespace());
             TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12,
                     rstElem, RahasConstants.KEY_TYPE_SYMM_KEY);
             TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, rstElem, 256);
@@ -99,33 +130,120 @@ public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);
         
-        OMElement attrStmtElem = elem.getFirstChildWithName(new QName(XML.SAML_NS, "AttributeStatement"));
-        OMElement kiElem = attrStmtElem.getFirstChildWithName(new QName(XML.SAML_NS,"Subject")).getFirstChildWithName(new QName(XML.SAML_NS,"SubjectConfirmation")).getFirstChildWithName(new QName("http://www.w3.org/2000/09/xmldsig#", "KeyInfo"));
-        OMElement encrKey = kiElem.getFirstChildWithName(new QName("http://www.w3.org/2001/04/xmlenc#", "EncryptedKey"));
+        //Uncomment for inteorp - START
+//        String respEntrB64 = rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.ENTROPY_LN)).getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.BINARY_SECRET_LN)).getText().trim();
+//
+//        
+//        
+//        OMElement attrStmtElem = elem.getFirstChildWithName(new QName(XML.SAML_NS, "AttributeStatement"));
+//        OMElement kiElem = attrStmtElem.getFirstChildWithName(new QName(XML.SAML_NS,"Subject")).getFirstChildWithName(new QName(XML.SAML_NS,"SubjectConfirmation")).getFirstChildWithName(new QName("http://www.w3.org/2000/09/xmldsig#", "KeyInfo"));
+//        OMElement encrKey = kiElem.getFirstChildWithName(new QName("http://www.w3.org/2001/04/xmlenc#", "EncryptedKey"));
+//        
 //        
 //        String cipherValue = encrKey.getFirstChildWithName(new QName("http://www.w3.org/2001/04/xmlenc#", "CipherData")).getFirstChildWithName(new QName("http://www.w3.org/2001/04/xmlenc#", "CipherValue")).getText();
-//        System.out.println(cipherValue);
-//
 //        
-//
-//        String serviceEntropyValue = rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.ENTROPY_LN)).getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.BINARY_SECRET_LN)).getText();
-//        
-//        byte[] serviceEntr = Base64.decode(serviceEntropyValue);
-//        
-//        try {
-//            P_SHA1 p_sha1 = new P_SHA1();
-//            
-//            KeyStore ks = KeyStore.getInstance("JKS");
-//            FileInputStream ksfis = new FileInputStream("/home/ruchith/workspace/sx-interop-aug-06/config/rahas-sts.jks");
-//            BufferedInputStream ksbufin = new BufferedInputStream(ksfis);
-//            ks.load(ksbufin, "password".toCharArray()); // Populate the keystore
-//          
-//            Cipher cipher = Cipher.getInstance("RSA/NONE/OAEPPADDING", "BC");
-//            cipher.init(Cipher.ENCRYPT_MODE, ks.getKey("bob", "password".toCharArray()));
-//            System.out.println("\n\nCipherDataValue:\n" + Base64.encode(cipher.doFinal(serviceEntr)));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+//        byte[] serviceEntr = Base64.decode(respEntrB64);
+        
+//      try {
+//          this.requestService(elem, clientEntr, serviceEntr);
+//      } catch (Exception e) {
+//          e.printStackTrace();
+//      }
+
+        //Uncomment for inteorp - END
+        
+        
+
     }
+    
+//    private void requestService(OMElement assertion, byte[] reqEnt, byte[] respEnt) throws Exception {
+//        
+//        StAXOMBuilder builder = new StAXOMBuilder(new OMDOMFactory(), assertion.getXMLStreamReader());
+//        Element domAssertionElem = (Element)builder.getDocumentElement();
+//
+//        DocumentBuilderFactoryImpl.setDOOMRequired(true);
+//        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+//        
+//        SOAPFactory fac = new SOAP11Factory((DocumentImpl)doc);
+//        SOAPEnvelope envelope = fac.getDefaultEnvelope();
+//        this.addPayload(envelope);
+//        
+//        WSSecHeader secHeader = new WSSecHeader();
+//        secHeader.insertSecurityHeader(doc);
+//        
+//        WSSecTimestamp ts = new WSSecTimestamp();
+//        ts.prepare(doc);
+//        ts.prependToHeader(secHeader);
+//        
+//        WSSecDKSign sig = new WSSecDKSign();
+//        sig.setSignatureAlgorithm(XMLSignature.ALGO_ID_MAC_HMAC_SHA1);
+//        P_SHA1 p_sha1 = new P_SHA1();
+//        SecurityTokenReference ref = new SecurityTokenReference(doc);
+//        ref.setSAMLKeyIdentifier(assertion.getAttributeValue(new QName("AssertionID")));
+//        
+//        System.out.println("\nRequest Entropy: " + Base64.encode(reqEnt));
+//        System.out.println("Response Entropy: " + Base64.encode(respEnt));
+//        
+//        byte[] ephmeralKey = p_sha1.createKey(reqEnt, respEnt, 0, 32);
+//        
+//        System.out.println( ephmeralKey.length * 8 + " bit Key: " + Base64.encode(ephmeralKey));
+//        
+//        sig.setExternalKey(ephmeralKey, ref.getElement());
+//
+//        WSEncryptionPart part = new WSEncryptionPart(WSConstants.TIMESTAMP_TOKEN_LN, WSConstants.WSU_NS, "Element");
+//        Vector partsVector = new Vector();
+//        partsVector.add(part);
+//        sig.setParts(partsVector);
+//        
+//        sig.prepare(doc, secHeader);
+//        sig.addReferencesToSign(partsVector, secHeader);
+//        sig.computeSignature();
+//        
+//        Element importedAssertionElement = (Element) doc.importNode(domAssertionElem, true);
+//        WSSecurityUtil.appendChildElement(doc, secHeader.getSecurityHeader(), importedAssertionElement);
+//        sig.appendDKElementToHeader(secHeader);
+//        sig.appendSigToHeader(secHeader);
+//
+//        
+//        System.out.println(envelope);
+//        
+//        
+//        //Create a service client and send the request
+//        AxisService service = new AxisService("ping");
+//        AxisOperation op = new OutInAxisOperation(new QName("Ping"));
+//        service.addChild(op);
+//        
+//        ServiceClient client = new ServiceClient(ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "rahas_client_repo", null), service);
+//
+//        
+//        OperationClient opClient = client.createClient(new QName("Ping"));
+//        MessageContext mc = new MessageContext();
+//        mc.setEnvelope(envelope);
+//        
+//        client.engageModule(new QName("addressing"));
+//        client.engageModule(new QName("rampart"));
+//        
+//        opClient.addMessageContext(mc);
+////        opClient.getOptions().setTo(new EndpointReference("https://131.107.72.15/PingService/OasisScenario1"));
+//        opClient.getOptions().setTo(new EndpointReference("https://207.200.37.116/Ping/Scenario1"));
+//        
+//        opClient.getOptions().setAction("http://example.org/Ping");
+////        opClient.getOptions().setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Submission.WSA_NAMESPACE);
+//        
+//        opClient.execute(true);
+//        MessageContext response = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+//        System.out.println("------------------------------RESPONSE------------------------------\n" + response.getEnvelope());
+//        
+//    }
+//    
+//    private void addPayload(SOAPEnvelope env) {
+//        //<Ping xmlns="http://example.org/Ping">Ping</Ping>
+//        OMNamespace ns = env.getOMFactory().createOMNamespace("http://example.org/Ping", "");
+//        OMElement elem = env.getOMFactory().createOMElement("Ping", ns);
+//        elem.setText("Ping");
+//        
+//        env.getBody().addChild(elem);
+//    }
+    
 
 }

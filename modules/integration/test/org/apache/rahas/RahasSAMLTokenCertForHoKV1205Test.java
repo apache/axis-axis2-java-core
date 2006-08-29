@@ -21,7 +21,6 @@ import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.xml.security.encryption.XMLCipher;
-import org.apache.xml.security.utils.EncryptionConstants;
 import org.opensaml.XML;
 
 import javax.xml.namespace.QName;
@@ -40,8 +39,9 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
             reqTypeElem.setText(RahasConstants.V_05_12.REQ_TYPE_ISSUE);
             tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
             
-            TrustUtil.createAppliesToElement(rstElem,
-                    "http://207.200.37.116/Ping/Scenario4");
+            TrustUtil.createAppliesToElement(rstElem, 
+//                    "http://207.200.37.116/Ping/Scenario4", this.getWSANamespace());
+                    "http://localhost:5555/axis2/services/SecureService", this.getWSANamespace());
             TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12,
                     rstElem, RahasConstants.KEY_TYPE_PUBLIC_KEY);
             TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, rstElem, 256);

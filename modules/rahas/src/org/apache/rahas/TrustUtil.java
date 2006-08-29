@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.message.token.Reference;
@@ -30,6 +31,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
+
+import java.security.SecureRandom;
 
 public class TrustUtil {
     
@@ -215,15 +218,19 @@ public class TrustUtil {
         return ltElem;
     }
 
-    public static OMElement createAppliesToElement(OMElement parent, String address) {
-        OMElement appliesToElem = createOMElement(parent, RahasConstants.WSP_NS,
-                RahasConstants.APPLIES_TO_LN,
+    public static OMElement createAppliesToElement(OMElement parent,
+            String address, String addressingNs) {
+        OMElement appliesToElem = createOMElement(parent,
+                RahasConstants.WSP_NS, RahasConstants.APPLIES_TO_LN,
                 RahasConstants.WSP_PREFIX);
-        
-        OMElement eprElem = createOMElement(appliesToElem, RahasConstants.WSA_NS, RahasConstants.ENDPOINT_REFERENCE, RahasConstants.WSA_PREFIX);
-        OMElement addressElem = createOMElement(eprElem, RahasConstants.WSA_NS, RahasConstants.ADDRESS, RahasConstants.WSA_PREFIX);
+
+        OMElement eprElem = createOMElement(appliesToElem, addressingNs,
+                "EndpointReference", AddressingConstants.WSA_DEFAULT_PREFIX);
+        OMElement addressElem = createOMElement(eprElem, addressingNs,
+                AddressingConstants.EPR_ADDRESS,
+                AddressingConstants.WSA_DEFAULT_PREFIX);
         addressElem.setText(address);
-        
+
         return appliesToElem;
     }
     
@@ -249,45 +256,6 @@ public class TrustUtil {
                 parent);
     }
 
-    /**
-     * Find the value of the KeyType element of the RST
-     * @param version WS-Trsut version
-     * @param rst RequestSecurityToken element
-     * @return The value of the KeyType element of the RST. If there's no 
-     * KeyType element null will be returned.
-     * @throws TrustException
-     */
-    public static String findKeyType(OMElement rst) throws TrustException {
-        OMElement keyTypeElem = rst.getFirstChildWithName(new QName(rst.getNamespace().getNamespaceURI(), RahasConstants.KEY_TYPE_LN));
-        if(keyTypeElem != null) {
-            String text = keyTypeElem.getText();
-            if(text != null && !"".equals(text.trim())) {
-                return text.trim();
-            } 
-        }
-        return null;
-    }
-    
-    /**
-     * Find the KeySize
-     * @param rst
-     * @return Value of KeySize if available, otherwise -1
-     * @throws TrustException
-     */
-    public static int findKeySize(OMElement rst) throws TrustException {
-        OMElement keySizeElem = rst.getFirstChildWithName(new QName(rst.getNamespace().getNamespaceURI(), RahasConstants.KEY_SIZE_LN));
-        if(keySizeElem != null) {
-            String text = keySizeElem.getText();
-            if(text != null && !"".equals(text.trim())) {
-                try {
-                    return Integer.parseInt(text.trim());
-                } catch (NumberFormatException e) {
-                    throw new TrustException(TrustException.INVALID_REQUEST, new String[] { "invalid wst:Keysize value" }, e);
-                }
-            } 
-        }
-        return -1;
-    }
     
     
     public static String getWSTNamespace(int version) throws TrustException {
@@ -304,8 +272,10 @@ public class TrustUtil {
     public static int getWSTVersion(String ns) {
         if(RahasConstants.WST_NS_05_02.equals(ns)) {
             return RahasConstants.VERSION_05_02;
-        } else {
+        } else if(RahasConstants.WST_NS_05_12.equals(ns)) {
             return RahasConstants.VERSION_05_12;
+        } else {
+            return -1;
         }
     }
     
@@ -326,6 +296,44 @@ public class TrustUtil {
             msgCtx.getConfigurationContext().setProperty(tempKey, storage);
         }
         return storage;
+    }
+    
+    
+    /**
+     * Create an ephemeral key
+     * 
+     * @return
+     * @throws WSSecurityException
+     */
+    protected byte[] generateEphemeralKey(int keySize) throws TrustException {
+        try {
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            byte[] temp = new byte[keySize / 8];
+            random.nextBytes(temp);
+            return temp;
+        } catch (Exception e) {
+            throw new TrustException(
+                    "Error in creating the ephemeral key", e);
+        }
+    }
+    
+    /**
+     * Create an ephemeral key
+     * 
+     * @return
+     * @throws WSSecurityException
+     */
+    protected byte[] generateEphemeralKey(byte[] reqEnt, byte[] respEnt,
+            String algo, int keySize) throws TrustException {
+        try {
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            byte[] temp = new byte[keySize / 8];
+            random.nextBytes(temp);
+            return temp;
+        } catch (Exception e) {
+            throw new TrustException(
+                    "Error in creating the ephemeral key", e);
+        }
     }
     
 }

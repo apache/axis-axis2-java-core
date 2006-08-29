@@ -77,6 +77,7 @@ public abstract class TestClient extends TestCase {
             
 //            options.setTo(new EndpointReference("http://127.0.0.1:" + 9090 + "/axis2/services/MutualCertsSAMLHoK"));
 //            options.setTo(new EndpointReference("http://www-lk.wso2.com:8888/axis2/services/MutualCertsSAMLHoK"));
+//            options.setTo(new EndpointReference("https://131.107.72.15/trust/Addressing2004/UserName"));
 //            options.setTo(new EndpointReference("https://131.107.72.15/trust/UserName"));
 //            options.setTo(new EndpointReference("http://127.0.0.1:" + 9090 + "/trust/X509WSS10"));
 //            options.setTo(new EndpointReference("https://131.107.72.15/trust/UserName"));
@@ -86,7 +87,7 @@ public abstract class TestClient extends TestCase {
             
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setAction(this.getRequestAction());
-            options.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Submission.WSA_NAMESPACE);
+//            options.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, this.getWSANamespace());
 
 
             OutflowConfiguration clientOutflowConfiguration = getClientOutflowConfiguration();
@@ -112,6 +113,10 @@ public abstract class TestClient extends TestCase {
             axisFault.printStackTrace();
             fail(axisFault.getMessage());
         }
+    }
+    
+    protected String getWSANamespace() {
+        return AddressingConstants.Submission.WSA_NAMESPACE;
     }
 
     public abstract OMElement getRequest();
