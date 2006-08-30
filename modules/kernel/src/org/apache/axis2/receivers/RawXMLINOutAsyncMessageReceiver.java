@@ -86,8 +86,11 @@ public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRe
 
                 AxisService service = msgContext.getAxisService();
                 service.getTargetNamespace();
-                result.declareNamespace(service.getTargetNamespace(),
-                        service.getTargetNamespacePrefix());
+                if (result != null) {
+                    result.declareNamespace(service.getTargetNamespace(),
+                            service.getTargetNamespacePrefix());
+                }
+
                 OMElement bodyContent;
 
                 SOAPFactory fac = getSOAPFactory(msgContext);
