@@ -37,7 +37,7 @@ import java.util.Properties;
 </ramp:crypto>
 </pre>
  */
-public class Crypto implements Assertion {
+public class CryptoConfig implements Assertion {
     
     public final static String CRYPTO_LN = "crypto";
     public final static String PROVIDER_ATTR = "provider";

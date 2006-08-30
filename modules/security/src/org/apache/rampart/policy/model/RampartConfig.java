@@ -62,27 +62,30 @@ public class RampartConfig implements Assertion {
     
     public final static String DEC_CRYPTO_LN = "decryptionCrypto";
     
+    public final static String TS_TTL_LN = "timestampTTL";
+    
     private String user;
     private String encryptionUser;
     private String pwCbClass;
-    private Crypto sigCrypto;
-    private Crypto encrCrypto;
-    private Crypto decCrypto;
+    private CryptoConfig sigCryptoConfig;
+    private CryptoConfig encrCryptoConfig;
+    private CryptoConfig decCryptoConfig;
+    private String timestampTTL;
     
-    public Crypto getDecCrypto() {
-        return decCrypto;
+    public CryptoConfig getDecCryptoConfig() {
+        return decCryptoConfig;
     }
 
-    public void setDecCrypto(Crypto decCrypto) {
-        this.decCrypto = decCrypto;
+    public void setDecCryptoConfig(CryptoConfig decCrypto) {
+        this.decCryptoConfig = decCrypto;
     }
 
-    public Crypto getEncrCrypto() {
-        return encrCrypto;
+    public CryptoConfig getEncrCryptoConfig() {
+        return encrCryptoConfig;
     }
 
-    public void setEncrCrypto(Crypto encrCrypto) {
-        this.encrCrypto = encrCrypto;
+    public void setEncrCryptoConfig(CryptoConfig encrCrypto) {
+        this.encrCryptoConfig = encrCrypto;
     }
 
     public String getEncryptionUser() {
@@ -101,12 +104,14 @@ public class RampartConfig implements Assertion {
         this.pwCbClass = pwCbClass;
     }
 
-    public Crypto getSigCrypto() {
-        return sigCrypto;
+    public CryptoConfig getSigCryptoConfig() {
+        return sigCryptoConfig;
     }
 
-    public void setSigCrypto(Crypto sigCrypto) {
-        this.sigCrypto = sigCrypto;
+
+    
+    public void setSigCryptoConfig(CryptoConfig sigCryptoConfig) {
+        this.sigCryptoConfig = sigCryptoConfig;
     }
 
     public String getUser() {
@@ -139,6 +144,20 @@ public class RampartConfig implements Assertion {
     public short getType() {
         // TODO TODO
         throw new UnsupportedOperationException("TODO");
+    }
+
+    /**
+     * @return Returns the timestampTTL.
+     */
+    public String getTimestampTTL() {
+        return timestampTTL;
+    }
+
+    /**
+     * @param timestampTTL The timestampTTL to set.
+     */
+    public void setTimestampTTL(String timestampTTL) {
+        this.timestampTTL = timestampTTL;
     }
 
 }
