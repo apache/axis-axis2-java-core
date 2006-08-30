@@ -145,7 +145,11 @@ public class RESTSender extends AbstractHTTPSender {
         String param = getParam(msgContext);
         GetMethod getMethod = new GetMethod();
 
-        getMethod.setPath(url.getFile() + "?" + param);
+        if (param != null && param.length() > 0) {
+            getMethod.setPath(url.getFile() + "?" + param);
+        } else {
+            getMethod.setPath(url.getFile());
+        }
 
         // Serialization as "application/x-www-form-urlencoded"
         String charEncoding =
