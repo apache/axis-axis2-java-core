@@ -53,7 +53,11 @@ public class Java2WSDLUtils {
         int currentIndex = packageName.lastIndexOf(PACKAGE_CLASS_DELIMITER);
         if (currentIndex > 0) {
             strBuf.append(HTTP);
-        } else if(currentIndex ==-1){
+        } else if (prevIndex > 0) {
+            strBuf.append(HTTP);
+            strBuf.append(packageName);
+            return strBuf;
+        } else if (currentIndex == -1) {
 //            strBuf.append(HTTP);
 //            strBuf.append(packageName);
             return strBuf;

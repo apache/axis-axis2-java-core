@@ -46,7 +46,7 @@ import java.util.Map;
 
 public class SchemaGenerator implements Java2WSDLConstants {
 
-    public static final String NAME_SPACE_PREFIX = "stn_";
+    public static final String NAME_SPACE_PREFIX = "ans";// axis2 name space
 
     private static int prefixCount = 1;
 
