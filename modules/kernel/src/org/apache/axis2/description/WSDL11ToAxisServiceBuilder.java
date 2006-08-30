@@ -305,7 +305,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      */
     private Binding findBinding(Definition dif) throws AxisFault {
         Map services = dif.getServices();
-        Service service;
+        Service service = null;
         Binding binding = null;
         Port port = null;
         if (serviceName != null) {
@@ -318,39 +318,48 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (services.size() > 0) {
                 //pick the first service - we don't really have a choice here
                 service = (Service) services.values().toArray()[0];
-            } else {
-                throw new AxisFault("No service element found in the WSDL");
-            }
+            } 
         }
-        copyExtensibleElements(service.getExtensibilityElements(), dif,
-                axisService, SERVICE);
-        if (portName != null) {
-            port = service.getPort(portName);
-            if (port == null) {
-                throw new AxisFault("No port found for the given name :"
-                        + portName);
-            }
-        } else {
-            Map ports = service.getPorts();
-            if (ports != null && ports.size() > 0) {
-                //pick the port with the SOAP address as the default port
-                port = findSOAPPort(ports);
+        if (service != null) {
+            copyExtensibleElements(service.getExtensibilityElements(), dif,
+                    axisService, SERVICE);
+            if (portName != null) {
+                port = service.getPort(portName);
                 if (port == null) {
-                    //a SOAP port was not found - log a warning
-                    // and use the first port in the list
-                    log.info("A SOAP port was not found - " +
-                            "picking a random port!");
-                    port = (Port) ports.values().toArray()[0];
+                    throw new AxisFault("No port found for the given name :"
+                            + portName);
+                }
+            } else {
+                Map ports = service.getPorts();
+                if (ports != null && ports.size() > 0) {
+                    //pick the port with the SOAP address as the default port
+                    port = findSOAPPort(ports);
+                    if (port == null) {
+                        //a SOAP port was not found - log a warning
+                        // and use the first port in the list
+                        log.info("A SOAP port was not found - " +
+                                "picking a random port!");
+                        port = (Port) ports.values().toArray()[0];
+                    }
                 }
             }
-        }
-
-        axisService.setName(service.getQName().getLocalPart());
-
-        if (port != null) {
-            copyExtensibleElements(port.getExtensibilityElements(), dif,
-                    axisService, PORT);
-            binding = port.getBinding();
+    
+            axisService.setName(service.getQName().getLocalPart());
+    
+            if (port != null) {
+                copyExtensibleElements(port.getExtensibilityElements(), dif,
+                        axisService, PORT);
+                binding = port.getBinding();
+            }
+        } else {
+            log.info("A service element was not found - " +
+                    "picking a random binding!");
+            Collection bindings = dif.getBindings().values();
+            if (bindings == null || bindings.isEmpty()) {
+                throw new AxisFault("No bindings found in wsdl");
+            }
+            binding = (Binding) bindings.iterator().next();
+            axisService.setName(binding.getQName().getLocalPart() + "Service");
         }
         return binding;
     }
@@ -597,10 +606,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (wsdl4jMessagePart == null) {
                 throw new WSDLProcessingException("Missing part named \"" + bindingPartsList.get(0) + "\"");
             }
-            if (wsdl4jMessagePart.getElementName() == null) {
-                //this cannot be done - we need to have a
-                //element reference
-                throw new WSDLProcessingException("Element reference missing for " + bindingPartsList.get(0) + "!" );
+            QName name = wsdl4jMessagePart.getElementName();
+            if (name == null) {
+                name = wsdl4jMessagePart.getTypeName(); 
+            }
+            if (name == null) {
+                throw new WSDLProcessingException("Element reference / Type name  missing for " + bindingPartsList.get(0) + "!" );
             }
             inMessage.setElementQName(wsdl4jMessagePart.getElementName());
 
@@ -1363,17 +1374,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             wsdl4jDefinition.getNamespaces().putAll(namespaces);
                             //copy types
                             Types t = importedDef.getTypes();
-                            List typesList = t.getExtensibilityElements();
-                            for (int j = 0; j < typesList.size(); j++) {
-                                Types types = wsdl4JDefinition.getTypes();
-                                if (types == null) {
-                                    types = wsdl4JDefinition.createTypes();
-                                    wsdl4JDefinition.setTypes(types);
+                            if(t != null){
+                                List typesList = t.getExtensibilityElements();
+                                for (int j = 0; j < typesList.size(); j++) {
+                                    Types types = wsdl4JDefinition.getTypes();
+                                    if (types == null) {
+                                        types = wsdl4JDefinition.createTypes();
+                                        wsdl4JDefinition.setTypes(types);
+                                    }
+                                    types
+                                            .addExtensibilityElement((ExtensibilityElement) typesList
+                                                    .get(j));
+    
                                 }
-                                types
-                                        .addExtensibilityElement((ExtensibilityElement) typesList
-                                                .get(j));
-
                             }
 
                             //add messages
