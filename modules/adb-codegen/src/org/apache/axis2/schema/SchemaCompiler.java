@@ -411,9 +411,12 @@ public class SchemaCompiler {
             metainf = (BeanWriterMetaInfoHolder) this.processedAnonymousComplexTypesMap.get(xsElt);
             metainf.setAnonymous(true);
         }else{
-            //this means we did not find any schema type associated with the particular element. we
-            //should be throwing an exception here
-            throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.elementWithNoType", xsElt.getQName().toString()));
+            //this means we did not find any schema type associated with the particular element.
+            log.warn(SchemaCompilerMessages.getMessage("schema.elementWithNoType", xsElt.getQName().toString()));
+            metainf.registerMapping(xsElt.getQName(),
+                    null,
+                    DEFAULT_CLASS_NAME,
+                    SchemaConstants.ANY_TYPE);
         }
 
         if (nillableElementList.contains(xsElt.getQName())){
