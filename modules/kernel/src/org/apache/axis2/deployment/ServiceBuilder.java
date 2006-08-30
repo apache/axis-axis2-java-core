@@ -83,10 +83,18 @@ public class ServiceBuilder extends DescriptionBuilder {
                 OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
-                    service.setName(serviceNameatt.getAttributeValue());
+                    if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
+                        service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    }
                 }
             }
+            OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
+            if (serviceNameatt != null) {
+                if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
+                    service.setServiceDescription(serviceNameatt.getAttributeValue());
+                }
+            }
             // Process WS-Addressing flag attribute
             OMAttribute addressingRequiredatt = service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
             if (addressingRequiredatt != null) {

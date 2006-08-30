@@ -155,14 +155,19 @@ public class DependencyManager {
                 Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
                         classLoader);
                 Object serviceImpl = implClass.newInstance();
-                Method[] methods = serviceImpl.getClass().getMethods();
-
-                for (int i = 0; i < methods.length; i++) {
-                    if (SERVICE_START_METHOD.equals(methods[i].getName())
-                            && (methods[i].getParameterTypes().length == 1)
-                            && (methods[i].getParameterTypes()[0] == ConfigurationContext.class)) {
-                        methods[i].invoke(serviceImpl, new Object[]{configCtx});
-                        break;
+                if (serviceImpl instanceof Service) {
+                    org.apache.axis2.engine.Service service = (Service) serviceImpl;
+                    service.startUp(configCtx, axisService);
+                } else {
+                    Method[] methods = serviceImpl.getClass().getMethods();
+                    for (int i = 0; i < methods.length; i++) {
+                        if (SERVICE_START_METHOD.equals(methods[i].getName())
+                                && (methods[i].getParameterTypes().length == 1)
+                                && (methods[i].getParameterTypes()[0] == ConfigurationContext.class)
+                                && (methods[i].getParameterTypes()[1] == AxisService.class)) {
+                            methods[i].invoke(serviceImpl, new Object[]{configCtx, axisService});
+                            break;
+                        }
                     }
                 }
             } catch (Exception e) {

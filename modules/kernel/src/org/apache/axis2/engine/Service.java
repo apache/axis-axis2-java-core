@@ -17,14 +17,22 @@
 
 package org.apache.axis2.engine;
 
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.AxisService;
 
 /**
  * This class *may* be implemented by any service which require some information from Axis2 engine,
  * but its not a must.
  */
 public interface Service {
+
+    /**
+     * this will be called during the deployement time of the service. irrespective
+     * of the service scope this method will be called
+     */
+    public void startUp(ConfigurationContext configctx, AxisService service);
 
     /**
      * this will be called during the initialization of the service. If the service is in the application scope, then this
