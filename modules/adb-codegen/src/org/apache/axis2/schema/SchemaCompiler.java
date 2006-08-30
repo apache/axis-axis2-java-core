@@ -543,6 +543,10 @@ public class SchemaCompiler {
             //referenced name
         }else if (xsElt.getRefName()!=null){
 
+            if(xsElt.getRefName().equals(SchemaConstants.XSD_SCHEMA)){
+                innerElementMap.put(xsElt.getQName(), SchemaCompiler.DEFAULT_CLASS_NAME);
+                return;
+            }
             //process the referenced type. It could be thought that the referenced element replaces this
             //element
             XmlSchemaElement referencedElement = getReferencedElement(parentSchema, xsElt.getRefName());
@@ -1474,7 +1478,14 @@ public class SchemaCompiler {
                                         SchemaConstants.ARRAY_TYPE :
                                         SchemaConstants.ELEMENT_TYPE);                    	
                     } else {
-                    	throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.referencedElementNotFound",referencedQName.toString()));
+                        if(referencedQName.equals(SchemaConstants.XSD_SCHEMA)) {
+                            metainfHolder.registerMapping(referencedQName,
+                                    null,
+                                    DEFAULT_CLASS_NAME,
+                                    SchemaConstants.ANY_TYPE);
+                        } else {
+                            throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.referencedElementNotFound",referencedQName.toString()));
+                        }
                     }
                 }
 
