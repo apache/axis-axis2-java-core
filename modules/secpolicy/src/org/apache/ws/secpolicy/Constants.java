@@ -236,8 +236,6 @@ public class Constants {
     
     public static final QName WSS_X509_PKI_PATH_V1_TOKEN_11 = new QName(Constants.SP_NS, "WssX509PkiPathV1Token11");
     
-    public static final QName WSS10 = new QName(Constants.SP_NS, "Wss10");
-    
     public static final QName MUST_SUPPORT_REF_KEY_IDENTIFIER = new QName(Constants.SP_NS, "MustSupportRefKeyIdentifier");
     
     public static final QName MUST_SUPPORT_REF_ISSUER_SERIAL = new QName(Constants.SP_NS, "MustSupportRefIssuerSerail");
@@ -245,8 +243,12 @@ public class Constants {
     public static final QName MUST_SUPPORT_REF_EXTERNAL_URI = new QName(Constants.SP_NS, "MustSupportRefExternalURI");
     
     public static final QName MUST_SUPPORT_REF_EMBEDDED_TOKEN = new QName(Constants.SP_NS, "MustSupportRefEmbeddedToken");
-        
-    public static final QName WSS11 = new QName(Constants.SP_NS, "Wss11");    
+    
+    public static final QName WSS10 = new QName(Constants.SP_NS, "Wss10");
+    
+    public static final QName WSS11 = new QName(Constants.SP_NS, "Wss11");
+    
+    public static final QName TRUST_10 = new QName(Constants.SP_NS, "Trust10");
     
     public static final QName MUST_SUPPORT_REF_THUMBPRINT = new QName(Constants.SP_NS, "MustSupportRefThumbprint");
     
