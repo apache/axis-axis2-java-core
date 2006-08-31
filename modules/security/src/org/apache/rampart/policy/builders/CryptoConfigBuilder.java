@@ -15,26 +15,26 @@
  */
 package org.apache.rampart.policy.builders;
 
-import java.util.Iterator;
-import java.util.Properties;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
 import org.apache.neethi.builders.AssertionBuilder;
-import org.apache.rampart.policy.Constants;
 import org.apache.rampart.policy.model.CryptoConfig;
+import org.apache.rampart.policy.model.RampartConfig;
 
-public class CryptoConfigBuilder implements AssertionBuilder, Constants.Crypto {
+import javax.xml.namespace.QName;
+
+import java.util.Iterator;
+import java.util.Properties;
+
+public class CryptoConfigBuilder implements AssertionBuilder {
 
     public Assertion build(OMElement element, AssertionBuilderFactory factory)
             throws IllegalArgumentException {
         CryptoConfig cryptoCofig = new CryptoConfig();
 
-        OMAttribute attribute = element.getAttribute(PROVIDER_ATTR);
+        OMAttribute attribute = element.getAttribute(new QName(CryptoConfig.PROVIDER_ATTR));
         cryptoCofig.setProvider(attribute.getAttributeValue().trim());
         
         Properties properties = new Properties();
@@ -52,8 +52,10 @@ public class CryptoConfigBuilder implements AssertionBuilder, Constants.Crypto {
 
             childElement = (OMElement) iterator.next();
 
-            if (PROPERTY.equals(childElement.getQName())) {
-                name = childElement.getAttribute(PROPERTY_NAME_ATTR);
+            QName prop = new QName(RampartConfig.NS, CryptoConfig.PROPERTY_LN);
+            
+            if (prop.equals(childElement.getQName())) {
+                name = childElement.getAttribute(new QName(CryptoConfig.PROPERTY_NAME_ATTR));
                 value = childElement.getText();
 
                 properties.put(name.getAttributeValue(), value.trim());
@@ -66,7 +68,7 @@ public class CryptoConfigBuilder implements AssertionBuilder, Constants.Crypto {
     }
 
     public QName getKnownElement() {
-        return NAME;
+        return new QName(RampartConfig.NS, CryptoConfig.CRYPTO_LN);
     }
 
 }

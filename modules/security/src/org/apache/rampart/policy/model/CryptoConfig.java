@@ -42,7 +42,7 @@ public class CryptoConfig implements Assertion {
     public final static String CRYPTO_LN = "crypto";
     public final static String PROVIDER_ATTR = "provider";
     public final static String PROPERTY_LN = "property";
-    public final static String PERPERTY_NAME_ATTR = "name";
+    public final static String PROPERTY_NAME_ATTR = "name";
 
     private String provider;
     private Properties prop;

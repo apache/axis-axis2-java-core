@@ -17,6 +17,7 @@
 package org.apache.rampart.policy.model;
 
 import org.apache.neethi.Assertion;
+import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 
 import javax.xml.namespace.QName;
@@ -32,6 +33,8 @@ import javax.xml.stream.XMLStreamWriter;
         <ramp:user>alice</ramp:user>
         <ramp:encryptionUser>bob</ramp:encryptionUser>
         <ramp:passwordCallbackClass>org.apache.axis2.security.PWCallback</ramp:passwordCallbackClass>
+        <ramp:timestampTTL>300</ramp:timestampTTL>
+        <ramp:tokenStoreClass>org.apache.rahas.StorageImpl</ramp:tokenStoreClass>
         
         <ramp:signatureCryto>
             <ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
@@ -41,6 +44,13 @@ import javax.xml.stream.XMLStreamWriter;
             </ramp:crypto>
         </ramp:signatureCryto>
     </ramp:RampartConfig>
+    
+    <ramp:tokenIssuerPolicy>
+        <wsp:Policy>
+            ....
+            ....
+        </wsp:Policy>
+    </ramp:tokenIssuerPolicy>
 </pre>
  * 
  */
@@ -56,13 +66,17 @@ public class RampartConfig implements Assertion {
     
     public final static String PW_CB_CLASS_LN = "passwordCallbackClass";
     
-    public final static String SIG_CRYPTO_LN = "signatureCryto";
+    public final static String SIG_CRYPTO_LN = "signatureCrypto";
     
     public final static String ENCR_CRYPTO_LN = "encryptionCypto";
     
     public final static String DEC_CRYPTO_LN = "decryptionCrypto";
     
     public final static String TS_TTL_LN = "timestampTTL";
+    
+    public final static String TOKEN_STORE_CLASS_LN = "tokenStoreClass";
+    
+    public final static String TOKEN_ISSUER_POLICY_LN = "tokenIssuerPolicy";
     
     private String user;
     private String encryptionUser;
@@ -71,7 +85,23 @@ public class RampartConfig implements Assertion {
     private CryptoConfig encrCryptoConfig;
     private CryptoConfig decCryptoConfig;
     private String timestampTTL;
+    private String tokenStoreClass;
+    private Policy tokenIssuerPolicy;
     
+    /**
+     * @return Returns the tokenStoreClass.
+     */
+    public String getTokenStoreClass() {
+        return tokenStoreClass;
+    }
+
+    /**
+     * @param tokenStoreClass The tokenStoreClass to set.
+     */
+    public void setTokenStoreClass(String tokenStoreClass) {
+        this.tokenStoreClass = tokenStoreClass;
+    }
+
     public CryptoConfig getDecCryptoConfig() {
         return decCryptoConfig;
     }
@@ -161,6 +191,20 @@ public class RampartConfig implements Assertion {
      */
     public void setTimestampTTL(String timestampTTL) {
         this.timestampTTL = timestampTTL;
+    }
+
+    /**
+     * @return Returns the tokenIssuerPolicy.
+     */
+    public Policy getTokenIssuerPolicy() {
+        return tokenIssuerPolicy;
+    }
+
+    /**
+     * @param tokenIssuerPolicy The tokenIssuerPolicy to set.
+     */
+    public void setTokenIssuerPolicy(Policy tokenIssuerPolicy) {
+        this.tokenIssuerPolicy = tokenIssuerPolicy;
     }
 
 }

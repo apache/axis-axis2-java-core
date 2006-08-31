@@ -15,51 +15,62 @@
  */
 package org.apache.rampart.policy.builders;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
+import org.apache.neethi.Policy;
 import org.apache.neethi.builders.AssertionBuilder;
-import org.apache.rampart.policy.Constants;
 import org.apache.rampart.policy.model.CryptoConfig;
 import org.apache.rampart.policy.model.RampartConfig;
 
-public class RampartConfigBuilder implements AssertionBuilder,
-        Constants.RampartConifg {
+import javax.xml.namespace.QName;
+
+public class RampartConfigBuilder implements AssertionBuilder {
 
     public Assertion build(OMElement element, AssertionBuilderFactory factory)
             throws IllegalArgumentException {
 
         RampartConfig rampartConfig = new RampartConfig();
-        
+
         OMElement childElement;
 
-        childElement = element.getFirstChildWithName(USER);
+        childElement = element.getFirstChildWithName(new QName(
+                RampartConfig.NS, RampartConfig.USER_LN));
         if (childElement != null) {
             rampartConfig.setUser(childElement.getText().trim());
         }
 
-        childElement = element.getFirstChildWithName(ENCRYPTION_USER);
+        childElement = element.getFirstChildWithName(new QName(
+                RampartConfig.NS, RampartConfig.ENCRYPTION_USER_LN));
         if (childElement != null) {
             rampartConfig.setEncryptionUser(childElement.getText().trim());
         }
 
-        childElement = element.getFirstChildWithName(PASSWD_CALLBACK_CLASS);
+        childElement = element.getFirstChildWithName(new QName(
+                RampartConfig.NS, RampartConfig.PW_CB_CLASS_LN));
         if (childElement != null) {
             rampartConfig.setPwCbClass(childElement.getText().trim());
         }
 
-        childElement = element.getFirstChildWithName(SIGNATURE_CRYPTO);
+        childElement = element.getFirstChildWithName(new QName(
+                RampartConfig.NS, RampartConfig.SIG_CRYPTO_LN));
         if (childElement != null) {
-            rampartConfig.setSigCryptoConfig((CryptoConfig) factory.build(childElement.getFirstElement()));
+            rampartConfig.setSigCryptoConfig((CryptoConfig) factory
+                    .build(childElement.getFirstElement()));
+        }
+
+        childElement = element.getFirstChildWithName(new QName(
+                RampartConfig.NS, RampartConfig.TOKEN_ISSUER_POLICY_LN));
+        if (childElement != null) {
+            rampartConfig.setTokenIssuerPolicy((Policy) factory
+                    .build(childElement));
         }
 
         return rampartConfig;
     }
 
     public QName getKnownElement() {
-        return Constants.RampartConifg.NAME;
+        return new QName(RampartConfig.NS, RampartConfig.RAMPART_CONFIG_LN);
     }
 
 }
