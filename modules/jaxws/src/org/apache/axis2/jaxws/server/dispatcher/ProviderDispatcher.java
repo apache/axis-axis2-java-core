@@ -176,16 +176,15 @@ public class ProviderDispatcher extends JavaDispatcher{
                     value.getClass().getName());
         }
         
-        BlockFactory factory = createBlockFactory(providerType);
         MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(
                 MessageFactory.class);
-        
         Message message = msgFactory.create(messageProtocol);
-            
-        // Since we know this isn't going to be a JAX-B block, it's ok if
-        // the context is null.  The QName can be null for now as well.
-        Block block = factory.createFrom(value, null, null);
-        message.setBodyBlock(0, block);
+        
+        if (value != null) {
+            BlockFactory factory = createBlockFactory(providerType);
+            Block block = factory.createFrom(value, null, null);
+            message.setBodyBlock(0, block);
+        }
 
         return message;
     }
