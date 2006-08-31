@@ -18,6 +18,7 @@
 package org.apache.axis2.jaxws;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -40,6 +41,7 @@ import org.apache.axis2.util.ThreadContextMigratorUtil;
 public class AxisCallback extends Callback {
 
     private MessageContext responseMsgCtx;
+    private Exception e = null;
     
     /**
      * This method will be called when the Axis2 implementation is
@@ -76,8 +78,11 @@ public class AxisCallback extends Callback {
 
     // FIXME: Figure out what needs to be done when this method is called
     // and we've received an error from Axis2.
-    public void onError(Exception e) {
-        e.printStackTrace();
+    public void onError(Exception e){
+    	//I will set the exception variable here that we can read after the operaiton client is execution in InvocationController.
+    	//The idea is to read the exception after OperationClient execution and if there is an exception do not run the executor. 
+    	//Insterad reaturn the error to client. 
+    	this.e =e;
     }
     
     /**
@@ -87,5 +92,9 @@ public class AxisCallback extends Callback {
      */
     public MessageContext getResponseMessageContext() {
         return responseMsgCtx;
+    }
+    
+    public Exception getException(){
+    	return e;
     }
 }

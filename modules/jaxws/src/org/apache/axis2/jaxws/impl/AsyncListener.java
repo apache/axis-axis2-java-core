@@ -17,16 +17,20 @@
 package org.apache.axis2.jaxws.impl;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
+
 
 
 /**
@@ -70,9 +74,17 @@ public class AsyncListener implements Callable {
      * This method will be called to collect the async response from Axis2.  
      */
     public Object call() throws Exception {
+    	
+    	if(axisCallback == null){
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("AsyncListenerErr1"));
+    	}
+    	
         if (axisCallback != null) {
             while (!axisCallback.isComplete()) {
                 //TODO: The wait period should probably be configurable
+            	if(axisCallback.getException() != null){
+            		throw axisCallback.getException();
+            	}
                 Thread.sleep(1000);
             }
             
@@ -81,11 +93,8 @@ public class AsyncListener implements Callable {
             Object responseObj = getResponseValueObject(responseMsgCtx);
             return responseObj;            
         }
-        else {
-            //throw an Exception
-        }
+    	return null;
         
-        return null;
     }
     
     /**
