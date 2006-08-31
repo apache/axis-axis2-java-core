@@ -29,8 +29,8 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class IssuedToken extends Token {
     
-    OMElement issuerEpr;
-    OMElement rstTemplate;
+    private OMElement issuerEpr;
+    private OMElement rstTemplate;
     
     boolean requireExternalReference;
     boolean requireInternalReference;

@@ -16,6 +16,7 @@
 
 package org.apache.ws.secpolicy.model;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
@@ -29,8 +30,9 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class SecureConversationToken extends SecurityContextToken  {
 
-    
     private Policy bootstrapPolicy;
+    
+    private OMElement issuerEpr;
     
     /**
      * @return Returns the bootstrapPolicy.
@@ -67,6 +69,20 @@ public class SecureConversationToken extends SecurityContextToken  {
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
         // TODO TODO Sanka
         throw new UnsupportedOperationException("TODO Sanka");
+    }
+
+    /**
+     * @return Returns the issuerEpr.
+     */
+    public OMElement getIssuerEpr() {
+        return issuerEpr;
+    }
+
+    /**
+     * @param issuerEpr The issuerEpr to set.
+     */
+    public void setIssuerEpr(OMElement issuerEpr) {
+        this.issuerEpr = issuerEpr;
     }
 
 }
