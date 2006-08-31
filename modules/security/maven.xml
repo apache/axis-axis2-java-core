@@ -69,6 +69,8 @@
 		
         <copy file="src/META-INF/module.xml"
             tofile="target/temp-mar/META-INF/module.xml" overwrite="true"/>
+	<copy file="src/META-INF/services/org.apache.neethi.builders.AssertionBuilder"
+	    tofile="target/temp-mar/META-INF/services/org.apache.neethi.builders.AssertionBuilder" overwrite="true" />
 
         <jar jarfile="target/rampart-${rampart_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>

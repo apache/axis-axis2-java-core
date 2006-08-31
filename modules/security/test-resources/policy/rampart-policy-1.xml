@@ -4,12 +4,12 @@
 		<ramp:encryptionUser>bob</ramp:encryptionUser>
 		<ramp:passwordCallbackClass>org.apache.axis2.security.PWCallback</ramp:passwordCallbackClass>
 		
-		<ramp:signatureCryto>
+		<ramp:signatureCrypto>
 			<ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
 				<ramp:property name="keystoreType">JKS</ramp:property>
 				<ramp:property name="keystoreFile">/path/to/file.jks</ramp:property>
 				<ramp:property name="keystorePassword">password</ramp:property>
 			</ramp:crypto>
-		</ramp:signatureCryto>
+		</ramp:signatureCrypto>
 	</ramp:RampartConfig>
 </wsp:Policy>
