@@ -4,6 +4,10 @@ import javax.xml.namespace.QName;
 
 public class Constants {
 
+    public static final String P_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
+    
+    public static final QName POLICY = new QName(P_NS, "Policy");    
+    
     public final static String SP_NS = "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy";
     
     public final static String ATTR_INCLUDE_TOKEN = "IncludeToken";
@@ -19,7 +23,6 @@ public class Constants {
 
     public final static String INCLUDE_ALWAYS = Constants.SP_NS
             + "/IncludeToken/Always";
-
     
     public final static int SUPPORTING_TOKEN_SUPPORTING = 1;
     public final static int SUPPORTING_TOKEN_ENDORSING = 2;
@@ -255,7 +258,25 @@ public class Constants {
     public static final QName MUST_SUPPORT_REF_ENCRYPTED_KEY = new QName(Constants.SP_NS, "MustSupportRefEncryptedkey");
     
     public static final QName REQUIRE_SIGNATURE_CONFIRMATION = new QName(Constants.SP_NS, "RequireSignatureConfirmation");
+ 
+    public static final QName MUST_SUPPORT_CLIENT_CHALLENGE = new QName(Constants.SP_NS, "MustSupportClientChanllenge");
+    
+    public static final QName MUST_SUPPORT_SERVER_CHALLENGE = new QName(Constants.SP_NS, "MustSupportServerChanllenge");
+    
+    public static final QName REQUIRE_CLIENT_ENTROPY = new QName(Constants.SP_NS, "RequireClientEntropy");
+    
+    public static final QName REQUIRE_SERVER_ENTROPY = new QName(Constants.SP_NS, "RequireServerEntropy");
+    
+    public static final QName MUST_SUPPORT_ISSUED_TOKENS = new QName(Constants.SP_NS, "MustSupportIssuedTokens");
+    
+    public static final QName ISSUER = new QName(Constants.SP_NS, "Issuer");
+    
+    public static final QName REQUIRE_DERIVED_KEYS = new QName(Constants.SP_NS, "RequireDerivedKeys");
+    
+    public static final QName REQUIRE_EXTERNAL_URI_REFERNCE = new QName(Constants.SP_NS, "RequireExternalUriReference");
+    
+    public static final QName SC10_SECURITY_CONTEXT_TOKEN = new QName(Constants.SP_NS, "SC10SecurityContextToken");
+    
+    public static final QName BOOTSTRAP_POLICY = new QName(Constants.SP_NS, "BootstrapPolicy");
     
 }
-
-

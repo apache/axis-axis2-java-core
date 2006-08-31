@@ -15,4 +15,7 @@ org.apache.ws.secpolicy.builders.UsernameTokenBuilder
 org.apache.ws.secpolicy.builders.WSS10Builder
 org.apache.ws.secpolicy.builders.WSS11Builder
 org.apache.ws.secpolicy.builders.X509TokenBuilder
+org.apache.ws.secpolicy.builders.Trust10Builder
+org.apache.ws.secpolicy.builders.SecurityContextTokenBuilder
+org.apache.ws.secpolicy.builders.SecureConversationTokenBuilder
 
