@@ -162,7 +162,7 @@ public class DependencyManager {
                     Method[] methods = serviceImpl.getClass().getMethods();
                     for (int i = 0; i < methods.length; i++) {
                         if (SERVICE_START_METHOD.equals(methods[i].getName())
-                                && (methods[i].getParameterTypes().length == 1)
+                                && (methods[i].getParameterTypes().length == 2)
                                 && (methods[i].getParameterTypes()[0] == ConfigurationContext.class)
                                 && (methods[i].getParameterTypes()[1] == AxisService.class)) {
                             methods[i].invoke(serviceImpl, new Object[]{configCtx, axisService});

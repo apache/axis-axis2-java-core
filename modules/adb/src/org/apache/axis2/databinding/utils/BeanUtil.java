@@ -60,7 +60,7 @@ public class BeanUtil {
             jam_service_parms.includeClass(beanObject.getClass().getName());
             JamService service = factory.createService(jam_service_parms);
             JamClassIterator jClassIter = service.getClasses();
-            JClass jClass ;
+            JClass jClass;
             if (jClassIter.hasNext()) {
                 jClass = (JClass) jClassIter.next();
             } else {
@@ -93,7 +93,7 @@ public class BeanUtil {
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             (Object[]) null);
-                    object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
+                    object.add(new QName(beanName.getNamespaceURI(), propDesc.getName(), beanName.getPrefix()));
                     object.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if (ptype.isArray()) {
                     Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
@@ -101,13 +101,13 @@ public class BeanUtil {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
-                            object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
-                            object.add(o == null ? null :  SimpleTypeMapper.getStringValue(o));
+                            object.add(new QName(beanName.getNamespaceURI(), propDesc.getName(), beanName.getPrefix()));
+                            object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
                         }
                     } else {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
-                            object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
+                            object.add(new QName(beanName.getNamespaceURI(), propDesc.getName(), beanName.getPrefix()));
                             object.add(o);
                         }
                     }
@@ -123,10 +123,10 @@ public class BeanUtil {
                         for (int j = 0; j < objList.size(); j++) {
                             Object o = objList.get(j);
                             if (SimpleTypeMapper.isSimpleType(o)) {
-                                object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
+                                object.add(new QName(beanName.getNamespaceURI(), propDesc.getName(), beanName.getPrefix()));
                                 object.add(o);
                             } else {
-                                object.add(new QName(beanName.getNamespaceURI(),propDesc.getName(),beanName.getPrefix()));
+                                object.add(new QName(beanName.getNamespaceURI(), propDesc.getName(), beanName.getPrefix()));
                                 object.add(o);
                             }
                         }
@@ -474,24 +474,29 @@ public class BeanUtil {
                 Object array [] = (Object[]) arg;
                 for (int j = 0; j < array.length; j++) {
                     Object o = array[j];
-                    if (SimpleTypeMapper.isSimpleType(o)) {
+                    if (o == null) {
                         objects.add("item" + argCount);
-                        objects.add(o == null ? null :  SimpleTypeMapper.getStringValue(o));
+                        objects.add(o);
                     } else {
-                        objects.add(new QName("item" + argCount));
-                        if (o instanceof OMElement) {
-                            OMFactory fac = OMAbstractFactory.getOMFactory();
-                            OMElement wrappingElement;
-                            if (partName == null) {
-                                wrappingElement = fac.createOMElement("item" + argCount, null);
-                                wrappingElement.addChild((OMElement) o);
-                            } else {
-                                wrappingElement = fac.createOMElement(partName, null);
-                                wrappingElement.addChild((OMElement) o);
-                            }
-                            objects.add(wrappingElement);
+                        if (SimpleTypeMapper.isSimpleType(o)) {
+                            objects.add("item" + argCount);
+                            objects.add(SimpleTypeMapper.getStringValue(o));
                         } else {
-                            objects.add(o);
+                            objects.add(new QName("item" + argCount));
+                            if (o instanceof OMElement) {
+                                OMFactory fac = OMAbstractFactory.getOMFactory();
+                                OMElement wrappingElement;
+                                if (partName == null) {
+                                    wrappingElement = fac.createOMElement("item" + argCount, null);
+                                    wrappingElement.addChild((OMElement) o);
+                                } else {
+                                    wrappingElement = fac.createOMElement(partName, null);
+                                    wrappingElement.addChild((OMElement) o);
+                                }
+                                objects.add(wrappingElement);
+                            } else {
+                                objects.add(o);
+                            }
                         }
                     }
                 }
@@ -547,6 +552,7 @@ public class BeanUtil {
 
     /**
      * increments the namespace counter and returns a new prefix
+     *
      * @return unique prefix
      */
     public static String getUniquePrefix() {
