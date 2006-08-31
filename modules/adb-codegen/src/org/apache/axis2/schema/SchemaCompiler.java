@@ -1244,22 +1244,22 @@ public class SchemaCompiler {
 			
 			else if ( obj instanceof XmlSchemaMaxExclusiveFacet ) {
 				XmlSchemaMaxExclusiveFacet maxEx = (XmlSchemaMaxExclusiveFacet) obj;
-				metaInfHolder.setMaxExclusiveFacet(Integer.parseInt(maxEx.getValue().toString()));
+				metaInfHolder.setMaxExclusiveFacet(maxEx.getValue().toString());
 			}
 			
 			else if ( obj instanceof XmlSchemaMinExclusiveFacet ) {
 				XmlSchemaMinExclusiveFacet minEx = (XmlSchemaMinExclusiveFacet) obj;
-				metaInfHolder.setMinExclusiveFacet(Integer.parseInt(minEx.getValue().toString()));
+				metaInfHolder.setMinExclusiveFacet(minEx.getValue().toString());
 			}
 			
 			else if ( obj instanceof XmlSchemaMaxInclusiveFacet ) {
 				XmlSchemaMaxInclusiveFacet maxIn = (XmlSchemaMaxInclusiveFacet) obj;
-				metaInfHolder.setMaxInclusiveFacet(Integer.parseInt(maxIn.getValue().toString()));
+				metaInfHolder.setMaxInclusiveFacet(maxIn.getValue().toString());
 			}
 			
 			else if ( obj instanceof XmlSchemaMinInclusiveFacet ) {
 				XmlSchemaMinInclusiveFacet minIn = (XmlSchemaMinInclusiveFacet) obj;
-				metaInfHolder.setMinInclusiveFacet(Integer.parseInt(minIn.getValue().toString()));
+				metaInfHolder.setMinInclusiveFacet(minIn.getValue().toString());
 			}
 			
 			else if ( obj instanceof XmlSchemaMaxLengthFacet ) {

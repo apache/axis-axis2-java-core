@@ -53,14 +53,14 @@ public class BeanWriterMetaInfoHolder {
     protected String ownClassName = null;
     
     protected long lengthFacet = -1;
-    protected long maxExclusiveFacet = -1;
-    protected long minExclusiveFacet = -1;
-    protected long maxInclusiveFacet = -1;
-    protected long minInclusiveFacet = -1;
     protected long maxLengthFacet = -1;
     protected long minLengthFacet = -1;
     protected ArrayList enumFacet = new ArrayList();
     protected String patternFacet = null;
+    protected String maxExclusiveFacet = null;
+    protected String minExclusiveFacet = null;
+    protected String maxInclusiveFacet = null;
+    protected String minInclusiveFacet = null;
 
     protected List nillableQNameList  = new ArrayList();
 
@@ -561,7 +561,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @param maxExclusiveFacet
      */
-    public void setMaxExclusiveFacet(long maxExclusiveFacet) {
+    public void setMaxExclusiveFacet(String maxExclusiveFacet) {
     	this.maxExclusiveFacet = maxExclusiveFacet;
     }
     
@@ -570,7 +570,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @return Returns the maxExclusive.
      */
-    public long getMaxExclusiveFacet() {
+    public String getMaxExclusiveFacet() {
     	return this.maxExclusiveFacet;
     }
     
@@ -579,7 +579,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @param minExclusiveFacet
      */
-    public void setMinExclusiveFacet(long minExclusiveFacet) {
+    public void setMinExclusiveFacet(String minExclusiveFacet) {
     	this.minExclusiveFacet = minExclusiveFacet;
     }
     
@@ -588,7 +588,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @return Returns the minExclusive.
      */
-    public long getMinExclusiveFacet() {
+    public String getMinExclusiveFacet() {
     	return this.minExclusiveFacet;
     }
     
@@ -597,7 +597,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @param maxInclusiveFacet
      */
-    public void setMaxInclusiveFacet(long maxInclusiveFacet) {
+    public void setMaxInclusiveFacet(String maxInclusiveFacet) {
     	this.maxInclusiveFacet = maxInclusiveFacet;
     }
     
@@ -606,7 +606,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @return Returns the maxInclusive.
      */
-    public long getMaxInclusiveFacet() {
+    public String getMaxInclusiveFacet() {
     	return this.maxInclusiveFacet;
     }
     
@@ -615,7 +615,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @param minInclusiveFacet
      */
-    public void setMinInclusiveFacet(long minInclusiveFacet) {
+    public void setMinInclusiveFacet(String minInclusiveFacet) {
     	this.minInclusiveFacet = minInclusiveFacet;
     }
     
@@ -624,7 +624,7 @@ public class BeanWriterMetaInfoHolder {
      *
      * @return Returns the minInclusive.
      */
-    public long getMinInclusiveFacet() {
+    public String getMinInclusiveFacet() {
     	return this.minInclusiveFacet;
     }
     

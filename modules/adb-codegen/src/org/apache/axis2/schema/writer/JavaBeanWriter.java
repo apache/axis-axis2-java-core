@@ -698,19 +698,19 @@ public class JavaBeanWriter implements BeanWriter {
             	XSLTUtils.addAttribute(model, "minLenFacet", metainf.getMinLengthFacet() + "", property);
             }
             
-            if (metainf.isRestrictionBaseType(name) && metainf.getMaxExclusiveFacet() != -1) {
+            if (metainf.isRestrictionBaseType(name) && metainf.getMaxExclusiveFacet() != null) {
             	XSLTUtils.addAttribute(model, "maxExFacet", metainf.getMaxExclusiveFacet() + "", property);
             }
             
-            if (metainf.isRestrictionBaseType(name) && metainf.getMinExclusiveFacet() != -1) {
+            if (metainf.isRestrictionBaseType(name) && metainf.getMinExclusiveFacet() != null) {
             	XSLTUtils.addAttribute(model, "minExFacet", metainf.getMinExclusiveFacet() + "", property);
             }
             
-            if (metainf.isRestrictionBaseType(name) && metainf.getMaxInclusiveFacet() != -1) {
+            if (metainf.isRestrictionBaseType(name) && metainf.getMaxInclusiveFacet() != null) {
             	XSLTUtils.addAttribute(model, "maxInFacet", metainf.getMaxInclusiveFacet() + "", property);
             }
             
-            if (metainf.isRestrictionBaseType(name) && metainf.getMinInclusiveFacet() != -1) {
+            if (metainf.isRestrictionBaseType(name) && metainf.getMinInclusiveFacet() != null) {
             	XSLTUtils.addAttribute(model, "minInFacet", metainf.getMinInclusiveFacet() + "", property);
             }
             

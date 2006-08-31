@@ -489,11 +489,11 @@ public class ConverterUtil {
         return new URI(s);
     }
 
-    public static BigInteger convertToInteger(String s) throws Exception {
+    public static BigInteger convertToInteger(String s) {
         return new BigInteger(s);
     }
 
-    public static BigInteger convertToBigInteger(String s) throws Exception {
+    public static BigInteger convertToBigInteger(String s) {
     	return convertToInteger(s);
     }
     
