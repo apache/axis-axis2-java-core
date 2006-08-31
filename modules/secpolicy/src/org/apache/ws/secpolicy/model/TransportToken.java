@@ -28,7 +28,7 @@ import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
 
-public class TransportToken implements Assertion {
+public class TransportToken extends AbstractSecurityAssertion {
 
     private Token transportToken;
     

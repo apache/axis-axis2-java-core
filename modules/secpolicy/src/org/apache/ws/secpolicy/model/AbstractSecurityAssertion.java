@@ -16,6 +16,7 @@
 package org.apache.ws.secpolicy.model;
 
 import org.apache.neethi.Assertion;
+import org.apache.neethi.PolicyComponent;
 
 public abstract class AbstractSecurityAssertion implements Assertion{
 
@@ -32,5 +33,9 @@ public abstract class AbstractSecurityAssertion implements Assertion{
     public short getType() {
         return Assertion.ASSERTION;
     }    
+    
+    public boolean equal(PolicyComponent policyComponent) {
+        throw new UnsupportedOperationException();
+    }
 
 }

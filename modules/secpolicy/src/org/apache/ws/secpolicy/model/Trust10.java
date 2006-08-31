@@ -16,18 +16,17 @@
 
 package org.apache.ws.secpolicy.model;
 
-import org.apache.neethi.Assertion;
-import org.apache.neethi.PolicyComponent;
-import org.apache.ws.secpolicy.Constants;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.secpolicy.Constants;
+
 /**
  * Model bean to capture Trust10 assertion info
  */
-public class Trust10 implements Assertion {
+public class Trust10 extends AbstractSecurityAssertion {
 
     private boolean mustSupportClientChallenge;
     private boolean mustSupportServerChallenge;
