@@ -181,7 +181,7 @@ public class ServiceDescription {
         // TODO: Using Class.forName() is probably not the best long-term way to get the SEI class from the annotation
         Class seiClass = null;
         try {
-            seiClass = Class.forName(webServiceAnnotation.endpointInterface());
+            seiClass = Class.forName(webServiceAnnotation.endpointInterface(), false, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException e) {
             // TODO: Throwing wrong exception
             e.printStackTrace();

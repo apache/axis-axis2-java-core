@@ -231,7 +231,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
                     JAXBBlockFactory.class);
             
             String responseWrapper = opDesc.getResponseWrapperClassName();
-            Class responseWrapperClass = Class.forName(responseWrapper);
+            Class responseWrapperClass = Class.forName(responseWrapper, false, Thread.currentThread().getContextClassLoader());
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
 
             String webResult = opDesc.getWebResultName();
