@@ -78,9 +78,12 @@ public class CryptoConfig implements Assertion {
         // TODO TODO
         throw new UnsupportedOperationException("TODO");
     }
+    
+    public boolean equal(PolicyComponent policyComponent) {
+        throw new UnsupportedOperationException();
+    }
 
     public short getType() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        return Assertion.ASSERTION;
     }
 }

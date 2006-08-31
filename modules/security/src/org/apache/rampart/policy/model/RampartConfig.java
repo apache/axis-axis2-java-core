@@ -140,10 +140,13 @@ public class RampartConfig implements Assertion {
         // TODO TODO
         throw new UnsupportedOperationException("TODO");
     }
+    
+    public boolean equal(PolicyComponent policyComponent) {
+        throw new UnsupportedOperationException("TODO");
+    }
 
     public short getType() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        return Assertion.ASSERTION;
     }
 
     /**
