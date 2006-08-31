@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -54,10 +55,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
-
 public class DocLitProxyHandler extends BaseProxyHandler {
 	private static Log log = LogFactory.getLog(DocLitProxyHandler.class);
 	private static int SIZE = 1;
+	private static String DEFAULT_ARG="arg";
+	private ArrayList<Object> argList = null;
 	/**
 	 * @param pd
 	 * @param delegate
@@ -106,9 +108,9 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	private MessageContext createDocLitWrappedRequest(Method method, Object[] objects)throws ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, javax.xml.stream.XMLStreamException{
 		
 		Class wrapperClazz = proxyDescriptor.getRequestWrapperClass(isAsync());
-		ArrayList<String> names = proxyDescriptor.getParamNames();
+		ArrayList<String> names = getParamNames(objects);
 		String localName = proxyDescriptor.getResponseWrapperLocalName();
-		Map<String, Object> values = getParamValues(names, objects);
+		Map<String, Object> values = getParamValues(objects, names);
 		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
 		
 		//TODO:if(@XmlRootElement) annotation found or defined
@@ -134,8 +136,8 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	private MessageContext createDocLitNONWrappedRequest(Method method, Object[] objects) throws JAXBException, MessageException, XMLStreamException{
 		JAXBContext ctx = null;
 		Object requestObject = null;
-		ArrayList<String> names = proxyDescriptor.getParamNames();
-		Map<String, Object> values = getParamValues(names, objects);
+		ArrayList<String> names = getParamNames(objects);
+		Map<String, Object> values = getParamValues(objects, names);
 		if(names.size()> SIZE || values.size() > SIZE){
 			throw ExceptionFactory.makeWebServiceException("As per WS-I compliance, Multi part WSDL not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
 		}
@@ -271,25 +273,9 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 			}
 		}
 		
-		// TODO Shouldn't this be a WebServiceException ?
 		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("noWebResultForProperty", propertyName, returnClazz.getName()));
 	}
-	//TODO: refactor this once PropertyDescriptor is implemented.
-	private Map<String, Object> getParamValues(ArrayList<String> names, Object[] objects){
-		Map<String, Object> values = new Hashtable<String, Object>();
-		int i=0;
-		for(Object obj:objects){
-			//skip AsycHandler Object
-			if(obj instanceof AsyncHandler){
-				i++;
-				continue;
-			}
-			
-			values.put(names.get(i++), obj);
-		}
-		return values;
-	}
-	//TODO remove this once OperationDescription is implemented
+	
 	
 	/** 
 	 * reads PropertyDescritpr and invokes  get method on result property and returns the object.
@@ -342,6 +328,83 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		 * return false;
 		 */
 		return proxyDescriptor.isClazzDocLitWrapped();
+	}
+	
+	public ArrayList<String> getParamNames(Object[] objects){ 
+        ArrayList<String> names = proxyDescriptor.getParamNames();
+        //TODO Should this logic be moved to Operation Description.
+		ArrayList<Object> paramValues = createArgList(objects);
+		if(names.size() == paramValues.size()){
+			return names;
+		}
+		if(names.size() > 0 && names.size() != paramValues.size()){
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("InvalidWebParams"));
+		}
+		//if no webparams found but there method has input parameter I will create default input param names. Java reflection does not allow reading
+		//formal parameter names, hence I will create defautl argument names to be arg0, arg1 ....
+		int i=0;
+		if(names.size() ==0){
+			for(Object paramValue:paramValues){
+				names.add(DEFAULT_ARG + i++);
+			}
+		}
+		return names;
+	}
+	//TODO: Should we move this to OperationDescription.
+	public Map<String, Object> getParamValues(Object[] objects, ArrayList<String> names){
+		Map<String, Object> values = new Hashtable<String, Object>();
+		
+		if(objects == null){
+			return values;
+		}
+		//if object array not null check if there is only AsyncHandler object param, if yes then its Async call 
+		//with no parameter. Lets filter AsyncHandler and check for return objects, if they are 0 return value;
+		ArrayList<Object> paramValues = createArgList(objects);
+		
+		//@webparams and paramValues identified in method should match. 
+		if(names.size() > 0 && names.size() != paramValues.size()){
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("InvalidWebParams"));
+		}
+		
+		if(paramValues.size() == 0){
+			//No method parameters
+			return values;
+		}
+		//If no webParam annotation defined read default names of the object and let's use those.
+		boolean readDefault = false;
+		if(names.size() ==0){
+			readDefault = true;
+		}
+		int i =0;
+		for(Object paramValue: paramValues){
+			if(readDefault){
+				//Java Reflection does not allow you to read names of forma parameter, so I will default the method argument names to arg0, arg1 ....
+				values.put(DEFAULT_ARG + i++, paramValue);
+			}else{
+				values.put(names.get(i++), paramValue);
+			}
+		}
+		return values;
+	}
+	
+	private ArrayList<Object> createArgList(Object[] objects){
+		if(this.argList !=null){
+			return argList;
+		}
+		argList = new ArrayList<Object>();
+		
+		if(objects == null){
+			return argList;
+		}
+		for(Object obj:objects){
+			//skip AsycHandler Object
+			if(obj instanceof AsyncHandler){		
+				continue;
+			}
+			
+			argList.add(obj);
+		}
+		return argList;
 	}
 	
 }

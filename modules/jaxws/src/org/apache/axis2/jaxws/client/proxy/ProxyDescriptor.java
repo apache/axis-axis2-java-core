@@ -21,6 +21,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.Map;
 
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -31,10 +33,12 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.Response;
 import javax.xml.ws.ResponseWrapper;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
+import org.apache.axis2.jaxws.i18n.Messages;
 
 /**
  * ProxyDescriptor is instantiated from ProxyHandler using the Method argument. 
@@ -47,10 +51,10 @@ public class ProxyDescriptor {
 	private Class seiClazz = null;
 	private Method seiMethod = null;
 	private PortData port = null;
-
     private ServiceDescription serviceDescription= null;
 	private OperationDescription operationDescription= null;
 	private EndpointDescription endpointDescription = null;
+   
     
 	public ServiceDescription getServiceDescription() {
      return serviceDescription;   
@@ -100,7 +104,7 @@ public class ProxyDescriptor {
         return operationDescription.getWebResultName();
 	}
     // TODO: (JLB) Move to OperationDescription?
-	public ArrayList<String> getParamNames(){
+	public ArrayList<String> getParamNames(){ 
         return new ArrayList<String>(Arrays.asList(operationDescription.getWebParamNames()));
 	}
 	public PortData getPort() {
