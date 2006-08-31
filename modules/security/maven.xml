@@ -129,6 +129,12 @@
         <!-- Interop client -->
         <copy file="interop/org/apache/axis2/security/InteropScenarioClient.java" 
             tofile="${work.dir}/src/org/apache/axis2/security/InteropScenarioClient.java" overwrite="yes"/>
+		
+		<copy toDir="target/classes/META-INF/">
+			<fileset dir="src/META-INF">
+                <include name="**/services/*"/>
+            </fileset>
+		</copy>
 
         <ant:path id="classes.dir" location="${class.dir}"/>
         <maven:addPath id="maven.dependency.classpath" refid="classes.dir"/>
