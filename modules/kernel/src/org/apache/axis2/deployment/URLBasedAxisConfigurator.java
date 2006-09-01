@@ -95,7 +95,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     }
                 }
             } else {
-                super.loadServices();
+            	loadServicesFromUrl(repositoy);
             }
         } catch (MalformedURLException e) {
             log.info(e);
