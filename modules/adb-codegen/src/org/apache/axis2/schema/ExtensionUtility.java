@@ -344,6 +344,10 @@ public class ExtensionUtility {
             //output
             options.setWriteOutput(!configuration.isPackClasses());
         }
+        
+        if(configuration.isGenerateAll()) {
+            options.setGenerateAll(true);
+        }
     }
 
 }

@@ -321,6 +321,28 @@ public class SchemaCompiler {
             //this is the set of outer elements so we need to generate classes
             writeElement((XmlSchemaElement) xmlSchemaElement2Iterator.next());
         }
+        
+        if(options.isGenerateAll()) {
+            Iterator xmlSchemaTypes2Iterator = schema.getSchemaTypes().getValues();
+            while (xmlSchemaTypes2Iterator.hasNext()) {
+                XmlSchemaType schemaType = (XmlSchemaType) xmlSchemaTypes2Iterator.next();
+                if(this.isAlreadyProcessed(schemaType.getQName())) {
+                    continue;
+                }
+                if (schemaType instanceof XmlSchemaComplexType) {
+                    //write classes for complex types
+                    XmlSchemaComplexType complexType = (XmlSchemaComplexType) schemaType;
+                    if (complexType.getName() != null) {
+                        processNamedComplexSchemaType(complexType, schema);
+                    }
+                } else if (schemaType instanceof XmlSchemaSimpleType) {
+                    //process simple type
+                    processSimpleSchemaType((XmlSchemaSimpleType) schemaType,
+                            null,
+                            schema);
+                }
+            }
+        }
 
         if (!isPartofGroup){
             //complete the compilation

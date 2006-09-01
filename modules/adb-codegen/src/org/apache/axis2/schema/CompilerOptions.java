@@ -40,6 +40,8 @@ public class CompilerOptions {
      */
     private File outputLocation;
     private String packageName = null;
+    private boolean generateAll = false;
+
     /**
      * Package for the mapper
      */
@@ -146,6 +148,12 @@ public class CompilerOptions {
         Matcher m = pat.matcher(wordToMatch);
         return m.matches();
     }
-
     
+    public boolean isGenerateAll() {
+        return generateAll;
+    }
+
+    public void setGenerateAll(boolean generateAll) {
+        this.generateAll = generateAll;
+    }
 }
