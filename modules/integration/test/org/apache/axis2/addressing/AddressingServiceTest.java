@@ -1,10 +1,7 @@
 package org.apache.axis2.addressing;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -17,23 +14,18 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 /*
 * Copyright 2004,2005,2006 The Apache Software Foundation.
 *
@@ -54,7 +46,6 @@ import org.apache.commons.logging.LogFactory;
 
 public class AddressingServiceTest extends UtilServerBasedTestCase implements TestConstants {
 
-	private static final Log log = LogFactory.getLog(AddressingServiceTest.class);
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
     EndpointReference targetEPR = new EndpointReference(
@@ -62,10 +53,10 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
 
     EndpointReference replyTo = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/RedirectReceiverService/echoOMElementResponse");
-    
+
     EndpointReference faultTo = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/RedirectReceiverService/fault");
-    
+
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
     protected ServiceContext serviceContext;
@@ -82,58 +73,58 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
                 Echo.class.getName(),
                 operationName);
         UtilServer.deployService(echoService);
-        
+
         rrService = createRedirectReceiverService();
         UtilServer.deployService(rrService);
     }
-    
+
     AxisService createRedirectReceiverService() throws AxisFault {
         AxisService service = new AxisService("RedirectReceiverService");
-        
+
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS, RedirectReceiver.class.getName()));
-        
+        service.addParameter(new Parameter(Constants.SERVICE_CLASS, RedirectReceiver.class.getName()));
+
         AxisOperation axisOp = new InOnlyAxisOperation(new QName("echoOMElementResponse"));
-        
+
         axisOp.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
         axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
         service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + "echoOMElementResponse", axisOp);
-        
+
         AxisOperation axisOp2 = new InOnlyAxisOperation(new QName("fault"));
-        
+
         axisOp2.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
         axisOp2.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp2);
         service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + "fault", axisOp2);
-        
+
         return service;
     }
-    
+
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.unDeployService(new QName("RedirectReceiverService"));
         UtilServer.unDeployClientService();
     }
-    
+
     public static AxisService createSimpleOneWayServiceforClient(QName serviceName,
-            String className,
-            QName opName)
-    throws AxisFault {
+                                                                 String className,
+                                                                 QName opName)
+            throws AxisFault {
         AxisService service = new AxisService(serviceName.getLocalPart());
-        
+
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS, className));
-        
+        service.addParameter(new Parameter(Constants.SERVICE_CLASS, className));
+
         AxisOperation axisOp = new OutOnlyAxisOperation(opName);
-        
+
         axisOp.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
         axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
-        
+
         return service;
     }
-    
+
     public void testEchoToReplyTo() throws Exception {
         OMElement method = createEchoOMElement("this message should not cause a fault.");
         ServiceClient sender = null;
@@ -179,8 +170,8 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
                 sender.finalizeInvoke();
         }
     }
-    
-    private OMElement createEchoOMElement(String text){
+
+    private OMElement createEchoOMElement(String text) {
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
@@ -188,20 +179,20 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText(text);
         method.addChild(value);
-        
+
         return method;
     }
-    
-    private ServiceClient createServiceClient() throws AxisFault{
+
+    private ServiceClient createServiceClient() throws AxisFault {
         AxisService service =
-            createSimpleOneWayServiceforClient(serviceName,
+                createSimpleOneWayServiceforClient(serviceName,
                         Echo.class.getName(),
                         operationName);
 
         ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
 
-        ServiceClient sender = null;
-        
+        ServiceClient sender;
+
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
@@ -212,11 +203,11 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
         sender.engageModule(new QName("addressing"));
-        
+
         return sender;
     }
-    
-    public void testUsingAddressingRequired() throws Exception{
+
+    public void testUsingAddressingRequired() throws Exception {
         echoService.setWSAddressingFlag("required");
 
         OMElement method = createEchoOMElement("this message should cause a fault.");
@@ -224,27 +215,27 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
 
         try {
             sender = createNoAddressingServiceClient();
-            try{
-                sender.sendReceive(operationName,method);
+            try {
+                sender.sendReceive(operationName, method);
                 fail("Should have received a specific fault");
-            }catch(AxisFault af){
+            } catch (AxisFault af) {
                 af.printStackTrace();
                 assertEquals(Final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON, af.getMessage());
             }
-        }finally {
+        } finally {
             if (sender != null)
                 sender.finalizeInvoke();
         }
     }
 
-    private ServiceClient createNoAddressingServiceClient() throws AxisFault{
+    private ServiceClient createNoAddressingServiceClient() throws AxisFault {
         AxisService service =
-            Utils.createSimpleServiceforClient(serviceName,
-                    Echo.class.getName(),
-                    operationName);
+                Utils.createSimpleServiceforClient(serviceName,
+                        Echo.class.getName(),
+                        operationName);
 
         ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
-        ServiceClient sender = null;
+        ServiceClient sender;
 
         Options options = new Options();
         options.setTo(targetEPR);

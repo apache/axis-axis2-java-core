@@ -22,7 +22,6 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
 import org.apache.rampart.util.Axis2Util;
-import org.apache.ws.security.handler.RequestData;
 import org.apache.ws.security.handler.WSHandler;
 
 import javax.xml.namespace.QName;
@@ -39,23 +38,23 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
             new HandlerDescription(new QName("deafult Handler"));
 
     private final static String WSS_PASSWORD = "password";
-    
+
     private final static String WSS_USERNAME = "username";
-    
+
     /**
      * Field handlerDesc
      */
     protected HandlerDescription handlerDesc;
-    
+
     /**
      * In Axis2, the user cannot set inflow and outflow parameters.
-     * Therefore, we need to map the Axis2 specific inflow and outflow 
+     * Therefore, we need to map the Axis2 specific inflow and outflow
      * parameters to WSS4J params,
-     * 
+     * <p/>
      * Knowledge of inhandler and out handler is used to get the mapped value.
      */
     protected boolean inHandler;
-    
+
     /**
      * Constructor AbstractHandler.
      */
@@ -64,18 +63,18 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     }
 
     public abstract void processMessage(MessageContext msgContext) throws AxisFault;
-    
+
     /* (non-Javadoc)
-     * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
-     */
+    * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
+    */
     public void invoke(MessageContext msgContext) throws AxisFault {
         //If the security module is not engaged for this service
         //do not do any processing
-        if(msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
+        if (msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
             this.processMessage(msgContext);
         }
     }
-    
+
     /**
      * Method getName.
      *
@@ -87,10 +86,8 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
     /**
      * Method cleanup.
-     *
-     * @throws org.apache.axis2.AxisFault
      */
-    public void cleanup() throws AxisFault {
+    public void cleanup() {
     }
 
     /**
@@ -131,15 +128,15 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
 
     public Object getProperty(Object msgContext, String axisKey) {
-    	
-    	int repetition = getCurrentRepetition(msgContext);
-    	
-    	String key = Axis2Util.getKey(axisKey,inHandler, repetition);
-        Object property = ((MessageContext)msgContext).getProperty(key);
-        if(property == null) {
+
+        int repetition = getCurrentRepetition(msgContext);
+
+        String key = Axis2Util.getKey(axisKey, inHandler, repetition);
+        Object property = ((MessageContext) msgContext).getProperty(key);
+        if (property == null) {
             //Try the description hierarchy
-            Parameter parameter = ((MessageContext)msgContext).getParameter(key);
-            if(parameter != null) {
+            Parameter parameter = ((MessageContext) msgContext).getParameter(key);
+            if (parameter != null) {
                 property = parameter.getValue();
             }
         }
@@ -148,60 +145,62 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
 
     /**
      * Returns the repetition number from the message context
+     *
      * @param msgContext
      * @return Returns int.
      */
-	protected int getCurrentRepetition(Object msgContext) {
-		//get the repetition from the message context
-    	int repetition = 0;
-    	if(!inHandler) {//We only need to repete the out handler
-    		Integer count = (Integer)((MessageContext)msgContext).getProperty(WSSHandlerConstants.CURRENT_REPETITON);
-    		if(count != null) { //When we are repeting the handler
-    			repetition = count.intValue();
-    		}
-    	}
-		return repetition;
-	}
+    protected int getCurrentRepetition(Object msgContext) {
+        //get the repetition from the message context
+        int repetition = 0;
+        if (!inHandler) {//We only need to repete the out handler
+            Integer count = (Integer) ((MessageContext) msgContext).getProperty(WSSHandlerConstants.CURRENT_REPETITON);
+            if (count != null) { //When we are repeting the handler
+                repetition = count.intValue();
+            }
+        }
+        return repetition;
+    }
 
     public String getPassword(Object msgContext) {
-        return (String)((MessageContext)msgContext).getProperty(WSS_PASSWORD);
+        return (String) ((MessageContext) msgContext).getProperty(WSS_PASSWORD);
     }
 
     public void setPassword(Object msgContext, String password) {
-        ((MessageContext)msgContext).setProperty(WSS_PASSWORD,password);
+        ((MessageContext) msgContext).setProperty(WSS_PASSWORD, password);
     }
-    
+
     public String getUsername(Object msgContext) {
-        return (String)((MessageContext)msgContext).getProperty(WSS_USERNAME);
+        return (String) ((MessageContext) msgContext).getProperty(WSS_USERNAME);
     }
 
     public void setUsername(Object msgContext, String username) {
-        ((MessageContext)msgContext).setProperty(WSS_USERNAME,username);
-    }
-    
-	/**
-	 * Gets optoin. Extracts the configuration values from the service.xml 
-	 * and/or axis2.xml. Values set in the service.xml takes prority over 
-	 * values of the axis2.xml
-	 */
-    public Object getOption(String axisKey) {
-        Parameter parameter = this.handlerDesc.getParameter(axisKey);
-        return (parameter== null)?null:parameter.getValue();
+        ((MessageContext) msgContext).setProperty(WSS_USERNAME, username);
     }
 
-	public void setProperty(Object msgContext, String key, Object value) {
-		((MessageContext)msgContext).setProperty(key, value);
-	}
+    /**
+     * Gets optoin. Extracts the configuration values from the service.xml
+     * and/or axis2.xml. Values set in the service.xml takes prority over
+     * values of the axis2.xml
+     */
+    public Object getOption(String axisKey) {
+        Parameter parameter = this.handlerDesc.getParameter(axisKey);
+        return (parameter == null) ? null : parameter.getValue();
+    }
+
+    public void setProperty(Object msgContext, String key, Object value) {
+        ((MessageContext) msgContext).setProperty(key, value);
+    }
 
     /**
      * Overrides the class loader used to load the PW callback class.
+     *
      * @param msgCtx MessageContext
      * @return Returns class loader.
      */
     public java.lang.ClassLoader getClassLoader(Object msgCtx) {
         try {
-            
-            return ((MessageContext)msgCtx).getAxisService().getClassLoader();
+
+            return ((MessageContext) msgCtx).getAxisService().getClassLoader();
         } catch (Throwable t) {
             return super.getClassLoader(msgCtx);
         }

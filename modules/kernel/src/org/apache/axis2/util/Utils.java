@@ -32,7 +32,6 @@ import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
@@ -157,7 +156,7 @@ public class Utils {
         AxisService service = new AxisService(serviceName.getLocalPart());
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS, className));
+        service.addParameter(new Parameter(Constants.SERVICE_CLASS, className));
 
         AxisOperation axisOp = new InOutAxisOperation(opName);
 
@@ -177,7 +176,7 @@ public class Utils {
         AxisService service = new AxisService(serviceName.getLocalPart());
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS, className));
+        service.addParameter(new Parameter(Constants.SERVICE_CLASS, className));
 
         AxisOperation axisOp = new OutInAxisOperation(opName);
 

@@ -16,9 +16,8 @@
 
 package org.apache.axis2.mtom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -26,7 +25,6 @@ import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.swa.EchoRawSwATest;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -43,8 +41,6 @@ import java.io.InputStream;
 
 public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
 
-	private static final Log log = LogFactory.getLog(EchoRawMTOMFaultReportTest.class);
-
     private QName serviceName = new QName("EchoService");
 
     private QName operationName = new QName("mtomSample");
@@ -58,14 +54,14 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawMTOMFaultReportTest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawMTOMFaultReportTest.class), Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
 
     protected void setUp() throws Exception {
         AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS,
+        service.addParameter(new Parameter(Constants.SERVICE_CLASS,
                 EchoService.class.getName()));
 
         AxisOperation axisOp = new OutInAxisOperation(operationName);

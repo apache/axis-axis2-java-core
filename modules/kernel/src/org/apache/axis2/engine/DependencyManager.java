@@ -18,6 +18,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -26,7 +27,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -126,7 +126,7 @@ public class DependencyManager {
             ServiceContext serviceContext = serviceGroupContext.getServiceContext(axisService);
             AxisService service = serviceContext.getAxisService();
             ClassLoader classLoader = service.getClassLoader();
-            Parameter implInfoParam = service.getParameter(AbstractMessageReceiver.SERVICE_CLASS);
+            Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);
             if (implInfoParam != null) {
                 try {
                     Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
@@ -149,7 +149,7 @@ public class DependencyManager {
     public static void startService(AxisService axisService,
                                     ConfigurationContext configCtx) {
         ClassLoader classLoader = axisService.getClassLoader();
-        Parameter implInfoParam = axisService.getParameter(AbstractMessageReceiver.SERVICE_CLASS);
+        Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
         if (implInfoParam != null) {
             try {
                 Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,

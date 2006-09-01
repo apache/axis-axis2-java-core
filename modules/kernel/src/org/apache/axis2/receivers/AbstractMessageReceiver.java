@@ -22,6 +22,7 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.util.MultiParentClassLoader;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -35,8 +36,8 @@ import java.lang.reflect.Method;
 import java.net.URL;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
-    public static final String SERVICE_CLASS = "ServiceClass";
-    public static final String SERVICE_OBJECT_SUPPLIER = "ServiceObjectSupplier";
+//    public static final String SERVICE_CLASS = "ServiceClass";
+//    public static final String SERVICE_OBJECT_SUPPLIER = "ServiceObjectSupplier";
     public static final String SCOPE = "scope";
 
     protected void saveTCCL(MessageContext msgContext) {
@@ -71,9 +72,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             ClassLoader classLoader = service.getClassLoader();
 
             // allow alternative definition of makeNewServiceObject
-            if (service.getParameter(SERVICE_OBJECT_SUPPLIER) != null) {
+            if (service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER) != null) {
                 Parameter serviceObjectParam =
-                        service.getParameter(SERVICE_OBJECT_SUPPLIER);
+                        service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
                 Class serviceObjectMaker = Class.forName(((String)
                         serviceObjectParam.getValue()).trim(), true, classLoader);
 
@@ -85,7 +86,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                     return method.invoke(null, new Object[] { msgContext });
             }
 
-            Parameter implInfoParam = service.getParameter(SERVICE_CLASS);
+            Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);
             if (implInfoParam != null) {
                 Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
                         classLoader);

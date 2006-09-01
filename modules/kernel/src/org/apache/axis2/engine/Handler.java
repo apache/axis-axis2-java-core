@@ -23,7 +23,6 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 
 import javax.xml.namespace.QName;
-import java.io.Serializable;
 
 /**
  * Interface Handler
@@ -32,10 +31,8 @@ public interface Handler {
 
     /**
      * Method cleanup.
-     *
-     * @throws AxisFault
      */
-    public void cleanup() throws AxisFault;
+    public void cleanup();
 
     /**
      * Method init.

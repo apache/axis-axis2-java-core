@@ -18,11 +18,8 @@
 
 package org.apache.axis2.deployment;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -44,28 +41,26 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 
 
 public class TargetResolverServiceTest extends UtilServerBasedTestCase implements TestConstants {
 
-	private static final Log log = LogFactory.getLog(TargetResolverServiceTest.class);
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
-    
+
     // 2 special urls that the TestTargetResolver will modify into ones that can be targeted
     EndpointReference targetEPR = new EndpointReference(
             "trtest://" + (UtilServer.TESTING_PORT) + "/axis2/services/EchoXMLService/echoOMElement");
 
     EndpointReference replyTo = new EndpointReference(
             "http://ws.apache.org/new/anonymous/address");
-    
+
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
     protected ServiceContext serviceContext;
@@ -73,7 +68,7 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
     protected AxisService rrService;
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(TargetResolverServiceTest.class),Constants.TESTING_PATH+"deployment_repo");
+        return getTestSetup2(new TestSuite(TargetResolverServiceTest.class), Constants.TESTING_PATH + "deployment_repo");
     }
 
     protected void setUp() throws Exception {
@@ -83,30 +78,30 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
                 operationName);
         UtilServer.deployService(echoService);
     }
-    
+
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.unDeployClientService();
     }
-    
+
     public static AxisService createSimpleServiceforClient(QName serviceName,
-            String className,
-            QName opName)
-    throws AxisFault {
+                                                           String className,
+                                                           QName opName)
+            throws AxisFault {
         AxisService service = new AxisService(serviceName.getLocalPart());
-        
+
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS, className));
-        
+        service.addParameter(new Parameter(Constants.SERVICE_CLASS, className));
+
         AxisOperation axisOp = new OutInAxisOperation(opName);
-        
+
         axisOp.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
         axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
-        
+
         return service;
     }
-    
+
     public void testEchoToReplyTo() throws Exception {
         OMElement method = createEchoOMElement("this message should not cause a fault.");
         ServiceClient sender = null;
@@ -119,8 +114,8 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
                 sender.finalizeInvoke();
         }
     }
-    
-    private OMElement createEchoOMElement(String text){
+
+    private OMElement createEchoOMElement(String text) {
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
@@ -128,19 +123,19 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
         OMElement value = fac.createOMElement("myValue", omNs);
         value.setText(text);
         method.addChild(value);
-        
+
         return method;
     }
-    
-    private ServiceClient createServiceClient() throws AxisFault{
+
+    private ServiceClient createServiceClient() throws AxisFault {
         AxisService service =
-            createSimpleServiceforClient(serviceName,
+                createSimpleServiceforClient(serviceName,
                         Echo.class.getName(),
                         operationName);
 
-        ConfigurationContext configcontext = UtilServer.createClientConfigurationContext(Constants.TESTING_PATH+"deployment_repo");
-        ServiceClient sender = null;
-        
+        ConfigurationContext configcontext = UtilServer.createClientConfigurationContext(Constants.TESTING_PATH + "deployment_repo");
+        ServiceClient sender ;
+
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
@@ -150,7 +145,7 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
         sender.engageModule(new QName("addressing"));
-        
+
         return sender;
     }
 }

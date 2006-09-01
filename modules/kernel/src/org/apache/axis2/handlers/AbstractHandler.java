@@ -17,7 +17,6 @@
 
 package org.apache.axis2.handlers;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
@@ -49,10 +48,8 @@ public abstract class AbstractHandler implements Handler {
 
     /**
      * Method cleanup.
-     *
-     * @throws AxisFault
      */
-    public void cleanup() throws AxisFault {
+    public void cleanup() {
     }
 
     /**

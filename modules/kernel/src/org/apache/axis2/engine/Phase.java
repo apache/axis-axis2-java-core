@@ -187,7 +187,7 @@ public class Phase implements Handler {
         // Default version does nothing
     }
 
-    public void cleanup() throws AxisFault {
+    public void cleanup() {
 
         // Default version does nothing
     }

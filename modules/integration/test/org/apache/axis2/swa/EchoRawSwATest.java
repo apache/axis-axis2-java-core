@@ -16,21 +16,17 @@
 
 package org.apache.axis2.swa;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.BufferedReader;
@@ -42,17 +38,9 @@ import java.net.SocketException;
 
 public class EchoRawSwATest extends UtilServerBasedTestCase {
 
-	private static final Log log = LogFactory.getLog(EchoRawSwATest.class);
-
     private QName serviceName = new QName("EchoSwAService");
 
     private QName operationName = new QName("echoAttachment");
-
-    private ServiceContext serviceContext;
-
-    private boolean finish = false;
-
-    private OMTextImpl expectedTextData;
 
     public EchoRawSwATest() {
         super(EchoRawSwATest.class.getName());
@@ -64,14 +52,14 @@ public class EchoRawSwATest extends UtilServerBasedTestCase {
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawSwATest.class),
-                             Constants.TESTING_PATH + "MTOM-enabledRepository");
+                Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         AxisService service = new AxisService(serviceName.getLocalPart());
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(
-                AbstractMessageReceiver.SERVICE_CLASS, EchoSwA.class
+                Constants.SERVICE_CLASS, EchoSwA.class
                 .getName()));
         AxisOperation axisOp = new InOutAxisOperation(operationName);
         axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
@@ -88,7 +76,7 @@ public class EchoRawSwATest extends UtilServerBasedTestCase {
     public void testEchoXMLSync() throws Exception {
         Socket socket = new Socket("127.0.0.1", 5555);
         OutputStream outStream = socket.getOutputStream();
-        InputStream inStream = socket.getInputStream();
+        socket.getInputStream();
         InputStream requestMsgInStream = getResourceAsStream("/org/apache/axis2/swa/swainput.bin");
         int data;
         while ((data = requestMsgInStream.read()) != -1) {
@@ -119,9 +107,5 @@ public class EchoRawSwATest extends UtilServerBasedTestCase {
         return this.getClass().getResourceAsStream(path);
     }
 
-    private void compareWithCreatedOMText(OMText actualTextData) {
-        String originalTextValue = expectedTextData.getText();
-        String returnedTextValue = actualTextData.getText();
-        TestCase.assertEquals(returnedTextValue, originalTextValue);
-    }
+
 }
