@@ -34,13 +34,13 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
      * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
+    	// If no AxisOperation has been found at the end of the dispatch phase and addressing
+        // is in use we should throw an ActionNotSupported Fault
+        checkAction(msgContext);
         // Check that if wsaddressing=required that addressing headers were found inbound
         checkUsingAddressing(msgContext);
         // Check that if anonymous flag is in effect that the replyto and faultto are valid
         checkAnonymous(msgContext);
-        // If no AxisOperation has been found at the end of the dispatch phase and addressing
-        // is in use we should throw and ActionNotSupported Fault
-        checkAction(msgContext);
     }
     
     /**
