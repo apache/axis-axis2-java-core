@@ -293,7 +293,7 @@ public class ConverterUtil {
     }
 
     public static javax.activation.DataHandler convertToBase64Binary(String s)
-            throws Exception {
+            {
         // reusing the byteArrayDataSource from the Axiom classes
         ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
                 Base64.decode(s)
@@ -302,7 +302,7 @@ public class ConverterUtil {
     }
 
     public static javax.activation.DataHandler convertToDataHandler(String s)
-            throws Exception {
+            {
         return convertToBase64Binary(s);
     }
 
@@ -453,8 +453,13 @@ public class ConverterUtil {
         return new IDRefs(s);
     }
 
-    public static URI convertToAnyURI(String s) throws Exception {
-        return new URI(s);
+    public static URI convertToAnyURI(String s) {
+        try {
+            return new URI(s);
+        } catch (URI.MalformedURIException e) {
+            throw new ObjectConversionException(
+                    ADBMessages.getMessage("converter.cannotParse", s), e);
+        }
     }
 
     public static BigInteger convertToInteger(String s) {
@@ -465,7 +470,7 @@ public class ConverterUtil {
         return convertToInteger(s);
     }
 
-    public static byte convertToByte(String s) throws Exception {
+    public static byte convertToByte(String s) {
         return Byte.parseByte(s);
     }
 
@@ -475,9 +480,8 @@ public class ConverterUtil {
      *
      * @param source
      * @return Returns Calendar.
-     * @throws Exception
      */
-    public static Calendar convertToDateTime(String source) throws Exception {
+    public static Calendar convertToDateTime(String source) {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat zulu =
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -724,7 +728,7 @@ public class ConverterUtil {
      * but that returns an *immutable* list !!!!!
      *
      * @param array
-     * @return
+     * @return list
      */
     public static List toList(Object[] array) {
         if (array == null) {
@@ -741,7 +745,7 @@ public class ConverterUtil {
     /**
      * Converts the given datahandler to a string
      *
-     * @return
+     * @return string
      */
     public static String getStringFromDatahandler(DataHandler dataHandler) {
         try {
@@ -760,7 +764,7 @@ public class ConverterUtil {
      *
      * @param clazz
      * @param value
-     * @return
+     * @return object
      */
     public static Object getObjectForClass(Class clazz, String value) {
         //first see whether this class has a constructor that can
