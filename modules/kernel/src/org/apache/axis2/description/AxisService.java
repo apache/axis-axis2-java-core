@@ -134,7 +134,7 @@ public class AxisService extends AxisDescription {
      * instance the schemas are asked for and then used to serve
      * the subsequent requests
      */
-    private Hashtable schemaMappingTable = null;
+    private Map schemaMappingTable = null;
 
     /**
      * counter variable for naming the schemas
@@ -184,11 +184,11 @@ public class AxisService extends AxisDescription {
         this.schemaLocationsAdjusted = schemaLocationsAdjusted;
     }
 
-    public Hashtable getSchemaMappingTable() {
+    public Map getSchemaMappingTable() {
         return schemaMappingTable;
     }
 
-    public void setSchemaMappingTable(Hashtable schemaMappingTable) {
+    public void setSchemaMappingTable(Map schemaMappingTable) {
         this.schemaMappingTable = schemaMappingTable;
     }
 
@@ -1368,17 +1368,16 @@ public class AxisService extends AxisDescription {
                     //recursively call the calculating
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
                     s = externalSchema.getSchema();
-                    if (s != null) {
-                        calcualteSchemaNames(Arrays.asList(
-                                new XmlSchema[]{s}),
-                                             nameTable);
+                    if (s != null && nameTable.get(s) == null) {
                         nameTable.put(s,
                                       ("xsd" + count++)
                                       + (customSchemaNameSuffix != null ?
                                          customSchemaNameSuffix :
                                          ""));
+                        calcualteSchemaNames(Arrays.asList(
+                                new XmlSchema[]{s}),
+                                             nameTable);
                     }
-
                 }
             }
         }
@@ -1390,10 +1389,9 @@ public class AxisService extends AxisDescription {
      * @param schemas
      */
     private void adjustSchemaNames(List schemas, Hashtable nameTable) {
-        //first traversal - fill the hashtable
-        for (int i = 0; i < schemas.size(); i++) {
-            XmlSchema schema = (XmlSchema) schemas.get(i);
-
+        Enumeration enumeration = nameTable.keys();
+        while (enumeration.hasMoreElements()) {
+            XmlSchema schema = (XmlSchema) enumeration.nextElement();
             XmlSchemaObjectCollection includes = schema.getIncludes();
             for (int j = 0; j < includes.getCount(); j++) {
                 Object item = includes.getItem(j);
@@ -1402,31 +1400,27 @@ public class AxisService extends AxisDescription {
                     XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
                     XmlSchema s = xmlSchemaExternal.getSchema();
                     if (s != null) {
-                        adjustSchemaNames(Arrays.asList(
-                                new XmlSchema[]{s}), nameTable);
                         xmlSchemaExternal.setSchemaLocation(
                                 customSchemaNamePrefix == null ?
-                                //use the default mode
-                                (getName() +
-                                 "?xsd=" +
-                                 nameTable.get(s)) :
-                                                   //custom prefix is present - add the custom prefix
-                                                   (customSchemaNamePrefix +
-                                                    nameTable.get(s)));
+                                        //use the default mode
+                                        (getName() +
+                                                "?xsd=" +
+                                                nameTable.get(s)) :
+                                        //custom prefix is present - add the custom prefix
+                                        (customSchemaNamePrefix +
+                                                nameTable.get(s)));
                     }
                 }
             }
-
         }
     }
-
     /**
      * Swap the key,value pairs
      *
      * @param originalTable
      */
-    private Hashtable swapMappingTable(Hashtable originalTable) {
-        Hashtable swappedTable = new Hashtable(originalTable.size());
+    private Map swapMappingTable(Map originalTable) {
+        HashMap swappedTable = new HashMap(originalTable.size());
         Iterator keys = originalTable.keySet().iterator();
         Object key;
         while (keys.hasNext()) {

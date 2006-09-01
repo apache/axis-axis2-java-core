@@ -7,6 +7,8 @@ import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaAny;
@@ -20,12 +22,21 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaContent;
 import org.apache.ws.commons.schema.XmlSchemaContentModel;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaInclude;
+import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
+import org.apache.ws.commons.schema.XmlSchemaMaxExclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMaxInclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
+import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaObjectTable;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
+import org.apache.ws.commons.schema.XmlSchemaPatternFacet;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaSimpleContent;
 import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
@@ -36,17 +47,6 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
 import org.apache.ws.commons.schema.XmlSchemaType;
-import org.apache.ws.commons.schema.XmlSchemaPatternFacet;
-import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
-import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -118,7 +118,7 @@ public class SchemaCompiler {
     //are fed to the schema compiler!
     private Map availableSchemaMap = new HashMap();
 
-
+    private Map loadedSourceURI = new HashMap();
 
     // a list of externally identified QNames to be processed. This becomes
     // useful when  only a list of external elements need to be processed
@@ -281,6 +281,16 @@ public class SchemaCompiler {
         //add the schema to the loaded schema list
         if (!loadedSchemaMap.containsKey(schema.getTargetNamespace())) {
             loadedSchemaMap.put(schema.getTargetNamespace(), schema);
+        }
+        
+        // If we have/are loading a schema with a specific targetnamespace from a certain URI,
+        // then just return back to the caller to avoid recursion.
+        if (schema.getSourceURI() != null){
+            String key = schema.getTargetNamespace() + ":" + schema.getSourceURI();
+            if(loadedSourceURI.containsKey(key)){
+                return;
+            }
+            loadedSourceURI.put(key, key);
         }
 
         XmlSchemaObjectCollection includes = schema.getIncludes();

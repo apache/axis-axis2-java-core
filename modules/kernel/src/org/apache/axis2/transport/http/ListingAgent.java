@@ -34,8 +34,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-
+import java.util.Map;
 public class ListingAgent extends AbstractAgent {
 
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
@@ -116,7 +115,7 @@ public class ListingAgent extends AbstractAgent {
     }
 
     public void processListService(HttpServletRequest req,
-                                      HttpServletResponse res)
+                                   HttpServletResponse res)
             throws IOException, ServletException {
 
         String filePart = req.getRequestURL().toString();
@@ -180,7 +179,7 @@ public class ListingAgent extends AbstractAgent {
                     AxisService axisService = (AxisService) serviceObj;
                     //call the populator
                     axisService.populateSchemaMappings();
-                    Hashtable schemaMappingtable =
+                    Map schemaMappingtable =
                             axisService.getSchemaMappingTable();
                     ArrayList schemas = axisService.getSchema();
 

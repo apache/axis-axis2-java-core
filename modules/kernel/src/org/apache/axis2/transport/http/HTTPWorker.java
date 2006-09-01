@@ -16,11 +16,6 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Hashtable;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -44,6 +39,11 @@ import org.apache.http.entity.ContentProducer;
 import org.apache.http.entity.EntityTemplate;
 import org.apache.http.entity.StringEntity;
 import org.apache.ws.commons.schema.XmlSchema;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HTTPWorker implements Worker {
 
@@ -175,7 +175,7 @@ public class HTTPWorker implements Worker {
                     //run the population logic just to be sure
                     service.populateSchemaMappings();
                     //write out the correct schema
-                    Hashtable schemaTable = service.getSchemaMappingTable();
+                    Map schemaTable = service.getSchemaMappingTable();
                     final XmlSchema schema = (XmlSchema)schemaTable.get(schemaName);
                     //schema found - write it to the stream
                     if (schema != null) {
