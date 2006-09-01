@@ -818,7 +818,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME));
 
 
-        Hashtable schemaMappings = axisService.getSchemaMappingTable();
+        Map schemaMappings = axisService.getSchemaMappingTable();
         Iterator keys = schemaMappings.keySet().iterator();
         while (keys.hasNext()) {
             Object key = keys.next();
