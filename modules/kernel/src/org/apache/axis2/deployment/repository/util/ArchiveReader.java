@@ -21,21 +21,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentErrorMsgs;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.DescriptionBuilder;
-import org.apache.axis2.deployment.ModuleBuilder;
-import org.apache.axis2.deployment.ServiceBuilder;
-import org.apache.axis2.deployment.ServiceGroupBuilder;
+import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
-import org.apache.axis2.description.WSDLToAxisServiceBuilder;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
@@ -45,13 +34,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -290,6 +273,11 @@ public class ArchiveReader implements DeploymentConstants {
                             && entryName.endsWith(SUFFIX_WSDL)) {
                         out = new ByteArrayOutputStream();
 
+                        if (entryName.indexOf("/") != entryName.lastIndexOf("/")) {
+                            //only care abt the toplevel wsdl
+                            continue;
+                        }
+
                         while ((read = zin.read(buf)) > 0) {
                             out.write(buf, 0, read);
                         }
@@ -313,7 +301,6 @@ public class ArchiveReader implements DeploymentConstants {
                             } else {
                                 new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
-
                             AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, serviceFile, true, new ByteArrayInputStream(out.toByteArray()));
                             servicesMap.put(service.getName(), service);
                         }

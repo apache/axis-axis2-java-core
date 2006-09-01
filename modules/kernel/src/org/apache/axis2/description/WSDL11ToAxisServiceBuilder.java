@@ -1568,7 +1568,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // just add this schema - no need to worry about the imported
                 // ones
                 axisService.addSchema(getXMLSchema(schema.getElement(),
-                        wsdl4jDefinition.getDocumentBaseURI()));
+                        schema.getDocumentBaseURI()));
+//                        wsdl4jDefinition.getDocumentBaseURI()));
 
             } else if (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(wsdl4jElement
                     .getElementType())) {

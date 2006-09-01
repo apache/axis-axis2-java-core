@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment.resolver;
 
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.xml.sax.InputSource;
 
@@ -36,6 +37,7 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
 
     private File aarFile;
     private InputStream baseInputStream;
+    private String lastImportLocation = "";
 
     public AARBasedWSDLLocator(File zipFile, InputStream baseInputStream) {
         this.baseInputStream = baseInputStream;
@@ -51,6 +53,14 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
      * @param importLocation
      */
     public InputSource getImportInputSource(String parentLocation, String importLocation) {
+        //setting current import location.
+        if (importLocation != null && importLocation.length() > 0) {
+            int speindex = importLocation.lastIndexOf("/");
+            if (speindex > 0) {
+                lastImportLocation = importLocation.substring(0, speindex);
+            }
+
+        }
         if (isAbsolute(importLocation)) {
             return super.resolveEntity(
                     null, importLocation, parentLocation);
@@ -65,10 +75,13 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
                 int read;
                 ByteArrayOutputStream out;
                 String searchingStr;
+                if (parentLocation != null && parentLocation.length() > 0) {
+                    importLocation = Utils.getPath(parentLocation, importLocation);
+                }
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName().toLowerCase();
                     searchingStr = (DeploymentConstants.META_INF + "/" + importLocation).toLowerCase();
-                    if (entryName.equals(searchingStr)) {
+                    if (entryName.equalsIgnoreCase(searchingStr)) {
                         out = new ByteArrayOutputStream();
                         while ((read = zin.read(buf)) > 0) {
                             out.write(buf, 0, read);
@@ -107,6 +120,8 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
      */
     public String getLatestImportURI() {
         //we don't care about this either
-        return "";
+        return lastImportLocation;
     }
+
+
 }

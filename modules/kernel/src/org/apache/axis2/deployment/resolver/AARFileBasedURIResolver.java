@@ -1,16 +1,13 @@
 package org.apache.axis2.deployment.resolver;
 
-import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.util.Utils;
+import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.xml.sax.InputSource;
 
-import java.util.zip.ZipInputStream;
+import java.io.*;
 import java.util.zip.ZipEntry;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.util.zip.ZipInputStream;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -30,7 +27,7 @@ import java.io.File;
 /**
  * A custom URI resolver that can
  */
-public class AARFileBasedURIResolver extends DefaultURIResolver{
+public class AARFileBasedURIResolver extends DefaultURIResolver {
 
     private String aarFileName;
     private File aarFile;
@@ -42,7 +39,7 @@ public class AARFileBasedURIResolver extends DefaultURIResolver{
     public AARFileBasedURIResolver(File aarFile) {
         this.aarFile = aarFile;
     }
-    
+
     public AARFileBasedURIResolver() {
     }
 
@@ -53,26 +50,27 @@ public class AARFileBasedURIResolver extends DefaultURIResolver{
     public void setAarFileName(File aarFile) {
         this.aarFile = aarFile;
     }
+
     public InputSource resolveEntity(
             String targetNamespace,
             String schemaLocation,
             String baseUri) {
         //no issue with
-        if (isAbsolute(schemaLocation)){
+        if (isAbsolute(schemaLocation)) {
             return super.resolveEntity(
-                    targetNamespace,schemaLocation,baseUri);
-        }else{
+                    targetNamespace, schemaLocation, baseUri);
+        } else {
             //validate
-            if (schemaLocation.startsWith("..")){
+            if ((baseUri == null || "".equals(baseUri)) && schemaLocation.startsWith("..")) {
                 throw new RuntimeException(
-                        "Unsupported schema location "+ schemaLocation);
+                        "Unsupported schema location " + schemaLocation);
             }
 
             ZipInputStream zin = null;
             try {
-                if (aarFile!=null){
+                if (aarFile != null) {
                     zin = new ZipInputStream(new FileInputStream(aarFile));
-                } else{
+                } else {
                     zin = new ZipInputStream(new FileInputStream(aarFileName));
                 }
 
@@ -81,10 +79,13 @@ public class AARFileBasedURIResolver extends DefaultURIResolver{
                 int read;
                 ByteArrayOutputStream out;
                 String searchingStr;
+                if (baseUri != null && baseUri.length() > 0) {
+                    schemaLocation = Utils.getPath(baseUri, schemaLocation);
+                }
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName().toLowerCase();
                     searchingStr = (DeploymentConstants.META_INF + "/" + schemaLocation).toLowerCase();
-                    if (entryName.equals(searchingStr)) {
+                    if (entryName.equalsIgnoreCase(searchingStr)) {
                         out = new ByteArrayOutputStream();
                         while ((read = zin.read(buf)) > 0) {
                             out.write(buf, 0, read);
@@ -95,12 +96,11 @@ public class AARFileBasedURIResolver extends DefaultURIResolver{
                 }
 
 
-
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            } finally{
+            } finally {
                 try {
-                    if (zin!=null) zin.close();
+                    if (zin != null) zin.close();
                 } catch (IOException e) {
                     //log this error
                 }

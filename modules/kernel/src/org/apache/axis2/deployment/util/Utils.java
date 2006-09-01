@@ -6,8 +6,8 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -95,7 +95,7 @@ public class Utils {
             ArrayList array = new ArrayList();
             String urlString = url.toString();
             InputStream in = url.openStream();
-            ZipInputStream zin ;
+            ZipInputStream zin;
             if (antiJARLocking) {
                 File inputFile = createTempFile(urlString.substring(urlString.length() - 4), in);
                 in.close();
@@ -409,6 +409,7 @@ public class Utils {
      * @param config        : AxisConfiguration : for get classs loders etc..
      * @return
      * @throws org.apache.axis2.deployment.DeploymentException
+     *
      */
     public static AxisModule buildModule(File modulearchive, DeploymentEngine engine, AxisConfiguration config)
             throws DeploymentException {
@@ -483,5 +484,46 @@ public class Utils {
         }
 
         return axisService;
+    }
+
+    public static String getPath(String parent, String childPath) {
+        Stack parentStack = new Stack();
+        Stack childStack = new Stack();
+        if (parent != null) {
+            String [] values = parent.split("/");
+            if (values.length > 0) {
+                for (int i = 0; i < values.length; i++) {
+                    String value = values[i];
+                    parentStack.push(value);
+                }
+            }
+        }
+        String [] values = childPath.split("/");
+        if (values.length > 0) {
+            for (int i = 0; i < values.length; i++) {
+                String value = values[i];
+                childStack.push(value);
+            }
+        }
+        String filepath = "";
+        while (!childStack.isEmpty()) {
+            String value = (String) childStack.pop();
+            if ("..".equals(value)) {
+                parentStack.pop();
+            } else if (!"".equals(value)) {
+                if ("".equals(filepath)) {
+                    filepath = value;
+                } else {
+                    filepath = value + "/" + filepath;
+                }
+            }
+        }
+        while (!parentStack.isEmpty()) {
+            String value = (String) parentStack.pop();
+            if (!"".equals(value)) {
+                filepath = value + "/" + filepath;
+            }
+        }
+        return filepath;
     }
 }
