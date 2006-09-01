@@ -2773,7 +2773,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                        javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
 
               <xsl:for-each select="type">
-                <xsl:if test="position() &gt; 1">else </xsl:if> if (
+                  if (
                   "<xsl:value-of select="@nsuri"/>".equals(namespaceURI) &amp;&amp;
                   "<xsl:value-of select="@shortname"/>".equals(typeName)){
                    <xsl:choose>
