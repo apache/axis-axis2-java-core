@@ -36,14 +36,8 @@ public class RampartPolicyToken {
     public static final int USERNAME_TOKEN = 2;
 	
 	int tokenType;
-	
-	String sigAlgorithm;
-
+    
 	int keyIdentifier;
-
-	String encAlgorithm;
-
-	String encTransportAlgorithm;
 
 	ArrayList sigParts;
 
@@ -70,13 +64,6 @@ public class RampartPolicyToken {
 	}
 
 	/**
-	 * @return Returns the encAlgorithm.
-	 */
-	public String getEncAlgorithm() {
-		return encAlgorithm;
-	}
-
-	/**
 	 * @return Returns the encElements.
 	 */
 	public ArrayList getEncElements() {
@@ -95,20 +82,6 @@ public class RampartPolicyToken {
 	 */
 	public ArrayList getEncParts() {
 		return encParts;
-	}
-
-	/**
-	 * @return Returns the encTransportAlgorithm.
-	 */
-	public String getEncTransportAlgorithm() {
-		return encTransportAlgorithm;
-	}
-
-	/**
-	 * @return Returns the sigAlgorithm.
-	 */
-	public String getSigAlgorithm() {
-		return sigAlgorithm;
 	}
 
 	/**

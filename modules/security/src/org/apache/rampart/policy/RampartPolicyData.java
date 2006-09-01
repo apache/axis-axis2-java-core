@@ -16,21 +16,18 @@
 
 package org.apache.rampart.policy;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.WSSPolicyException;
-import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.secpolicy.model.AlgorithmSuite;
-import org.apache.ws.secpolicy.model.Header;
-import org.apache.ws.secpolicy.model.SignedEncryptedElements;
-import org.apache.ws.secpolicy.model.SignedEncryptedParts;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
+import org.apache.ws.secpolicy.model.Trust10;
 import org.apache.ws.secpolicy.model.X509Token;
+import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.WSEncryptionPart;
+
+import java.util.ArrayList;
 
 public class RampartPolicyData {
 
@@ -38,6 +35,8 @@ public class RampartPolicyData {
      * Global settings for overall security processing
      */
     private boolean symmetricBinding;
+    
+    private boolean transportBinding;
 
     private String layout;
 
@@ -56,18 +55,18 @@ public class RampartPolicyData {
     /*
      * Message tokens for symmetrical binding
      */
-    private RampartPolicyToken encryptionToken;
+    private Token encryptionToken;
 
-    private RampartPolicyToken signatureToken;
+    private Token signatureToken;
 
     /*
      * Message tokens for asymmetrical binding
      */
-    private RampartPolicyToken recipientToken; // used to encrypt data to
+    private Token recipientToken; // used to encrypt data to
 
     // receipient
 
-    private RampartPolicyToken initiatorToken; // used to sign data by
+    private Token initiatorToken; // used to sign data by
 
     // initiator
 
@@ -91,15 +90,19 @@ public class RampartPolicyData {
     /*
      * Holds the supporting tokens elements
      */
-    private RampartSupportingToken supportingToken;
+    private SupportingToken supportingToken;
 
-    private RampartSupportingToken signedSupportingToken;
+    private SupportingToken signedSupportingToken;
 
-    private RampartSupportingToken endorsingSupportingToken;
+    private SupportingToken endorsingSupportingToken;
 
-    private RampartSupportingToken signedEndorsingSupportingToken;
+    private SupportingToken signedEndorsingSupportingToken;
+    
+    private AlgorithmSuite algorithmSuite;
     
     private RampartConfig rampartConfig;
+    
+    private Trust10 trust10;
     
     /**
      * @return Returns the symmetricBinding.
@@ -223,157 +226,6 @@ public class RampartPolicyData {
     }
 
     /**
-     * Return the encryption token data.
-     * 
-     * The returned token data may be empty.
-     * 
-     * @return Returns the encryptionToken.
-     */
-    public RampartPolicyToken getEncryptionToken() {
-        if (encryptionToken == null) {
-            encryptionToken = new RampartPolicyToken();
-        }
-        return encryptionToken;
-    }
-
-    /**
-     * Sets the parameters for the encryption token according to parsed policy.
-     * 
-     * The encryption token is specific to the symmetric binding.
-     * 
-     * @param encryptionToken
-     *            The encryptionToken to set.
-     */
-    public void setEncryptionToken(Token encToken, AlgorithmSuite suite)
-            throws WSSPolicyException {
-        if (encToken instanceof X509Token) {
-            if (encryptionToken == null) {
-                encryptionToken = new RampartPolicyToken();
-            }
-            initializeWSS4JPolicyToken(encryptionToken, (X509Token) encToken,
-                    suite);
-        }
-    }
-
-    /**
-     * Sets the parameters for the protection token according to parsed policy.
-     * 
-     * The protection token is specific to the symmetric binding.
-     * 
-     * @param protectionToken
-     *            The protectionToken to set.
-     */
-    public void setProtectionToken(Token protectionToken, AlgorithmSuite suite)
-            throws WSSPolicyException {
-        setEncryptionToken(protectionToken, suite);
-        setSignatureToken(protectionToken, suite);
-    }
-
-    /**
-     * Return the signature token data.
-     * 
-     * The returned token data may be empty.
-     * 
-     * @return Returns the signatureToken.
-     */
-    public RampartPolicyToken getSignatureToken() {
-        if (signatureToken == null) {
-            signatureToken = new RampartPolicyToken();
-        }
-        return signatureToken;
-    }
-
-    /**
-     * Sets the parameters for the signature token according to parsed policy.
-     * 
-     * The signature token is specific to the symmetric binding.
-     * 
-     * @param signatureToken
-     *            The signatureToken to set.
-     */
-    public void setSignatureToken(Token sigToken, AlgorithmSuite suite)
-            throws WSSPolicyException {
-        if (sigToken instanceof X509Token) {
-            if (signatureToken == null) {
-                signatureToken = new RampartPolicyToken();
-            }
-            initializeWSS4JPolicyToken(signatureToken, (X509Token) sigToken,
-                    suite);
-        }
-    }
-
-    /**
-     * Return the initiator token data.
-     * 
-     * The returned token data may be empty.
-     * 
-     * @return Returns the initiatorToken.
-     */
-    public RampartPolicyToken getInitiatorToken() {
-        if (initiatorToken == null) {
-            initiatorToken = new RampartPolicyToken();
-        }
-        return initiatorToken;
-    }
-
-    /**
-     * Sets the parameters for the initiator token according to parsed policy.
-     * 
-     * The initiator token is specific to the symmetric binding. The message
-     * initiator uses this token to sign its data. Thus this method initializes
-     * the signature relevant parts of the WSS4JPolicyToken data.
-     * 
-     * @param initiatorToken
-     *            The initiatorToken to set.
-     */
-    public void setInitiatorToken(Token iniToken, AlgorithmSuite suite)
-            throws WSSPolicyException {
-        if (iniToken instanceof X509Token) {
-            if (initiatorToken == null) {
-                initiatorToken = new RampartPolicyToken();
-            }
-            initializeWSS4JPolicyToken(initiatorToken, (X509Token) iniToken,
-                    suite);
-        }
-    }
-
-    /**
-     * Return the recipient token data.
-     * 
-     * The returned token data may be empty.
-     * 
-     * @return Returns the recipientToken.
-     */
-    public RampartPolicyToken getRecipientToken() {
-        if (recipientToken == null) {
-            recipientToken = new RampartPolicyToken();
-        }
-        return recipientToken;
-    }
-
-    /**
-     * Sets the parameters for the initiator token according to parsed policy.
-     * 
-     * The initiator token is specific to the symmetric binding. The message
-     * initiator uses this token to encrypt data sent to the reipient. Thus this
-     * method initializes the encryption relevant parts of the WSS4JPolicyToken
-     * data.
-     * 
-     * @param recipientToken
-     *            The recipientToken to set.
-     */
-    public void setRecipientToken(Token recToken, AlgorithmSuite suite)
-            throws WSSPolicyException {
-        if (recToken instanceof X509Token) {
-            if (recipientToken == null) {
-                recipientToken = new RampartPolicyToken();
-            }
-            initializeWSS4JPolicyToken(recipientToken, (X509Token) recToken,
-                    suite);
-        }
-    }
-
-    /**
      * @return Returns the encryptedElements.
      */
     public ArrayList getEncryptedElements() {
@@ -486,109 +338,19 @@ public class RampartPolicyData {
     public void setSupportingTokens(SupportingToken suppToken)
             throws WSSPolicyException {
 
-        Iterator it = null;
-        RampartSupportingToken wst = new RampartSupportingToken();
-
-        /*
-         * Get and store the parts to sign of the supporting token
-         */
-        SignedEncryptedParts sep = suppToken.getSignedParts();
-        if (sep != null) {
-            it = sep.getHeaders().iterator();
-            if (wst.sigParts == null) {
-                wst.sigParts = new ArrayList();
-            }
-            while (it.hasNext()) {
-                Header header = (Header) it.next();
-                wst.sigParts.add(new WSEncryptionPart(header.getName(), header
-                        .getNamespace(), "Content"));
-            }
-        }
-        /*
-         * Get and store the parts to encrypt of the supporting token
-         */
-        sep = suppToken.getEncryptedParts();
-        if (sep != null) {
-            it = sep.getHeaders().iterator();
-            if (wst.encParts == null) {
-                wst.encParts = new ArrayList();
-            }
-            while (it.hasNext()) {
-                Header header = (Header) it.next();
-                wst.encParts.add(new WSEncryptionPart(header.getName(), header
-                        .getNamespace(), "Content"));
-            }
-        }
-
-        /*
-         * Get and store the elements (XPath) to sign of the supporting token
-         */
-        SignedEncryptedElements see = suppToken.getSignedElements();
-        if (see != null) {
-            it = see.getXPathExpressions().iterator();
-            if (wst.sigElements == null) {
-                wst.sigElements = new ArrayList();
-            }
-            while (it.hasNext()) {
-                wst.sigElements.add((String) it.next());
-            }
-        }
-        /*
-         * Get and store the elements (XPath) to encrypt of the supporting token
-         */
-        see = suppToken.getEncryptedElements();
-        if (see != null) {
-            it = see.getXPathExpressions().iterator();
-            if (wst.encElements == null) {
-                wst.encElements = new ArrayList();
-            }
-            while (it.hasNext()) {
-                wst.encElements.add((String) it.next());
-            }
-        }
-        AlgorithmSuite suite = suppToken.getAlgorithmSuite();
-
-        /*
-         * Iterator over all tokens, initialize their data structure, and store
-         * them in the support token data structure.
-         */
-        it = suppToken.getTokens().iterator();
-        while (it.hasNext()) {
-            if (wst.supportTokens == null) {
-                wst.supportTokens = new ArrayList();
-            }
-
-            Token tok = (Token) it.next();
-            if (tok instanceof X509Token) {
-                RampartPolicyToken wpt = new RampartPolicyToken();
-                wst.supportTokens.add(wpt);
-                initializeWSS4JPolicyToken(wpt, (X509Token) tok, suite);
-            }
-        }
-        /*
-         * The supporting token is parsed and initialized, set it according to
-         * its type.
-         */
-        wst.tokenType = suppToken.getType();
-        if (wst.tokenType == Constants.SUPPORTING_TOKEN_SUPPORTING) {
-            supportingToken = wst;
-        } else if (wst.tokenType == Constants.SUPPORTING_TOKEN_SIGNED) {
-            signedSupportingToken = wst;
-        } else if (wst.tokenType == Constants.SUPPORTING_TOKEN_ENDORSING) {
-            endorsingSupportingToken = wst;
-        } else if (wst.tokenType == Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING) {
-            signedEndorsingSupportingToken = wst;
+        int tokenType = suppToken.getType();
+        if (tokenType == Constants.SUPPORTING_TOKEN_SUPPORTING) {
+            supportingToken = suppToken;
+        } else if (tokenType == Constants.SUPPORTING_TOKEN_SIGNED) {
+            signedSupportingToken = suppToken;
+        } else if (tokenType == Constants.SUPPORTING_TOKEN_ENDORSING) {
+            endorsingSupportingToken = suppToken;
+        } else if (tokenType == Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING) {
+            signedEndorsingSupportingToken = suppToken;
         }
     }
     
     
-
-    /**
-     * @return Returns the endorsingSupportingToken.
-     */
-    public RampartSupportingToken getEndorsingSupportingToken() {
-        return endorsingSupportingToken;
-    }
 
     /**
      * @return Returns the rampartConfig.
@@ -597,33 +359,11 @@ public class RampartPolicyData {
         return rampartConfig;
     }
 
-    /**
-     * @return Returns the signedEndorsingSupportingToken.
-     */
-    public RampartSupportingToken getSignedEndorsingSupportingToken() {
-        return signedEndorsingSupportingToken;
-    }
 
-    /**
-     * @return Returns the signedSupportingToken.
-     */
-    public RampartSupportingToken getSignedSupportingToken() {
-        return signedSupportingToken;
-    }
-
-    /**
-     * @return Returns the supportingToken.
-     */
-    public RampartSupportingToken getSupportingToken() {
-        return supportingToken;
-    }
-
-    private static void initializeWSS4JPolicyToken(RampartPolicyToken tok,
-            X509Token x509Tok, AlgorithmSuite suite) throws WSSPolicyException {
+    private static void initializeRampartPolicyToken(RampartPolicyToken tok,
+            X509Token x509Tok) throws WSSPolicyException {
         tok.tokenType = RampartPolicyToken.X509_TOKEN;
-        tok.encAlgorithm = suite.getEncryption();
-        tok.sigAlgorithm = suite.getAsymmetricSignature();
-        tok.encTransportAlgorithm = suite.getAsymmetricKeyWrap();
+
         if (x509Tok.isRequireIssuerSerialReference()) {
             tok.keyIdentifier = WSConstants.ISSUER_SERIAL;
         } else if (x509Tok.isRequireThumbprintReference()) {
@@ -637,4 +377,172 @@ public class RampartPolicyData {
         }
     }
 
+    /**
+     * @return Returns the encryptionToken.
+     */
+    public Token getEncryptionToken() {
+        return encryptionToken;
+    }
+
+    /**
+     * @param encryptionToken The encryptionToken to set.
+     */
+    public void setEncryptionToken(Token encryptionToken) {
+        this.encryptionToken = encryptionToken;
+    }
+
+    /**
+     * @return Returns the initiatorToken.
+     */
+    public Token getInitiatorToken() {
+        return initiatorToken;
+    }
+
+    /**
+     * @param initiatorToken The initiatorToken to set.
+     */
+    public void setInitiatorToken(Token initiatorToken) {
+        this.initiatorToken = initiatorToken;
+    }
+
+    /**
+     * @return Returns the recipientToken.
+     */
+    public Token getRecipientToken() {
+        return recipientToken;
+    }
+
+    /**
+     * @param recipientToken The recipientToken to set.
+     */
+    public void setRecipientToken(Token recipientToken) {
+        this.recipientToken = recipientToken;
+    }
+    
+    public void setProtectionToken(Token protectionToken) {
+        this.setEncryptionToken(protectionToken);
+        this.setSignatureToken(protectionToken);
+    }
+
+    /**
+     * @return Returns the signatureToken.
+     */
+    public Token getSignatureToken() {
+        return signatureToken;
+    }
+
+    /**
+     * @param signatureToken The signatureToken to set.
+     */
+    public void setSignatureToken(Token signatureToken) {
+        this.signatureToken = signatureToken;
+    }
+
+    /**
+     * @return Returns the signedEndorsingSupportingToken.
+     */
+    public SupportingToken getSignedEndorsingSupportingToken() {
+        return signedEndorsingSupportingToken;
+    }
+
+    /**
+     * @param signedEndorsingSupportingToken The signedEndorsingSupportingToken to set.
+     */
+    public void setSignedEndorsingSupportingToken(
+            SupportingToken signedEndorsingSupportingToken) {
+        this.signedEndorsingSupportingToken = signedEndorsingSupportingToken;
+    }
+
+    /**
+     * @return Returns the signedSupportingToken.
+     */
+    public SupportingToken getSignedSupportingToken() {
+        return signedSupportingToken;
+    }
+
+    /**
+     * @param signedSupportingToken The signedSupportingToken to set.
+     */
+    public void setSignedSupportingToken(SupportingToken signedSupportingToken) {
+        this.signedSupportingToken = signedSupportingToken;
+    }
+
+    /**
+     * @return Returns the supportingToken.
+     */
+    public SupportingToken getSupportingToken() {
+        return supportingToken;
+    }
+
+    /**
+     * @param supportingToken The supportingToken to set.
+     */
+    public void setSupportingToken(SupportingToken supportingToken) {
+        this.supportingToken = supportingToken;
+    }
+
+    /**
+     * @param endorsingSupportingToken The endorsingSupportingToken to set.
+     */
+    public void setEndorsingSupportingToken(SupportingToken endorsingSupportingToken) {
+        this.endorsingSupportingToken = endorsingSupportingToken;
+    }
+
+    /**
+     * @return Returns the endorsingSupportingToken.
+     */
+    public SupportingToken getEndorsingSupportingToken() {
+        return endorsingSupportingToken;
+    }
+
+    /**
+     * @return Returns the algorithmSuite.
+     */
+    public AlgorithmSuite getAlgorithmSuite() {
+        return algorithmSuite;
+    }
+
+    /**
+     * @param algorithmSuite The algorithmSuite to set.
+     */
+    public void setAlgorithmSuite(AlgorithmSuite algorithmSuite) {
+        this.algorithmSuite = algorithmSuite;
+    }
+
+    /**
+     * @return Returns the trust10.
+     */
+    public Trust10 getTrust10() {
+        return trust10;
+    }
+
+    /**
+     * @param trust10 The trust10 to set.
+     */
+    public void setTrust10(Trust10 trust10) {
+        this.trust10 = trust10;
+    }
+
+    /**
+     * @param rampartConfig The rampartConfig to set.
+     */
+    public void setRampartConfig(RampartConfig rampartConfig) {
+        this.rampartConfig = rampartConfig;
+    }
+
+    /**
+     * @return Returns the transportBinding.
+     */
+    public boolean isTransportBinding() {
+        return transportBinding;
+    }
+
+    /**
+     * @param transportBinding The transportBinding to set.
+     */
+    public void setTransportBinding(boolean transportBinding) {
+        this.transportBinding = transportBinding;
+    }
+
+    
 }

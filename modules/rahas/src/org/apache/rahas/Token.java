@@ -65,7 +65,7 @@ public class Token {
     /**
      * The token in its previous state
      */
-    private OMElement presivousToken;
+    private OMElement previousToken;
     
     /**
      * The RequestedAttachedReference element
@@ -95,7 +95,7 @@ public class Token {
     /**
      * A flag to assist the TokenStorage
      */
-    private boolean chnaged;
+    private boolean changed;
     
     /**
      * The secret associated with the Token
@@ -119,15 +119,15 @@ public class Token {
     /**
      * @return Returns the chnaged.
      */
-    public boolean isChnaged() {
-        return chnaged;
+    public boolean isChanged() {
+        return changed;
     }
 
     /**
      * @param chnaged The chnaged to set.
      */
-    public void setChnaged(boolean chnaged) {
-        this.chnaged = chnaged;
+    public void setChanged(boolean chnaged) {
+        this.changed = chnaged;
     }
     
     /**
@@ -182,15 +182,15 @@ public class Token {
     /**
      * @return Returns the presivousToken.
      */
-    public OMElement getPresivousToken() {
-        return presivousToken;
+    public OMElement getPreviousToken() {
+        return previousToken;
     }
 
     /**
      * @param presivousToken The presivousToken to set.
      */
-    public void setPresivousToken(OMElement presivousToken) {
-        this.presivousToken = presivousToken;
+    public void setPreviousToken(OMElement presivousToken) {
+        this.previousToken = presivousToken;
     }
 
     /**

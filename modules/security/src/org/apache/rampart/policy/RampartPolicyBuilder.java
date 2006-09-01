@@ -18,7 +18,6 @@ package org.apache.rampart.policy;
 import org.apache.neethi.Assertion;
 import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.ws.secpolicy.WSSPolicyException;
-import org.apache.ws.secpolicy.model.AlgorithmSuite;
 import org.apache.ws.secpolicy.model.AsymmetricBinding;
 import org.apache.ws.secpolicy.model.Binding;
 import org.apache.ws.secpolicy.model.EncryptionToken;
@@ -33,6 +32,8 @@ import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.SymmetricAsymmetricBindingBase;
 import org.apache.ws.secpolicy.model.SymmetricBinding;
 import org.apache.ws.secpolicy.model.TokenWrapper;
+import org.apache.ws.secpolicy.model.TransportBinding;
+import org.apache.ws.secpolicy.model.Trust10;
 import org.apache.ws.secpolicy.model.Wss10;
 import org.apache.ws.secpolicy.model.Wss11;
 
@@ -66,9 +67,12 @@ public class RampartPolicyBuilder {
             if (assertion instanceof Binding) {
                 if (assertion instanceof SymmetricBinding) {
                     processSymmetricPolicyBinding((SymmetricBinding) assertion, rpd);
-                } else {
+                } else if(assertion instanceof SymmetricBinding) {
                     processAsymmetricPolicyBinding((AsymmetricBinding) assertion, rpd);
+                } else {
+                    processTransportBinding((TransportBinding) assertion, rpd);
                 }
+                
                 /*
                  * Don't change the order of Wss11 / Wss10 instance checks
                  * because Wss11 extends Wss10 - thus first check Wss11.
@@ -84,6 +88,8 @@ public class RampartPolicyBuilder {
                 processSignedEncryptedParts((SignedEncryptedParts) assertion, rpd);
             } else if (assertion instanceof SupportingToken) {
                 processSupportingTokens((SupportingToken) assertion, rpd);
+            } else if (assertion instanceof Trust10) {
+                processTrust10((Trust10)assertion, rpd);
             } else if (assertion instanceof RampartConfig) {
                 processRampartConfig((RampartConfig)assertion, rpd);
             } else {
@@ -95,12 +101,30 @@ public class RampartPolicyBuilder {
     }
 
     /**
+     * @param binding
+     * @param rpd
+     */
+    private static void processTransportBinding(TransportBinding binding, RampartPolicyData rpd) {
+        binding(binding, rpd);
+        rpd.setTransportBinding(true);
+    }
+
+    /**
+     * Add TRust10 assertion info into rampart policy data
+     * @param trust10
+     * @param rpd
+     */
+    private static void processTrust10(Trust10 trust10, RampartPolicyData rpd) {
+        rpd.setTrust10(trust10);
+    }
+
+    /**
      * Add the rampart configuration information into rampart policy data.
      * @param config
      * @param rpd
      */
     private static void processRampartConfig(RampartConfig config, RampartPolicyData rpd) {
-        
+        rpd.setRampartConfig(config);
     }
 
     /**
@@ -226,6 +250,7 @@ public class RampartPolicyBuilder {
         rpd.setProtectionOrder(binding.getProtectionOrder());
         rpd.setSignatureProtection(binding.isSignatureProtection());
         rpd.setTokenProtection(binding.isTokenProtection());
+        rpd.setAlgorithmSuite(binding.getAlgorithmSuite());
     }
 
     /**
@@ -239,9 +264,9 @@ public class RampartPolicyBuilder {
     private static void symmetricBinding(SymmetricBinding binding,
             RampartPolicyData rpd) throws WSSPolicyException {
         Assertion token = binding.getProtectionToken();
-        AlgorithmSuite suite = binding.getAlgorithmSuite();
+        
         if (token != null) {
-            rpd.setProtectionToken(((ProtectionToken)token).getProtectionToken(), suite);
+            rpd.setProtectionToken(((ProtectionToken)token).getProtectionToken());
         } else {
             token = binding.getEncryptionToken();
             Assertion token1 = binding.getSignatureToken();
@@ -249,9 +274,8 @@ public class RampartPolicyBuilder {
                 // this is an error - throw something
             }
             rpd.setEncryptionToken(
-                    ((EncryptionToken) token).getEncryptionToken(), suite);
-            rpd.setSignatureToken(((SignatureToken) token).getSignatureToken(),
-                    suite);
+                    ((EncryptionToken) token).getEncryptionToken());
+            rpd.setSignatureToken(((SignatureToken) token).getSignatureToken());
         }
     }
 
@@ -270,11 +294,8 @@ public class RampartPolicyBuilder {
         if (tokWrapper == null && tokWrapper1 == null) {
             // this is an error - throw something
         }
-        AlgorithmSuite suite = binding.getAlgorithmSuite();
-        rpd.setRecipientToken(((RecipientToken) tokWrapper).getReceipientToken(),
-                        suite);
-        rpd.setInitiatorToken(((InitiatorToken) tokWrapper1).getInitiatorToken(),
-                suite);
+        rpd.setRecipientToken(((RecipientToken) tokWrapper).getReceipientToken());
+        rpd.setInitiatorToken(((InitiatorToken) tokWrapper1).getInitiatorToken());
     }
 
     private static void processSupportingTokens(SupportingToken token,

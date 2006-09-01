@@ -17,6 +17,8 @@
 package org.apache.rampart;
 
 import org.apache.axis2.context.MessageContext;
+import org.apache.rahas.RahasConstants;
+import org.apache.rahas.TokenStorage;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.message.WSSecHeader;
@@ -24,10 +26,6 @@ import org.w3c.dom.Document;
 
 import java.util.Vector;
 
-/**
- * 
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class RampartMessageData {
 
     private MessageContext msgContext = null;
@@ -48,7 +46,34 @@ public class RampartMessageData {
     
     private Vector endorsedSignatureParts;
 
+    private TokenStorage tokenStorage;
     
+    /**
+     * WS-Trust version to use.
+     * 
+     * Pissible values:
+     * RahasConstants.VERSION_05_02
+     * RahasConstants.VERSION_05_12
+     */
+    
+    private int wstVersion = RahasConstants.VERSION_05_02;
+    
+    /*
+     * IssuedTokens or SecurityContextTokens can be used
+     * as the encryption token, signature token,
+     */
+    private String issuedEncryptionTokenId;
+    
+    private String issuedSignatureTokenId;
+    
+    private String secConvTokenId;
+    
+    
+    
+    public RampartMessageData(MessageContext msgCtx, Document doc) {
+        this.msgContext = msgCtx;
+        this.document = doc;
+    }
     
     /**
      * @return Returns the encryptionParts.
@@ -178,6 +203,76 @@ public class RampartMessageData {
      */
     public void setSecHeader(WSSecHeader secHeader) {
         this.secHeader = secHeader;
+    }
+
+    /**
+     * @return Returns the issuedEncryptionTokenId.
+     */
+    public String getIssuedEncryptionTokenId() {
+        return issuedEncryptionTokenId;
+    }
+
+    /**
+     * @param issuedEncryptionTokenId The issuedEncryptionTokenId to set.
+     */
+    public void setIssuedEncryptionTokenId(String issuedEncryptionTokenId) {
+        this.issuedEncryptionTokenId = issuedEncryptionTokenId;
+    }
+
+    /**
+     * @return Returns the issuedSignatureTokenId.
+     */
+    public String getIssuedSignatureTokenId() {
+        return issuedSignatureTokenId;
+    }
+
+    /**
+     * @param issuedSignatureTokenId The issuedSignatureTokenId to set.
+     */
+    public void setIssuedSignatureTokenId(String issuedSignatureTokenId) {
+        this.issuedSignatureTokenId = issuedSignatureTokenId;
+    }
+
+    /**
+     * @return Returns the secConvTokenId.
+     */
+    public String getSecConvTokenId() {
+        return secConvTokenId;
+    }
+
+    /**
+     * @param secConvTokenId The secConvTokenId to set.
+     */
+    public void setSecConvTokenId(String secConvTokenId) {
+        this.secConvTokenId = secConvTokenId;
+    }
+
+    /**
+     * @return Returns the tokenStorage.
+     */
+    public TokenStorage getTokenStorage() {
+        return tokenStorage;
+    }
+
+    /**
+     * @param tokenStorage The tokenStorage to set.
+     */
+    public void setTokenStorage(TokenStorage tokenStorage) {
+        this.tokenStorage = tokenStorage;
+    }
+
+    /**
+     * @return Returns the wstVerion.
+     */
+    public int getWstVersion() {
+        return wstVersion;
+    }
+
+    /**
+     * @param wstVerion The wstVerion to set.
+     */
+    public void setWstVersion(int wstVerion) {
+        this.wstVersion = wstVerion;
     }
 
 }

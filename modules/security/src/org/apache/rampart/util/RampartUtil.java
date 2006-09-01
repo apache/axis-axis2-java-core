@@ -19,12 +19,15 @@ package org.apache.rampart.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rampart.RampartException;
+import org.apache.rampart.RampartMessageData;
 import org.apache.rampart.policy.model.CryptoConfig;
 import org.apache.rampart.policy.model.RampartConfig;
+import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
+import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.util.Loader;
 
 import javax.security.auth.callback.Callback;
@@ -36,8 +39,8 @@ public class RampartUtil {
 
     private static Log log = LogFactory.getLog(RampartUtil.class);
     
-    public static CallbackHandler getPasswordCB(ClassLoader classLoader, String cbHandlerClass) 
-    throws RampartException {
+    public static CallbackHandler getPasswordCB(ClassLoader classLoader,
+            String cbHandlerClass) throws RampartException {
 
         log.debug("loading class : " + cbHandlerClass);
         
@@ -64,7 +67,37 @@ public class RampartUtil {
         return cbHandler;
     }
     
-    
+    public static CallbackHandler getPasswordCB(RampartMessageData rmd) throws RampartException {
+
+        ClassLoader classLoader = rmd.getMsgContext().getAxisService().getClassLoader();
+        String cbHandlerClass = rmd.getPolicyData().getRampartConfig().getPwCbClass();
+        
+        log.debug("loading class : " + cbHandlerClass);
+        
+        CallbackHandler cbHandler = null;
+        
+        if (cbHandlerClass != null) {
+            Class cbClass = null;
+            try {
+                cbClass = Loader.loadClass(classLoader, cbHandlerClass);
+            } catch (ClassNotFoundException e) {
+                throw new RampartException(
+                       "WSHandler: cannot load password callback class: "
+               + cbHandlerClass, e);
+            }
+            try {
+                cbHandler = (CallbackHandler) cbClass.newInstance();
+            } catch (java.lang.Exception e) {
+                throw new RampartException(
+                     "WSHandler: cannot create instance of password callback: "
+             + cbHandlerClass, e);
+            }
+        } else {
+            cbHandler = (CallbackHandler)rmd.getMsgContext().getProperty(WSHandlerConstants.PW_CALLBACK_REF);
+        }
+        
+        return cbHandler;
+    }
     
     /**
      * Perform a callback to get a password.
@@ -115,7 +148,8 @@ public class RampartUtil {
      * @return
      * @throws RampartException
      */
-    public static Crypto getEncryptionCrypto(RampartConfig config) throws RampartException{
+    public static Crypto getEncryptionCrypto(RampartConfig config)
+            throws RampartException {
         log.debug("Loading encryption crypto");
         
         CryptoConfig cryptoConfig = config.getEncrCryptoConfig();
@@ -148,7 +182,8 @@ public class RampartUtil {
      * @return
      * @throws RampartException
      */
-    public static Crypto getSignatureCrypto(RampartConfig config) throws RampartException {
+    public static Crypto getSignatureCrypto(RampartConfig config)
+            throws RampartException {
         log.debug("Loading Signature crypto");
         
         CryptoConfig cryptoConfig = config.getSigCryptoConfig();
@@ -161,4 +196,26 @@ public class RampartUtil {
             throw new RampartException("missingSignatureCrypto");
         }
     }
+    
+    
+    /**
+     * figureout the key identifier of a give X509Token
+     * @param token
+     * @return
+     * @throws RampartException
+     */
+    public static int getKeyIdentifier(X509Token token) throws RampartException {
+        if (token.isRequireIssuerSerialReference()) {
+            return WSConstants.ISSUER_SERIAL;
+        } else if (token.isRequireThumbprintReference()) {
+            return WSConstants.THUMBPRINT_IDENTIFIER;
+        } else if (token.isRequireEmbeddedTokenReference()) {
+            return WSConstants.BST_DIRECT_REFERENCE;
+        } else {
+            throw new RampartException(
+                    "Unknown key reference specifier for X509Token");
+
+        }
+    }
+    
 }

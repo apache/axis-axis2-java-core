@@ -209,9 +209,8 @@ public class Axis2Util {
      * @param factory
      * @param element
      * @return
-     * @throws Exception
      */
-    public static OMElement toDOOM(OMFactory factory, OMElement element) throws Exception {
+    public static OMElement toDOOM(OMFactory factory, OMElement element){
         StAXOMBuilder builder = new StAXOMBuilder(factory, element.getXMLStreamReader());
         OMElement elem = builder.getDocumentElement();
         elem.build();
