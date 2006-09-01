@@ -268,7 +268,7 @@
                                    </xsl:otherwise>
                                </xsl:choose>
 
-                            } catch (Exception e) {
+                            } catch (java.lang.Exception e) {
                                 throw new java.lang.IllegalArgumentException();
                             }
                         }
@@ -543,17 +543,27 @@
                                                      <xsl:value-of select="$varName"/>.getAttributeValue(),
                                                      xmlWriter);
                         </xsl:when>
-                         <xsl:when test="@any and @array">
+                        <xsl:when test="@any and @array">
 							 if (<xsl:value-of select="$varName"/> != null) {
-                             for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
-                              writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
-                                                     <xsl:value-of select="$varName"/>[i].getLocalName(),
-                                                     <xsl:value-of select="$varName"/>[i].getAttributeValue(),
-                                                  xmlWriter);
-                             }
+								 for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
+									 writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
+                                                    <xsl:value-of select="$varName"/>[i].getLocalName(),
+                                                    <xsl:value-of select="$varName"/>[i].getAttributeValue(),xmlWriter);
+									 }
 							 }
-                         </xsl:when>
+                        </xsl:when>
                         <!-- there can never be attribute arrays in the normal case-->
+                        <xsl:when test="@optional">
+ 							// optional attribute <xsl:value-of select="$propertyName"/>
+ 							try {
+								writeAttribute("<xsl:value-of select="$namespace"/>",
+                                               "<xsl:value-of select="$propertyName"/>",
+                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);							
+							} catch (NullPointerException e) {
+								// If <xsl:value-of select="$varName"/> was null
+								// it can not be serialized.
+							}
+                        </xsl:when>
                         <xsl:otherwise>
                              writeAttribute("<xsl:value-of select="$namespace"/>",
                                                      "<xsl:value-of select="$propertyName"/>",
@@ -1858,28 +1868,33 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                     <xsl:variable name="varName">typedBean.local<xsl:value-of select="@javaname"/></xsl:variable>
                      <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:choose>
-                        <!-- Note - It is assumed that any attributes are OMAttributes-->
+						<!-- Note - It is assumed that any attributes are OMAttributes-->
                         <xsl:when test="@any and not(@array)">
                             writeAttribute(<xsl:value-of select="$varName"/>.getNamespace().getName(),
                                                      <xsl:value-of select="$varName"/>.getLocalName(),
                                                      <xsl:value-of select="$varName"/>.getAttributeValue(),xmlWriter);
                         </xsl:when>
-                         <xsl:when test="@any and @array">
-                             for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
-                              writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
-                                                     <xsl:value-of select="$varName"/>[i].getLocalName(),
-                                                     <xsl:value-of select="$varName"/>[i].getAttributeValue(),xmlWriter);
-                             }
-                         </xsl:when>
+                        <xsl:when test="@any and @array">
+							 if (<xsl:value-of select="$varName"/> != null) {
+								 for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
+									 writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
+                                                    <xsl:value-of select="$varName"/>[i].getLocalName(),
+                                                    <xsl:value-of select="$varName"/>[i].getAttributeValue(),xmlWriter);
+									 }
+							 }
+                        </xsl:when>
                         <!-- there can never be attribute arrays in the normal case-->
-                         <xsl:when test="@optional">
+                        <xsl:when test="@optional">
  							// optional attribute <xsl:value-of select="$propertyName"/>
- 							if (<xsl:value-of select="$varName"/> != null) {
+ 							try {
 								writeAttribute("<xsl:value-of select="$namespace"/>",
                                                "<xsl:value-of select="$propertyName"/>",
                                                org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
+							} catch (NullPointerException e) {
+								// If <xsl:value-of select="$varName"/> was null
+								// it can not be serialized.
 							}
-                         </xsl:when>
+                        </xsl:when>
                         <xsl:otherwise>
                              writeAttribute("<xsl:value-of select="$namespace"/>",
                                                      "<xsl:value-of select="$propertyName"/>",
