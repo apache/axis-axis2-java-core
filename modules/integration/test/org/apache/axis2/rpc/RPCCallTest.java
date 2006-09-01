@@ -41,8 +41,6 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -62,7 +60,6 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
     protected EndpointReference targetEPR;
-	private static final Log log = LogFactory.getLog(RPCCallTest.class);
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName("http://org.apache.axis2/xsd", "concat");
     protected QName transportName = new QName("http://org.apache.axis2/xsd",

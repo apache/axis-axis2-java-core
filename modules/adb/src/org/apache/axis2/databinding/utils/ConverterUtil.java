@@ -1,48 +1,19 @@
 package org.apache.axis2.databinding.utils;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.attachments.utils.IOUtils;
-import org.apache.axis2.databinding.types.Day;
-import org.apache.axis2.databinding.types.Duration;
-import org.apache.axis2.databinding.types.Entities;
-import org.apache.axis2.databinding.types.Entity;
-import org.apache.axis2.databinding.types.HexBinary;
-import org.apache.axis2.databinding.types.IDRef;
-import org.apache.axis2.databinding.types.IDRefs;
-import org.apache.axis2.databinding.types.Id;
-import org.apache.axis2.databinding.types.Language;
-import org.apache.axis2.databinding.types.Month;
-import org.apache.axis2.databinding.types.MonthDay;
-import org.apache.axis2.databinding.types.NCName;
-import org.apache.axis2.databinding.types.NMToken;
-import org.apache.axis2.databinding.types.NMTokens;
-import org.apache.axis2.databinding.types.Name;
-import org.apache.axis2.databinding.types.NegativeInteger;
-import org.apache.axis2.databinding.types.NonNegativeInteger;
-import org.apache.axis2.databinding.types.NonPositiveInteger;
-import org.apache.axis2.databinding.types.NormalizedString;
-import org.apache.axis2.databinding.types.Notation;
-import org.apache.axis2.databinding.types.PositiveInteger;
-import org.apache.axis2.databinding.types.Time;
-import org.apache.axis2.databinding.types.Token;
-import org.apache.axis2.databinding.types.URI;
-import org.apache.axis2.databinding.types.UnsignedByte;
-import org.apache.axis2.databinding.types.UnsignedInt;
-import org.apache.axis2.databinding.types.UnsignedLong;
-import org.apache.axis2.databinding.types.UnsignedShort;
-import org.apache.axis2.databinding.types.Year;
-import org.apache.axis2.databinding.types.YearMonth;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.i18n.ADBMessages;
+import org.apache.axis2.databinding.types.*;
 import org.apache.axis2.util.Base64;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.activation.DataHandler;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -51,12 +22,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -102,7 +68,7 @@ public class ConverterUtil {
     }
 
     public static String convertToString(byte i) {
-        return ((int)i)+"";
+        return ((int) i) + "";
     }
 
     public static String convertToString(char i) {
@@ -124,7 +90,7 @@ public class ConverterUtil {
         synchronized (calendar) {
             if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
                 buf.append("-");
-                calendar.setTime((Date)value);
+                calendar.setTime((Date) value);
                 calendar.set(Calendar.ERA, GregorianCalendar.AD);
                 value = calendar.getTime();
             }
@@ -168,6 +134,7 @@ public class ConverterUtil {
     public static String convertToString(Time o) {
         return o.toString();
     }
+
     public static String convertToString(Byte o) {
         return o.toString();
     }
@@ -175,6 +142,7 @@ public class ConverterUtil {
     public static String convertToString(BigInteger o) {
         return o.toString();
     }
+
     public static String convertToString(Integer o) {
         return o.toString();
     }
@@ -243,9 +211,9 @@ public class ConverterUtil {
     }
 
     public static double convertToDouble(String s) {
-        if (POSITIVE_INFINITY.equals(s)){
+        if (POSITIVE_INFINITY.equals(s)) {
             return Double.POSITIVE_INFINITY;
-        }else if (NEGATIVE_INFINITY.equals(s)){
+        } else if (NEGATIVE_INFINITY.equals(s)) {
             return Double.NEGATIVE_INFINITY;
         }
         return Double.parseDouble(s);
@@ -256,9 +224,9 @@ public class ConverterUtil {
     }
 
     public static float convertToFloat(String s) {
-        if (POSITIVE_INFINITY.equals(s)){
+        if (POSITIVE_INFINITY.equals(s)) {
             return Float.POSITIVE_INFINITY;
-        }else if (NEGATIVE_INFINITY.equals(s)){
+        } else if (NEGATIVE_INFINITY.equals(s)) {
             return Float.NEGATIVE_INFINITY;
         }
         return Float.parseFloat(s);
@@ -288,12 +256,13 @@ public class ConverterUtil {
         try {
             XMLStreamReader r = StAXUtils.createXMLStreamReader(
                     new ByteArrayInputStream(s.getBytes()));
-            StAXOMBuilder builder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(),r);
+            StAXOMBuilder builder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), r);
             return builder.getDocumentElement();
         } catch (XMLStreamException e) {
             return null;
         }
     }
+
     public static YearMonth convertToGYearMonth(String s) {
         return new YearMonth(s);
     }
@@ -324,17 +293,17 @@ public class ConverterUtil {
     }
 
     public static javax.activation.DataHandler convertToBase64Binary(String s)
-            throws Exception{
+            throws Exception {
         // reusing the byteArrayDataSource from the Axiom classes
         ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
                 Base64.decode(s)
         );
         return new DataHandler(byteArrayDataSource);
     }
-    
+
     public static javax.activation.DataHandler convertToDataHandler(String s)
-    		throws Exception{
-    	return convertToBase64Binary(s);
+            throws Exception {
+        return convertToBase64Binary(s);
     }
 
     /**
@@ -399,7 +368,6 @@ public class ConverterUtil {
     }
 
 
-
     public static NormalizedString convertToNormalizedString(String s) {
         return new NormalizedString(s);
     }
@@ -449,9 +417,9 @@ public class ConverterUtil {
     }
 
     public static Id convertToId(String s) {
-    	return convertToID(s);
+        return convertToID(s);
     }
-        
+
     public static Language convertToLanguage(String s) {
         return new Language(s);
     }
@@ -494,9 +462,9 @@ public class ConverterUtil {
     }
 
     public static BigInteger convertToBigInteger(String s) {
-    	return convertToInteger(s);
+        return convertToInteger(s);
     }
-    
+
     public static byte convertToByte(String s) throws Exception {
         return Byte.parseByte(s);
     }
@@ -504,6 +472,7 @@ public class ConverterUtil {
     /**
      * Code from Axis1 code base
      * Note - We only follow the convention in the latest schema spec
+     *
      * @param source
      * @return Returns Calendar.
      * @throws Exception
@@ -616,18 +585,18 @@ public class ConverterUtil {
 
     /**
      * Code from Axis1 code base
+     *
      * @param source
      * @return Returns QName.
      */
     public static QName convertToQName(String source) {
         source = source.trim();
         int colon = source.lastIndexOf(":");
-        String namespace = colon < 0 ? "" : "" ;// todo Fix this. Need to take a namespace with this
+        String namespace = colon < 0 ? "" : "";// todo Fix this. Need to take a namespace with this
         //context.getNamespaceURI(source.substring(0, colon));
         String localPart = colon < 0 ? source : source.substring(colon + 1);
         return new QName(namespace, localPart);
     }
-
 
     /* ################################################################# */
 
@@ -707,26 +676,33 @@ public class ConverterUtil {
             for (int i = 0; i < listSize; i++) {
                 Array.setDouble(returnArray, i, Double.parseDouble(objectList.get(i).toString()));
             }
-        } else{
-            ConvertToArbitraryObjectArray( returnArray, baseArrayClass, objectList);
+        } else {
+            ConvertToArbitraryObjectArray(returnArray, baseArrayClass, objectList);
         }
         return returnArray;
     }
 
     /**
-     * 
      * @param returnArray
      * @param baseArrayClass
      * @param objectList
      */
-    private static void ConvertToArbitraryObjectArray(                                                     Object returnArray,
+    private static void ConvertToArbitraryObjectArray(Object returnArray,
                                                       Class baseArrayClass,
                                                       List objectList) {
         try {
             for (int i = 0; i < objectList.size(); i++) {
-                Array.set(returnArray, i, getObjectForClass(
-                        baseArrayClass,
-                        objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o == null) {
+                    Array.set(returnArray, i, getObjectForClass(
+                            baseArrayClass,
+                            null));
+                } else {
+                    Array.set(returnArray, i, getObjectForClass(
+                            baseArrayClass,
+                            o.toString()));
+                }
+
             }
             return;
         } catch (Exception e) {
@@ -735,7 +711,7 @@ public class ConverterUtil {
         }
 
         try {
-            objectList.toArray((Object[])returnArray);
+            objectList.toArray((Object[]) returnArray);
         } catch (Exception e) {
             //we are over with alternatives - throw the
             //converison exception
@@ -746,14 +722,15 @@ public class ConverterUtil {
     /**
      * We could have used the Arraya.asList() method
      * but that returns an *immutable* list !!!!!
+     *
      * @param array
      * @return
      */
-    public static List toList(Object[] array){
-        if (array==null){
+    public static List toList(Object[] array) {
+        if (array == null) {
             return new ArrayList();
-        }else{
-            ArrayList list =  new ArrayList();
+        } else {
+            ArrayList list = new ArrayList();
             for (int i = 0; i < array.length; i++) {
                 list.add(array[i]);
             }
@@ -763,9 +740,10 @@ public class ConverterUtil {
 
     /**
      * Converts the given datahandler to a string
+     *
      * @return
      */
-    public static String getStringFromDatahandler(DataHandler dataHandler){
+    public static String getStringFromDatahandler(DataHandler dataHandler) {
         try {
             InputStream inStream;
             inStream = dataHandler.getDataSource().getInputStream();
@@ -779,11 +757,12 @@ public class ConverterUtil {
     /**
      * A reflection based method to generate an instance of
      * a given class and populate it with a given value
+     *
      * @param clazz
      * @param value
      * @return
      */
-    public static Object getObjectForClass(Class clazz,String value){
+    public static Object getObjectForClass(Class clazz, String value) {
         //first see whether this class has a constructor that can
         //take the string as an argument.
         boolean continueFlag = false;
@@ -801,16 +780,16 @@ public class ConverterUtil {
                     e);
         }
 
-        if (!continueFlag){
+        if (!continueFlag) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotConvert",
                             clazz.getName()));
         }
 
         try {
-            Method parseMethod =  clazz.getMethod("parse",new Class[]{String.class});
+            Method parseMethod = clazz.getMethod("parse", new Class[]{String.class});
             Object instance = clazz.newInstance();
-            return parseMethod.invoke(instance,new Object[]{value});
+            return parseMethod.invoke(instance, new Object[]{value});
         } catch (NoSuchMethodException e) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotConvert",
@@ -827,7 +806,7 @@ public class ConverterUtil {
     /**
      * A simple exception that is thrown when the conversion fails
      */
-    public static class ObjectConversionException extends RuntimeException{
+    public static class ObjectConversionException extends RuntimeException {
         public ObjectConversionException() {
         }
 

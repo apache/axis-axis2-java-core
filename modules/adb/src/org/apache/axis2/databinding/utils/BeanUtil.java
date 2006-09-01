@@ -92,12 +92,12 @@ public class BeanUtil {
                 }
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
-                            (Object[]) null);
+                            null);
                     object.add(new QName(beanName.getNamespaceURI(), propDesc.getName(), beanName.getPrefix()));
                     object.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if (ptype.isArray()) {
                     Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
-                            (Object[]) null);
+                            null);
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
@@ -114,7 +114,7 @@ public class BeanUtil {
 
                 } else if (SimpleTypeMapper.isArrayList(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
-                            (Object[]) null);
+                            null);
                     ArrayList objList = (ArrayList) value;
                     if (objList != null && objList.size() > 0) {
                         //this was given error , when the array.size = 0
@@ -135,7 +135,7 @@ public class BeanUtil {
                 } else {
                     object.add(new QName(propDesc.getName()));
                     Object value = propDesc.getReadMethod().invoke(beanObject,
-                            (Object[]) null);
+                            null);
                     object.add(value);
                 }
             }
@@ -404,8 +404,9 @@ public class BeanUtil {
                     done = false;
                     break;
                 }
-                valueList.add(processObject(omElement, arrayClassType,
-                        helper));
+                Object o = processObject(omElement, arrayClassType,
+                        helper);
+                valueList.add(o);
             }
             retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
                     valueList);
@@ -447,6 +448,11 @@ public class BeanUtil {
                     return helper.processRef(classType, ref);
                 }
             } else {
+                OMAttribute attribute = omElement.getAttribute(
+                        new QName("http://www.w3.org/2001/XMLSchema-instance", "nil", "xsi"));
+                if (attribute != null) {
+                    return null;
+                }
                 if (SimpleTypeMapper.isSimpleType(classType)) {
                     return SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
                 } else if (SimpleTypeMapper.isArrayList(classType)) {
@@ -465,6 +471,8 @@ public class BeanUtil {
         for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
             if (arg == null) {
+                objects.add("item" + i);
+                objects.add(arg);
                 continue;
             }
             //todo if the request parameter has name other than argi (0<i<n) , there should be a
