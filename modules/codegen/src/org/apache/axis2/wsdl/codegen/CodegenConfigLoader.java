@@ -178,12 +178,20 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
 
         }
 
-        config.setFlattenFiles(loadOption(WSDL2JavaConstants.FLATTEN_FILES_OPTION,
-                        WSDL2JavaConstants.FLATTEN_FILES_OPTION_LONG,
-                        optionMap)!=null);
-       
+        config
+				.setFlattenFiles(loadOption(
+						WSDL2JavaConstants.FLATTEN_FILES_OPTION,
+						WSDL2JavaConstants.FLATTEN_FILES_OPTION_LONG, optionMap) != null);
 
-        //loop through the map and find parameters having the extra prefix.
+		commandLineOption = loadOption(
+				WSDL2JavaConstants.BACKWORD_COMPATIBILITY_OPTION,
+				WSDL2JavaConstants.BACKWORD_COMPATIBILITY_OPTION_LONG,
+				optionMap);
+		if (commandLineOption != null) {
+			config.setBackwordCompatibilityMode(true);
+		}
+
+        // loop through the map and find parameters having the extra prefix.
         //put them in the property map
         Iterator keyIterator = optionMap.keySet().iterator();
         while (keyIterator.hasNext()) {

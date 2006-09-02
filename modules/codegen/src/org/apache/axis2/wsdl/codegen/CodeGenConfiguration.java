@@ -430,4 +430,18 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             );
         }
     }
+        
+    	/**
+	 * This flag determines whether the generated classes are expected to be
+	 * backword compatible with Axis 1.x
+	 */
+	private boolean backwordCompatibilityMode = true;
+
+	public boolean isBackwordCompatibilityMode() {
+		return backwordCompatibilityMode;
+	}
+
+	public void setBackwordCompatibilityMode(boolean backwordCompatibilityMode) {
+		this.backwordCompatibilityMode = backwordCompatibilityMode;
+	}
 }

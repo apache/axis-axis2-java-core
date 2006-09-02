@@ -1402,7 +1402,11 @@ public class SchemaCompiler {
             ,XmlSchema parentSchema) throws SchemaCompilationException {
         if (particle instanceof XmlSchemaSequence) {
             XmlSchemaObjectCollection items = ((XmlSchemaSequence) particle).getItems();
-            process(items, metainfHolder, true,parentSchema);
+           	if (options.isBackwordCompatibilityMode()) {
+    			process(items, metainfHolder, false, parentSchema);
+    		} else {
+    			process(items, metainfHolder, true, parentSchema);
+    		}
         } else if (particle instanceof XmlSchemaAll) {
             XmlSchemaObjectCollection items = ((XmlSchemaAll) particle).getItems();
             process(items, metainfHolder, false,parentSchema);

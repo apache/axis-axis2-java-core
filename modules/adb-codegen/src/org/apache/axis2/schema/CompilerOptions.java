@@ -156,4 +156,17 @@ public class CompilerOptions {
     public void setGenerateAll(boolean generateAll) {
         this.generateAll = generateAll;
     }
+	/**
+	 * This flag determines whether the generated classes are expected to be
+	 * backword compatible with Axis 1.x
+	 */
+	private boolean backwordCompatibilityMode = false;
+
+	public boolean isBackwordCompatibilityMode() {
+		return backwordCompatibilityMode;
+	}
+
+	public void setBackwordCompatibilityMode(boolean backwordCompatibilityMode) {
+		this.backwordCompatibilityMode = backwordCompatibilityMode;
+	}
 }
