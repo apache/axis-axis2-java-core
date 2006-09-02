@@ -25,8 +25,8 @@ public class MockFlow extends Flow {
         super();
         for (int i = 0; i < length; i++) {
             SpeakingHandler1 h1 = new SpeakingHandler1(
-                    "Executing " + i + " inside " + message,new QName("SpeakingHandler" + i));
-            h1.setName(new QName("SpeakingHandler" + i));
+                    "Executing " + i + " inside " + message, new QName("SpeakingHandler" + i));
+            h1.setName("SpeakingHandler" + i);
             this.addHandler(h1.getHandlerDescription());
         }
     }

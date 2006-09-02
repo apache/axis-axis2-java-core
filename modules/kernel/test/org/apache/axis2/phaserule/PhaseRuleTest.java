@@ -25,7 +25,6 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 public class PhaseRuleTest extends AbstractTestCase {
@@ -60,7 +59,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         Handler h1 = new PhaseRuleHandlers();
         h1.init(hm);
         hm.setHandler(h1);
-        hm.setName(new QName("H1"));
+        hm.setName("H1");
         PhaseRule rule = new PhaseRule();
         rule.setPhaseName("PreDispatch");
         rule.setPhaseFirst(true);
@@ -72,7 +71,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         Handler h2 = new PhaseRuleHandlers();
         h2.init(hm1);
         hm1.setHandler(h2);
-        hm1.setName(new QName("H2"));
+        hm1.setName("H2");
         PhaseRule rule1 = new PhaseRule();
         rule1.setPhaseName("PreDispatch");
         rule1.setAfter("H1");
@@ -84,7 +83,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         Handler h3 = new PhaseRuleHandlers();
         h3.init(hm2);
         hm2.setHandler(h3);
-        hm2.setName(new QName("H3"));
+        hm2.setName("H3");
         PhaseRule rule2 = new PhaseRule();
         rule2.setPhaseName("PreDispatch");
         rule2.setAfter("H1");
@@ -97,7 +96,7 @@ public class PhaseRuleTest extends AbstractTestCase {
         Handler h4 = new PhaseRuleHandlers();
         h4.init(hm3);
         hm3.setHandler(h4);
-        hm3.setName(new QName("H4"));
+        hm3.setName("H4");
         PhaseRule rule3 = new PhaseRule();
         rule3.setPhaseName("Dispatch");
         hm3.setRules(rule3);

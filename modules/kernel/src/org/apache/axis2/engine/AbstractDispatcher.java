@@ -28,8 +28,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-
 /**
  * This the base class for all dispatchers. A dispatcher's task is
  * to find the service for an incoming SOAP message.
@@ -42,7 +40,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://ws.apache.org/axis2/", "AbstractDispatcher");
+    public static final String NAME = "AbstractDispatcher";
     private static final Log log = LogFactory.getLog(AbstractDispatcher.class);
 
     public AbstractDispatcher() {

@@ -51,7 +51,7 @@ public class InvalidPhaseFirstRulesTest extends TestCase {
             h1.init(hm);
             ((PhaseRuleHandlers) h1).setName(new QName("PhaseFirstHnadler"));
             hm.setHandler(h1);
-            hm.setName(new QName("H1"));
+            hm.setName("H1");
             PhaseRule rule = new PhaseRule();
             rule.setPhaseName("PhaseA");
             rule.setPhaseFirst(true);
@@ -65,7 +65,7 @@ public class InvalidPhaseFirstRulesTest extends TestCase {
             ((PhaseRuleHandlers) h2).setName(new QName("Second Handler"));
             h2.init(hm1);
             hm1.setHandler(h2);
-            hm1.setName(new QName("H2"));
+            hm1.setName("H2");
             PhaseRule rule1 = new PhaseRule();
             rule1.setPhaseName("PhaseA");
             hm1.setRules(rule1);

@@ -32,14 +32,11 @@ import javax.xml.namespace.QName;
  */
 public class SOAPActionBasedDispatcher extends AbstractDispatcher {
 
-	private static final long serialVersionUID = 6319071671173417797L;
-	
-	/**
+    /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://ws.apache.org/axis2/",
-            "SOAPActionBasedDispatcher");
-	private static final Log log = LogFactory.getLog(SOAPActionBasedDispatcher.class);
+    public static final String NAME = "SOAPActionBasedDispatcher";
+    private static final Log log = LogFactory.getLog(SOAPActionBasedDispatcher.class);
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {

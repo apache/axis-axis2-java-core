@@ -21,8 +21,6 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
 
-import javax.xml.namespace.QName;
-
 /**
  * Class AbstractHandler
  */
@@ -32,7 +30,7 @@ public abstract class AbstractHandler implements Handler {
      * Field EMPTY_HANDLER_METADATA
      */
     private static HandlerDescription EMPTY_HANDLER_METADATA =
-            new HandlerDescription(new QName("default Handler"));
+            new HandlerDescription(("default Handler"));
 
     /**
      * Field handlerDesc
@@ -66,10 +64,10 @@ public abstract class AbstractHandler implements Handler {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        QName name = this.getName();
+        String name = this.getName();
 
         return (name != null)
-                ? name.toString()
+                ? name
                 : null;
     }
 
@@ -87,7 +85,7 @@ public abstract class AbstractHandler implements Handler {
      *
      * @return Returns QName.
      */
-    public QName getName() {
+    public String getName() {
         return handlerDesc.getName();
     }
 

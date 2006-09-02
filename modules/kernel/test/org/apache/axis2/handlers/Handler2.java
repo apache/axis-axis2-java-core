@@ -5,8 +5,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.Handler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -25,14 +23,15 @@ import javax.xml.namespace.QName;
 */
 
 public class Handler2 extends AbstractHandler implements Handler {
-    private static final long serialVersionUID = 972538148763607921L;
-	private static final Log log = LogFactory.getLog(Handler2.class);
+    private static final Log log = LogFactory.getLog(Handler2.class);
     private String message;
-    private QName name;
+    private String name;
+
     public Handler2() {
         this.message = "inside service 2";
     }
-    public QName getName() {
+
+    public String getName() {
         return name;
     }
 
@@ -44,7 +43,7 @@ public class Handler2 extends AbstractHandler implements Handler {
         log.info("I am " + message + " Handler Running :)");
     }
 
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

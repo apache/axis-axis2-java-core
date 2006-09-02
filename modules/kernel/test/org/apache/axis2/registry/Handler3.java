@@ -25,15 +25,16 @@ import javax.xml.namespace.QName;
 *
 */
 
-public class Handler3  extends AbstractHandler implements Handler {
-    private static final long serialVersionUID = 5364844101018794296L;
-	private static final Log log = LogFactory.getLog(Handler3 .class);
+public class Handler3 extends AbstractHandler implements Handler {
+    private static final Log log = LogFactory.getLog(Handler3 .class);
     private String message;
-    private QName name;
+    private String name;
+
     public Handler3() {
-       this.message = "inside Module 1";
+        this.message = "inside Module 1";
     }
-    public QName getName() {
+
+    public String getName() {
         return name;
     }
 
@@ -45,7 +46,7 @@ public class Handler3  extends AbstractHandler implements Handler {
         log.info("I am " + message + " Handler Running :)");
     }
 
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

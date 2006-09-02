@@ -43,7 +43,7 @@ public class BeforeAfterTest extends TestCase {
         h1.init(hm);
         ((PhaseRuleHandlers) h1).setName(new QName("First"));
         hm.setHandler(h1);
-        hm.setName(new QName("H1"));
+        hm.setName("H1");
         PhaseRule rule = new PhaseRule();
         rule.setPhaseName("PhaseA");
         hm.setRules(rule);
@@ -55,7 +55,7 @@ public class BeforeAfterTest extends TestCase {
         ((PhaseRuleHandlers) h2).setName(new QName("Forth"));
         h2.init(hm1);
         hm1.setHandler(h2);
-        hm1.setName(new QName("H2"));
+        hm1.setName("H2");
         PhaseRule rule1 = new PhaseRule();
         rule1.setPhaseName("PhaseA");
         hm1.setRules(rule1);
@@ -68,7 +68,7 @@ public class BeforeAfterTest extends TestCase {
         ((PhaseRuleHandlers) h3).setName(new QName("Second"));
         h3.init(hm3);
         hm3.setHandler(h3);
-        hm3.setName(new QName("H3"));
+        hm3.setName("H3");
         PhaseRule rule3 = new PhaseRule();
         rule3.setPhaseName("PhaseA");
         rule3.setAfter("H1");
@@ -81,7 +81,7 @@ public class BeforeAfterTest extends TestCase {
         ((PhaseRuleHandlers) h4).setName(new QName("Third"));
         h4.init(hm4);
         hm4.setHandler(h4);
-        hm4.setName(new QName("H4"));
+        hm4.setName("H4");
         PhaseRule rule4 = new PhaseRule();
         rule4.setPhaseName("PhaseA");
         rule4.setAfter("H1");

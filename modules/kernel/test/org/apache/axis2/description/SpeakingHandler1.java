@@ -23,19 +23,16 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-
 public class SpeakingHandler1 extends AbstractHandler implements Handler {
-    private static final long serialVersionUID = -9147014780463234096L;
-	private static final Log log = LogFactory.getLog(SpeakingHandler1.class);
+    private static final Log log = LogFactory.getLog(SpeakingHandler1.class);
     private String message;
-    private QName name;
+    private String name;
 
     public SpeakingHandler1(String message) {
         this.message = message;
     }
 
-    public QName getName() {
+    public String getName() {
         return name;
     }
 
@@ -47,7 +44,7 @@ public class SpeakingHandler1 extends AbstractHandler implements Handler {
         log.info("I am " + message + " Handler Running :)");
     }
 
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

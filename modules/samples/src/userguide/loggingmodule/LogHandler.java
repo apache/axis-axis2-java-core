@@ -27,9 +27,9 @@ import javax.xml.namespace.QName;
 
 public class LogHandler extends AbstractHandler implements Handler {
 	private static final Log log = LogFactory.getLog(LogHandler.class);
-    private QName name;
+    private String name;
 
-    public QName getName() {
+    public String getName() {
         return name;
     }
 
@@ -41,7 +41,7 @@ public class LogHandler extends AbstractHandler implements Handler {
         log.info(msgContext.getEnvelope().toString());
     }
 
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

@@ -35,7 +35,7 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
      * Field EMPTY_HANDLER_METADATA
      */
     private static HandlerDescription EMPTY_HANDLER_METADATA =
-            new HandlerDescription(new QName("deafult Handler"));
+            new HandlerDescription("deafult Handler");
 
     private final static String WSS_PASSWORD = "password";
 
@@ -80,7 +80,7 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
      *
      * @return Returns name.
      */
-    public QName getName() {
+    public String getName() {
         return handlerDesc.getName();
     }
 
@@ -122,8 +122,8 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        QName name = this.getName();
-        return (name != null) ? name.toString() : null;
+        String name = this.getName();
+        return (name != null) ? name : null;
     }
 
 

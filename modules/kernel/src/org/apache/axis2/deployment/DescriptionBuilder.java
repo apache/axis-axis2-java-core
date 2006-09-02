@@ -230,7 +230,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             throw new DeploymentException(Messages.getMessage(DeploymentErrorMsgs.INVALID_HANDLER,
                     "Name missing"));
         } else {
-            handler.setName(new QName(name_attribute.getAttributeValue()));
+            handler.setName(name_attribute.getAttributeValue());
         }
 
         // Setting Handler Class name

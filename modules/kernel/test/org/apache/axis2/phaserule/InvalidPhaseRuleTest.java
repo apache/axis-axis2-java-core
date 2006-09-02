@@ -25,14 +25,13 @@ import org.apache.axis2.phaseresolver.PhaseHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 public class InvalidPhaseRuleTest extends AbstractTestCase {
 
     InvalidPhaseRuleTest phaserul;
     AxisConfiguration axisSytem;
-	private static final Log log = LogFactory.getLog(InvalidPhaseRuleTest.class);
+    private static final Log log = LogFactory.getLog(InvalidPhaseRuleTest.class);
 
     public InvalidPhaseRuleTest(String testName) {
         super(testName);
@@ -52,7 +51,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             HandlerDescription hm = new HandlerDescription();
             hm.setClassName("org.apache.axis2.handlers.AbstractHandler");
             hm.setHandler(han);
-            hm.setName(new QName("H1"));
+            hm.setName("H1");
             PhaseRule rule = new PhaseRule();
             rule.setPhaseName("global");
             rule.setPhaseFirst(true);
@@ -62,7 +61,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             HandlerDescription hm1 = new HandlerDescription();
             hm1.setClassName("org.apache.axis2.handlers.AbstractHandler");
             hm1.setHandler(han);
-            hm1.setName(new QName("H2"));
+            hm1.setName("H2");
             PhaseRule rule1 = new PhaseRule();
             rule1.setPhaseName("global");
             rule1.setAfter("H1");
@@ -72,7 +71,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             HandlerDescription hm3 = new HandlerDescription();
             hm3.setClassName("org.apache.axis2.handlers.AbstractHandler");
             hm3.setHandler(han);
-            hm3.setName(new QName("H4"));
+            hm3.setName("H4");
             PhaseRule rule3 = new PhaseRule();
             rule3.setPhaseName("Logging");
             hm3.setRules(rule3);
@@ -93,9 +92,9 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             ArrayList inPhase = axisSytem.getGlobalInFlow();
 
             inPhase.add("global");
-            ((AxisConfiguration) axisSytem).setInFaultPhases(inPhase);
-            ((AxisConfiguration) axisSytem).setOutFaultPhases(inPhase);
-            ((AxisConfiguration) axisSytem).setGlobalOutPhase(inPhase);
+            axisSytem.setInFaultPhases(inPhase);
+            axisSytem.setOutFaultPhases(inPhase);
+            axisSytem.setGlobalOutPhase(inPhase);
 
             Handler han = null;
             PhaseHolder ph = new PhaseHolder(inPhase);
@@ -104,7 +103,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             HandlerDescription hm = new HandlerDescription();
             hm.setClassName("org.apache.axis2.handlers.AbstractHandler");
             hm.setHandler(han);
-            hm.setName(new QName("H1"));
+            hm.setName("H1");
             PhaseRule rule = new PhaseRule();
             rule.setPhaseName("global");
             rule.setPhaseFirst(true);
@@ -115,7 +114,7 @@ public class InvalidPhaseRuleTest extends AbstractTestCase {
             HandlerDescription hm1 = new HandlerDescription();
             hm1.setClassName("org.apache.axis2.handlers.AbstractHandler");
             hm1.setHandler(han);
-            hm1.setName(new QName("H2"));
+            hm1.setName("H2");
             PhaseRule rule1 = new PhaseRule();
             rule1.setPhaseName("global");
             rule1.setAfter("H1");

@@ -22,7 +22,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.i18n.Messages;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /**
@@ -43,7 +42,7 @@ public class HandlerDescription implements ParameterInclude {
     /**
      * Field name
      */
-    private QName name;
+    private String name;
 
     /**
      * Field parameterInclude
@@ -69,7 +68,7 @@ public class HandlerDescription implements ParameterInclude {
      *
      * @param name
      */
-    public HandlerDescription(QName name) {
+    public HandlerDescription(String name) {
         this();
         this.name = name;
     }
@@ -116,7 +115,7 @@ public class HandlerDescription implements ParameterInclude {
     /**
      * @return Returns QName.
      */
-    public QName getName() {
+    public String getName() {
         return name;
     }
 
@@ -175,7 +174,7 @@ public class HandlerDescription implements ParameterInclude {
     /**
      * @param name
      */
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

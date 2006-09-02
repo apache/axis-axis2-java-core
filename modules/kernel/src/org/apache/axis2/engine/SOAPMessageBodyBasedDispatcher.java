@@ -36,14 +36,11 @@ import javax.xml.namespace.QName;
  */
 public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
 
-	private static final long serialVersionUID = 487519840603427717L;
-	
-	/**
+    /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://ws.apache.org/axis2/",
-            "SOAPMessageBodyBasedDispatcher");
-	private static final Log log = LogFactory.getLog(SOAPMessageBodyBasedDispatcher.class);
+    public static final String NAME = "SOAPMessageBodyBasedDispatcher";
+    private static final Log log = LogFactory.getLog(SOAPMessageBodyBasedDispatcher.class);
     String serviceName = null;
     QName operationName = null;
 
@@ -80,7 +77,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                         "Checking for Service using SOAP message body's first child's namespace : "
                                 + filePart);
 
-                String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
+                String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
                         messageContext.getConfigurationContext().getServiceContextPath());
 
                 if (values[1] != null) {

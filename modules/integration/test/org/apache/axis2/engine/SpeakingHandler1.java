@@ -30,21 +30,21 @@ import javax.xml.namespace.QName;
 public class SpeakingHandler1 extends AbstractHandler implements Handler {
 	private static final Log log = LogFactory.getLog(SpeakingHandler1.class);
     private String message;
-    private QName name;
+    private String name;
 
     public SpeakingHandler1(String message, QName name) {
         this.message = message;
         HandlerDescription handlerDesc = new HandlerDescription();
-        handlerDesc.setName(new QName("SpeakingHandler1"));
+        handlerDesc.setName("SpeakingHandler1");
         PhaseRule rule = new PhaseRule();
         rule.setPhaseName(PhaseMetadata.PHASE_DISPATCH);
         handlerDesc.setRules(rule);
         handlerDesc.setHandler(this);
-        handlerDesc.setName(name);
+        handlerDesc.setName(name.getLocalPart());
         init(handlerDesc);
     }
 
-    public QName getName() {
+    public String getName() {
         return name;
     }
 
@@ -56,7 +56,7 @@ public class SpeakingHandler1 extends AbstractHandler implements Handler {
         log.info("I am " + message + " Handler Running :)");
     }
 
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

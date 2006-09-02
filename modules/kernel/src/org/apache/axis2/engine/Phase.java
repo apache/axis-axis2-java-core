@@ -26,7 +26,6 @@ import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -34,8 +33,6 @@ import java.util.Iterator;
  * A Phase is an ordered collection of Handlers.
  */
 public class Phase implements Handler {
-
-    private static final long serialVersionUID = -3352439587370050957L;
 
     public static final String ALL_PHASES = "*";
 
@@ -62,7 +59,7 @@ public class Phase implements Handler {
     /**
      * Field log
      */
-	private static final Log log = LogFactory.getLog(Phase.class);
+    private static final Log log = LogFactory.getLog(Phase.class);
 
     /**
      * Field handlers
@@ -135,7 +132,7 @@ public class Phase implements Handler {
         while (handlers_itr.hasNext()) {
             Handler hand = (Handler) handlers_itr.next();
             HandlerDescription handlerDesc = hand.getHandlerDesc();
-            if (handler.getName().getLocalPart().equals(handlerDesc.getName().getLocalPart())) {
+            if (handler.getName().equals(handlerDesc.getName())) {
                 return;
             }
         }
@@ -208,7 +205,7 @@ public class Phase implements Handler {
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
 
-            if (temphandler.getName().getLocalPart().equals(afterName)) {
+            if (temphandler.getName().equals(afterName)) {
                 if (phaselastset && (i == handlers.size() - 1)) {
                     throw new PhaseException("Can't insert handler after handler '"
                             + temphandler.getName()
@@ -244,7 +241,7 @@ public class Phase implements Handler {
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
 
-            if (temphandler.getName().getLocalPart().equals(beforename)) {
+            if (temphandler.getName().equals(beforename)) {
                 if (i == 0) {
                     if (phasefirstset) {
                         throw new PhaseException("Can't insert handler before handler '"
@@ -281,10 +278,10 @@ public class Phase implements Handler {
         for (int i = 0; i < handlers.size(); i++) {
             Handler temphandler = (Handler) handlers.get(i);
 
-            if (afterName.equals(temphandler.getName().getLocalPart())) {
+            if (afterName.equals(temphandler.getName())) {
                 after = i;
             } else {
-                if (beforeName.equals(temphandler.getName().getLocalPart())) {
+                if (beforeName.equals(temphandler.getName())) {
                     before = i;
                 }
             }
@@ -447,8 +444,8 @@ public class Phase implements Handler {
         return handlers;
     }
 
-    public QName getName() {
-        return new QName(phaseName);
+    public String getName() {
+        return phaseName;
     }
 
     public Parameter getParameter(String name) {
@@ -526,19 +523,19 @@ public class Phase implements Handler {
     public void removeHandler(HandlerDescription handler) {
         if (handlers.remove(handler.getHandler())) {
             PhaseRule rule = handler.getRules();
-            if(rule.isPhaseFirst()){
+            if (rule.isPhaseFirst()) {
                 phasefirstset = false;
             }
-            if(rule.isPhaseLast()){
+            if (rule.isPhaseLast()) {
                 phaselastset = false;
             }
-            if(rule.isPhaseFirst()&& rule.isPhaseLast()){
+            if (rule.isPhaseFirst() && rule.isPhaseLast()) {
                 isOneHandler = false;
             }
-            log.debug("removed handler " + handler.getName().getLocalPart()
+            log.debug("removed handler " + handler.getName()
                     + " from the phase " + phaseName);
         } else {
-            log.debug("unable to remove handler " + handler.getName().getLocalPart()
+            log.debug("unable to remove handler " + handler.getName()
                     + " from the phase " + phaseName);
         }
     }

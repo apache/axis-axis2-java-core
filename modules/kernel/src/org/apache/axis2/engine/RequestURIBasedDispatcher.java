@@ -34,11 +34,8 @@ import javax.xml.namespace.QName;
  */
 public class RequestURIBasedDispatcher extends AbstractDispatcher {
 
-	private static final long serialVersionUID = 6212111158265910316L;
-	
-    public static final QName NAME = new QName("http://ws.apache.org/axis2/",
-            "RequestURIBasedDispatcher");
-	private static final Log log = LogFactory.getLog(RequestURIBasedDispatcher.class);
+    public static final String NAME = "RequestURIBasedDispatcher";
+    private static final Log log = LogFactory.getLog(RequestURIBasedDispatcher.class);
 
     /*
      *  (non-Javadoc)
@@ -50,24 +47,20 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         EndpointReference toEPR = messageContext.getTo();
         if (toEPR != null) {
             String filePart = toEPR.getAddress();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
+            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
                     messageContext.getConfigurationContext().getServiceContextPath());
 
             if ((values.length >= 2) && (values[1] != null)) {
                 QName operationName = new QName(values[1]);
                 log.debug("Checking for Operation using QName(target endpoint URI fragment) : " + operationName);
                 return service.getOperation(operationName);
+            } else {
+                log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
+                return null;
             }
-            else
-            {
-              log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
-              return null;
-            }
-        }
-        else
-        {
-          log.debug("Attempted to check for Operation using null target endpoint URI");
-          return null;
+        } else {
+            log.debug("Attempted to check for Operation using null target endpoint URI");
+            return null;
         }
     }
 
@@ -83,7 +76,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
 
             String filePart = toEPR.getAddress();
             //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart ,
+            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
                     messageContext.getConfigurationContext().getServiceContextPath());
 
             if ((values.length >= 1) && (values[0] != null)) {
@@ -91,17 +84,13 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                         messageContext.getConfigurationContext().getAxisConfiguration();
 
                 return registry.getService(values[0]);
+            } else {
+                log.debug("Attempted to check for Service using target endpoint URI, but the service fragment was missing");
+                return null;
             }
-            else
-            {
-              log.debug("Attempted to check for Service using target endpoint URI, but the service fragment was missing");
-              return null;
-            }
-        }
-        else
-        {
-          log.debug("Attempted to check for Service using null target endpoint URI");
-          return null;
+        } else {
+            log.debug("Attempted to check for Service using null target endpoint URI");
+            return null;
         }
     }
 

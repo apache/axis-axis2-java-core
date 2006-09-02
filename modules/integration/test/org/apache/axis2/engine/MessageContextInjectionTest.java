@@ -79,7 +79,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
 
         InstanceDispatcher id = new InstanceDispatcher();
 
-        id.init(new HandlerDescription(new QName("InstanceDispatcher")));
+        id.init(new HandlerDescription("InstanceDispatcher"));
         dispatchPhase.addHandler(abd);
         dispatchPhase.addHandler(rud);
         dispatchPhase.addHandler(sabd);

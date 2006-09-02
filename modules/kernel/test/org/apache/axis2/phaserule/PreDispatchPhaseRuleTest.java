@@ -25,7 +25,6 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseHolder;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 public class PreDispatchPhaseRuleTest extends AbstractTestCase {
@@ -58,7 +57,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         Handler h1 = new PhaseRuleHandlers();
         h1.init(pre);
         pre.setHandler(h1);
-        pre.setName(new QName("pre-H1"));
+        pre.setName("pre-H1");
         PhaseRule pre_rule1 = new PhaseRule();
         pre_rule1.setPhaseName("PreDispatch");
         pre.setRules(pre_rule1);
@@ -69,7 +68,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         Handler h2 = new PhaseRuleHandlers();
         h2.init(pre2);
         pre2.setHandler(h2);
-        pre2.setName(new QName("dispatch"));
+        pre2.setName("dispatch");
         PhaseRule prerule2 = new PhaseRule();
         prerule2.setPhaseName("Dispatch");
         pre2.setRules(prerule2);
@@ -81,7 +80,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         Handler h3 = new PhaseRuleHandlers();
         h3.init(hm);
         hm.setHandler(h3);
-        hm.setName(new QName("pre-H2"));
+        hm.setName("pre-H2");
         PhaseRule rule = new PhaseRule();
         rule.setPhaseName("PreDispatch");
         rule.setPhaseFirst(true);
@@ -93,7 +92,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         Handler h4 = new PhaseRuleHandlers();
         h4.init(hm1);
         hm1.setHandler(h4);
-        hm1.setName(new QName("pre-H3"));
+        hm1.setName("pre-H3");
         PhaseRule rule1 = new PhaseRule();
         rule1.setPhaseName("PreDispatch");
         rule1.setAfter("pre-H2");
@@ -105,7 +104,7 @@ public class PreDispatchPhaseRuleTest extends AbstractTestCase {
         Handler h5 = new PhaseRuleHandlers();
         h5.init(hm2);
         hm2.setHandler(h5);
-        hm2.setName(new QName("H3"));
+        hm2.setName("H3");
         PhaseRule rule2 = new PhaseRule();
         rule2.setPhaseName("PreDispatch");
         rule2.setAfter("pre-H2");

@@ -44,7 +44,7 @@ public class PhaseLastTest extends TestCase {
         h1.init(hm);
         ((PhaseRuleHandlers) h1).setName(new QName("PhaseLast"));
         hm.setHandler(h1);
-        hm.setName(new QName("H1"));
+        hm.setName("H1");
         PhaseRule rule = new PhaseRule();
         rule.setPhaseName("PhaseA");
         rule.setPhaseLast(true);
@@ -57,7 +57,7 @@ public class PhaseLastTest extends TestCase {
         ((PhaseRuleHandlers) h2).setName(new QName("Second Handler"));
         h2.init(hm1);
         hm1.setHandler(h2);
-        hm1.setName(new QName("H2"));
+        hm1.setName("H2");
         PhaseRule rule1 = new PhaseRule();
         rule1.setPhaseName("PhaseA");
         rule1.setAfter("H1");

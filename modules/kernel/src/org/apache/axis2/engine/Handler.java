@@ -66,9 +66,9 @@ public interface Handler {
     /**
      * Method getName.
      *
-     * @return Returns QName
+     * @return Returns String
      */
-    public QName getName();
+    public String getName();
 
     /**
      * Method getParameter.

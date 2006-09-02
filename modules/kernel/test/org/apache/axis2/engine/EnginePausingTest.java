@@ -23,12 +23,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
@@ -90,7 +85,7 @@ public class EnginePausingTest extends TestCase {
 
         InstanceDispatcher id = new InstanceDispatcher();
 
-        id.init(new HandlerDescription(new QName("InstanceDispatcher")));
+        id.init(new HandlerDescription("InstanceDispatcher"));
         dispatchPhase.addHandler(abd);
         dispatchPhase.addHandler(rud);
         dispatchPhase.addHandler(sabd);
@@ -183,19 +178,18 @@ public class EnginePausingTest extends TestCase {
     }
 
     public class TempHandler extends AbstractHandler {
-        private static final long serialVersionUID = 6201231320871883424L;
         private Integer index;
         private boolean pause = false;
 
         public TempHandler(int index, boolean pause) {
             this.index = new Integer(index);
             this.pause = pause;
-            init(new HandlerDescription(new QName("handler" + index)));
+            init(new HandlerDescription("handler" + index));
         }
 
         public TempHandler(int index) {
             this.index = new Integer(index);
-            init(new HandlerDescription(new QName("handler" + index)));
+            init(new HandlerDescription("handler" + index));
         }
 
         public void invoke(MessageContext msgContext) throws AxisFault {

@@ -71,7 +71,7 @@ public class PhasesInfo {
     HandlerDescription makeHandler(OMElement handlerElement) {
         String name = handlerElement.getAttributeValue(new QName("name"));
         QName qname = handlerElement.resolveQName(name);
-        HandlerDescription desc = new HandlerDescription(qname);
+        HandlerDescription desc = new HandlerDescription(qname.getLocalPart());
         String className = handlerElement.getAttributeValue(new QName("class"));
 
         desc.setClassName(className);

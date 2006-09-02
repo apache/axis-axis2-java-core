@@ -32,7 +32,6 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 
-import javax.xml.namespace.QName;
 import java.io.OutputStream;
 
 /**
@@ -46,7 +45,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
     /**
      * Field NAME
      */
-    public static final QName NAME = new QName("http://ws.apache.org/axis2/", "TransportSender");
+    public static final String NAME = "TransportSender";
 
     /**
      * Constructor AbstractTransportSender
@@ -90,13 +89,13 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         if (epr != null) {
             if (!epr.getAddress().equals(AddressingConstants.Final.WSA_NONE_URI)) {
                 out = openTheConnection(epr, msgContext);
-    
+
                 OutputStream newOut = startSendWithToAddress(msgContext, out);
-    
+
                 if (newOut != null) {
                     out = newOut;
                 }
-    
+
                 writeMessage(msgContext, out);
                 finalizeSendWithToAddress(msgContext, out);
             }

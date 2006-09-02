@@ -18,14 +18,9 @@ package org.apache.axis2.engine;
 
 //todo
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.*;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
@@ -42,7 +37,7 @@ import java.io.Reader;
 import java.net.Socket;
 
 public class MessageWithServerTest extends UtilServerBasedTestCase {
-	private static final Log log = LogFactory.getLog(MessageWithServerTest.class);
+    private static final Log log = LogFactory.getLog(MessageWithServerTest.class);
     private QName serviceName = new QName("", "EchoService");
     private QName operationName =
             new QName("http://ws.apache.org/axis2", "echoVoid");
@@ -99,7 +94,7 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
 
         InstanceDispatcher id = new InstanceDispatcher();
 
-        id.init(new HandlerDescription(new QName("InstanceDispatcher")));
+        id.init(new HandlerDescription("InstanceDispatcher"));
         dispatchPhase.addHandler(abd);
         dispatchPhase.addHandler(rud);
         dispatchPhase.addHandler(sabd);
