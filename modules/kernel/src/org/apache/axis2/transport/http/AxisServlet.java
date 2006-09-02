@@ -102,7 +102,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, req.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
 
         return msgContext;
     }
@@ -278,6 +277,11 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             axisConfiguration = configContext.getAxisConfiguration();
             config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
+            // setting the ServletConfig to AxisConfiguration
+            Parameter servletConfigParam = new Parameter();
+            servletConfigParam.setName(HTTPConstants.HTTP_SERVLETCONFIG);
+            servletConfigParam.setValue(this.servletConfig);
+            axisConfiguration.addParameter(servletConfigParam);
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
             TransportInDescription transportInDescription = new TransportInDescription(
@@ -453,7 +457,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(req));
         msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
         return msgContext;
     }
 

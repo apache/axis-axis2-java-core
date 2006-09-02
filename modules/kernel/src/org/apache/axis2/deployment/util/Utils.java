@@ -31,6 +31,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.lang.reflect.Method;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -211,10 +212,37 @@ public class Utils {
      */
     public static void fillAxisService(AxisService axisService,
                                        AxisConfiguration axisConfig, ArrayList excludeOperations) throws Exception {
+        String serviceClass;
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
-        if (implInfoParam == null) {
-            // Nothing to do.
-            return;
+        ClassLoader serviceClassLoader = axisService.getClassLoader();
+
+        if (implInfoParam != null) {
+           serviceClass = (String) implInfoParam.getValue();
+        } else {
+            // if Service_Class is null, every AbstractMR will look for
+            // ServiceObjectSupplier. This is user specific and may contain
+            // other looks.
+            implInfoParam = axisService.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
+            if (implInfoParam != null) {
+                Class serviceObjectMaker = Class.forName(((String)
+                        implInfoParam.getValue()).trim(), true, serviceClassLoader);
+
+                // Find static getServiceObject() method, call it if there
+                Method method = serviceObjectMaker.
+                        getMethod("getServiceObject",
+                                  new Class[] { AxisService.class });
+                Object obj = null;
+                if (method != null) {
+                    obj =  method.invoke(serviceObjectMaker.newInstance(), new Object[] { axisService });
+                }
+                if (obj == null) {
+                    throw new Exception("ServiceObjectSupplier implmentation Object could not be found");
+                }
+                serviceClass = obj.getClass().getName();
+            } else {
+                return;
+            }
+
         }
         // adding name spaces
         Map map = new HashMap();
@@ -223,8 +251,6 @@ public class Utils {
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
                 Java2WSDLConstants.URI_2001_SCHEMA_XSD);
         axisService.setNameSpacesMap(map);
-        String serviceClass = (String) implInfoParam.getValue();
-        ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
                 serviceClass.trim(), axisService.getSchematargetNamespace(),
                 axisService.getSchematargetNamespacePrefix());

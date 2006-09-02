@@ -81,9 +81,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                 // Find static getServiceObject() method, call it if there   
                 Method method = serviceObjectMaker.
                         getMethod("getServiceObject",
-                                  new Class[] { MessageContext.class });
+                                  new Class[] { AxisService.class });
                 if (method != null)
-                    return method.invoke(null, new Object[] { msgContext });
+                    return method.invoke(serviceObjectMaker.newInstance(), new Object[] { service });
             }
 
             Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);

@@ -17,58 +17,59 @@
 package org.apache.axis2.extensions.spring.receivers;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.ServiceObjectSupplier;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.Constants;
 import org.apache.axis2.transport.http.HTTPConstants;
-
-import javax.servlet.ServletContext;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-public class SpringServletContextObjectSupplier {
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+
+public class SpringServletContextObjectSupplier implements ServiceObjectSupplier {
     public static final String SERVICE_SPRING_BEANNAME = "SpringBeanName";
 
     /**
-     * Method getServiceObject that is Spring aware via ServletContext. 
+     * Method getServiceObject that is Spring aware via ServletContext.
      *
-     * @param msgContext
+     * @param axisService
      * @return Returns Object.
      * @throws AxisFault
      */
-    public static Object getServiceObject(MessageContext msgContext) throws AxisFault {
+    public Object getServiceObject(AxisService axisService) throws AxisFault {
         try {
-            AxisService service =
-                    msgContext.getOperationContext().getServiceContext().getAxisService();
             // Name of spring aware bean to be injected, taken from services.xml
-            // via 'SERVICE_SPRING_BEANNAME ' . The Bean and its properties are pre-configured 
+            // via 'SERVICE_SPRING_BEANNAME ' . The Bean and its properties are pre-configured
             // as normally done in a spring type of way and subsequently loaded by Spring.
             // Axis2 just assumes that the bean is configured and is in the classloader.
-            Parameter implBeanParam = service.getParameter(SERVICE_SPRING_BEANNAME);
+            Parameter implBeanParam = axisService.getParameter(SERVICE_SPRING_BEANNAME);
             String beanName = ((String) implBeanParam.getValue()).trim();
             if (beanName != null) {
-                ServletContext servletContext = (ServletContext) msgContext.getOptions().
-                   getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT);
-            	if (servletContext == null) {
-            		throw new Exception("Axis2 Can't find ServletContext");
+                ServletConfig servletConfig = (ServletConfig) axisService.getAxisConfiguration()
+                        .getParameter(HTTPConstants.HTTP_SERVLETCONFIG);
+                if (servletConfig == null) {
+                    throw new Exception("Axis2 Can't find ServletConfig");
                 }
-                ApplicationContext aCtx = 
-                    WebApplicationContextUtils.getWebApplicationContext(servletContext);
-            	if (aCtx == null) {
-            		throw new Exception("Axis2 Can't find Spring's ApplicationContext");
-            	} else if (aCtx.getBean(beanName) == null) {
-            	    throw new Exception("Axis2 Can't find Spring Bean: " + beanName);
-            	}
+                ServletContext servletContext = servletConfig.getServletContext();
+
+                ApplicationContext aCtx =
+                        WebApplicationContextUtils.getWebApplicationContext(servletContext);
+                if (aCtx == null) {
+                    throw new Exception("Axis2 Can't find Spring's ApplicationContext");
+                } else if (aCtx.getBean(beanName) == null) {
+                    throw new Exception("Axis2 Can't find Spring Bean: " + beanName);
+                }
                 return aCtx.getBean(beanName);
             } else {
-                throw new AxisFault(Messages.getMessage("paramIsNotSpecified", "SERVICE_SPRING_BEANNAME"));
+                throw new AxisFault(
+                        Messages.getMessage("paramIsNotSpecified", "SERVICE_SPRING_BEANNAME"));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
+
     }
 }
 
