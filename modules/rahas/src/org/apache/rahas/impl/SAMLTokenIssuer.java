@@ -208,7 +208,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
 
             // Store the token
             Token assertionToken = new Token(assertion.getId(), (OMElement) assertion
-                    .toDOM());
+                    .toDOM(),creationTime, expirationTime);
             // At this point we definitely have the secret
             // Otherwise it should fail with an exception earlier
             assertionToken.setSecret(data.getEphmeralKey());
@@ -489,11 +489,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
      */
     public String getResponseAction(RahasData data)
             throws TrustException {
-        if(RahasConstants.VERSION_05_02 == data.getVersion()) {
-            return RahasConstants.V_05_02.RSTR_ACTON_ISSUE;
-        } else {
-            return RahasConstants.V_05_12.RSTR_ACTON_ISSUE;    
-        }
+        return TrustUtil.getActionValue(data.getVersion(), RahasConstants.RSTR_ACTON_ISSUE);
     }
     
     

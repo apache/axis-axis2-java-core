@@ -50,9 +50,8 @@ public class TokenRequestDispatcher {
         
         String reqType = data.getRequestType();
         String tokenType = data.getTokenType();
-        
-        if (RahasConstants.V_05_02.REQ_TYPE_ISSUE.equals(reqType) ||
-                RahasConstants.V_05_12.REQ_TYPE_ISSUE.equals(reqType)) {
+        if ((RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_ISSUE).equals(reqType) ||
+                (RahasConstants.WST_NS_05_12 + RahasConstants.REQ_TYPE_ISSUE).equals(reqType)) {
             TokenIssuer issuer = null;
             if (tokenType == null
                     || (tokenType != null && "".equals(tokenType.toString()))) {
@@ -68,16 +67,16 @@ public class TokenRequestDispatcher {
                     issuer.getResponseAction(data));
             
             return response;
-        } else if(RahasConstants.V_05_02.REQ_TYPE_VALIDATE.equals(reqType) ||
-                RahasConstants.V_05_12.REQ_TYPE_VALIDATE.equals(reqType)) {
+        } else if((RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_VALIDATE).equals(reqType) ||
+                (RahasConstants.WST_NS_05_12 + RahasConstants.REQ_TYPE_VALIDATE).equals(reqType)) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "validate requests");
-        } else if(RahasConstants.V_05_02.REQ_TYPE_RENEW.equals(reqType) ||
-                RahasConstants.V_05_12.REQ_TYPE_RENEW.equals(reqType)) {
+        } else if((RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_RENEW).equals(reqType) ||
+                (RahasConstants.WST_NS_05_12 + RahasConstants.REQ_TYPE_RENEW).equals(reqType)) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "renew requests");            
-        } else if(RahasConstants.V_05_02.REQ_TYPE_CANCEL.equals(reqType) ||
-                RahasConstants.V_05_12.REQ_TYPE_CANCEL.equals(reqType)) {
+        } else if((RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_CANCEL).equals(reqType) ||
+                (RahasConstants.WST_NS_05_12 + RahasConstants.REQ_TYPE_CANCEL).equals(reqType)) {
             throw new UnsupportedOperationException("TODO: handle " +
                     "cancel requests");
         } else {

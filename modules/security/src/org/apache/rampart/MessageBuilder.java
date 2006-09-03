@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.rampart.builder.TimestampBuilder;
-import org.apache.rampart.conversation.STSRequester;
 import org.apache.rampart.policy.RampartPolicyBuilder;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.rampart.util.Axis2Util;
@@ -101,9 +100,9 @@ public class MessageBuilder {
                     issuerAddress = (issuerAddress != null) ? issuerAddress
                             : msgCtx.getOptions().getTo().getAddress();
                     
-                    String id = STSRequester.getSct(rmd, issuerAddress,
-                            ((SecureConversationToken) sigTok)
-                                    .getBootstrapPolicy());
+//                    String id = STSClient.getSct(rmd, issuerAddress,
+//                            ((SecureConversationToken) sigTok)
+//                                    .getBootstrapPolicy());
                 }
             }
         } else if(!rpd.isSymmetricBinding() && !rpd.isTransportBinding()) {
@@ -128,15 +127,6 @@ public class MessageBuilder {
         return elem.getText().trim();
     }
 
-    private void obtainIssuedToken(RampartMessageData rmd, IssuedToken tok) {
-        OMElement elem = tok.getIssuerEpr();
-        
-    }
-    
-    private void obtainSecConvtoken(RampartMessageData rmd, SecureConversationToken tok) {
-        OMElement elem = tok.getIssuerEpr();
-        Policy bootstrapPolicy = tok.getBootstrapPolicy();
-        
-    }
+
     
 }

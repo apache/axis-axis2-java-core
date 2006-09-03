@@ -46,6 +46,9 @@ public class SCTIssuerConfig {
     
     protected int keySize;
     
+    //TODO: get from config
+    protected long ttl = 300000;
+    
     private SCTIssuerConfig(OMElement elem) throws TrustException {
         OMElement proofTokenElem = (OMElement) elem.getFirstChildWithName(
                 new QName("proofToken"));

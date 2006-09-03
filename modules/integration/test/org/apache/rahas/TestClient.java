@@ -109,9 +109,9 @@ public abstract class TestClient extends TestCase {
             OMElement result = serviceClient.sendReceive(getRequest());
 
             this.validateRsponse(result);
-        } catch (AxisFault axisFault) {
-            axisFault.printStackTrace();
-            fail(axisFault.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
     
@@ -127,7 +127,7 @@ public abstract class TestClient extends TestCase {
     
     public abstract String getServiceRepo();
     
-    public abstract String getRequestAction();
+    public abstract String getRequestAction() throws TrustException;
     
     public abstract void validateRsponse(OMElement resp);
 }

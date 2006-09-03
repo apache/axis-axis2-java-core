@@ -62,65 +62,44 @@ public class RahasConstants {
     public final static String KEY_TYPE_PUBLIC_KEY = "/PublicKey";
     public final static String KEY_TYPE_BEARER = "/Bearer";
     
+    //Attr values
+    public final static String BIN_SEC_TYPE_NONCE =  "/Nonce";
+    
+    //ComputedKey algos
+    public final static String COMPUTED_KEY_PSHA1 =  "/CK/PSHA1";
+    
+//  RequestTypes
+    public final static String REQ_TYPE_ISSUE = "/Issue";
+    public final static String REQ_TYPE_VALIDATE = "/Validate";
+    public final static String REQ_TYPE_RENEW = "/Renew";
+    public final static String REQ_TYPE_CANCEL = "/Cancel";
+    
+    //RST actions
+    public final static String RST_ACTON_ISSUE =  "/RST/Issue";
+    public final static String RST_ACTON_VALIDATE = "/RST/Renew";
+    public final static String RST_ACTON_RENEW = "/RST/Cancel";
+    public final static String RST_ACTON_CANCEL = "/RST/Validate";
+    public final static String RST_ACTON_SCT = "/RST/SCT";
+    
+    //RSTR actions
+    public final static String RSTR_ACTON_ISSUE = "/RSTR/Issue";
+    public final static String RSTR_ACTON_VALIDATE = "/RSTR/Renew";
+    public final static String RSTR_ACTON_RENEW = "/RSTR/Cancel";
+    public final static String RSTR_ACTON_CANCEL = "/RSTR/Validate";
+    public final static String RSTR_ACTON_SCT = "/RSTR/SCT";
+
     
     public class V_05_02 { 
-        //RequestTypes
-        public final static String REQ_TYPE_ISSUE = WST_NS_05_02 + "/Issue";
-        public final static String REQ_TYPE_VALIDATE = WST_NS_05_02 + "/Validate";
-        public final static String REQ_TYPE_RENEW = WST_NS_05_02 + "/Renew";
-        public final static String REQ_TYPE_CANCEL = WST_NS_05_02 + "/Cancel";
-        
-        //RST actions
-        public final static String RST_ACTON_ISSUE = WST_NS_05_02 + "/RST/Issue";
-        public final static String RST_ACTON_VALIDATE = WST_NS_05_02 + "/RST/Renew";
-        public final static String RST_ACTON_RENEW = WST_NS_05_02 + "/RST/Cancel";
-        public final static String RST_ACTON_CANCEL = WST_NS_05_02 + "/RST/Validate";
-        public final static String RST_ACTON_SCT = WST_NS_05_02 + "/RST/SCT";
-        
-        //RSTR actions
-        public final static String RSTR_ACTON_ISSUE = WST_NS_05_02 + "/RSTR/Issue";
-        public final static String RSTR_ACTON_VALIDATE = WST_NS_05_02 + "/RSTR/Renew";
-        public final static String RSTR_ACTON_RENEW = WST_NS_05_02 + "/RSTR/Cancel";
-        public final static String RSTR_ACTON_CANCEL = WST_NS_05_02 + "/RSTR/Validate";
-        public final static String RSTR_ACTON_SCT = WST_NS_05_02 + "/RSTR/SCT";
-        //Attr values
-        public final static String BIN_SEC_TYPE_NONCE = WST_NS_05_02 + "/Nonce";
         
         //Token types
         public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
 
-        //ComputedKey algos
-        public final static String COMPUTED_KEY_PSHA1 =  WST_NS_05_02 + "/CK/PSHA1";
     }
     
     public class V_05_12 { 
-        //RequestTypes
-        public final static String REQ_TYPE_ISSUE = WST_NS_05_12 + "/Issue";
-        public final static String REQ_TYPE_VALIDATE = WST_NS_05_12 + "/Validate";
-        public final static String REQ_TYPE_RENEW = WST_NS_05_12 + "/Renew";
-        public final static String REQ_TYPE_CANCEL = WST_NS_05_12 + "/Cancel";
-        
-        //RST actions
-        public final static String RST_ACTON_ISSUE = WST_NS_05_12 + "/RST/Issue";
-        public final static String RST_ACTON_VALIDATE = WST_NS_05_12 + "/RST/Renew";
-        public final static String RST_ACTON_RENEW = WST_NS_05_12 + "/RST/Cancel";
-        public final static String RST_ACTON_CANCEL = WST_NS_05_12 + "/RST/Validate";
-        public final static String RST_ACTON_SCT = WST_NS_05_12 + "/RST/SCT";
-        
-        //RSTR actions
-        public final static String RSTR_ACTON_ISSUE = WST_NS_05_12 + "/RSTR/Issue";
-        public final static String RSTR_ACTON_VALIDATE = WST_NS_05_12 + "/RSTR/Renew";
-        public final static String RSTR_ACTON_RENEW = WST_NS_05_12 + "/RSTR/Cancel";
-        public final static String RSTR_ACTON_CANCEL = WST_NS_05_12 + "/RSTR/Validate";
-        public final static String RSTR_ACTON_SCT = WST_NS_05_12 + "/RSTR/SCT";
-        //Attr values
-        public final static String BIN_SEC_TYPE_NONCE = WST_NS_05_12 + "/Nonce";
         
         //Token types
         public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/12/sc/sct";
-        
-        //ComputedKey algos
-        public final static String COMPUTED_KEY_PSHA1 =  WST_NS_05_12 + "/CK/PSHA1";
         
     }
     

@@ -27,12 +27,15 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.message.token.SecurityTokenReference;
+import org.apache.ws.security.util.XmlSchemaDateFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class TrustUtil {
     
@@ -105,10 +108,22 @@ public class TrustUtil {
     }
     
     public static OMElement createRequestTypeElement(
-            int version, OMElement parent) throws TrustException {
+            int version, OMElement parent, String value) throws TrustException {
         String ns = getWSTNamespace(version);
-        return createOMElement(parent, ns,
+        
+        OMElement elem = createOMElement(parent, ns,
                 RahasConstants.REQUEST_TYPE_LN, RahasConstants.WST_PREFIX);
+        
+        if (RahasConstants.REQ_TYPE_ISSUE.equals(value)
+                || RahasConstants.REQ_TYPE_CANCEL.equals(value)
+                || RahasConstants.REQ_TYPE_RENEW.equals(value)
+                || RahasConstants.REQ_TYPE_VALIDATE.equals(value)) {
+            elem.setText(ns + value);
+        } else {
+            elem.setText(value);
+        }
+        
+        return elem;
     }
     
     public static OMElement createTokenTypeElement(
@@ -134,7 +149,7 @@ public class TrustUtil {
                 RahasConstants.BINARY_SECRET_LN, RahasConstants.WST_PREFIX);
         if(type != null) {
             elem.addAttribute(elem.getOMFactory().createOMAttribute(
-                    RahasConstants.ATTR_TYPE, null, type));
+                    RahasConstants.ATTR_TYPE, null, ns + type));
         }
         return elem;
     }
@@ -146,7 +161,7 @@ public class TrustUtil {
         String ns = getWSTNamespace(version);
         OMElement elem = createOMElement(parent, ns,
                 RahasConstants.COMPUTED_KEY_ALGO_LN, RahasConstants.WST_PREFIX);
-        elem.setText(algoId);
+        elem.setText(ns + algoId);
         return elem;
     }
     
@@ -217,6 +232,19 @@ public class TrustUtil {
         
         return ltElem;
     }
+    
+    public static OMElement createLifetimeElement(int version, OMElement parent,
+            long ttl) throws TrustException {
+        
+        Date creationTime = new Date();
+        Date expirationTime = new Date();
+        expirationTime.setTime(creationTime.getTime() + ttl);
+        
+        DateFormat zulu = new XmlSchemaDateFormat();
+
+        return createLifetimeElement(version, parent, zulu
+                .format(creationTime), zulu.format(expirationTime));
+    }
 
     public static OMElement createAppliesToElement(OMElement parent,
             String address, String addressingNs) {
@@ -232,6 +260,23 @@ public class TrustUtil {
         addressElem.setText(address);
 
         return appliesToElem;
+    }
+    
+    public static String getActionValue(int version, String action) throws TrustException {
+        if(RahasConstants.RST_ACTON_ISSUE.equals(action) || 
+                RahasConstants.RST_ACTON_CANCEL.equals(action) || 
+                RahasConstants.RST_ACTON_RENEW.equals(action) ||
+                RahasConstants.RST_ACTON_VALIDATE.equals(action) ||
+                RahasConstants.RST_ACTON_SCT.equals(action) ||
+                RahasConstants.RSTR_ACTON_ISSUE.equals(action) || 
+                RahasConstants.RSTR_ACTON_CANCEL.equals(action) || 
+                RahasConstants.RSTR_ACTON_RENEW.equals(action) ||
+                RahasConstants.RSTR_ACTON_VALIDATE.equals(action) ||
+                RahasConstants.RSTR_ACTON_SCT.equals(action)) {
+            
+            return getWSTNamespace(version) + action; 
+        }
+        return action;
     }
     
     /**

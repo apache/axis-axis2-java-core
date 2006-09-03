@@ -32,10 +32,13 @@ import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.token.SecurityContextToken;
+import org.apache.ws.security.util.XmlSchemaDateFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class SCTIssuer implements TokenIssuer {
 
@@ -162,9 +165,23 @@ public class SCTIssuer implements TokenIssuer {
         byte[] secret = this.generateEphemeralKey();
         binSecElem.setText(Base64.encode(secret));
 
+        //Creation and expiration times
+        Date creationTime = new Date();
+        Date expirationTime = new Date();
+        
+        expirationTime.setTime(creationTime.getTime() + config.ttl);
+        
+        
+        // Use GMT time in milliseconds
+        DateFormat zulu = new XmlSchemaDateFormat();
+
+        // Add the Lifetime element
+        TrustUtil.createLifetimeElement(wstVersion, rstrElem, zulu
+                .format(creationTime), zulu.format(expirationTime));
+        
         // Store the tokens
         Token sctToken = new Token(sct.getIdentifier(), (OMElement) sct
-                .getElement());
+                .getElement(), creationTime, expirationTime);
         sctToken.setSecret(secret);
         TrustUtil.getTokenStore(data.getInMessageContext()).add(sctToken);
 
@@ -228,6 +245,19 @@ public class SCTIssuer implements TokenIssuer {
             }
         }
 
+        //Creation and expiration times
+        Date creationTime = new Date();
+        Date expirationTime = new Date();
+        
+        expirationTime.setTime(creationTime.getTime() + config.ttl);
+        
+        // Use GMT time in milliseconds
+        DateFormat zulu = new XmlSchemaDateFormat();
+        
+        // Add the Lifetime element
+        TrustUtil.createLifetimeElement(wstVersion, rstrElem, zulu
+                .format(creationTime), zulu.format(expirationTime));
+        
         Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
         Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
 
@@ -240,9 +270,10 @@ public class SCTIssuer implements TokenIssuer {
 
         reqProofTok.addChild((OMElement) encryptedKeyElem);
 
+        
         // Store the tokens
         Token sctToken = new Token(sct.getIdentifier(), (OMElement) sct
-                .getElement());
+                .getElement(), creationTime, expirationTime);
         sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
         TrustUtil.getTokenStore(data.getInMessageContext()).add(sctToken);
 
@@ -250,12 +281,7 @@ public class SCTIssuer implements TokenIssuer {
     }
 
     public String getResponseAction(RahasData data) throws TrustException {
-        if (RahasConstants.WST_NS_05_02.equals(data.getRstElement()
-                .getNamespace().getNamespaceURI())) {
-            return RahasConstants.V_05_02.RSTR_ACTON_SCT;
-        } else {
-            return RahasConstants.V_05_12.RSTR_ACTON_SCT;
-        }
+        return TrustUtil.getActionValue(data.getVersion(), RahasConstants.RSTR_ACTON_SCT);
     }
 
     /**

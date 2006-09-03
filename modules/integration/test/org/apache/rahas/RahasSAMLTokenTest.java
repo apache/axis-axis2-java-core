@@ -68,7 +68,7 @@ public class RahasSAMLTokenTest extends TestClient {
 
         RequestSecurityTokenType rst = new RequestSecurityTokenType();
         try {
-            rst.setRequestType(new URI(RahasConstants.V_05_02.REQ_TYPE_ISSUE));
+            rst.setRequestType(new URI(RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_ISSUE));
             rst.setTokenType(new URI(RahasConstants.TOK_TYPE_SAML_10));
             rst.setContext(new URI("http://get.optional.attrs.working"));
             
@@ -105,8 +105,8 @@ public class RahasSAMLTokenTest extends TestClient {
     }
 
 
-    public String getRequestAction() {
-        return RahasConstants.V_05_02.RST_ACTON_ISSUE;
+    public String getRequestAction() throws TrustException {
+        return TrustUtil.getActionValue(RahasConstants.VERSION_05_02, RahasConstants.RST_ACTON_ISSUE);
     }
 
 }

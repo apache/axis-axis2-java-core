@@ -49,10 +49,13 @@ import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.message.token.SecurityContextToken;
 import org.apache.ws.security.util.WSSecurityUtil;
+import org.apache.ws.security.util.XmlSchemaDateFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 public class WSDoAllSender extends WSDoAllHandler {
@@ -365,7 +368,14 @@ public class WSDoAllSender extends WSDoAllHandler {
         
         SecurityContextToken sct = new SecurityContextToken(config.getDocument());
         Util.resgisterContext(sct.getIdentifier(), config);
-        Token token = new Token(sct.getIdentifier(), (OMElement)sct.getElement());
+        
+        //Creation and expiration times
+        Date creationTime = new Date();
+        Date expirationTime = new Date();
+        
+        expirationTime.setTime(creationTime.getTime() + 300000);
+        
+        Token token = new Token(sct.getIdentifier(), (OMElement)sct.getElement(), creationTime, expirationTime);
         token.setSecret(encrKeyBuilder.getEphemeralKey());
         
         config.getTokenStore().add(token);
@@ -380,6 +390,13 @@ public class WSDoAllSender extends WSDoAllHandler {
         OMElement rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(config.getWstVersion(), header);
 
         OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(config.getWstVersion(), rstrElem);
+
+        // Use GMT time in milliseconds
+        DateFormat zulu = new XmlSchemaDateFormat();
+        
+        // Add the Lifetime element
+        TrustUtil.createLifetimeElement(config.getWstVersion(), rstrElem, zulu
+                .format(creationTime), zulu.format(expirationTime));
         
         rstElem.addChild((OMElement)sct.getElement());
         

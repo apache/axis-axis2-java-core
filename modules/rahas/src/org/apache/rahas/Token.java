@@ -17,10 +17,18 @@
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
+import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.util.XmlSchemaDateFormat;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -102,6 +110,16 @@ public class Token {
      */
     private byte[] secret;
     
+    /**
+     * Created time
+     */
+    private Date created;
+    
+    /**
+     * Expiration time
+     */
+    private Date expires;
+    
 
     /**
      * Create a new token
@@ -111,9 +129,36 @@ public class Token {
         this.id = id;
     }
     
-    public Token(String id, OMElement tokenElem) {
+    public Token(String id, OMElement tokenElem, Date created, Date expires) throws TrustException {
         this.id = id;
         this.token = (OMElement)dummyDoc.importNode((Element)tokenElem, true);
+        this.created = created;
+        this.expires = expires;
+    }
+
+    public Token(String id, OMElement tokenElem, OMElement lifetimeElem) throws TrustException {
+        this.id = id;
+        this.token = (OMElement)dummyDoc.importNode((Element)tokenElem, true);
+        this.processLifeTime(lifetimeElem);
+    }
+    
+    /**
+     * @param lifetimeElem
+     * @throws TrustException 
+     */
+    private void processLifeTime(OMElement lifetimeElem) throws TrustException {
+        try {
+            DateFormat zulu = new XmlSchemaDateFormat();
+            OMElement createdElem = lifetimeElem.getFirstChildWithName(new QName(WSConstants.WSU_NS, WSConstants.CREATED_LN));
+            this.created = zulu.parse(createdElem.getText());
+            
+            OMElement expiresElem = lifetimeElem.getFirstChildWithName(new QName(WSConstants.WSU_NS, WSConstants.CREATED_LN));
+            this.expires = zulu.parse(expiresElem.getText());
+        } catch (OMException e) {
+            throw new TrustException("lifeTimeProcessingError", new String[]{lifetimeElem.toString()}, e);
+        } catch (ParseException e) {
+            throw new TrustException("lifeTimeProcessingError", new String[]{lifetimeElem.toString()}, e);
+        }
     }
 
     /**
@@ -240,4 +285,28 @@ public class Token {
                 (Element) unattachedReference, true);
         }
     }
+
+    /**
+     * @return Returns the created.
+     */
+    public Date getCreated() {
+        return created;
+    }
+
+    /**
+     * @return Returns the expires.
+     */
+    public Date getExpires() {
+        return expires;
+    }
+
+    /**
+     * @param expires The expires to set.
+     */
+    public void setExpires(Date expires) {
+        this.expires = expires;
+    }
+    
+
+    
 }

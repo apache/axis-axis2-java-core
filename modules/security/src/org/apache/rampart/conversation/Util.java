@@ -96,7 +96,9 @@ public class Util {
             if (sctElem != null) {
                 SecurityContextToken sct = new SecurityContextToken(
                         (Element) sctElem);
-                token = new Token(sct.getIdentifier(), sctElem);
+                token = new Token(sct.getIdentifier(), sctElem, rstr
+                        .getFirstChildWithName(new QName(ns,
+                                RahasConstants.LIFETIME_LN)));
                 resgisterContext(sct.getIdentifier(), config);
             } else {
                 throw new RampartException("sctMissingInResponse");

@@ -70,9 +70,8 @@ public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
     public OMElement getRequest() {
         try {
             OMElement rstElem = TrustUtil.createRequestSecurityTokenElement(RahasConstants.VERSION_05_12);
-            OMElement reqTypeElem = TrustUtil.createRequestTypeElement(RahasConstants.VERSION_05_12, rstElem);
+            OMElement reqTypeElem = TrustUtil.createRequestTypeElement(RahasConstants.VERSION_05_12, rstElem, RahasConstants.REQ_TYPE_ISSUE);
             OMElement tokenTypeElem = TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, rstElem);
-            reqTypeElem.setText(RahasConstants.V_05_12.REQ_TYPE_ISSUE);
             tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
             
             TrustUtil.createAppliesToElement(rstElem,
@@ -85,8 +84,8 @@ public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
             byte[] nonce = WSSecurityUtil.generateNonce(16);
             clientEntr = nonce;
             OMElement entrElem = TrustUtil.createEntropyElement(RahasConstants.VERSION_05_12, rstElem);
-            TrustUtil.createBinarySecretElement(RahasConstants.VERSION_05_12, entrElem, RahasConstants.V_05_12.BIN_SEC_TYPE_NONCE).setText(Base64.encode(nonce));
-            TrustUtil.createComputedKeyAlgorithm(RahasConstants.VERSION_05_12,rstElem, RahasConstants.V_05_12.COMPUTED_KEY_PSHA1);
+            TrustUtil.createBinarySecretElement(RahasConstants.VERSION_05_12, entrElem, RahasConstants.BIN_SEC_TYPE_NONCE).setText(Base64.encode(nonce));
+            TrustUtil.createComputedKeyAlgorithm(RahasConstants.VERSION_05_12,rstElem, RahasConstants.COMPUTED_KEY_PSHA1);
             
             return rstElem;
             
@@ -117,8 +116,8 @@ public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
         return "rahas_service_repo_3";
     }
 
-    public String getRequestAction() {
-        return RahasConstants.V_05_12.RST_ACTON_ISSUE;
+    public String getRequestAction() throws TrustException {
+        return TrustUtil.getActionValue(RahasConstants.VERSION_05_12, RahasConstants.RST_ACTON_ISSUE);
     }
 
     public void validateRsponse(OMElement resp) {
