@@ -59,4 +59,8 @@ public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
     public void testEchoXMLSync() throws Exception {
         super.testEchoXMLSync();
     }
+    
+    public void testEchoXMLSyncSeperateListener() throws Exception {
+        super.testEchoXMLSyncSeperateListener();
+    }
 }

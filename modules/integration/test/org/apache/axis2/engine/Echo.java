@@ -37,6 +37,7 @@ public class Echo {
 
 
     public OMElement echoOMElement(OMElement omEle) {
+    	omEle.buildWithAttachments();
         omEle.setLocalName(omEle.getLocalName() + "Response");
         if(omEle.getFirstElement().getText().trim().startsWith("fault")){
             throw new RuntimeException("fault string found in echoOMElement");

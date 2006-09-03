@@ -48,6 +48,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+
 import java.awt.*;
 import java.io.InputStream;
 
@@ -152,15 +154,13 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
     public void testEchoXMLSync() throws Exception {
         OMElement payload = createEnvelope();
         Options options = new Options();
-//        options.setProperty(MessageContext.CHARACTER_SET_ENCODING, "UTF-16");
-        //options.setTimeOutInMilliSeconds(-1);
-        //options.setProperty(HTTPConstants.SO_TIMEOUT,new Integer(Integer.MAX_VALUE));
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+        
         ServiceClient sender = new ServiceClient(configContext,null);
         options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         sender.setOptions(options);
@@ -178,6 +178,30 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         actualDH = (DataHandler) binaryNode.getDataHandler();
         new ImageIO().loadImage(actualDH.getDataSource()
                 .getInputStream());
+    }
+    
+    public void testEchoXMLSyncSeperateListener() throws Exception {
+        OMElement payload = createEnvelope();
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+        
+        ServiceClient sender = new ServiceClient(configContext,null);
+        sender.engageModule( new QName("addressing"));
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+        sender.setOptions(options);
+        options.setUseSeparateListener(true);
+        options.setTo(targetEPR);
+        OMElement result = sender.sendReceive(payload);
+
+        OMElement ele = (OMElement) result.getFirstOMChild();
+        OMText binaryNode = (OMText) ele.getFirstOMChild();
+        // to the assert equal
+        compareWithCreatedOMText(binaryNode);
     }
 
     protected InputStream getResourceAsStream(String path) {

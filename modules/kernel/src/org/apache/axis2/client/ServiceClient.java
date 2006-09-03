@@ -516,9 +516,9 @@ public class ServiceClient {
             }
             // process the result of the invocation
             if (callback.envelope != null) {
-                // building soap envelop
-                callback.envelope.build();
-                // closing transport
+                // transport was already returned by the call back receiver
+            	//Buidling of the Envelope should happen at the setComplete()
+            	// or onComplete() methods of the Callback class
                 return callback.envelope.getBody().getFirstElement();
             } else {
                 if (callback.error instanceof AxisFault) {
@@ -703,7 +703,12 @@ public class ServiceClient {
         private Exception error;
 
         public void onComplete(AsyncResult result) {
-            this.envelope = result.getResponseEnvelope();
+			this.envelope = result.getResponseEnvelope();
+			// Transport input stream gets closed after calling setComplete
+			// method. Have to build the whole envelope including the
+			// attachments at this stage. Data might get lost if the input
+			// stream gets closed before building the whole envelope.
+			this.envelope.buildWithAttachments();
             this.msgctx = result.getResponseMessageContext();
         }
 
