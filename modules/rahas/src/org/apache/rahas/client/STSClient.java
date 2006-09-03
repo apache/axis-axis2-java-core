@@ -35,6 +35,8 @@ import org.apache.ws.secpolicy.model.AlgorithmSuite;
 import org.apache.ws.secpolicy.model.Binding;
 import org.apache.ws.secpolicy.model.Trust10;
 import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.conversation.ConversationException;
+import org.apache.ws.security.conversation.dkalgo.P_SHA1;
 import org.apache.ws.security.util.WSSecurityUtil;
 
 import javax.xml.namespace.QName;
@@ -50,6 +52,8 @@ public class STSClient {
     private byte[] requestorEntropy;
     
     private String addressingNs = AddressingConstants.Final.WSA_NAMESPACE;
+    
+    private int keySize;
     
     /**
      * Life time in seconds
@@ -130,9 +134,56 @@ public class STSClient {
         tok.setAttachedReference(reqAttRef);
         tok.setUnattachedReference(reqUnattRef);
         
+        //Handle proof token
+        OMElement rpt = rstr.getFirstChildWithName(new QName(ns, RahasConstants.REQUESTED_PROOF_TOKEN_LN));
         
-        //Handle the Lifetime
-        OMElement lifetime = rstr.getFirstChildWithName(new QName(ns, RahasConstants.LIFETIME_LN));
+        byte[] secret = null;
+        
+        if(rpt != null) {
+            OMElement child = rpt.getFirstElement();
+            if(child == null) {
+                throw new TrustException("invalidRPT");
+            }
+            if(child.getQName().equals(new QName(ns, RahasConstants.BINARY_SECRET_LN))) {
+                //First check for the binary secret
+                String b64Secret = child.getText();
+                tok.setSecret(Base64.decode(b64Secret));
+            }else if(child.getQName().equals(new QName(ns, WSConstants.ENC_KEY_LN))){
+                //TODO Handle encrypted key
+                throw new UnsupportedOperationException("TODO: Handle encrypted key");
+            } else if(child.getQName().equals(new QName(ns, RahasConstants.COMPUTED_KEY_LN))) {
+                //Handle the computed key
+
+                //Get service entropy
+                OMElement serviceEntrElem = rstr.getFirstChildWithName(new QName(ns, RahasConstants.ENTROPY_LN));
+                if(serviceEntrElem != null && serviceEntrElem.getText() != null && !"".equals(serviceEntrElem.getText().trim())) {
+                    byte[] serviceEntr = Base64.decode(serviceEntrElem.getText());
+                    
+                    //Right now we only use PSHA1 as the computed key algo                    
+                    P_SHA1 p_sha1 = new P_SHA1();
+                    
+                    int length = (this.keySize != -1) ? keySize
+                            : this.algorithmSuite
+                                    .getMaximumSymmetricKeyLength();
+                    try {
+                        secret = p_sha1.createKey(this.requestorEntropy, serviceEntr, 0, length);
+                    } catch (ConversationException e) {
+                        throw new TrustException("keyDerivationError", e);
+                    }
+                } else {
+                    //Service entropy missing
+                    throw new TrustException("serviceEntropyMissing");
+                }
+            }
+            
+        } else {
+            if(this.requestorEntropy != null) {
+                //Use requestor entropy as the key
+                secret = this.requestorEntropy;
+            }
+        }
+        
+        tok.setSecret(secret);
         
         return tok;
         
@@ -215,13 +266,24 @@ public class STSClient {
 
         TrustUtil.createRequestTypeElement(version, rst, requestType);
         TrustUtil.createAppliesToElement(rst, requestType, this.addressingNs);
-        TrustUtil.createLifetimeElement(version, rst, this.ttl);
+        TrustUtil.createLifetimeElement(version, rst, this.ttl * 1000);
         
         //Copy over the elements from the template
         Iterator templateChildren = rstTemplate.getChildElements();
         while (templateChildren.hasNext()) {
             OMNode child = (OMNode) templateChildren.next();
             rst.addChild(child);
+            
+            //Look for the key size element
+            if (child instanceof OMElement
+                    && ((OMElement) child).getQName().equals(
+                            new QName(TrustUtil.getWSTNamespace(version),
+                                    RahasConstants.KEY_SIZE_LN))) {
+                OMElement childElem = (OMElement)child;
+                this.keySize = (childElem.getText() != null && !""
+                        .equals(childElem.getText())) ? 
+                                Integer.parseInt(childElem.getText()) : -1;
+            }
         }
         
         try {
@@ -236,6 +298,7 @@ public class STSClient {
                     
                     //Add the ComputedKey element
                     TrustUtil.createComputedKeyAlgorithm(version, rst, RahasConstants.COMPUTED_KEY_PSHA1);
+                    
                 }
             }
         } catch (Exception e) {

@@ -48,6 +48,7 @@ public class RahasConstants {
     public static final String REQUESTED_SECURITY_TOKEN_LN = "RequestedSecurityToken";
     public final static String BINARY_SECRET_LN = "BinarySecret";
     public final static String COMPUTED_KEY_ALGO_LN = "ComputedKeyAlgorithm";
+    public final static String COMPUTED_KEY_LN = "ComputedKey";
     public final static String REQUESTED_ATTACHED_REFERENCE_LN = "RequestedAttachedReference";
     public final static String REQUESTED_UNATTACHED_REFERENCE_LN = "RequestedUnattachedReference";
     public final static String KEY_SIZE_LN = "KeySize";
