@@ -101,7 +101,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, req.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
+//        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
         return msgContext;
     }
 
@@ -279,6 +279,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             axisConfiguration.addParameter(servletConfigParam);
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
+            // setting ServletContext into configctx
+            configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
+                    servletConfig.getServletContext());
             TransportInDescription transportInDescription = new TransportInDescription(
                     new QName(Constants.TRANSPORT_HTTP));
             transportInDescription.setReceiver(this);
@@ -403,19 +406,19 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (port == null) {
             port = "8080";
         }
-        
-        if(ip == null) {
+
+        if (ip == null) {
             try {
                 ip = HttpUtils.getIpAddress();
             } catch (SocketException e) {
                 throw new AxisFault(e);
             }
         }
-        
+
         return new EndpointReference("http://" + ip + ":" + port + '/' +
-                 configContext.getServiceContextPath() + "/" + serviceName);
+                configContext.getServiceContextPath() + "/" + serviceName);
     }
-    
+
     protected MessageContext createMessageContext(HttpServletRequest req,
                                                   HttpServletResponse resp) throws IOException {
         MessageContext msgContext = new MessageContext();
