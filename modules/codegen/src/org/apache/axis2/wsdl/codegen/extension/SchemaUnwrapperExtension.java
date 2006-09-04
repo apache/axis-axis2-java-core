@@ -1,31 +1,24 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
-import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.AxisFault;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaType;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaAll;
+import org.apache.axis2.wsdl.util.Constants;
+import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
+import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -89,8 +82,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                 if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())){
                     walkSchema(op.getMessage(
-                            WSDLConstants.MESSAGE_LABEL_IN_VALUE),
-                            configuration);
+                            WSDLConstants.MESSAGE_LABEL_IN_VALUE));
                 }
 
             }
@@ -110,7 +102,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
      * &lt; /element &gt;
      */
 
-    public void walkSchema(AxisMessage message,CodeGenConfiguration config)
+    public void walkSchema(AxisMessage message)
             throws CodeGenerationException{
         //nothing to unwrap
         if (message.getSchemaElement()==null){
