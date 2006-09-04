@@ -40,6 +40,8 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
 
     private static final String PARAMETER_ONE = "ParameterOne";
     private static final String PARAMETER_TWO = "ParameterTwo";
+    private static final String PARAMETER_THREE = "ParameterThree";
+    private static final String PARAMETER_FOUR = "ParameterFour";
     private static final String ADD_OPERATION = "Add";
 
     protected void setUp() throws Exception {
@@ -75,6 +77,71 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
 
 
     }
+
+    /**
+     * This refers to the schema-2.xsd which has an AddRequest element which is of AddRequestType.
+     * AddRequestType is a complex type
+     */
+    public void testScenarioTwo() {
+        String schemaLocation = "test-resources/schemas/schema-2.xsd";
+
+        createAndWalkSchema(schemaLocation);
+
+        assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
+
+        Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
+        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+        List partsList = messagePartInformationHolder.getPartsList();
+
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
+        assertTrue(partsList.size() == 2);
+    }
+
+//    /**
+//     * 1. AddRequest is of AddRequestType
+//     * 2. AddRequestType extends from AbstractParameterType
+//     * 3. AbstractParameterType has primitive types only
+//     */
+//    public void testScenarioThree() {
+//        String schemaLocation = "test-resources/schemas/schema-3.xsd";
+//
+//        createAndWalkSchema(schemaLocation);
+//
+//        assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
+//
+//        Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
+//        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+//        List partsList = messagePartInformationHolder.getPartsList();
+//
+//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
+//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
+//        assertTrue(partsList.size() == 2);
+//    }
+//
+//    /**
+//     * 1. AddRequest is of AddRequestType
+//     * 2. AddRequestType extends from AbstractParameterType and it AddRequestType has more stuff defined in a sequence, in
+//     * addition to the extension.
+//     * 3. AbstractParameterType has primitive types only
+//     */
+//    public void testScenarioFour() {
+//        String schemaLocation = "test-resources/schemas/schema-4.xsd";
+//
+//        createAndWalkSchema(schemaLocation);
+//
+//        assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
+//
+//        Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
+//        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+//        List partsList = messagePartInformationHolder.getPartsList();
+//
+//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
+//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
+//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_THREE)));
+//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_FOUR)));
+//        assertTrue(partsList.size() == 4);
+//    }
 
     private void createAndWalkSchema(String schemaLocation) {
         try {

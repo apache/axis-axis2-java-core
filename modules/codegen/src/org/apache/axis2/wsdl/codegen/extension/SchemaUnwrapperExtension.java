@@ -41,14 +41,14 @@ import java.util.List;
  * such as the databinding extension may well depend on the schema being unwrapped
  * previously.
  * For a complete unwrap the following format of the schema is expected
- *   &lt; element &gt;
- *      &lt; complexType &gt;
- *          &lt; sequence &gt;
- *              &lt; element /&gt;
- *          &lt; /sequence &gt;
- *      &lt; /complexType &gt;
+ * &lt; element &gt;
+ * &lt; complexType &gt;
+ * &lt; sequence &gt;
+ * &lt; element /&gt;
+ * &lt; /sequence &gt;
+ * &lt; /complexType &gt;
  * &lt; /element &gt;
- *
+ * <p/>
  * When an unwrapped WSDL is encountered Axis2 generates a wrapper schema
  * and that wrapper schema has the above mentioned format. This unwrapping algorithm
  * will work on a pure doc/lit WSDL if it has the above mentioned format
@@ -57,18 +57,17 @@ import java.util.List;
 public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
     /**
-     *
      * @param configuration
      * @throws CodeGenerationException
      */
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
-        if (!configuration.isParametersWrapped()){
+        if (!configuration.isParametersWrapped()) {
 
             // A check to avoid nasty surprises - Since unwrapping is not
             // supported by all frameworks, we check the framework name to be
             // compatible
             if (!ConfigPropertyFileLoader.getUnwrapSupportedFrameworkNames().
-                    contains(configuration.getDatabindingType())){
+                    contains(configuration.getDatabindingType())) {
                 throw new CodeGenerationException(
                         CodegenMessages.getMessage("extension.unsupportedforunwrapping"));
             }
@@ -76,11 +75,11 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             //walk the schema and find the top level elements
             AxisService axisService = configuration.getAxisService();
 
-            for(Iterator operations = axisService.getOperations();
-                operations.hasNext();){
-                AxisOperation op = (AxisOperation)operations.next();
+            for (Iterator operations = axisService.getOperations();
+                 operations.hasNext();) {
+                AxisOperation op = (AxisOperation) operations.next();
 
-                if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())){
+                if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
                     walkSchema(op.getMessage(
                             WSDLConstants.MESSAGE_LABEL_IN_VALUE));
                 }
@@ -94,134 +93,172 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
      * For a successful unwrapping the element should have the
      * following structure
      * &lt; element &gt;
-     *      &lt; complexType &gt;
-     *          &lt; sequence &gt;
-     *              &lt; element /&gt;
-     *          &lt; /sequence &gt;
-     *      &lt; /complexType &gt;
+     * &lt; complexType &gt;
+     * &lt; sequence &gt;
+     * &lt; element /&gt;
+     * &lt; /sequence &gt;
+     * &lt; /complexType &gt;
      * &lt; /element &gt;
      */
 
     public void walkSchema(AxisMessage message)
-            throws CodeGenerationException{
+            throws CodeGenerationException {
         //nothing to unwrap
-        if (message.getSchemaElement()==null){
+        if (message.getSchemaElement() == null) {
             return;
         }
 
-        XmlSchemaType schemaType = message.getSchemaElement().getSchemaType();
-        if (schemaType.getQName()!=null){
-            throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                    "named type","anonymous type"));
-        }
 
+        List partNameList = new LinkedList();
 
-        //create a type mapper
-        if (schemaType instanceof XmlSchemaComplexType){
-            XmlSchemaComplexType cmplxType = (XmlSchemaComplexType)schemaType;
-            XmlSchemaParticle particle = cmplxType.getParticle();
-            if (particle instanceof XmlSchemaSequence){
-                // get the name of the operation name and namespace,
-                // part name and hang them somewhere ? The ideal place
-                // would be the property bag in the codegen config!
-                QName opName = ((AxisOperation)message.getParent()).getName();
-                List partNameList = new LinkedList();
+        XmlSchemaElement schemaElement = message.getSchemaElement();
+        XmlSchemaType schemaType = schemaElement.getSchemaType();
 
-                XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
-                XmlSchemaObjectCollection items = sequence.getItems();
-                for (Iterator i = items.getIterator();i.hasNext();){
-                    Object item = i.next();
-                    // get each and every element in the sequence and
-                    // traverse through them
-                    if (item instanceof XmlSchemaElement){
-                        //add the element name to the part name list
-                        String partName = ((XmlSchemaElement) item).getName();
+        // this type should be a complex type or it should have a name which refer to another type definition
 
-                        //  part names are not unique across messages. Hence
-                        //  we need some way of making the part name a unique
-                        //  one (due to the fact that the type mapper
-                        //  is a global list of types).
-                        //  The seemingly best way to do that is to
-                        //  specify a namespace for the part QName reference which
-                        //  is stored in the  list. This part qname is
-                        //  temporary and should not be used with it's
-                        //  namespace URI (which happened to be the operation name)
-                        //  with _input attached to it
-
-
-                        partNameList.add(
-                                WSDLUtil.getPartQName(opName.getLocalPart(),
-                                        WSDLConstants.INPUT_PART_QNAME_SUFFIX,
-                                        partName));
-
-                        // if the particle contains anything other than
-                        // a XMLSchemaElement then we are not in a position
-                        // to unwrap it
-                    }else{
-                        throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                                "unknown type","Element"));
-                    }
-                }
-
-                try {
-                    //set in the axis message that the unwrapping was success
-                    message.addParameter(getParameter(
-                            Constants.UNWRAPPED_KEY,
-                            Boolean.TRUE));
-
-                    // attach the opName and the parts name list into the
-                    // axis message by using the holder
-                    MessagePartInformationHolder infoHolder = new MessagePartInformationHolder();
-                    infoHolder.setOperationName(opName);
-                    infoHolder.setPartsList(partNameList);
-
-                    //attach it to the parameters
-                    message.addParameter(
-                            getParameter(Constants.UNWRAPPED_DETAILS,
-                                    infoHolder));
-
-                } catch (AxisFault axisFault) {
-                    throw new CodeGenerationException(axisFault);
-                }
-
-                //we do not know how to deal with other particles
-                //such as xs:all or xs:choice. Usually occurs when
-                //passed with the user built WSDL where the style
-                //is document.
-            }else if (particle instanceof XmlSchemaChoice){
-                throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                        "choice","sequence"));
-
-            }else if (particle instanceof XmlSchemaAll){
-                throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                        "all","sequence"));
-            }else{
-                throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                        "unknown","sequence"));
+        // first let's handle this being a complex type
+        if (schemaType instanceof XmlSchemaComplexType) {
+            XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
+            if (cmplxType.getContentModel() == null) {
+                processComplexType(cmplxType.getParticle(), message, partNameList);
+            } else {
+                // now lets handle case with extensions
+                processComplexContentModel(cmplxType, message, partNameList);
             }
-        }else{
+
+
+        } else {
             //we've no idea how to unwrap a non complexType!!!!!!
             throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                    "unknown","complexType"));
+                    "unknown", "complexType"));
+        }
 
+        try {
+            //set in the axis message that the unwrapping was success
+            message.addParameter(getParameter(
+                    Constants.UNWRAPPED_KEY,
+                    Boolean.TRUE));
+
+            // attach the opName and the parts name list into the
+            // axis message by using the holder
+            MessagePartInformationHolder infoHolder = new MessagePartInformationHolder();
+            infoHolder.setOperationName(((AxisOperation) message.getParent()).getName());
+            infoHolder.setPartsList(partNameList);
+
+            //attach it to the parameters
+            message.addParameter(
+                    getParameter(Constants.UNWRAPPED_DETAILS,
+                            infoHolder));
+
+        } catch (AxisFault axisFault) {
+            throw new CodeGenerationException(axisFault);
         }
 
     }
 
+    private void processComplexContentModel(XmlSchemaComplexType cmplxType, AxisMessage message, List partNameList) throws CodeGenerationException {
+        XmlSchemaContentModel contentModel = cmplxType.getContentModel();
+        if (contentModel instanceof XmlSchemaComplexContent) {
+            XmlSchemaComplexContent xmlSchemaComplexContent = (XmlSchemaComplexContent) contentModel;
+            XmlSchemaContent content = xmlSchemaComplexContent.getContent();
+            if (content instanceof XmlSchemaComplexContentExtension) {
+                XmlSchemaComplexContentExtension schemaExtension = (XmlSchemaComplexContentExtension) content;
+
+                // process particles inside this extension, if any
+                processComplexType(schemaExtension.getParticle(), message, partNameList);
+
+//                AxisService axisService = (AxisService) message.getParent().getParent();
+//                XmlSchemaElement schemaElement = axisService.getSchemaElement(schemaExtension.getBaseTypeName());
+//                if (schemaElement != null) {
+//                    XmlSchemaType schemaType = schemaElement.getSchemaType();
+//
+//                    if (schemaType instanceof XmlSchemaComplexType) {
+//                        XmlSchemaComplexType xmlSchemaComplexType = (XmlSchemaComplexType) schemaType;
+//                        processComplexType(xmlSchemaComplexType, message, partNameList);
+//
+//                    } else {
+//                        //we've no idea how to unwrap a non complexType!!!!!!
+//                        throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+//                                "unknown", "complexType"));
+//                    }
+//                }
+            }
+        }
+    }
+
+    private void processComplexType(XmlSchemaParticle schemaParticle, AxisMessage message, List partNameList) throws CodeGenerationException {
+        if (schemaParticle instanceof XmlSchemaSequence) {
+            // get the name of the operation name and namespace,
+            // part name and hang them somewhere ? The ideal place
+            // would be the property bag in the codegen config!
+            QName opName = ((AxisOperation) message.getParent()).getName();
+
+            XmlSchemaSequence sequence = (XmlSchemaSequence) schemaParticle;
+            XmlSchemaObjectCollection items = sequence.getItems();
+            for (Iterator i = items.getIterator(); i.hasNext();) {
+                Object item = i.next();
+                // get each and every element in the sequence and
+                // traverse through them
+                if (item instanceof XmlSchemaElement) {
+                    //add the element name to the part name list
+                    String partName = ((XmlSchemaElement) item).getName();
+
+                    //  part names are not unique across messages. Hence
+                    //  we need some way of making the part name a unique
+                    //  one (due to the fact that the type mapper
+                    //  is a global list of types).
+                    //  The seemingly best way to do that is to
+                    //  specify a namespace for the part QName reference which
+                    //  is stored in the  list. This part qname is
+                    //  temporary and should not be used with it's
+                    //  namespace URI (which happened to be the operation name)
+                    //  with _input attached to it
+
+
+                    partNameList.add(
+                            WSDLUtil.getPartQName(opName.getLocalPart(),
+                                    WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                    partName));
+
+                    // if the particle contains anything other than
+                    // a XMLSchemaElement then we are not in a position
+                    // to unwrap it
+                } else {
+                    throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                            "unknown type", "Element"));
+                }
+            }
+
+            //we do not know how to deal with other particles
+            //such as xs:all or xs:choice. Usually occurs when
+            //passed with the user built WSDL where the style
+            //is document.
+        } else if (schemaParticle instanceof XmlSchemaChoice) {
+            throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                    "choice", "sequence"));
+
+        } else if (schemaParticle instanceof XmlSchemaAll) {
+            throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                    "all", "sequence"));
+        } else {
+            throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                    "unknown", "sequence"));
+        }
+    }
+
     /**
      * Generate a parametes object
+     *
      * @param key
      * @param value
-     * @return
      */
-    private Parameter getParameter(String key,Object value){
+    private Parameter getParameter(String key, Object value) {
         Parameter myParameter = new Parameter();
         myParameter.setName(key);
         myParameter.setValue(value);
 
         return myParameter;
     }
-
 
 
 }
