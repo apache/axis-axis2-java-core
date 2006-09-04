@@ -44,7 +44,7 @@ public class SimpleTokenStoreTest extends TestCase {
     public void testGettokenIdentifiers() {
         SimpleTokenStore store = new SimpleTokenStore();
         try {
-            String[] ids = store.gettokenIdentifiers();
+            String[] ids = store.getTokenIdentifiers();
             assertNull("There should not be any token ids at this point", ids);
         } catch (TrustException e) {
             fail(e.getMessage());
@@ -53,7 +53,7 @@ public class SimpleTokenStoreTest extends TestCase {
             store.add(new Token("id-1"));
             store.add(new Token("id-2"));
             store.add(new Token("id-3"));
-            String[] ids = store.gettokenIdentifiers();
+            String[] ids = store.getTokenIdentifiers();
             assertEquals("Incorrect number fo token ids", 3, ids.length);
         } catch (TrustException e) {
             fail(e.getMessage());

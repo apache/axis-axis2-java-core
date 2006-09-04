@@ -56,7 +56,7 @@ public class SimpleTokenStore implements TokenStorage {
         }
     }
 
-    public String[] gettokenIdentifiers() throws TrustException {
+    public String[] getTokenIdentifiers() throws TrustException {
         if (this.tokens.size() == 0) {
             return null;
         }

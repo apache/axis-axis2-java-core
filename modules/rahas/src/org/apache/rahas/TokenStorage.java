@@ -45,7 +45,7 @@ public interface TokenStorage {
      * @return
      * @throws TrustException
      */
-    public String[] gettokenIdentifiers() throws TrustException;
+    public String[] getTokenIdentifiers() throws TrustException;
 
     /**
      * Return the list of <code>EXPIRED</code> tokens.
