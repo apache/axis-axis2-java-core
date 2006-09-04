@@ -23,6 +23,7 @@
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.io.InputStream" %>
 <%@ page import="java.io.StringWriter" %>
+<%@ page import="org.apache.axis2.deployment.WarBasedAxisConfigurator"%>
 
 <%
     /*
@@ -50,17 +51,7 @@
 <body>
 <jsp:include page="include/header.inc"/>
 <jsp:include page="include/link-footer.jsp"/>
-<%port = request.getServerPort();%>
-<%
-    // since this one is an internal request we do not use public frontendHostUrl
-    // for it
-    IP = request.getRequestURL().toString();
-    int lastindex = IP.lastIndexOf('/');
-    IP = IP.substring(0, lastindex);
-    ///axis2/axis2-web/services/version
-    IP = IP.replaceAll("axis2-web", "");
-    targetEPR = new EndpointReference(IP + AxisServlet.SERVICE_PATH + "/version");
-%>
+<%IP = request.getRequestURL().toString();%>
 <%!
     /*
     * Happiness tests for axis2. These look at the classpath and warn if things
@@ -68,9 +59,7 @@
     * but here we want to validate JSP compilation too, and have a drop-in
     * page for easy re-use
     */
-    int port = 0;
     String IP;
-    EndpointReference targetEPR;
 
     /**
      * Get a string providing install information.
@@ -347,10 +336,18 @@
 
     public boolean inVokeTheService() {
         try {
+            // since this one is an internal request we do not use public frontendHostUrl
+            // for it
+            int lastindex = IP.lastIndexOf('/');
+            IP = IP.substring(0, lastindex);
+            ///axis2/axis2-web/services/version
+            IP = IP.replaceAll("axis2-web", "");
+            
             OMElement payload = createEnvelope();
             ConfigurationContext configctx =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
             ServiceClient client = new ServiceClient(configctx, null);
+            EndpointReference targetEPR = new EndpointReference(IP + configctx.getServicePath() + "/version");
             Options options = new Options();
             client.setOptions(options);
             options.setTo(targetEPR);

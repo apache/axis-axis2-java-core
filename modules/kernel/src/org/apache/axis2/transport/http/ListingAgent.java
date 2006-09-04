@@ -44,11 +44,9 @@ public class ListingAgent extends AbstractAgent {
     private static final String LIST_FAULTY_SERVICES_JSP_NAME = "listFaultyService.jsp";
 
     public static final String RUNNING_PORT = "RUNNING_PORT";
-    private String servicePath;
 
     public ListingAgent(ConfigurationContext aConfigContext) {
         super(aConfigContext);
-        servicePath = aConfigContext.getServiceContextPath();
     }
 
     private void addTransportListner(String schema, int port) {
@@ -58,7 +56,7 @@ public class ListingAgent extends AbstractAgent {
                             new QName(schema));
             if (trsIn == null) {
                 trsIn = new TransportInDescription(new QName(schema));
-                trsIn.setReceiver(new HTTPSTListener(port, schema));
+                trsIn.setReceiver(new HTTPSListener(port, schema));
                 configContext.getListenerManager().addListener(trsIn, true);
             }
         } catch (AxisFault axisFault) {
@@ -147,7 +145,7 @@ public class ListingAgent extends AbstractAgent {
                             ip = ip.substring(0, seperatorIndex);
                         }
                     }
-                    ((AxisService) serviceObj).printWSDL2(out, ip, servicePath);
+                    ((AxisService) serviceObj).printWSDL2(out, ip, configContext.getServiceContextPath());
                     out.flush();
                     out.close();
                     return;
@@ -169,7 +167,7 @@ public class ListingAgent extends AbstractAgent {
                             ip = ip.substring(0, seperatorIndex);
                         }
                     }
-                    ((AxisService) serviceObj).printWSDL(out, ip, servicePath);
+                    ((AxisService) serviceObj).printWSDL(out, ip, configContext.getServiceContextPath());
                     out.flush();
                     out.close();
                     return;
@@ -229,9 +227,8 @@ public class ListingAgent extends AbstractAgent {
     protected void processListServices(HttpServletRequest req,
                                        HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
 
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        populateSessionInformation(req);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
                 configContext.getAxisConfiguration().getFaultyServices());
 
@@ -242,20 +239,20 @@ public class ListingAgent extends AbstractAgent {
      * This class is just to add tarnsport at the runtime if user send requet using
      * diffrent schemes , simly to handle http/https seperetaly
      */
-    private class HTTPSTListener implements TransportListener {
+    private class HTTPSListener implements TransportListener {
 
         private int port;
         private String schema;
-        private String contextPath;
+        private ConfigurationContext axisConf;
 
-        public HTTPSTListener(int port, String schema) {
+        public HTTPSListener(int port, String schema) {
             this.port = port;
             this.schema = schema;
         }
 
         public void init(ConfigurationContext axisConf,
                          TransportInDescription transprtIn) throws AxisFault {
-            contextPath = axisConf.getServiceContextPath();
+            this.axisConf = axisConf;
         }
 
         public void start() throws AxisFault {
@@ -265,7 +262,7 @@ public class ListingAgent extends AbstractAgent {
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-            return new EndpointReference(schema + "://" + ip + ":" + port + contextPath + "/" + serviceName);
+            return new EndpointReference(schema + "://" + ip + ":" + port + "/" + axisConf.getServiceContextPath() + "/" + serviceName);
         }
     }
 

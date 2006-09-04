@@ -57,7 +57,6 @@ public class SimpleHTTPServer implements TransportListener {
     public static int DEFAULT_PORT = 8080;
 
     private String hostAddress = null;
-    private String contextPath;
 
     protected ConfigurationContext configurationContext;
     protected HttpFactory httpFactory;
@@ -82,7 +81,6 @@ public class SimpleHTTPServer implements TransportListener {
         TransportInDescription httpDescription = new TransportInDescription(new QName(Constants.TRANSPORT_HTTP));
         httpDescription.setReceiver(this);
         httpFactory.getListenerManager().addListener(httpDescription, true);
-        contextPath = configurationContext.getServiceContextPath();
     }
 
     /**
@@ -109,8 +107,6 @@ public class SimpleHTTPServer implements TransportListener {
                 hostAddress = ((String) param.getValue()).trim();
             else
                 hostAddress = httpFactory.getHostAddress();
-
-            contextPath = configurationContext.getServiceContextPath();
         } catch (Exception e1) {
             throw new AxisFault(e1);
         }
@@ -233,7 +229,7 @@ public class SimpleHTTPServer implements TransportListener {
         //if host address is present
         if (hostAddress != null) {
             if (embedded != null) {
-                return new EndpointReference(hostAddress + contextPath + "/" + serviceName);
+                return new EndpointReference(hostAddress + "/" + configurationContext.getServiceContextPath() + "/" + serviceName);
             } else {
                 throw new AxisFault("Unable to generate EPR for the transport : http");
             }
@@ -255,7 +251,7 @@ public class SimpleHTTPServer implements TransportListener {
         if (embedded != null) {
             return new EndpointReference("http://" + localAddress + ":" +
                     (embedded.getPort())
-                    + contextPath + "/" + serviceName);
+                    + "/" + configurationContext.getServiceContextPath() + "/" + serviceName);
         } else {
             throw new AxisFault("Unable to generate EPR for the transport : http");
         }

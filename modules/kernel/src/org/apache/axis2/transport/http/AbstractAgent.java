@@ -146,4 +146,10 @@ public class AbstractAgent {
       }
     }
   }
+
+    protected void populateSessionInformation(HttpServletRequest req) {
+        HashMap services = configContext.getAxisConfiguration().getServices();
+        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
+    }
 }

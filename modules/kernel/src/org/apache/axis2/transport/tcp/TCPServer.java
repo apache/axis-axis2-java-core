@@ -48,7 +48,7 @@ public class TCPServer implements Runnable, TransportListener {
     private ConfigurationContext configContext;
     private ServerSocket serversocket;
     private String hostAddress = null;
-    private String conetxtPath;
+    private String contextPath;
 
     public TCPServer() {
     }
@@ -67,7 +67,7 @@ public class TCPServer implements Runnable, TransportListener {
                 listenerManager.init(configContext);
             }
             listenerManager.addListener(trsIn, true);
-            conetxtPath = configContext.getServiceContextPath();
+            contextPath = configContext.getServiceContextPath();
 
         } catch (IOException e1) {
             throw new AxisFault(e1);
@@ -91,7 +91,7 @@ public class TCPServer implements Runnable, TransportListener {
         if (param != null) {
             hostAddress = ((String) param.getValue()).trim();
         }
-        conetxtPath = configContext.getServiceContextPath();
+        contextPath = configContext.getServiceContextPath();
     }
 
     public static void main(String[] args) throws AxisFault, NumberFormatException {
@@ -188,7 +188,7 @@ public class TCPServer implements Runnable, TransportListener {
         if (hostAddress != null) {
             if (serversocket != null) {
                 // todo this has to fix
-                return new EndpointReference(hostAddress + conetxtPath + serviceName);
+                return new EndpointReference(hostAddress + "/" + contextPath + serviceName);
             } else {
                 log.debug("Unable to generate EPR for the transport tcp");
                 return null;
@@ -204,7 +204,7 @@ public class TCPServer implements Runnable, TransportListener {
         if (serversocket != null) {
             // todo this has to fix
             return new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
-                    + conetxtPath + "/" + serviceName);
+                    + "/" + contextPath + "/" + serviceName);
         } else {
             log.debug("Unable to generate EPR for the transport tcp");
             return null;

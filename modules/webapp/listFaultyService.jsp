@@ -15,7 +15,7 @@
   <jsp:include page="include/header.inc"></jsp:include>
     <jsp:include page="include/link-footer.jsp"></jsp:include>
   <%
-        String prifix = request.getAttribute("frontendHostUrl") + AxisServlet.SERVICE_PATH +"services/";
+        String prifix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) +"services/";
         String restprefix = request.getAttribute("frontendHostUrl") + "rest/";
     %>
         <%

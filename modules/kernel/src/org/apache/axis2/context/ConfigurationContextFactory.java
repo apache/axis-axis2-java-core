@@ -122,7 +122,7 @@ public class ConfigurationContextFactory {
         if (servicePath != null) {
             String spath = ((String) servicePath.getValue()).trim();
             if (spath.length() > 0) {
-                configContext.setServiceContextPath(spath);
+                configContext.setServicePath(spath);
             }
         }
     }

@@ -16,6 +16,7 @@
 package org.apache.axis2.transport.http;
 
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.Constants;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -38,6 +39,7 @@ public class AxisAdminServlet extends AxisServlet {
   protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
         try {
+            req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());
             agent.handle(req, resp);
         } catch (Exception e) {
             throw new ServletException(e);

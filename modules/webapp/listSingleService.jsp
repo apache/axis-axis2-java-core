@@ -11,7 +11,7 @@
 <jsp:include page="include/adminheader.jsp"/>
 <h1>List Single service</h1>
 <%
-    String prefix = request.getAttribute("frontendHostUrl") + AxisServlet.SERVICE_PATH + "/";
+    String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
     String restPrefix = request.getAttribute("frontendHostUrl") + "rest/";
 %>
 <%

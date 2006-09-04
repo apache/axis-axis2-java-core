@@ -36,7 +36,7 @@
 <jsp:include page="include/adminheader.jsp"/>
 
 <h1>Available Services</h1>
-<% String prefix = request.getAttribute("frontendHostUrl") + AxisServlet.SERVICE_PATH + "/";
+<% String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
     String restPrefix = request.getAttribute("frontendHostUrl") + "rest/";
 %>
 <%

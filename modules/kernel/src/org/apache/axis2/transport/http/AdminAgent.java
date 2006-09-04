@@ -312,10 +312,7 @@ public class AdminAgent extends AbstractAgent {
         HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
-
-        HashMap services = configContext.getAxisConfiguration().getServices();
-
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        populateSessionInformation(req);
 
         String moduleName = req.getParameter("modules");
 
@@ -383,18 +380,14 @@ public class AdminAgent extends AbstractAgent {
 
     protected void processSelectServiceParaEdit(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "SERVICE_PARAMETER");
         renderView(SELECT_SERVICE_JSP_NAME, req, res);
     }
 
     protected void processListOperation(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "MODULE");
 
         renderView(SELECT_SERVICE_JSP_NAME, req, res);
@@ -410,13 +403,8 @@ public class AdminAgent extends AbstractAgent {
                     service.setActive(true);
                 }
             }
-            HashMap services = configContext.getAxisConfiguration().getServices();
-            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
-        } else {
-            HashMap services = configContext.getAxisConfiguration().getServices();
-            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
         }
-
+        populateSessionInformation(req);
         renderView(ACTIVATE_SERVICE_JSP_NAME, req, res);
     }
 
@@ -429,12 +417,10 @@ public class AdminAgent extends AbstractAgent {
                     AxisService service = configContext.getAxisConfiguration().getService(serviceName);
                     service.setActive(false);
                 }
-                HashMap services = configContext.getAxisConfiguration().getServices();
-                req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+                populateSessionInformation(req);
             }
         } else {
-            HashMap services = configContext.getAxisConfiguration().getServices();
-            req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+            populateSessionInformation(req);
         }
 
         renderView(IN_ACTIVATE_SERVICE_JSP_NAME, req, res);
@@ -471,9 +457,7 @@ public class AdminAgent extends AbstractAgent {
     protected void processListServiceGroups(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         Iterator serviceGroups = configContext.getAxisConfiguration().getServiceGroups();
-        HashMap services = configContext.getAxisConfiguration().getServices();
-
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SERVICE_GROUP_MAP, serviceGroups);
 
         renderView(LIST_SERVICE_GROUP_JSP, req, res);
@@ -481,8 +465,7 @@ public class AdminAgent extends AbstractAgent {
 
     protected void processListService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        populateSessionInformation(req);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
                 configContext.getAxisConfiguration().getFaultyServices());
 
@@ -525,9 +508,7 @@ public class AdminAgent extends AbstractAgent {
     }
 
     protected void processSelectService(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        HashMap services = configContext.getAxisConfiguration().getServices();
-
-        req.getSession().setAttribute(Constants.SERVICE_MAP, services);
+        populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
 
         renderView(SELECT_SERVICE_JSP_NAME, req, res);

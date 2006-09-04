@@ -19,7 +19,7 @@
 </jsp:include>
 <h1>Available services</h1>
 <%
-  String prifix = request.getAttribute("frontendHostUrl") + AxisServlet.SERVICE_PATH +"/";
+  String prifix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) +"/";
 %>
 <%
   HashMap serviceMap = (HashMap) request.getSession().getAttribute(Constants.SERVICE_MAP);

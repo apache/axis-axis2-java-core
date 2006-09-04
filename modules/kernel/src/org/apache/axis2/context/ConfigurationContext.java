@@ -60,8 +60,8 @@ public class ConfigurationContext extends AbstractContext {
     private long serviceGroupContextTimoutInterval = 30 * 1000;
 
     //To specify url mapping for services
-    private String contextRoot = "/axis2";
-    private String serviceContextPath = contextRoot + "/services";
+    private String contextRoot = "axis2";
+    private String servicePath = "services";
     //To have your own context path
 
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
@@ -380,22 +380,31 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     public String getServiceContextPath() {
-        return serviceContextPath;
+        String path =  getContextRoot().trim() + "/";
+        if(servicePath == null || servicePath.trim().length() == 0){
+            throw new IllegalArgumentException("service path cannot be null or empty");
+        } else {
+            path += servicePath.trim();
+        }
+        return path;
     }
 
-    public void setServiceContextPath(String serviceContextPath) {
-        if (serviceContextPath == null || "".equals(serviceContextPath)) {
+    public String getServicePath() {
+        if(servicePath == null || servicePath.trim().length() == 0){
             throw new IllegalArgumentException("service path cannot be null or empty");
         }
-        if (contextRoot != null && contextRoot.trim().length() != 0 && !contextRoot.equals("/")) {
-            this.serviceContextPath = contextRoot + "/" + serviceContextPath;
-        } else {
-            this.serviceContextPath = "/" + serviceContextPath;
-        }
+        return servicePath.trim();
     }
 
     public String getContextRoot() {
-        return this.contextRoot;
+        if (contextRoot == null || contextRoot.trim().length() == 0) {
+            throw new IllegalArgumentException("context root cannot be null or empty");
+        }
+        return this.contextRoot.trim();
+    }
+
+    public void setServicePath(String servicePath) {
+        this.servicePath = servicePath;
     }
 
     public void setContextRoot(String contextRoot) {

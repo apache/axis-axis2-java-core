@@ -68,8 +68,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected transient ServletConfig servletConfig;
 
     private transient ListingAgent agent;
-    public static String SERVICE_PATH;
-    private String contextPath;
+    private String contextRoot;
 
     protected boolean enableRESTInAxis2MainServlet = false;
     protected boolean disableREST = false;
@@ -286,7 +285,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             listenerManager.addListener(transportInDescription, true);
             ListenerManager.defaultConfigurationContext = configContext;
             agent = new ListingAgent(configContext);
-            SERVICE_PATH = configContext.getServiceContextPath();
 
             initParams();
 
@@ -313,6 +311,18 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (parameter != null) {
             disableSeperateEndpointForREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
         }
+
+        // HACK ALERT!!! - Is there a better way to get the webapp name?
+        try {
+            String[] array = servletConfig.getServletContext().getResource("/").toString().split("/");
+            contextRoot = array[array.length - 1];
+            configContext.setContextRoot(contextRoot);
+        } catch (Exception e) {
+        }
+        if (contextRoot == null) {
+            contextRoot = "axis2";
+        }
+        this.configContext.setContextRoot(contextRoot);
     }
 
     public void init() throws ServletException {
@@ -402,22 +412,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
         }
         
-        if (contextPath == null) {
-            // HACK ALERT!!! - Is there a better way to get the webapp name?
-            try {
-                String[] array = servletConfig.getServletContext().getResource("/").toString().split("/");
-                contextPath = array[array.length - 1];
-                configContext.setContextRoot(contextPath);
-            } catch (Exception e) {
-            }
-            if (contextPath == null) {
-                contextPath = "axis2";
-            }
-        }
         return new EndpointReference("http://" + ip + ":" + port + '/' +
-                contextPath + "/" + SERVICE_PATH + "/" + serviceName);
+                 configContext.getServiceContextPath() + "/" + serviceName);
     }
-
+    
     protected MessageContext createMessageContext(HttpServletRequest req,
                                                   HttpServletResponse resp) throws IOException {
         MessageContext msgContext = new MessageContext();
@@ -440,7 +438,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         String requestURI = req.getRequestURI();
         if (requestURI.indexOf("rest") != -1) {
-            requestURI = requestURI.replaceFirst("rest", SERVICE_PATH);
+            requestURI = requestURI.replaceFirst("rest", configContext.getServiceContextPath());
         }
         msgContext.setTo(new EndpointReference(requestURI));
         msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));

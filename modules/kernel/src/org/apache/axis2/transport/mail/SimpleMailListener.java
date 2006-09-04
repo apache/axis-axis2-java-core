@@ -64,7 +64,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
     private String port;
     private String replyTo;
     private String user;
-    private String servicePath;
 
     public SimpleMailListener() {
     }
@@ -103,7 +102,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
             listenerManager.init(configurationContext);
         }
         listenerManager.addListener(trsIn, true);
-        servicePath = configurationContext.getServiceContextPath();
     }
 
     /*
@@ -118,7 +116,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
         password = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PASSWORD));
         port = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PORT));
         replyTo = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.RAPLY_TO));
-        servicePath = configurationContext.getServiceContextPath();
         if ((user == null) || (host == null) || (password == null) || (port == null)) {
             if (this.user == null) {
                 throw new AxisFault(Messages.getMessage("canNotBeNull", "User"));
@@ -281,7 +278,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "/" + servicePath + "/" + serviceName);//Constants.TRANSPORT_MAIL + 
+        return new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "/" + configurationContext.getServiceContextPath() + "/" + serviceName);//Constants.TRANSPORT_MAIL + 
     }
 
     public void setDoThreads(boolean value) {
