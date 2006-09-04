@@ -101,7 +101,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, req.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
         return msgContext;
     }
 

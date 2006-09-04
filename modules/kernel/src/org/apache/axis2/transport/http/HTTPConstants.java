@@ -155,7 +155,6 @@ public class HTTPConstants {
 
     /**
      * Field MC_HTTP_SERVLETCONTEXT
-     * @deprecated
      */
     public static String MC_HTTP_SERVLETCONTEXT = "transport.http.servletContext";
 
