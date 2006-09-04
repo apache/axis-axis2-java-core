@@ -380,7 +380,11 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     public String getServiceContextPath() {
-        String path =  getContextRoot().trim() + "/";
+        String ctxRoot = getContextRoot().trim();
+        String path = "/";
+        if(!ctxRoot.equals("/")){
+           path = ctxRoot + "/";
+        }
         if(servicePath == null || servicePath.trim().length() == 0){
             throw new IllegalArgumentException("service path cannot be null or empty");
         } else {
