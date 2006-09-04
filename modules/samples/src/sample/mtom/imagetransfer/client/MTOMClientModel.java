@@ -16,8 +16,12 @@
 
 package sample.mtom.imagetransfer.client;
 
-import org.apache.axiom.attachments.utils.ImageDataSource;
-import org.apache.axiom.attachments.utils.ImageIO;
+import java.io.File;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -28,12 +32,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
 
 
 public class MTOMClientModel {
@@ -56,12 +54,8 @@ public class MTOMClientModel {
 
         OMElement data = fac.createOMElement("mtomSample", omNs);
         OMElement image = fac.createOMElement("image", omNs);
-        Image expectedImage;
-        expectedImage = new ImageIO()
-                .loadImage(new FileInputStream(inputFile));
-
-        ImageDataSource dataSource = new ImageDataSource("test.jpg",
-                expectedImage);
+  
+        FileDataSource dataSource = new FileDataSource(inputFile);
         expectedDH = new DataHandler(dataSource);
         OMText textData = fac.createOMText(expectedDH, true);
         image.addChild(textData);

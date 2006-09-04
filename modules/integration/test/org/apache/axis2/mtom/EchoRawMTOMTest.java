@@ -16,11 +16,18 @@
 
 package org.apache.axis2.mtom;
 
+import java.awt.Image;
+import java.io.InputStream;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.imageio.ImageIO;
+import javax.xml.namespace.QName;
+
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.framework.Test;
-import org.apache.axiom.attachments.utils.ImageDataSource;
-import org.apache.axiom.attachments.utils.ImageIO;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -46,12 +53,6 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-
-import java.awt.*;
-import java.io.InputStream;
 
 public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestConstants {
 
@@ -94,13 +95,8 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         OMElement data = fac.createOMElement("data", omNs);
-        Image expectedImage;
-        expectedImage =
-                new ImageIO()
-                        .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
-        ImageDataSource dataSource = new ImageDataSource("test.jpg",
-                expectedImage);
-        expectedDH = new DataHandler(dataSource);
+        FileDataSource fileDataSource = new FileDataSource("src/org/apache/axis2/mtom/test.jpg");
+        expectedDH = new DataHandler(fileDataSource);
         expectedTextData = new OMTextImpl(expectedDH, true, fac);
         data.addChild(expectedTextData);
         rpcWrapEle.addChild(data);
@@ -176,7 +172,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         // Save the image
         DataHandler actualDH;
         actualDH = (DataHandler) binaryNode.getDataHandler();
-        new ImageIO().loadImage(actualDH.getDataSource()
+       ImageIO.read(actualDH.getDataSource()
                 .getInputStream());
     }
     

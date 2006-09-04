@@ -16,19 +16,23 @@
 
 package sample.mtom.imagetransfer.service;
 
-import org.apache.axiom.attachments.utils.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
+
+import javax.activation.DataHandler;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axis2.AxisFault;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import java.awt.*;
-import java.io.FileOutputStream;
-import java.util.Iterator;
 
 public class MTOMService {
 
@@ -58,10 +62,8 @@ public class MTOMService {
         //Extracting the data and saving
         DataHandler actualDH;
         actualDH = (DataHandler) binaryNode.getDataHandler();
-        Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
-                .getInputStream());
-        FileOutputStream imageOutStream = new FileOutputStream(fileName);
-        new ImageIO().saveImage("image/jpeg", actualObject, imageOutStream);
+        BufferedImage bufferedImage = ImageIO.read(actualDH.getDataSource().getInputStream());
+        this.saveImage("image/jpeg",bufferedImage, new FileOutputStream(fileName) );
         //setting response
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace ns = fac.createOMNamespace("urn://fakenamespace", "ns");
@@ -69,4 +71,28 @@ public class MTOMService {
         ele.setText("Image Saved");
         return ele;
     }
+    
+	/**
+     * Saves an image.
+     *
+     * @param mimeType the mime-type of the format to save the image
+     * @param image    the image to save
+     * @param os       the stream to write to
+     * @throws Exception if an error prevents image encoding
+     */
+    private void saveImage(String mimeType, BufferedImage image, OutputStream os)
+            throws Exception {
+
+        ImageWriter writer = null;
+        Iterator iter = javax.imageio.ImageIO.getImageWritersByMIMEType(mimeType);
+        if (iter.hasNext()) {
+            writer = (ImageWriter) iter.next();
+        }
+        ImageOutputStream ios = javax.imageio.ImageIO.createImageOutputStream(os);
+        writer.setOutput(ios);
+        
+        writer.write(new IIOImage(image, null, null));
+        ios.flush();
+        writer.dispose();
+    } // saveImage
 }

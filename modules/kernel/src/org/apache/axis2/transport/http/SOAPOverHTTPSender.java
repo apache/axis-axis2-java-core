@@ -18,6 +18,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.MIMEOutputUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -37,8 +38,10 @@ import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.zip.GZIPOutputStream;
 
 public class SOAPOverHTTPSender extends AbstractHTTPSender {
@@ -77,7 +80,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         } else {
         }
-        //setting the coolie in the out path
+        //setting the cookie in the out path
         Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
         if (cookieString != null) {
             StringBuffer buffer = new StringBuffer();
@@ -142,6 +145,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
     public class AxisSOAPRequestEntity implements RequestEntity {
         private boolean doingMTOM = false;
+        private boolean doingSWA = false;
         private byte[] bytes;
         private String charSetEnc;
         private boolean chunked;
@@ -176,11 +180,16 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
 
                 if (!doingMTOM) {
+                	// why are we creating a new OMOutputFormat
                     OMOutputFormat format2 = new OMOutputFormat();
-
-                    format2.setCharSetEncoding(charSetEnc);
-                    element.serializeAndConsume(bytesOut, format2);
-
+					format2.setCharSetEncoding(charSetEnc);
+					if (doingSWA) {
+			            StringWriter bufferedSOAPBody = new StringWriter();
+			            element.serializeAndConsume(bufferedSOAPBody,format2);
+						MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,bytesOut,new HashMap(), format2);
+					} else {
+						element.serializeAndConsume(bytesOut, format2);
+					}
                     return bytesOut.toByteArray();
                 } else {
                     format.setCharSetEncoding(charSetEnc);

@@ -34,8 +34,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
-import org.apache.axiom.attachments.utils.ImageIO;
-import org.apache.axiom.attachments.utils.ImageDataSource;
 import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.soap.SOAP12Constants;
 import junit.framework.Test;

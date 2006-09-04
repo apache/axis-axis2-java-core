@@ -16,11 +16,15 @@
 
 package org.apache.axis2.mtom;
 
+import java.net.URL;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
+import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.framework.Test;
-import org.apache.axiom.attachments.utils.ImageDataSource;
-import org.apache.axiom.attachments.utils.ImageIO;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -40,13 +44,10 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-import javax.activation.DataHandler;
-import java.awt.*;
-import java.io.InputStream;
-
 public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase implements TestConstants {
 
     private OMElement data;
+    private String fileName = "src/org/apache/axis2/mtom/test.jpg";
 
     public EchoRawMTOMCommonsChunkingTest() {
         super(EchoRawMTOMCommonsChunkingTest.class.getName());
@@ -77,12 +78,7 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase impl
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         data = fac.createOMElement("data", omNs);
-        Image expectedImage;
-        expectedImage = new ImageIO()
-                .loadImage(getResourceAsStream("org/apache/axis2/mtom/test.jpg"));
-
-        ImageDataSource dataSource = new ImageDataSource("test.jpg",
-                expectedImage);
+        FileDataSource dataSource = new FileDataSource(fileName);
         expectedDH = new DataHandler(dataSource);
         OMElement subData = fac.createOMElement("subData", omNs);
         OMText textData = new OMTextImpl(expectedDH, fac);
@@ -116,9 +112,9 @@ public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase impl
 
     }
 
-    private InputStream getResourceAsStream(String path) {
+    private URL getResourceAsStream(String path) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return cl.getResourceAsStream(path);
+        return cl.getResource(path);
     }
 
     private void campareWithCreatedOMElement(OMElement element) {
