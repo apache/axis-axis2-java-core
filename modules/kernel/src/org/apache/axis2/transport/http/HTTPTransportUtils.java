@@ -210,6 +210,28 @@ public class HTTPTransportUtils {
                     if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
                         soap11 = false;
 
+                        //Check for action header and set it in as soapAction in MessageContext
+                        int index = contentType.indexOf("action");
+                        if (index > -1) {
+                            String transientString = contentType.substring(index,contentType.length());
+                            int equal = transientString.indexOf("=");
+                            int firstComma = transientString.indexOf(";");
+                            String soapAction; // This will contain "" in the string
+                            if (firstComma > -1) {
+                                soapAction = transientString.substring(equal+1,firstComma-1);
+
+                            } else {
+                                soapAction = transientString.substring(equal+1,transientString.length());
+                            }
+                            if ((soapAction != null) && soapAction.startsWith("\"")
+                                && soapAction.endsWith("\"")) {
+                                soapAction = soapAction
+                                        .substring(1, soapAction.length() - 1);
+                            }
+                            msgContext.setSoapAction(soapAction);
+
+                        }
+
                         // it is SOAP 1.2
                         builder =
                                 new StAXSOAPModelBuilder(xmlreader,
