@@ -1,29 +1,23 @@
 package org.apache.axis2.schema;
 
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
+import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.Constants;
-import org.apache.axis2.wsdl.WSDLUtil;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.ws.commons.schema.XmlSchemaType;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.List;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -160,7 +154,6 @@ public class ExtensionUtility {
 
     /**
      * @param message
-     * @param configuration
      * @param mapper
      */
     private static void walkSchema(AxisMessage message,
@@ -171,47 +164,89 @@ public class ExtensionUtility {
         if (message.getParameter(Constants.UNWRAPPED_KEY) != null) {
             XmlSchemaType schemaType = message.getSchemaElement().getSchemaType();
             //create a type mapper
-            if (schemaType instanceof XmlSchemaComplexType) {
-                XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
-                XmlSchemaParticle particle = cmplxType.getParticle();
-                if (particle instanceof XmlSchemaSequence) {
-                    XmlSchemaObjectCollection items =
-                            ((XmlSchemaSequence) particle).getItems();
-                    for (Iterator i = items.getIterator(); i.hasNext();) {
-                        Object item = i.next();
-                        // get each and every element in the sequence and
-                        // traverse through them
-                        if (item instanceof XmlSchemaElement) {
-                            //populate the map with the partname - class name
-                            //attached to the schema element
-                            XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
-                            XmlSchemaType eltSchemaType = xmlSchemaElement.getSchemaType();
-                            if (eltSchemaType != null) {
-                                //there is a schema type object.We can utilize that
-                                populateClassName(eltSchemaType,mapper,opName,xmlSchemaElement.getName());
-                            } else if (xmlSchemaElement.getSchemaTypeName() != null) {
-                                //there is no schema type object but there is a
-                                //schema type QName.  Use that Qname to look up the
-                                //schematype in other schema objects
-                                eltSchemaType = findSchemaType(schemaMap,
-                                        xmlSchemaElement.getSchemaTypeName());
-                                if (eltSchemaType!=null){
-                                    populateClassName(eltSchemaType,mapper,opName,xmlSchemaElement.getName());
-                                }
+            processXMLSchemaComplexType(schemaType, mapper, opName, schemaMap);
+        }
+    }
 
-
-                            }
-                        }
-
-                    }
-
-                }
+    private static void processXMLSchemaComplexType(XmlSchemaType schemaType, TypeMapper mapper, String opName, Map schemaMap) {
+        if (schemaType instanceof XmlSchemaComplexType) {
+            XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
+            if (cmplxType.getContentModel() == null) {
+                processSchemaSequence(cmplxType.getParticle(), mapper, opName, schemaMap);
+            } else {
+                processComplexContentModel(cmplxType, mapper, opName, schemaMap);
             }
+        }
+    }
+
+    private static void processComplexContentModel(XmlSchemaComplexType cmplxType, TypeMapper mapper, String opName, Map schemaMap) {
+        XmlSchemaContentModel contentModel = cmplxType.getContentModel();
+        if (contentModel instanceof XmlSchemaComplexContent) {
+            XmlSchemaComplexContent xmlSchemaComplexContent = (XmlSchemaComplexContent) contentModel;
+            XmlSchemaContent content = xmlSchemaComplexContent.getContent();
+            if (content instanceof XmlSchemaComplexContentExtension) {
+                XmlSchemaComplexContentExtension schemaExtension = (XmlSchemaComplexContentExtension) content;
+
+                // process particles inside this extension, if any
+                processSchemaSequence(schemaExtension.getParticle(), mapper, opName, schemaMap);
+
+                // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
+                // the parent schema
+                XmlSchema parentSchema = (XmlSchema) schemaMap.get(schemaExtension.getBaseTypeName().getNamespaceURI());
+
+                // ok now we got the parent schema. Now let's get the extension's schema type
+
+                XmlSchemaType extensionSchemaType = parentSchema.getTypeByName(schemaExtension.getBaseTypeName());
+
+                processXMLSchemaComplexType(extensionSchemaType, mapper, opName, schemaMap);
+            }
+        }
+    }
+
+    private static void processSchemaSequence(XmlSchemaParticle particle, TypeMapper mapper, String opName, Map schemaMap) {
+        if (particle instanceof XmlSchemaSequence) {
+            XmlSchemaObjectCollection items =
+                    ((XmlSchemaSequence) particle).getItems();
+            for (Iterator i = items.getIterator(); i.hasNext();) {
+                Object item = i.next();
+                // get each and every element in the sequence and
+                // traverse through them
+                if (item instanceof XmlSchemaElement) {
+                    //populate the map with the partname - class name
+                    //attached to the schema element
+                    XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
+                    XmlSchemaType eltSchemaType = xmlSchemaElement.getSchemaType();
+                    if (eltSchemaType != null) {
+                        //there is a schema type object.We can utilize that
+                        populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement.getName());
+                    } else if (xmlSchemaElement.getSchemaTypeName() != null) {
+                        //there is no schema type object but there is a
+                        //schema type QName.  Use that Qname to look up the
+                        //schematype in other schema objects
+                        eltSchemaType = findSchemaType(schemaMap,
+                                xmlSchemaElement.getSchemaTypeName());
+                        if (eltSchemaType != null) {
+                            populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement.getName());
+                        }
+                    }
+                } else if (item instanceof XmlSchemaAny) {
+
+                    // if this is an instance of xs:any, then there is no part name for it. Using ANY_ELEMENT_FIELD_NAME
+                    // for it for now
+                    QName partQName = WSDLUtil.getPartQName(opName,
+                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                            Constants.ANY_ELEMENT_FIELD_NAME);
+                    mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement");
+                }
+
+            }
+
         }
     }
 
     /**
      * Util method to populate the class name into the typeMap
+     *
      * @param eltSchemaType
      */
     private static void populateClassName(XmlSchemaType eltSchemaType,
@@ -228,14 +263,14 @@ public class ExtensionUtility {
             QName partQName = WSDLUtil.getPartQName(opName,
                     WSDLConstants.INPUT_PART_QNAME_SUFFIX,
                     partName);
-            typeMap.addTypeMappingName(partQName,className);
+            typeMap.addTypeMappingName(partQName, className);
             if (Boolean.TRUE.equals(
                     metaInfoMap.get(SchemaConstants.
-                            SchemaCompilerInfoHolder.CLASSNAME_PRIMITVE_KEY))){
+                            SchemaCompilerInfoHolder.CLASSNAME_PRIMITVE_KEY))) {
 
                 //this type is primitive - add that to the type mapper status
                 //for now lets add a boolean
-                typeMap.addTypeMappingStatus(partQName,Boolean.TRUE);
+                typeMap.addTypeMappingStatus(partQName, Boolean.TRUE);
             }
 
         }
@@ -243,14 +278,14 @@ public class ExtensionUtility {
 
     /**
      * Look for a given schema type given the schema type Qname
+     *
      * @param schemaMap
-     * @param namespaceURI
      * @return null if the schema is not found
      */
     private static XmlSchemaType findSchemaType(Map schemaMap, QName schemaTypeName) {
         //find the schema
         XmlSchema schema = (XmlSchema) schemaMap.get(schemaTypeName.getNamespaceURI());
-        if (schema!=null){
+        if (schema != null) {
             return schema.getTypeByName(schemaTypeName);
         }
         return null;
@@ -258,6 +293,7 @@ public class ExtensionUtility {
 
     /**
      * populate parameters from the user
+     *
      * @param options
      */
     private static void populateUserparameters(CompilerOptions options, CodeGenConfiguration configuration) {
@@ -302,7 +338,7 @@ public class ExtensionUtility {
 
         //set helper mode
         //this becomes effective only if the classes are unpacked
-        if (!options.isWrapClasses()){
+        if (!options.isWrapClasses()) {
             if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.HELPER_MODE)) {
                 options.setHelperMode(true);
             }
@@ -312,6 +348,7 @@ public class ExtensionUtility {
 
     /**
      * populate the default options - called before the applying of user parameters
+     *
      * @param options
      */
     private static void populateDefaultOptions(CompilerOptions options, CodeGenConfiguration configuration) {
@@ -344,8 +381,8 @@ public class ExtensionUtility {
             //output
             options.setWriteOutput(!configuration.isPackClasses());
         }
-        
-        if(configuration.isGenerateAll()) {
+
+        if (configuration.isGenerateAll()) {
             options.setGenerateAll(true);
         }
     }

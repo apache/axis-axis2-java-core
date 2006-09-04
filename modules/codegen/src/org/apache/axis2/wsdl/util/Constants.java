@@ -27,6 +27,9 @@ public interface Constants {
     String UNWRAPPED_KEY = "UnWrapped";
     String UNWRAPPED_DETAILS = "UnWrapped_details";
 
+    public static final String ANY_ELEMENT_FIELD_NAME = "extraElement";
+    
+
 
     public interface CodegenStyle {
         final int AUTOMATIC = 0;
