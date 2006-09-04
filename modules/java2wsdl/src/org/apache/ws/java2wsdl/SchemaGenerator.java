@@ -1,31 +1,12 @@
 package org.apache.ws.java2wsdl;
 
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaForm;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.*;
 import org.apache.ws.java2wsdl.bytecode.MethodTable;
 import org.apache.ws.java2wsdl.utils.TypeTable;
-import org.codehaus.jam.JClass;
-import org.codehaus.jam.JMethod;
-import org.codehaus.jam.JParameter;
-import org.codehaus.jam.JProperty;
-import org.codehaus.jam.JamClassIterator;
-import org.codehaus.jam.JamService;
-import org.codehaus.jam.JamServiceFactory;
-import org.codehaus.jam.JamServiceParams;
+import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -78,7 +59,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private String elementFormDefault = null;
 
     private ArrayList excludeMethods = new ArrayList();
-    
+
     private ArrayList extraClasses = null;
 
     public SchemaGenerator(ClassLoader loader, String className,
@@ -121,13 +102,12 @@ public class SchemaGenerator implements Java2WSDLConstants {
         //it can posible to add the classLoader as well
         jam_service_parms.addClassLoader(classLoader);
         jam_service_parms.includeClass(className);
-        
-        for ( int count = 0 ; count < getExtraClasses().size() ; ++count )
-        {
-            jam_service_parms.includeClass((String)getExtraClasses().get(count));
+
+        for (int count = 0; count < getExtraClasses().size(); ++count) {
+            jam_service_parms.includeClass((String) getExtraClasses().get(count));
         }
         JamService service = factory.createService(jam_service_parms);
-        QName extraSchemaTypeName ;
+        QName extraSchemaTypeName;
         JamClassIterator jClassIter = service.getClasses();
         //all most all the time the ittr will have only one class in it
         while (jClassIter.hasNext()) {
@@ -135,9 +115,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
             // serviceName = jclass.getSimpleName();
             //todo in the future , when we support annotation we can use this
             //JAnnotation[] annotations = jclass.getAnnotations();
-            
-            if ( jclass.getQualifiedName().equals(className) )
-            {
+
+            if (jclass.getQualifiedName().equals(className)) {
                 /**
                  * Schema genertaion done in two stage 1. Load all the methods and
                  * create type for methods parameters (if the parameters are Bean
@@ -149,12 +128,12 @@ public class SchemaGenerator implements Java2WSDLConstants {
                 methods = jclass.getDeclaredMethods();
                 //short the elements in the array
                 Arrays.sort(methods);
-    
+
                 // since we do not support overload
                 HashMap uniqueMethods = new HashMap();
                 XmlSchemaComplexType methodSchemaType;
                 XmlSchemaSequence sequence = null;
-    
+
                 for (int i = 0; i < methods.length; i++) {
                     JMethod jMethod = methods[i];
                     String methodName = methods[i].getSimpleName();
@@ -163,30 +142,30 @@ public class SchemaGenerator implements Java2WSDLConstants {
                     if (excludeMethods.contains(jMethod.getSimpleName())) {
                         continue;
                     }
-    
+
                     if (uniqueMethods.get(jMethod.getSimpleName()) != null) {
                         throw new Exception(
                                 " Sorry we don't support methods overloading !!!! ");
                     }
-    
+
                     if (!jMethod.isPublic()) {
                         // no need to generate Schema for non public methods
                         continue;
                     }
                     uniqueMethods.put(jMethod.getSimpleName(), jMethod);
                     //create the schema type for the method wrapper
-    
+
                     uniqueMethods.put(jMethod.getSimpleName(), jMethod);
                     JParameter [] paras = jMethod.getParameters();
                     String parameterNames [] = null;
                     if (paras.length > 0) {
                         parameterNames = methodTable.getParameterNames(methodName);
                         sequence = new XmlSchemaSequence();
-    
+
                         methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName());
                         methodSchemaType.setParticle(sequence);
                     }
-    
+
                     for (int j = 0; j < paras.length; j++) {
                         JParameter methodParameter = paras[j];
                         JClass paraType = methodParameter.getType();
@@ -195,7 +174,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
                     }
                     // for its return type
                     JClass returnType = jMethod.getReturnType();
-    
+
                     if (!returnType.isVoidType()) {
                         methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName() + RESPONSE);
                         sequence = new XmlSchemaSequence();
@@ -203,13 +182,10 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         generateSchemaForType(sequence, returnType, "return");
                     }
                 }
-            }
-            else
-            {
+            } else {
                 //generate the schema type for extra classes
                 extraSchemaTypeName = typeTable.getSimpleSchemaTypeName(jclass.getQualifiedName());
-                if (extraSchemaTypeName == null) 
-                {
+                if (extraSchemaTypeName == null) {
                     generateSchema(jclass);
                 }
             }
@@ -323,6 +299,10 @@ public class SchemaGenerator implements Java2WSDLConstants {
         }
 
         String classTypeName = type.getQualifiedName();
+        if (isArrayType && "byte".equals(classTypeName)) {
+            classTypeName = "base64Binary";
+            isArrayType = false;
+        }
 
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);
         if (schemaTypeName == null) {
@@ -473,8 +453,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
     }
 
     public ArrayList getExtraClasses() {
-        if ( extraClasses == null )
-        {
+        if (extraClasses == null) {
             extraClasses = new ArrayList();
         }
         return extraClasses;

@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
+import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
@@ -392,7 +393,12 @@ public class BeanUtil {
             boolean done = true;
             ArrayList valueList = new ArrayList();
             Class arrayClassType = classType.getComponentType();
-            valueList.add(processObject(omElement, arrayClassType, helper));
+            if ("byte".equals(arrayClassType.getName())) {
+                retObjs[count] = processObject(omElement, arrayClassType, helper, true);
+                return null;
+            } else {
+                valueList.add(processObject(omElement, arrayClassType, helper, true));
+            }
             while (parts.hasNext()) {
                 objValue = parts.next();
                 if (objValue instanceof OMElement) {
@@ -405,7 +411,7 @@ public class BeanUtil {
                     break;
                 }
                 Object o = processObject(omElement, arrayClassType,
-                        helper);
+                        helper, true);
                 valueList.add(o);
             }
             retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
@@ -415,14 +421,14 @@ public class BeanUtil {
             }
         } else {
             //handling refs
-            retObjs[count] = processObject(omElement, classType, helper);
+            retObjs[count] = processObject(omElement, classType, helper, false);
         }
         return null;
     }
 
     public static Object processObject(OMElement omElement,
                                        Class classType,
-                                       MultirefHelper helper) throws AxisFault {
+                                       MultirefHelper helper, boolean isArrayType) throws AxisFault {
         boolean hasRef = false;
         OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
         String ref = null;
@@ -454,7 +460,12 @@ public class BeanUtil {
                     return null;
                 }
                 if (SimpleTypeMapper.isSimpleType(classType)) {
-                    return SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
+                    if (isArrayType && "byte".equals(classType.getName())) {
+                        String value = omElement.getText();
+                        return Base64.decode(value);
+                    } else {
+                        return SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
+                    }
                 } else if (SimpleTypeMapper.isArrayList(classType)) {
                     return SimpleTypeMapper.getArrayList(omElement);
                 } else {
@@ -533,6 +544,8 @@ public class BeanUtil {
                             wrappingElement.addChild((OMElement) arg);
                         }
                         objects.add(wrappingElement);
+                    } else if (arg instanceof byte[]) {
+                        objects.add(Base64.encode((byte[]) arg));
                     } else {
                         objects.add(arg);
                     }
@@ -554,7 +567,8 @@ public class BeanUtil {
     /**
      * @deprecated Please use getUniquePrefix
      */
-    public static String getUniquePrifix() {
+    public static String getUniquePrifix
+            () {
         return "ns" + nsCount++;
     }
 
@@ -563,7 +577,8 @@ public class BeanUtil {
      *
      * @return unique prefix
      */
-    public static String getUniquePrefix() {
+    public static String getUniquePrefix
+            () {
         return "ns" + nsCount++;
     }
 
@@ -575,7 +590,9 @@ public class BeanUtil {
      * @param wrongName
      * @return the right name, using english as the locale for case conversion
      */
-    private static String getCorrectName(String wrongName) {
+    private static String getCorrectName
+            (String
+                    wrongName) {
         if (wrongName.length() > 1) {
             return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH)
                     + wrongName.substring(1, wrongName.length());

@@ -36,6 +36,7 @@ public class RPCServiceClass {
         return bean;
     }
 
+
     public MyBean echoBean(MyBean bean) {
         return bean;
     }
@@ -71,7 +72,7 @@ public class RPCServiceClass {
 //        child.addChild(fac.createOMText(child, b.getText()));
 //        bodyContent.addChild(child);
 ////        bodyContent.addChild(b);
-        return (OMElement)b.detach();
+        return (OMElement) b.detach();
     }
 
     public double divide(double a, double b) {
@@ -190,7 +191,11 @@ public class RPCServiceClass {
         return mail;
     }
 
-    public int multiArrays(String [] a, String b [],String d [], int c) {
-        return a.length + b.length  + d.length+ c;
+    public int multiArrays(String [] a, String b [], String d [], int c) {
+        return a.length + b.length + d.length + c;
+    }
+
+    public String testByteArray(byte [] value) {
+        return new String(value);
     }
 }

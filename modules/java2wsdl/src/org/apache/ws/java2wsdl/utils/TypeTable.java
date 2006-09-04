@@ -4,11 +4,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -90,6 +86,9 @@ public class TypeTable {
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put(List.class.getName(),
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+        //byteArrat
+        simpleTypetoxsd.put("base64Binary",
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "base64Binary", "xs"));
     }
 
     public QName getSimpleSchemaTypeName(String typename) {

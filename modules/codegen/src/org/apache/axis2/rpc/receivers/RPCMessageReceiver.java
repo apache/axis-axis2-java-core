@@ -23,6 +23,7 @@ package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
@@ -147,10 +148,17 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             } else {
                 if (resObject.getClass().isArray()) {
                     int length = Array.getLength(resObject);
-                    Object objArray [] = new Object[length];
-                    for (int i = 0; i < length; i++) {
-                        objArray[i] = Array.get(resObject, i);
+                    Object objArray [];
+                    if (resObject instanceof byte[]) {
+                        objArray = new Object[1];
+                        objArray[0] = Base64.encode((byte[]) resObject);
+                    } else {
+                        objArray = new Object[length];
+                        for (int i = 0; i < length; i++) {
+                            objArray[i] = Array.get(resObject, i);
+                        }
                     }
+
                     QName resName = new QName(service.getSchematargetNamespace(),
                             method.getName() + "Response",
                             service.getSchematargetNamespacePrefix());
