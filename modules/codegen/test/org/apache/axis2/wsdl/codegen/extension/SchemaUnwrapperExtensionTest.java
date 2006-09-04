@@ -9,7 +9,6 @@ import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaElement;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
@@ -98,57 +97,55 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
         assertTrue(partsList.size() == 2);
     }
 
-//    /**
-//     * 1. AddRequest is of AddRequestType
-//     * 2. AddRequestType extends from AbstractParameterType
-//     * 3. AbstractParameterType has primitive types only
-//     */
-//    public void testScenarioThree() {
-//        String schemaLocation = "test-resources/schemas/schema-3.xsd";
-//
-//        createAndWalkSchema(schemaLocation);
-//
-//        assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
-//
-//        Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
-//        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
-//        List partsList = messagePartInformationHolder.getPartsList();
-//
-//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
-//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
-//        assertTrue(partsList.size() == 2);
-//    }
-//
-//    /**
-//     * 1. AddRequest is of AddRequestType
-//     * 2. AddRequestType extends from AbstractParameterType and it AddRequestType has more stuff defined in a sequence, in
-//     * addition to the extension.
-//     * 3. AbstractParameterType has primitive types only
-//     */
-//    public void testScenarioFour() {
-//        String schemaLocation = "test-resources/schemas/schema-4.xsd";
-//
-//        createAndWalkSchema(schemaLocation);
-//
-//        assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
-//
-//        Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
-//        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
-//        List partsList = messagePartInformationHolder.getPartsList();
-//
-//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
-//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
-//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_THREE)));
-//        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_FOUR)));
-//        assertTrue(partsList.size() == 4);
-//    }
+    /**
+     * 1. AddRequest is of AddRequestType
+     * 2. AddRequestType extends from AbstractParameterType
+     * 3. AbstractParameterType has primitive types only
+     */
+    public void testScenarioThree() {
+        String schemaLocation = "test-resources/schemas/schema-3.xsd";
+
+        createAndWalkSchema(schemaLocation);
+
+        assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
+
+        Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
+        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+        List partsList = messagePartInformationHolder.getPartsList();
+
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
+        assertTrue(partsList.size() == 2);
+    }
+
+    /**
+     * 1. AddRequest is of AddRequestType
+     * 2. AddRequestType extends from AbstractParameterType and it AddRequestType has more stuff defined in a sequence, in
+     * addition to the extension.
+     * 3. AbstractParameterType has primitive types only
+     */
+    public void testScenarioFour() {
+        String schemaLocation = "test-resources/schemas/schema-4.xsd";
+
+        createAndWalkSchema(schemaLocation);
+
+        assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
+
+        Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
+        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+        List partsList = messagePartInformationHolder.getPartsList();
+
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_THREE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_FOUR)));
+        assertTrue(partsList.size() == 4);
+    }
 
     private void createAndWalkSchema(String schemaLocation) {
         try {
             XmlSchema xmlSchema = loadSchema(schemaLocation);
             axisService.addSchema(xmlSchema);
-            XmlSchemaElement schemaElement = axisMessage.getSchemaElement();
-
             SchemaUnwrapperExtension extension = new SchemaUnwrapperExtension();
             extension.walkSchema(axisMessage);
         } catch (FileNotFoundException e) {

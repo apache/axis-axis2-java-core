@@ -16,6 +16,7 @@ import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
 import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -117,21 +118,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         // this type should be a complex type or it should have a name which refer to another type definition
 
         // first let's handle this being a complex type
-        if (schemaType instanceof XmlSchemaComplexType) {
-            XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
-            if (cmplxType.getContentModel() == null) {
-                processComplexType(cmplxType.getParticle(), message, partNameList);
-            } else {
-                // now lets handle case with extensions
-                processComplexContentModel(cmplxType, message, partNameList);
-            }
-
-
-        } else {
-            //we've no idea how to unwrap a non complexType!!!!!!
-            throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-                    "unknown", "complexType"));
-        }
+        handleAllCasesOfComplexTypes(schemaType, message, partNameList);
 
         try {
             //set in the axis message that the unwrapping was success
@@ -156,6 +143,24 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
     }
 
+    private void handleAllCasesOfComplexTypes(XmlSchemaType schemaType, AxisMessage message, List partNameList) throws CodeGenerationException {
+        if (schemaType instanceof XmlSchemaComplexType) {
+            XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
+            if (cmplxType.getContentModel() == null) {
+                processComplexType(cmplxType.getParticle(), message, partNameList);
+            } else {
+                // now lets handle case with extensions
+                processComplexContentModel(cmplxType, message, partNameList);
+            }
+
+
+        } else {
+            //we've no idea how to unwrap a non complexType!!!!!!
+            throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
+                    "unknown", "complexType"));
+        }
+    }
+
     private void processComplexContentModel(XmlSchemaComplexType cmplxType, AxisMessage message, List partNameList) throws CodeGenerationException {
         XmlSchemaContentModel contentModel = cmplxType.getContentModel();
         if (contentModel instanceof XmlSchemaComplexContent) {
@@ -167,21 +172,25 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 // process particles inside this extension, if any
                 processComplexType(schemaExtension.getParticle(), message, partNameList);
 
-//                AxisService axisService = (AxisService) message.getParent().getParent();
-//                XmlSchemaElement schemaElement = axisService.getSchemaElement(schemaExtension.getBaseTypeName());
-//                if (schemaElement != null) {
-//                    XmlSchemaType schemaType = schemaElement.getSchemaType();
-//
-//                    if (schemaType instanceof XmlSchemaComplexType) {
-//                        XmlSchemaComplexType xmlSchemaComplexType = (XmlSchemaComplexType) schemaType;
-//                        processComplexType(xmlSchemaComplexType, message, partNameList);
-//
-//                    } else {
-//                        //we've no idea how to unwrap a non complexType!!!!!!
-//                        throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
-//                                "unknown", "complexType"));
-//                    }
-//                }
+                // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
+                // the parent schema
+                AxisService axisService = (AxisService) message.getParent().getParent();
+                ArrayList schemasList = axisService.getSchema();
+
+                XmlSchema parentSchema = null;
+
+                for (int i = 0; i < schemasList.size() || parentSchema == null; i++) {
+                    XmlSchema schema = (XmlSchema) schemasList.get(i);
+                    if (schema.getTargetNamespace().equals(schemaExtension.getBaseTypeName().getNamespaceURI())) {
+                        parentSchema = schema;
+                    }
+                }
+
+                // ok now we got the parent schema. Now let's get the extension's schema type
+
+                XmlSchemaType extensionSchemaType = parentSchema.getTypeByName(schemaExtension.getBaseTypeName());
+
+                handleAllCasesOfComplexTypes(extensionSchemaType, message, partNameList);
             }
         }
     }
