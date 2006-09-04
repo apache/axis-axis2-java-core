@@ -18,6 +18,8 @@ package org.apache.rahas.client;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -35,13 +37,23 @@ import org.apache.ws.secpolicy.model.AlgorithmSuite;
 import org.apache.ws.secpolicy.model.Binding;
 import org.apache.ws.secpolicy.model.Trust10;
 import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.WSPasswordCallback;
+import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.conversation.dkalgo.P_SHA1;
+import org.apache.ws.security.processor.EncryptedKeyProcessor;
 import org.apache.ws.security.util.WSSecurityUtil;
+import org.w3c.dom.Element;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.xml.namespace.QName;
 
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.Vector;
 
 public class STSClient {
 
@@ -60,6 +72,10 @@ public class STSClient {
      * Default is 300 seconds (5 mins)
      */
     private int ttl = 300;
+    
+    private Crypto crypto;
+    
+    private CallbackHandler cbHandler;
     
     public Token requestSecurityToken(ConfigurationContext configCtx,
             int version, Policy policy, String issuerAddress,
@@ -149,8 +165,16 @@ public class STSClient {
                 String b64Secret = child.getText();
                 tok.setSecret(Base64.decode(b64Secret));
             }else if(child.getQName().equals(new QName(ns, WSConstants.ENC_KEY_LN))){
-                //TODO Handle encrypted key
-                throw new UnsupportedOperationException("TODO: Handle encrypted key");
+                try {
+                    Element domChild = (Element)new StAXOMBuilder(DOOMAbstractFactory.getOMFactory(),child.getXMLStreamReader()).getDocumentElement();
+                    EncryptedKeyProcessor processor = new EncryptedKeyProcessor();
+                    processor.handleToken(domChild, null, this.crypto,
+                            this.cbHandler, null, new Vector(),
+                            null);
+                    secret = processor.getDecryptedBytes();
+                } catch (WSSecurityException e) {
+                    throw new TrustException("errorInProcessingEncryptedKey", e);
+                }
             } else if(child.getQName().equals(new QName(ns, RahasConstants.COMPUTED_KEY_LN))) {
                 //Handle the computed key
 
@@ -340,5 +364,40 @@ public class STSClient {
      */
     public void setTtl(int ttl) {
         this.ttl = ttl;
+    }
+
+    /**
+     * Sets the crypto information required to process the RSTR.
+     * @param crypto Crypto information
+     * @param cbHandler Callback handler to provide the private key password to 
+     * decrypt
+     */
+    public void setCryptoInfo(Crypto crypto, CallbackHandler cbHandler) {
+        this.crypto = crypto;
+        this.cbHandler = cbHandler;
+    }
+    
+    /**
+     * Sets the crypto information required to process the RSTR.
+     * @param crypto The crypto information
+     * @param privKeyPasswd Private key password to decrypt
+     */
+    public void setCryptoInfo(Crypto crypto, String privKeyPasswd) {
+        this.crypto = crypto;
+        this.cbHandler = new CBHandler(privKeyPasswd);
+    }
+    
+    private class CBHandler implements CallbackHandler {
+        
+        private String passwd;
+        
+        private CBHandler(String passwd) {
+            this.passwd = passwd;
+        }
+
+        public void handle(Callback[] cb) throws IOException, UnsupportedCallbackException {
+            ((WSPasswordCallback)cb[0]).setPassword(this.passwd);
+        }
+        
     }
 }
