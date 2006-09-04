@@ -17,6 +17,7 @@
 package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.ws.security.WSConstants;
@@ -112,6 +113,8 @@ public class RahasData {
         this.processKeySize();
 
         this.processAppliesTo();
+        
+        this.processEntropy();
 
     }
 
@@ -259,6 +262,28 @@ public class RahasData {
         }
         this.keysize = -1;
     }
+    
+
+    /**
+     * Process wst:Entropy element in the request.
+     */
+    private void processEntropy() throws TrustException {
+        OMElement entropyElem = this.rstElement
+                .getFirstChildWithName(new QName(this.wstNs,
+                        RahasConstants.ENTROPY_LN));
+        
+        if(entropyElem != null) {
+            OMElement binSecElem = entropyElem.getFirstElement();
+            if (binSecElem != null && binSecElem.getText() != null
+                    && !"".equals(binSecElem.getText())) {
+                this.requestEntropy = Base64.decode(binSecElem.getText());
+            } else {
+                throw new TrustException("malformedEntropyElement",
+                        new String[] { entropyElem.toString() });
+            }
+            
+        }
+    }
 
     /**
      * @return Returns the appliesToAddress.
@@ -377,6 +402,20 @@ public class RahasData {
      */
     public String getSoapNs() {
         return soapNs;
+    }
+
+    /**
+     * @param responseEntropy The responseEntropy to set.
+     */
+    public void setResponseEntropy(byte[] responseEntropy) {
+        this.responseEntropy = responseEntropy;
+    }
+
+    /**
+     * @param ephmeralKey The ephmeralKey to set.
+     */
+    public void setEphmeralKey(byte[] ephmeralKey) {
+        this.ephmeralKey = ephmeralKey;
     }
 
     

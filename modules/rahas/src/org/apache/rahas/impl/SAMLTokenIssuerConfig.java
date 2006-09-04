@@ -80,6 +80,17 @@ public class SAMLTokenIssuerConfig {
     
     public final static QName ISSUER_NAME = new QName("issuerName");
     
+    /**
+     * The key computation policy when clien't entropy is provided
+     */
+    public static final QName KEY_COMPUTATION = new QName("keyComputation");
+    
+    public final static int KEY_COMP_USE_REQ_ENT = 1;
+    
+    public final static int KEY_COMP_PROVIDE_ENT = 2;
+    
+    public final static int KEY_COMP_USE_OWN_KEY = 3;
+    
     protected String cryptoPropFile;
     protected String issuerKeyAlias;
     protected String issuerKeyPassword;
@@ -90,7 +101,8 @@ public class SAMLTokenIssuerConfig {
     protected long ttl = 300000;
     protected boolean addRequestedAttachedRef;
     protected boolean addRequestedUnattachedRef;
-
+    protected int keyComputation = KEY_COMP_PROVIDE_ENT;
+    
     private SAMLTokenIssuerConfig(OMElement elem) throws TrustException {
         
         //The alias of the private key 
@@ -128,6 +140,12 @@ public class SAMLTokenIssuerConfig {
         
         if(this.cryptoPropFile == null || "".equals(this.cryptoPropFile)) {
             throw new TrustException("samlPropFileMissing");
+        }
+        
+        OMElement keyCompElem = elem.getFirstChildWithName(KEY_COMPUTATION);
+        
+        if(keyCompElem != null && keyCompElem.getText() != null && !"".equals(keyCompElem)) {
+            this.keyComputation = Integer.parseInt(keyCompElem.getText());
         }
         
         //time to live

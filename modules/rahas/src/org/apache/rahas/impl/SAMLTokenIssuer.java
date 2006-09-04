@@ -33,8 +33,10 @@ import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
+import org.apache.ws.security.conversation.dkalgo.P_SHA1;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.util.Base64;
+import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.ws.security.util.XmlSchemaDateFormat;
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.utils.EncryptionConstants;
@@ -218,13 +220,37 @@ public class SAMLTokenIssuer implements TokenIssuer {
             throw new TrustException("samlConverstionError", e);
         }
 
+        //Add the RequestedProofToken
+        OMElement reqProofTokElem = TrustUtil.createRequestedProofTokenElement(
+                version, rstrElem);
+        
         if(keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY)) {
-            //Add the RequestedProofToken
-            OMElement reqProofTokElem = TrustUtil
-                    .createRequestedProofTokenElement(version, rstrElem);
-            OMElement binSecElem = TrustUtil.createBinarySecretElement(version,
-                    reqProofTokElem, null);
-            binSecElem.setText(Base64.encode(data.getEphmeralKey()));
+            
+            if (config.keyComputation == SAMLTokenIssuerConfig.KEY_COMP_PROVIDE_ENT
+                    && data.getRequestEntropy() != null) {
+                //If we there's requestor entropy and its configured to provide
+                //entropy then we have to set the entropy value and
+                //set the RPT to include a ComputedKey element
+                
+                OMElement respEntrElem = TrustUtil.createEntropyElement(
+                        version, rstrElem);
+                
+                TrustUtil.createBinarySecretElement(version, respEntrElem,
+                        RahasConstants.BIN_SEC_TYPE_NONCE);
+                
+                OMElement compKeyElem = TrustUtil.createComputedKeyElement(
+                        version, reqProofTokElem);
+                compKeyElem.setText(data.getWstNs()
+                        + RahasConstants.COMPUTED_KEY_PSHA1);
+            } else {
+                //In all other cases use send the key in a binary sectret element
+                
+                //TODO : Provide a config option to set this type to encrypted key
+                OMElement binSecElem = TrustUtil.createBinarySecretElement(version,
+                        reqProofTokElem, null);
+                binSecElem.setText(Base64.encode(data.getEphmeralKey()));
+                
+            }
         }
         
         // Unet the DOM impl to DOOM
@@ -270,13 +296,13 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 //Get ApliesTo to figureout which service to issue the token for
                 serviceCert = getServiceCert(data.getRstElement(), config,
                         crypto, data.getAppliesToAddress());
-    
+
                 //Ceate the encrypted key
                 WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
-        
+
                 //Use thumbprint id
                 encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
-    
+                
                 //SEt the encryption cert
                 encrKeyBuilder.setUseThisCert(serviceCert);
                 
@@ -284,6 +310,26 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 int keysize = data.getKeysize();
                 keysize = (keysize != -1) ? keysize : config.keySize;
                 encrKeyBuilder.setKeySize(keysize);
+
+                boolean reqEntrPresent = data.getRequestEntropy() != null;
+
+                if(reqEntrPresent && config.keyComputation != SAMLTokenIssuerConfig.KEY_COMP_USE_OWN_KEY) {
+                    //If there's no requestor entropy and if the issuer is not 
+                    //configured to use its own key
+                    
+                    if(config.keyComputation == SAMLTokenIssuerConfig.KEY_COMP_PROVIDE_ENT) {
+                        data.setResponseEntropy(WSSecurityUtil.generateNonce(config.keySize/8));
+                        P_SHA1 p_sha1 = new P_SHA1();
+                        encrKeyBuilder.setEphemeralKey(p_sha1.createKey(data
+                                .getRequestEntropy(),
+                                data.getResponseEntropy(), 0, keysize / 8));
+                    } else {
+                        //If we reach this its expected to use the requestor's 
+                        //entropy
+                        encrKeyBuilder.setEphemeralKey(data.getRequestEntropy());
+                    }
+                }// else : We have to use our own key here, so don't set the key
+                
                 
                 //Set key encryption algo
                 encrKeyBuilder.setKeyEncAlgo(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15);
@@ -292,7 +338,10 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 encrKeyBuilder.prepare(doc, crypto);
                 
                 //Extract the base64 encoded secret value
-                System.arraycopy(encrKeyBuilder.getEphemeralKey(), 0, data.getEphmeralKey(), 0, keysize/8);
+                byte[] tempKey = new byte[keysize/8];
+                System.arraycopy(encrKeyBuilder.getEphemeralKey(), 0, tempKey, 0, keysize/8);
+                
+                data.setEphmeralKey(tempKey);
                 
                 //Extract the Encryptedkey DOM element 
                 encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();

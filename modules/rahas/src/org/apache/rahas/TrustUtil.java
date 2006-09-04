@@ -107,6 +107,13 @@ public class TrustUtil {
                 RahasConstants.ENTROPY_LN, RahasConstants.WST_PREFIX);
     }
     
+    public static OMElement createComputedKeyElement(
+            int version, OMElement parent) throws TrustException {
+        String ns = getWSTNamespace(version);
+        return createOMElement(parent, ns,
+                RahasConstants.COMPUTED_KEY_LN, RahasConstants.WST_PREFIX);
+    }
+    
     public static OMElement createRequestTypeElement(
             int version, OMElement parent, String value) throws TrustException {
         String ns = getWSTNamespace(version);
