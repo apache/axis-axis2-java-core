@@ -115,9 +115,6 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         XmlSchemaElement schemaElement = message.getSchemaElement();
         XmlSchemaType schemaType = schemaElement.getSchemaType();
 
-        // this type should be a complex type or it should have a name which refer to another type definition
-
-        // first let's handle this being a complex type
         handleAllCasesOfComplexTypes(schemaType, message, partNameList);
 
         try {
@@ -147,7 +144,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         if (schemaType instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
             if (cmplxType.getContentModel() == null) {
-                processComplexType(cmplxType.getParticle(), message, partNameList);
+                processXMLSchemaSequence(cmplxType.getParticle(), message, partNameList);
             } else {
                 // now lets handle case with extensions
                 processComplexContentModel(cmplxType, message, partNameList);
@@ -170,7 +167,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 XmlSchemaComplexContentExtension schemaExtension = (XmlSchemaComplexContentExtension) content;
 
                 // process particles inside this extension, if any
-                processComplexType(schemaExtension.getParticle(), message, partNameList);
+                processXMLSchemaSequence(schemaExtension.getParticle(), message, partNameList);
 
                 // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                 // the parent schema
@@ -195,7 +192,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         }
     }
 
-    private void processComplexType(XmlSchemaParticle schemaParticle, AxisMessage message, List partNameList) throws CodeGenerationException {
+    private void processXMLSchemaSequence(XmlSchemaParticle schemaParticle, AxisMessage message, List partNameList) throws CodeGenerationException {
         if (schemaParticle instanceof XmlSchemaSequence) {
             // get the name of the operation name and namespace,
             // part name and hang them somewhere ? The ideal place
@@ -204,6 +201,11 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
             XmlSchemaSequence sequence = (XmlSchemaSequence) schemaParticle;
             XmlSchemaObjectCollection items = sequence.getItems();
+
+            // if this is an empty sequence, return
+            if (items.getCount() == 0) {
+                return;
+            }
             for (Iterator i = items.getIterator(); i.hasNext();) {
                 Object item = i.next();
                 // get each and every element in the sequence and
@@ -232,6 +234,14 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     // if the particle contains anything other than
                     // a XMLSchemaElement then we are not in a position
                     // to unwrap it
+                } else if (item instanceof XmlSchemaAny) {
+
+                    // if this is an instance of xs:any, then there is no part name for it. Using ANY_ELEMENT_FIELD_NAME
+                    // for it for now
+                     partNameList.add(
+                            WSDLUtil.getPartQName(opName.getLocalPart(),
+                                    WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                    Constants.ANY_ELEMENT_FIELD_NAME));
                 } else {
                     throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
                             "unknown type", "Element"));
