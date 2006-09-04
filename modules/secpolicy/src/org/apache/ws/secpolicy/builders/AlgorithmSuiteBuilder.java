@@ -46,12 +46,12 @@ public class AlgorithmSuiteBuilder implements AssertionBuilder {
         policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
-            processAlternative((List) iterator.next(), algorithmSuite);
+            buildConfigOption((List) iterator.next(), algorithmSuite);
         }
         return algorithmSuite;
     }
     
-    private void processAlternative(List assertionList, AlgorithmSuite target) {
+    private void buildConfigOption(List assertionList, AlgorithmSuite target) {
         AlgorithmSuite algorithmSuite = new AlgorithmSuite();
         
         XmlPrimtiveAssertion primtiveAssertion;

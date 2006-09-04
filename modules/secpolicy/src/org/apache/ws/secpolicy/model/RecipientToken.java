@@ -16,9 +16,6 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -29,8 +26,7 @@ import org.apache.ws.secpolicy.Constants;
 public class RecipientToken extends AbstractSecurityAssertion implements TokenWrapper {
     
     private Token receipientToken;
-    private ArrayList recipientTokens = null;
-
+   
     /**
      * @return Returns the receipientToken.
      */
@@ -43,24 +39,6 @@ public class RecipientToken extends AbstractSecurityAssertion implements TokenWr
      */
     public void setReceipientToken(Token receipientToken) {
         this.receipientToken = receipientToken;
-    }
-    
-    public List getConfigurations() {
-        return recipientTokens;
-    }
-    
-    public RecipientToken getDefaultConfiguration() {
-        if (recipientTokens != null) {
-            return (RecipientToken) recipientTokens.get(0);
-        }
-        return null;
-    }
-    
-    public void addConfiguration(RecipientToken recipientToken) {
-        if (recipientTokens == null) {
-            recipientTokens = new ArrayList();
-        }
-        recipientTokens.add(recipientToken);
     }
 
     /* (non-Javadoc)

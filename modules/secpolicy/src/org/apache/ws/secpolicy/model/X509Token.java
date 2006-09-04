@@ -16,10 +16,6 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -38,8 +34,6 @@ public class X509Token extends Token {
     private boolean requireThumbprintReference;
     
     private String tokenVersionAndType;
-    
-    private List x509Tokens = null;
     
     /**
      * @return Returns the requireEmbeddedTokenReference.
@@ -111,26 +105,6 @@ public class X509Token extends Token {
      */
     public void setTokenVersionAndType(String tokenVersionAndType) {
         this.tokenVersionAndType = tokenVersionAndType;
-    }
-    
-    public Iterator getConfigurations() {
-        return x509Tokens.iterator();
-    }
-    
-    public X509Token getDefualtConfiguration() {
-        
-        if (x509Tokens != null) {
-            return (X509Token) x509Tokens.get(0);
-        }
-        return null;
-    }
-    
-    public void addConfiguration(X509Token token) {
-        
-        if (x509Tokens == null) {
-            x509Tokens = new ArrayList();
-        }
-        x509Tokens.add(token);
     }
 
     public QName getName() {

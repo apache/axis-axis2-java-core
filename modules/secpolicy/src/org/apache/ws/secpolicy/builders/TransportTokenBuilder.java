@@ -43,6 +43,7 @@ public class TransportTokenBuilder implements AssertionBuilder {
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), transportToken);
+            break; // since there should be only one alternative
         }
         
         return transportToken;
@@ -53,7 +54,6 @@ public class TransportTokenBuilder implements AssertionBuilder {
     }
     
     private void processAlternative(List assertions, TransportToken parent) {
-        TransportToken transportToken = new TransportToken();
         
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
             XmlPrimtiveAssertion primtive = (XmlPrimtiveAssertion) iterator.next();
@@ -61,10 +61,8 @@ public class TransportTokenBuilder implements AssertionBuilder {
             
             if (Constants.HTTPS_TOKEN.equals(qname)) {
                 HttpsToken httpsToken = new HttpsToken();
-                transportToken.setTransportToken(httpsToken);
+                parent.setTransportToken(httpsToken);
             }
         }
-        
-        parent.addConfiguration(transportToken);
     }
 }

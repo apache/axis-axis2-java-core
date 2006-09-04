@@ -43,7 +43,8 @@ public class LayoutBuilder implements AssertionBuilder {
         policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext(); ) {
-            processAlternative((List) iterator.next(), layout);                        
+            processAlternative((List) iterator.next(), layout);         
+            break; // there should be only one alternative
         }
                         
         return layout;
@@ -54,24 +55,21 @@ public class LayoutBuilder implements AssertionBuilder {
     }
 
     public void processAlternative(List assertions, Layout parent) {
-        Layout layout = new Layout();
         
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
             Assertion assertion = (Assertion) iterator.next();
             QName qname = assertion.getName();
             
             if (STRICT.equals(qname)) {
-                layout.setValue(Constants.LAYOUT_STRICT);
+                parent.setValue(Constants.LAYOUT_STRICT);
             } else if (LAX.equals(qname)) {
-                layout.setValue(Constants.LAYOUT_LAX);
+                parent.setValue(Constants.LAYOUT_LAX);
             } else if (LAXTSFIRST.equals(qname)) {
-                layout.setValue(Constants.LAYOUT_LAX_TIMESTAMP_FIRST);
+                parent.setValue(Constants.LAYOUT_LAX_TIMESTAMP_FIRST);
             } else if (LAXTSLAST.equals(qname)) {
-                layout.setValue(Constants.LAYOUT_LAX_TIMESTAMP_LAST);
+                parent.setValue(Constants.LAYOUT_LAX_TIMESTAMP_LAST);
             }
             
         }
-        parent.addCofiguration(layout);
     }
-
 }

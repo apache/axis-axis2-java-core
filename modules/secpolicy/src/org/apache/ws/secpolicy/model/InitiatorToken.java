@@ -16,9 +16,6 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -27,8 +24,6 @@ import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
 public class InitiatorToken extends AbstractSecurityAssertion implements TokenWrapper {
-    
-    private ArrayList initiatorTokens = null;
     
     private Token initiatorToken;
 
@@ -53,25 +48,6 @@ public class InitiatorToken extends AbstractSecurityAssertion implements TokenWr
         this.setInitiatorToken(tok);
     }
     
-    public List getConfigurations() {
-        return initiatorTokens;
-    }
-    
-    public InitiatorToken getDefaultConfiguration() {
-        if (initiatorTokens != null) {
-            return (InitiatorToken) initiatorTokens.get(0);
-        }
-        return null;
-    }
-    
-    public void addConfiguration(InitiatorToken initiatorToken) {
-        
-        if (initiatorTokens == null) {
-           initiatorTokens = new ArrayList();
-       }
-       initiatorTokens.add(initiatorToken);
-    }
-
     public QName getName() {
         return Constants.INITIATOR_TOKEN;
     }
@@ -83,8 +59,4 @@ public class InitiatorToken extends AbstractSecurityAssertion implements TokenWr
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
-    
-    
-    
-    
 }

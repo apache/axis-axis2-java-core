@@ -16,9 +16,6 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -33,8 +30,6 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
     private SignatureToken signatureToken;
     
     private ProtectionToken protectionToken;
-    
-    private List symmetricBindings = null;
     
     /**
      * @return Returns the encryptionToken.
@@ -91,24 +86,6 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
         this.signatureToken = signatureToken;
     }
     
-    public List getConfigurations() {
-        return symmetricBindings;
-    }
-    
-    public SymmetricBinding getDefaultConfiguration() {
-        if (symmetricBindings != null) {
-            return (SymmetricBinding) symmetricBindings.get(0);
-        }
-        return null;
-    }
-    
-    public void addConfiguration(SymmetricBinding symmetricBinding) {
-        if (symmetricBindings == null) {
-            symmetricBindings = new ArrayList();
-        }
-        symmetricBindings.add(symmetricBinding);
-    }
-
     public QName getName() {
         return Constants.SYMMETRIC_BINDING;
     }

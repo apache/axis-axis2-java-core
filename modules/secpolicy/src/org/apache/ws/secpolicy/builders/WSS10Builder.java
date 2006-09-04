@@ -41,6 +41,10 @@ public class WSS10Builder implements AssertionBuilder {
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), wss10);
+            /*
+             * since there should be only one alternative
+             */
+            break;
         }
         
         return wss10;
@@ -52,8 +56,6 @@ public class WSS10Builder implements AssertionBuilder {
     
     private void processAlternative(List assertions, Wss10 parent) {
         
-        Wss10 wss10 = new Wss10();
-        
         Assertion assertion;
         QName name;
         
@@ -62,20 +64,17 @@ public class WSS10Builder implements AssertionBuilder {
             name = assertion.getName();
             
             if (Constants.MUST_SUPPORT_REF_KEY_IDENTIFIER.equals(name)) {
-                wss10.setMustSupportRefKeyIdentifier(true);
+                parent.setMustSupportRefKeyIdentifier(true);
                 
             } else if (Constants.MUST_SUPPORT_REF_ISSUER_SERIAL.equals(name)) {
-                wss10.setMustSupportRefIssuerSerial(true);
+                parent.setMustSupportRefIssuerSerial(true);
                 
             } else if (Constants.MUST_SUPPORT_REF_EXTERNAL_URI.equals(name)) {
-                wss10.setMustSupportRefExternalURI(true);
+                parent.setMustSupportRefExternalURI(true);
                 
             } else if (Constants.MUST_SUPPORT_REF_EMBEDDED_TOKEN.equals(name)) {
-                wss10.setMustSupportRefEmbeddedToken(true);
+                parent.setMustSupportRefEmbeddedToken(true);
             }
         }
-        
-        parent.addConfiguration(wss10);
     }
-
 }

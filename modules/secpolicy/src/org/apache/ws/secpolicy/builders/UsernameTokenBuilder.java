@@ -57,6 +57,11 @@ public class UsernameTokenBuilder implements AssertionBuilder {
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), usernameToken);
+            
+            /*
+             * since there should be only one alternative
+             */
+            break;
         }
         
         return usernameToken;
@@ -67,20 +72,17 @@ public class UsernameTokenBuilder implements AssertionBuilder {
     }
 
     private void processAlternative(List assertions, UsernameToken parent) {
-        UsernameToken usernameToken = new UsernameToken();
-        usernameToken.setInclusion(parent.getInclusion());
-        
+                
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
             Assertion assertion = (Assertion) iterator.next();
             QName qname = assertion.getName();
             
             if (Constants.WSS_USERNAME_TOKEN10.equals(qname)) {
-                usernameToken.setUseUTProfile11(false)
+                parent.setUseUTProfile11(false)
                 ;                
             } else if (Constants.WSS_USERNAME_TOKEN11.equals(qname)) {
-                usernameToken.setUseUTProfile11(true);
+                parent.setUseUTProfile11(true);
             }
         }
-        parent.addConfiguration(usernameToken);
     }
 }

@@ -37,10 +37,11 @@ public class InitiatorTokenBuilder implements AssertionBuilder {
         InitiatorToken initiatorToken = new InitiatorToken();
         
         Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
-        policy = (Policy) policy.normalize(false);
+        policy = (Policy) policy.normalize(false); 
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), initiatorToken);
+            break; // TODO process all the token that must be set ..
         }
         
         return initiatorToken;
@@ -48,7 +49,6 @@ public class InitiatorTokenBuilder implements AssertionBuilder {
     
     private void processAlternative(List assertions, InitiatorToken parent) {
         
-        InitiatorToken initiatorToken = new InitiatorToken();
         Object token;
         
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
@@ -58,8 +58,6 @@ public class InitiatorTokenBuilder implements AssertionBuilder {
                 parent.setInitiatorToken((Token) token);
             }
         }
-        
-        parent.addConfiguration(initiatorToken);
     }
 
     public QName getKnownElement() {

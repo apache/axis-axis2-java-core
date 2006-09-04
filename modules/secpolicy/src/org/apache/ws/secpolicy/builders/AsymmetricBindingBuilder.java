@@ -44,14 +44,18 @@ public class AsymmetricBindingBuilder implements AssertionBuilder {
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), asymmetricBinding);
+            
+            /*
+             * since there should be only one alternative
+             */
+            break;
         }
         
         return asymmetricBinding;
     }
     
-    private void processAlternative(List assertions, AsymmetricBinding parent) {
-        AsymmetricBinding asymmetricBinding = new AsymmetricBinding();
-        
+    private void processAlternative(List assertions, AsymmetricBinding asymmetricBinding) {
+               
         Assertion assertion;
         QName name;
         
@@ -81,8 +85,6 @@ public class AsymmetricBindingBuilder implements AssertionBuilder {
                 asymmetricBinding.setProtectionOrder(Constants.SIGN_BEFORE_ENCRYPTING);
             }  
         }
-                
-        parent.addConfiguration(asymmetricBinding);
     }
     
     public QName getKnownElement() {

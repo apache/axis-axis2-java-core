@@ -16,9 +16,6 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -32,8 +29,6 @@ public class Wss10 extends AbstractSecurityAssertion {
     private boolean MustSupportRefIssuerSerial;
     private boolean MustSupportRefExternalURI;
     private boolean MustSupportRefEmbeddedToken;
-    
-    private ArrayList wss10s = null;
     
     /**
      * @return Returns the mustSupportRefEmbeddedToken.
@@ -82,24 +77,6 @@ public class Wss10 extends AbstractSecurityAssertion {
      */
     public void setMustSupportRefKeyIdentifier(boolean mustSupportRefKeyIdentifier) {
         this.mustSupportRefKeyIdentifier = mustSupportRefKeyIdentifier;
-    }
-    
-    public List getConfiguration() {
-        return wss10s;
-    }
-    
-    public Wss10 getDefaultConfiguration() {
-        if (wss10s != null) {
-            wss10s = new ArrayList();
-        }
-        return null;
-    }
-    
-    public void addConfiguration(Wss10 wss10) {
-        if (wss10s == null) {
-            wss10s = new ArrayList();
-        }
-        wss10s.add(wss10);
     }
     
     public QName getName() {

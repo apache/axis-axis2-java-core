@@ -44,6 +44,11 @@ public class TransportBindingBuilder implements AssertionBuilder {
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), transportBinding, factory);
+            
+            /*
+             * since there should be only one alternative
+             */
+            break; 
         }
         
         return transportBinding;
@@ -54,7 +59,6 @@ public class TransportBindingBuilder implements AssertionBuilder {
     }
 
     private void processAlternative(List assertionList, TransportBinding parent, AssertionBuilderFactory factory) {
-        TransportBinding transportBinding = new TransportBinding();
         
         for (Iterator iterator = assertionList.iterator(); iterator.hasNext(); ) {
             
@@ -62,24 +66,23 @@ public class TransportBindingBuilder implements AssertionBuilder {
             QName name = primitive.getName();
             
             if (name.equals(Constants.ALGORITHM_SUITE)) {
-                transportBinding.setAlgorithmSuite((AlgorithmSuite) primitive);
+                parent.setAlgorithmSuite((AlgorithmSuite) primitive);
                 
             } else if (name.equals(Constants.TRANSPORT_TOKEN)) {
-                transportBinding.setTransportToken(((TransportToken) primitive));
+                parent.setTransportToken(((TransportToken) primitive));
                 
             } else if (name.equals(Constants.INCLUDE_TIMESTAMP)) {
-                transportBinding.setIncludeTimestamp(true);
+                parent.setIncludeTimestamp(true);
                 
             } else if (name.equals(Constants.LAYOUT)) {
-                transportBinding.setLayout((Layout) primitive);
+                parent.setLayout((Layout) primitive);
                  
             } else if (name.equals(Constants.SIGNED_SUPPORTING_TOKENS)) {
-                transportBinding.setSignedSupportingToken((SupportingToken) primitive);
+                parent.setSignedSupportingToken((SupportingToken) primitive);
                 
             } else if (name.equals(Constants.SIGNED_ENDORSING_SUPPORTING_TOKENS)) {
-                transportBinding.setSignedEndorsingSupportingTokens((SupportingToken) primitive);
+                parent.setSignedEndorsingSupportingTokens((SupportingToken) primitive);
             }
         }
-        parent.addConfiguration(transportBinding);
     }
 }

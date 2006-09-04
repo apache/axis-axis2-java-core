@@ -40,6 +40,7 @@ public class ProtectionTokenBuilder implements AssertionBuilder {
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), protectionToken);
+            break; // since there should be only one alternative ..
         }
         
         return protectionToken;
@@ -50,11 +51,7 @@ public class ProtectionTokenBuilder implements AssertionBuilder {
     }
 
     private void processAlternative(List assertions, ProtectionToken parent) {
-        ProtectionToken protectionToken = new ProtectionToken();
-        
         Token token = (Token) assertions.get(0);
-        protectionToken.setToken(token);
-        
-        parent.addOption(protectionToken);
+        parent.setToken(token);
     }
 }

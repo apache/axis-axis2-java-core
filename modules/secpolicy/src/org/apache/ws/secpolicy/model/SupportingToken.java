@@ -15,8 +15,8 @@
  */
 
 package org.apache.ws.secpolicy.model;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -26,8 +26,8 @@ import org.apache.neethi.Assertion;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
-public class SupportingToken extends AbstractSecurityAssertion implements AlgorithmWrapper, TokenWrapper
-         {
+public class SupportingToken extends AbstractConfigurableSecurityAssertion
+        implements AlgorithmWrapper, TokenWrapper {
 
     /**
      * Type of SupportingToken
@@ -50,8 +50,6 @@ public class SupportingToken extends AbstractSecurityAssertion implements Algori
     private SignedEncryptedParts signedParts;
 
     private SignedEncryptedParts encryptedParts;
-
-    private ArrayList SupportingTokens = new ArrayList();
 
     public SupportingToken(int type) {
         this.type = type;
@@ -202,13 +200,4 @@ public class SupportingToken extends AbstractSecurityAssertion implements Algori
         // TODO Auto-generated method stub
 
     }
-
-    public void addOption(SupportingToken supportingToken) {
-        this.SupportingTokens.add(supportingToken);
-    }
-
-    public Iterator getOptions() {
-        return this.SupportingTokens.iterator();
-    }
-
 }

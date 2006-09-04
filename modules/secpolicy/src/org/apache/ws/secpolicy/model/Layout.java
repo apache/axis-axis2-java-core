@@ -16,9 +16,6 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -30,8 +27,6 @@ public class Layout extends AbstractSecurityAssertion  {
    
     private String value = Constants.LAYOUT_LAX;
     
-    private List layouts;
-
     /**
      * @return Returns the value.
      */
@@ -53,24 +48,6 @@ public class Layout extends AbstractSecurityAssertion  {
              }
     }
     
-    public List getConfigurations() {
-        return layouts;
-    }
-    
-    public Layout getDefaultConfiguration() {
-        if (layouts != null) {
-            return (Layout) layouts.get(0);
-        }
-        return null;
-    }
-    
-    public void addCofiguration(Layout layout) {
-        if (layouts == null) {
-            layouts = new ArrayList();
-        }
-        layouts.add(layout);
-    }
-
     public QName getName() {
         return Constants.LAYOUT;
     }

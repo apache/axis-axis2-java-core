@@ -44,15 +44,18 @@ public class X509TokenBuilder implements AssertionBuilder {
             for (Iterator iterator = policy.getAlternatives(); iterator
                     .hasNext();) {
                 processAlternative((List) iterator.next(), x509Token);
+                
+                /*
+                 * since there should be only one alternative
+                 */
+                break;
             }
         }
         return x509Token;
     }
 
     private void processAlternative(List assertions, X509Token parent) {
-        X509Token x509Token = new X509Token();
-
-        Assertion assertion;
+                Assertion assertion;
         QName name;
 
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
@@ -60,48 +63,46 @@ public class X509TokenBuilder implements AssertionBuilder {
             name = (QName) assertion.getName();
 
             if (Constants.REQUIRE_KEY_IDENTIFIRE_REFERENCE.equals(name)) {
-                x509Token.setRequireKeyIdentifierReference(true);
+                parent.setRequireKeyIdentifierReference(true);
 
             } else if (Constants.REQUIRE_ISSUER_SERIAL_REFERENCE.equals(name)) {
-                x509Token.setRequireIssuerSerialReference(true);
+                parent.setRequireIssuerSerialReference(true);
 
             } else if (Constants.REQUIRE_EMBEDDED_TOKEN_REFERENCE.equals(name)) {
-                x509Token.setRequireEmbeddedTokenReference(true);
+                parent.setRequireEmbeddedTokenReference(true);
 
             } else if (Constants.REQUIRE_THUMBPRINT_REFERENCE.equals(name)) {
-                x509Token.setRequireThumbprintReference(true);
+                parent.setRequireThumbprintReference(true);
 
             } else if (Constants.WSS_X509_V1_TOKEN_10.equals(name)) {
-                x509Token.setTokenVersionAndType(Constants.WSS_X509_V1_TOKEN10);
+                parent.setTokenVersionAndType(Constants.WSS_X509_V1_TOKEN10);
 
             } else if (Constants.WSS_X509_V1_TOKEN_11.equals(name)) {
-                x509Token.setTokenVersionAndType(Constants.WSS_X509_V1_TOKEN11);
+                parent.setTokenVersionAndType(Constants.WSS_X509_V1_TOKEN11);
 
             } else if (Constants.WSS_X509_V3_TOKEN_10.equals(name)) {
-                x509Token.setTokenVersionAndType(Constants.WSS_X509_V3_TOKEN10);
+                parent.setTokenVersionAndType(Constants.WSS_X509_V3_TOKEN10);
 
             } else if (Constants.WSS_X509_V3_TOKEN_11.equals(name)) {
-                x509Token.setTokenVersionAndType(Constants.WSS_X509_V3_TOKEN11);
+                parent.setTokenVersionAndType(Constants.WSS_X509_V3_TOKEN11);
 
             } else if (Constants.WSS_X509_PKCS7_TOKEN_10.equals(name)) {
-                x509Token
+                parent
                         .setTokenVersionAndType(Constants.WSS_X509_PKCS7_TOKEN10);
 
             } else if (Constants.WSS_X509_PKCS7_TOKEN_11.equals(name)) {
-                x509Token
+                parent
                         .setTokenVersionAndType(Constants.WSS_X509_PKCS7_TOKEN11);
 
             } else if (Constants.WSS_X509_PKI_PATH_V1_TOKEN_10.equals(name)) {
-                x509Token
+                parent
                         .setTokenVersionAndType(Constants.WSS_X509_PKI_PATH_V1_TOKEN10);
 
             } else if (Constants.WSS_X509_PKI_PATH_V1_TOKEN_11.equals(name)) {
-                x509Token
+                parent
                         .setTokenVersionAndType(Constants.WSS_X509_PKI_PATH_V1_TOKEN11);
             }
         }
-
-        parent.addConfiguration(x509Token);
     }
 
     public QName getKnownElement() {

@@ -41,13 +41,17 @@ public class RecipientTokenBuilder implements AssertionBuilder {
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), recipientToken);
+            
+            /* 
+             * for the moment we will pick the first token specified in the policy
+             */
+            break;   
         }
         
         return recipientToken;
     }
 
     private void processAlternative(List assertions, RecipientToken parent) {
-        RecipientToken recipientToken = new RecipientToken();
         
         Assertion assertion;
         
@@ -55,12 +59,11 @@ public class RecipientTokenBuilder implements AssertionBuilder {
             assertion = (Assertion) iterator.next();
             
             if (assertion instanceof Token) {
-                recipientToken.setToken((Token) assertion);
+                parent.setToken((Token) assertion);
             }
-        }
-                
-        parent.addConfiguration(recipientToken);        
+        }        
     }
+    
     public QName getKnownElement() {
         return Constants.RECIPIENT_TOKEN;
     }

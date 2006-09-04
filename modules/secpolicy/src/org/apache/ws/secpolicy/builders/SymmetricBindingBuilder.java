@@ -23,6 +23,8 @@ import javax.xml.namespace.QName;
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.builders.AssertionBuilder;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.EncryptionToken;
@@ -35,7 +37,17 @@ public class SymmetricBindingBuilder implements AssertionBuilder {
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
         SymmetricBinding symmetricBinding = new SymmetricBinding();
         
+        Policy policy = PolicyEngine.getPolicy(element);
+        policy = (Policy) policy.normalize();
         
+        for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
+            processAlternatives((List) iterator.next(), symmetricBinding);
+            
+            /*
+             * since there should be only one alternative ..
+             */
+            break; 
+        }
         return symmetricBinding;
     }
 
@@ -44,8 +56,6 @@ public class SymmetricBindingBuilder implements AssertionBuilder {
     }
     
     private void processAlternatives(List assertions, SymmetricBinding parent) {
-        SymmetricBinding symmetricBinding = new SymmetricBinding();
-        
         Assertion assertion;
         QName name;
         
@@ -54,18 +64,15 @@ public class SymmetricBindingBuilder implements AssertionBuilder {
             name = assertion.getName();
             
             if (Constants.ENCRYPTION_TOKEN.equals(name)) {
-                symmetricBinding.setEncryptionToken((EncryptionToken) assertion);
+                parent.setEncryptionToken((EncryptionToken) assertion);
                 
             } else if (Constants.SIGNATURE_TOKEN.equals(name)) {
-                symmetricBinding.setSignatureToken((SignatureToken) assertion);
+                parent.setSignatureToken((SignatureToken) assertion);
                 
             } else if (Constants.PROTECTION_TOKEN.equals(name)) {
-                symmetricBinding.setProtectionToken((ProtectionToken) assertion);
+                parent.setProtectionToken((ProtectionToken) assertion);
                 
             }
-        }
-        
-        parent.addConfiguration(symmetricBinding);
-        
+        }        
     }
 }

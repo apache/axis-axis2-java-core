@@ -40,6 +40,10 @@ public class WSS11Builder implements AssertionBuilder {
 
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), wss11);
+            /*
+             * since there should be only one alternative
+             */
+            break;
         }
 
         return wss11;
@@ -50,8 +54,7 @@ public class WSS11Builder implements AssertionBuilder {
     }
 
     private void processAlternative(List assertions, Wss11 parent) {
-        Wss11 wss11 = new Wss11();
-
+        
         Assertion assertion;
         QName name;
 
@@ -60,29 +63,26 @@ public class WSS11Builder implements AssertionBuilder {
             name = assertion.getName();
 
             if (Constants.MUST_SUPPORT_REF_KEY_IDENTIFIER.equals(name)) {
-                wss11.setMustSupportRefKeyIdentifier(true);
+                parent.setMustSupportRefKeyIdentifier(true);
 
             } else if (Constants.MUST_SUPPORT_REF_ISSUER_SERIAL.equals(name)) {
-                wss11.setMustSupportRefIssuerSerial(true);
+                parent.setMustSupportRefIssuerSerial(true);
 
             } else if (Constants.MUST_SUPPORT_REF_EXTERNAL_URI.equals(name)) {
-                wss11.setMustSupportRefExternalURI(true);
+                parent.setMustSupportRefExternalURI(true);
 
             } else if (Constants.MUST_SUPPORT_REF_EMBEDDED_TOKEN.equals(name)) {
-                wss11.setMustSupportRefEmbeddedToken(true);
+                parent.setMustSupportRefEmbeddedToken(true);
                 
             } else if (Constants.MUST_SUPPORT_REF_THUMBPRINT.equals(name)) {
-                wss11.setMustSupportRefThumbprint(true);
+                parent.setMustSupportRefThumbprint(true);
                 
             } else if (Constants.MUST_SUPPORT_REF_ENCRYPTED_KEY.equals(name)) {
-                wss11.setMustSupportRefEncryptedKey(true);
+                parent.setMustSupportRefEncryptedKey(true);
                 
             } else if (Constants.REQUIRE_SIGNATURE_CONFIRMATION.equals(name)) {
-                wss11.setRequireSignatureConfirmation(true);
+                parent.setRequireSignatureConfirmation(true);
             }
         }
-
-        parent.addConfiguration(wss11);
-
     }
 }

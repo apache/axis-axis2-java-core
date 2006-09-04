@@ -16,10 +16,6 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -30,8 +26,6 @@ import org.apache.ws.secpolicy.Constants;
 public class ProtectionToken extends AbstractSecurityAssertion implements TokenWrapper {
     
     private Token protectionToken;
-    
-    private List protectionTokens = new ArrayList();
 
     /**
      * @return Returns the protectionToken.
@@ -51,14 +45,6 @@ public class ProtectionToken extends AbstractSecurityAssertion implements TokenW
         this.setProtectionToken(tok);
     }
     
-    public Iterator getOptions() {
-        return protectionTokens.iterator();
-    }
-    
-    public void addOption(ProtectionToken protectionToken) {
-        protectionTokens.add(protectionToken);
-    }
-
     public QName getName() {
         return Constants.PROTECTION_TOKEN;
     }

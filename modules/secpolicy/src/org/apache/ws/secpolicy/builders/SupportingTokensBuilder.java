@@ -35,64 +35,73 @@ import org.apache.ws.secpolicy.model.Token;
 
 public class SupportingTokensBuilder implements AssertionBuilder {
 
-    public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
+    public Assertion build(OMElement element, AssertionBuilderFactory factory)
+            throws IllegalArgumentException {
         QName name = element.getQName();
         SupportingToken supportingToken = null;
-        
+
         if (Constants.SUPPORIING_TOKENS.equals(name)) {
-            supportingToken = new SupportingToken(Constants.SUPPORTING_TOKEN_SUPPORTING);
+            supportingToken = new SupportingToken(
+                    Constants.SUPPORTING_TOKEN_SUPPORTING);
         } else if (Constants.SIGNED_SUPPORTING_TOKENS.equals(name)) {
-            supportingToken = new SupportingToken(Constants.SUPPORTING_TOKEN_SIGNED);
+            supportingToken = new SupportingToken(
+                    Constants.SUPPORTING_TOKEN_SIGNED);
         } else if (Constants.ENDORSING_SUPPORTING_TOKENS.equals(name)) {
-            supportingToken = new SupportingToken(Constants.SUPPORTING_TOKEN_ENDORSING);
+            supportingToken = new SupportingToken(
+                    Constants.SUPPORTING_TOKEN_ENDORSING);
         } else if (Constants.SIGNED_ENDORSING_SUPPORTING_TOKENS.equals(name)) {
-            supportingToken = new SupportingToken(Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING);
+            supportingToken = new SupportingToken(
+                    Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING);
         }
-                
+
         Policy policy = (Policy) PolicyEngine.getPolicy(element);
         policy = (Policy) policy.normalize(false);
-        
+
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), supportingToken);
         }
-        
+
         return supportingToken;
     }
-   
+
     public QName getKnownElement() {
         return Constants.SUPPORIING_TOKENS;
     }
 
     private void processAlternative(List assertions, SupportingToken parent) {
-        SupportingToken supportingToken = new SupportingToken(parent.getTokenType());
-        
+        SupportingToken supportingToken = new SupportingToken(parent
+                .getTokenType());
+
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
-            
+
             Assertion primitive = (Assertion) iterator.next();
             QName qname = primitive.getName();
-            
+
             if (Constants.ALGORITHM_SUITE.equals(qname)) {
                 supportingToken.setAlgorithmSuite((AlgorithmSuite) primitive);
-                
+
             } else if (Constants.SIGNED_PARTS.equals(qname)) {
-                supportingToken.setSignedParts((SignedEncryptedParts) primitive);
-                
+                supportingToken
+                        .setSignedParts((SignedEncryptedParts) primitive);
+
             } else if (Constants.SIGNED_ELEMENTS.equals(qname)) {
-                supportingToken.setSignedElements((SignedEncryptedElements) primitive);
-                
+                supportingToken
+                        .setSignedElements((SignedEncryptedElements) primitive);
+
             } else if (Constants.ENCRYPTED_PARTS.equals(qname)) {
-                supportingToken.setEncryptedParts((SignedEncryptedParts) primitive);
-                
+                supportingToken
+                        .setEncryptedParts((SignedEncryptedParts) primitive);
+
             } else if (Constants.ENCRYPTED_ELEMENTS.equals(qname)) {
-                supportingToken.setEncryptedElements((SignedEncryptedElements) primitive);
-                
+                supportingToken
+                        .setEncryptedElements((SignedEncryptedElements) primitive);
+
             } else if (primitive instanceof Token) {
                 supportingToken.addToken((Token) primitive);
             }
         }
-        
-        parent.addOption(supportingToken);        
+
+        parent.addConfiguration(supportingToken);
     }
-    
 
 }

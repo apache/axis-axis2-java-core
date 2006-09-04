@@ -15,17 +15,15 @@
  */
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
+import org.apache.ws.secpolicy.WSSPolicyException;
 
-public class AlgorithmSuite extends AbstractSecurityAssertion {
+public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
     
     private String symmetricSignature = Constants.HMAC_SHA1;
     
@@ -60,12 +58,6 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
     private String strTransform;
     
     private String xPath;
-    
-    private List algorithmSuites;
-        
-//    public AlgorithmSuite (String algoSuite) throws WSSPolicyException {
-//        this.setAlgorithmSuite(algoSuite);
-//    }
     
     /**
      * Set the algorithm suite
@@ -370,24 +362,6 @@ public class AlgorithmSuite extends AbstractSecurityAssertion {
         xPath = path;
     }
     
-    public List getConfigurations() {
-        return algorithmSuites;
-    }
-    
-    public AlgorithmSuite getDefaultConfiguration() {
-        if (algorithmSuites != null) {
-            return (AlgorithmSuite) algorithmSuites.get(0);
-        }
-        return null;
-    }
-    
-    public void addConfiguration(AlgorithmSuite algorithmSuite) {
-        if (algorithmSuites == null) {
-            algorithmSuites = new ArrayList();
-        }
-        algorithmSuites.add(algorithmSuite);
-    }
-
     public QName getName() {
         return Constants.ALGORITHM_SUITE;
     }

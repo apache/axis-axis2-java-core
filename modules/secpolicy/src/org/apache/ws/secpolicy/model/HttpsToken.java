@@ -16,9 +16,6 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -34,8 +31,6 @@ public class HttpsToken extends Token {
 
     private Token httpsToken;
     
-    private List httpsTokens = new ArrayList();
-
     /**
      * @return Returns the httpsToken.
      */
@@ -49,21 +44,6 @@ public class HttpsToken extends Token {
     public void setHttpsToken(Token httpsToken) {
         this.httpsToken = httpsToken;
     }
-    
-    public List getConfigurations() {
-        return httpsTokens;
-    }
-    
-    public HttpsToken getDefaultConfiguration() {
-        if (httpsTokens != null) {
-            return (HttpsToken) httpsTokens.get(0);
-        }
-        return null;
-    }
-        
-    public void addConfiguration(HttpsToken httpsToken) {
-        httpsTokens.add(httpsToken);
-    }
 
     public QName getName() {
         return Constants.HTTPS_TOKEN;
@@ -76,7 +56,4 @@ public class HttpsToken extends Token {
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
-    
-    
-
 }
