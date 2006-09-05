@@ -95,7 +95,7 @@ public class EchoRawMTOMTest extends UtilServerBasedTestCase implements TestCons
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         OMElement data = fac.createOMElement("data", omNs);
-        FileDataSource fileDataSource = new FileDataSource("src/org/apache/axis2/mtom/test.jpg");
+        FileDataSource fileDataSource = new FileDataSource("test-resources/mtom/test.jpg");
         expectedDH = new DataHandler(fileDataSource);
         expectedTextData = new OMTextImpl(expectedDH, true, fac);
         data.addChild(expectedTextData);

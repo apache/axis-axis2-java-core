@@ -36,6 +36,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -102,7 +104,7 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
         httppost.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
                 myretryhandler);
         httppost.setRequestEntity(new InputStreamRequestEntity(
-                this.getResourceAsStream("/org/apache/axis2/mtom/wmtom.bin")));
+                new FileInputStream("test-resources/mtom/wmtom.bin")));
 
         httppost.setRequestHeader("Content-Type",
                 "multipart/related; boundary=--MIMEBoundary258DE2D105298B756D; type=\"application/xop+xml\"; start=\"<0.15B50EF49317518B01@apache.org>\"; start-info=\"application/soap+xml\"");
@@ -118,9 +120,5 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
         } finally {
             httppost.releaseConnection();
         }
-    }
-
-    private InputStream getResourceAsStream(String path) {
-        return this.getClass().getResourceAsStream(path);
     }
 }

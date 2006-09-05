@@ -466,7 +466,7 @@
            <!-- MTOM enabled Repository -->
             <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
             <mkdir dir="target/test-resources/MTOM-enabledRepository/conf"/>
-            <copy file="test/org/apache/axis2/mtom/MTOM-enabled-axis2.xml"
+            <copy file="test-resources/mtom/MTOM-enabled-axis2.xml"
                   tofile="target/test-resources/MTOM-enabledRepository/conf/axis2.xml"/>
         	<copy file="../addressing/target/addressing-${addressing_version}.mar"
         	      tofile="target/test-resources/MTOM-enabledRepository/modules/addressing-${addressing_version}.mar"/>
@@ -474,7 +474,7 @@
             <!-- MTOM file cache enabled Repository -->
             <mkdir dir="target/test-resources/MTOM-fileCache-enabledRepository"/>
             <mkdir dir="target/test-resources/MTOM-fileCache-enabledRepository/conf"/>
-            <copy file="test/org/apache/axis2/mtom/MTOM-fileCache-enabled-axis2.xml"
+            <copy file="test-resources/mtom/MTOM-fileCache-enabled-axis2.xml"
                   tofile="target/test-resources/MTOM-fileCache-enabledRepository/conf/axis2.xml"/>
         	<copy file="../addressing/target/addressing-${addressing_version}.mar"
         	        	      tofile="target/test-resources/MTOM-fileCache-enabledRepository/modules/addressing-${addressing_version}.mar"/>

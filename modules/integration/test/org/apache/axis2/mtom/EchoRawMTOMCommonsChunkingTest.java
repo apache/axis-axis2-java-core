@@ -47,7 +47,7 @@ import org.apache.axis2.util.Utils;
 public class EchoRawMTOMCommonsChunkingTest extends UtilServerBasedTestCase implements TestConstants {
 
     private OMElement data;
-    private String fileName = "src/org/apache/axis2/mtom/test.jpg";
+    private String fileName = "test-resources/mtom/test.jpg";
 
     public EchoRawMTOMCommonsChunkingTest() {
         super(EchoRawMTOMCommonsChunkingTest.class.getName());
