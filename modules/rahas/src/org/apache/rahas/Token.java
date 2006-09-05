@@ -30,6 +30,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * This represents a security token which can have either one of 4 states.
@@ -96,9 +97,9 @@ public class Token {
     private OMElement unattachedReference;
     
     /**
-     * A bag to hold anyother properties
+     * A bag to hold any other properties
      */
-    private HashMap properties;
+    private Properties  properties;
 
     /**
      * A flag to assist the TokenStorage
@@ -178,14 +179,14 @@ public class Token {
     /**
      * @return Returns the properties.
      */
-    public HashMap getProperties() {
+    public Properties getProperties() {
         return properties;
     }
 
     /**
      * @param properties The properties to set.
      */
-    public void setProperties(HashMap properties) {
+    public void setProperties(Properties properties) {
         this.properties = properties;
     }
 
