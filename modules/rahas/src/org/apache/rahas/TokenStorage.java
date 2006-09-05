@@ -16,7 +16,7 @@
 
 package org.apache.rahas;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The storage interface to store security tokens and
@@ -54,28 +54,28 @@ public interface TokenStorage {
      * @return
      * @throws TrustException
      */
-    public ArrayList getExpiredTokens() throws TrustException;
+    public List getExpiredTokens() throws TrustException;
     
     /**
      * Return the list of ISSUED and RENEWED tokens.
      * @return
      * @throws TrustException
      */
-    public ArrayList getValidTokens() throws TrustException;
+    public List getValidTokens() throws TrustException;
     
     /**
      * Return the list of RENEWED tokens.
      * @return
      * @throws TrustException
      */
-    public ArrayList getRenewedTokens() throws TrustException;
+    public List getRenewedTokens() throws TrustException;
     
     /**
      * Return the list of CANCELLED tokens
      * @return
      * @throws TrustException
      */
-    public ArrayList getCancelledTokens() throws TrustException;
+    public List getCancelledTokens() throws TrustException;
     
     /**
      * Returns the <code>Token</code> of the given id

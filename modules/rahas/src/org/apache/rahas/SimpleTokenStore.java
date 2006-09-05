@@ -16,6 +16,8 @@
 
 package org.apache.rahas;
 
+import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -25,93 +27,76 @@ import java.util.Iterator;
  */
 public class SimpleTokenStore implements TokenStorage {
 
-    private Hashtable tokens = new Hashtable();
+    private Map tokens = new Hashtable();
 
     public void add(Token token) throws TrustException {
-        if (token != null && !"".equals(token.getId()) && 
-                token.getId() != null) {
+        if (token != null && !"".equals(token.getId()) &&
+            token.getId() != null) {
             if (this.tokens.keySet().size() == 0
-                    || (this.tokens.keySet().size() > 0 && !this.tokens
-                            .keySet().contains(token.getId()))) {
+                || (this.tokens.keySet().size() > 0 && !this.tokens
+                    .keySet().contains(token.getId()))) {
                 tokens.put(token.getId(), token);
             } else {
                 throw new TrustException("tokenAlreadyExists",
-                        new String[] { token.getId() });
+                                         new String[]{token.getId()});
             }
 
         }
     }
 
     public void update(Token token) throws TrustException {
-        if (token != null && !"".equals(token.getId()) && 
-                token.getId() != null) {
-            if(this.tokens.keySet().size() == 0 ||
-                    (this.tokens.keySet().size() > 0 && 
-                            !this.tokens.keySet().contains(token.getId()))) {
-                    throw new TrustException("noTokenToUpdate",
-                        new String[] { token.getId() });
+        if (token != null && token.getId() != null && token.getId().trim().length() != 0) {
+
+            if (!this.tokens.keySet().contains(token.getId())) {
+                throw new TrustException("noTokenToUpdate", new String[]{token.getId()});
             }
             this.tokens.remove(this.tokens.get(token.getId()));
             this.tokens.put(token.getId(), token);
         }
     }
 
-    public String[] getTokenIdentifiers() throws TrustException {
-        if (this.tokens.size() == 0) {
-            return null;
+     public String[] getTokenIdentifiers() throws TrustException {
+        List identifiers = new ArrayList();
+        for (Iterator iterator = tokens.keySet().iterator(); iterator.hasNext();) {
+            identifiers.add(iterator.next());
         }
-        String[] ids = new String[this.tokens.size()];
-        Iterator iter = this.tokens.keySet().iterator();
-        for (int i = 0; i < ids.length; i++) {
-            ids[i] = (String) iter.next();
-        }
-        return ids;
+        return (String[]) identifiers.toArray(new String[identifiers.size()]);
     }
 
-    public ArrayList getExpiredTokens() throws TrustException {
+    public List getExpiredTokens() throws TrustException {
         return getTokens(Token.EXPIRED);
     }
 
-    public ArrayList getCancelledTokens() throws TrustException {
-        return getTokens(Token.CANCELLED);
-    }
-    
-    public ArrayList getValidTokens() throws TrustException {
+    public List getValidTokens() throws TrustException {
         ArrayList issued = getTokens(Token.ISSUED);
-        ArrayList renewed = getTokens(Token.RENEWED);
-        Iterator renewedIter = renewed.iterator();
-        while (renewedIter.hasNext()) {
-            issued.add(renewedIter.next());
+        List renewed = getTokens(Token.RENEWED);
+        for (Iterator iterator = renewed.iterator(); iterator.hasNext();) {
+            issued.add(iterator.next());
         }
         return issued;
     }
 
-    public ArrayList getRenewedTokens() throws TrustException {
+    public List getRenewedTokens() throws TrustException {
         return getTokens(Token.RENEWED);
     }
-    
-    private ArrayList getTokens(int state) throws TrustException {
-        if (this.tokens.size() == 0) {
-            return null;
-        }
-        Iterator iter = this.tokens.keySet().iterator();
-        ArrayList list = new ArrayList();
-        while (iter.hasNext()) {
-            String id = (String) iter.next();
-            Token tok = (Token)this.tokens.get(id);
-            if(tok.getState() == state) {
-                list.add(tok);
+
+
+    public List getCancelledTokens() throws TrustException {
+        return getTokens(Token.CANCELLED);
+    }
+
+    private ArrayList getTokens(int state) {
+        ArrayList expiredTokens = new ArrayList();
+        for (Iterator iterator = this.tokens.values().iterator(); iterator.hasNext();) {
+            Token token = (Token) iterator.next();
+            if (token.getState() == state) {
+                expiredTokens.add(token);
             }
         }
-        if(list.size() > 0) {
-            return list;
-        } else {
-            return null;
-        }
-             
+        return expiredTokens;
     }
 
     public Token getToken(String id) throws TrustException {
-        return (Token)this.tokens.get(id);
+        return (Token) this.tokens.get(id);
     }
 }

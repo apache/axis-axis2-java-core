@@ -18,7 +18,7 @@ package org.apache.rahas;
 
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SimpleTokenStoreTest extends TestCase {
 
@@ -29,23 +29,23 @@ public class SimpleTokenStoreTest extends TestCase {
             store.add(token);
         } catch (TrustException e) {
             fail("Adding a new token to an empty store should not fail, " +
-                    "message : " + e.getMessage());
+                 "message : " + e.getMessage());
         }
         try {
             store.add(token);
             fail("Adding an existing token must throw an exception");
         } catch (TrustException e) {
-            assertEquals("Incorrect exception message", 
-                    TrustException.getMessage("tokenAlreadyExists", 
-                    new String[] {token.getId()}), e.getMessage());
+            assertEquals("Incorrect exception message",
+                         TrustException.getMessage("tokenAlreadyExists",
+                                                   new String[] {token.getId()}), e.getMessage());
         }
     }
-    
+
     public void testGettokenIdentifiers() {
         SimpleTokenStore store = new SimpleTokenStore();
         try {
             String[] ids = store.getTokenIdentifiers();
-            assertNull("There should not be any token ids at this point", ids);
+            assertEquals("There should not be any token ids at this point", 0, ids.length);
         } catch (TrustException e) {
             fail(e.getMessage());
         }
@@ -59,7 +59,7 @@ public class SimpleTokenStoreTest extends TestCase {
             fail(e.getMessage());
         }
     }
-    
+
     public void testUpdate() {
         SimpleTokenStore store = new SimpleTokenStore();
         Token token1 = new Token("id-1");
@@ -72,20 +72,19 @@ public class SimpleTokenStoreTest extends TestCase {
                             .getId() }), e.getMessage());
         }
         try {
-            Token token = token1;
-            store.add(token);
+            store.add(token1);
             store.add(new Token("id-2"));
             store.add(new Token("id-3"));
-            token.setState(Token.EXPIRED);
-            store.update(token);
+            token1.setState(Token.EXPIRED);
+            store.update(token1);
         } catch (TrustException e) {
             fail(e.getMessage());
         }
     }
-    
+
     public void testGetValidExpiredRenewedTokens() {
         SimpleTokenStore store = new SimpleTokenStore();
-        
+
         Token token1 = new Token("id-1");
         Token token2 = new Token("id-2");
         Token token3 = new Token("id-3");
@@ -93,7 +92,7 @@ public class SimpleTokenStoreTest extends TestCase {
         Token token5 = new Token("id-5");
         Token token6 = new Token("id-6");
         Token token7 = new Token("id-7");
-        
+
         token1.setState(Token.ISSUED);
         token2.setState(Token.ISSUED);
         token3.setState(Token.ISSUED);
@@ -101,7 +100,7 @@ public class SimpleTokenStoreTest extends TestCase {
         token5.setState(Token.RENEWED);
         token6.setState(Token.EXPIRED);
         token7.setState(Token.CANCELLED);
-        
+
         try {
             store.add(token1);
             store.add(token2);
@@ -110,18 +109,18 @@ public class SimpleTokenStoreTest extends TestCase {
             store.add(token5);
             store.add(token6);
             store.add(token7);
-            
-            ArrayList list = store.getValidTokens();
-            ArrayList list2 = store.getExpiredTokens();
-            ArrayList list3 = store.getRenewedTokens();
-            ArrayList list4 = store.getCancelledTokens();
-            
+
+            List list = store.getValidTokens();
+            List list2 = store.getExpiredTokens();
+            List list3 = store.getRenewedTokens();
+            List list4 = store.getCancelledTokens();
+
             assertEquals("Incorrect number of valid tokens", 5, list.size());
-            assertEquals("Incorrect number of expired tokens", 1, 
-                    list2.size());
+            assertEquals("Incorrect number of expired tokens", 1,
+                         list2.size());
             assertEquals("Incorrect number of newed tokens", 2, list3.size());
             assertEquals("Incorrect number of newed tokens", 1, list4.size());
-            
+
         } catch (TrustException e) {
             fail(e.getMessage());
         }
