@@ -60,8 +60,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.net.SocketException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -523,7 +523,7 @@ public class AxisService extends AxisDescription {
         AxisOperation axisOperation = getOperation(new QName(operationName));
         if (axisOperation == null) {
             throw new AxisFault(Messages.getMessage("invalidoperation",
-                                                    operationName));
+                    operationName));
         }
         PolicyUtil.writePolicy(axisOperation.getPolicyInclude(), out);
     }
@@ -595,10 +595,10 @@ public class AxisService extends AxisDescription {
                     if (listener != null) {
                         try {
                             if (listener.getEPRForService(getName(), requestIP)
-                                != null) {
+                                    != null) {
                                 String address =
                                         listener.getEPRForService(getName(),
-                                                                  requestIP).getAddress();
+                                                requestIP).getAddress();
                                 if (address != null) {
                                     eprList.add(address);
                                 }
@@ -638,7 +638,7 @@ public class AxisService extends AxisDescription {
     private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
         if (isWsdlfound()) {
             AxisService2OM axisService2WOM = new AxisService2OM(this,
-                                                                serviceURL, "document", "literal", servicePath);
+                    serviceURL, "document", "literal", servicePath);
             try {
                 OMElement wsdlElement = axisService2WOM.generateOM();
                 wsdlElement.serialize(out);
@@ -656,10 +656,10 @@ public class AxisService extends AxisDescription {
     private void printWSDLError(OutputStream out) throws AxisFault {
         try {
             String wsdlntfound = "<error>" +
-                                 "<description>Unable to generate WSDL for this service</description>" +
-                                 "<reason>Either user has not dropped the wsdl into META-INF or" +
-                                 " operations use message receivers other than RPC.</reason>" +
-                                 "</error>";
+                    "<description>Unable to generate WSDL for this service</description>" +
+                    "<reason>Either user has not dropped the wsdl into META-INF or" +
+                    " operations use message receivers other than RPC.</reason>" +
+                    "</error>";
             out.write(wsdlntfound.getBytes());
             out.flush();
             out.close();
@@ -943,9 +943,9 @@ public class AxisService extends AxisDescription {
      */
     public void setScope(String scope) {
         if (Constants.SCOPE_APPLICATION.equals(scope) ||
-            Constants.SCOPE_TRANSPORT_SESSION.equals(scope) ||
-            Constants.SCOPE_SOAP_SESSION.equals(scope) ||
-            Constants.SCOPE_REQUEST.equals(scope)) {
+                Constants.SCOPE_TRANSPORT_SESSION.equals(scope) ||
+                Constants.SCOPE_SOAP_SESSION.equals(scope) ||
+                Constants.SCOPE_REQUEST.equals(scope)) {
             this.scope = scope;
         }
     }
@@ -1215,13 +1215,13 @@ public class AxisService extends AxisDescription {
 
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator;
+        ArrayList excludeOpeartion = new ArrayList();
         try {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                                                  implClass, schemaNameSpace,
-                                                  axisService.getSchematargetNamespacePrefix());
+                    implClass, schemaNameSpace,
+                    axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             axisService.setElementFormDefault(false);
-            ArrayList excludeOpeartion = new ArrayList();
             excludeOpeartion.add("init");
             excludeOpeartion.add("setOperationContext");
             excludeOpeartion.add("destroy");
@@ -1245,7 +1245,7 @@ public class AxisService extends AxisDescription {
             if (!jmethod.isPublic()) {
                 // no need to expose , private and protected methods
                 continue;
-            } else if ("init".equals(jmethod.getSimpleName())) {
+            } else if (excludeOpeartion.contains(jmethod.getSimpleName())) {
                 continue;
             }
             AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
@@ -1256,10 +1256,10 @@ public class AxisService extends AxisDescription {
                 operation.setMessageReceiver(messageReceiver);
             } catch (IllegalAccessException e) {
                 throw new AxisFault("IllegalAccessException occured during message receiver loading"
-                                    + e.getMessage());
+                        + e.getMessage());
             } catch (InstantiationException e) {
                 throw new AxisFault("InstantiationException occured during message receiver loading"
-                                    + e.getMessage());
+                        + e.getMessage());
             }
             pinfo.setOperationPhases(operation);
             axisService.addOperation(operation);
@@ -1275,7 +1275,7 @@ public class AxisService extends AxisDescription {
             clazz = Class.forName("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
         } catch (ClassNotFoundException e) {
             throw new AxisFault("ClassNotFoundException occured during message receiver loading"
-                                + e.getMessage());
+                    + e.getMessage());
         }
 
         return createService(implClass, axisConfig, clazz);
@@ -1367,13 +1367,13 @@ public class AxisService extends AxisDescription {
                     s = externalSchema.getSchema();
                     if (s != null && nameTable.get(s) == null) {
                         nameTable.put(s,
-                                      ("xsd" + count++)
-                                      + (customSchemaNameSuffix != null ?
-                                         customSchemaNameSuffix :
-                                         ""));
+                                ("xsd" + count++)
+                                        + (customSchemaNameSuffix != null ?
+                                        customSchemaNameSuffix :
+                                        ""));
                         calcualteSchemaNames(Arrays.asList(
                                 new XmlSchema[]{s}),
-                                             nameTable);
+                                nameTable);
                     }
                 }
             }
@@ -1411,6 +1411,7 @@ public class AxisService extends AxisDescription {
             }
         }
     }
+
     /**
      * Swap the key,value pairs
      *

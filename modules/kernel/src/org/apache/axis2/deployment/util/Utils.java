@@ -26,13 +26,13 @@ import org.codehaus.jam.JMethod;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.lang.reflect.Method;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -218,7 +218,7 @@ public class Utils {
         ClassLoader serviceClassLoader = axisService.getClassLoader();
 
         if (implInfoParam != null) {
-           serviceClass = (String) implInfoParam.getValue();
+            serviceClass = (String) implInfoParam.getValue();
         } else {
             // if Service_Class is null, every AbstractMR will look for
             // ServiceObjectSupplier. This is user specific and may contain
@@ -231,10 +231,10 @@ public class Utils {
                 // Find static getServiceObject() method, call it if there
                 Method method = serviceObjectMaker.
                         getMethod("getServiceObject",
-                                  new Class[] { AxisService.class });
+                                new Class[]{AxisService.class});
                 Object obj = null;
                 if (method != null) {
-                    obj =  method.invoke(serviceObjectMaker.newInstance(), new Object[] { axisService });
+                    obj = method.invoke(serviceObjectMaker.newInstance(), new Object[]{axisService});
                 }
                 if (obj == null) {
                     throw new Exception("ServiceObjectSupplier implmentation Object could not be found");
@@ -329,7 +329,12 @@ public class Utils {
                     Java2WSDLConstants.RESPONSE));
             outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
         }
-
+        if (jmethod.getExceptionTypes().length > 0) {
+            AxisMessage faultMessage = new AxisMessage();
+            faultMessage.setName(jmethod.getSimpleName() + "Fault");
+            faultMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName() + "Fault"));
+            operation.setFaultMessages(faultMessage);
+        }
         operation.setName(new QName(opName));
         AxisMessage inMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         if (inMessage != null) {

@@ -153,6 +153,15 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         // no need to generate Schema for non public methods
                         continue;
                     }
+                    if (jMethod.getExceptionTypes().length > 0) {
+                        methodSchemaType = createSchemaTypeForMethodPart(jMethod.getSimpleName() + "Fault");
+                        sequence = new XmlSchemaSequence();
+                        XmlSchemaElement elt1 = new XmlSchemaElement();
+                        elt1.setName(jMethod.getSimpleName() + "Fault");
+                        elt1.setSchemaTypeName(typeTable.getQNamefortheType(Object.class.getName()));
+                        sequence.getItems().add(elt1);
+                        methodSchemaType.setParticle(sequence);
+                    }
                     uniqueMethods.put(jMethod.getSimpleName(), jMethod);
                     //create the schema type for the method wrapper
 
