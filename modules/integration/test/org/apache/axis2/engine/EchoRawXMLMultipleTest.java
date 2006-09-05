@@ -15,12 +15,12 @@
  */
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
@@ -43,7 +43,7 @@ import javax.xml.namespace.QName;
 
 public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements TestConstants {
 
-	private static final Log log = LogFactory.getLog(EchoRawXMLMultipleTest.class);
+    private static final Log log = LogFactory.getLog(EchoRawXMLMultipleTest.class);
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
 
@@ -89,6 +89,7 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
                         "target/test-resources/integrationRepo/conf/axis2.xml");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
+        options.setAction("urn:echoOMElement");
         options.setTo(targetEPR);
         for (int i = 0; i < 5; i++) {
             Callback callback = new Callback() {
@@ -129,10 +130,11 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
         ServiceClient sender = new ServiceClient(configContext, null);
         for (int i = 0; i < 5; i++) {
             Options options = new Options();
+            options.setAction("urn:echoOMElement");
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
-            options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
-                                                                  
+            options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
+
 
             Callback callback = new Callback() {
                 public void onComplete(AsyncResult result) {
@@ -195,9 +197,10 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
                         "target/test-resources/integrationRepo/conf/axis2.xml");
         ServiceClient sender = new ServiceClient(configContext, null);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
-
+        options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
+        options.setAction("urn:echoOMElement");
         sender.setOptions(options);
+
         for (int i = 0; i < 5; i++) {
             OMElement result = sender.sendReceive(payload);
             TestingUtils.campareWithCreatedOMElement(result);

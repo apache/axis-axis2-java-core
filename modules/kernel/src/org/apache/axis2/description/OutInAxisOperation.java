@@ -228,6 +228,9 @@ class OutInAxisOperationClient implements OperationClient {
         }
         //setting AxisMessage
         mc.setAxisMessage(axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
+        if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
+            mc.setSoapAction(options.getAction());
+        }
         mc.setOptions(options);
 
         // do Target Resolution
@@ -252,12 +255,6 @@ class OutInAxisOperationClient implements OperationClient {
             mc.setTransportIn(options.getTransportIn());
         }
 
-        if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
-            String soapaction = axisOp.getSoapAction();
-            if (soapaction != null) {
-                mc.setSoapAction(soapaction);
-            }
-        }
         addReferenceParameters(mc);
         if (options.isUseSeparateListener()) {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
@@ -282,7 +279,6 @@ class OutInAxisOperationClient implements OperationClient {
 
             // Options object reused so soapAction needs to be removed so
             // that soapAction+wsa:Action on response don't conflict
-            options.setAction("");
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
@@ -333,11 +329,9 @@ class OutInAxisOperationClient implements OperationClient {
     }
 
     /**
-     * @return Returns MessageContext.
-     * @throws AxisFault
-     * Sends the message using a two way transport and waits for a response
-     *
      * @param msgctx
+     * @return Returns MessageContext.
+     * @throws AxisFault Sends the message using a two way transport and waits for a response
      */
     protected MessageContext send(MessageContext msgctx) throws AxisFault {
 

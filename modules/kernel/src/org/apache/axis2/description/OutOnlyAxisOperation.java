@@ -320,6 +320,9 @@ class OutOnlyAxisOperationClient implements OperationClient {
         ConfigurationContext cc = sc.getConfigurationContext();
 
         // set options on the message context
+        if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
+            mc.setSoapAction(options.getAction());
+        }
         mc.setOptions(options);
         mc.setAxisMessage(axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
@@ -337,13 +340,6 @@ class OutOnlyAxisOperationClient implements OperationClient {
                     .getAxisConfiguration(), toEPR, mc);
         }
         mc.setTransportOut(senderTransport);
-
-        if (mc.getSoapAction() == null) {
-            String soapaction = axisOp.getSoapAction();
-            if (soapaction != null) {
-                mc.setSoapAction(soapaction);
-            }
-        }
 
         // create the operation context for myself
         OperationContext oc = new OperationContext(axisOp, sc);
