@@ -27,7 +27,7 @@ import java.util.Iterator;
  */
 public class SimpleTokenStore implements TokenStorage {
 
-    private Map tokens = new Hashtable();
+    protected Map tokens = new Hashtable();
 
     public void add(Token token) throws TrustException {
         if (token != null && !"".equals(token.getId()) &&
