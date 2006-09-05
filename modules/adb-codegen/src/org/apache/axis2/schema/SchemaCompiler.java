@@ -223,10 +223,16 @@ public class SchemaCompiler {
 
             //set a mapper package if not avaialable
             if (writer.getExtensionMapperPackageName()==null){
+                String nsp = null;
                 //get the first schema from the list and take that namespace as the
                 //mapper namespace
-                writer.registerExtensionMapperPackageName(
-                        URLProcessor.makePackageName(((XmlSchema) schemalist.get(0)).getTargetNamespace()));
+                for (int i = 0; nsp == null && i < schemalist.size(); i++) {
+                    nsp = ((XmlSchema) schemalist.get(i)).getTargetNamespace();
+                }
+                if(nsp == null) {
+                    nsp = URLProcessor.DEFAULT_PACKAGE;
+                }
+                writer.registerExtensionMapperPackageName(URLProcessor.makePackageName(nsp));
             }
             // second round - call the schema compiler one by one
             for (int i = 0; i < schemalist.size(); i++) {

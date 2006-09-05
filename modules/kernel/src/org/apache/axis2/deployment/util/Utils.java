@@ -20,6 +20,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
@@ -245,7 +246,7 @@ public class Utils {
 
         }
         // adding name spaces
-        Map map = new HashMap();
+        NamespaceMap map = new NamespaceMap();
         map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
                 Java2WSDLConstants.AXIS2_XSD);
         map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,

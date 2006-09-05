@@ -122,13 +122,6 @@ public abstract class WSDLToAxisServiceBuilder {
 
     protected XmlSchema getXMLSchema(Element element, String baseUri) {
         XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
-        Map nsMap = axisService.getNameSpacesMap();
-        Iterator keys = nsMap.keySet().iterator();
-        String key;
-        while (keys.hasNext()) {
-            key = (String) keys.next();
-            schemaCollection.mapNamespace(key, (String) nsMap.get(key));
-        }
 
         if (baseUri != null) schemaCollection.setBaseUri(baseUri);
 

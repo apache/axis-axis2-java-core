@@ -17,6 +17,7 @@ import org.apache.ws.policy.PolicyConstants;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
 import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -185,7 +186,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService.setTargetNamespace(wsdl4jDefinition
                     .getTargetNamespace());
 
-            axisService.setNameSpacesMap(wsdl4jDefinition.getNamespaces());
+            axisService.setNameSpacesMap(new NamespaceMap(wsdl4jDefinition.getNamespaces()));
 
             Binding binding = findBinding(wsdl4jDefinition);
 
@@ -1267,7 +1268,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 String s = nameSpaceDeclarationArray[i];
                 schemaElement.setAttributeNS(XML_NAMESPACE_URI,
                         NAMESPACE_DECLARATION_PREFIX + namespacePrefixMap.get(s).toString(), s);
-
+            }
+            
+            if(schemaElement.getAttributeNS(XML_NAMESPACE_URI, xsdPrefix).length()==0){
+                schemaElement.setAttributeNS(XML_NAMESPACE_URI,
+                        NAMESPACE_DECLARATION_PREFIX + xsdPrefix, XMLSCHEMA_NAMESPACE_URI);
             }
 
             //add the targetNamespace

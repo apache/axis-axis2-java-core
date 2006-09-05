@@ -41,6 +41,8 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.utils.NamespacePrefixList;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
@@ -155,7 +157,7 @@ public class AxisService extends AxisDescription {
     /////////////////////////////////////////
     // WSDL related stuff ////////////////////
     ////////////////////////////////////////
-    private Map nameSpacesMap;
+    private NamespaceMap nameSpacesMap;
 
     private String soapNsUri;
     private String endpoint;
@@ -509,14 +511,7 @@ public class AxisService extends AxisDescription {
 
     private XmlSchema addNameSpaces(int i) {
         XmlSchema schema = (XmlSchema) schemaList.get(i);
-        Iterator keys = nameSpacesMap.keySet().iterator();
-        Hashtable prefixTable = schema.getPrefixToNamespaceMap();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            if (prefixTable.get(key) == null) {
-                prefixTable.put(key, nameSpacesMap.get(key));
-            }
-        }
+        schema.setNamespaceContext(nameSpacesMap);
         return schema;
     }
 
@@ -911,7 +906,9 @@ public class AxisService extends AxisDescription {
     public void addSchema(XmlSchema schema) {
         if (schema != null) {
             schemaList.add(schema);
-            addSchemaNameSpace(schema.getTargetNamespace());
+            if(schema.getTargetNamespace() != null) {
+                addSchemaNameSpace(schema.getTargetNamespace());
+            }
         }
 
     }
@@ -1304,7 +1301,7 @@ public class AxisService extends AxisDescription {
         return nameSpacesMap;
     }
 
-    public void setNameSpacesMap(Map nameSpacesMap) {
+    public void setNameSpacesMap(NamespaceMap nameSpacesMap) {
         this.nameSpacesMap = nameSpacesMap;
     }
 
@@ -1320,7 +1317,7 @@ public class AxisService extends AxisDescription {
             }
         }
         if (nameSpacesMap == null) {
-            nameSpacesMap = new HashMap();
+            nameSpacesMap = new NamespaceMap();
         }
         if (!found) {
             nameSpacesMap.put("ns" + nsCount, targetNameSpace);

@@ -28,6 +28,7 @@ import org.apache.woden.wsdl20.xml.InterfaceMessageReferenceElement;
 import org.apache.woden.wsdl20.xml.InterfaceOperationElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.policy.Policy;
 import org.apache.ws.policy.PolicyReference;
 import org.apache.ws.policy.util.DOMPolicyReader;
@@ -78,7 +79,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private Map namespacemap;
     
-    private HashMap stringBasedNamespaceMap;
+    private NamespaceMap stringBasedNamespaceMap;
     
     private boolean setupComplete = false;
 
@@ -248,7 +249,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
             // Create the namespacemap
 
-            stringBasedNamespaceMap = new HashMap();
+            stringBasedNamespaceMap = new NamespaceMap();
             Iterator iterator = namespacemap.keySet().iterator();
             while (iterator.hasNext()) {
                 String key = (String) iterator.next();
