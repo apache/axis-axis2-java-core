@@ -9,7 +9,7 @@
   <types>
     <xsd:schema>
       <xsd:import schemaLocation="customer.xsd"
-          targetNamespace="http://ws.apache.org/axis2/jibx/customer/data"/>
+          namespace="http://ws.apache.org/axis2/jibx/customer/data"/>
     </xsd:schema>
   </types>
 
