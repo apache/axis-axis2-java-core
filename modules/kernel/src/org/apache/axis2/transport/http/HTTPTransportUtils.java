@@ -323,7 +323,7 @@ public class HTTPTransportUtils {
             throw new AxisFault(e);
         } finally {
             if ((msgContext.getEnvelope() == null) && !soap11) {
-                msgContext.setEnvelope(new SOAP12Factory().createSOAPEnvelope());
+                msgContext.setEnvelope(new SOAP12Factory().getDefaultEnvelope());
             }
         }
     }

@@ -1019,7 +1019,11 @@ public class MessageContext extends AbstractContext {
      */
     public boolean isHeaderPresent() {
         OMElement node = getEnvelope().getFirstElement();
-        if (node != null && node.getQName().getLocalPart().equals(SOAPConstants.BODY_LOCAL_NAME)) {
+        if (node ==null)
+        {
+        	return false;
+        }
+        else if (node.getQName().getLocalPart().equals(SOAPConstants.BODY_LOCAL_NAME)) {
             return false;
         }
         return true;
