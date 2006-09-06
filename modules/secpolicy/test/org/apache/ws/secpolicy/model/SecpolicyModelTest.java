@@ -46,16 +46,16 @@ public class SecpolicyModelTest extends TestCase {
                     SymmetricBinding binding = (SymmetricBinding)assertion;
                     assertEquals("IncludeTimestamp assertion not processed", true, binding.isIncludeTimestamp());
                     
-                    ProtectionToken initToken = binding.getProtectionToken();
-                    assertNotNull("initiatorToken missing", initToken);
+                    ProtectionToken protectionToken = binding.getProtectionToken();
+                    assertNotNull("ProtectionToken missing", protectionToken);
                     
-                    Token token = initToken.getProtectionToken();
+                    Token token = protectionToken.getProtectionToken();
                     if(token instanceof X509Token) {
                         assertEquals("incorrect X509 token versin and type",
                                 Constants.WSS_X509_V3_TOKEN10,
                                 ((X509Token) token).getTokenVersionAndType());
                     } else {
-                        fail("InitiatorToken must contain a X509Token assertion");
+                        fail("ProtectionToken must contain a X509Token assertion");
                     }
                     
                 }
