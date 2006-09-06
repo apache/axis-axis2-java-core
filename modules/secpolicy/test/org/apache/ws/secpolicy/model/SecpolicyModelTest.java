@@ -36,19 +36,20 @@ public class SecpolicyModelTest extends TestCase {
             Policy p = this.getPolicy("test-resources/policy-symm-binding.xml");
             List assertions = (List)p.getAlternatives().next();
             
-            boolean asymmBindingFound = false;
+            boolean symmBindingFound = false;
             
             for (Iterator iter = assertions.iterator(); iter.hasNext();) {
                 Assertion assertion = (Assertion) iter.next();
+                System.out.println(assertion.getClass());
                 if(assertion instanceof AsymmetricBinding) {
-                    asymmBindingFound = true;
-                    AsymmetricBinding binding = (AsymmetricBinding)assertion;
+                    symmBindingFound = true;
+                    SymmetricBinding binding = (SymmetricBinding)assertion;
                     assertEquals("IncludeTimestamp assertion not processed", true, binding.isIncludeTimestamp());
                     
-                    InitiatorToken initToken = binding.getInitiatorToken();
+                    ProtectionToken initToken = binding.getProtectionToken();
                     assertNotNull("initiatorToken missing", initToken);
                     
-                    Token token = initToken.getInitiatorToken();
+                    Token token = initToken.getProtectionToken();
                     if(token instanceof X509Token) {
                         assertEquals("incorrect X509 token versin and type",
                                 Constants.WSS_X509_V3_TOKEN10,
@@ -61,7 +62,7 @@ public class SecpolicyModelTest extends TestCase {
             }
             //The Asymm binding mean is not built in the policy processing :-(
             //TODO: Sanka please have a look
-//            assertTrue("AsymmetricBinding not porcessed",  asymmBindingFound);
+//            assertTrue("SymmetricBinding not porcessed",  symmBindingFound);
             
         } catch (Exception e) {
             e.printStackTrace();
