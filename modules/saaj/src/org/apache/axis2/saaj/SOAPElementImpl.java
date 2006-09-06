@@ -420,7 +420,6 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public void setParent(OMContainer parentElement) {
         element.setParent(parentElement);
-        this.getAttributes();
     }
 
     /* (non-Javadoc)
