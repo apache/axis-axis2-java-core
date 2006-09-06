@@ -86,8 +86,8 @@ public class SecureConversationTokenBuilder implements AssertionBuilder {
         return conversationToken;
     }
 
-    public QName getKnownElement() {
-        return Constants.SECURE_CONVERSATION_TOKEN;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.SECURE_CONVERSATION_TOKEN};
     }
 
 }

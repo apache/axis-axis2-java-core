@@ -8,4 +8,13 @@
     xmlns:maven="jelly:maven"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
+    
+    <preGoal name="java:compile" >
+    	<copy toDir="target/classes/META-INF/">
+		<fileset dir="src/META-INF">
+			<include name="**/services/*"/>
+		</fileset>
+        </copy>
+    </preGoal>
+    
 </project>

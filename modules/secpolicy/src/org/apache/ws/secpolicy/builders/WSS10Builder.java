@@ -50,8 +50,8 @@ public class WSS10Builder implements AssertionBuilder {
         return wss10;
     }
 
-    public QName getKnownElement() {
-        return Constants.WSS10;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.WSS10};
     }
     
     private void processAlternative(List assertions, Wss10 parent) {

@@ -60,8 +60,8 @@ public class InitiatorTokenBuilder implements AssertionBuilder {
         }
     }
 
-    public QName getKnownElement() {
-        return Constants.INITIATOR_TOKEN;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.INITIATOR_TOKEN};
     }
 
 }

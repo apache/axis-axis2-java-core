@@ -46,8 +46,8 @@ public class ProtectionTokenBuilder implements AssertionBuilder {
         return protectionToken;
     }
         
-    public QName getKnownElement() {
-        return Constants.PROTECTION_TOKEN;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.PROTECTION_TOKEN};
     }
 
     private void processAlternative(List assertions, ProtectionToken parent) {

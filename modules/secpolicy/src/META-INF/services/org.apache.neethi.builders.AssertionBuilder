@@ -18,4 +18,4 @@ org.apache.ws.secpolicy.builders.X509TokenBuilder
 org.apache.ws.secpolicy.builders.Trust10Builder
 org.apache.ws.secpolicy.builders.SecurityContextTokenBuilder
 org.apache.ws.secpolicy.builders.SecureConversationTokenBuilder
-
+org.apache.ws.secpolicy.builders.SymmetricBindingBuilder

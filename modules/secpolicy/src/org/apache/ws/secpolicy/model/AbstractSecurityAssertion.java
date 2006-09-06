@@ -19,6 +19,8 @@ import org.apache.neethi.Assertion;
 import org.apache.neethi.PolicyComponent;
 
 public abstract class AbstractSecurityAssertion implements Assertion{
+    
+    private boolean normalized = false;
 
     private boolean isOptional;
 
@@ -37,5 +39,12 @@ public abstract class AbstractSecurityAssertion implements Assertion{
     public boolean equal(PolicyComponent policyComponent) {
         throw new UnsupportedOperationException();
     }
-
+    
+    public void setNormalized(boolean normalized) {
+        this.normalized = normalized;
+    }
+    
+    public boolean isNormalized() {
+        return normalized;
+    }
 }

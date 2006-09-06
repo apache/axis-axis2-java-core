@@ -67,8 +67,8 @@ public class UsernameTokenBuilder implements AssertionBuilder {
         return usernameToken;
     }
         
-    public QName getKnownElement() {
-        return Constants.USERNAME_TOKEN;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.USERNAME_TOKEN};
     }
 
     private void processAlternative(List assertions, UsernameToken parent) {
@@ -78,8 +78,8 @@ public class UsernameTokenBuilder implements AssertionBuilder {
             QName qname = assertion.getName();
             
             if (Constants.WSS_USERNAME_TOKEN10.equals(qname)) {
-                parent.setUseUTProfile11(false)
-                ;                
+                parent.setUseUTProfile11(false);
+                
             } else if (Constants.WSS_USERNAME_TOKEN11.equals(qname)) {
                 parent.setUseUTProfile11(true);
             }

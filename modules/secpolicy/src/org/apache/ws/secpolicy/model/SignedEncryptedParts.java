@@ -80,7 +80,7 @@ public class SignedEncryptedParts extends AbstractSecurityAssertion {
     }
 
     public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
+        return this;
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {

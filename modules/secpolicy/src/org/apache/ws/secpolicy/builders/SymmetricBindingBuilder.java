@@ -27,18 +27,18 @@ import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.builders.AssertionBuilder;
 import org.apache.ws.secpolicy.Constants;
-import org.apache.ws.secpolicy.model.EncryptionToken;
+import org.apache.ws.secpolicy.model.AlgorithmSuite;
+import org.apache.ws.secpolicy.model.Layout;
 import org.apache.ws.secpolicy.model.ProtectionToken;
-import org.apache.ws.secpolicy.model.SignatureToken;
 import org.apache.ws.secpolicy.model.SymmetricBinding;
 
 public class SymmetricBindingBuilder implements AssertionBuilder {
 
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
-        SymmetricBinding symmetricBinding = new SymmetricBinding();
+        SymmetricBinding symmetricBinding = new SymmetricBinding(); 
         
         Policy policy = PolicyEngine.getPolicy(element);
-        policy = (Policy) policy.normalize();
+        policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternatives((List) iterator.next(), symmetricBinding);
@@ -51,11 +51,11 @@ public class SymmetricBindingBuilder implements AssertionBuilder {
         return symmetricBinding;
     }
 
-    public QName getKnownElement() {
-        return Constants.SYMMETRIC_BINDING;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.SYMMETRIC_BINDING};
     }
     
-    private void processAlternatives(List assertions, SymmetricBinding parent) {
+    private void processAlternatives(List assertions, SymmetricBinding symmetricBinding) {
         Assertion assertion;
         QName name;
         
@@ -63,15 +63,26 @@ public class SymmetricBindingBuilder implements AssertionBuilder {
             assertion = (Assertion) iterator.next();
             name = assertion.getName();
             
-            if (Constants.ENCRYPTION_TOKEN.equals(name)) {
-                parent.setEncryptionToken((EncryptionToken) assertion);
+            if (Constants.ALGORITHM_SUITE.equals(name)) {
+                symmetricBinding.setAlgorithmSuite((AlgorithmSuite) assertion);
                 
-            } else if (Constants.SIGNATURE_TOKEN.equals(name)) {
-                parent.setSignatureToken((SignatureToken) assertion);
+            } else if (Constants.LAYOUT.equals(name)) {
+                symmetricBinding.setLayout((Layout) assertion);
+                
+            } else if (Constants.INCLUDE_TIMESTAMP.equals(name)) {
+                symmetricBinding.setIncludeTimestamp(true);
                 
             } else if (Constants.PROTECTION_TOKEN.equals(name)) {
-                parent.setProtectionToken((ProtectionToken) assertion);
+                symmetricBinding.setProtectionToken((ProtectionToken) assertion);
                 
+            } else if (Constants.ENCRYPT_BEFORE_SIGNING.equals(name.getLocalPart())) {
+                symmetricBinding.setProtectionOrder(Constants.ENCRYPT_BEFORE_SIGNING);
+                
+            } else if (Constants.SIGN_BEFORE_ENCRYPTING.equals(name.getLocalPart())) {
+                symmetricBinding.setProtectionOrder(Constants.SIGN_BEFORE_ENCRYPTING);
+                
+            } else if (Constants.ONLY_SIGN_ENTIRE_HEADERS_AND_BODY.equals(name.getLocalPart())) {
+                symmetricBinding.setEntireHeaderAndBodySignatures(true);
             }
         }        
     }

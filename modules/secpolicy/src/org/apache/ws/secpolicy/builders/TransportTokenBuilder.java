@@ -49,8 +49,8 @@ public class TransportTokenBuilder implements AssertionBuilder {
         return transportToken;
     }
         
-    public QName getKnownElement() {
-        return Constants.TRANSPORT_TOKEN;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.TRANSPORT_TOKEN};
     }
     
     private void processAlternative(List assertions, TransportToken parent) {

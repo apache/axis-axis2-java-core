@@ -50,8 +50,8 @@ public class LayoutBuilder implements AssertionBuilder {
         return layout;
     }
     
-    public QName getKnownElement() {
-        return Constants.LAYOUT;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.LAYOUT};
     }
 
     public void processAlternative(List assertions, Layout parent) {

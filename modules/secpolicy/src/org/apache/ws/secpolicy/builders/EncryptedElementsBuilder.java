@@ -49,8 +49,8 @@ public class EncryptedElementsBuilder implements AssertionBuilder {
     
     
     
-    public QName getKnownElement() {
-        return Constants.ENCRYPTED_ELEMENTS;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.ENCRYPTED_ELEMENTS};
     }
 
 

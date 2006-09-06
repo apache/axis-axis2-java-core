@@ -15,52 +15,58 @@
  */
 package org.apache.ws.secpolicy.model;
 
+import java.util.Iterator;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.neethi.All;
+import org.apache.neethi.ExactlyOne;
+import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.WSSPolicyException;
 
 public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
-    
+
     private String symmetricSignature = Constants.HMAC_SHA1;
-    
+
     private String asymmetricSignature = Constants.RSA_SHA1;
 
     private String computedKey = Constants.P_SHA1;
 
     private int maximumSymmetricKeyLength = 256;
-    
+
     private int minimumAsymmetricKeyLength = 1024;
-    
+
     private int maximumAsymmetricKeyLength = 4096;
 
     private String digest;
-    
+
     private String encryption;
-    
+
     private String symmetricKeyWrap;
-    
+
     private String asymmetricKeyWrap;
-    
+
     private String encryptionKeyDerivation;
-    
+
     private String signatureKeyDerivation;
-    
+
     private int minimumSymmetricKeyLength;
-    
+
     private String c14n = Constants.EX_C14N;
-    
+
     private String soapNormalization;
 
     private String strTransform;
-    
+
     private String xPath;
-    
+
     /**
      * Set the algorithm suite
+     * 
      * @param algoSuite
      * @throws WSSPolicyException
      * @see Constants#ALGO_SUITE_BASIC128
@@ -81,8 +87,8 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
      * @see Constants#ALGO_SUITE_TRIPLE_DES_SHA256_RSA15
      */
     public void setAlgorithmSuite(String algoSuite) {
-        //TODO: Optimize this :-)
-        if(Constants.ALGO_SUITE_BASIC256.equals(algoSuite)) {
+        // TODO: Optimize this :-)
+        if (Constants.ALGO_SUITE_BASIC256.equals(algoSuite)) {
             this.digest = Constants.SHA1;
             this.encryption = Constants.AES256;
             this.symmetricKeyWrap = Constants.KW_AES256;
@@ -106,7 +112,7 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
             this.encryptionKeyDerivation = Constants.P_SHA1_L128;
             this.signatureKeyDerivation = Constants.P_SHA1_L128;
             this.minimumSymmetricKeyLength = 128;
-        } else if(Constants.ALGO_SUITE_TRIPLE_DES.equals(algoSuite)) {
+        } else if (Constants.ALGO_SUITE_TRIPLE_DES.equals(algoSuite)) {
             this.digest = Constants.SHA1;
             this.encryption = Constants.TRIPLE_DES;
             this.symmetricKeyWrap = Constants.KW_TRIPLE_DES;
@@ -146,7 +152,7 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
             this.encryptionKeyDerivation = Constants.P_SHA1_L192;
             this.signatureKeyDerivation = Constants.P_SHA1_L192;
             this.minimumSymmetricKeyLength = 192;
-        } else if(Constants.ALGO_SUITE_BASIC256_SHA256.equals(algoSuite)) {
+        } else if (Constants.ALGO_SUITE_BASIC256_SHA256.equals(algoSuite)) {
             this.digest = Constants.SHA256;
             this.encryption = Constants.AES256;
             this.symmetricKeyWrap = Constants.KW_AES256;
@@ -170,7 +176,7 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
             this.encryptionKeyDerivation = Constants.P_SHA1_L128;
             this.signatureKeyDerivation = Constants.P_SHA1_L128;
             this.minimumSymmetricKeyLength = 128;
-        } else if(Constants.ALGO_SUITE_TRIPLE_DES_SHA256.equals(algoSuite)) {
+        } else if (Constants.ALGO_SUITE_TRIPLE_DES_SHA256.equals(algoSuite)) {
             this.digest = Constants.SHA256;
             this.encryption = Constants.TRIPLE_DES;
             this.symmetricKeyWrap = Constants.KW_TRIPLE_DES;
@@ -178,7 +184,7 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
             this.encryptionKeyDerivation = Constants.P_SHA1_L192;
             this.signatureKeyDerivation = Constants.P_SHA1_L192;
             this.minimumSymmetricKeyLength = 192;
-        }  else if (Constants.ALGO_SUITE_BASIC256_SHA256_RSA15.equals(algoSuite)) {
+        } else if (Constants.ALGO_SUITE_BASIC256_SHA256_RSA15.equals(algoSuite)) {
             this.digest = Constants.SHA256;
             this.encryption = Constants.AES256;
             this.symmetricKeyWrap = Constants.KW_AES256;
@@ -202,7 +208,8 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
             this.encryptionKeyDerivation = Constants.P_SHA1_L128;
             this.signatureKeyDerivation = Constants.P_SHA1_L128;
             this.minimumSymmetricKeyLength = 128;
-        } else if (Constants.ALGO_SUITE_TRIPLE_DES_SHA256_RSA15.equals(algoSuite)) {
+        } else if (Constants.ALGO_SUITE_TRIPLE_DES_SHA256_RSA15
+                .equals(algoSuite)) {
             this.digest = Constants.SHA256;
             this.encryption = Constants.TRIPLE_DES;
             this.symmetricKeyWrap = Constants.KW_TRIPLE_DES;
@@ -211,7 +218,8 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
             this.signatureKeyDerivation = Constants.P_SHA1_L192;
             this.minimumSymmetricKeyLength = 192;
         } else {
-//            throw new WSSPolicyException("Invalid algorithm suite : " + algoSuite);
+            // throw new WSSPolicyException("Invalid algorithm suite : " +
+            // algoSuite);
         }
     }
 
@@ -314,10 +322,11 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
     }
 
     /**
-     * @param c14n The c14n to set.
+     * @param c14n
+     *            The c14n to set.
      */
     public void setC14n(String c14n) {
-            this.c14n = c14n;
+        this.c14n = c14n;
     }
 
     /**
@@ -328,10 +337,11 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
     }
 
     /**
-     * @param soapNormalization The soapNormalization to set.
+     * @param soapNormalization
+     *            The soapNormalization to set.
      */
     public void setSoapNormalization(String soapNormalization) {
-            this.soapNormalization = soapNormalization;
+        this.soapNormalization = soapNormalization;
     }
 
     /**
@@ -342,10 +352,11 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
     }
 
     /**
-     * @param strTransform The strTransform to set.
+     * @param strTransform
+     *            The strTransform to set.
      */
     public void setStrTransform(String strTransform) {
-            this.strTransform = strTransform;
+        this.strTransform = strTransform;
     }
 
     /**
@@ -356,20 +367,22 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
     }
 
     /**
-     * @param path The xPath to set.
+     * @param path
+     *            The xPath to set.
      */
     public void setXPath(String path) {
         xPath = path;
     }
-    
+
     public QName getName() {
         return Constants.ALGORITHM_SUITE;
     }
-    
+
     public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+                "AlgorithmSuite.normalize() is not supported");
     }
-    
+
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }

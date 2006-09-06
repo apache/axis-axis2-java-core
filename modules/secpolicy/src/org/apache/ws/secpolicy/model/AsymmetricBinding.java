@@ -16,10 +16,16 @@
 
 package org.apache.ws.secpolicy.model;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.neethi.All;
+import org.apache.neethi.ExactlyOne;
+import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
@@ -58,12 +64,46 @@ public class AsymmetricBinding extends SymmetricAsymmetricBindingBase {
         return Constants.ASYMMETRIC_BINDING;
     }
     public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
+        
+        if (isNormalized()) {
+            return this;
+        }
+        
+        AlgorithmSuite algorithmSuite = getAlgorithmSuite();
+        List configs = algorithmSuite.getConfigurations();
+        
+        Policy policy = new Policy();
+        ExactlyOne exactlyOne = new ExactlyOne();
+        
+        policy.addPolicyComponent(exactlyOne);
+        
+        All wrapper;
+        AsymmetricBinding asymmetricBinding;
+        
+        for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
+            wrapper = new All();
+            asymmetricBinding = new AsymmetricBinding();
+            
+            asymmetricBinding.setAlgorithmSuite((AlgorithmSuite) iterator.next());
+            asymmetricBinding.setEntireHeaderAndBodySignatures(isEntireHeaderAndBodySignatures());
+            asymmetricBinding.setIncludeTimestamp(isIncludeTimestamp());
+            asymmetricBinding.setInitiatorToken(getInitiatorToken());
+            asymmetricBinding.setLayout(getLayout());
+            asymmetricBinding.setProtectionOrder(getProtectionOrder());
+            asymmetricBinding.setRecipientToken(getRecipientToken());
+            asymmetricBinding.setSignatureProtection(isSignatureProtection());
+            asymmetricBinding.setSignedEndorsingSupportingTokens(getSignedEndorsingSupportingTokens());
+            asymmetricBinding.setTokenProtection(isTokenProtection());
+            
+            asymmetricBinding.setNormalized(true);
+            wrapper.addPolicyComponent(wrapper);
+        }
+        
+        return policy; 
+        
     }
+    
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
-    
-    
-    
 }

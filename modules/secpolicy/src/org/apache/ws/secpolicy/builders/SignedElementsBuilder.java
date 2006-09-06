@@ -48,8 +48,8 @@ public class SignedElementsBuilder implements AssertionBuilder {
         return signedEncryptedElements;
     }
         
-    public QName getKnownElement() {
-        return Constants.SIGNED_ELEMENTS;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.SIGNED_ELEMENTS};
     }
 
     private void processElement(OMElement element, SignedEncryptedElements parent) {

@@ -26,7 +26,7 @@ import org.apache.neethi.Assertion;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
-public class SupportingToken extends AbstractConfigurableSecurityAssertion
+public class SupportingToken extends AbstractSecurityAssertion
         implements AlgorithmWrapper, TokenWrapper {
 
     /**
@@ -182,14 +182,8 @@ public class SupportingToken extends AbstractConfigurableSecurityAssertion
         }
     }
 
-    public boolean isOptional() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     public PolicyComponent normalize() {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
     public short getType() {
@@ -197,7 +191,6 @@ public class SupportingToken extends AbstractConfigurableSecurityAssertion
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException("not yet implemented");
     }
 }

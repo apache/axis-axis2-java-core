@@ -129,7 +129,7 @@ public class AlgorithmSuiteBuilder implements AssertionBuilder {
         target.addConfiguration(algorithmSuite);
     }
 
-    public QName getKnownElement() {
-        return Constants.ALGORITHM_SUITE;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.ALGORITHM_SUITE};
     }
 }

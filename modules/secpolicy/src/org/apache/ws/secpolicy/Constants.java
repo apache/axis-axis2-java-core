@@ -59,6 +59,9 @@ public class Constants {
      */
     public final static String SIGN_BEFORE_ENCRYPTING = "SignBeforeEncrypting";
     
+    public final static String ONLY_SIGN_ENTIRE_HEADERS_AND_BODY = "OnlySignEntireHeadersAndBody";
+    
+    
     public final static String WSS_X509_V1_TOKEN10 = "WssX509V1Token10";
     
     public final static String WSS_X509_V3_TOKEN10 = "WssX509V3Token10";
@@ -278,5 +281,4 @@ public class Constants {
     public static final QName SC10_SECURITY_CONTEXT_TOKEN = new QName(Constants.SP_NS, "SC10SecurityContextToken");
     
     public static final QName BOOTSTRAP_POLICY = new QName(Constants.SP_NS, "BootstrapPolicy");
-    
 }

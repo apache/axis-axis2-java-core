@@ -49,8 +49,8 @@ public class WSS11Builder implements AssertionBuilder {
         return wss11;
     }
 
-    public QName getKnownElement() {
-        return Constants.WSS11;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.WSS11};
     }
 
     private void processAlternative(List assertions, Wss11 parent) {

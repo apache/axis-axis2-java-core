@@ -59,19 +59,25 @@ public class SupportingTokensBuilder implements AssertionBuilder {
 
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), supportingToken);
+            
+            /*
+             * for the moment we will say there should be only one alternative 
+             */
+            break;            
         }
 
         return supportingToken;
     }
 
-    public QName getKnownElement() {
-        return Constants.SUPPORIING_TOKENS;
+    public QName[] getKnownElements() {
+        return new QName[] { Constants.SUPPORIING_TOKENS,
+                Constants.SIGNED_SUPPORTING_TOKENS,
+                Constants.ENDORSING_SUPPORTING_TOKENS,
+                Constants.SIGNED_ENDORSING_SUPPORTING_TOKENS};
     }
 
-    private void processAlternative(List assertions, SupportingToken parent) {
-        SupportingToken supportingToken = new SupportingToken(parent
-                .getTokenType());
-
+    private void processAlternative(List assertions, SupportingToken supportingToken) {
+        
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
 
             Assertion primitive = (Assertion) iterator.next();
@@ -100,8 +106,5 @@ public class SupportingTokensBuilder implements AssertionBuilder {
                 supportingToken.addToken((Token) primitive);
             }
         }
-
-        parent.addConfiguration(supportingToken);
     }
-
 }

@@ -16,10 +16,16 @@
 
 package org.apache.ws.secpolicy.model;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.neethi.All;
+import org.apache.neethi.ExactlyOne;
+import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
@@ -91,7 +97,50 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
     }
 
     public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
+        if (isNormalized()) {
+            return this;
+        }
+        
+        AlgorithmSuite algorithmSuite = getAlgorithmSuite();
+        List configurations = algorithmSuite.getConfigurations();
+        
+        if (configurations == null && configurations.size() == 1) {
+            setNormalized(true);
+            return this;
+        }
+        
+        Policy policy = new Policy();
+        ExactlyOne exactlyOne = new ExactlyOne();
+        
+        All wrapper;
+        SymmetricBinding symmetricBinding;
+        
+        for (Iterator iterator = configurations.iterator(); iterator.hasNext();) {
+            wrapper = new All();
+            symmetricBinding = new SymmetricBinding();
+            
+            algorithmSuite = (AlgorithmSuite) iterator.next();
+            symmetricBinding.setAlgorithmSuite(algorithmSuite);
+            
+            symmetricBinding.setEncryptionToken(getEncryptionToken());
+            symmetricBinding.setEntireHeaderAndBodySignatures(isEntireHeaderAndBodySignatures());
+            symmetricBinding.setIncludeTimestamp(isIncludeTimestamp());
+            symmetricBinding.setLayout(getLayout());
+            symmetricBinding.setProtectionOrder(getProtectionOrder());
+            symmetricBinding.setProtectionToken(getProtectionToken());
+            symmetricBinding.setSignatureProtection(isSignatureProtection());
+            symmetricBinding.setSignatureToken(getSignatureToken());
+            symmetricBinding.setSignedEndorsingSupportingTokens(getSignedEndorsingSupportingTokens());
+            symmetricBinding.setSignedSupportingToken(getSignedSupportingToken());
+            symmetricBinding.setTokenProtection(isTokenProtection());
+            
+            symmetricBinding.setNormalized(true);
+            wrapper.addPolicyComponent(symmetricBinding);
+            exactlyOne.addPolicyComponent(wrapper);
+        }
+        
+        policy.addPolicyComponent(exactlyOne);
+        return policy;
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {

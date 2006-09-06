@@ -50,8 +50,11 @@ public class ProtectionToken extends AbstractSecurityAssertion implements TokenW
     }
 
     public PolicyComponent normalize() {
-        // TODO Auto-generated method stub
-        return null;
+        /*
+         *  ProtectionToken can not contain multiple values. Hence we consider it
+         *  to always be in the normalized format.
+         */
+        return this;
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {

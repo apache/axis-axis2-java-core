@@ -54,8 +54,8 @@ public class TransportBindingBuilder implements AssertionBuilder {
         return transportBinding;
     }
     
-    public QName getKnownElement() {
-        return Constants.TRANSPORT_BINDING;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.TRANSPORT_BINDING};
     }
 
     private void processAlternative(List assertionList, TransportBinding parent, AssertionBuilderFactory factory) {

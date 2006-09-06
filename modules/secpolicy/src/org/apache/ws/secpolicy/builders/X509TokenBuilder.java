@@ -105,7 +105,7 @@ public class X509TokenBuilder implements AssertionBuilder {
         }
     }
 
-    public QName getKnownElement() {
-        return Constants.X509_TOKEN;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.X509_TOKEN};
     }
 }

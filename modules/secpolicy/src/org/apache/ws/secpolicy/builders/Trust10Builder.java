@@ -63,8 +63,8 @@ public class Trust10Builder implements AssertionBuilder {
         return trust10;
     }
 
-    public QName getKnownElement() {
-        return Constants.TRUST_10;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.TRUST_10};
     }
 
 }

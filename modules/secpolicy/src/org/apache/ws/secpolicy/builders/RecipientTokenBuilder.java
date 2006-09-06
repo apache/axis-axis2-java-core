@@ -64,8 +64,8 @@ public class RecipientTokenBuilder implements AssertionBuilder {
         }        
     }
     
-    public QName getKnownElement() {
-        return Constants.RECIPIENT_TOKEN;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.RECIPIENT_TOKEN};
     }
 
 }

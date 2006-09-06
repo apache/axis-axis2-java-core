@@ -84,10 +84,10 @@ public class Wss10 extends AbstractSecurityAssertion {
     }
     
     public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
+        return this;
     }
     
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("not yet implemented");
     }
 }

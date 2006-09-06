@@ -47,8 +47,8 @@ public class EncryptedPartsBuilder implements AssertionBuilder {
         return signedEncryptedParts;
     }
     
-    public QName getKnownElement() {
-        return Constants.ENCRYPTED_PARTS;
+    public QName[] getKnownElements() {
+        return new QName[] {Constants.ENCRYPTED_PARTS};
     }
 
     private void processElement(OMElement element, SignedEncryptedParts parent) {

@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.neethi.Assertion;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
@@ -119,17 +120,10 @@ public class Trust10 extends AbstractSecurityAssertion {
         throw new UnsupportedOperationException("TODO Sanka");
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#normalize()
-     */
     public PolicyComponent normalize() {
-        // TODO TODO Sanka
-        throw new UnsupportedOperationException("TODO Sanka");
+        return this;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.PolicyComponent#serialize(javax.xml.stream.XMLStreamWriter)
-     */
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
         // TODO TODO Sanka
         throw new UnsupportedOperationException("TODO Sanka");
@@ -139,8 +133,7 @@ public class Trust10 extends AbstractSecurityAssertion {
      * @see org.apache.neethi.PolicyComponent#getType()
      */
     public short getType() {
-        // TODO TODO Sanka
-        throw new UnsupportedOperationException("TODO Sanka");
+        return Assertion.ASSERTION;
     }
 
 }

@@ -78,17 +78,20 @@ public class AsymmetricBindingBuilder implements AssertionBuilder {
             } else if (Constants.INCLUDE_TIMESTAMP.equals(name)) {
                 asymmetricBinding.setIncludeTimestamp(true);
                 
-            } else if (Constants.ENCRYPT_BEFORE_SIGNING.equals(name)) {
+            } else if (Constants.ENCRYPT_BEFORE_SIGNING.equals(name.getLocalPart())) {
                 asymmetricBinding.setProtectionOrder(Constants.ENCRYPT_BEFORE_SIGNING);
                 
-            } else if (Constants.SIGN_BEFORE_ENCRYPTING.equals(name)) {
+            } else if (Constants.SIGN_BEFORE_ENCRYPTING.equals(name.getLocalPart())) {
                 asymmetricBinding.setProtectionOrder(Constants.SIGN_BEFORE_ENCRYPTING);
-            }  
+                
+            } else if (Constants.ONLY_SIGN_ENTIRE_HEADERS_AND_BODY.equals(name.getLocalPart())) {
+                asymmetricBinding.setEntireHeaderAndBodySignatures(true);
+            }
         }
     }
     
-    public QName getKnownElement() {
-        return Constants.ASYMMETRIC_BINDING;
+    public QName[] getKnownElements() {
+        return new QName[]{Constants.ASYMMETRIC_BINDING};
     }
     
 }
