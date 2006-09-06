@@ -51,6 +51,8 @@ public class MessageContext extends AbstractContext {
     public static final String REMOTE_ADDR = "REMOTE_ADDR";
 
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
+    
+    public Map attachmentsMap = new HashMap();
 
     /**
      * Field TRANSPORT_OUT
@@ -1021,5 +1023,15 @@ public class MessageContext extends AbstractContext {
             return false;
         }
         return true;
+    }
+    
+    public void setAttachment(String contentID, Object dataHandler)
+    {
+    	attachmentsMap.put(contentID,dataHandler);
+    }
+    
+    public Object getAttachment(String contentID)
+    {
+    	return attachmentsMap.get(contentID);
     }
 }
