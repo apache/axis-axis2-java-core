@@ -51,7 +51,7 @@
                       for (int j = 0; j < handlers.size(); j++) {
                           Handler handler = (Handler) handlers.get(j);
                           %>
-                          <li>Handler Name : <%=handler.getHandlerDesc().getName().getLocalPart()%></li>
+                          <li>Handler Name : <%=handler.getHandlerDesc().getName()%></li>
                           <%
                       }
                      %>
@@ -76,7 +76,7 @@
                       for (int j = 0; j < handlers.size(); j++) {
                           Handler handler = (Handler) handlers.get(j);
                           %>
-                          <li>Handler Name : <%=handler.getHandlerDesc().getName().getLocalPart()%></li>
+                          <li>Handler Name : <%=handler.getHandlerDesc().getName()%></li>
                           <%
                       }
                      %>
@@ -102,7 +102,7 @@
                       for (int j = 0; j < handlers.size(); j++) {
                           Handler handler = (Handler) handlers.get(j);
                           %>
-                          <li>Handler Name : <%=handler.getHandlerDesc().getName().getLocalPart()%></li>
+                          <li>Handler Name : <%=handler.getHandlerDesc().getName()%></li>
                           <%
                       }
                      %>
@@ -127,7 +127,7 @@
                       for (int j = 0; j < handlers.size(); j++) {
                           Handler handler = (Handler) handlers.get(j);
                           %>
-                          <li>Handler Name : <%=handler.getHandlerDesc().getName().getLocalPart()%></li>
+                          <li>Handler Name : <%=handler.getHandlerDesc().getName()%></li>
                           <%
                       }
                      %>
