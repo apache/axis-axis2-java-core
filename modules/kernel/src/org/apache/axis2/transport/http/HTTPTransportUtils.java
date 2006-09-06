@@ -213,15 +213,14 @@ public class HTTPTransportUtils {
                         //Check for action header and set it in as soapAction in MessageContext
                         int index = contentType.indexOf("action");
                         if (index > -1) {
-                            String transientString = contentType.substring(index,contentType.length());
+                            String transientString = contentType.substring(index, contentType.length());
                             int equal = transientString.indexOf("=");
-                            int firstComma = transientString.indexOf(";");
+                            int firstSemiColon = transientString.indexOf(";");
                             String soapAction; // This will contain "" in the string
-                            if (firstComma > -1) {
-                                soapAction = transientString.substring(equal+1,firstComma);
-
+                            if (firstSemiColon > -1) {
+                                soapAction = transientString.substring(equal + 1, firstSemiColon - 1);
                             } else {
-                                soapAction = transientString.substring(equal+1,transientString.length());
+                                soapAction = transientString.substring(equal + 1, transientString.length());
                             }
                             if ((soapAction != null) && soapAction.startsWith("\"")
                                 && soapAction.endsWith("\"")) {

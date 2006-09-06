@@ -24,12 +24,7 @@ import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.w3c.dom.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -133,7 +128,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
-        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.element.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -176,7 +171,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
-        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.element.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -189,7 +184,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
                 new SOAPElementImpl((ElementImpl) getOwnerDocument().createElement(localName));
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         element.appendChild(childEle.element);
-        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        childEle.element.getParentNode().setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -425,6 +420,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public void setParent(OMContainer parentElement) {
         element.setParent(parentElement);
+        this.getAttributes();
     }
 
     /* (non-Javadoc)
@@ -693,5 +689,16 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         OMNode omNode = this.element.detach();
         this.parentElement = null;
         return omNode;
+    }
+
+    /**
+     * Returns the collection of attributes associated with this node, or null
+     * if none. At this writing, Element is the only type of node which will
+     * ever have attributes.
+     *
+     * @see org.apache.axiom.om.impl.dom.ElementImpl
+     */
+    public NamedNodeMap getAttributes() {
+        return element.getAttributes();
     }
 }
