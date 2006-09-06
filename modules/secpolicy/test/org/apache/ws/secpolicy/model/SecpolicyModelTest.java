@@ -41,7 +41,7 @@ public class SecpolicyModelTest extends TestCase {
             for (Iterator iter = assertions.iterator(); iter.hasNext();) {
                 Assertion assertion = (Assertion) iter.next();
                 System.out.println(assertion.getClass());
-                if(assertion instanceof AsymmetricBinding) {
+                if(assertion instanceof SymmetricBinding) {
                     symmBindingFound = true;
                     SymmetricBinding binding = (SymmetricBinding)assertion;
                     assertEquals("IncludeTimestamp assertion not processed", true, binding.isIncludeTimestamp());
@@ -61,8 +61,7 @@ public class SecpolicyModelTest extends TestCase {
                 }
             }
             //The Asymm binding mean is not built in the policy processing :-(
-            //TODO: Sanka please have a look
-//            assertTrue("SymmetricBinding not porcessed",  symmBindingFound);
+            assertTrue("SymmetricBinding not porcessed",  symmBindingFound);
             
         } catch (Exception e) {
             e.printStackTrace();
