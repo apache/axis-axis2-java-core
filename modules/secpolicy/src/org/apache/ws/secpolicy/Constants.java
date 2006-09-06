@@ -278,7 +278,15 @@ public class Constants {
     
     public static final QName REQUIRE_EXTERNAL_URI_REFERNCE = new QName(Constants.SP_NS, "RequireExternalUriReference");
     
+    public static final QName REQUIRE_EXTERNAL_REFERNCE = new QName(Constants.SP_NS, "RequireExternalReference");
+    
+    public static final QName REQUIRE_INTERNAL_REFERNCE = new QName(Constants.SP_NS, "RequireInternalReference");
+    
+    public static final QName REQUEST_SECURITY_TOKEN_TEMPLATE = new QName(Constants.SP_NS, "RequestSecurityTokenTemplate");
+    
     public static final QName SC10_SECURITY_CONTEXT_TOKEN = new QName(Constants.SP_NS, "SC10SecurityContextToken");
     
     public static final QName BOOTSTRAP_POLICY = new QName(Constants.SP_NS, "BootstrapPolicy");
+    
+    public static final QName RST_TEMPLATE = new QName(Constants.SP_NS, "RequestSecurityTokenTemplate");
 }

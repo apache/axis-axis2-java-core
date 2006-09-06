@@ -40,7 +40,6 @@ public class SecpolicyModelTest extends TestCase {
             
             for (Iterator iter = assertions.iterator(); iter.hasNext();) {
                 Assertion assertion = (Assertion) iter.next();
-                System.out.println(assertion.getClass());
                 if(assertion instanceof SymmetricBinding) {
                     symmBindingFound = true;
                     SymmetricBinding binding = (SymmetricBinding)assertion;
