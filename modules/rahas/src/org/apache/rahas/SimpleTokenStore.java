@@ -63,11 +63,8 @@ public class SimpleTokenStore implements TokenStorage {
         return (String[]) identifiers.toArray(new String[identifiers.size()]);
     }
 
-    public List getExpiredTokens() throws TrustException {
-        return getTokens(Token.EXPIRED);
-    }
-
     public List getValidTokens() throws TrustException {
+        checkTokenExpiry();
         ArrayList issued = getTokens(Token.ISSUED);
         List renewed = getTokens(Token.RENEWED);
         for (Iterator iterator = renewed.iterator(); iterator.hasNext();) {
@@ -77,12 +74,19 @@ public class SimpleTokenStore implements TokenStorage {
     }
 
     public List getRenewedTokens() throws TrustException {
+        checkTokenExpiry();
         return getTokens(Token.RENEWED);
     }
 
 
     public List getCancelledTokens() throws TrustException {
+        checkTokenExpiry();
         return getTokens(Token.CANCELLED);
+    }
+
+    public List getExpiredTokens() throws TrustException {
+        checkTokenExpiry();
+        return getTokens(Token.EXPIRED);
     }
 
     private ArrayList getTokens(int state) {
@@ -98,5 +102,16 @@ public class SimpleTokenStore implements TokenStorage {
 
     public Token getToken(String id) throws TrustException {
         return (Token) this.tokens.get(id);
+    }
+
+    protected void checkTokenExpiry() throws TrustException {
+        for (Iterator iterator = tokens.values().iterator(); iterator.hasNext();) {
+            Token token = (Token) iterator.next();
+            if (token.getExpires() != null &&
+                token.getExpires().getTime() < System.currentTimeMillis()) {
+                token.setState(Token.EXPIRED);
+                update(token);
+            }
+        }
     }
 }
