@@ -67,8 +67,8 @@ public class CryptoConfigBuilder implements AssertionBuilder {
         return cryptoCofig;
     }
 
-    public QName getKnownElement() {
-        return new QName(RampartConfig.NS, CryptoConfig.CRYPTO_LN);
+    public QName[] getKnownElements() {
+        return new QName[] {new QName(RampartConfig.NS, CryptoConfig.CRYPTO_LN)};
     }
 
 }

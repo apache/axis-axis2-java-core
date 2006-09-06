@@ -69,8 +69,8 @@ public class RampartConfigBuilder implements AssertionBuilder {
         return rampartConfig;
     }
 
-    public QName getKnownElement() {
-        return new QName(RampartConfig.NS, RampartConfig.RAMPART_CONFIG_LN);
+    public QName[] getKnownElements() {
+        return new QName[] {new QName(RampartConfig.NS, RampartConfig.RAMPART_CONFIG_LN)};
     }
 
 }
