@@ -96,6 +96,7 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
          try {
             generateAndCompile(wsdlFileName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
         } catch (CodeGenerationException e) {
+             e.printStackTrace();
             fail("Exception while code generation test! " + wsdlFileName + e.getMessage());
         }
 

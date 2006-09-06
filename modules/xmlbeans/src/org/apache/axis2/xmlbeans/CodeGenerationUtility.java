@@ -16,6 +16,42 @@
 
 package org.apache.axis2.xmlbeans;
 
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
+import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
+import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.util.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaInclude;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.xmlbeans.BindingConfig;
+import org.apache.xmlbeans.Filer;
+import org.apache.xmlbeans.SchemaGlobalElement;
+import org.apache.xmlbeans.SchemaProperty;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeSystem;
+import org.apache.xmlbeans.XmlBeans;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
+import org.w3c.dom.Element;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.namespace.QName;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,46 +59,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.io.ByteArrayInputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.HashMap;
-import java.net.URL;
-
-import org.apache.axis2.util.URLProcessor;
-import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
-import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.util.Constants;
-import org.apache.axis2.wsdl.WSDLUtil;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.xmlbeans.BindingConfig;
-import org.apache.xmlbeans.Filer;
-import org.apache.xmlbeans.SchemaProperty;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlBeans;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.SchemaGlobalElement;
-import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.namespace.QName;
 
 /**
  * Framework-linked code used by XMLBeans data binding support. This is accessed
@@ -81,6 +85,7 @@ public class CodeGenerationUtility {
     public static final String MAPPER_FILE_NAME = "mapper";
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
 
+    private static final Log log = LogFactory.getLog(CodeGenerationUtility.class);
     boolean debug = false;
 
     /**
@@ -123,14 +128,9 @@ public class CodeGenerationUtility {
                 XmlOptions options = new XmlOptions();
                 options.setLoadAdditionalNamespaces(
                         nameSpacesMap); //add the namespaces
-                Document[] allSchemas = schema.getAllSchemas();
+                XmlSchema[] allSchemas = getAllSchemas(schema);
                 for (int j = 0; j < allSchemas.length; j++) {
-                    Document allSchema = allSchemas[j];
-                    completeSchemaList.add(
-                            XmlObject.Factory.parse(
-                                    allSchema
-                                    , options));
-
+                    completeSchemaList.add(allSchemas[j]);
                 }
             }
 
@@ -147,13 +147,12 @@ public class CodeGenerationUtility {
 
             }
 
+            XmlSchemaCollection extras = new XmlSchemaCollection();
             // add the third party schemas
             //todo perhaps checking the namespaces would be a good idea to
             //make the generated code work efficiently
             for (int i = 0; i < additionalSchemas.length; i++) {
-                completeSchemaList.add(XmlObject.Factory.parse(
-                        additionalSchemas[i]
-                        , null));
+                completeSchemaList.add(extras.read(additionalSchemas[i]));
                 topLevelSchemaList.add(XmlObject.Factory.parse(
                         additionalSchemas[i]
                         , null));
@@ -161,7 +160,7 @@ public class CodeGenerationUtility {
 
             //compile the type system
             Axis2EntityResolver er = new Axis2EntityResolver();
-            er.setSchemas(convertToSchemaDocumentArray(completeSchemaList));
+            er.setSchemas((XmlSchema[]) completeSchemaList.toArray(new XmlSchema[completeSchemaList.size()]));
             er.setBaseUri(cgconfig.getBaseURI());
 
 
@@ -281,7 +280,7 @@ public class CodeGenerationUtility {
 
     /**
      * @param sts
-     * @return
+     * @return array list
      */
     private static List findPlainBase64Types(SchemaTypeSystem sts) {
         ArrayList allSeenTypes = new ArrayList();
@@ -422,39 +421,12 @@ public class CodeGenerationUtility {
     }
 
     /**
-     * Get an array of schema documents
-     * @param vec
-     * @return
-     */
-    private static SchemaDocument[] convertToSchemaDocumentArray(List vec) {
-        SchemaDocument[] schemaDocuments =
-                (SchemaDocument[]) vec.toArray(new SchemaDocument[vec.size()]);
-        //remove duplicates
-        Vector uniqueSchemas = new Vector(schemaDocuments.length);
-        Vector uniqueSchemaTns = new Vector(schemaDocuments.length);
-        SchemaDocument.Schema s;
-        for (int i = 0; i < schemaDocuments.length; i++) {
-            s = schemaDocuments[i].getSchema();
-            if (!uniqueSchemaTns.contains(s.getTargetNamespace())) {
-                uniqueSchemas.add(schemaDocuments[i]);
-                uniqueSchemaTns.add(s.getTargetNamespace());
-            } else if (s.getTargetNamespace() == null) {
-                //add anyway
-                uniqueSchemas.add(schemaDocuments[i]);
-            }
-        }
-        return (SchemaDocument[])
-                uniqueSchemas.toArray(
-                        new SchemaDocument[uniqueSchemas.size()]);
-    }
-
-    /**
      * Converts a given vector of schemaDocuments to XmlBeans processable
      * schema objects. One drawback we have here is the non-inclusion of
      * untargeted namespaces
      *
      * @param vec
-     * @return
+     * @return schema array
      */
     private static SchemaDocument.Schema[] convertToSchemaArray(List vec) {
         SchemaDocument[] schemaDocuments =
@@ -477,16 +449,38 @@ public class CodeGenerationUtility {
                         new SchemaDocument.Schema[uniqueSchemas.size()]);
     }
 
-    /**
-     * Implementation of the entity resolver
-     * A custom entity resolver for XMLBeans
-     */
-    private static class Axis2EntityResolver implements EntityResolver {
-        private SchemaDocument[] schemas;
-        private String baseUri;
-
-        public Axis2EntityResolver() {
+    private static XmlSchema[] getAllSchemas(XmlSchema schema) {
+        HashMap map = new HashMap();
+        traverseSchemas(schema, map);
+        return (XmlSchema[]) map.values().toArray(new XmlSchema[map.values().size()]);
+    }
+    private static void traverseSchemas(XmlSchema schema, HashMap map) {
+        String key = schema.getTargetNamespace() + ":" + schema.getSourceURI();
+        if(map.containsKey(key)){
+            return;
         }
+        map.put(key, schema);
+
+        XmlSchemaObjectCollection includes = schema.getIncludes();
+        if (includes != null) {
+            Iterator tempIterator = includes.getIterator();
+            while (tempIterator.hasNext()) {
+                Object o = tempIterator.next();
+                if (o instanceof XmlSchemaImport) {
+                    XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
+                    if (schema1 != null) traverseSchemas(schema1, map);
+                }
+                if (o instanceof XmlSchemaInclude) {
+                    XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
+                    if (schema1 != null) traverseSchemas(schema1, map);
+                }
+            }
+        }
+    }
+
+    private static class Axis2EntityResolver implements EntityResolver {
+        private XmlSchema[] schemas;
+        private String baseUri;
 
         /**
          * @param publicId - this is the target namespace
@@ -495,12 +489,30 @@ public class CodeGenerationUtility {
          * @see EntityResolver#resolveEntity(String, String)
          */
         public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            if(systemId.startsWith("project://local/")) {
+                systemId = systemId.substring("project://local/".length());
+            }
+            log.info("Resolving schema with publicId [" + publicId + "] and systemId [" + systemId + "]");
             try {
-                for (int i = 0; i < schemas.length; i++){
-                    SchemaDocument.Schema schema = schemas[i].getSchema();
-                    if (schema.getTargetNamespace() != null &&
-                            publicId != null &&
-                            schema.getTargetNamespace().equals(publicId)) {
+                for (int i=0; i< schemas.length; i++) {
+                    XmlSchema schema = schemas[i];
+                    boolean found = false;
+                    if(systemId.indexOf('/') == -1 && schema.getSourceURI() != null && schema.getSourceURI().endsWith(systemId)) {
+                        found = true;
+                    } else if(schema.getSourceURI() != null && schema.getSourceURI().equals(systemId)) {
+                        found = true;                        
+                    }
+                    if(found) {
+                        try {
+                            return new InputSource(getSchemaAsStream(schemas[i]));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                for (int i=0; i< schemas.length; i++) {
+                    XmlSchema schema = schemas[i];
+                    if(schema.getTargetNamespace() != null && schema.getTargetNamespace().equals(publicId)) {
                         try {
                             return new InputSource(getSchemaAsStream(schemas[i]));
                         } catch (IOException e) {
@@ -513,8 +525,8 @@ public class CodeGenerationUtility {
                     //if the systemId actually had a scheme then as per the URL
                     //constructor, the context URL scheme should be ignored
                     baseUri = (baseUri == null) ? "file:///" : baseUri;
-                    URL url = new URL(new URL(baseUri),systemId);
-                    return new InputSource(url.openStream() );
+                    URL url = new URL(new URL(baseUri), systemId);
+                    return new InputSource(url.openStream());
                 }
                 return XMLUtils.getEmptyInputSource();
             } catch (Exception e) {
@@ -522,11 +534,11 @@ public class CodeGenerationUtility {
             }
         }
 
-        public SchemaDocument[]  getSchemas() {
+        public XmlSchema[]  getSchemas() {
             return schemas;
         }
 
-        public void setSchemas(SchemaDocument[] schemas) {
+        public void setSchemas(XmlSchema[] schemas) {
             this.schemas = schemas;
         }
 
@@ -541,16 +553,14 @@ public class CodeGenerationUtility {
         /**
          * Convert schema into a InputStream
          *
-         * @param doc
+         * @param schema
          */
-        private ByteArrayInputStream getSchemaAsStream(SchemaDocument schema) throws IOException {
+        private ByteArrayInputStream getSchemaAsStream(XmlSchema schema) throws IOException {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            schema.save(baos);
+            schema.write(baos);
             baos.flush();
             return new ByteArrayInputStream(baos.toByteArray());
-
         }
-
     }
 
 
