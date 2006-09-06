@@ -218,7 +218,7 @@ public class HTTPTransportUtils {
                             int firstComma = transientString.indexOf(";");
                             String soapAction; // This will contain "" in the string
                             if (firstComma > -1) {
-                                soapAction = transientString.substring(equal+1,firstComma-1);
+                                soapAction = transientString.substring(equal+1,firstComma);
 
                             } else {
                                 soapAction = transientString.substring(equal+1,transientString.length());
