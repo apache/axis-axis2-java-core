@@ -18,8 +18,13 @@ package org.apache.ws.secpolicy.model;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
+import org.apache.ws.secpolicy.Constants;
+
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -29,6 +34,34 @@ public class SecpolicyModelTest extends TestCase {
     public void testSymmBinding() {
         try {
             Policy p = this.getPolicy("test-resources/policy-symm-binding.xml");
+            List assertions = (List)p.getAlternatives().next();
+            
+            boolean asymmBindingFound = false;
+            
+            for (Iterator iter = assertions.iterator(); iter.hasNext();) {
+                Assertion assertion = (Assertion) iter.next();
+                if(assertion instanceof AsymmetricBinding) {
+                    asymmBindingFound = true;
+                    AsymmetricBinding binding = (AsymmetricBinding)assertion;
+                    assertEquals("IncludeTimestamp assertion not processed", true, binding.isIncludeTimestamp());
+                    
+                    InitiatorToken initToken = binding.getInitiatorToken();
+                    assertNotNull("initiatorToken missing", initToken);
+                    
+                    Token token = initToken.getInitiatorToken();
+                    if(token instanceof X509Token) {
+                        assertEquals("incorrect X509 token versin and type",
+                                Constants.WSS_X509_V3_TOKEN10,
+                                ((X509Token) token).getTokenVersionAndType());
+                    } else {
+                        fail("InitiatorToken must contain a X509Token assertion");
+                    }
+                    
+                }
+            }
+            //The Asymm binding mean is not built in the policy processing :-(
+            //TODO: Sanka please have a look
+//            assertTrue("AsymmetricBinding not porcessed",  asymmBindingFound);
             
         } catch (Exception e) {
             e.printStackTrace();
