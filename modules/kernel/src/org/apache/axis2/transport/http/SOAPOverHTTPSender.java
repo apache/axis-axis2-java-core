@@ -250,8 +250,8 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             }
         }
 
-        public String getContentType() {
-            String encoding = format.getCharSetEncoding();
+        public String getContentType() {            
+        	String encoding = format.getCharSetEncoding();
             String contentType = format.getContentType();
 
             if (encoding != null) {
@@ -260,10 +260,9 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
             if (!msgCtxt.isSOAP11() && (soapActionString != null)
-                    && !"".equals(soapActionString.trim())) {
+                    && !"".equals(soapActionString.trim()) && ! "\"\"".equals(soapActionString.trim())) {
                 contentType = contentType + ";action=\"" + soapActionString + "\";";
             }
-
             return contentType;
         }
 
