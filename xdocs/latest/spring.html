@@ -6,7 +6,36 @@
 </head>
 
 <body>
-<h1>Axis2 intergration with the Spring Framework</h1>
+<h2>Content</h2>
+<ul>
+  <li><a href="#1">Introduction</a>
+  </li>
+  <li><a href="#2">Configuring Axis2 to be Spring aware</a>
+    <ul>
+      <li><a href="#21">Programming Model</a></li>
+      <li><a href="#22">Simple Spring config example</a></li>
+      <li><a href="#22">Inside a Servlet Container</a></li>
+      <li><a href="#22">Outside a Servlet Container</a></li>
+      <li><a href="#23">Enabling MTOM Optimization at Server Side</a></li>
+      <li><a href="#24">Accessing Received Binary Data (Sample Code) </a>
+        <ul>
+          <li><a href="#241">Service</a></li>
+          <li><a href="#242">Client</a></li>
+        </ul>
+      </li>
+      <li><a href="#25">MTOM Databinding</a>
+    </ul>
+  </li>
+  <li><a href="#3">SOAP with Attachments with Axis2</a></li>
+  <li><a href="#4">Advanced Topics </a>
+    <ul>
+      <li><a href="#41">File Caching for Attachments</a></li>
+    </ul>
+  </li>
+</ul>
+<a name="1"></a>
+
+<h2>Introduction</h2>
 
 <p>The idea behind Axis2 and Spring integration is that Axis2 simply needs to 
 have Spring supply one of its pre-loaded beans to the Axis2 Message Receiver 
@@ -23,10 +52,21 @@ functionality is required.</p>
 
 <p>This guide assumes some basic knowledge of Axis2. See the userguide for more info.</p>
 
+<a name="2"></a>
+
+<h2>Configuring Axis2 to be Spring aware</h2>
+<a name="21"></a>
+
+<h3>Programming Model</h3>
+
 <p>From an Axis2 standpoint, two needed hooks are to be placed into the AAR services.xml: 
 The ServiceObjectSupplier that hooks Axis2 and Spring together, and the name of Spring bean 
 that Axis2 will use as the service. All Message Receivers are currently supported, as would be
 any Message Receiver that extends org.apache.axis2.receivers.AbstractMessageReceiver . </p>
+
+<a name="22"></a>
+
+<h3>Simple Spring config example</h3>
 
 <p>For the purpose of this example, and for no other reason besides simplicity, we'll 
 configure Spring via a WAR file's web.xml. Lets add a context-param and a listener:</p>
@@ -38,8 +78,14 @@ configure Spring via a WAR file's web.xml. Lets add a context-param and a listen
       &lt;param-value&gt;/WEB-INF/applicationContext.xml&lt;/param-value&gt;
     &lt;/context-param&gt;</pre>
 
-<p>Here we will show two examples of Spring's /WEB-INF/applicationContext.xml . The first example 
+<p>Next we will show two examples of Spring's /WEB-INF/applicationContext.xml referenced in the web.xml listener -  one with a servlet container, and one without. The first example 
 should be familair to any Spring user: </p>
+
+<a name="23"></a>
+
+<h3>Inside a Servlet Container</h3>
+
+<p>This 'inside a servlet container' exampe applicationContext.xml should be familair to any Spring user: </p>
 
 <pre> &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
@@ -84,11 +130,6 @@ provide an Application Context to Axis2, with a bean ref 'applicationContext' :
   &lt;/bean&gt;
 &lt;/beans&gt;</pre>
 
-
-<p>Lets move now to the Axis2 services.xml file. Note that while we are using RawXMLINOutMessageReceiver 
-as the Message Receiver, currently all Message Receviers extend AbstractMessageReceiver and therefore are 
-automatically supported.</p>
-
 <p>If the service is running in a Servlet Container, ie, Axis2 will be able to get a hold of 
 ServletContext, the services.xml for the example would be using SpringServletContextObjectSupplier such as: </p>
 
@@ -102,6 +143,11 @@ ServletContext, the services.xml for the example would be using SpringServletCon
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
 &lt;/service&gt; </pre>
+
+<p>Lets move now to the Axis2 services.xml file. Note that while we are using RawXMLINOutMessageReceiver 
+as the Message Receiver, currently all Message Receviers extend AbstractMessageReceiver and therefore are 
+automatically supported.</p>
+
 
 <p>If the service is _NOT_ running in a Servlet Container, ie, Axis2 will _NOT_ be able to get a hold of 
 ServletContext, the services.xml for the example would be using SpringAppContextAwareObjectSupplier such as: </p>
