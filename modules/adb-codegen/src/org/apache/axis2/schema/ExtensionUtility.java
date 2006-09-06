@@ -385,6 +385,10 @@ public class ExtensionUtility {
         if (configuration.isGenerateAll()) {
             options.setGenerateAll(true);
         }
+        
+        if (configuration.isBackwordCompatibilityMode()) {
+            options.setBackwordCompatibilityMode(true);
+        }
     }
 
 }
