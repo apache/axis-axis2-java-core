@@ -91,8 +91,7 @@ public class Util {
         }
         Token token = null;
         if (rstElem != null) {
-            OMElement sctElem = rstElem
-                    .getFirstChildWithName(SecurityContextToken.TOKEN);
+            OMElement sctElem = rstElem.getFirstElement();
             if (sctElem != null) {
                 SecurityContextToken sct = new SecurityContextToken(
                         (Element) sctElem);

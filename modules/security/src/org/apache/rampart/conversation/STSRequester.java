@@ -33,6 +33,7 @@ import org.apache.rahas.TrustUtil;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.util.Axis2Util;
+import org.apache.ws.security.conversation.ConversationConstants;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Element;
 
@@ -84,12 +85,7 @@ public class STSRequester {
             OMElement rstElem = TrustUtil.createRequestSecurityTokenElement(config.getWstVersion());
             OMElement reqTypeElem = TrustUtil.createRequestTypeElement(config.getWstVersion(), rstElem, RahasConstants.REQ_TYPE_ISSUE);
             OMElement tokenTypeElem = TrustUtil.createTokenTypeElement(config.getWstVersion(), rstElem);
-            
-            if(config.getWstVersion() == RahasConstants.VERSION_05_02) {
-                tokenTypeElem.setText(RahasConstants.V_05_02.TOK_TYPE_SCT);
-            } else {
-                tokenTypeElem.setText(RahasConstants.V_05_12.TOK_TYPE_SCT);
-            }
+            tokenTypeElem.setText(ConversationConstants.getWSCNs(ConversationConstants.DEFAULT_VERSION) + ConversationConstants.TOKEN_TYPE_SECURITY_CONTEXT_TOKEN);
             
             if(config.isProvideEntropy()) {
                 //TODO Option to get the nonce lenght and  
@@ -118,7 +114,8 @@ public class STSRequester {
             
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RampartException(e.getMessage());
+            throw new RampartException("errorInObtainingSct",
+                    new String[] { config.getStsEPRAddress() }, e);
         }
     }
 

@@ -89,20 +89,6 @@ public class RahasConstants {
     public final static String RSTR_ACTON_SCT = "/RSTR/SCT";
 
     
-    public class V_05_02 { 
-        
-        //Token types
-        public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/02/sc/sct";
-
-    }
-    
-    public class V_05_12 { 
-        
-        //Token types
-        public final static String TOK_TYPE_SCT = "http://schemas.xmlsoap.org/ws/2005/12/sc/sct";
-        
-    }
-    
     //Token types
     public final static String TOK_TYPE_SAML_10="http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1";
  

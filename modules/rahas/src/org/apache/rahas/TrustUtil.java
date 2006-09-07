@@ -209,12 +209,17 @@ public class TrustUtil {
     public static OMElement createKeyTypeElement(
             int version, OMElement parent, String type) throws TrustException {
         String ns = getWSTNamespace(version);
-        OMElement ktelem = createOMElement(parent, ns,
+        OMElement ktElem = createOMElement(parent, ns,
                 RahasConstants.KEY_TYPE_LN,
                 RahasConstants.WST_PREFIX);
-        
-        ktelem.setText(ns + type);
-        return ktelem;
+        if(RahasConstants.KEY_TYPE_BEARER.equals(type) ||
+                RahasConstants.KEY_TYPE_PUBLIC_KEY.equals(type) ||
+                RahasConstants.KEY_TYPE_SYMM_KEY.equals(type)) {
+            ktElem.setText(ns + type);
+        } else {
+            ktElem.setText(type);
+        }
+        return ktElem;
     }
     
     public static OMElement createLifetimeElement(
@@ -321,13 +326,13 @@ public class TrustUtil {
         }
     }
     
-    public static int getWSTVersion(String ns) {
+    public static int getWSTVersion(String ns) throws TrustException {
         if(RahasConstants.WST_NS_05_02.equals(ns)) {
             return RahasConstants.VERSION_05_02;
         } else if(RahasConstants.WST_NS_05_12.equals(ns)) {
             return RahasConstants.VERSION_05_12;
         } else {
-            return -1;
+            throw new TrustException("unsupportedWSTVersion");
         }
     }
     

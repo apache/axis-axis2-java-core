@@ -30,6 +30,8 @@ import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
+import org.apache.ws.security.conversation.ConversationConstants;
+import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.token.SecurityContextToken;
 import org.apache.ws.security.util.XmlSchemaDateFormat;
@@ -117,167 +119,177 @@ public class SCTIssuer implements TokenIssuer {
     private SOAPEnvelope doBinarySecret(SCTIssuerConfig config, RahasData data)
             throws TrustException {
 
-        SOAPEnvelope env = TrustUtil.createSOAPEnvelope(data.getSoapNs());
-        int wstVersion = data.getVersion();
-        
-        // Get the document
-        Document doc = ((Element) env).getOwnerDocument();
-
-        SecurityContextToken sct = new SecurityContextToken(doc);
-
-        OMElement rstrElem = TrustUtil
-                .createRequestSecurityTokenResponseElement(wstVersion, env
-                        .getBody());
-
-        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(
-                wstVersion, rstrElem);
-
-        rstElem.addChild((OMElement) sct.getElement());
-
-        if (config.addRequestedAttachedRef) {
-            if (wstVersion == RahasConstants.VERSION_05_02) {
-                TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#"
-                        + sct.getID(), RahasConstants.V_05_02.TOK_TYPE_SCT);
-            } else {
-                TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#"
-                        + sct.getID(), RahasConstants.V_05_12.TOK_TYPE_SCT);
+        try {
+            SOAPEnvelope env = TrustUtil.createSOAPEnvelope(data.getSoapNs());
+            int wstVersion = data.getVersion();
+            
+            // Get the document
+            Document doc = ((Element) env).getOwnerDocument();
+    
+            SecurityContextToken sct = new SecurityContextToken(this.getWSCVersion(data.getTokenType()), doc);
+    
+            OMElement rstrElem = TrustUtil
+                    .createRequestSecurityTokenResponseElement(wstVersion, env
+                            .getBody());
+    
+            OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(
+                    wstVersion, rstrElem);
+    
+            rstElem.addChild((OMElement) sct.getElement());
+    
+            String tokenType = data.getTokenType();
+            
+            if (config.addRequestedAttachedRef) {
+                if (wstVersion == RahasConstants.VERSION_05_02) {
+                    TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#"
+                            + sct.getID(), tokenType);
+                } else {
+                    TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#"
+                            + sct.getID(), tokenType);
+                }
             }
-        }
-
-        if (config.addRequestedUnattachedRef) {
-            if (wstVersion == RahasConstants.VERSION_05_02) {
-                TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem,
-                        sct.getIdentifier(),
-                        RahasConstants.V_05_02.TOK_TYPE_SCT);
-            } else {
-                TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem,
-                        sct.getIdentifier(),
-                        RahasConstants.V_05_12.TOK_TYPE_SCT);
+    
+            if (config.addRequestedUnattachedRef) {
+                if (wstVersion == RahasConstants.VERSION_05_02) {
+                    TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem,
+                            sct.getIdentifier(),
+                            tokenType);
+                } else {
+                    TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem,
+                            sct.getIdentifier(),
+                            tokenType);
+                }
             }
+    
+            OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(
+                    wstVersion, rstrElem);
+    
+            OMElement binSecElem = TrustUtil.createBinarySecretElement(wstVersion,
+                    reqProofTok, null);
+    
+            byte[] secret = this.generateEphemeralKey();
+            binSecElem.setText(Base64.encode(secret));
+    
+            //Creation and expiration times
+            Date creationTime = new Date();
+            Date expirationTime = new Date();
+            
+            expirationTime.setTime(creationTime.getTime() + config.ttl);
+            
+            
+            // Use GMT time in milliseconds
+            DateFormat zulu = new XmlSchemaDateFormat();
+    
+            // Add the Lifetime element
+            TrustUtil.createLifetimeElement(wstVersion, rstrElem, zulu
+                    .format(creationTime), zulu.format(expirationTime));
+            
+            // Store the tokens
+            Token sctToken = new Token(sct.getIdentifier(), (OMElement) sct
+                    .getElement(), creationTime, expirationTime);
+            sctToken.setSecret(secret);
+            TrustUtil.getTokenStore(data.getInMessageContext()).add(sctToken);
+    
+            return env;
+        } catch (ConversationException e) {
+            throw new TrustException(e.getMessage(), e);
         }
-
-        OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(
-                wstVersion, rstrElem);
-
-        OMElement binSecElem = TrustUtil.createBinarySecretElement(wstVersion,
-                reqProofTok, null);
-
-        byte[] secret = this.generateEphemeralKey();
-        binSecElem.setText(Base64.encode(secret));
-
-        //Creation and expiration times
-        Date creationTime = new Date();
-        Date expirationTime = new Date();
-        
-        expirationTime.setTime(creationTime.getTime() + config.ttl);
-        
-        
-        // Use GMT time in milliseconds
-        DateFormat zulu = new XmlSchemaDateFormat();
-
-        // Add the Lifetime element
-        TrustUtil.createLifetimeElement(wstVersion, rstrElem, zulu
-                .format(creationTime), zulu.format(expirationTime));
-        
-        // Store the tokens
-        Token sctToken = new Token(sct.getIdentifier(), (OMElement) sct
-                .getElement(), creationTime, expirationTime);
-        sctToken.setSecret(secret);
-        TrustUtil.getTokenStore(data.getInMessageContext()).add(sctToken);
-
-        return env;
     }
 
     private SOAPEnvelope doEncryptedKey(SCTIssuerConfig config, RahasData data)
             throws TrustException {
 
-        int wstVersion = data.getVersion();
-        
-        SOAPEnvelope env = TrustUtil.createSOAPEnvelope(data.getSoapNs());
-        // Get the document
-        Document doc = ((Element) env).getOwnerDocument();
-
-        WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
-        Crypto crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile,
-                data.getInMessageContext().getAxisService().getClassLoader());
-
-        encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
         try {
-            encrKeyBuilder.setUseThisCert(data.getClientCert());
-            encrKeyBuilder.prepare(doc, crypto);
-        } catch (WSSecurityException e) {
-            throw new TrustException(
-                    "errorInBuildingTheEncryptedKeyForPrincipal",
-                    new String[] { data.getClientCert().getSubjectDN()
-                            .getName() });
-        }
-
-        SecurityContextToken sct = new SecurityContextToken(doc);
-
-        OMElement rstrElem = TrustUtil
-                .createRequestSecurityTokenResponseElement(wstVersion, env
-                        .getBody());
-
-        OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(
-                wstVersion, rstrElem);
-
-        rstElem.addChild((OMElement) sct.getElement());
-
-        if (config.addRequestedAttachedRef) {
-            if (wstVersion == RahasConstants.VERSION_05_02) {
-                TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#"
-                        + sct.getID(), RahasConstants.V_05_02.TOK_TYPE_SCT);
-            } else {
-                TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#"
-                        + sct.getID(), RahasConstants.V_05_12.TOK_TYPE_SCT);
+            int wstVersion = data.getVersion();
+            
+            SOAPEnvelope env = TrustUtil.createSOAPEnvelope(data.getSoapNs());
+            // Get the document
+            Document doc = ((Element) env).getOwnerDocument();
+    
+            WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
+            Crypto crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile,
+                    data.getInMessageContext().getAxisService().getClassLoader());
+    
+            encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            try {
+                encrKeyBuilder.setUseThisCert(data.getClientCert());
+                encrKeyBuilder.prepare(doc, crypto);
+            } catch (WSSecurityException e) {
+                throw new TrustException(
+                        "errorInBuildingTheEncryptedKeyForPrincipal",
+                        new String[] { data.getClientCert().getSubjectDN()
+                                .getName() });
             }
-        }
-
-        if (config.addRequestedUnattachedRef) {
-            if (wstVersion == RahasConstants.VERSION_05_02) {
-                TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem,
-                        sct.getIdentifier(),
-                        RahasConstants.V_05_02.TOK_TYPE_SCT);
-            } else {
-                TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem,
-                        sct.getIdentifier(),
-                        RahasConstants.V_05_12.TOK_TYPE_SCT);
+    
+            SecurityContextToken sct = new SecurityContextToken(this.getWSCVersion(data.getTokenType()), doc);
+    
+            OMElement rstrElem = TrustUtil
+                    .createRequestSecurityTokenResponseElement(wstVersion, env
+                            .getBody());
+    
+            OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(
+                    wstVersion, rstrElem);
+    
+            rstElem.addChild((OMElement) sct.getElement());
+            
+            String tokenType = data.getTokenType();
+    
+            if (config.addRequestedAttachedRef) {
+                if (wstVersion == RahasConstants.VERSION_05_02) {
+                    TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#"
+                            + sct.getID(), tokenType);
+                } else {
+                    TrustUtil.createRequestedAttachedRef(wstVersion, rstrElem, "#"
+                            + sct.getID(), tokenType);
+                }
             }
+    
+            if (config.addRequestedUnattachedRef) {
+                if (wstVersion == RahasConstants.VERSION_05_02) {
+                    TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem,
+                            sct.getIdentifier(), tokenType);
+                } else {
+                    TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem,
+                            sct.getIdentifier(), tokenType);
+                }
+            }
+    
+            //Creation and expiration times
+            Date creationTime = new Date();
+            Date expirationTime = new Date();
+            
+            expirationTime.setTime(creationTime.getTime() + config.ttl);
+            
+            // Use GMT time in milliseconds
+            DateFormat zulu = new XmlSchemaDateFormat();
+            
+            // Add the Lifetime element
+            TrustUtil.createLifetimeElement(wstVersion, rstrElem, zulu
+                    .format(creationTime), zulu.format(expirationTime));
+            
+            Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
+            Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
+    
+            OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(
+                    wstVersion, rstrElem);
+    
+            if (bstElem != null) {
+                reqProofTok.addChild((OMElement) bstElem);
+            }
+    
+            reqProofTok.addChild((OMElement) encryptedKeyElem);
+    
+            
+            // Store the tokens
+            Token sctToken = new Token(sct.getIdentifier(), (OMElement) sct
+                    .getElement(), creationTime, expirationTime);
+            sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
+            TrustUtil.getTokenStore(data.getInMessageContext()).add(sctToken);
+    
+            return env;
+        } catch (ConversationException e) {
+            throw new TrustException(e.getMessage(), e);
         }
-
-        //Creation and expiration times
-        Date creationTime = new Date();
-        Date expirationTime = new Date();
-        
-        expirationTime.setTime(creationTime.getTime() + config.ttl);
-        
-        // Use GMT time in milliseconds
-        DateFormat zulu = new XmlSchemaDateFormat();
-        
-        // Add the Lifetime element
-        TrustUtil.createLifetimeElement(wstVersion, rstrElem, zulu
-                .format(creationTime), zulu.format(expirationTime));
-        
-        Element encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
-        Element bstElem = encrKeyBuilder.getBinarySecurityTokenElement();
-
-        OMElement reqProofTok = TrustUtil.createRequestedProofTokenElement(
-                wstVersion, rstrElem);
-
-        if (bstElem != null) {
-            reqProofTok.addChild((OMElement) bstElem);
-        }
-
-        reqProofTok.addChild((OMElement) encryptedKeyElem);
-
-        
-        // Store the tokens
-        Token sctToken = new Token(sct.getIdentifier(), (OMElement) sct
-                .getElement(), creationTime, expirationTime);
-        sctToken.setSecret(encrKeyBuilder.getEphemeralKey());
-        TrustUtil.getTokenStore(data.getInMessageContext()).add(sctToken);
-
-        return env;
     }
 
     public String getResponseAction(RahasData data) throws TrustException {
@@ -319,4 +331,19 @@ public class SCTIssuer implements TokenIssuer {
         this.configParamName = configParamName;
     }
 
+    private int getWSCVersion(String tokenTypeValue) throws ConversationException {
+        
+        if(tokenTypeValue == null) {
+            return ConversationConstants.DEFAULT_VERSION;
+        }
+        
+        if(tokenTypeValue != null && tokenTypeValue.startsWith(ConversationConstants.WSC_NS_05_02)) {
+            return ConversationConstants.getWSTVersion(ConversationConstants.WSC_NS_05_02);
+        } else if(tokenTypeValue != null && tokenTypeValue.startsWith(ConversationConstants.WSC_NS_05_12)) {
+            return ConversationConstants.getWSTVersion(ConversationConstants.WSC_NS_05_12);
+        } else {
+            throw new ConversationException("unsupportedSecConvVersion");
+        }
+    }
+    
 }

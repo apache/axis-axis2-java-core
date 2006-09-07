@@ -33,6 +33,7 @@ import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
+import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.conversation.dkalgo.P_SHA1;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.util.Base64;
@@ -348,6 +349,10 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 //Extract the Encryptedkey DOM element 
                 encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
             } catch (WSSecurityException e) {
+                throw new TrustException(
+                        "errorInBuildingTheEncryptedKeyForPrincipal",
+                        new String[] { serviceCert.getSubjectDN().getName()}, e);
+            } catch (ConversationException e) {
                 throw new TrustException(
                         "errorInBuildingTheEncryptedKeyForPrincipal",
                         new String[] { serviceCert.getSubjectDN().getName()}, e);

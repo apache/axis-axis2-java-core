@@ -21,12 +21,28 @@ import org.apache.rahas.RahasConstants;
 import org.apache.rahas.TokenStorage;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.ws.security.WSSConfig;
+import org.apache.ws.security.conversation.ConversationConstants;
 import org.apache.ws.security.message.WSSecHeader;
 import org.w3c.dom.Document;
 
 import java.util.Vector;
 
 public class RampartMessageData {
+    
+    /**
+     * Key to hold the address of the issuer in the msg ctx.
+     */
+    public final static String KEY_ISSUER_ADDRESS = "issuerAddress";
+    
+    /**
+     * Key to hold the issuer policy
+     */
+    public final static String KEY_ISSUER_POLICY = "issuerPolicy";
+
+    /**
+     * Key to hold the service policy
+     */
+    public static final String KEY_SERVICE_POLICY = "servicePolicy";
 
     private MessageContext msgContext = null;
 
@@ -57,6 +73,8 @@ public class RampartMessageData {
      */
     
     private int wstVersion = RahasConstants.VERSION_05_02;
+    
+    private int secConvVersion = ConversationConstants.DEFAULT_VERSION;
     
     /*
      * IssuedTokens or SecurityContextTokens can be used
@@ -273,6 +291,13 @@ public class RampartMessageData {
      */
     public void setWstVersion(int wstVerion) {
         this.wstVersion = wstVerion;
+    }
+
+    /**
+     * @return Returns the secConvVersion.
+     */
+    public int getSecConvVersion() {
+        return secConvVersion;
     }
 
 }

@@ -16,12 +16,20 @@
 
 package org.apache.rampart.util;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.rahas.RahasConstants;
+import org.apache.rahas.TrustException;
+import org.apache.rahas.TrustUtil;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.RampartMessageData;
 import org.apache.rampart.policy.model.CryptoConfig;
 import org.apache.rampart.policy.model.RampartConfig;
+import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
@@ -218,4 +226,47 @@ public class RampartUtil {
         }
     }
     
+    /**
+     * Process a give issuer address element and return the address.
+     * @param issuerAddress
+     * @return
+     * @throws RampartException If the issuer address element is malformed.
+     */
+    public static String processIssuerAddress(OMElement issuerAddress) 
+        throws RampartException {
+        if(issuerAddress != null && issuerAddress.getText() != null && 
+                !"".equals(issuerAddress.getText())) {
+            return issuerAddress.getText().trim();
+        } else {
+            throw new RampartException("invalidIssuerAddress",
+                    new String[] { issuerAddress.toString() });
+        }
+    }
+    
+    
+    public static OMElement createRSTTempalteForSCT(int conversationVersion, 
+            int wstVersion) throws RampartException {
+        try {
+            log.debug("Creating RSTTemplate for an SCT request");
+            OMFactory fac = OMAbstractFactory.getOMFactory();
+            
+            OMNamespace wspNs = fac.createOMNamespace(Constants.SP_NS, "wsp");
+            OMElement rstTempl = fac.createOMElement(
+                    Constants.REQUEST_SECURITY_TOKEN_TEMPLATE.getLocalPart(),
+                    wspNs);
+            
+            //Create TokenType element and set the value
+            OMElement tokenTypeElem = TrustUtil.createTokenTypeElement(
+                    wstVersion, rstTempl);
+            tokenTypeElem.setText(getConversationNs(conversationVersion) + "/sct");
+            
+            return rstTempl;
+        } catch (TrustException e) {
+            throw new RampartException(e.getMessage(), e);
+        }
+    }
+    
+    public static String getConversationNs(int version) {
+        return null;
+    }
 }
