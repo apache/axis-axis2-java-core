@@ -16,7 +16,6 @@
 
 package org.apache.rahas;
 
-import org.apache.axis2.addressing.AddressingConstants;
 
 public class RahasConstants {
     

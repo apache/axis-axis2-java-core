@@ -16,9 +16,13 @@
 
 package org.apache.rahas;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.neethi.Policy;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
+import org.apache.ws.secpolicy.Constants;
 import org.opensaml.XML;
 
 import javax.xml.namespace.QName;
@@ -83,5 +87,36 @@ public class RahasSAMLTokenUTForBearerV1205Test extends TestClient {
         assertNotNull("RequestedSecurityToken missing", rst);
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.rahas.TestClient#getServicePolicy()
+     */
+    public Policy getServicePolicy() throws Exception {
+        return this.getPolicy("test-resources/rahas/policy/service-policy-transport-binding.xml");
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.rahas.TestClient#getSTSPolicy()
+     */
+    public Policy getSTSPolicy() throws Exception {
+        return this.getPolicy("test-resources/rahas/policy/sts-policy-transport-binding.xml");
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.rahas.TestClient#getRSTTemplate()
+     */
+    public OMElement getRSTTemplate() throws TrustException {
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMElement elem = factory.createOMElement(Constants.RST_TEMPLATE.getLocalPart(), factory.createOMNamespace(Constants.RST_TEMPLATE.getNamespaceURI(),"wsp"));
+        
+        TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, elem).setText(RahasConstants.TOK_TYPE_SAML_10);
+        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, elem, RahasConstants.KEY_TYPE_BEARER);
+        
+        return elem;
+    }
+    
+    public int getTrstVersion() {
+        return RahasConstants.VERSION_05_12;
     }
 }

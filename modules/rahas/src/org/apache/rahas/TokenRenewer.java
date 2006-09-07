@@ -18,36 +18,39 @@ package org.apache.rahas;
 
 import org.apache.axiom.soap.SOAPEnvelope;
 
-public interface TokenCanceller {
-    
+public interface TokenRenewer {
+
     /**
-     * Cancel the token specified in the request.
+     * Renew the token specified in the given request.
+     * 
      * @param data
      *            A populated <code>RahasData</code> instance
      * @return
      * @throws TrustException
      */
-    public SOAPEnvelope cancel(RahasData data) throws TrustException;
-    
+    public SOAPEnvelope renew(RahasData data) throws TrustException;
+
     /**
-     * Set the configuration file of this TokenCanceller.
+     * Set the configuration file of this TokenRenewer.
      * 
-     * This is the text value of the &lt;configuration-file&gt; element of the 
+     * This is the text value of the &lt;configuration-file&gt; element of the
      * token-dispatcher-configuration
+     * 
      * @param configFile
      */
     public void setConfigurationFile(String configFile);
-    
+
     /**
-     * Set the configuration element of this TokenCanceller.
+     * Set the configuration element of this TokenRenewer.
      * 
-     * This is the &lt;configuration&gt; element of the 
+     * This is the &lt;configuration&gt; element of the
      * token-dispatcher-configuration
      * 
-     * @param configElement <code>OMElement</code> representing the configuation
+     * @param configElement
+     *            <code>OMElement</code> representing the configuation
      */
     public void setConfigurationElement(String configElement);
-    
+
     /**
      * Set the name of the configuration parameter.
      * 
@@ -59,5 +62,4 @@ public interface TokenCanceller {
      * @param configParamName
      */
     public void setConfigurationParamName(String configParamName);
-    
 }

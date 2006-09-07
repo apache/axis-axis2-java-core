@@ -16,31 +16,50 @@
 
 package org.apache.rahas;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axis2.context.MessageContext;
 
 public interface TokenValidator {
 
-    public SOAPEnvelope validate(OMElement request, MessageContext msgCtx) throws TrustException;
-    
-    
+    /**
+     * Validate the token specified in the given request.
+     * 
+     * @param data
+     *            A populated <code>RahasData</code> instance
+     * @return
+     * @throws TrustException
+     */
+    public SOAPEnvelope validate(RahasData data) throws TrustException;
+
     /**
      * Set the configuration file of this TokenValidator.
      * 
-     * This is the text value of the &lt;configuration-file&gt; element of the 
+     * This is the text value of the &lt;configuration-file&gt; element of the
      * token-dispatcher-configuration
+     * 
      * @param configFile
      */
     public void setConfigurationFile(String configFile);
-    
+
     /**
      * Set the configuration element of this TokenValidator.
      * 
-     * This is the &lt;configuration&gt; element of the 
+     * This is the &lt;configuration&gt; element of the
      * token-dispatcher-configuration
      * 
-     * @param configElement <code>OMElement</code> representing the configuation
+     * @param configElement
+     *            <code>OMElement</code> representing the configuation
      */
     public void setConfigurationElement(String configElement);
+
+    /**
+     * Set the name of the configuration parameter.
+     * 
+     * If this is used then there must be a
+     * <code>org.apache.axis2.description.Parameter</code> object available in
+     * the via the messageContext when the <code>TokenIssuer</code> is called.
+     * 
+     * @see org.apache.axis2.description.Parameter
+     * @param configParamName
+     */
+    public void setConfigurationParamName(String configParamName);
 }

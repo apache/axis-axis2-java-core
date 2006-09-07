@@ -23,6 +23,8 @@ import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
@@ -53,12 +55,18 @@ import javax.xml.namespace.QName;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 public class STSClient {
 
+    private String action;
+    
+    private Options options;
+    
     private Trust10 trust10;
     
+//    /get the algo suite from the issuer's policy ... not service policy
     private AlgorithmSuite algorithmSuite;
     
     private byte[] requestorEntropy;
@@ -76,28 +84,37 @@ public class STSClient {
     private Crypto crypto;
     
     private CallbackHandler cbHandler;
-    
+
     public Token requestSecurityToken(ConfigurationContext configCtx,
-            int version, Policy policy, String issuerAddress,
-            OMElement rstTemplate, String requestType, String appliesTo)
-            throws TrustException {
+            int version, Policy servicePolicy, String issuerAddress,
+            Policy IssuerPolicy, OMElement rstTemplate, String requestType,
+            String appliesTo) throws TrustException {
         try {
             AxisService axisService = new AxisService("SecurityTokenService");
             QName rstQn = new QName("requestSecurityToken");
             OutInAxisOperation operation = new OutInAxisOperation(rstQn);
             axisService.addOperation(operation);
             ServiceClient client = new ServiceClient(configCtx, axisService);
+            
+            if(this.options != null) {
+                client.setOptions(options);
+            }
+            //Set the action
+            client.getOptions().setAction(action);
+            client.getOptions().setTo(new EndpointReference(issuerAddress));
+            client.engageModule(new QName("rampart"));
 
             //TODO Set policy in the options to be picked up by the modules 
             //such as rampart
             
-            //Process the STS policy
-            this.processPolicy(policy);
+            //Process the STS and service policy policy
+            this.processPolicy(IssuerPolicy, servicePolicy);
 
-            OMElement result = client.sendReceive(this.createRequest(version, rstTemplate, requestType, appliesTo));
+            OMElement result = client.sendReceive(rstQn, this.createRequest(version, rstTemplate, requestType, appliesTo));
             
             return this.processResult(version, result);
         } catch (AxisFault e) {
+            e.printStackTrace();
             throw new TrustException("errorInObtainingToken", new String[]{issuerAddress});
         }
     }
@@ -180,8 +197,9 @@ public class STSClient {
 
                 //Get service entropy
                 OMElement serviceEntrElem = rstr.getFirstChildWithName(new QName(ns, RahasConstants.ENTROPY_LN));
-                if(serviceEntrElem != null && serviceEntrElem.getText() != null && !"".equals(serviceEntrElem.getText().trim())) {
-                    byte[] serviceEntr = Base64.decode(serviceEntrElem.getText());
+                OMElement binSecElem = serviceEntrElem.getFirstElement();
+                if(binSecElem != null && binSecElem.getText() != null && !"".equals(binSecElem.getText().trim())) {
+                    byte[] serviceEntr = Base64.decode(binSecElem.getText());
                     
                     //Right now we only use PSHA1 as the computed key algo                    
                     P_SHA1 p_sha1 = new P_SHA1();
@@ -258,15 +276,27 @@ public class STSClient {
     /**
      * Process the goven service policy and extract the info required to create
      * the RST.
-     * @param policy
+     * @param servicePolicy
      */
-    private void processPolicy(Policy policy) {
+    private void processPolicy(Policy issuerPolicy, Policy servicePolicy) {
         //Get the policy assertions
         //Assumption: there's only one alternative
-        Iterator assertions = (Iterator)policy.getAlternatives().next();
         
-        while (assertions.hasNext()) {
-            Assertion tempAssertion = (Assertion) assertions.next();
+        List issuerAssertions = (List)issuerPolicy.getAlternatives().next();
+        
+        for (Iterator iter = issuerAssertions.iterator(); iter.hasNext();) {
+            Assertion tempAssertion = (Assertion) iter.next();
+            //find the AlgorithmSuite assertion
+            if(tempAssertion instanceof Binding) {
+                this.algorithmSuite = ((Binding) tempAssertion)
+                            .getAlgorithmSuite();    
+            }
+        }
+
+        List assertions = (List)servicePolicy.getAlternatives().next();
+        
+        for (Iterator iter = assertions.iterator(); iter.hasNext();) {
+            Assertion tempAssertion = (Assertion) iter.next();
             //find the Trust10 assertion
             if(tempAssertion instanceof Trust10) {
                 this.trust10 = (Trust10) tempAssertion;
@@ -289,7 +319,7 @@ public class STSClient {
         OMElement rst = TrustUtil.createRequestSecurityTokenElement(version);
 
         TrustUtil.createRequestTypeElement(version, rst, requestType);
-        TrustUtil.createAppliesToElement(rst, requestType, this.addressingNs);
+        TrustUtil.createAppliesToElement(rst, appliesTo, this.addressingNs);
         TrustUtil.createLifetimeElement(version, rst, this.ttl * 1000);
         
         //Copy over the elements from the template
@@ -400,4 +430,19 @@ public class STSClient {
         }
         
     }
+
+    /**
+     * @param action The action to set.
+     */
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    /**
+     * @param options The options to set.
+     */
+    public void setOptions(Options options) {
+        this.options = options;
+    }
+
 }

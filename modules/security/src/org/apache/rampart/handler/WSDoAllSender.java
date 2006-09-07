@@ -265,12 +265,6 @@ public class WSDoAllSender extends WSDoAllHandler {
         doSenderAction(doAction, doc, reqData, actions, !msgContext.isServerSide());
         
         /*
-         * If required convert the resulting document into a message first.
-         * The outputDOM() method performs the necessary c14n call. After
-         * that we extract it as a string for further processing.
-         *
-         * Set the resulting byte array as the new SOAP message.
-         *
          * If noSerialization is false, this handler shall be the last (or
          * only) one in a handler chain. If noSerialization is true, just
          * set the processed Document in the transfer property. The next

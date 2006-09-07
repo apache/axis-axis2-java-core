@@ -16,6 +16,7 @@
 
 package org.apache.rahas;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -24,6 +25,9 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyEngine;
+import org.apache.rahas.client.STSClient;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
@@ -129,4 +133,65 @@ public abstract class TestClient extends TestCase {
     public abstract String getRequestAction() throws TrustException;
     
     public abstract void validateRsponse(OMElement resp);
+    
+    
+    
+    /**
+     * This test will use WS-SecPolicy
+     */
+    public void testWithStsClient() {
+        
+        STSClient client = new STSClient();
+        
+        // Get the repository location from the args
+        String repo = Constants.TESTING_PATH + "rahas_client_repo";
+
+        try {
+            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
+                    null);
+            
+            Options options = new Options();
+            OutflowConfiguration clientOutflowConfiguration = getClientOutflowConfiguration();
+            if(clientOutflowConfiguration != null) {
+                options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, clientOutflowConfiguration.getProperty());
+            }
+            InflowConfiguration clientInflowConfiguration = getClientInflowConfiguration();
+            if(clientInflowConfiguration != null) {
+                options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, clientInflowConfiguration.getProperty());
+            }
+            
+            client.setAction(this.getRequestAction());
+            client.setOptions(options);
+            
+            Token tok = client.requestSecurityToken(configContext, 
+                    this.getTrstVersion(), this.getServicePolicy(),
+                    "http://127.0.0.1:" + port+ "/axis2/services/SecureService", 
+                    this.getSTSPolicy(), 
+                    this.getRSTTemplate(), 
+                    TrustUtil.getWSTNamespace(this.getTrstVersion())+ RahasConstants.REQ_TYPE_ISSUE,
+                    "http://localhost:5555/axis2/services/SecureService");
+            
+            assertNotNull("Response token missing", tok);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+        
+    }
+    
+    public abstract int getTrstVersion() ;
+
+    public abstract Policy getServicePolicy() throws Exception;
+    
+    public abstract Policy getSTSPolicy() throws Exception;
+    
+    public abstract OMElement getRSTTemplate() throws TrustException;
+    
+    protected Policy getPolicy(String filePath) throws Exception {
+        StAXOMBuilder builder = new StAXOMBuilder(filePath);
+        OMElement elem = builder.getDocumentElement();
+        return PolicyEngine.getPolicy(elem);
+    }
+    
 }

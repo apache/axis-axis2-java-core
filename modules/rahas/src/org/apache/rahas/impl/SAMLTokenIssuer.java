@@ -220,12 +220,13 @@ public class SAMLTokenIssuer implements TokenIssuer {
             throw new TrustException("samlConverstionError", e);
         }
 
-        //Add the RequestedProofToken
-        OMElement reqProofTokElem = TrustUtil.createRequestedProofTokenElement(
-                version, rstrElem);
         
         if(keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY)) {
-            
+
+            //Add the RequestedProofToken
+            OMElement reqProofTokElem = TrustUtil.createRequestedProofTokenElement(
+                    version, rstrElem);
+
             if (config.keyComputation == SAMLTokenIssuerConfig.KEY_COMP_PROVIDE_ENT
                     && data.getRequestEntropy() != null) {
                 //If we there's requestor entropy and its configured to provide
@@ -236,7 +237,8 @@ public class SAMLTokenIssuer implements TokenIssuer {
                         version, rstrElem);
                 
                 TrustUtil.createBinarySecretElement(version, respEntrElem,
-                        RahasConstants.BIN_SEC_TYPE_NONCE);
+                        RahasConstants.BIN_SEC_TYPE_NONCE).setText(
+                        Base64.encode(data.getResponseEntropy()));
                 
                 OMElement compKeyElem = TrustUtil.createComputedKeyElement(
                         version, reqProofTokElem);

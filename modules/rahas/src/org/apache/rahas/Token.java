@@ -18,18 +18,16 @@ package org.apache.rahas;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.util.XmlSchemaDateFormat;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -48,8 +46,6 @@ import java.util.Properties;
  * @see org.apache.rahas.TokenStorage
  */
 public class Token {
-    
-    private static Document dummyDoc = new OMDOMFactory().getDocument();
     
     public final static int ISSUED = 1;
     public final static int EXPIRED = 2;
@@ -132,14 +128,16 @@ public class Token {
     
     public Token(String id, OMElement tokenElem, Date created, Date expires) throws TrustException {
         this.id = id;
-        this.token = (OMElement)dummyDoc.importNode((Element)tokenElem, true);
+        this.token = new StAXOMBuilder(DOOMAbstractFactory.getOMFactory(),
+                tokenElem.getXMLStreamReader()).getDocumentElement();
         this.created = created;
         this.expires = expires;
     }
 
     public Token(String id, OMElement tokenElem, OMElement lifetimeElem) throws TrustException {
         this.id = id;
-        this.token = (OMElement)dummyDoc.importNode((Element)tokenElem, true);
+        this.token = new StAXOMBuilder(DOOMAbstractFactory.getOMFactory(),
+                tokenElem.getXMLStreamReader()).getDocumentElement();
         this.processLifeTime(lifetimeElem);
     }
     
@@ -236,7 +234,8 @@ public class Token {
      * @param presivousToken The presivousToken to set.
      */
     public void setPreviousToken(OMElement presivousToken) {
-        this.previousToken = presivousToken;
+        this.previousToken = new StAXOMBuilder(DOOMAbstractFactory.getOMFactory(),
+                presivousToken.getXMLStreamReader()).getDocumentElement();
     }
 
     /**
@@ -265,8 +264,9 @@ public class Token {
      */
     public void setAttachedReference(OMElement attachedReference) {
         if(attachedReference != null) {
-            this.attachedReference = (OMElement) dummyDoc.importNode(
-                (Element) attachedReference, true);
+            this.attachedReference = new StAXOMBuilder(DOOMAbstractFactory
+                    .getOMFactory(), attachedReference.getXMLStreamReader())
+                    .getDocumentElement();
         }
     }
 
@@ -282,8 +282,9 @@ public class Token {
      */
     public void setUnattachedReference(OMElement unattachedReference) {
         if(unattachedReference != null) {
-            this.unattachedReference = (OMElement) dummyDoc.importNode(
-                (Element) unattachedReference, true);
+            this.unattachedReference = new StAXOMBuilder(DOOMAbstractFactory
+                    .getOMFactory(), unattachedReference.getXMLStreamReader())
+                    .getDocumentElement();
         }
     }
 
@@ -307,7 +308,4 @@ public class Token {
     public void setExpires(Date expires) {
         this.expires = expires;
     }
-    
-
-    
 }

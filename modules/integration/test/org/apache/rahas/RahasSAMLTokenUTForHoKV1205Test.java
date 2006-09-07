@@ -16,45 +16,19 @@
 
 package org.apache.rahas;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.dom.DocumentImpl;
-import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
-import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.OperationClient;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.util.Base64;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.neethi.Policy;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
+import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSEncryptionPart;
-import org.apache.ws.security.conversation.dkalgo.P_SHA1;
-import org.apache.ws.security.message.WSSecDKSign;
-import org.apache.ws.security.message.WSSecHeader;
-import org.apache.ws.security.message.WSSecTimestamp;
-import org.apache.ws.security.message.token.SecurityTokenReference;
 import org.apache.ws.security.util.WSSecurityUtil;
-import org.apache.xml.security.signature.XMLSignature;
 import org.opensaml.XML;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import java.util.Vector;
 
 public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
 
@@ -153,6 +127,33 @@ public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
         
         
 
+    }
+
+    public Policy getServicePolicy() throws Exception {
+        return this.getPolicy("test-resources/rahas/policy/service-policy-transport-binding.xml");
+    }
+
+    public Policy getSTSPolicy() throws Exception {
+        return this.getPolicy("test-resources/rahas/policy/sts-policy-transport-binding.xml");
+    }
+    
+
+    /* (non-Javadoc)
+     * @see org.apache.rahas.TestClient#getRSTTemplate()
+     */
+    public OMElement getRSTTemplate() throws TrustException {
+        OMFactory factory = OMAbstractFactory.getOMFactory();
+        OMElement elem = factory.createOMElement(Constants.RST_TEMPLATE.getLocalPart(), factory.createOMNamespace(Constants.RST_TEMPLATE.getNamespaceURI(),"wsp"));
+        
+        TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, elem).setText(RahasConstants.TOK_TYPE_SAML_10);
+        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, elem, RahasConstants.KEY_TYPE_SYMM_KEY);
+        TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, elem, 256);
+        
+        return elem;
+    }
+    
+    public int getTrstVersion() {
+        return RahasConstants.VERSION_05_12;
     }
     
 //    private void requestService(OMElement assertion, byte[] reqEnt, byte[] respEnt) throws Exception {
