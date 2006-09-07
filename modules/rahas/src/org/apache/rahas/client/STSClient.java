@@ -62,6 +62,10 @@ public class STSClient {
 
     private String action;
     
+    private OMElement rstTemplate;
+    
+    private int version = RahasConstants.VERSION_05_02;
+    
     private Options options;
     
     private Trust10 trust10;
@@ -84,21 +88,32 @@ public class STSClient {
     private Crypto crypto;
     
     private CallbackHandler cbHandler;
+    
+    private ConfigurationContext configCtx;
 
-    public Token requestSecurityToken(ConfigurationContext configCtx,
-            int version, Policy servicePolicy, String issuerAddress,
-            Policy IssuerPolicy, OMElement rstTemplate, String requestType,
+    public STSClient(ConfigurationContext configCtx) throws TrustException {
+        if(configCtx != null) {
+            this.configCtx = configCtx;
+        } else {
+            throw new TrustException("stsClientCfgCtxNull");
+        }
+    }
+    
+    public Token requestSecurityToken(
+            Policy servicePolicy, String issuerAddress,
+            Policy IssuerPolicy,  String requestType,
             String appliesTo) throws TrustException {
         try {
             AxisService axisService = new AxisService("SecurityTokenService");
             QName rstQn = new QName("requestSecurityToken");
             OutInAxisOperation operation = new OutInAxisOperation(rstQn);
             axisService.addOperation(operation);
-            ServiceClient client = new ServiceClient(configCtx, axisService);
+            ServiceClient client = new ServiceClient(this.configCtx, axisService);
             
             if(this.options != null) {
                 client.setOptions(options);
             }
+
             //Set the action
             client.getOptions().setAction(action);
             client.getOptions().setTo(new EndpointReference(issuerAddress));
@@ -110,7 +125,7 @@ public class STSClient {
             //Process the STS and service policy policy
             this.processPolicy(IssuerPolicy, servicePolicy);
 
-            OMElement result = client.sendReceive(rstQn, this.createRequest(version, rstTemplate, requestType, appliesTo));
+            OMElement result = client.sendReceive(rstQn, this.createRequest(requestType, appliesTo));
             
             return this.processResult(version, result);
         } catch (AxisFault e) {
@@ -148,7 +163,8 @@ public class STSClient {
                 .getFirstElement();
         
         //Get the security token
-        OMElement reqSecTok = rstr.getFirstChildWithName(new QName(ns, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+        OMElement reqSecTok = rstr.getFirstChildWithName(new QName(ns,
+                RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
         if(reqSecTok == null) {
             throw new TrustException("reqestedSecTokMissing");
         }
@@ -161,14 +177,16 @@ public class STSClient {
             throw new TrustException("cannotObtainTokenIdentifier");
         }
         
-        OMElement lifeTimeEle = rstr.getFirstChildWithName(new QName(ns, RahasConstants.LIFETIME_LN));
+        OMElement lifeTimeEle = rstr.getFirstChildWithName(new QName(ns,
+                RahasConstants.LIFETIME_LN));
         
         Token tok = new Token(id, tokenElem, lifeTimeEle);
         tok.setAttachedReference(reqAttRef);
         tok.setUnattachedReference(reqUnattRef);
         
         //Handle proof token
-        OMElement rpt = rstr.getFirstChildWithName(new QName(ns, RahasConstants.REQUESTED_PROOF_TOKEN_LN));
+        OMElement rpt = rstr.getFirstChildWithName(new QName(ns,
+                RahasConstants.REQUESTED_PROOF_TOKEN_LN));
         
         byte[] secret = null;
         
@@ -183,11 +201,16 @@ public class STSClient {
                 tok.setSecret(Base64.decode(b64Secret));
             }else if(child.getQName().equals(new QName(ns, WSConstants.ENC_KEY_LN))){
                 try {
-                    Element domChild = (Element)new StAXOMBuilder(DOOMAbstractFactory.getOMFactory(),child.getXMLStreamReader()).getDocumentElement();
+                    Element domChild = (Element) new StAXOMBuilder(
+                            DOOMAbstractFactory.getOMFactory(), child
+                                    .getXMLStreamReader()).getDocumentElement();
+                    
                     EncryptedKeyProcessor processor = new EncryptedKeyProcessor();
+                    
                     processor.handleToken(domChild, null, this.crypto,
                             this.cbHandler, null, new Vector(),
                             null);
+                    
                     secret = processor.getDecryptedBytes();
                 } catch (WSSecurityException e) {
                     throw new TrustException("errorInProcessingEncryptedKey", e);
@@ -196,9 +219,15 @@ public class STSClient {
                 //Handle the computed key
 
                 //Get service entropy
-                OMElement serviceEntrElem = rstr.getFirstChildWithName(new QName(ns, RahasConstants.ENTROPY_LN));
+                OMElement serviceEntrElem = rstr
+                        .getFirstChildWithName(new QName(ns,
+                                RahasConstants.ENTROPY_LN));
+                
                 OMElement binSecElem = serviceEntrElem.getFirstElement();
-                if(binSecElem != null && binSecElem.getText() != null && !"".equals(binSecElem.getText().trim())) {
+                
+                if (binSecElem != null && binSecElem.getText() != null
+                        && !"".equals(binSecElem.getText().trim())) {
+                    
                     byte[] serviceEntr = Base64.decode(binSecElem.getText());
                     
                     //Right now we only use PSHA1 as the computed key algo                    
@@ -311,48 +340,56 @@ public class STSClient {
     /**
      * Create the RST request.
      * @param version 
-     * @param rstTemplate 
      * @return
      * @throws TrustException
      */
-    private OMElement createRequest(int version, OMElement rstTemplate, String requestType, String appliesTo) throws TrustException {
+    private OMElement createRequest(String requestType,
+            String appliesTo) throws TrustException {
         OMElement rst = TrustUtil.createRequestSecurityTokenElement(version);
 
-        TrustUtil.createRequestTypeElement(version, rst, requestType);
+        TrustUtil.createRequestTypeElement(this.version, rst, requestType);
         TrustUtil.createAppliesToElement(rst, appliesTo, this.addressingNs);
-        TrustUtil.createLifetimeElement(version, rst, this.ttl * 1000);
+        TrustUtil.createLifetimeElement(this.version, rst, this.ttl * 1000);
         
         //Copy over the elements from the template
-        Iterator templateChildren = rstTemplate.getChildElements();
-        while (templateChildren.hasNext()) {
-            OMNode child = (OMNode) templateChildren.next();
-            rst.addChild(child);
-            
-            //Look for the key size element
-            if (child instanceof OMElement
-                    && ((OMElement) child).getQName().equals(
-                            new QName(TrustUtil.getWSTNamespace(version),
-                                    RahasConstants.KEY_SIZE_LN))) {
-                OMElement childElem = (OMElement)child;
-                this.keySize = (childElem.getText() != null && !""
-                        .equals(childElem.getText())) ? 
-                                Integer.parseInt(childElem.getText()) : -1;
+        if(this.rstTemplate != null) {
+            Iterator templateChildren = rstTemplate.getChildElements();
+            while (templateChildren.hasNext()) {
+                OMNode child = (OMNode) templateChildren.next();
+                rst.addChild(child);
+                
+                //Look for the key size element
+                if (child instanceof OMElement
+                        && ((OMElement) child).getQName().equals(
+                                new QName(TrustUtil.getWSTNamespace(this.version),
+                                        RahasConstants.KEY_SIZE_LN))) {
+                    OMElement childElem = (OMElement)child;
+                    this.keySize = (childElem.getText() != null && !""
+                            .equals(childElem.getText())) ? 
+                                    Integer.parseInt(childElem.getText()) : -1;
+                }
             }
         }
         
         try {
-            //Handle entropy
-            if(this.trust10 != null) {
-                if(this.trust10.isRequireClientEntropy()) {
-                    //setup requestor entropy
-                    OMElement ent = TrustUtil.createEntropyElement(version, rst);
-                    OMElement binSec = TrustUtil.createBinarySecretElement(version, ent, RahasConstants.BIN_SEC_TYPE_NONCE);
-                    this.requestorEntropy = WSSecurityUtil.generateNonce(this.algorithmSuite.getMaximumSymmetricKeyLength());
+            // Handle entropy
+            if (this.trust10 != null) {
+                if (this.trust10.isRequireClientEntropy()) {
+                    // setup requestor entropy
+                    OMElement ent = TrustUtil
+                            .createEntropyElement(this.version, rst);
+                    OMElement binSec = TrustUtil.createBinarySecretElement(
+                            this.version, ent,
+                            RahasConstants.BIN_SEC_TYPE_NONCE);
+                    this.requestorEntropy = WSSecurityUtil
+                            .generateNonce(this.algorithmSuite
+                                    .getMaximumSymmetricKeyLength());
                     binSec.setText(Base64.encode(this.requestorEntropy));
-                    
-                    //Add the ComputedKey element
-                    TrustUtil.createComputedKeyAlgorithm(version, rst, RahasConstants.COMPUTED_KEY_PSHA1);
-                    
+
+                    // Add the ComputedKey element
+                    TrustUtil.createComputedKeyAlgorithm(this.version, rst,
+                            RahasConstants.COMPUTED_KEY_PSHA1);
+
                 }
             }
         } catch (Exception e) {
@@ -416,20 +453,6 @@ public class STSClient {
         this.crypto = crypto;
         this.cbHandler = new CBHandler(privKeyPasswd);
     }
-    
-    private class CBHandler implements CallbackHandler {
-        
-        private String passwd;
-        
-        private CBHandler(String passwd) {
-            this.passwd = passwd;
-        }
-
-        public void handle(Callback[] cb) throws IOException, UnsupportedCallbackException {
-            ((WSPasswordCallback)cb[0]).setPassword(this.passwd);
-        }
-        
-    }
 
     /**
      * @param action The action to set.
@@ -443,6 +466,35 @@ public class STSClient {
      */
     public void setOptions(Options options) {
         this.options = options;
+    }
+
+    /**
+     * @param rstTemplate The rstTemplate to set.
+     */
+    public void setRstTemplate(OMElement rstTemplate) {
+        this.rstTemplate = rstTemplate;
+    }
+    
+    private class CBHandler implements CallbackHandler {
+        
+        private String passwd;
+        
+        private CBHandler(String passwd) {
+            this.passwd = passwd;
+        }
+
+        public void handle(Callback[] cb) throws IOException,
+                UnsupportedCallbackException {
+            ((WSPasswordCallback)cb[0]).setPassword(this.passwd);
+        }
+        
+    }
+
+    /**
+     * @param version The version to set.
+     */
+    public void setVersion(int version) {
+        this.version = version;
     }
 
 }

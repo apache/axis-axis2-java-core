@@ -141,7 +141,7 @@ public abstract class TestClient extends TestCase {
      */
     public void testWithStsClient() {
         
-        STSClient client = new STSClient();
+
         
         // Get the repository location from the args
         String repo = Constants.TESTING_PATH + "rahas_client_repo";
@@ -149,6 +149,8 @@ public abstract class TestClient extends TestCase {
         try {
             ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
                     null);
+            
+            STSClient client = new STSClient(configContext);
             
             Options options = new Options();
             OutflowConfiguration clientOutflowConfiguration = getClientOutflowConfiguration();
@@ -162,13 +164,13 @@ public abstract class TestClient extends TestCase {
             
             client.setAction(this.getRequestAction());
             client.setOptions(options);
+            client.setRstTemplate(this.getRSTTemplate());
+            client.setVersion(this.getTrstVersion());
             
-            Token tok = client.requestSecurityToken(configContext, 
-                    this.getTrstVersion(), this.getServicePolicy(),
-                    "http://127.0.0.1:" + port+ "/axis2/services/SecureService", 
-                    this.getSTSPolicy(), 
-                    this.getRSTTemplate(), 
-                    TrustUtil.getWSTNamespace(this.getTrstVersion())+ RahasConstants.REQ_TYPE_ISSUE,
+            Token tok = client.requestSecurityToken( 
+                    this.getServicePolicy(), "http://127.0.0.1:" + port + "/axis2/services/SecureService", this.getSTSPolicy(),
+                    TrustUtil.getWSTNamespace(this.getTrstVersion())
+                            + RahasConstants.REQ_TYPE_ISSUE,
                     "http://localhost:5555/axis2/services/SecureService");
             
             assertNotNull("Response token missing", tok);
