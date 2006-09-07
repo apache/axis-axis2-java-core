@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import javax.xml.ws.Provider;
+import javax.xml.ws.WebServiceProvider;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -30,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axis2.jaxws.DispatchTestConstants;
 
+@WebServiceProvider()
 public class SourceProvider implements Provider<Source> {
     String responseAsString = new String("<ns2:ReturnType xmlns:ns2=\"http://test\"><return_str>some response</return_str></ns2:ReturnType>");
     public Source invoke(Source source) {

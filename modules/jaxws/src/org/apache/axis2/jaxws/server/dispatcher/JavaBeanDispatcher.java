@@ -75,14 +75,10 @@ public class JavaBeanDispatcher extends JavaDispatcher {
                     "class: " + serviceImplClass.getName());
         }
 
-        //FIXME: This block should be in the EndpointController.  We'll hold off on that
-        //though until this is up and running.
-        ServiceDescription serviceDesc = getServiceDescription(mc, serviceImplClass);
-        mc.setServiceDescription(serviceDesc);
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
         OperationDescription opDesc = getOperationDescription(mc);
         mc.setOperationDescription(opDesc);
-        
+
         Method target = resolveJavaMethodForOperation(mc);
         Object[] params = getParameterData(target, mc);
 
@@ -110,9 +106,11 @@ public class JavaBeanDispatcher extends JavaDispatcher {
      * Find the Java method that corresponds to the WSDL operation that was 
      * targeted by the Axis2 Dispatchers.
      */
+    // TODO: This should be done using the OperationDescriptor
     private Method resolveJavaMethodForOperation(MessageContext mc) {
         QName opName = mc.getOperationName();
         if (opName == null)
+            // TODO: NLS
             throw ExceptionFactory.makeWebServiceException("Operation name was not set");
         
         String localPart = opName.getLocalPart();
@@ -125,7 +123,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         if (log.isDebugEnabled()) {
             log.debug("No Java method found for the operation");
         }
-        
+        // TODO: NLS
         throw ExceptionFactory.makeWebServiceException("No Java method was found for the operation");
     }
     
@@ -160,50 +158,6 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
-    }
-    
-    /*
-     * Gets the ServiceDescription associated with the request that is currently
-     * being processed. 
-     */
-    //FIXME: This method should be in the EndpointController
-    private ServiceDescription getServiceDescription(MessageContext mc, Class implClass) {
-        AxisService axisSvc = mc.getAxisMessageContext().getAxisService();
-        
-        //Check to see if we've already created a ServiceDescription for this
-        //service before trying to create a new one. 
-        if (axisSvc.getParameter("JAXWS_SERVICE_DESCRIPTION") != null) {
-            Parameter param = axisSvc.getParameter("JAXWS_SERVICE_DESCRIPTION");
-            ServiceDescription sd = (ServiceDescription) param.getValue();
-            return sd;
-        }
-        else {
-            ServiceDescription sd = DescriptionFactory.
-                createServiceDescriptionFromServiceImpl(implClass, axisSvc);
-            return sd;
-        }
-    }
-    
-    /*
-     * Gets the OperationDescription associated with the request that is currently
-     * being processed. 
-     */
-    //FIXME: This method should be in the EndpointController
-    private OperationDescription getOperationDescription(MessageContext mc) {
-        ServiceDescription sd = mc.getServiceDescription();
-        EndpointDescription[] eds = sd.getEndpointDescriptions();
-        EndpointDescription ed = eds[0];
-        EndpointInterfaceDescription eid = ed.getEndpointInterfaceDescription();
-        
-        OperationDescription[] ops = eid.getOperation(mc.getOperationName());
-        OperationDescription op = ops[0];
-        
-        if (log.isDebugEnabled()) {
-            log.debug("wsdl operation: " + op.getName());
-            log.debug("   java method: " + op.getJavaMethodName());
-        }
-        
-        return op;        
     }
     
     private JAXBContext createJAXBContext(OperationDescription opDesc) {
@@ -254,4 +208,28 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         }
     }
     
+    /*
+     * Gets the OperationDescription associated with the request that is currently
+     * being processed.
+     * 
+     *  Note that this is not done in the EndpointController since operations are only relevant
+     *  to Endpoint-based implementation (i.e. not to Proxy-based ones)s
+     */
+
+    private OperationDescription getOperationDescription(MessageContext mc) {
+        ServiceDescription sd = mc.getServiceDescription();
+        EndpointDescription[] eds = sd.getEndpointDescriptions();
+        EndpointDescription ed = eds[0];
+        EndpointInterfaceDescription eid = ed.getEndpointInterfaceDescription();
+        
+        OperationDescription[] ops = eid.getOperation(mc.getOperationName());
+        OperationDescription op = ops[0];
+        
+        if (log.isDebugEnabled()) {
+            log.debug("wsdl operation: " + op.getName());
+            log.debug("   java method: " + op.getJavaMethodName());
+        }
+        
+        return op;        
+    }
 }

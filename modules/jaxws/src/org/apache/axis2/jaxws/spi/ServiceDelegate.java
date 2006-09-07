@@ -238,7 +238,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	/*TODO: if portQname is null then fetch it from annotation. 
     	 * if portQname is provided then add that to the ports table.
     	 */
-        // TODO: (JLB) Move the annotation processing to the DescriptionFactory
+        // TODO: Move the annotation processing to the DescriptionFactory
         DescriptionFactory.updateEndpointInterface(serviceDescription, sei, portName);
 
         

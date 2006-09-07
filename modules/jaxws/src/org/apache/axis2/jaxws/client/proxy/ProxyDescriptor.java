@@ -70,7 +70,7 @@ public class ProxyDescriptor {
 	public ProxyDescriptor(Class seiClazz, ServiceDescription serviceDescription){
 		this.seiClazz = seiClazz;
         this.serviceDescription = serviceDescription;
-        // TODO: (JLB) This probably needs to be more robust; can there be > 1 endpoints; if so, how choose which one?
+        // FIXME: This probably needs to be more robust; can there be > 1 endpoints; if so, how choose which one?
         this.endpointDescription = serviceDescription.getEndpointDescription(seiClazz)[0];
 	}
 	

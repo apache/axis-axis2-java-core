@@ -24,6 +24,9 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
@@ -65,6 +68,9 @@ public class EndpointController {
             Class implClass = loadServiceImplClass(implClassName, 
                     requestMsgCtx.getClassLoader());
             
+            ServiceDescription serviceDesc = getServiceDescription(requestMsgCtx, implClass);
+            requestMsgCtx.setServiceDescription(serviceDesc);
+            
             EndpointDispatcher dispatcher = getEndpointDispatcher(implClass);
             
             MessageContext responseMsgContext = dispatcher.invoke(requestMsgCtx);
@@ -83,6 +89,9 @@ public class EndpointController {
 	 */
 	private EndpointDispatcher getEndpointDispatcher(Class serviceImplClass) 
         throws Exception {
+        // TODO:  This check should be based on the EndpointDescription processing of annotations
+        //        It is left this way for now because some tests have an @WebService annotation on
+        //        Provider-based endpoints as a pre-existing workaround.
         if(Provider.class.isAssignableFrom(serviceImplClass)) {
     		return new ProviderDispatcher(serviceImplClass);
     	}
@@ -126,5 +135,25 @@ public class EndpointController {
         String className = ((String) param.getValue()).trim();
         return className;
     }
-	
+    
+    /*
+     * Gets the ServiceDescription associated with the request that is currently
+     * being processed. 
+     */
+    private ServiceDescription getServiceDescription(MessageContext mc, Class implClass) {
+        AxisService axisSvc = mc.getAxisMessageContext().getAxisService();
+        
+        //Check to see if we've already created a ServiceDescription for this
+        //service before trying to create a new one. 
+        if (axisSvc.getParameter("JAXWS_SERVICE_DESCRIPTION") != null) {
+            Parameter param = axisSvc.getParameter("JAXWS_SERVICE_DESCRIPTION");
+            ServiceDescription sd = (ServiceDescription) param.getValue();
+            return sd;
+        }
+        else {
+            ServiceDescription sd = DescriptionFactory.
+                createServiceDescriptionFromServiceImpl(implClass, axisSvc);
+            return sd;
+        }
+    }
 }

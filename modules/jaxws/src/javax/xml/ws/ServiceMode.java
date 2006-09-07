@@ -26,5 +26,5 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface ServiceMode {
 
-    public Service.Mode value();
+    public Service.Mode value() default Service.Mode.PAYLOAD;
 }

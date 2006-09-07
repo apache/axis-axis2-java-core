@@ -38,24 +38,6 @@ import junit.framework.TestCase;
  */
 public class AnnotationDescriptionTests extends TestCase {
     
-//    private static boolean setupDone = false;
-//    private static Service service;
-//    private static ServiceDelegate serviceDelegate;
-//    private static ServiceDescription serviceDescription;
-
-
-/*    
-    protected void setUp() {
-        if (!setupDone) {
-            setupDone = true;
-            String namespaceURI= "http://ws.apache.org/axis2/tests";
-            String localPart = "EchoServiceAnnotated";
-            service = Service.create(null,  new QName(namespaceURI, localPart));
-            serviceDelegate = getServiceDelegate(service);
-            serviceDescription = serviceDelegate.getServiceDescription();
-        }
-    }
-*/    
     /* 
      * ========================================================================
      * ServiceDescription Tests

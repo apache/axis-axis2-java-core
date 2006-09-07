@@ -17,8 +17,10 @@
 package org.apache.axis2.jaxws.proxy.doclitnonwrapped;
 
 import javax.xml.ws.Provider;
+import javax.xml.ws.WebServiceProvider;
 
 
+@WebServiceProvider()
 public class DocLitnonWrappedImpl implements Provider<String> {
 
 	

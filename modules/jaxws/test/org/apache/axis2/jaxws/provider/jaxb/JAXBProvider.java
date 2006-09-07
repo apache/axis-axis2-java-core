@@ -25,6 +25,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Provider;
+import javax.xml.ws.WebServiceProvider;
 
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
@@ -34,6 +35,7 @@ import org.test.mtom.SendImageResponse;
  * A JAXWS Source Provider implementation
  *
  */
+@WebServiceProvider
 public class JAXBProvider implements Provider<Source> {
     
     /**

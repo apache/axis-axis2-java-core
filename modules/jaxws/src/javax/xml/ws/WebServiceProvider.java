@@ -25,11 +25,8 @@ import java.lang.annotation.Target;
 
 public @interface WebServiceProvider {
 
-    public String wsdlLocation();
-
-    public String serviceName();
-
-    public String targetNamespace();
-
-    public String portName();
+    public String wsdlLocation() default "";
+    public String serviceName() default "";
+    public String targetNamespace() default "";
+    public String portName() default "";
 }

@@ -17,7 +17,9 @@
 package org.apache.axis2.jaxws.provider.string;
 
 import javax.xml.ws.Provider;
+import javax.xml.ws.WebServiceProvider;
 
+@WebServiceProvider()
 public class StringProvider implements Provider<String> {
 
     private static String responseGood = "<provider><message>request processed</message></provider>";

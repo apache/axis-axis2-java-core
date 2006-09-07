@@ -17,8 +17,9 @@
 package org.apache.axis2.jaxws.proxy.doclitwrapped;
 
 import javax.xml.ws.Provider;
+import javax.xml.ws.WebServiceProvider;
 
-
+@WebServiceProvider()
 public class DocLitWrappedProxyImpl implements Provider<String> {
 
 	public String invoke(String invoke_str) {

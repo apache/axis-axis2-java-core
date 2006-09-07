@@ -43,6 +43,11 @@ public class DescriptionFactory {
         return new ServiceDescription(wsdlURL, serviceQName, serviceClass);
     }
     
+    // TODO: Taking an AxisService is only temporary; the AxisService should be created when creating the ServiceDesc
+    public static ServiceDescription createServiceDescriptionFromServiceImpl(Class serviceImplClass, AxisService axisService) {
+        return new ServiceDescription(serviceImplClass, axisService);
+    }
+
     /**
      * Update an existing ServiceDescription with an annotated SEI
      * @param serviceDescription
@@ -51,14 +56,7 @@ public class DescriptionFactory {
      * @return
      */
     public static ServiceDescription updateEndpointInterface(ServiceDescription serviceDescription, Class sei, QName portQName) {
-        
         serviceDescription.updateEndpointInterfaceDescription(sei, portQName);
         return serviceDescription;
     }
-    
-    // TODO: (JLB) Taking an AxisService is only temporary; the AxisService should be created when creating the ServiceDesc
-    public static ServiceDescription createServiceDescriptionFromServiceImpl(Class serviceImplClass, AxisService axisService) {
-        return new ServiceDescription(serviceImplClass, axisService);
-    }
-
 }

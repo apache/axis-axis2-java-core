@@ -89,6 +89,8 @@ TBD
  */
 
 /**
+ * ServiceDescription contains the metadata (e.g. WSDL, annotations) relating to a Service on both the
+ * service-requester (aka client) and service-provider (aka server) sides.
  * 
  */
 public class ServiceDescription {
@@ -100,7 +102,8 @@ public class ServiceDescription {
     // Only ONE of the following will be set in a ServiceDescription, depending on whether this Description
     // was created from a service-requester or service-provider flow. 
     private Class serviceClass;         // A service-requester generated service or generic service class
-    private Class serviceImplClass;     // A service-provider service implementation class
+    private Class serviceImplClass;     // A service-provider service implementation class.  The impl
+                                        // could be a Provider (no SEI operations) or an Endpoint (SEI based operations) 
     
     // TODO: Possibly remove Definition and delegate to the Defn on the AxisSerivce set as a paramater by WSDLtoAxisServicBuilder?
     private WSDLWrapper wsdlWrapper; 
@@ -112,7 +115,9 @@ public class ServiceDescription {
     public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.ServiceDescription";
     
     /**
-     * ServiceDescription contains the metadata (e.g. WSDL, annotations) relating to a Service.
+     * This is (currently) the client-side-only constructor
+     * Construct a service description hierachy based on WSDL (may be null), the Service class, and 
+     * a service QName.
      * 
      * @param wsdlURL  The WSDL file (this may be null).
      * @param serviceQName  The name of the service in the WSDL.  This can not be null since a 
@@ -132,9 +137,9 @@ public class ServiceDescription {
         }
         
         this.wsdlURL = wsdlURL;
+        // TODO: The serviceQName needs to be verified between the argument/WSDL/Annotation
         this.serviceQName = serviceQName;
         this.serviceClass = serviceClass;
-
         
         setupWsdlDefinition();
         // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
@@ -144,7 +149,12 @@ public class ServiceDescription {
         addAnonymousAxisOperations();
     }
 
-    // Create the descrpiptions based on the service implementation class
+    /**
+     * This is (currently) the service-provider-side-only constructor.
+     * Create a service Description based on a service implementation class
+     * 
+     * @param serviceImplClass
+     */
     // NOTE: Taking an axisService on the call is TEMPORARY!  Eventually the AxisService should be constructed
     //       based on the annotations in the ServiceImpl class.
     // TODO: Remove axisService as paramater when the AxisService can be constructed from the annotations
@@ -165,32 +175,13 @@ public class ServiceDescription {
                 throw new UnsupportedOperationException("Can't add AxisService param: " + e);
             }
         }
-        // Look for @WebService
-        // If @WebService.endpointInterface != null, use that
-        // Else use the public (including inherited) methods
-        WebService webServiceAnnotation = (WebService) this.serviceImplClass.getAnnotation(WebService.class);
 
-        // TODO: Initial code path requires the @WebService annotation
-        if (webServiceAnnotation == null) {
-            throw new UnsupportedOperationException("TEMPORARY CODE: ServiceImpl bean must have @WebServiceAnnotation");
-        }
-        if (webServiceAnnotation.endpointInterface() == null) {
-            throw new UnsupportedOperationException("TEMPORARY CODE: ServiceImpl bean must have @WebServiceAnnotation.endpointInterface set");
-        }
-        
-        // TODO: Using Class.forName() is probably not the best long-term way to get the SEI class from the annotation
-        Class seiClass = null;
-        try {
-            seiClass = Class.forName(webServiceAnnotation.endpointInterface(), false, Thread.currentThread().getContextClassLoader());
-        } catch (ClassNotFoundException e) {
-            // TODO: Throwing wrong exception
-            e.printStackTrace();
-            throw new UnsupportedOperationException("Can't create SEI class: " + e);
-        }
-        // Create the EndpointDescription hierachy from the SEI annotations; Since the PortQName is null, 
+        // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         // it will be set to the annotation value.
-        EndpointDescription endpointDescription = new EndpointDescription(seiClass, null, this);
+        EndpointDescription endpointDescription = new EndpointDescription(serviceImplClass, null, this);
         addEndpointDescription(endpointDescription);
+        
+        // TODO: (JLB) The ServiceQName instance variable should be set based on annotation or default
 
         // The anonymous AxisOperations are currently NOT added here.  The reason 
         // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations

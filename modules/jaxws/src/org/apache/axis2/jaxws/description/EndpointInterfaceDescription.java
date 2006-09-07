@@ -69,6 +69,8 @@ TBD
 public class EndpointInterfaceDescription {
     private EndpointDescription parentEndpointDescription;
     private ArrayList<OperationDescription> operationDescriptions = new ArrayList<OperationDescription>();
+    // This may be an actual Service Endpoint Interface -OR- it may be a service implementation class that did not 
+    // specify an @WebService.endpointInterface.
     private Class seiClass;
     
     // Annotations and cached values
