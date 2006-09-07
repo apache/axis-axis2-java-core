@@ -218,7 +218,7 @@ public class HTTPTransportUtils {
                             int firstSemiColon = transientString.indexOf(";");
                             String soapAction; // This will contain "" in the string
                             if (firstSemiColon > -1) {
-                                soapAction = transientString.substring(equal + 1, firstSemiColon - 1);
+                                soapAction = transientString.substring(equal + 1, firstSemiColon);
                             } else {
                                 soapAction = transientString.substring(equal + 1, transientString.length());
                             }
