@@ -51,6 +51,8 @@ import org.apache.axis2.jaxws.client.factory.ProxyHandlerFactory;
 import org.apache.axis2.jaxws.client.proxy.BaseProxyHandler;
 import org.apache.axis2.jaxws.client.proxy.ProxyDescriptor;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.DescriptionKey;
+import org.apache.axis2.jaxws.description.DescriptionRegistry;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.handler.PortInfoImpl;
@@ -83,8 +85,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         if(!isValidServiceName()){
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", ""));
     	}
-
-        serviceDescription = DescriptionFactory.createServiceDescription(url, serviceQname, clazz);
+        serviceDescription = getServiceDescription(url, serviceQname, clazz);
         if (isValidWSDLLocation()) {
             if(!isServiceDefined(serviceQname)){
             	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", serviceQname.toString(), url.toString()));
@@ -343,19 +344,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * 
      */
     public ServiceClient getServiceClient() throws WebServiceException {
-        try {
-            if(serviceClient == null) {
-                ConfigurationContext configCtx = getAxisConfigContext();
-                AxisService axisSvc = serviceDescription.getAxisService();
-                
-                serviceClient = new ServiceClient(configCtx, axisSvc);
-            }
-        } catch (AxisFault e) {
-            throw ExceptionFactory.makeWebServiceException(
-            		Messages.getMessage("serviceClientCreateError"), e);
-        }
-        
-        return serviceClient;        
+    	return serviceDescription.getServiceClient();      
     }
 
     //================================================
@@ -436,5 +425,11 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	return configCtx;
     	
     }
+    
+    private ServiceDescription getServiceDescription(URL url, QName serviceName, Class clazz ){
+    	DescriptionKey key = new DescriptionKey(serviceName, url, clazz);
+    	return DescriptionRegistry.getRegistry().getServiceDescription(key);
+    }
+    	
 
 }

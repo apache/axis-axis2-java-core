@@ -35,6 +35,7 @@ import javax.xml.ws.Service;
 import junit.framework.TestCase;
 
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
+import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
 import org.test.proxy.doclitwrapped.ReturnType;
 
 
@@ -47,6 +48,38 @@ public class ProxyTests extends TestCase {
 			"ProxyDocLitWrappedPort");
 	private String wsdlLocation = "test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
 	private boolean runningOnAxis = true;
+	
+	public void testMultipleServiceCalls(){
+		try{
+			if(!runningOnAxis){
+				return;
+			}
+			System.out.println("---------------------------------------");
+			System.out.println("test:" +getName());
+			String request = new String("some string request");
+			System.out.println("Service Call #1");
+			ProxyDocLitWrappedService service1 = new ProxyDocLitWrappedService();
+			DocLitWrappedProxy proxy1 = service1.getProxyDocLitWrappedPort();
+			BindingProvider p1 =	(BindingProvider)proxy1;
+			p1.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+			String response1 = proxy1.invoke(request);
+			System.out.println("Proxy Response =" + response1);
+			System.out.println("---------------------------------------");
+			
+			System.out.println("Service Call #2");
+			ProxyDocLitWrappedService service2 = new ProxyDocLitWrappedService();
+			DocLitWrappedProxy proxy2 = service2.getProxyDocLitWrappedPort();
+			BindingProvider p2 =	(BindingProvider)proxy2;
+			p2.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+			String response2 = proxy2.invoke(request);
+			System.out.println("Proxy Response =" + response2);
+			System.out.println("---------------------------------------");
+			
+		}catch(Exception e){
+			//fail(getName() + " failed");
+			e.printStackTrace();
+		}
+	}
 	
 	public void testInvoke(){
 		try{ 

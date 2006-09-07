@@ -33,6 +33,7 @@ import javax.wsdl.WSDLException;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
@@ -40,6 +41,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.RobustOutOnlyAxisOperation;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AbstractDispatcher;
+import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
@@ -109,6 +111,10 @@ public class ServiceDescription {
     private WSDLWrapper wsdlWrapper; 
     
     private Hashtable<QName, EndpointDescription> endpointDescriptions = new Hashtable<QName, EndpointDescription>();
+    
+    //On Client side, there should be One ServiceClient instance per ServiceDescription instance and One ServiceDescription 
+    //instance per new Web Service.
+    private ServiceClient serviceClient = null;
     
     private static final Log log = LogFactory.getLog(AbstractDispatcher.class);
 
@@ -365,5 +371,26 @@ public class ServiceDescription {
             OutInAxisOperation outInOperation = new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP);
             axisService.addOperation(outInOperation);
         }
+    }
+    
+    public ServiceClient getServiceClient(){
+    	try {
+            if(serviceClient == null) {
+                ConfigurationContext configCtx = getAxisConfigContext();
+                AxisService axisSvc = getAxisService();
+                serviceClient = new ServiceClient(configCtx, axisSvc);
+            }
+        } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(
+            		Messages.getMessage("serviceClientCreateError"), e);
+        }
+    	return serviceClient;
+    }
+    
+    private ConfigurationContext getAxisConfigContext() {
+    	ClientConfigurationFactory factory = ClientConfigurationFactory.newInstance(); 
+    	ConfigurationContext configCtx = factory.getClientConfigurationContext();
+    	return configCtx;
+    	
     }
 }

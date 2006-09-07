@@ -1,8 +1,10 @@
 
 package org.apache.axis2.jaxws.proxy.doclitwrapped.sei;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
@@ -15,17 +17,26 @@ import javax.xml.ws.WebServiceClient;
  * Generated source version: 2.0
  * 
  */
+
 @WebServiceClient(name = "ProxyDocLitWrappedService", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", wsdlLocation = "ProxyDocLitWrapped.wsdl")
 public class ProxyDocLitWrappedService
     extends Service
 {
 
     private final static URL PROXYDOCLITWRAPPEDSERVICE_WSDL_LOCATION;
-
+    private static String wsdlLocation = "/test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
     static {
         URL url = null;
         try {
-            url = new URL("file:/C:/temp/ProxyDocLitWrapped.wsdl");
+        	try{
+	        	String baseDir  = new File(".").getCanonicalPath();
+	        	wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();
+        	}catch(Exception e){
+        		
+        	}
+        	File file = new File(wsdlLocation);
+        	url = file.toURL();
+            
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
