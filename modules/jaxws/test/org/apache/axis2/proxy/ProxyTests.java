@@ -17,26 +17,18 @@
 package org.apache.axis2.proxy;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.concurrent.Future;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
 
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
-import org.test.proxy.doclitwrapped.ReturnType;
 
 
 public class ProxyTests extends TestCase {
@@ -80,7 +72,33 @@ public class ProxyTests extends TestCase {
 			e.printStackTrace();
 		}
 	}
-	
+    
+    public void testInvokeWithNullParam(){
+        try{ 
+            if(!runningOnAxis){
+                return;
+            }
+            System.out.println("---------------------------------------");
+            System.out.println("Test Name: "+getName());
+            File wsdl= new File(wsdlLocation); 
+            URL wsdlUrl = wsdl.toURL(); 
+            Service service = Service.create(null, serviceName); 
+            Object proxy =service.getPort(portName, DocLitWrappedProxy.class);
+            System.out.println(">>Invoking Binding Provider property");
+            BindingProvider p = (BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+
+            DocLitWrappedProxy dwp = (DocLitWrappedProxy)proxy;
+            System.out.println(">> Invoking Proxy Synchronously");
+            String request = null;
+            String response = dwp.invoke(request);
+            System.out.println("Proxy Response =" + response);
+            System.out.println("---------------------------------------");
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
 	public void testInvoke(){
 		try{ 
 			if(!runningOnAxis){

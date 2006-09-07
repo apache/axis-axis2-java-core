@@ -17,18 +17,15 @@
 package org.apache.axis2.jaxws.client.proxy;
 
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.AsyncHandler;
 
@@ -168,7 +165,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	 * @throws InvocationTargetException
 	 */
 
-	private Object createDocLitWrappedResponse(Method method, MessageContext response)throws IllegalAccessException, ClassNotFoundException, JAXBWrapperException, JAXBException, javax.xml.stream.XMLStreamException, MessageException, IntrospectionException, NoSuchFieldException, InvocationTargetException{
+	private Object createDocLitWrappedResponse(Method method, MessageContext response)throws ClassNotFoundException, JAXBWrapperException, JAXBException, javax.xml.stream.XMLStreamException, MessageException{
 		Class wrapperClazz = proxyDescriptor.getResponseWrapperClass(isAsync());
 		String resultName = proxyDescriptor.getWebResultName(isAsync());
 		JAXBContext ctx = JAXBContext.newInstance(new Class[]{wrapperClazz});
@@ -198,7 +195,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	 * @param response
 	 * @return
 	 */
-	private Object createDocLitNONWrappedResponse(Method method, MessageContext response) throws IllegalAccessException, JAXBException, MessageException, XMLStreamException, InvocationTargetException, IntrospectionException, NoSuchFieldException{
+	private Object createDocLitNONWrappedResponse(Method method, MessageContext response) throws JAXBWrapperException, JAXBException, MessageException, XMLStreamException{
 		
 		Message responseMsg = response.getMessage();
 		Class returnType = proxyDescriptor.getReturnType(isAsync());
@@ -226,51 +223,6 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		
 	}
 
-	/*
-	 * this method return property descriptor to read or write the property value.
-	 * It reads all the property descriptor on the java bean. Then determins if java field name is the the actual property who's pd has been requested.
-	 * if true it returns pd.
-	 * Also the propertyName supplied is compared with java field name and if they dont match than xmlElement annotation on JAXB Object is lookedup. if they
-	 * dont match then xmlElement is compared with java field name using lowercases and finally return the pd.
-	 * if property descriptor not found for a perticular property just return null.
-	 */
-	private PropertyDescriptor getPropertyDescriptor(Class returnClazz, String propertyName)throws IntrospectionException, NoSuchFieldException{
-		PropertyDescriptor[] allPds = Introspector.getBeanInfo(returnClazz).getPropertyDescriptors();
-		Field[] fields = returnClazz.getDeclaredFields();
-		for(PropertyDescriptor pd:allPds){
-			for(Field field:fields){
-				if(propertyName == null){
-					//if this happens I will get the first property that has datatype same as return clazz and return its descriptor.
-					if(field.getType() == returnClazz){
-						return pd;
-					}
-				}
-				String javaFieldName = field.getName();
-				String pdName = pd.getDisplayName();
-				if(javaFieldName.equals(pdName)){
-					if(javaFieldName.equals(propertyName)){
-						return pd;
-						
-					}else{
-						XmlElement xmlElement =field.getAnnotation(XmlElement.class);
-						if(xmlElement == null){
-							//TODO:What happens if xmlElement not defined.
-							
-						}
-						String xmlName =xmlElement.name();
-						if(xmlName.equals(propertyName)){
-							return pd;
-						}
-						if(xmlName.toLowerCase().equals(propertyName.toLowerCase())){
-							return pd;
-						}
-					}
-				}
-			}
-		}
-		
-		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("noWebResultForProperty", propertyName, returnClazz.getName()));
-	}
 	
 	
 	/** 
@@ -284,14 +236,12 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
-	private Object getWebResultObject(Class wrapperClazz, Object businessObject, String propertyName) throws NoSuchFieldException, IntrospectionException,InvocationTargetException, IllegalAccessException{
-		PropertyDescriptor pd = getPropertyDescriptor(wrapperClazz, propertyName);
-		if(pd == null){
-			//TODO: what happens if pd not found.
-		}
-		Method readMethod = pd.getReadMethod();
-		Object webResult = readMethod.invoke(wrapperClazz.cast(businessObject), null);
-		return webResult;
+	private Object getWebResultObject(Class wrapperClazz, Object businessObject, String propertyName) throws JAXBWrapperException{
+		
+		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
+		Object[] webResult = wrapTool.unWrap(businessObject,new ArrayList<String>(Arrays.asList(new String[]{propertyName})));
+		return webResult[0];
+		
 	}
 	
 	private MessageContext initializeRequest(Block messageBlock) throws XMLStreamException, MessageException{
@@ -348,7 +298,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	}
 	//TODO: Should we move this to OperationDescription.
 	public Map<String, Object> getParamValues(Object[] objects, ArrayList<String> names){
-		Map<String, Object> values = new Hashtable<String, Object>();
+		Map<String, Object> values = new HashMap<String, Object>();
 		
 		if(objects == null){
 			return values;
