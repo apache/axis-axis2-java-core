@@ -35,10 +35,15 @@ public class AsyncCallback implements AsyncHandler {
 			if(obj instanceof ReturnType){
 				ReturnType type = (ReturnType)obj;
 				System.out.println(">>Return String = "+type.getReturnStr());
+				return;
 			}
-			else{
-				System.out.println("Response.get should have been ReturnType" );
+			if(obj instanceof org.test.proxy.doclitnonwrapped.ReturnType){
+				org.test.proxy.doclitnonwrapped.ReturnType returnType = (org.test.proxy.doclitnonwrapped.ReturnType)obj;
+				System.out.println(">>Return String = "+returnType.getReturnStr());
+				return;
 			}
+			System.out.println("Response.get should have been ReturnType" );
+			
 		}catch(ExecutionException e){
 			e.printStackTrace();
 		}catch(InterruptedException e){

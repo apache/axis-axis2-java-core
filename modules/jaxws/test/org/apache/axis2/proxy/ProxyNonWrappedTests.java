@@ -16,11 +16,17 @@
  */
 package org.apache.axis2.proxy;
 
+import java.io.File;
+import java.net.URL;
+import java.util.concurrent.Future;
+
 import javax.xml.namespace.QName;
+import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.DocLitnonWrappedProxy;
+import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.ProxyDocLitUnwrappedService;
 import org.test.proxy.doclitnonwrapped.Invoke;
 import org.test.proxy.doclitnonwrapped.ObjectFactory;
 import org.test.proxy.doclitnonwrapped.ReturnType;
@@ -34,9 +40,10 @@ import junit.framework.TestCase;
  */
 public class ProxyNonWrappedTests extends TestCase {
 
-	QName serviceName = new QName("http://doclitnonwrapped.test.org", "ProxyDocLitUnwrappedService");
+	QName serviceName = new QName("http://doclitnonwrapped.proxy.test.org", "ProxyDocLitUnwrappedService");
 	private String axisEndpoint = "http://localhost:8080/axis2/services/ProxyDocLitUnwrappedService";
 	private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedPort");
+	private String wsdlLocation = "test-resources/wsdl/ProxyDocLitnonWrapped.wsdl";
 	public ProxyNonWrappedTests() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -71,7 +78,36 @@ public class ProxyNonWrappedTests extends TestCase {
 	}
 	
 	public void testInvokeAsyncCallback(){
-		
+		try{ 
+			System.out.println("---------------------------------------");
+			System.out.println("DocLitNonWrapped test case: " + getName());
+			//Create wsdl url
+			File wsdl= new File(wsdlLocation); 
+			URL wsdlUrl = wsdl.toURL(); 
+			ObjectFactory factory = new ObjectFactory();
+			//create input object to web service operation
+			Invoke invokeObj = factory.createInvoke();
+			invokeObj.setInvokeStr("test request for twoWay Async Operation");
+			//Create Service
+			ProxyDocLitUnwrappedService service = new ProxyDocLitUnwrappedService(wsdlUrl, serviceName);
+			//Create proxy
+			DocLitnonWrappedProxy proxy = service.getProxyDocLitnonWrappedPort(); 
+			System.out.println(">>Invoking Binding Provider property");
+			//Setup Endpoint url -- optional.
+			BindingProvider p =	(BindingProvider)proxy;
+				p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,axisEndpoint);
+			System.out.println(">> Invoking Proxy Asynchronous Callback");
+			AsyncHandler<ReturnType> handler = new AsyncCallback();
+			//Invoke operation Asynchronously.
+			Future<?> monitor = proxy.invokeAsync(invokeObj, handler);
+			while(!monitor.isDone()){
+				Thread.sleep(1000);
+			}
+			System.out.println("---------------------------------------");
+		}catch(Exception e){ 
+			e.printStackTrace(); 
+            fail("Exception received" + e);
+		}
 	}
 	
 	public void testInvokeAsyncPolling(){

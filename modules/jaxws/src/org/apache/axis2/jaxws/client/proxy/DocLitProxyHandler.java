@@ -23,7 +23,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -34,8 +33,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.AsyncHandler;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAPBody;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -47,7 +44,6 @@ import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
@@ -333,7 +329,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	public ArrayList<String> getParamNames(Object[] objects){ 
         ArrayList<String> names = proxyDescriptor.getParamNames();
         //TODO Should this logic be moved to Operation Description.
-		ArrayList<Object> paramValues = createArgList(objects);
+		ArrayList<Object> paramValues = createArgList(names, objects);
 		if(names.size() == paramValues.size()){
 			return names;
 		}
@@ -359,7 +355,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		}
 		//if object array not null check if there is only AsyncHandler object param, if yes then its Async call 
 		//with no parameter. Lets filter AsyncHandler and check for return objects, if they are 0 return value;
-		ArrayList<Object> paramValues = createArgList(objects);
+		ArrayList<Object> paramValues = createArgList(names, objects);
 		
 		//@webparams and paramValues identified in method should match. 
 		if(names.size() > 0 && names.size() != paramValues.size()){
@@ -387,7 +383,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		return values;
 	}
 	
-	private ArrayList<Object> createArgList(Object[] objects){
+	private ArrayList<Object> createArgList(ArrayList<String> names, Object[] objects){
 		if(this.argList !=null){
 			return argList;
 		}
@@ -396,13 +392,20 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		if(objects == null){
 			return argList;
 		}
+		int i =0;
 		for(Object obj:objects){
 			//skip AsycHandler Object
-			if(obj instanceof AsyncHandler){		
+			if(obj instanceof AsyncHandler){
+				if(isAsync() && proxyDescriptor.isClazzDocLitBare()){
+					//doeble check and remove the name of AsyncHandler from names list, work around for how wsImport generates doc/lit bare art-effects.
+					names.remove(i);
+				}
+				i++;
 				continue;
 			}
 			
 			argList.add(obj);
+			i++;
 		}
 		return argList;
 	}

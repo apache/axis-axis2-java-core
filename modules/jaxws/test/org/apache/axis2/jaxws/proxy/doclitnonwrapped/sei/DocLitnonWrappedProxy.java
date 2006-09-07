@@ -1,12 +1,16 @@
 
 package org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei;
 
+import java.util.concurrent.Future;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Response;
 
 import org.test.proxy.doclitnonwrapped.Invoke;
 import org.test.proxy.doclitnonwrapped.ReturnType;
@@ -21,6 +25,30 @@ import org.test.proxy.doclitnonwrapped.ReturnType;
 @WebService(name = "DocLitnonWrappedProxy", targetNamespace = "http://doclitnonwrapped.proxy.test.org")
 @SOAPBinding(parameterStyle = ParameterStyle.BARE)
 public interface DocLitnonWrappedProxy {
+	/**
+     * 
+     * @param allByMyself
+     * @return
+     *     returns javax.xml.ws.Response<org.test.proxy.doclitnonwrapped.ReturnType>
+     */
+    @WebMethod(operationName = "invoke", action = "http://doclitnonwrapped.proxy.test.org/invokeReturn")
+    public Response<ReturnType> invokeAsync(
+        @WebParam(name = "invoke", targetNamespace = "http://doclitnonwrapped.proxy.test.org", partName = "allByMyself")
+        Invoke allByMyself);
+
+    /**
+     * 
+     * @param allByMyself
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "invoke", action = "http://doclitnonwrapped.proxy.test.org/invokeReturn")
+    public Future<?> invokeAsync(
+        @WebParam(name = "invoke", targetNamespace = "http://doclitnonwrapped.proxy.test.org", partName = "allByMyself")
+        Invoke allByMyself,
+        @WebParam(name = "invokeResponse", targetNamespace = "", partName = "asyncHandler")
+        AsyncHandler<ReturnType> asyncHandler);
 
 
     /**
