@@ -29,6 +29,8 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 import org.apache.rahas.RahasConstants;
@@ -60,6 +62,8 @@ import java.util.Vector;
 
 public class STSClient {
 
+    private static Log log = LogFactory.getLog(STSClient.class);
+    
     private String action;
     
     private OMElement rstTemplate;
@@ -70,7 +74,6 @@ public class STSClient {
     
     private Trust10 trust10;
     
-//    /get the algo suite from the issuer's policy ... not service policy
     private AlgorithmSuite algorithmSuite;
     
     private byte[] requestorEntropy;
@@ -311,30 +314,41 @@ public class STSClient {
         //Get the policy assertions
         //Assumption: there's only one alternative
         
-        List issuerAssertions = (List)issuerPolicy.getAlternatives().next();
-        
-        for (Iterator iter = issuerAssertions.iterator(); iter.hasNext();) {
-            Assertion tempAssertion = (Assertion) iter.next();
-            //find the AlgorithmSuite assertion
-            if(tempAssertion instanceof Binding) {
-                this.algorithmSuite = ((Binding) tempAssertion)
-                            .getAlgorithmSuite();    
+        if(issuerPolicy != null) {
+            log.debug("Processing Issuer policy");
+            
+            List issuerAssertions = (List)issuerPolicy.getAlternatives().next();
+            
+            for (Iterator iter = issuerAssertions.iterator(); iter.hasNext();) {
+                Assertion tempAssertion = (Assertion) iter.next();
+                //find the AlgorithmSuite assertion
+                if(tempAssertion instanceof Binding) {
+                    
+                    log.debug("Extracting algo suite from issuer " +
+                            "policy binding");
+                    
+                    this.algorithmSuite = ((Binding) tempAssertion)
+                                .getAlgorithmSuite();    
+                }
             }
         }
 
-        List assertions = (List)servicePolicy.getAlternatives().next();
-        
-        for (Iterator iter = assertions.iterator(); iter.hasNext();) {
-            Assertion tempAssertion = (Assertion) iter.next();
-            //find the Trust10 assertion
-            if(tempAssertion instanceof Trust10) {
-                this.trust10 = (Trust10) tempAssertion;
-            } else if(tempAssertion instanceof Binding) {
-                this.algorithmSuite = ((Binding) tempAssertion)
-                            .getAlgorithmSuite();    
+        if(servicePolicy != null) {
+            
+            log.debug("Processing service policy to find Trust10 assertion");
+            
+            List assertions = (List)servicePolicy.getAlternatives().next();
+            
+            for (Iterator iter = assertions.iterator(); iter.hasNext();) {
+                Assertion tempAssertion = (Assertion) iter.next();
+                //find the Trust10 assertion
+                if(tempAssertion instanceof Trust10) {
+                    log.debug("Extracting Trust10 assertion from " +
+                            "service policy");
+                    this.trust10 = (Trust10) tempAssertion;
+                }
             }
         }
-        
     }
     
     /**
@@ -345,6 +359,10 @@ public class STSClient {
      */
     private OMElement createRequest(String requestType,
             String appliesTo) throws TrustException {
+        
+        log.debug("Creating request with request type: " + requestType + 
+                " and applies to: " + appliesTo);
+        
         OMElement rst = TrustUtil.createRequestSecurityTokenElement(version);
 
         TrustUtil.createRequestTypeElement(this.version, rst, requestType);
@@ -353,6 +371,9 @@ public class STSClient {
         
         //Copy over the elements from the template
         if(this.rstTemplate != null) {
+            
+            log.debug("Using RSTTemplate: " + this.rstTemplate.toString());
+            
             Iterator templateChildren = rstTemplate.getChildElements();
             while (templateChildren.hasNext()) {
                 OMNode child = (OMNode) templateChildren.next();
@@ -363,10 +384,12 @@ public class STSClient {
                         && ((OMElement) child).getQName().equals(
                                 new QName(TrustUtil.getWSTNamespace(this.version),
                                         RahasConstants.KEY_SIZE_LN))) {
+                    log.debug("Extracting key size from the RSTTemplate: ");
                     OMElement childElem = (OMElement)child;
                     this.keySize = (childElem.getText() != null && !""
                             .equals(childElem.getText())) ? 
                                     Integer.parseInt(childElem.getText()) : -1;
+                    log.debug("Key size from RSTTemplate: " + this.keySize);
                 }
             }
         }
@@ -374,7 +397,13 @@ public class STSClient {
         try {
             // Handle entropy
             if (this.trust10 != null) {
+                
+                log.debug("Processing Trust10 assertion");
+                
                 if (this.trust10.isRequireClientEntropy()) {
+                    
+                    log.debug("Requires client entropy");
+                    
                     // setup requestor entropy
                     OMElement ent = TrustUtil
                             .createEntropyElement(this.version, rst);
@@ -386,6 +415,9 @@ public class STSClient {
                                     .getMaximumSymmetricKeyLength());
                     binSec.setText(Base64.encode(this.requestorEntropy));
 
+                    log.debug("Clien entropy : "
+                            + Base64.encode(this.requestorEntropy));
+                    
                     // Add the ComputedKey element
                     TrustUtil.createComputedKeyAlgorithm(this.version, rst,
                             RahasConstants.COMPUTED_KEY_PSHA1);
@@ -393,7 +425,7 @@ public class STSClient {
                 }
             }
         } catch (Exception e) {
-            throw new TrustException("errorSettingUpRequestorEntropy");
+            throw new TrustException("errorSettingUpRequestorEntropy", e);
         }
 
         return rst;

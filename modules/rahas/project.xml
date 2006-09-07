@@ -41,18 +41,6 @@
             <artifactId>axiom-dom</artifactId>
             <version>${axiom.version}</version>
         </dependency>
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-java2wsdl</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-
-
-                <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-codegen</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
 
         <dependency>
             <groupId>axis2</groupId>
@@ -61,32 +49,13 @@
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
-            <artifactId>axis2-adb</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>         
-        <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-jibx</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>         
-       <dependency>
-            <groupId>axis2</groupId>
-            <artifactId>axis2-xmlbeans</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>        
-		<dependency>
-            <groupId>axis2</groupId>
             <artifactId>axis2-secpolicy</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-        <!-- external JARs -->
         <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-            <version>${wsdl4j.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
+            <groupId>axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -169,14 +138,6 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>xmlbeans</groupId>
-            <artifactId>xbean</artifactId>
-            <version>${xbean.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-        <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>${xml_apis.version}</version>
@@ -204,6 +165,14 @@
             <groupId>backport-util-concurrent</groupId>
             <artifactId>backport-util-concurrent</artifactId>
             <version>${backport_util_concurrent.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+		<dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>${wsdl4j.version}</version>
             <properties>
                 <module>true</module>
             </properties>
