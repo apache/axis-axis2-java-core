@@ -1,7 +1,7 @@
 package org.apache.axis2.tools.bean;
 
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL2AxisServiceBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
@@ -229,8 +229,8 @@ public class CodegenBean {
         }
 
 
-        WSDL2AxisServiceBuilder builder =
-                new WSDL2AxisServiceBuilder(url.openConnection().getInputStream());
+        WSDL11ToAxisServiceBuilder builder =
+                new WSDL11ToAxisServiceBuilder(url.openConnection().getInputStream());
 
         builder.setBaseUri(getBaseUri(wsdlURI));
         return builder.populateService();

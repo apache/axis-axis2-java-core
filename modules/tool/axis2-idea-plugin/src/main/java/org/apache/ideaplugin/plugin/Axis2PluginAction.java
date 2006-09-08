@@ -43,7 +43,7 @@ public class Axis2PluginAction extends AnAction {
         Application application =
                 ApplicationManager.getApplication();
         Axis2IdeaPlugin axis2component =
-                application.getComponent(Axis2IdeaPlugin.class);
+                (Axis2IdeaPlugin)application.getComponent(Axis2IdeaPlugin.class);
         axis2component.showTool();
     }
 

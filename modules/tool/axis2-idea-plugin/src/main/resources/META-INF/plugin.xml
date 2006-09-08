@@ -6,7 +6,7 @@
     <name>Axis2 IDEA tools</name>
 
     <!-- Description -->
-    <description> Service Archive creation and Codegenaration </description>
+    <description> Service Archive creation and Code Generation </description>
 
     <!-- Plugin version -->
     <version>1.0</version>
