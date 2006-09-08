@@ -334,7 +334,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
         //adding SOAP headers
-         _serviceClient.addHeadersToEnvelop(env);
+         _serviceClient.addHeadersToEnvelope(env);
         // create message context with that soap envelope
         org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
         _messageContext.setEnvelope(env);
@@ -533,7 +533,7 @@
                         </xsl:otherwise>
                     </xsl:choose>
         //adding SOAP headers
-         _serviceClient.addHeadersToEnvelop(env);
+         _serviceClient.addHeadersToEnvelope(env);
         // create message context with that soap envelope
         org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
         _messageContext.setEnvelope(env);
@@ -687,7 +687,7 @@
                                     </xsl:choose>
 
               //adding SOAP headers
-         _serviceClient.addHeadersToEnvelop(env);
+         _serviceClient.addHeadersToEnvelope(env);
                 // create message context with that soap envelope
             org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
             _messageContext.setEnvelope(env);

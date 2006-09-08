@@ -656,12 +656,12 @@ public class ServiceClient {
         if (elem != null) {
             envelope.getBody().addChild(elem);
         }
-        addHeadersToEnvelop(envelope);
+        addHeadersToEnvelope(envelope);
         mc.setEnvelope(envelope);
     }
 
 
-    public void addHeadersToEnvelop(SOAPEnvelope envelope) {
+    public void addHeadersToEnvelope(SOAPEnvelope envelope) {
         if (headers != null) {
             SOAPHeader sh = envelope.getHeader();
             for (int i = 0; i < headers.size(); i++) {
