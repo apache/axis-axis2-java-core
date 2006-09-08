@@ -152,6 +152,11 @@ public class AddressingOutHandler extends AddressingHandler {
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,
                                   MessageContext msgCtxt, OMNamespace addressingNamespaceObject, boolean replaceHeaders) {
         String action = messageContextOptions.getAction();
+        if(action == null || "".equals(action)){
+            if(msgCtxt.getAxisOperation()!=null){
+                action = msgCtxt.getAxisOperation().getOutputAction();
+            }
+        }
         if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
                 addressingNamespaceObject, replaceHeaders)) {
             processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
