@@ -176,7 +176,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
         if (!stopped) {
             String logMessage = "Mail listner is being setup to listen to the address " + user
                     + "@" + host + " On port " + port;
-
             log.info(logMessage);
         }
 
@@ -206,14 +205,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 // Waiting for 3 seconds.
                 Thread.sleep(3000);
             } catch (Exception e) {
-
-                log.debug("An error occured when running the mail listner." + e.getMessage(), e);
-
-                break;
+                log.error("Error in SimpleMailListener" + e);
             }
         }
 
-        log.info("Mail listener has been stoped.");
     }
 
     /**
@@ -278,7 +273,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
      * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + "/" + configurationContext.getServiceContextPath() + "/" + serviceName);//Constants.TRANSPORT_MAIL + 
+        return new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + configurationContext.getServiceContextPath() + "/" + serviceName);//Constants.TRANSPORT_MAIL +
     }
 
     public void setDoThreads(boolean value) {

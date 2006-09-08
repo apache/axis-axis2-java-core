@@ -72,7 +72,9 @@ public class EmailReceiver {
             props.put("mail.host", host);
             props.put("mail.store.protocol", "pop3");
             props.put("mail.transport.protocol", "smtp");
-            props.put("mail.pop3.port", popPort);
+            if (Integer.parseInt(popPort) != 110) {
+                props.put("mail.pop3.port", popPort);
+            }
 
             Session session = Session.getInstance(props, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {

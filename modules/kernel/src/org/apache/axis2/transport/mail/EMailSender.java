@@ -18,7 +18,11 @@
 package org.apache.axis2.transport.mail;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 
 import javax.mail.Authenticator;
 import javax.mail.Flags;
@@ -37,6 +41,7 @@ public class EMailSender {
     private String password;
     private String smtpPort;
     private String user;
+    private MessageContext messageContext;
 
     public EMailSender(String user, String host, String smtpPort, String password) {
         this.user = user;
@@ -45,15 +50,19 @@ public class EMailSender {
         this.password = password;
     }
 
+    public void setMessageContext(MessageContext messageContext) {
+        this.messageContext = messageContext;
+    }
+
     public static void main(String[] args) throws Exception {
         String user = "hemapani";
         String host = "127.0.0.1";
         String smtpPort = "25";
         String password = "hemapani";
         EMailSender sender = new EMailSender(user, host, smtpPort, password);
+        OMOutputFormat format = new OMOutputFormat();
 
-        sender.send("Testing mail sending", "hemapani@127.0.0.1", "Hellp, testing",
-                MailSrvConstants.DEFAULT_CHAR_SET);
+        sender.send("Testing mail sending", "hemapani@127.0.0.1", "Hellp, testing", format);
 
         EmailReceiver receiver = new EmailReceiver(user, host, "110", password);
 
@@ -75,11 +84,11 @@ public class EMailSender {
         receiver.disconnect();
     }
 
-    public void send(String subject, String targetEmail, String message, String charSet)
+    public void send(String subject, String targetEmail, String message, OMOutputFormat format)
             throws AxisFault {
         try {
-            final PasswordAuthentication authentication = new PasswordAuthentication(user,
-                    password);
+            final PasswordAuthentication authentication =
+                    new PasswordAuthentication(user, password);
             Properties props = new Properties();
 
             props.put("mail.user", user);
@@ -99,14 +108,24 @@ public class EMailSender {
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
             msg.setSubject(subject);
 
-            if (charSet == null) {
-                charSet = MailSrvConstants.DEFAULT_CHAR_SET;
+            String contentType = format.getContentType() != null ? format.getContentType() :
+                                 MailSrvConstants.DEFAULT_CONTENT_TYPE;
+            if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                if (messageContext.getSoapAction() != null) {
+                    msg.setHeader(MailSrvConstants.HEADER_SOAP_ACTION,
+                                  messageContext.getSoapAction());
+                    msg.setHeader("Content-Transfer-Encoding", "QUOTED-PRINTABLE");
+                }
             }
-
-            msg.addHeaderLine("Content-Type: " + MailSrvConstants.DEFAULT_CONTENT_TYPE
-                    + "; charset=" + charSet);
-            msg.setText(message);
-            msg.setHeader("Content-Transfer-Encoding", MailSrvConstants.DEFAULT_CHAR_SET_ENCODING);
+            if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+                if (messageContext.getSoapAction() != null) {
+                    msg.setContent(message,
+                                   contentType + "; charset=" + format.getCharSetEncoding() +
+                                   " ; action=" + messageContext.getSoapAction());
+                }
+            } else {
+                msg.setContent(message, contentType + "; charset=" + format.getCharSetEncoding());
+            }
             Transport.send(msg);
         } catch (AddressException e) {
             throw new AxisFault(e);

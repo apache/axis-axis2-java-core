@@ -25,6 +25,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
@@ -32,6 +33,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,7 +44,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 
 public class MailWorker implements Runnable {
-	private static final Log log = LogFactory.getLog(MailWorker.class);
+    private static final Log log = LogFactory.getLog(MailWorker.class);
     private ConfigurationContext configContext = null;
     private MimeMessage mimeMessage;
 
@@ -66,9 +68,11 @@ public class MailWorker implements Runnable {
         // create and initialize a message context
         try {
             TransportInDescription transportIn =
-                    configContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL));
+                    configContext.getAxisConfiguration()
+                            .getTransportIn(new QName(Constants.TRANSPORT_MAIL));
             TransportOutDescription transportOut =
-                    configContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL));
+                    configContext.getAxisConfiguration()
+                            .getTransportOut(new QName(Constants.TRANSPORT_MAIL));
             if ((transportIn != null) && (transportOut != null)) {
                 // create Message Context
                 msgContext = new MessageContext();
@@ -77,40 +81,26 @@ public class MailWorker implements Runnable {
                 msgContext.setTransportOut(transportOut);
                 msgContext.setServerSide(true);
                 msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
-                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                        mimeMessage.getEncoding());
-                String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION);
-                if (soapAction == null){
-                	soapAction = mimeMessage.getSubject();
-                }
 
-                //msgContext.setWSAAction(soapAction);
-                msgContext.setSoapAction(soapAction);
-                msgContext.setIncomingTransportName(Constants.TRANSPORT_MAIL);
-
-                // TODO add the transport Headers to the Message Context
-                // Create Mail EPR, EPR is constructed using the format, foo@bar/axis2/services/echo and is constructed
-                // using the <to-email-address>/<email-subject>
-/*                InternetAddress[] recepainets = (InternetAddress[]) mimeMessage.getAllRecipients();
-
-                if ((recepainets != null) && (recepainets.length > 0)) {
+                if (TransportUtils.getCharSetEncoding(mimeMessage.getContentType()) != null) {
+                    msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                                           TransportUtils.getCharSetEncoding(
+                                                   mimeMessage.getContentType()));
                 } else {
-                    throw new AxisFault(Messages.getMessage("noRecep4Email"));
+                    msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                                           MessageContext.DEFAULT_CHAR_SET_ENCODING);
                 }
 
-                // try to assume the reply to value
-                InternetAddress[] replyToAs = (InternetAddress[]) mimeMessage.getAllRecipients();
-
-                if ((replyToAs != null) && (replyToAs.length > 0)) {
-                    String replyTo = replyToAs[0].getAddress();
-
-                    if (replyTo != null) {
-                        msgContext.setReplyTo(new EndpointReference(replyTo));
-                    }
-                }*/
+                msgContext.setIncomingTransportName(Constants.TRANSPORT_MAIL);
+                String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION);
+                msgContext.setSoapAction(soapAction);
+                if (mimeMessage.getSubject() != null) {
+                    msgContext.setTo(new EndpointReference(mimeMessage.getSubject()));
+                }
 
                 // Create the SOAP Message
-                // TODO This can we written better way, to use the streams better
+                // SMTP basically a text protocol, thus, following would be the optimal way to build the
+                // SOAP11/12 body from it.
                 String message = mimeMessage.getContent().toString();
                 ByteArrayInputStream bais =
                         new ByteArrayInputStream(message.getBytes());
@@ -118,11 +108,15 @@ public class MailWorker implements Runnable {
                         StAXUtils.createXMLStreamReader(bais);
                 String soapNamespaceURI = "";
                 if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
-                        > -1) {
+                    > -1) {
                     soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
                 } else if (mimeMessage.getContentType().indexOf(
                         SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                     soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                } else {
+                    log.warn(
+                            "MailWorker found a message other than text/xml or application/soap+xml");
+                    return;
                 }
 
                 StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
@@ -135,7 +129,7 @@ public class MailWorker implements Runnable {
                 }
             } else {
                 throw new AxisFault(Messages.getMessage("unknownTransport",
-                        Constants.TRANSPORT_MAIL));
+                                                        Constants.TRANSPORT_MAIL));
             }
         } catch (Exception e) {
             try {

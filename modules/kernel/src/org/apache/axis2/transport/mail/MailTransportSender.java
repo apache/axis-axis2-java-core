@@ -17,10 +17,6 @@
 
 package org.apache.axis2.transport.mail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -35,6 +31,10 @@ import org.apache.axis2.transport.AbstractTransportSender;
 import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.util.Utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 public class MailTransportSender extends AbstractTransportSender {
 	
     private static final long serialVersionUID = -2858556361961169381L;
@@ -44,6 +44,8 @@ public class MailTransportSender extends AbstractTransportSender {
     private String password;
     private String user;
     private TransportOutDescription transportOut;
+    // assosiation with OMOutputFormat
+    private OMOutputFormat format = new OMOutputFormat();
 
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
     throws AxisFault {
@@ -77,7 +79,8 @@ public class MailTransportSender extends AbstractTransportSender {
 
             if ((user != null) && (host != null) && (password != null) && (smtpPort != null)) {
 
-            	   EMailSender sender = new EMailSender(user, host, smtpPort, password);
+            	EMailSender sender = new EMailSender(user, host, smtpPort, password);
+                sender.setMessageContext(msgContext);
 
                 String eprAddress = msgContext.getTo().getAddress();
 
@@ -85,8 +88,10 @@ public class MailTransportSender extends AbstractTransportSender {
                 String charSet =
                         (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
                 if (charSet == null) {
-                    charSet = MailSrvConstants.DEFAULT_CHAR_SET;
+                    charSet = MessageContext.DEFAULT_CHAR_SET_ENCODING;// Since we are deleaing only SOAP and XML messages here
                 }
+                format.setSOAP11(msgContext.isSOAP11());
+                format.setCharSetEncoding(charSet);
 
                 int mailNameIndex = eprAddress.indexOf("mail:");
                 if (mailNameIndex > -1){
@@ -107,8 +112,7 @@ public class MailTransportSender extends AbstractTransportSender {
                 		email = email.substring(emailColon + 1);
                 }
                 
-                sender.send(subject, email, new String(byteArrayOutputStream.toByteArray()),
-                        charSet);
+                sender.send(subject, email, new String(byteArrayOutputStream.toByteArray()),format);
             } else {
                 if (user == null) {
                     throw new AxisFault(Messages.getMessage("canNotBeNull", "User"));
