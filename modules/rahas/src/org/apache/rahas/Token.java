@@ -117,15 +117,6 @@ public class Token {
      */
     private Date expires;
     
-
-    /**
-     * Create a new token
-     * @param id
-     */
-    public Token(String id){
-        this.id = id;
-    }
-    
     public Token(String id, OMElement tokenElem, Date created, Date expires) throws TrustException {
         this.id = id;
         this.token = new StAXOMBuilder(DOOMAbstractFactory.getOMFactory(),

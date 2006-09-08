@@ -19,25 +19,31 @@ package org.apache.rahas;
 import junit.framework.TestCase;
 
 import java.util.List;
+import java.util.Date;
+
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 
 public class SimpleTokenStoreTest extends TestCase {
 
     public void testAdd() {
-        Token token = new Token("id-1");
         SimpleTokenStore store = new SimpleTokenStore();
         try {
-            store.add(token);
+            store.add(getTestToken("id-1"));
         } catch (TrustException e) {
             fail("Adding a new token to an empty store should not fail, " +
                  "message : " + e.getMessage());
         }
+        Token token = null;
         try {
+            token = getTestToken("id-1");
             store.add(token);
             fail("Adding an existing token must throw an exception");
         } catch (TrustException e) {
             assertEquals("Incorrect exception message",
                          TrustException.getMessage("tokenAlreadyExists",
-                                                   new String[] {token.getId()}), e.getMessage());
+                                                   new String[]{token.getId()}), e.getMessage());
         }
     }
 
@@ -50,9 +56,9 @@ public class SimpleTokenStoreTest extends TestCase {
             fail(e.getMessage());
         }
         try {
-            store.add(new Token("id-1"));
-            store.add(new Token("id-2"));
-            store.add(new Token("id-3"));
+            store.add(getTestToken("id-1"));
+            store.add(getTestToken("id-2"));
+            store.add(getTestToken("id-3"));
             String[] ids = store.getTokenIdentifiers();
             assertEquals("Incorrect number fo token ids", 3, ids.length);
         } catch (TrustException e) {
@@ -62,19 +68,24 @@ public class SimpleTokenStoreTest extends TestCase {
 
     public void testUpdate() {
         SimpleTokenStore store = new SimpleTokenStore();
-        Token token1 = new Token("id-1");
+        Token token1 = null;
+        try {
+            token1 = getTestToken("id-1");
+        } catch (TrustException e) {
+            fail();
+        }
         try {
             store.update(token1);
             fail("An exception must be thrown at this point : noTokenToUpdate");
         } catch (TrustException e) {
             assertEquals("Incorrect exception message", TrustException
-                    .getMessage("noTokenToUpdate", new String[] { token1
-                            .getId() }), e.getMessage());
+                    .getMessage("noTokenToUpdate", new String[]{token1
+                    .getId()}), e.getMessage());
         }
         try {
             store.add(token1);
-            store.add(new Token("id-2"));
-            store.add(new Token("id-3"));
+            store.add(getTestToken("id-2"));
+            store.add(getTestToken("id-3"));
             token1.setState(Token.EXPIRED);
             store.update(token1);
         } catch (TrustException e) {
@@ -84,24 +95,23 @@ public class SimpleTokenStoreTest extends TestCase {
 
     public void testGetValidExpiredRenewedTokens() {
         SimpleTokenStore store = new SimpleTokenStore();
-
-        Token token1 = new Token("id-1");
-        Token token2 = new Token("id-2");
-        Token token3 = new Token("id-3");
-        Token token4 = new Token("id-4");
-        Token token5 = new Token("id-5");
-        Token token6 = new Token("id-6");
-        Token token7 = new Token("id-7");
-
-        token1.setState(Token.ISSUED);
-        token2.setState(Token.ISSUED);
-        token3.setState(Token.ISSUED);
-        token4.setState(Token.RENEWED);
-        token5.setState(Token.RENEWED);
-        token6.setState(Token.EXPIRED);
-        token7.setState(Token.CANCELLED);
-
         try {
+            Token token1 = getTestToken("id-1", new Date(System.currentTimeMillis() + 10000));
+            Token token2 = getTestToken("id-2", new Date(System.currentTimeMillis() + 10000));
+            Token token3 = getTestToken("id-3", new Date(System.currentTimeMillis() + 10000));
+            Token token4 = getTestToken("id-4", new Date(System.currentTimeMillis() + 10000));
+            Token token5 = getTestToken("id-5", new Date(System.currentTimeMillis() + 10000));
+            Token token6 = getTestToken("id-6");
+            Token token7 = getTestToken("id-7");
+
+            token1.setState(Token.ISSUED);
+            token2.setState(Token.ISSUED);
+            token3.setState(Token.ISSUED);
+            token4.setState(Token.RENEWED);
+            token5.setState(Token.RENEWED);
+            token6.setState(Token.EXPIRED);
+            token7.setState(Token.CANCELLED);
+
             store.add(token1);
             store.add(token2);
             store.add(token3);
@@ -124,5 +134,20 @@ public class SimpleTokenStoreTest extends TestCase {
         } catch (TrustException e) {
             fail(e.getMessage());
         }
+    }
+
+    private Token getTestToken(String tokenId) throws TrustException {
+        return getTestToken(tokenId, new Date());
+    }
+
+    private Token getTestToken(String tokenId, Date expiry) throws TrustException {
+        OMFactory factory = DOOMAbstractFactory.getOMFactory();
+        OMElement tokenEle = factory.createOMElement("testToken", "", "");
+        Token token = new Token(tokenId, tokenEle, new Date(), expiry);
+        token.setAttachedReference(tokenEle);
+        token.setPreviousToken(tokenEle);
+        token.setState(Token.ISSUED);
+        token.setSecret("Top secret!".getBytes());
+        return token;
     }
 }
