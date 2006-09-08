@@ -41,7 +41,6 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
@@ -630,9 +629,25 @@ public class AxisService extends AxisDescription {
      * @throws AxisFault
      */
     public void printWSDL(OutputStream out) throws AxisFault {
-        setWsdlfound(true);
-        //pick the endpoint and take it as the epr for the WSDL
-        getWSDL(out, new String[]{getEndpoint()}, "services");
+        if (isUseUserWSDL()) {
+            Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+            if (wsld4jdefinition != null) {
+                try {
+                    Definition definition = (Definition) wsld4jdefinition.getValue();
+                    WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
+                    writer.writeWSDL(definition, out);
+                } catch (WSDLException e) {
+                    throw new AxisFault(e);
+                }
+            } else {
+                printWSDLError(out);
+            }
+        } else {
+            setWsdlfound(true);
+            //pick the endpoint and take it as the epr for the WSDL
+            getWSDL(out, new String[]{getEndpoint()}, "services");
+        }
+
     }
 
     private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
@@ -670,9 +685,24 @@ public class AxisService extends AxisDescription {
 
     //WSDL 2.0
     public void printWSDL2(OutputStream out) throws AxisFault {
-        setWsdlfound(true);
-        //pick the endpoint and take it as the epr for the WSDL
-        getWSDL2(out, new String[]{getEndpoint()});
+        if (isUseUserWSDL()) {
+            Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+            if (wsld4jdefinition != null) {
+                try {
+                    Definition definition = (Definition) wsld4jdefinition.getValue();
+                    WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
+                    writer.writeWSDL(definition, out);
+                } catch (WSDLException e) {
+                    throw new AxisFault(e);
+                }
+            } else {
+                printWSDLError(out);
+            }
+        } else {
+            setWsdlfound(true);
+            //pick the endpoint and take it as the epr for the WSDL
+            getWSDL2(out, new String[]{getEndpoint()});
+        }
     }
 
     public void printWSDL2(OutputStream out,
@@ -906,7 +936,7 @@ public class AxisService extends AxisDescription {
     public void addSchema(XmlSchema schema) {
         if (schema != null) {
             schemaList.add(schema);
-            if(schema.getTargetNamespace() != null) {
+            if (schema.getTargetNamespace() != null) {
                 addSchemaNameSpace(schema.getTargetNamespace());
             }
         }

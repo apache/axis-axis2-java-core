@@ -229,26 +229,26 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
-
-            // Generating schema for the service if the imple class is JAVA
-            if (!service.isWsdlfound()) {
-                //trying to generate WSDL for the service using JAM  and Java refelection
-                try {
-                    if (generateWsdl(service)) {
-                        Utils.fillAxisService(service, axisConfig, excludeops);
+            if (!service.isUseUserWSDL()) {
+                // Generating schema for the service if the imple class is JAVA
+                if (!service.isWsdlfound()) {
+                    //trying to generate WSDL for the service using JAM  and Java refelection
+                    try {
+                        if (generateWsdl(service)) {
+                            Utils.fillAxisService(service, axisConfig, excludeops);
+                        }
+                    } catch (Exception e) {
+                        /**
+                         * I have log here if some error occours , since service impl
+                         * class can alos be non-java class , so in that case
+                         * it is not posible to generate scheam, so no pint of throwing that
+                         * error ,  I know we have to handle this , untill that I have
+                         * to log this
+                         */
+                        log.error(Messages.getMessage("errorinschemagen", e.getMessage()), e);
                     }
-                } catch (Exception e) {
-                    /**
-                     * I have log here if some error occours , since service impl
-                     * class can alos be non-java class , so in that case
-                     * it is not posible to generate scheam, so no pint of throwing that
-                     * error ,  I know we have to handle this , untill that I have
-                     * to log this
-                     */
-                    log.error(Messages.getMessage("errorinschemagen", e.getMessage()), e);
                 }
             }
-
             for (int i = 0; i < excludeops.size(); i++) {
                 String opName = (String) excludeops.get(i);
                 service.removeOperation(new QName(opName));
