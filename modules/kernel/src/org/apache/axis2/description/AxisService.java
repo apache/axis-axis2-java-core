@@ -1246,6 +1246,16 @@ public class AxisService extends AxisDescription {
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator;
         ArrayList excludeOpeartion = new ArrayList();
+
+
+        NamespaceMap map = new NamespaceMap();
+        map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
+                Java2WSDLConstants.AXIS2_XSD);
+        map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
+                Java2WSDLConstants.URI_2001_SCHEMA_XSD);
+        axisService.setNameSpacesMap(map);
+
+
         try {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
                     implClass, schemaNameSpace,

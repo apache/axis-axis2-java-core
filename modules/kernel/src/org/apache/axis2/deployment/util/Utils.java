@@ -13,14 +13,13 @@ import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
-import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
@@ -212,7 +211,8 @@ public class Utils {
      * This guy will create a AxisService using java reflection
      */
     public static void fillAxisService(AxisService axisService,
-                                       AxisConfiguration axisConfig, ArrayList excludeOperations) throws Exception {
+                                       AxisConfiguration axisConfig,
+                                       ArrayList excludeOperations) throws Exception {
         String serviceClass;
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
         ClassLoader serviceClassLoader = axisService.getClassLoader();
@@ -274,10 +274,9 @@ public class Utils {
                 // no need to expose , private and protected methods
                 continue;
             }
-            if (jmethod.getSimpleName().equals("init")
-                    || DependencyManager.MESSAGE_CONTEXT_INJECTION_METHOD.equals(jmethod.getSimpleName())
-                    || DependencyManager.SERVICE_DESTROY_METHOD.equals(jmethod.getSimpleName()))
+            if (excludeOperations.contains(jmethod.getSimpleName())) {
                 continue;
+            }
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
             // if the opeartion there in services.xml then try to set it schema element name

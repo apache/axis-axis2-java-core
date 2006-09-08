@@ -310,7 +310,8 @@ public class ServiceClient {
     }
 
     /**
-     * To remove all the headers in ServiceClient
+     * To remove all the
+     *  in ServiceClient
      */
     public void removeHeaders() {
         if (headers != null) {
@@ -418,7 +419,7 @@ public class ServiceClient {
             }
         } else {
             MessageContext mc = new MessageContext();
-            fillSoapEnvelope(mc, elem);
+            fillSOAPEnvelope(mc, elem);
             OperationClient mepClient = createClient(operation);
             mepClient.addMessageContext(mc);
             mepClient.execute(true);
@@ -455,7 +456,7 @@ public class ServiceClient {
         // create a message context and put the payload in there along with any
         // headers
         MessageContext mc = new MessageContext();
-        fillSoapEnvelope(mc, elem);
+        fillSOAPEnvelope(mc, elem);
         // add the message context there and have it go
         mepClient.addMessageContext(mc);
         mepClient.execute(false);
@@ -517,8 +518,8 @@ public class ServiceClient {
             // process the result of the invocation
             if (callback.envelope != null) {
                 // transport was already returned by the call back receiver
-            	//Buidling of the Envelope should happen at the setComplete()
-            	// or onComplete() methods of the Callback class
+                //Buidling of the Envelope should happen at the setComplete()
+                // or onComplete() methods of the Callback class
                 return callback.envelope.getBody().getFirstElement();
             } else {
                 if (callback.error instanceof AxisFault) {
@@ -532,7 +533,7 @@ public class ServiceClient {
             }
         } else {
             MessageContext mc = new MessageContext();
-            fillSoapEnvelope(mc, elem);
+            fillSOAPEnvelope(mc, elem);
             OperationClient mepClient = createClient(operation);
             mepClient.addMessageContext(mc);
             mepClient.execute(true);
@@ -566,7 +567,7 @@ public class ServiceClient {
     public void sendReceiveNonBlocking(QName operation, OMElement elem,
                                        Callback callback) throws AxisFault {
         MessageContext mc = new MessageContext();
-        fillSoapEnvelope(mc, elem);
+        fillSOAPEnvelope(mc, elem);
         OperationClient mepClient = createClient(operation);
         // here a blocking invocation happens in a new thread, so the
         // progamming model is non blocking
@@ -647,7 +648,7 @@ public class ServiceClient {
      * @param elem the payload content
      * @throws AxisFault if something goes wrong
      */
-    private void fillSoapEnvelope(MessageContext mc, OMElement elem)
+    private void fillSOAPEnvelope(MessageContext mc, OMElement elem)
             throws AxisFault {
         mc.setServiceContext(serviceContext);
         SOAPFactory soapFactory = getSOAPFactory();
@@ -655,13 +656,18 @@ public class ServiceClient {
         if (elem != null) {
             envelope.getBody().addChild(elem);
         }
+        addHeadersToEnvelop(envelope);
+        mc.setEnvelope(envelope);
+    }
+
+
+    public void addHeadersToEnvelop(SOAPEnvelope envelope) {
         if (headers != null) {
             SOAPHeader sh = envelope.getHeader();
             for (int i = 0; i < headers.size(); i++) {
                 sh.addChild((OMElement) headers.get(i));
             }
         }
-        mc.setEnvelope(envelope);
     }
 
 
@@ -703,12 +709,12 @@ public class ServiceClient {
         private Exception error;
 
         public void onComplete(AsyncResult result) {
-			this.envelope = result.getResponseEnvelope();
-			// Transport input stream gets closed after calling setComplete
-			// method. Have to build the whole envelope including the
-			// attachments at this stage. Data might get lost if the input
-			// stream gets closed before building the whole envelope.
-			this.envelope.buildWithAttachments();
+            this.envelope = result.getResponseEnvelope();
+            // Transport input stream gets closed after calling setComplete
+            // method. Have to build the whole envelope including the
+            // attachments at this stage. Data might get lost if the input
+            // stream gets closed before building the whole envelope.
+            this.envelope.buildWithAttachments();
             this.msgctx = result.getResponseMessageContext();
         }
 
