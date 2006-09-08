@@ -50,7 +50,6 @@ public class SimpleTokenStore implements TokenStorage {
             if (!this.tokens.keySet().contains(token.getId())) {
                 throw new TrustException("noTokenToUpdate", new String[]{token.getId()});
             }
-            this.tokens.remove(this.tokens.get(token.getId()));
             this.tokens.put(token.getId(), token);
         }
     }
