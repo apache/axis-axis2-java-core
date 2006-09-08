@@ -22,7 +22,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.rahas.RahasConstants;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
 import org.apache.rampart.RampartException;
@@ -35,6 +34,8 @@ import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
+import org.apache.ws.security.conversation.ConversationConstants;
+import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.util.Loader;
 
@@ -258,15 +259,16 @@ public class RampartUtil {
             //Create TokenType element and set the value
             OMElement tokenTypeElem = TrustUtil.createTokenTypeElement(
                     wstVersion, rstTempl);
-            tokenTypeElem.setText(getConversationNs(conversationVersion) + "/sct");
+            String tokenType = ConversationConstants.getWSCNs(conversationVersion) + ConversationConstants.TOKEN_TYPE_SECURITY_CONTEXT_TOKEN;
+            tokenTypeElem.setText(tokenType);
             
             return rstTempl;
         } catch (TrustException e) {
             throw new RampartException(e.getMessage(), e);
+        } catch (ConversationException e) {
+            throw new RampartException(e.getMessage(), e);
         }
     }
     
-    public static String getConversationNs(int version) {
-        return null;
-    }
+
 }

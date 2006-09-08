@@ -17,8 +17,11 @@
 package org.apache.rampart;
 
 import org.apache.axis2.context.MessageContext;
+import org.apache.neethi.Policy;
 import org.apache.rahas.RahasConstants;
 import org.apache.rahas.TokenStorage;
+import org.apache.rahas.TrustException;
+import org.apache.rahas.TrustUtil;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.conversation.ConversationConstants;
@@ -30,19 +33,24 @@ import java.util.Vector;
 public class RampartMessageData {
     
     /**
+     * Axis2 parameter name to be used in the client's axis2 xml
+     */
+    public final static String KEY_RAMPART_POLICY = "rampartPolicy";
+    
+    /**
      * Key to hold the address of the issuer in the msg ctx.
      */
     public final static String KEY_ISSUER_ADDRESS = "issuerAddress";
     
     /**
-     * Key to hold the issuer policy
+     * Key to hold the WS-Trust version
      */
-    public final static String KEY_ISSUER_POLICY = "issuerPolicy";
+    public final static String KEY_WST_VERSION = "wstVersion";
 
     /**
-     * Key to hold the service policy
+     * Key to hold the WS-SecConv version
      */
-    public static final String KEY_SERVICE_POLICY = "servicePolicy";
+    public final static String KEY_WSSC_VERSION = "wscVersion";
 
     private MessageContext msgContext = null;
 
@@ -87,10 +95,36 @@ public class RampartMessageData {
     private String secConvTokenId;
     
     
-    
-    public RampartMessageData(MessageContext msgCtx, Document doc) {
+    /**
+     * The service policy extracted from the message context.
+     * If policy is specified in the RampartConfig <b>this</b> will take precedence
+     */
+    private Policy servicePolicy;
+
+
+    public RampartMessageData(MessageContext msgCtx, Document doc) throws RampartException {
         this.msgContext = msgCtx;
         this.document = doc;
+        
+        try {
+            //Extract known properties from the msgCtx
+            
+            if(msgCtx.getProperty(KEY_WST_VERSION) != null) {
+                this.wstVersion = TrustUtil.getWSTVersion((String)msgCtx.getProperty(KEY_WST_VERSION));
+            }
+            
+            if(msgCtx.getProperty(KEY_WSSC_VERSION) != null) {
+                this.secConvVersion = TrustUtil.getWSTVersion((String)msgCtx.getProperty(KEY_WSSC_VERSION));
+            }
+            
+            if(msgCtx.getProperty(KEY_RAMPART_POLICY) != null) {
+                this.servicePolicy = (Policy)msgCtx.getProperty(KEY_RAMPART_POLICY);
+            }
+            
+        } catch (TrustException e) {
+            throw new RampartException("errorInExtractingMsgProps", e);
+        }
+        
     }
     
     /**
@@ -298,6 +332,13 @@ public class RampartMessageData {
      */
     public int getSecConvVersion() {
         return secConvVersion;
+    }
+
+    /**
+     * @return Returns the servicePolicy.
+     */
+    public Policy getServicePolicy() {
+        return servicePolicy;
     }
 
 }

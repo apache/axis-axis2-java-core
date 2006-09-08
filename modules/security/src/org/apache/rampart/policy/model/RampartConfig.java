@@ -36,21 +36,22 @@ import javax.xml.stream.XMLStreamWriter;
         <ramp:timestampTTL>300</ramp:timestampTTL>
         <ramp:tokenStoreClass>org.apache.rahas.StorageImpl</ramp:tokenStoreClass>
         
-        <ramp:signatureCryto>
+        <ramp:signatureCrypto>
             <ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
                 <ramp:property name="keystoreType">JKS</ramp:property>
                 <ramp:property name="keystoreFile">/path/to/file.jks</ramp:property>
                 <ramp:property name="keystorePassword">password</ramp:property>
             </ramp:crypto>
-        </ramp:signatureCryto>
+        </ramp:signatureCrypto>
+        
+        <ramp:tokenIssuerPolicy>
+            <wsp:Policy>
+            ....
+            ....
+            </wsp:Policy>
+        </ramp:tokenIssuerPolicy>
     </ramp:RampartConfig>
-    
-    <ramp:tokenIssuerPolicy>
-        <wsp:Policy>
-            ....
-            ....
-        </wsp:Policy>
-    </ramp:tokenIssuerPolicy>
+
 </pre>
  * 
  */
@@ -206,5 +207,6 @@ public class RampartConfig implements Assertion {
     public void setTokenIssuerPolicy(Policy tokenIssuerPolicy) {
         this.tokenIssuerPolicy = tokenIssuerPolicy;
     }
+
 
 }

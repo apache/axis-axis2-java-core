@@ -38,9 +38,10 @@ import org.apache.ws.secpolicy.model.Wss10;
 import org.apache.ws.secpolicy.model.Wss11;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class RampartPolicyBuilder {
-
+    
     /**
      * Compile the parsed security data into one Policy data block.
      * 
@@ -59,11 +60,13 @@ public class RampartPolicyBuilder {
      * @return The compile Poilcy data block.
      * @throws WSSPolicyException
      */
-    public static RampartPolicyData build(Iterator topLevelAssertions)
+    public static RampartPolicyData build(List topLevelAssertions)
             throws WSSPolicyException {
+        
         RampartPolicyData rpd = new RampartPolicyData();
-        while (topLevelAssertions.hasNext()) {
-            Assertion assertion = (Assertion) topLevelAssertions.next();
+        
+        for (Iterator iter = topLevelAssertions.iterator(); iter.hasNext();) {
+            Assertion assertion = (Assertion) iter.next();
             if (assertion instanceof Binding) {
                 if (assertion instanceof SymmetricBinding) {
                     processSymmetricPolicyBinding((SymmetricBinding) assertion, rpd);
@@ -97,6 +100,7 @@ public class RampartPolicyBuilder {
                         + assertion.getClass().getName());
             }
         }
+        
         return rpd;
     }
 

@@ -19,9 +19,11 @@ package org.apache.rampart;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyEngine;
 import org.apache.rahas.RahasConstants;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
@@ -38,31 +40,24 @@ import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
+import org.apache.ws.security.conversation.ConversationConstants;
+import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 
 import javax.security.auth.callback.CallbackHandler;
 
-import java.util.Iterator;
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 public class MessageBuilder {
     
     private static Log log = LogFactory.getLog(MessageBuilder.class);
     
-    public void build(MessageContext msgCtx) throws WSSPolicyException, RampartException, WSSecurityException {
+    public void build(MessageContext msgCtx) throws WSSPolicyException,
+            RampartException, WSSecurityException {
         
-        //TODO: Get hold of the policy from the message context
-        Policy policy = new Policy();
-        Iterator it = (Iterator)policy.getAlternatives().next();
-        
-        RampartPolicyData policyData = RampartPolicyBuilder.build(it);
-        
-        processEnvelope(msgCtx, policyData);
-    }
-    
-    private void processEnvelope(MessageContext msgCtx, RampartPolicyData rpd) throws RampartException, WSSecurityException {
-        log.info("Before create Message assym....");
 
         DocumentBuilderFactoryImpl.setDOOMRequired(true);
         
@@ -73,164 +68,248 @@ public class MessageBuilder {
         Document doc = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx.getEnvelope(), false);
         SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(doc
                 .getDocumentElement());
-
+        
         WSSecHeader secHeader = new WSSecHeader();
         secHeader.insertSecurityHeader(doc);
         
         RampartMessageData rmd = new RampartMessageData(msgCtx, doc);
-        rmd.setPolicyData(rpd);
+        
+        Policy policy = null;
+        /*
+         * When creating the RampartMessageData instance we 
+         * extract the service policy is set in the msgCtx.
+         * If it is missing then try to obtain from the configuration files.
+         */
+        if(rmd.getServicePolicy() != null) {
+            if(msgCtx.isServerSide()) {
+                String policyXml = msgCtx.getEffectivePolicy().toString();
+                policy = PolicyEngine.getPolicy(new ByteArrayInputStream(policyXml.getBytes()));
+            } else {
+                Parameter param = msgCtx.getParameter(RampartMessageData.KEY_RAMPART_POLICY);
+                OMElement policyElem = param.getParameterElement().getFirstElement();
+                policy = PolicyEngine.getPolicy(policyElem);
+            }
+        }
+        
+        
+        List it = (List)policy.getAlternatives().next();
+        
+        RampartPolicyData policyData = RampartPolicyBuilder.build(it);
+
+     
+        rmd.setPolicyData(policyData);
         rmd.setSecHeader(secHeader);
         
+        processEnvelope(msgCtx, rmd);
+    }
+    
+    private void processEnvelope(MessageContext msgCtx, RampartMessageData rmd)
+            throws RampartException, WSSecurityException {
+        log.info("Before create Message assym....");
+
+        RampartPolicyData rpd = rmd.getPolicyData();
+
         if(rpd.isIncludeTimestamp()) {
+            
+            log.debug("Adding a timestamp");
+            
             TimestampBuilder tsBuilder = new TimestampBuilder();
             tsBuilder.build(rmd);
         }
         
         
         if(rpd.isSymmetricBinding()) {
+            log.debug("Procesing symmentric binding: " +
+                    "Setting up encryption token and signature token");
             //Setting up encryption token and signature token
             
             Token sigTok = rpd.getSignatureToken();
             Token encrTok = rpd.getEncryptionToken();
-            
             if(sigTok instanceof IssuedToken) {
+                
+                log.debug("SignatureToken is an IssuedToken");
+                
                 if(rmd.getIssuedSignatureTokenId() == null) {
+                    log.debug("No Issuedtoken found, requesting a new token");
+                    
                     IssuedToken issuedToken = (IssuedToken)sigTok;
                     
                     try {
-                        STSClient client = new STSClient(rmd.getMsgContext()
-                                .getConfigurationContext());
-
-                        // Set request action
-                        client.setAction(TrustUtil.getActionValue(rmd
-                                .getWstVersion(),
-                                RahasConstants.RST_ACTON_ISSUE));
                         
-                        client.setRstTemplate(issuedToken.getRstTemplate());
-
-                        // Set crypto information
-                        Crypto crypto = RampartUtil.getSignatureCrypto(rmd
-                                .getPolicyData().getRampartConfig());
-                        CallbackHandler cbh = RampartUtil.getPasswordCB(rmd);
-                        client.setCryptoInfo(crypto, cbh);
-
-                        // Get service policy
-                        Policy servicePolicy = (Policy) msgCtx
-                                .getProperty(RampartMessageData.KEY_SERVICE_POLICY);
-
-                        // Get STS policy
-                        Policy stsPolicy = (Policy) msgCtx
-                                .getProperty(RampartMessageData.KEY_ISSUER_POLICY);
-
-                        // Get service epr
-                        String servceEprAddress = rmd.getMsgContext()
-                                .getOptions().getTo().getAddress();
+                        String action = TrustUtil.getActionValue(rmd
+                                .getWstVersion(),
+                                RahasConstants.RST_ACTON_ISSUE);
+                        
                         // Get sts epr
                         String issuerEprAddress = RampartUtil
                                 .processIssuerAddress(issuedToken
                                         .getIssuerEpr());
-
-                        // Request type
-                        String reqType = TrustUtil.getWSTNamespace(rmd
-                                .getWstVersion())
-                                + RahasConstants.REQ_TYPE_ISSUE;
                         
-                        //Make the request
-                        org.apache.rahas.Token rst = 
-                            client.requestSecurityToken(servicePolicy, 
-                                                        issuerEprAddress,
-                                                        stsPolicy, 
-                                                        reqType, 
-                                                        servceEprAddress);
+                        OMElement rstTemplate = issuedToken.getRstTemplate();
                         
-                        //Set the token ID
-                        rmd.setIssuedSignatureTokenId(rst.getId());
+                        String id = this.getToken(rmd, rstTemplate,
+                                issuerEprAddress, action);
                         
-                        //Add the token to token storage
-                        rmd.getTokenStorage().add(rst);
+                        log.debug("Issued token obtained: id=" + id);
                         
+                        rmd.setIssuedSignatureTokenId(id);
                     } catch (TrustException e) {
                         throw new RampartException(e.getMessage(), e);
                     }
                     
                 }
+                
             } else if(sigTok instanceof SecureConversationToken) {
+                
+                log.debug("SignatureToken is a SecureConversationToken");
+                
                 if(rmd.getSecConvTokenId() == null) {
-
+                
+                    log.debug("No SecureConversationToken found, " +
+                            "requesting a new token");
+                    
                     SecureConversationToken secConvTok = 
                                         (SecureConversationToken) sigTok;
                     
-                    
                     try {
-                        STSClient client = new STSClient(rmd.getMsgContext()
-                                .getConfigurationContext());
-
-                        // Set request action
-                        client.setAction(TrustUtil.getActionValue(
+                        
+                        String action = TrustUtil.getActionValue(
                                 rmd.getWstVersion(),
-                                RahasConstants.RST_ACTON_ISSUE));
-                        
-                        //Find SC version
-                        int conversationVersion = 1;
-                        
-                        client.setRstTemplate(RampartUtil.createRSTTempalteForSCT(conversationVersion, rmd.getWstVersion()));
-
-                        // Set crypto information
-                        Crypto crypto = RampartUtil.getSignatureCrypto(rmd
-                                .getPolicyData().getRampartConfig());
-                        CallbackHandler cbh = RampartUtil.getPasswordCB(rmd);
-                        client.setCryptoInfo(crypto, cbh);
-
-                        // Get service policy
-                        Policy servicePolicy = (Policy) msgCtx
-                                .getProperty(RampartMessageData.KEY_SERVICE_POLICY);
-
-                        // Get STS policy
-                        Policy stsPolicy = (Policy) msgCtx
-                                .getProperty(RampartMessageData.KEY_ISSUER_POLICY);
-
-                        // Get service epr
-                        String servceEprAddress = rmd.getMsgContext()
-                                .getOptions().getTo().getAddress();
+                                RahasConstants.RST_ACTON_SCT);
                         
                         // Get sts epr
                         String issuerEprAddress = RampartUtil
                                 .processIssuerAddress(secConvTok.getIssuerEpr());
 
-                        // Request type
-                        String reqType = TrustUtil.getWSTNamespace(rmd
-                                .getWstVersion())
-                                + RahasConstants.REQ_TYPE_ISSUE;
+                        //Find SC version
+                        int conversationVersion = rmd.getSecConvVersion();
                         
-                        //Make the request
-                        org.apache.rahas.Token rst = 
-                            client.requestSecurityToken(servicePolicy, 
-                                                        issuerEprAddress,
-                                                        stsPolicy, 
-                                                        reqType, 
-                                                        servceEprAddress);
+                        OMElement rstTemplate = RampartUtil.createRSTTempalteForSCT(
+                                conversationVersion, 
+                                rmd.getWstVersion());
                         
-                        //Set the token ID
-                        rmd.setIssuedSignatureTokenId(rst.getId());
+                        String id = this.getToken(rmd, rstTemplate,
+                                issuerEprAddress, action);
                         
-                        //Add the token to token storage
-                        rmd.getTokenStorage().add(rst);
+                        log.debug("SecureConversationToken obtained: id=" + id);
+                        
+                        rmd.setSecConvTokenId(id);
+
                         
                     } catch (TrustException e) {
                         throw new RampartException(e.getMessage(), e);
                     }
-
                 }
             }
-        } else if(!rpd.isSymmetricBinding() && !rpd.isTransportBinding()) {
-            //TODO Setup InitiatorToken and receipientToken
+            
+            //If it was the ProtectionToken assertion then sigTok is the
+            //same as encrTok
+            if(sigTok.equals(encrTok) && sigTok instanceof IssuedToken) {
+                
+                log.debug("Symmetric binding uses a ProtectionToken, both" +
+                        " SignatureToken and EncryptionToken are the same");
+                
+                rmd.setIssuedEncryptionTokenId(rmd.getIssuedEncryptionTokenId());
+            } else {
+                //Now we'll have to obtain the encryption token as well :-)
+                //ASSUMPTION: SecureConversationToken is used as a 
+                //ProtectionToken therfore we only have to process a issued 
+                //token here
+                
+                log.debug("Obtaining the Encryption Token");
+                if(rmd.getIssuedEncryptionTokenId() != null) {
+                    
+                    log.debug("EncrytionToken not alredy set");
+
+                    IssuedToken issuedToken = (IssuedToken)encrTok;
+                    
+                    try {
+                        
+                        String action = TrustUtil.getActionValue(rmd
+                                .getWstVersion(),
+                                RahasConstants.RST_ACTON_ISSUE);
+                        
+                        // Get sts epr
+                        String issuerEprAddress = RampartUtil
+                                .processIssuerAddress(issuedToken
+                                        .getIssuerEpr());
+                        
+                        OMElement rstTemplate = issuedToken.getRstTemplate();
+                        
+                        String id = this.getToken(rmd, rstTemplate,
+                                issuerEprAddress, action);
+                        
+                        log.debug("Issued token obtained: id=" + id);
+                        
+                        rmd.setIssuedEncryptionTokenId(id);
+                    } catch (TrustException e) {
+                        throw new RampartException(e.getMessage(), e);
+                    }
+
+                    
+                }
+                
+            }
+            
+        } else if(rpd.isTransportBinding()) {
+            //TODO: Handle transport binding
             
         } else {
-            //TODO: Handle transport binding
+            //TODO Setup InitiatorToken and receipientToken
             
         }
     }
+    
+    
+    private String getToken(RampartMessageData rmd, OMElement rstTemplate,
+            String issuerEpr, String action) throws RampartException {
 
-
+        try {
+            
+            STSClient client = new STSClient(rmd.getMsgContext()
+                    .getConfigurationContext());
+            // Set request action
+            client.setAction(action);
+            
+            client.setRstTemplate(rstTemplate);
+    
+            // Set crypto information
+            Crypto crypto = RampartUtil.getSignatureCrypto(rmd
+                    .getPolicyData().getRampartConfig());
+            CallbackHandler cbh = RampartUtil.getPasswordCB(rmd);
+            client.setCryptoInfo(crypto, cbh);
+    
+            // Get service policy
+            Policy servicePolicy = rmd.getServicePolicy();
+    
+            // Get STS policy
+            Policy stsPolicy = rmd.getPolicyData()
+                    .getRampartConfig().getTokenIssuerPolicy();
+    
+            // Get service epr
+            String servceEprAddress = rmd.getMsgContext()
+                    .getOptions().getTo().getAddress();
+    
+            // Request type
+            String reqType = TrustUtil.getWSTNamespace(rmd
+                    .getWstVersion())
+                    + RahasConstants.REQ_TYPE_ISSUE;
+            
+            //Make the request
+            org.apache.rahas.Token rst = 
+                client.requestSecurityToken(servicePolicy, 
+                                            issuerEpr,
+                                            stsPolicy, 
+                                            reqType, 
+                                            servceEprAddress);
+            
+            //Add the token to token storage
+            rmd.getTokenStorage().add(rst);
+            
+            return rst.getId();
+        } catch (TrustException e) {
+            throw new RampartException(e.getMessage(), e);
+        }
+    }
     
 }
