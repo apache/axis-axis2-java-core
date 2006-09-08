@@ -55,7 +55,7 @@ public class SimpleTokenStore implements TokenStorage {
         }
     }
 
-     public String[] getTokenIdentifiers() throws TrustException {
+    public String[] getTokenIdentifiers() throws TrustException {
         List identifiers = new ArrayList();
         for (Iterator iterator = tokens.keySet().iterator(); iterator.hasNext();) {
             identifiers.add(iterator.next());
@@ -64,47 +64,54 @@ public class SimpleTokenStore implements TokenStorage {
     }
 
     public List getValidTokens() throws TrustException {
-        checkTokenExpiry();
-        ArrayList issued = getTokens(Token.ISSUED);
-        List renewed = getTokens(Token.RENEWED);
-        for (Iterator iterator = renewed.iterator(); iterator.hasNext();) {
-            issued.add(iterator.next());
-        }
-        return issued;
+        return getTokens(new int[]{Token.ISSUED, Token.RENEWED});
     }
 
     public List getRenewedTokens() throws TrustException {
-        checkTokenExpiry();
         return getTokens(Token.RENEWED);
     }
 
 
     public List getCancelledTokens() throws TrustException {
-        checkTokenExpiry();
         return getTokens(Token.CANCELLED);
     }
 
     public List getExpiredTokens() throws TrustException {
-        checkTokenExpiry();
         return getTokens(Token.EXPIRED);
     }
 
-    private ArrayList getTokens(int state) {
-        ArrayList expiredTokens = new ArrayList();
+    private List getTokens(int[] states) throws TrustException {
+        processTokenExpiry();
+        List tokens = new ArrayList();
+        for (Iterator iterator = this.tokens.values().iterator(); iterator.hasNext();) {
+            Token token = (Token) iterator.next();
+            for (int i = 0; i < states.length; i++) {
+                if (token.getState() == states[i]) {
+                    tokens.add(token);
+                    break;
+                }
+            }
+        }
+        return tokens;
+    }
+
+    private List getTokens(int state) throws TrustException {
+        processTokenExpiry();
+        List tokens = new ArrayList();
         for (Iterator iterator = this.tokens.values().iterator(); iterator.hasNext();) {
             Token token = (Token) iterator.next();
             if (token.getState() == state) {
-                expiredTokens.add(token);
+                tokens.add(token);
             }
         }
-        return expiredTokens;
+        return tokens;
     }
 
     public Token getToken(String id) throws TrustException {
         return (Token) this.tokens.get(id);
     }
 
-    protected void checkTokenExpiry() throws TrustException {
+    protected void processTokenExpiry() throws TrustException {
         for (Iterator iterator = tokens.values().iterator(); iterator.hasNext();) {
             Token token = (Token) iterator.next();
             if (token.getExpires() != null &&
