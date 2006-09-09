@@ -16,6 +16,7 @@
 
 package org.apache.rampart.policy;
 
+import org.apache.rampart.RampartException;
 import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.WSSPolicyException;
@@ -28,6 +29,7 @@ import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RampartPolicyData {
 
@@ -90,19 +92,24 @@ public class RampartPolicyData {
     /*
      * Holds the supporting tokens elements
      */
-    private SupportingToken supportingToken;
+    private SupportingToken supportingTokens;
 
-    private SupportingToken signedSupportingToken;
+    private SupportingToken signedSupportingTokens;
 
-    private SupportingToken endorsingSupportingToken;
+    private SupportingToken endorsingSupportingTokens;
 
-    private SupportingToken signedEndorsingSupportingToken;
+    private SupportingToken signedEndorsingSupportingTokens;
     
     private AlgorithmSuite algorithmSuite;
     
     private RampartConfig rampartConfig;
     
     private Trust10 trust10;
+    
+    private HashMap supportingTokensIdMap;
+    private HashMap signedSupportingTokensIdMap;
+    private HashMap endorsingSupportingTokensIdMap;
+    private HashMap signedEndorsingSupportingTokensIdMap;
     
     /**
      * @return Returns the symmetricBinding.
@@ -335,18 +342,18 @@ public class RampartPolicyData {
         signedParts.add(wep);
     }
 
-    public void setSupportingTokens(SupportingToken suppToken)
+    public void setSupportingTokens(SupportingToken suppTokens)
             throws WSSPolicyException {
 
-        int tokenType = suppToken.getType();
+        int tokenType = suppTokens.getType();
         if (tokenType == Constants.SUPPORTING_TOKEN_SUPPORTING) {
-            supportingToken = suppToken;
+            supportingTokens = suppTokens;
         } else if (tokenType == Constants.SUPPORTING_TOKEN_SIGNED) {
-            signedSupportingToken = suppToken;
+            signedSupportingTokens = suppTokens;
         } else if (tokenType == Constants.SUPPORTING_TOKEN_ENDORSING) {
-            endorsingSupportingToken = suppToken;
+            endorsingSupportingTokens = suppTokens;
         } else if (tokenType == Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING) {
-            signedEndorsingSupportingToken = suppToken;
+            signedEndorsingSupportingTokens = suppTokens;
         }
     }
     
@@ -441,58 +448,51 @@ public class RampartPolicyData {
     /**
      * @return Returns the signedEndorsingSupportingToken.
      */
-    public SupportingToken getSignedEndorsingSupportingToken() {
-        return signedEndorsingSupportingToken;
+    public SupportingToken getSignedEndorsingSupportingTokens() {
+        return signedEndorsingSupportingTokens;
     }
 
     /**
      * @param signedEndorsingSupportingToken The signedEndorsingSupportingToken to set.
      */
-    public void setSignedEndorsingSupportingToken(
-            SupportingToken signedEndorsingSupportingToken) {
-        this.signedEndorsingSupportingToken = signedEndorsingSupportingToken;
+    public void setSignedEndorsingSupportingTokens(
+            SupportingToken signedEndorsingSupportingTokens) {
+        this.signedEndorsingSupportingTokens = signedEndorsingSupportingTokens;
     }
 
     /**
      * @return Returns the signedSupportingToken.
      */
-    public SupportingToken getSignedSupportingToken() {
-        return signedSupportingToken;
+    public SupportingToken getSignedSupportingTokens() {
+        return signedSupportingTokens;
     }
 
     /**
      * @param signedSupportingToken The signedSupportingToken to set.
      */
-    public void setSignedSupportingToken(SupportingToken signedSupportingToken) {
-        this.signedSupportingToken = signedSupportingToken;
+    public void setSignedSupportingTokens(SupportingToken signedSupportingTokens) {
+        this.signedSupportingTokens = signedSupportingTokens;
     }
 
     /**
      * @return Returns the supportingToken.
      */
-    public SupportingToken getSupportingToken() {
-        return supportingToken;
-    }
-
-    /**
-     * @param supportingToken The supportingToken to set.
-     */
-    public void setSupportingToken(SupportingToken supportingToken) {
-        this.supportingToken = supportingToken;
+    public SupportingToken getSupportingTokens() {
+        return supportingTokens;
     }
 
     /**
      * @param endorsingSupportingToken The endorsingSupportingToken to set.
      */
-    public void setEndorsingSupportingToken(SupportingToken endorsingSupportingToken) {
-        this.endorsingSupportingToken = endorsingSupportingToken;
+    public void setEndorsingSupportingTokens(SupportingToken endorsingSupportingTokens) {
+        this.endorsingSupportingTokens = endorsingSupportingTokens;
     }
 
     /**
      * @return Returns the endorsingSupportingToken.
      */
-    public SupportingToken getEndorsingSupportingToken() {
-        return endorsingSupportingToken;
+    public SupportingToken getEndorsingSupportingTokens() {
+        return endorsingSupportingTokens;
     }
 
     /**
@@ -544,5 +544,83 @@ public class RampartPolicyData {
         this.transportBinding = transportBinding;
     }
 
+    
+    /**
+     * Add the given token and id to the map. 
+     * @param token
+     * @param id
+     */
+    public void setSupporttingtokenId(Token token, String id, int type) throws RampartException {
+        
+        HashMap tokenMap = null;
+        switch (type) {
+        case Constants.SUPPORTING_TOKEN_SUPPORTING:
+            if(this.supportingTokensIdMap == null) {
+                this.supportingTokensIdMap = new HashMap();
+            }
+            tokenMap = this.supportingTokensIdMap;
+            break;
+
+        case Constants.SUPPORTING_TOKEN_SIGNED:
+            if(this.signedSupportingTokensIdMap == null) {
+                this.signedSupportingTokensIdMap = new HashMap();
+            }
+            tokenMap = this.signedSupportingTokensIdMap;
+            break;
+            
+        case Constants.SUPPORTING_TOKEN_ENDORSING:
+            if(this.endorsingSupportingTokensIdMap == null) {
+                this.endorsingSupportingTokensIdMap = new HashMap();
+            }
+            tokenMap = this.endorsingSupportingTokensIdMap;
+            break;
+            
+        case Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING:
+            if(this.signedEndorsingSupportingTokensIdMap == null) {
+                this.signedEndorsingSupportingTokensIdMap = new HashMap();
+            }
+            tokenMap = this.signedEndorsingSupportingTokensIdMap;
+            break;
+            
+        default:
+            throw new RampartException("invalidSupportingVersionType",
+                    new String[] { Integer.toString(type) });
+        }
+        
+        tokenMap.put(token, id);
+    }
+    
+    public String getSupportingTokenID(Token token, int type)
+            throws RampartException {
+        switch (type) {
+        case Constants.SUPPORTING_TOKEN_SUPPORTING:
+            if(this.supportingTokensIdMap != null) {
+                return (String)this.supportingTokensIdMap.get(token);
+            }
+            return null;
+
+        case Constants.SUPPORTING_TOKEN_SIGNED:
+            if(this.signedSupportingTokensIdMap != null) {
+                return (String)this.signedSupportingTokensIdMap.get(token);
+            }
+            return null;
+            
+        case Constants.SUPPORTING_TOKEN_ENDORSING:
+            if(this.endorsingSupportingTokensIdMap != null) {
+                return (String)this.endorsingSupportingTokensIdMap.get(token);
+            }
+            return null;
+            
+        case Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING:
+            if(this.signedEndorsingSupportingTokensIdMap == null) {
+                this.signedEndorsingSupportingTokensIdMap = new HashMap();
+            }
+            return null;
+
+        default:
+            throw new RampartException("invalidSupportingVersionType",
+                    new String[] { Integer.toString(type) });
+        }
+    }
     
 }

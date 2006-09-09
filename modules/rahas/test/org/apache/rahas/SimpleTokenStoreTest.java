@@ -101,8 +101,8 @@ public class SimpleTokenStoreTest extends TestCase {
             Token token3 = getTestToken("id-3", new Date(System.currentTimeMillis() + 10000));
             Token token4 = getTestToken("id-4", new Date(System.currentTimeMillis() + 10000));
             Token token5 = getTestToken("id-5", new Date(System.currentTimeMillis() + 10000));
-            Token token6 = getTestToken("id-6");
-            Token token7 = getTestToken("id-7");
+            Token token6 = getTestToken("id-6", new Date(System.currentTimeMillis() + 10000));
+            Token token7 = getTestToken("id-7", new Date(System.currentTimeMillis() + 10000));
 
             token1.setState(Token.ISSUED);
             token2.setState(Token.ISSUED);

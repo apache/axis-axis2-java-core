@@ -117,8 +117,14 @@ public class RampartMessageData {
                 this.secConvVersion = TrustUtil.getWSTVersion((String)msgCtx.getProperty(KEY_WSSC_VERSION));
             }
             
+            //This is for a user to set policy in from the client
             if(msgCtx.getProperty(KEY_RAMPART_POLICY) != null) {
                 this.servicePolicy = (Policy)msgCtx.getProperty(KEY_RAMPART_POLICY);
+            }
+            
+            //If the policy is already available in the service, then use it
+            if(msgCtx.getParameter(KEY_RAMPART_POLICY) != null) {
+                this.servicePolicy = (Policy)msgCtx.getProperty(getPolicyKey(msgCtx));
             }
             
         } catch (TrustException e) {
@@ -339,6 +345,24 @@ public class RampartMessageData {
      */
     public Policy getServicePolicy() {
         return servicePolicy;
+    }
+
+    /**
+     * @param servicePolicy The servicePolicy to set.
+     */
+    public void setServicePolicy(Policy servicePolicy) {
+        this.servicePolicy = servicePolicy;
+    }
+    
+    /**
+     * @param msgCtx
+     * @return
+     */
+    public static String getPolicyKey(MessageContext msgCtx) {
+        return RampartMessageData.KEY_RAMPART_POLICY
+                + msgCtx.getAxisService().getName() + "{"
+                + msgCtx.getAxisOperation().getName().getNamespaceURI()
+                + "}" + msgCtx.getAxisOperation().getName().getLocalPart();
     }
 
 }
