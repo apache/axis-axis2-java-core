@@ -19,6 +19,7 @@ package org.apache.rampart;
 import org.apache.axis2.context.MessageContext;
 import org.apache.neethi.Policy;
 import org.apache.rahas.RahasConstants;
+import org.apache.rahas.SimpleTokenStore;
 import org.apache.rahas.TokenStorage;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
@@ -26,6 +27,7 @@ import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.conversation.ConversationConstants;
 import org.apache.ws.security.message.WSSecHeader;
+import org.apache.ws.security.util.Loader;
 import org.w3c.dom.Document;
 
 import java.util.Vector;
@@ -62,6 +64,8 @@ public class RampartMessageData {
     
     private int timeToLive = 300;
     
+    private String timestampId;
+    
     private Document document;
     
     private Vector encryptionParts;
@@ -69,6 +73,8 @@ public class RampartMessageData {
     private Vector signatureParts;
     
     private Vector endorsedSignatureParts;
+    
+    private Vector signedEndorsedSignatureParts;
 
     private TokenStorage tokenStorage;
     
@@ -101,6 +107,7 @@ public class RampartMessageData {
      */
     private Policy servicePolicy;
 
+    private boolean isClientSide;
 
     public RampartMessageData(MessageContext msgCtx, Document doc) throws RampartException {
         this.msgContext = msgCtx;
@@ -126,6 +133,8 @@ public class RampartMessageData {
             if(msgCtx.getParameter(KEY_RAMPART_POLICY) != null) {
                 this.servicePolicy = (Policy)msgCtx.getProperty(getPolicyKey(msgCtx));
             }
+            
+            this.isClientSide = !msgCtx.isServerSide();
             
         } catch (TrustException e) {
             throw new RampartException("errorInExtractingMsgProps", e);
@@ -157,8 +166,12 @@ public class RampartMessageData {
     /**
      * @param endorsedSignatureParts The endorsedSignatureParts to set.
      */
-    public void setEndorsedSignatureParts(Vector endorsedSignatureParts) {
-        this.endorsedSignatureParts = endorsedSignatureParts;
+    public void addEndorsedSignaturePart(String id) {
+        if(this.endorsedSignatureParts == null) {
+            this.endorsedSignatureParts = new Vector();
+        }
+        
+        this.endorsedSignatureParts.add(id);
     }
 
     /**
@@ -171,8 +184,11 @@ public class RampartMessageData {
     /**
      * @param signatureParts The signatureParts to set.
      */
-    public void setSignatureParts(Vector signatureParts) {
-        this.signatureParts = signatureParts;
+    public void addSignaturePart(String id) {
+        if(this.signatureParts == null) {
+            this.signatureParts = new Vector();
+        }
+        this.signatureParts.add(id);
     }
 
     /**
@@ -308,7 +324,47 @@ public class RampartMessageData {
     /**
      * @return Returns the tokenStorage.
      */
-    public TokenStorage getTokenStorage() {
+    public TokenStorage getTokenStorage() throws RampartException {
+
+        if(this.tokenStorage != null) {
+            return this.tokenStorage;
+        }
+
+        TokenStorage storage = (TokenStorage) this.msgContext
+                .getProperty(TokenStorage.TOKEN_STORAGE_KEY);
+
+        if (storage != null) {
+            this.tokenStorage = storage;
+        } else {
+
+            String storageClass = this.policyData.getRampartConfig()
+                    .getTokenStoreClass();
+    
+            if (storageClass != null) {
+                Class stClass = null;
+                try {
+                    stClass = Loader.loadClass(msgContext.getAxisService()
+                            .getClassLoader(), storageClass);
+                } catch (ClassNotFoundException e) {
+                    throw new RampartException(
+                            "WSHandler: cannot load token storage class: "
+                                    + storageClass, e);
+                }
+                try {
+                    this.tokenStorage = (TokenStorage) stClass.newInstance();
+                } catch (java.lang.Exception e) {
+                    throw new RampartException(
+                            "Cannot create instance of token storage: "
+                                    + storageClass, e);
+                }
+            } else {
+                this.tokenStorage = new SimpleTokenStore();
+            }
+        }
+        
+        //Set the storage instance
+        this.msgContext.getConfigurationContext().setProperty(
+                TokenStorage.TOKEN_STORAGE_KEY, this.tokenStorage);
         return tokenStorage;
     }
 
@@ -363,6 +419,42 @@ public class RampartMessageData {
                 + msgCtx.getAxisService().getName() + "{"
                 + msgCtx.getAxisOperation().getName().getNamespaceURI()
                 + "}" + msgCtx.getAxisOperation().getName().getLocalPart();
+    }
+
+    /**
+     * @return Returns the timestampId.
+     */
+    public String getTimestampId() {
+        return timestampId;
+    }
+
+    /**
+     * @param timestampId The timestampId to set.
+     */
+    public void setTimestampId(String timestampId) {
+        this.timestampId = timestampId;
+    }
+
+    /**
+     * @return Returns the isClientSide.
+     */
+    public boolean isClientSide() {
+        return isClientSide;
+    }
+
+    /**
+     * @return Returns the signedendorsedSignatureParts.
+     */
+    public Vector getSignedEndorsedSignatureParts() {
+        return signedEndorsedSignatureParts;
+    }
+
+    public void addSignedEndorsedSignatureParts(String id) {
+        if(this.signedEndorsedSignatureParts == null) {
+            this.signedEndorsedSignatureParts = new Vector();
+        }
+        
+        this.signedEndorsedSignatureParts.add(id);
     }
 
 }

@@ -1,0 +1,292 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.rampart.builder;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.rahas.TrustException;
+import org.apache.rampart.RampartException;
+import org.apache.rampart.RampartMessageData;
+import org.apache.rampart.policy.RampartPolicyData;
+import org.apache.rampart.util.RampartUtil;
+import org.apache.ws.secpolicy.Constants;
+import org.apache.ws.secpolicy.model.IssuedToken;
+import org.apache.ws.secpolicy.model.SupportingToken;
+import org.apache.ws.secpolicy.model.Token;
+import org.apache.ws.secpolicy.model.UsernameToken;
+import org.apache.ws.security.WSPasswordCallback;
+import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.conversation.ConversationException;
+import org.apache.ws.security.message.WSSecDKSign;
+import org.apache.ws.security.message.WSSecTimestamp;
+import org.apache.ws.security.message.WSSecUsernameToken;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Vector;
+
+public class TransportBindingBuilder {
+
+    private static Log log = LogFactory.getLog(TransportBindingBuilder.class);
+    
+    public void build(RampartMessageData rmd) throws RampartException {
+        
+        log.debug("TransportBindingBuilder build invoked");
+        
+        RampartPolicyData rpd = rmd.getPolicyData();
+
+        Document doc = rmd.getDocument();
+        
+        log.debug("Adding timestamp");
+        
+        WSSecTimestamp timeStampBuilder = new WSSecTimestamp();
+        timeStampBuilder.setWsConfig(rmd.getConfig());
+
+        timeStampBuilder.setTimeToLive(RampartUtil.getTimeToLive(rmd));
+        
+        // add the Timestamp to the SOAP Enevelope
+
+        timeStampBuilder.build(doc, rmd
+                .getSecHeader());
+        
+        log.debug("Timestamp id: " + timeStampBuilder.getId());
+
+        rmd.setTimestampId(timeStampBuilder.getId());
+        
+        log.debug("Adding timestamp: DONE");
+        
+        /*
+         * Process Supporting tokens
+         */
+        
+        SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
+        
+        if(sgndSuppTokens != null && sgndSuppTokens.getTokens() != null &&
+                sgndSuppTokens.getTokens().size() > 0) {
+            
+            log.debug("Processing signed supporting tokens");
+            
+            ArrayList tokens = sgndSuppTokens.getTokens();
+            for (Iterator iter = tokens.iterator(); iter.hasNext();) {
+                
+                Token token = (Token) iter.next();
+                if(token instanceof UsernameToken && rmd.isClientSide()) {
+                    addUsernameToken(rmd);
+                } else {
+                    throw new RampartException("unsupportedSignedSupportingToken", 
+                            new String[]{"{" +token.getName().getNamespaceURI() 
+                            + "}" + token.getName().getLocalPart()});
+                }
+            }
+        }
+        
+        SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
+        if(sgndEndSuppTokens != null && sgndEndSuppTokens.getTokens() != null &&
+                sgndEndSuppTokens.getTokens().size() > 0) {
+            
+            log.debug("Processing endorsing signed supporting tokens");
+            
+            ArrayList tokens = sgndEndSuppTokens.getTokens();
+            for (Iterator iter = tokens.iterator(); iter.hasNext();) {
+                Token token = (Token) iter.next();
+                if(token instanceof IssuedToken){
+                    doIssuedTokenSignature(rmd, token);
+                }
+            }
+        }
+
+        SupportingToken endSupptokens = rpd.getEndorsingSupportingTokens();
+        if(endSupptokens != null && endSupptokens.getTokens() != null &&
+                endSupptokens.getTokens().size() > 0) {
+            log.debug("Processing endorsing supporting tokens");
+            ArrayList tokens = endSupptokens.getTokens();
+            for (Iterator iter = tokens.iterator(); iter.hasNext();) {
+                Token token = (Token) iter.next();
+                if(token instanceof IssuedToken){
+                    doIssuedTokenSignature(rmd, token);
+                }
+            }
+        }
+        
+    }
+
+    /**
+     * @param rmd
+     * @param token
+     * @throws RampartException
+     */
+    private void doIssuedTokenSignature(RampartMessageData rmd, Token token) throws RampartException {
+        
+        RampartPolicyData rpd = rmd.getPolicyData();
+        Document doc= rmd.getDocument();
+        
+        //Get the issued token
+        String id = RampartUtil.getIssuedToken(rmd, (IssuedToken)token);
+   
+        String inclusion = token.getInclusion();
+        org.apache.rahas.Token tok = null;
+        try {
+          tok = rmd.getTokenStorage().getToken(id);
+        } catch (TrustException e) {
+          throw new RampartException("errorExtractingToken",
+                  new String[]{id} ,e);
+        }
+   
+        if(inclusion.equals(Constants.INCLUDE_ALWAYS) ||
+        ((inclusion.equals(Constants.INCLUDE_ALWAYS_TO_RECIPIENT) 
+                || inclusion.equals(Constants.INCLUDE_ONCE)) 
+                && rmd.isClientSide())) {
+          
+          //Add the token
+          rmd.getSecHeader().getSecurityHeader().appendChild(
+                  doc.importNode((Element) tok.getToken(), true));
+          
+        }
+   
+        //check for dirived keys
+        if(token.isDerivedKeys()) {
+          //Create a derived key and add
+          try {
+   
+              //Do Signature with derived keys
+              WSSecDKSign dkSign = new WSSecDKSign();
+              
+              OMElement ref = tok.getAttachedReference();
+              if(ref == null) {
+                  ref = tok.getUnattachedReference();
+              }
+              if(ref != null) {
+                  dkSign.setExternalKey(tok.getSecret(), (Element) 
+                          doc.importNode((Element) ref, true));
+              } else {
+                  dkSign.setExternalKey(tok.getSecret(), tok.getId());
+              }
+              
+              //Set the algo info
+              dkSign.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
+              
+              
+              dkSign.prepare(doc);
+              
+              dkSign.appendDKElementToHeader(rmd.getSecHeader());
+              
+              Vector sigParts = new  Vector();
+              
+              sigParts.add(rmd.getTimestampId());                          
+              
+              if(rpd.isTokenProtection()) {
+                  sigParts.add(id);
+              }
+              
+              dkSign.setParts(sigParts);
+              
+              //Do signature
+              dkSign.computeSignature();
+              
+              dkSign.appendSigToHeader(rmd.getSecHeader());
+              
+          } catch (ConversationException e) {
+              throw new RampartException(
+                      "errorInDerivedKeyTokenSignature", e);
+          } catch (WSSecurityException e) {
+              throw new RampartException(
+                      "errorInDerivedKeyTokenSignature", e);
+          }
+          
+        } else {
+          //TODO: Do signature withtout derived keys with the Issuedtoken ??
+        }
+    }
+
+    /**
+     * Add a UsernameToken to the security header
+     * @param rmd
+     * @param rpd
+     * @param doc
+     * @return 
+     * @throws RampartException
+     */
+    private String addUsernameToken(RampartMessageData rmd) throws RampartException {
+       
+        log.debug("Adding a UsernameToken");
+        
+        RampartPolicyData rpd = rmd.getPolicyData();
+        Document doc = rmd.getDocument();
+        
+        //Get the user
+        String user = rpd.getRampartConfig().getUser();
+        if(user != null && !"".equals(user)) {
+            log.debug("User : " + user);
+            
+            //Get the password
+            CallbackHandler handler = RampartUtil.getPasswordCB(rmd);
+            
+            if(handler == null) {
+                //If the callback handler is missing
+                throw new RampartException("cbHandlerMissing");
+            }
+            
+            WSPasswordCallback[] cb = { new WSPasswordCallback(user,
+                    WSPasswordCallback.USERNAME_TOKEN) };
+            
+            try {
+                handler.handle(cb);
+                
+                //get the password
+                String password = cb[0].getPassword();
+                
+                log.debug("Password : " + password);
+                
+                if(password != null && !"".equals(password)) {
+                    //If the password is available then build the token
+                    
+                    WSSecUsernameToken utBuilder = new WSSecUsernameToken();
+                    //TODO Get the UT type, only WS-Sx spec supports this
+                    utBuilder.setUserInfo(user, password);
+                    
+                    //Add the UT
+                    utBuilder.build(doc, rmd.getSecHeader());
+                    
+                    return utBuilder.getId();
+                } else {
+                    //If there's no password then throw an exception
+                    throw new RampartException("noPasswordForUser", 
+                            new String[]{user});
+                }
+            } catch (IOException e) {
+                throw new RampartException("errorInGettingPasswordForUser", 
+                        new String[]{user}, e);
+            } catch (UnsupportedCallbackException e) {
+                throw new RampartException("errorInGettingPasswordForUser", 
+                        new String[]{user}, e);
+            }
+            
+        } else {
+            log.debug("No user value specified in the configuration");
+            throw new RampartException("userMissing");
+        }
+        
+    }
+    
+}

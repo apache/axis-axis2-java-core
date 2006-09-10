@@ -17,18 +17,26 @@
 package org.apache.rampart.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPBody;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.neethi.Policy;
+import org.apache.rahas.RahasConstants;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
+import org.apache.rahas.client.STSClient;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.RampartMessageData;
 import org.apache.rampart.policy.model.CryptoConfig;
 import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.ws.secpolicy.Constants;
+import org.apache.ws.secpolicy.model.IssuedToken;
+import org.apache.ws.secpolicy.model.SecureConversationToken;
 import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
@@ -41,6 +49,7 @@ import org.apache.ws.security.util.Loader;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.xml.namespace.QName;
 
 import java.util.Properties;
 
@@ -91,14 +100,14 @@ public class RampartUtil {
                 cbClass = Loader.loadClass(classLoader, cbHandlerClass);
             } catch (ClassNotFoundException e) {
                 throw new RampartException(
-                       "WSHandler: cannot load password callback class: "
+                       "Cannot load password callback class: "
                + cbHandlerClass, e);
             }
             try {
                 cbHandler = (CallbackHandler) cbClass.newInstance();
             } catch (java.lang.Exception e) {
                 throw new RampartException(
-                     "WSHandler: cannot create instance of password callback: "
+                     "Cannot create instance of password callback: "
              + cbHandlerClass, e);
             }
         } else {
@@ -271,4 +280,186 @@ public class RampartUtil {
     }
     
 
+    public static int getTimeToLive(RampartMessageData messageData) {
+
+        String ttl = messageData.getPolicyData().getRampartConfig()
+                .getTimestampTTL();
+        int ttl_i = 0;
+        if (ttl != null) {
+            try {
+                ttl_i = Integer.parseInt(ttl);
+            } catch (NumberFormatException e) {
+                ttl_i = messageData.getTimeToLive();
+            }
+        }
+        if (ttl_i <= 0) {
+            ttl_i = messageData.getTimeToLive();
+        }
+        return ttl_i;
+    }
+    
+    /**
+     * Obtain a security context token.
+     * @param rmd
+     * @param secConvTok
+     * @return
+     * @throws TrustException
+     * @throws RampartException
+     */
+    public static String getSecConvToken(RampartMessageData rmd,
+            SecureConversationToken secConvTok) throws TrustException,
+            RampartException {
+        String action = TrustUtil.getActionValue(
+                rmd.getWstVersion(),
+                RahasConstants.RST_ACTON_SCT);
+        
+        // Get sts epr
+        String issuerEprAddress = RampartUtil
+                .processIssuerAddress(secConvTok.getIssuerEpr());
+
+        //Find SC version
+        int conversationVersion = rmd.getSecConvVersion();
+        
+        OMElement rstTemplate = RampartUtil.createRSTTempalteForSCT(
+                conversationVersion, 
+                rmd.getWstVersion());
+        
+        //Check to see whether there's a specific issuer
+        Policy stsPolicy = null;
+        if (issuerEprAddress.equals(rmd.getMsgContext().getOptions().getTo().getAddress())) {
+            log.debug("Issuer address is the same as service " +
+                    "address");
+            stsPolicy = rmd.getServicePolicy();
+        } else {
+            //Try boot strap policy
+            Policy bsPol = secConvTok.getBootstrapPolicy();
+            if(bsPol != null) {
+                log.debug("BootstrapPolicy found");
+                stsPolicy = bsPol;
+            } else {
+                //No bootstrap policy
+                //Use issuer policy specified in rampart config
+                log.debug("No bootstrap policy, using issuer" +
+                        " policy specified in rampart config");
+                rmd.getPolicyData().getRampartConfig().getTokenIssuerPolicy();
+            }
+        }
+        
+        String id = getToken(rmd, rstTemplate,
+                issuerEprAddress, action, stsPolicy);
+        
+        log.debug("SecureConversationToken obtained: id=" + id);
+        return id;
+    }
+    
+
+    /**
+     * Obtain an issued token.
+     * @param rmd
+     * @param issuedToken
+     * @return
+     * @throws TrustException
+     * @throws RampartException
+     */
+    public static String getIssuedToken(RampartMessageData rmd,
+            IssuedToken issuedToken) throws RampartException {
+
+        try {
+            String action = TrustUtil.getActionValue(rmd.getWstVersion(),
+                    RahasConstants.RST_ACTON_ISSUE);
+
+            // Get sts epr
+            String issuerEprAddress = RampartUtil.processIssuerAddress(issuedToken
+                    .getIssuerEpr());
+
+            OMElement rstTemplate = issuedToken.getRstTemplate();
+
+            // Get STS policy
+            Policy stsPolicy = rmd.getPolicyData().getRampartConfig()
+                    .getTokenIssuerPolicy();
+
+            String id = getToken(rmd, rstTemplate, issuerEprAddress, action,
+                    stsPolicy);
+
+            log.debug("Issued token obtained: id=" + id);
+            return id;
+        } catch (TrustException e) {
+            throw new RampartException("errorInObtainingToken", e);
+        } 
+    }
+    
+    /**
+     * Request a token.
+     * @param rmd
+     * @param rstTemplate
+     * @param issuerEpr
+     * @param action
+     * @param issuerPolicy
+     * @return
+     * @throws RampartException
+     */
+    public static String getToken(RampartMessageData rmd, OMElement rstTemplate,
+            String issuerEpr, String action, Policy issuerPolicy) throws RampartException {
+
+        try {
+            
+            STSClient client = new STSClient(rmd.getMsgContext()
+                    .getConfigurationContext());
+            // Set request action
+            client.setAction(action);
+            
+            client.setRstTemplate(rstTemplate);
+    
+            // Set crypto information
+            Crypto crypto = RampartUtil.getSignatureCrypto(rmd
+                    .getPolicyData().getRampartConfig());
+            CallbackHandler cbh = RampartUtil.getPasswordCB(rmd);
+            client.setCryptoInfo(crypto, cbh);
+    
+            // Get service policy
+            Policy servicePolicy = rmd.getServicePolicy();
+    
+            // Get service epr
+            String servceEprAddress = rmd.getMsgContext()
+                    .getOptions().getTo().getAddress();
+    
+            // Request type
+            String reqType = TrustUtil.getWSTNamespace(rmd
+                    .getWstVersion())
+                    + RahasConstants.REQ_TYPE_ISSUE;
+            
+            //Make the request
+            org.apache.rahas.Token rst = 
+                client.requestSecurityToken(servicePolicy, 
+                                            issuerEpr,
+                                            issuerPolicy, 
+                                            reqType, 
+                                            servceEprAddress);
+            
+            //Add the token to token storage
+            rmd.getTokenStorage().add(rst);
+            
+            return rst.getId();
+        } catch (TrustException e) {
+            throw new RampartException(e.getMessage(), e);
+        }
+    }
+
+    public static String getSoapBodyId(SOAPEnvelope env) {
+        String id = null;
+        SOAPBody body = env.getBody();
+        OMAttribute idAttr = body.getAttribute(new QName(WSConstants.WSU_NS, "Id"));
+        if(idAttr != null) {
+            id = idAttr.getAttributeValue();
+        } else {
+            //Add an id
+            OMNamespace ns = env.getOMFactory().createOMNamespace(WSConstants.WSU_NS, WSConstants.WSU_PREFIX);
+            id = "Id-" + body.hashCode();
+            idAttr = env.getOMFactory().createOMAttribute("Id", ns, id);
+            body.addAttribute(idAttr);
+        }
+        
+        return id;
+    }
+    
 }
