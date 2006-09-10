@@ -22,7 +22,7 @@
         /**
          * Auto generated function definition
          <!--  select only the body parameters  -->
-          <xsl:for-each select="input/param[@location='body']">
+          <xsl:for-each select="input/param[@location='body' and @type!='']">
             <xsl:if test="@type!=''">* @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
          </xsl:text></xsl:if></xsl:for-each>
          */
@@ -34,7 +34,7 @@
         <xsl:value-of select="$outputtype"/>
         </xsl:otherwise>
         </xsl:choose>
-        <xsl:value-of select="$svc_name"/>_<xsl:value-of select="@name"/> (const axis2_env_t* env <xsl:for-each select="input/param[@location='body']"> ,<xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
+        <xsl:value-of select="$svc_name"/>_<xsl:value-of select="@name"/> (const axis2_env_t* env <xsl:for-each select="input/param[@location='body' and @type!='']"> ,<xsl:variable name="paramtype"><xsl:if test="@ours">axis2_</xsl:if><xsl:choose><xsl:when test="@type='org.apache.axiom.om.OMElement'">axiom_node_t*</xsl:when><xsl:otherwise><xsl:value-of select="@type"></xsl:value-of></xsl:otherwise></xsl:choose><xsl:if test="@ours">_t*</xsl:if></xsl:variable>
                                           <xsl:value-of select="$paramtype"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                                           </xsl:for-each> )
 
