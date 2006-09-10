@@ -23,16 +23,21 @@ import org.apache.rahas.TrustException;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.RampartMessageData;
 import org.apache.rampart.policy.RampartPolicyData;
+import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.IssuedToken;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.UsernameToken;
+import org.apache.ws.secpolicy.model.X509Token;
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.message.WSSecDKSign;
+import org.apache.ws.security.message.WSSecEncryptedKey;
+import org.apache.ws.security.message.WSSecSignature;
 import org.apache.ws.security.message.WSSecTimestamp;
 import org.apache.ws.security.message.WSSecUsernameToken;
 import org.w3c.dom.Document;
@@ -79,64 +84,179 @@ public class TransportBindingBuilder {
         /*
          * Process Supporting tokens
          */
-        
-        SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
-        
-        if(sgndSuppTokens != null && sgndSuppTokens.getTokens() != null &&
-                sgndSuppTokens.getTokens().size() > 0) {
+        if(rmd.isClientSide()) {
+            Vector signatureValues = new Vector();
             
-            log.debug("Processing signed supporting tokens");
+            SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
             
-            ArrayList tokens = sgndSuppTokens.getTokens();
-            for (Iterator iter = tokens.iterator(); iter.hasNext();) {
+            if(sgndSuppTokens != null && sgndSuppTokens.getTokens() != null &&
+                    sgndSuppTokens.getTokens().size() > 0) {
                 
-                Token token = (Token) iter.next();
-                if(token instanceof UsernameToken && rmd.isClientSide()) {
-                    addUsernameToken(rmd);
-                } else {
-                    throw new RampartException("unsupportedSignedSupportingToken", 
-                            new String[]{"{" +token.getName().getNamespaceURI() 
-                            + "}" + token.getName().getLocalPart()});
+                log.debug("Processing signed supporting tokens");
+                
+                ArrayList tokens = sgndSuppTokens.getTokens();
+                for (Iterator iter = tokens.iterator(); iter.hasNext();) {
+                    
+                    Token token = (Token) iter.next();
+                    if(token instanceof UsernameToken) {
+                        addUsernameToken(rmd);
+                    } else {
+                        throw new RampartException("unsupportedSignedSupportingToken", 
+                                new String[]{"{" +token.getName().getNamespaceURI() 
+                                + "}" + token.getName().getLocalPart()});
+                    }
+                }
+            }
+            
+            SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
+            if(sgndEndSuppTokens != null && sgndEndSuppTokens.getTokens() != null &&
+                    sgndEndSuppTokens.getTokens().size() > 0) {
+                
+                log.debug("Processing endorsing signed supporting tokens");
+                
+                ArrayList tokens = sgndEndSuppTokens.getTokens();
+                for (Iterator iter = tokens.iterator(); iter.hasNext();) {
+                    Token token = (Token) iter.next();
+                    if(token instanceof IssuedToken && rmd.isClientSide()) {
+                        signatureValues.add(doIssuedTokenSignature(rmd, token));
+                    } else if(token instanceof X509Token) {
+                        signatureValues.add(doX509TokenSignature(rmd, token));
+                    }
+                }
+            }
+    
+            SupportingToken endSupptokens = rpd.getEndorsingSupportingTokens();
+            if(endSupptokens != null && endSupptokens.getTokens() != null &&
+                    endSupptokens.getTokens().size() > 0) {
+                log.debug("Processing endorsing supporting tokens");
+                ArrayList tokens = endSupptokens.getTokens();
+                for (Iterator iter = tokens.iterator(); iter.hasNext();) {
+                    Token token = (Token) iter.next();
+                    if(token instanceof IssuedToken && rmd.isClientSide()){
+                        signatureValues.add(doIssuedTokenSignature(rmd, token));
+                    } else if(token instanceof X509Token) {
+                        signatureValues.add(doX509TokenSignature(rmd, token));
+                    }
                 }
             }
         }
-        
-        SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
-        if(sgndEndSuppTokens != null && sgndEndSuppTokens.getTokens() != null &&
-                sgndEndSuppTokens.getTokens().size() > 0) {
-            
-            log.debug("Processing endorsing signed supporting tokens");
-            
-            ArrayList tokens = sgndEndSuppTokens.getTokens();
-            for (Iterator iter = tokens.iterator(); iter.hasNext();) {
-                Token token = (Token) iter.next();
-                if(token instanceof IssuedToken){
-                    doIssuedTokenSignature(rmd, token);
-                }
-            }
-        }
+    }
 
-        SupportingToken endSupptokens = rpd.getEndorsingSupportingTokens();
-        if(endSupptokens != null && endSupptokens.getTokens() != null &&
-                endSupptokens.getTokens().size() > 0) {
-            log.debug("Processing endorsing supporting tokens");
-            ArrayList tokens = endSupptokens.getTokens();
-            for (Iterator iter = tokens.iterator(); iter.hasNext();) {
-                Token token = (Token) iter.next();
-                if(token instanceof IssuedToken){
-                    doIssuedTokenSignature(rmd, token);
-                }
+    /**
+     * X.509 signature
+     * @param rmd
+     * @param token
+     */
+    private byte[] doX509TokenSignature(RampartMessageData rmd, Token token) throws RampartException {
+        
+        RampartPolicyData rpd = rmd.getPolicyData();
+        Document doc = rmd.getDocument();
+        
+        if(token.isDerivedKeys()) {
+            //In this case we will have to encrypt the ephmeral key with the 
+            //other party's key and then use it as the parent key of the
+            // derived keys
+            
+            WSSecEncryptedKey encrKey = new WSSecEncryptedKey();
+            boolean bst = false;
+            if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
+                //Use thumbprint
+                encrKey.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            } else {
+                encrKey.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
+                bst = true;
             }
+            
+            try {
+
+                encrKey.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
+                encrKey.setKeySize(rpd.getAlgorithmSuite().getMaximumSymmetricKeyLength());
+                encrKey.setKeyEncAlgo(rpd.getAlgorithmSuite().getAsymmetricKeyWrap());
+                
+                encrKey.prepare(doc, RampartUtil.getEncryptionCrypto(rpd.getRampartConfig()));
+                
+                if(bst) {
+                    encrKey.appendBSTElementToHeader(rmd.getSecHeader());
+                }
+                
+                encrKey.appendToHeader(rmd.getSecHeader());
+                
+                WSSecDKSign dkSig = new WSSecDKSign();
+                dkSig.setSigCanonicalization(rpd.getAlgorithmSuite().getInclusiveC14n());
+                dkSig.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
+                
+                dkSig.setExternalKey(encrKey.getEphemeralKey(), encrKey.getId());
+                
+                Vector sigParts = new  Vector();
+                
+                sigParts.add(rmd.getTimestampId());                          
+                
+                if(rpd.isTokenProtection()) {
+                    sigParts.add(encrKey.getBSTTokenId());
+                }
+                
+                dkSig.setParts(sigParts);
+                
+                dkSig.addReferencesToSign(sigParts, rmd.getSecHeader());
+                
+                //Do signature
+                dkSig.computeSignature();
+
+                return dkSig.getSignatureValue();
+                
+            } catch (WSSecurityException e) {
+                throw new RampartException("errorCreatingEncryptedKey", e);
+            }
+            
+        } else {
+            WSSecSignature sig = new WSSecSignature();
+            sig.setWsConfig(rmd.getConfig());
+            boolean bst = false;
+            
+            if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
+                //Use thumbprint
+                sig.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            } else {
+                sig.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
+                bst = true;
+            }
+            
+            sig.setSignatureAlgorithm(rpd.getAlgorithmSuite().getAsymmetricSignature());
+            sig.setSigCanonicalization(rpd.getAlgorithmSuite().getInclusiveC14n());
+            
+            try {
+                sig.prepare(doc, RampartUtil.getSignatureCrypto(rpd.getRampartConfig()), rmd.getSecHeader());
+
+                sig.appendBSTElementToHeader(rmd.getSecHeader());
+                
+                Vector sigParts = new Vector();
+                sigParts.add(rmd.getTimestampId());
+                if(rpd.isTokenProtection() && bst) {
+                    sigParts.add(sig.getBSTTokenId());
+                }
+                
+                sig.addReferencesToSign(sigParts, rmd.getSecHeader());
+                
+                sig.appendToHeader(rmd.getSecHeader());
+                
+                sig.computeSignature();
+                
+            } catch (WSSecurityException e) {
+                throw new RampartException("errorInSignatureWithX509Token", e);
+            }
+            
+            return sig.getSignatureValue();
         }
         
     }
 
     /**
+     * IssuedToken signature
      * @param rmd
      * @param token
      * @throws RampartException
      */
-    private void doIssuedTokenSignature(RampartMessageData rmd, Token token) throws RampartException {
+    private byte[] doIssuedTokenSignature(RampartMessageData rmd, Token token) throws RampartException {
         
         RampartPolicyData rpd = rmd.getPolicyData();
         Document doc= rmd.getDocument();
@@ -153,15 +273,18 @@ public class TransportBindingBuilder {
                   new String[]{id} ,e);
         }
    
+        boolean tokenIncluded = false;
+        
         if(inclusion.equals(Constants.INCLUDE_ALWAYS) ||
         ((inclusion.equals(Constants.INCLUDE_ALWAYS_TO_RECIPIENT) 
                 || inclusion.equals(Constants.INCLUDE_ONCE)) 
                 && rmd.isClientSide())) {
           
-          //Add the token
-          rmd.getSecHeader().getSecurityHeader().appendChild(
+            //Add the token
+            rmd.getSecHeader().getSecurityHeader().appendChild(
                   doc.importNode((Element) tok.getToken(), true));
           
+            tokenIncluded = true;
         }
    
         //check for dirived keys
@@ -195,16 +318,20 @@ public class TransportBindingBuilder {
               
               sigParts.add(rmd.getTimestampId());                          
               
-              if(rpd.isTokenProtection()) {
+              if(rpd.isTokenProtection() && tokenIncluded) {
                   sigParts.add(id);
               }
               
               dkSign.setParts(sigParts);
               
+              dkSign.addReferencesToSign(sigParts, rmd.getSecHeader());
+              
               //Do signature
               dkSign.computeSignature();
               
               dkSign.appendSigToHeader(rmd.getSecHeader());
+              
+              return dkSign.getSignatureValue();
               
           } catch (ConversationException e) {
               throw new RampartException(
@@ -216,6 +343,7 @@ public class TransportBindingBuilder {
           
         } else {
           //TODO: Do signature withtout derived keys with the Issuedtoken ??
+            return null;
         }
     }
 
