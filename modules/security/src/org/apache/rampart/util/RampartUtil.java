@@ -68,16 +68,14 @@ public class RampartUtil {
             try {
                 cbClass = Loader.loadClass(classLoader, cbHandlerClass);
             } catch (ClassNotFoundException e) {
-                throw new RampartException(
-                       "WSHandler: cannot load password callback class: "
-               + cbHandlerClass, e);
+                throw new RampartException("cannotLoadPWCBClass", 
+                        new String[]{cbHandlerClass}, e);
             }
             try {
                 cbHandler = (CallbackHandler) cbClass.newInstance();
             } catch (java.lang.Exception e) {
-                throw new RampartException(
-                     "WSHandler: cannot create instance of password callback: "
-             + cbHandlerClass, e);
+                throw new RampartException("cannotCreatePWCBInstance",
+                        new String[]{cbHandlerClass}, e);
             }
         }
         
@@ -98,19 +96,18 @@ public class RampartUtil {
             try {
                 cbClass = Loader.loadClass(classLoader, cbHandlerClass);
             } catch (ClassNotFoundException e) {
-                throw new RampartException(
-                       "Cannot load password callback class: "
-               + cbHandlerClass, e);
+                throw new RampartException("cannotLoadPWCBClass", 
+                        new String[]{cbHandlerClass}, e);
             }
             try {
                 cbHandler = (CallbackHandler) cbClass.newInstance();
             } catch (java.lang.Exception e) {
-                throw new RampartException(
-                     "Cannot create instance of password callback: "
-             + cbHandlerClass, e);
+                throw new RampartException("cannotCreatePWCBInstance",
+                        new String[]{cbHandlerClass}, e);
             }
         } else {
-            cbHandler = (CallbackHandler)rmd.getMsgContext().getProperty(WSHandlerConstants.PW_CALLBACK_REF);
+            cbHandler = (CallbackHandler) rmd.getMsgContext().getProperty(
+                    WSHandlerConstants.PW_CALLBACK_REF);
         }
         
         return cbHandler;
@@ -152,7 +149,7 @@ public class RampartUtil {
         try {
             cbHandler.handle(callbacks);
         } catch (Exception e) {
-            throw new RampartException("WSHandler: password callback failed", e);
+            throw new RampartException("pwcbFailed", e);
         }
         return pwCb;
     }
@@ -230,7 +227,7 @@ public class RampartUtil {
             return WSConstants.BST_DIRECT_REFERENCE;
         } else {
             throw new RampartException(
-                    "Unknown key reference specifier for X509Token");
+                    "unknownKeyRefSpeficier");
 
         }
     }
@@ -267,7 +264,9 @@ public class RampartUtil {
             //Create TokenType element and set the value
             OMElement tokenTypeElem = TrustUtil.createTokenTypeElement(
                     wstVersion, rstTempl);
-            String tokenType = ConversationConstants.getWSCNs(conversationVersion) + ConversationConstants.TOKEN_TYPE_SECURITY_CONTEXT_TOKEN;
+            String tokenType = ConversationConstants
+                    .getWSCNs(conversationVersion)
+                    + ConversationConstants.TOKEN_TYPE_SECURITY_CONTEXT_TOKEN;
             tokenTypeElem.setText(tokenType);
             
             return rstTempl;
