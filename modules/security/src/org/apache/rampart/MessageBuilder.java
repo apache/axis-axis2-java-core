@@ -64,7 +64,7 @@ public class MessageBuilder {
         WSSecHeader secHeader = new WSSecHeader();
         secHeader.insertSecurityHeader(doc);
 
-        RampartMessageData rmd = new RampartMessageData(msgCtx, doc);
+        RampartMessageData rmd = new RampartMessageData(msgCtx, doc, true);
 
         Policy policy = null;
         /*

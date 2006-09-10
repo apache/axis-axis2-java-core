@@ -23,7 +23,6 @@ import org.apache.rahas.TrustException;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.RampartMessageData;
 import org.apache.rampart.policy.RampartPolicyData;
-import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.IssuedToken;
@@ -32,9 +31,11 @@ import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.UsernameToken;
 import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
+import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.message.WSSecDKSign;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.WSSecSignature;
@@ -139,6 +140,13 @@ public class TransportBindingBuilder {
                     }
                 }
             }
+            
+            //Store the signature values vector
+            rmd.getMsgContext().setProperty(WSHandlerConstants.SEND_SIGV, signatureValues);
+        } else {
+            if(rpd.isSignatureConfirmation()) {
+                ///TODO : signature configmation : after completing the engine
+            }
         }
     }
 
@@ -189,10 +197,10 @@ public class TransportBindingBuilder {
                 
                 Vector sigParts = new  Vector();
                 
-                sigParts.add(rmd.getTimestampId());                          
+                sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));                          
                 
                 if(rpd.isTokenProtection()) {
-                    sigParts.add(encrKey.getBSTTokenId());
+                    sigParts.add(new WSEncryptionPart(encrKey.getBSTTokenId()));
                 }
                 
                 dkSig.setParts(sigParts);
@@ -230,9 +238,9 @@ public class TransportBindingBuilder {
                 sig.appendBSTElementToHeader(rmd.getSecHeader());
                 
                 Vector sigParts = new Vector();
-                sigParts.add(rmd.getTimestampId());
+                sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));
                 if(rpd.isTokenProtection() && bst) {
-                    sigParts.add(sig.getBSTTokenId());
+                    sigParts.add(new WSEncryptionPart(sig.getBSTTokenId()));
                 }
                 
                 sig.addReferencesToSign(sigParts, rmd.getSecHeader());
@@ -316,10 +324,10 @@ public class TransportBindingBuilder {
               
               Vector sigParts = new  Vector();
               
-              sigParts.add(rmd.getTimestampId());                          
+              sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));                          
               
               if(rpd.isTokenProtection() && tokenIncluded) {
-                  sigParts.add(id);
+                  sigParts.add(new WSEncryptionPart(id));
               }
               
               dkSign.setParts(sigParts);

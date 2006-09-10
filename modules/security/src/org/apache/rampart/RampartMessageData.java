@@ -16,7 +16,10 @@
 
 package org.apache.rampart;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
 import org.apache.rahas.RahasConstants;
 import org.apache.rahas.SimpleTokenStore;
@@ -26,6 +29,7 @@ import org.apache.rahas.TrustUtil;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.conversation.ConversationConstants;
+import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.util.Loader;
 import org.w3c.dom.Document;
@@ -108,8 +112,10 @@ public class RampartMessageData {
     private Policy servicePolicy;
 
     private boolean isClientSide;
+    
+    private boolean sender;
 
-    public RampartMessageData(MessageContext msgCtx, Document doc) throws RampartException {
+    public RampartMessageData(MessageContext msgCtx, Document doc, boolean sender) throws RampartException {
         this.msgContext = msgCtx;
         this.document = doc;
         
@@ -135,8 +141,24 @@ public class RampartMessageData {
             }
             
             this.isClientSide = !msgCtx.isServerSide();
+            this.sender = sender;
+            
+            if(!this.isClientSide && this.sender) {
+                //Get hold of the incoming msg ctx
+                OperationContext opCtx = this.msgContext.getOperationContext();
+                MessageContext inMsgCtx;
+                if (opCtx != null
+                        && (inMsgCtx = opCtx
+                                .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
+                    msgContext.setProperty(WSHandlerConstants.RECV_RESULTS, 
+                            inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
+                }
+            }
+            
             
         } catch (TrustException e) {
+            throw new RampartException("errorInExtractingMsgProps", e);
+        } catch (AxisFault e) {
             throw new RampartException("errorInExtractingMsgProps", e);
         }
         
@@ -260,8 +282,22 @@ public class RampartMessageData {
      * @param policyData
      *            The policyData to set.
      */
-    public void setPolicyData(RampartPolicyData policyData) {
+    public void setPolicyData(RampartPolicyData policyData) throws RampartException {
         this.policyData = policyData;
+        
+        try {
+            //if client side then check whether sig conf enabled 
+            //and get hold of the stored signature values
+            if(this.isClientSide && !this.sender && policyData.isSignatureConfirmation()) {
+                OperationContext opCtx = msgContext.getOperationContext();
+                MessageContext outMsgCtx = opCtx
+                        .getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                msgContext.setProperty(WSHandlerConstants.SEND_SIGV, outMsgCtx
+                        .getProperty(WSHandlerConstants.SEND_SIGV));
+            }
+        } catch (AxisFault e) {
+            throw new RampartException("errorGettingSignatureValuesForSigconf", e);
+        }
     }
 
     /**
