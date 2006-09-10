@@ -345,7 +345,7 @@ public class RampartPolicyData {
     public void setSupportingTokens(SupportingToken suppTokens)
             throws WSSPolicyException {
 
-        int tokenType = suppTokens.getType();
+        int tokenType = suppTokens.getTokenType();
         if (tokenType == Constants.SUPPORTING_TOKEN_SUPPORTING) {
             supportingTokens = suppTokens;
         } else if (tokenType == Constants.SUPPORTING_TOKEN_SIGNED) {

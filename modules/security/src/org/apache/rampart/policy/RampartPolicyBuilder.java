@@ -96,6 +96,7 @@ public class RampartPolicyBuilder {
             } else if (assertion instanceof RampartConfig) {
                 processRampartConfig((RampartConfig)assertion, rpd);
             } else {
+                
                 System.out.println("Unknown top level PED found: "
                         + assertion.getClass().getName());
             }
@@ -237,6 +238,7 @@ public class RampartPolicyBuilder {
     private static void binding(Binding binding, RampartPolicyData rpd) {
         rpd.setLayout(binding.getLayout().getValue());
         rpd.setIncludeTimestamp(binding.isIncludeTimestamp());
+        rpd.setAlgorithmSuite(binding.getAlgorithmSuite());
     }
 
     /**

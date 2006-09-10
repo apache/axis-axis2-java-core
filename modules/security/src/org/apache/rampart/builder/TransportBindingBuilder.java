@@ -228,7 +228,49 @@ public class TransportBindingBuilder {
                 sig.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
                 bst = true;
             }
+
+            //Get the user
+            String user = rpd.getRampartConfig().getUser();
+            String password = null;
+
+            if(user != null && !"".equals(user)) {
+                log.debug("User : " + user);
+                
+                //Get the password
+                CallbackHandler handler = RampartUtil.getPasswordCB(rmd);
+                
+                if(handler == null) {
+                    //If the callback handler is missing
+                    throw new RampartException("cbHandlerMissing");
+                }
+                
+                WSPasswordCallback[] cb = { new WSPasswordCallback(user,
+                        WSPasswordCallback.SIGNATURE) };
+                
+                try {
+                    handler.handle(cb);
+                    if(cb[0].getPassword() != null && !"".equals(cb[0].getPassword())) {
+                        password = cb[0].getPassword();
+                        log.debug("Password : " + password);
+                    } else {
+                        //If there's no password then throw an exception
+                        throw new RampartException("noPasswordForUser", 
+                                new String[]{user});
+                    }
+                } catch (IOException e) {
+                    throw new RampartException("errorInGettingPasswordForUser", 
+                            new String[]{user}, e);
+                } catch (UnsupportedCallbackException e) {
+                    throw new RampartException("errorInGettingPasswordForUser", 
+                            new String[]{user}, e);
+                }
+                
+            } else {
+                log.debug("No user value specified in the configuration");
+                throw new RampartException("userMissing");
+            }
             
+            sig.setUserInfo(user, password);
             sig.setSignatureAlgorithm(rpd.getAlgorithmSuite().getAsymmetricSignature());
             sig.setSigCanonicalization(rpd.getAlgorithmSuite().getInclusiveC14n());
             
@@ -401,8 +443,9 @@ public class TransportBindingBuilder {
                     //TODO Get the UT type, only WS-Sx spec supports this
                     utBuilder.setUserInfo(user, password);
                     
+                    utBuilder.prepare(doc);
                     //Add the UT
-                    utBuilder.build(doc, rmd.getSecHeader());
+                    utBuilder.appendToHeader(rmd.getSecHeader());
                     
                     return utBuilder.getId();
                 } else {

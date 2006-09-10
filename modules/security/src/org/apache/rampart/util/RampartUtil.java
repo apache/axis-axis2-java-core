@@ -21,7 +21,6 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -282,8 +281,9 @@ public class RampartUtil {
 
     public static int getTimeToLive(RampartMessageData messageData) {
 
-        String ttl = messageData.getPolicyData().getRampartConfig()
-                .getTimestampTTL();
+        RampartConfig rampartConfig = messageData.getPolicyData().getRampartConfig();
+        
+        String ttl = rampartConfig.getTimestampTTL();
         int ttl_i = 0;
         if (ttl != null) {
             try {
@@ -446,17 +446,20 @@ public class RampartUtil {
     }
 
     public static String getSoapBodyId(SOAPEnvelope env) {
+        return addWsuIdToElement(env.getBody());
+    }
+    
+    public static String addWsuIdToElement(OMElement elem) {
         String id = null;
-        SOAPBody body = env.getBody();
-        OMAttribute idAttr = body.getAttribute(new QName(WSConstants.WSU_NS, "Id"));
+        OMAttribute idAttr = elem.getAttribute(new QName(WSConstants.WSU_NS, "Id"));
         if(idAttr != null) {
             id = idAttr.getAttributeValue();
         } else {
             //Add an id
-            OMNamespace ns = env.getOMFactory().createOMNamespace(WSConstants.WSU_NS, WSConstants.WSU_PREFIX);
-            id = "Id-" + body.hashCode();
-            idAttr = env.getOMFactory().createOMAttribute("Id", ns, id);
-            body.addAttribute(idAttr);
+            OMNamespace ns = elem.getOMFactory().createOMNamespace(WSConstants.WSU_NS, WSConstants.WSU_PREFIX);
+            id = "Id-" + elem.hashCode();
+            idAttr = elem.getOMFactory().createOMAttribute("Id", ns, id);
+            elem.addAttribute(idAttr);
         }
         
         return id;

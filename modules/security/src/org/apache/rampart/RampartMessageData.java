@@ -155,6 +155,7 @@ public class RampartMessageData {
                 }
             }
             
+            this.config = WSSConfig.getDefaultWSConfig();
             
         } catch (TrustException e) {
             throw new RampartException("errorInExtractingMsgProps", e);
