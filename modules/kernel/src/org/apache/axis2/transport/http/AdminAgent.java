@@ -22,9 +22,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
@@ -507,6 +509,33 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_AVAILABLE_MODULES_JSP_NAME, req, res);
     }
 
+    protected void processdisengageModule(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        String type = req.getParameter("type");
+        String serviceName = req.getParameter("serviceName");
+        String moduleName = req.getParameter("module");
+        AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
+        AxisService service = axisConfiguration.getService(serviceName);
+        AxisModule module = axisConfiguration.getModule(new QName(moduleName));
+        if (type.equals("operation")) {
+            if (service.isEngaged(module.getName()) || axisConfiguration.isEngaged(module.getName())) {
+                req.getSession().setAttribute("status", "can not disengage module has engage to top levle");
+            } else {
+                String opName = req.getParameter("operation");
+                AxisOperation op = service.getOperation(new QName(opName));
+                op.disEngageModule(module);
+                req.getSession().setAttribute("status", "disenged from the operation");
+            }
+        } else {
+            if (axisConfiguration.isEngaged(module.getName())) {
+                req.getSession().setAttribute("status", "can not disengage module has engage to top levle");
+            } else {
+                service.disEngageModule(axisConfiguration.getModule(new QName(moduleName)));
+                req.getSession().setAttribute("status", "disenged from the service");
+            }
+        }
+        renderView("disengage.jsp", req, res);
+    }
+
     protected void processSelectService(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
@@ -515,12 +544,15 @@ public class AdminAgent extends AbstractAgent {
     }
 
 
-    private boolean authorizationRequired(HttpServletRequest httpServletRequest) {
+    private boolean authorizationRequired
+            (HttpServletRequest
+                    httpServletRequest) {
         return httpServletRequest.getSession().getAttribute(Constants.LOGGED) == null &&
                 !httpServletRequest.getRequestURI().endsWith("login");
     }
 
-    private boolean axisSecurityEnabled() {
+    private boolean axisSecurityEnabled
+            () {
         Parameter parameter = configContext.getAxisConfiguration().getParameter(Constants.ADMIN_SECURITY_DISABLED);
         return parameter == null || !"true".equals(parameter.getValue());
     }

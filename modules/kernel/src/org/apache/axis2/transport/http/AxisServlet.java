@@ -74,6 +74,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected boolean disableREST = false;
     protected boolean disableSeperateEndpointForREST = false;
     private static final String LIST_SERVICES_SUFIX = "/services/listServices";
+    private static final String LIST_FAUKT_SERVICES_SUFIX = "/services/ListFaultyServices";
 
 
     protected MessageContext
@@ -136,7 +137,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
                 query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0)) { // handling meta data exchange stuff
             agent.processListService(req, resp);
-        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX)) { // handling list services request
+        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) || requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) { // handling list services request
             try {
                 agent.handle(req, resp);
             } catch (Exception e) {

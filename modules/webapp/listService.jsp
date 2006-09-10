@@ -4,7 +4,6 @@
 <%@ page import="org.apache.axis2.description.AxisService" %>
 <%@ page import="org.apache.axis2.description.Parameter" %>
 <%@ page import="org.apache.axis2.engine.AxisConfiguration" %>
-<%@ page import="org.apache.axis2.transport.http.AxisServlet" %>
 <%@ page import="org.apache.axis2.util.JavaUtils" %>
 <%@ page import="java.util.*" %>
 <%
@@ -123,7 +122,7 @@
 %>
 <ul>
     <% }
-    %><li><%=moduleName%></li>
+    %><li><%=moduleName%> :: <a href="axis2-admin/disengageModule?type=service&serviceName=<%=serviceName%>&module=<%=moduleName%>">Disengage</a></li>
     <br>
     <%
         }
@@ -152,7 +151,7 @@
         for (Iterator iterator2 = engagedModules.iterator(); iterator2.hasNext();) {
             AxisModule moduleDecription = (AxisModule) iterator2.next();
             moduleName = moduleDecription.getName().getLocalPart();
-    %><li><%=moduleName%></li><br><%
+    %><li><%=moduleName%> :: <a href="axis2-admin/disengageModule?type=operation&serviceName=<%=serviceName%>&operation=<%=axisOperation.getName().getLocalPart()%>&module=<%=moduleName%>">Disengage</a></li><br><%
     }
 %></ul><%
         }
@@ -172,7 +171,7 @@
     Enumeration faultyservices = errornessservice.keys();
     while (faultyservices.hasMoreElements()) {
         String faultyserviceName = (String) faultyservices.nextElement();
-%><h3><font color="blue"><a href="listSingleService.jsp?serviceName=<%=faultyserviceName%>">
+%><h3><font color="blue"><a href="services/ListFaultyServices?serviceName=<%=faultyserviceName%>">
     <%=faultyserviceName%></a></font></h3>
 <%
             }
