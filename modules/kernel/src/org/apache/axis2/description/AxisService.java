@@ -1396,21 +1396,18 @@ public class AxisService extends AxisDescription {
         //first traversal - fill the hashtable
         for (int i = 0; i < schemas.size(); i++) {
             XmlSchema schema = (XmlSchema) schemas.get(i);
-
             XmlSchemaObjectCollection includes = schema.getIncludes();
+
             for (int j = 0; j < includes.getCount(); j++) {
                 Object item = includes.getItem(j);
                 XmlSchema s;
                 if (item instanceof XmlSchemaExternal) {
-                    //recursively call the calculating
                     XmlSchemaExternal externalSchema = (XmlSchemaExternal) item;
                     s = externalSchema.getSchema();
                     if (s != null && nameTable.get(s) == null) {
-                        nameTable.put(s,
-                                ("xsd" + count++)
-                                        + (customSchemaNameSuffix != null ?
-                                        customSchemaNameSuffix :
-                                        ""));
+                        //insert the name into the table
+                        insertIntoNameTable(nameTable, s);
+                        //recursively call the same procedure
                         calcualteSchemaNames(Arrays.asList(
                                 new XmlSchema[]{s}),
                                 nameTable);
@@ -1421,34 +1418,70 @@ public class AxisService extends AxisDescription {
     }
 
     /**
+     * A quick private sub routine to insert the names
+     * @param nameTable
+     * @param s
+     */
+    private void insertIntoNameTable(Hashtable nameTable, XmlSchema s) {
+        nameTable.put(s,
+                ("xsd" + count++)
+                        + (customSchemaNameSuffix != null ?
+                        customSchemaNameSuffix :
+                        ""));
+    }
+
+    /**
      * Run 2  - adjust the names
      *
-     * @param schemas
      */
     private void adjustSchemaNames(List schemas, Hashtable nameTable) {
-        Enumeration enumeration = nameTable.keys();
-        while (enumeration.hasMoreElements()) {
-            XmlSchema schema = (XmlSchema) enumeration.nextElement();
-            XmlSchemaObjectCollection includes = schema.getIncludes();
+        //process the schemas in the main schema list
+        for (int i = 0; i < schemas.size(); i++) {
+            adjustSchemaName((XmlSchema) schemas.get(i),nameTable);
+        }
+        //process all the rest in the name table
+        Enumeration nameTableKeys = nameTable.keys();
+        while (nameTableKeys.hasMoreElements()) {
+            adjustSchemaName((XmlSchema)nameTableKeys.nextElement(),nameTable);
+
+        }
+    }
+
+    /**
+     * Adjust a single schema
+     * @param parentSchema
+     * @param nameTable
+     */
+    private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable) {
+            XmlSchemaObjectCollection includes = parentSchema.getIncludes();
             for (int j = 0; j < includes.getCount(); j++) {
                 Object item = includes.getItem(j);
                 if (item instanceof XmlSchemaExternal) {
-                    //recursively call the name adjusting
                     XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
                     XmlSchema s = xmlSchemaExternal.getSchema();
-                    if (s != null) {
-                        xmlSchemaExternal.setSchemaLocation(
-                                customSchemaNamePrefix == null ?
-                                        //use the default mode
-                                        (getName() +
-                                                "?xsd=" +
-                                                nameTable.get(s)) :
-                                        //custom prefix is present - add the custom prefix
-                                        (customSchemaNamePrefix +
-                                                nameTable.get(s)));
-                    }
+                    adjustSchemaLocation(s, xmlSchemaExternal, nameTable);
                 }
             }
+
+    }
+
+    /**
+     * Adjusts a given schema location
+     * @param s
+     * @param xmlSchemaExternal
+     * @param nameTable
+     */
+    private void adjustSchemaLocation(XmlSchema s, XmlSchemaExternal xmlSchemaExternal, Hashtable nameTable) {
+        if (s != null) {
+            xmlSchemaExternal.setSchemaLocation(
+                    customSchemaNamePrefix == null ?
+                            //use the default mode
+                            (getName() +
+                                    "?xsd=" +
+                                    nameTable.get(s)) :
+                            //custom prefix is present - add the custom prefix
+                            (customSchemaNamePrefix +
+                                    nameTable.get(s)));
         }
     }
 
