@@ -89,6 +89,25 @@ public class MessageBuilderTest extends TestCase {
         }
     }
 
+    public void testTransportBindingWithDK() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            
+            String policyXml = "test-resources/policy/rampart-transport-binding-dk.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+            
+            System.out.println(ctx.getEnvelope());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+    
     /**
      * @throws XMLStreamException
      * @throws FactoryConfigurationError

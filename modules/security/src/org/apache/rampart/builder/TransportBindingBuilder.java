@@ -190,10 +190,15 @@ public class TransportBindingBuilder {
                 encrKey.appendToHeader(rmd.getSecHeader());
                 
                 WSSecDKSign dkSig = new WSSecDKSign();
+                
+                dkSig.setWsConfig(rmd.getConfig());
+                
                 dkSig.setSigCanonicalization(rpd.getAlgorithmSuite().getInclusiveC14n());
                 dkSig.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
                 
                 dkSig.setExternalKey(encrKey.getEphemeralKey(), encrKey.getId());
+                
+                dkSig.prepare(doc, rmd.getSecHeader());
                 
                 Vector sigParts = new  Vector();
                 
@@ -209,10 +214,16 @@ public class TransportBindingBuilder {
                 
                 //Do signature
                 dkSig.computeSignature();
+                
+                dkSig.appendDKElementToHeader(rmd.getSecHeader());
 
+                dkSig.appendSigToHeader(rmd.getSecHeader());
+                
                 return dkSig.getSignatureValue();
                 
             } catch (WSSecurityException e) {
+                throw new RampartException("errorCreatingEncryptedKey", e);
+            } catch (ConversationException e) {
                 throw new RampartException("errorCreatingEncryptedKey", e);
             }
             
