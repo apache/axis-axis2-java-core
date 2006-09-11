@@ -689,7 +689,7 @@ public abstract class AbstractHTTPSender {
                 if (HTTPConstants.HEADER_USER_AGENT.equals(header.getName())) {
                     isCustomUserAgentSet = true;
                 }
-                method.addRequestHeader((Header) header);
+                method.addRequestHeader(header);
             }
 
         }

@@ -403,15 +403,13 @@ public class SAMLTokenIssuer implements TokenIssuer {
 
         if(serviceAddress != null && !"".equals(serviceAddress)) {
             String alias = (String)config.trustedServices.get(serviceAddress);;
-            if(alias != null) {
-                return (X509Certificate)crypto.getCertificates(alias)[0];
-            } else {
+            if(alias != null) return (X509Certificate) crypto.getCertificates(alias)[0]; else {
                 alias = (String)config.trustedServices.get("*");
-                return (X509Certificate)crypto.getCertificates(alias)[0];
+                return crypto.getCertificates(alias)[0];
             }
         } else {
             String alias = (String)config.trustedServices.get("*");
-            return (X509Certificate)crypto.getCertificates(alias)[0];
+            return crypto.getCertificates(alias)[0];
         }
         
     }

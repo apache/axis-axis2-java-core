@@ -54,7 +54,7 @@ public class SupportingTokensBuilder implements AssertionBuilder {
                     Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING);
         }
 
-        Policy policy = (Policy) PolicyEngine.getPolicy(element);
+        Policy policy = PolicyEngine.getPolicy(element);
         policy = (Policy) policy.normalize(false);
 
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {

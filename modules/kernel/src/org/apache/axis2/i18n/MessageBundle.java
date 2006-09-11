@@ -195,6 +195,6 @@ public class MessageBundle {
                     getResourceBundle().getResourceName(), key);
         }
 
-        return MessageFormat.format(msg, (Object[]) array);
+        return MessageFormat.format(msg, array);
     }
 }

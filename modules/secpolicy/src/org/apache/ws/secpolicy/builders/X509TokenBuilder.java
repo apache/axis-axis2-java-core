@@ -72,7 +72,7 @@ public class X509TokenBuilder implements AssertionBuilder {
 
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
             assertion = (Assertion) iterator.next();
-            name = (QName) assertion.getName();
+            name = assertion.getName();
 
             if (Constants.REQUIRE_KEY_IDENTIFIRE_REFERENCE.equals(name)) {
                 parent.setRequireKeyIdentifierReference(true);

@@ -73,7 +73,7 @@ public class OptionsParser {
                 al = new ArrayList();
             }
 
-            al.add((String) args[loop]);
+            al.add(args[loop]);
         }
 
         if (al == null) {

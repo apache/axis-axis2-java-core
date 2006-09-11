@@ -67,7 +67,7 @@ public class IssuedTokenBuilder implements AssertionBuilder {
 
         for (Iterator iterator = assertions.iterator(); iterator.hasNext();) {
             assertion = (Assertion) iterator.next();
-            name = (QName) assertion.getName();
+            name = assertion.getName();
             
             if (Constants.REQUIRE_DERIVED_KEYS.equals(name)) {
                 parent.setDerivedKeys(true);

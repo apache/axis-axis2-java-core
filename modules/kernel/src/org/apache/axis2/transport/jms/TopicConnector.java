@@ -166,7 +166,7 @@ public class TopicConnector extends JMSConnector {
                     TopicSubscription sub = (TopicSubscription) m_subscription;
 
                     if (sub.isDurable() && sub.m_unsubscribe) {
-                        ((TopicSession) m_session).unsubscribe(sub.m_subscriptionName);
+                        m_session.unsubscribe(sub.m_subscriptionName);
                     }
                 } catch (Exception ignore) {
                 }
@@ -319,7 +319,7 @@ public class TopicConnector extends JMSConnector {
             }
 
             protected Destination createTemporaryDestination() throws JMSException {
-                return ((TopicSession) m_session).createTemporaryTopic();
+                return m_session.createTemporaryTopic();
             }
 
             protected void deleteTemporaryDestination(Destination destination) throws JMSException {

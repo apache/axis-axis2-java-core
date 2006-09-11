@@ -51,11 +51,11 @@ public class HandlerParameterDecoder {
         	Parameter outFlowSecParam;
         
 	        if(msgCtx.isServerSide()){
-            		inFlowSecParam = (Parameter)msgCtx.getParameter(WSSHandlerConstants.INFLOW_SECURITY_SERVER);
-            		outFlowSecParam = (Parameter)msgCtx.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER);
+            		inFlowSecParam = msgCtx.getParameter(WSSHandlerConstants.INFLOW_SECURITY_SERVER);
+            		outFlowSecParam = msgCtx.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER);
        		 }else{
-            		inFlowSecParam = (Parameter)msgCtx.getParameter(WSSHandlerConstants.INFLOW_SECURITY_CLIENT);
-            		outFlowSecParam = (Parameter)msgCtx.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT);
+            		inFlowSecParam = msgCtx.getParameter(WSSHandlerConstants.INFLOW_SECURITY_CLIENT);
+            		outFlowSecParam = msgCtx.getParameter(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT);
         	}
         
         	//TODO: check whether policy is available 

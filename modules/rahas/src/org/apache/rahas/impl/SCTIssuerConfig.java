@@ -50,13 +50,13 @@ public class SCTIssuerConfig {
     protected long ttl = 300000;
     
     private SCTIssuerConfig(OMElement elem) throws TrustException {
-        OMElement proofTokenElem = (OMElement) elem.getFirstChildWithName(
+        OMElement proofTokenElem = elem.getFirstChildWithName(
                 new QName("proofToken"));
         if (proofTokenElem != null) {
             this.proofTokenType = proofTokenElem.getText().trim();
         }
 
-        OMElement cryptoPropertiesElem = (OMElement) elem
+        OMElement cryptoPropertiesElem = elem
                 .getFirstChildWithName(new QName("cryptoProperties"));
 
         if (!SCTIssuer.BINARY_SECRET.equals(proofTokenType)

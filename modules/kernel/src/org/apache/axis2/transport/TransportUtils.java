@@ -176,7 +176,7 @@ public class TransportUtils {
 		boolean fileCacheForAttachments;
 
 		if (cacheAttachmentProperty != null) {
-			cacheAttachmentProperty = (String) cacheAttachmentProperty;
+			cacheAttachmentProperty = cacheAttachmentProperty;
 			fileCacheForAttachments = (Constants.VALUE_TRUE
 					.equals(cacheAttachmentString));
 		} else {

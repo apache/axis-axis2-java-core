@@ -60,7 +60,7 @@ public class PublisherService {
 					//publishing
 					System.out.println("Publishing next publication...");
 					
-					SubscriberStore store = (SubscriberStore) CommonUtil.getSubscriberStore(serviceContext.getAxisService());
+					SubscriberStore store = CommonUtil.getSubscriberStore(serviceContext.getAxisService());
 					if (store==null)
 						throw new Exception ("Cant find the Savan subscriber store");
 					

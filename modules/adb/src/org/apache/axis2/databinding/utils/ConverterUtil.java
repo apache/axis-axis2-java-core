@@ -90,7 +90,7 @@ public class ConverterUtil {
         synchronized (calendar) {
             if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
                 buf.append("-");
-                calendar.setTime((Date) value);
+                calendar.setTime(value);
                 calendar.set(Calendar.ERA, GregorianCalendar.AD);
                 value = calendar.getTime();
             }

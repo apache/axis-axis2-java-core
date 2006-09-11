@@ -50,7 +50,7 @@ public class SavanOutHandler extends AbstractHandler {
 		//TODO hv a better method to identify publication messages
 		if (messagetype == SavanConstants.MessageTypes.UNKNOWN) {
 			SavanMessageContext publication = new SavanMessageContext(msgContext);
-			SubscriberStore store = (SubscriberStore) CommonUtil.getSubscriberStore(msgContext.getAxisService());
+			SubscriberStore store = CommonUtil.getSubscriberStore(msgContext.getAxisService());
 			if (store != null) {
 				
 				//building the publication envelope
