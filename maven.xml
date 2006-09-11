@@ -937,7 +937,6 @@
                 <ant:pathelement location="modules/security/src"/>
                 <ant:pathelement location="modules/spring/src"/>
                 <ant:pathelement location="modules/soapmonitor/src"/>
-                <ant:pathelement location="modules/tool/src"/>
             </ant:sourcepath>
             <ant:classpath>
                 <ant:fileset dir="target/lib">
