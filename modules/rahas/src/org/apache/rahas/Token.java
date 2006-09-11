@@ -117,7 +117,10 @@ public class Token {
      */
     private Date expires;
     
-    public Token(String id, OMElement tokenElem, Date created, Date expires) throws TrustException {
+    public Token(String id,
+                 OMElement tokenElem,
+                 Date created,
+                 Date expires) throws TrustException {
         this.id = id;
         this.token = new StAXOMBuilder(DOOMAbstractFactory.getOMFactory(),
                 tokenElem.getXMLStreamReader()).getDocumentElement();
@@ -125,7 +128,9 @@ public class Token {
         this.expires = expires;
     }
 
-    public Token(String id, OMElement tokenElem, OMElement lifetimeElem) throws TrustException {
+    public Token(String id,
+                 OMElement tokenElem,
+                 OMElement lifetimeElem) throws TrustException {
         this.id = id;
         this.token = new StAXOMBuilder(DOOMAbstractFactory.getOMFactory(),
                 tokenElem.getXMLStreamReader()).getDocumentElement();
@@ -139,15 +144,21 @@ public class Token {
     private void processLifeTime(OMElement lifetimeElem) throws TrustException {
         try {
             DateFormat zulu = new XmlSchemaDateFormat();
-            OMElement createdElem = lifetimeElem.getFirstChildWithName(new QName(WSConstants.WSU_NS, WSConstants.CREATED_LN));
+            OMElement createdElem =
+                    lifetimeElem.getFirstChildWithName(new QName(WSConstants.WSU_NS,
+                                                                 WSConstants.CREATED_LN));
             this.created = zulu.parse(createdElem.getText());
             
-            OMElement expiresElem = lifetimeElem.getFirstChildWithName(new QName(WSConstants.WSU_NS, WSConstants.CREATED_LN));
+            OMElement expiresElem =
+                    lifetimeElem.getFirstChildWithName(new QName(WSConstants.WSU_NS,
+                                                                 WSConstants.CREATED_LN));
             this.expires = zulu.parse(expiresElem.getText());
         } catch (OMException e) {
-            throw new TrustException("lifeTimeProcessingError", new String[]{lifetimeElem.toString()}, e);
+            throw new TrustException("lifeTimeProcessingError",
+                                     new String[]{lifetimeElem.toString()}, e);
         } catch (ParseException e) {
-            throw new TrustException("lifeTimeProcessingError", new String[]{lifetimeElem.toString()}, e);
+            throw new TrustException("lifeTimeProcessingError",
+                                     new String[]{lifetimeElem.toString()}, e);
         }
     }
 
