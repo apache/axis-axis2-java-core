@@ -15,20 +15,14 @@
  */
 package org.apache.ws.secpolicy.builders;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
-import org.apache.neethi.Policy;
-import org.apache.neethi.PolicyEngine;
-import org.apache.neethi.XmlPrimtiveAssertion;
 import org.apache.neethi.builders.AssertionBuilder;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.AlgorithmSuite;
+
+import javax.xml.namespace.QName;
 
 public class AlgorithmSuiteBuilder implements AssertionBuilder {
     
@@ -42,93 +36,12 @@ public class AlgorithmSuiteBuilder implements AssertionBuilder {
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
         AlgorithmSuite algorithmSuite = new AlgorithmSuite();
         
-        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
-        policy = (Policy) policy.normalize(false);
+        OMElement policyElem = element.getFirstElement();
+        algorithmSuite.setAlgorithmSuite(policyElem.getFirstElement().getLocalName());
         
-        for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
-            buildConfigOption((List) iterator.next(), algorithmSuite);
-        }
         return algorithmSuite;
     }
     
-    private void buildConfigOption(List assertionList, AlgorithmSuite target) {
-        AlgorithmSuite algorithmSuite = new AlgorithmSuite();
-        
-        XmlPrimtiveAssertion primtiveAssertion;
-        
-        for (Iterator iterator = assertionList.iterator(); iterator.hasNext();) {
-            primtiveAssertion = (XmlPrimtiveAssertion) iterator.next();
-            QName qname = primtiveAssertion.getName();
-            String localName = qname.getLocalPart();
-            
-            if (localName.equals(INCLUSIVE_C14N)) {
-                algorithmSuite.setC14n(Constants.C14N);
-                
-            } else if (localName.equals(SOAP_NORMALIZATION_10)) {
-                algorithmSuite.setSoapNormalization(Constants.SNT);
-                
-            } else if (localName.equals(STR_TRANSFORM_10)) {
-                algorithmSuite.setStrTransform(Constants.STRT10);
-                
-            } else if (localName.equals(XPATH10)) {
-                algorithmSuite.setXPath(Constants.XPATH);
-                
-            } else if (localName.equals(XPATH_FILTER20)) {
-                algorithmSuite.setXPath(Constants.XPATH20);
-                           
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC128)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC128);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC128_RSA15)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC128_RSA15);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC128_SHA256)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC128_SHA256);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC128_SHA256_RSA15)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC128_SHA256_RSA15);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC192)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC192);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC192_RSA15)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC192_RSA15);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC192_SHA256)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC192_SHA256);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC192_SHA256_RSA15)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC192_SHA256_RSA15);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC256)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC256);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC256_RSA15)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC256_RSA15);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC256_SHA256)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC256_SHA256);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_BASIC256_SHA256_RSA15)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_BASIC256_SHA256_RSA15);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_TRIPLE_DES)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_TRIPLE_DES);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_TRIPLE_DES_RSA15)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_TRIPLE_DES_RSA15);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_TRIPLE_DES_SHA256)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_TRIPLE_DES_SHA256);
-                
-            } else if (localName.equals(Constants.ALGO_SUITE_TRIPLE_DES_SHA256_RSA15)) {
-                algorithmSuite.setAlgorithmSuite(Constants.ALGO_SUITE_TRIPLE_DES_SHA256_RSA15);
-            }    
-        }
-        
-        target.addConfiguration(algorithmSuite);
-    }
-
     public QName[] getKnownElements() {
         return new QName[] {Constants.ALGORITHM_SUITE};
     }

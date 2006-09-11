@@ -45,6 +45,11 @@ public class X509TokenBuilder implements AssertionBuilder {
         }
 
         if (policyElement != null) {
+            
+            if (policyElement.getFirstChildWithName(Constants.REQUIRE_DERIVED_KEYS) != null) {
+                x509Token.setDerivedKeys(true);
+            }
+            
             Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
             policy = (Policy) policy.normalize(false);
 
