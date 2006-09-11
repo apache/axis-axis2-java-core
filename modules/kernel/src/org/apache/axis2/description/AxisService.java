@@ -1187,7 +1187,7 @@ public class AxisService extends AxisDescription {
 
     /**
      * To create an AxisService using given service impl class name
-     * fisrt generate schema corresponding to the given java class , next for each methods AxisOperation
+     * first generate schema corresponding to the given java class , next for each methods AxisOperation
      * will be created.
      * <p/>
      * Note : Inorder to work this properly RPCMessageReceiver should be availble in the class path

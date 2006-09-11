@@ -263,6 +263,8 @@ public class ArchiveReader implements DeploymentConstants {
             try {
                 zin = new ZipInputStream(new FileInputStream(serviceFile));
 
+                //TODO Check whether this WSDL is empty
+
                 ZipEntry entry;
                 byte[] buf = new byte[1024];
                 int read;

@@ -56,6 +56,18 @@
 
             private <xsl:value-of select="@type"/> faultMessage;
 
+            public <xsl:value-of select="@shortName"/>() {
+                super("<xsl:value-of select="@shortName"/>");
+            }
+
+            public <xsl:value-of select="@shortName"/>(String s) {
+               super(s);
+            }
+
+            public <xsl:value-of select="@shortName"/>(String s, Throwable ex) {
+              super(s, ex);
+            }
+
             public void setFaultMessage(<xsl:value-of select="@type"/> msg){
                faultMessage = msg;
             }
@@ -63,6 +75,8 @@
             public <xsl:value-of select="@type"/> getFaultMessage(){
                return faultMessage;
             }
+
+
          }
    </xsl:for-each>
          }

@@ -148,9 +148,11 @@
         }
         <xsl:for-each select="fault-list/fault">
             <xsl:if test="position()=1">}</xsl:if>catch (<xsl:value-of select="@name"/> e) {
-            org.apache.axis2.AxisFault f =
-            new org.apache.axis2.AxisFault("<xsl:value-of select="@shortName"/>");
+
+            org.apache.axis2.AxisFault f = createAxisFault(e);
+
             f.setDetail(toOM(e.getFaultMessage(),false));
+
             throw f;
             }
         </xsl:for-each>
@@ -176,7 +178,17 @@
         return returnMap;
         }
 
+        private org.apache.axis2.AxisFault createAxisFault(java.rmi.RemoteException e) {
+        org.apache.axis2.AxisFault f;
+        Throwable cause = e.getCause();
+        if (cause != null) {
+            f = new org.apache.axis2.AxisFault(e.getMessage(), cause);
+        } else {
+            f = new org.apache.axis2.AxisFault(e.getMessage());
+        }
 
+        return f;
+    }
 
         }//end of class
     </xsl:template>
