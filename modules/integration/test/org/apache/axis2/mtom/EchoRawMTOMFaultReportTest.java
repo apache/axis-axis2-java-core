@@ -16,8 +16,14 @@
 
 package org.apache.axis2.mtom;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -26,20 +32,15 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.axis2.swa.EchoRawSwAFileInputTest;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpMethodRetryHandler;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NoHttpResponseException;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
 
