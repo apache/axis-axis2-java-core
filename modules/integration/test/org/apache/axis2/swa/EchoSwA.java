@@ -35,20 +35,20 @@ import javax.xml.namespace.QName;
  */
 
 public class EchoSwA {
-    private MessageContext msgcts;
+    private OperationContext opcts;
 
     public EchoSwA() {
     }
 
     public void setOperationContext(OperationContext oc) throws AxisFault {
-        msgcts = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        opcts = oc;
     }
 
-    public OMElement echoAttachment(OMElement omEle) {
+    public OMElement echoAttachment(OMElement omEle) throws AxisFault {
         OMElement child = (OMElement) omEle.getFirstOMChild();
         OMAttribute attr = child.getAttribute(new QName("href"));
         String contentID = attr.getAttributeValue();
-        Attachments attachment = (Attachments) msgcts.getProperty(MTOMConstants.ATTACHMENTS);
+        Attachments attachment = (Attachments) (opcts.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)).getAttachmentMap();
         contentID = contentID.trim();
 
         if (contentID.substring(0, 3).equalsIgnoreCase("cid")) {
@@ -59,6 +59,15 @@ public class EchoSwA {
         omEle.build();
         child.detach();
         omEle.addChild(textNode);
+        return omEle;
+    }
+    
+    public OMElement echoOMElement(OMElement omEle) throws AxisFault {
+        OMElement child = (OMElement) omEle.getFirstOMChild();
+        Attachments attachment = (Attachments) (opcts.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)).getAttachmentMap();
+        opcts.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE).setAttachmentMap(attachment);
+        
+        omEle.build();
         return omEle;
     }
 }

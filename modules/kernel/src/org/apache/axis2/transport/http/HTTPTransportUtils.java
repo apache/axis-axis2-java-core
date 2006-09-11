@@ -114,6 +114,21 @@ public class HTTPTransportUtils {
         }
         return enableMTOM;
     }
+    
+    public static boolean doWriteSwA(MessageContext msgContext) {
+        boolean enableSwA = false;
+
+        if (msgContext.getParameter(Constants.Configuration.ENABLE_SWA) != null) {
+            enableSwA = JavaUtils.isTrueExplicitly(
+                    msgContext.getParameter(Constants.Configuration.ENABLE_SWA).getValue());
+        }
+
+        if (msgContext.getProperty(Constants.Configuration.ENABLE_SWA) != null) {
+            enableSwA = JavaUtils.isTrueExplicitly(
+                    msgContext.getProperty(Constants.Configuration.ENABLE_SWA));
+        }
+        return enableSwA;
+    }
 
     public static boolean processHTTPGetRequest(MessageContext msgContext,
                                                 OutputStream out, String soapAction, String requestURI,
@@ -179,7 +194,7 @@ public class HTTPTransportUtils {
             if (contentType != null) {
                 if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
 
-                    // It is MTOM
+                    // It is MIME (MTOM or SwA)
                     builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 } else {

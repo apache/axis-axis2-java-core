@@ -76,6 +76,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         // Check for the REST behaviour, if you desire rest beahaviour
         // put a <parameter name="doREST" value="true"/> at the axis2.xml
         msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
+        msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
 
         OutputStream out;
         EndpointReference epr = null;
@@ -147,6 +148,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                         (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
                 format.setDoOptimize(msgContext.isDoingMTOM());
+                format.setDoingSWA(msgContext.isDoingSwA());
                 format.setCharSetEncoding(charSetEnc);
                 outputMessage.serializeAndConsume(out, format);
                 out.flush();

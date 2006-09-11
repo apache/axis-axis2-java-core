@@ -240,8 +240,14 @@ public class TransportUtils {
 
         /*
         * put a reference to Attachments in to the message context
+        * Leaving this out for backword compatibility with 1.0
         */
         msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
+        
+        /*
+         * Setting the Attachments map to new SwA API
+         */
+        msgContext.setAttachmentMap(attachments);
 
         String soapEnvelopeNamespaceURI=null;
         if (contentTypeString.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {

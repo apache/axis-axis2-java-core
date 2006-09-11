@@ -16,7 +16,9 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
@@ -29,6 +31,7 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.ws.policy.Policy;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +55,7 @@ public class MessageContext extends AbstractContext {
 
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
     
-    public Map attachmentsMap = new HashMap();
+    public Attachments attachments = new Attachments();
 
     /**
      * Field TRANSPORT_OUT
@@ -129,6 +132,9 @@ public class MessageContext extends AbstractContext {
 
     // Are we doing MTOM now?
     private boolean doingMTOM;
+    
+    // Are we doing SwA now?
+    private boolean doingSwA;
 
     private transient AxisMessage axisMessage;
 
@@ -621,6 +627,13 @@ public class MessageContext extends AbstractContext {
     public boolean isDoingREST() {
         return doingREST;
     }
+    
+    /**
+     * @return Returns boolean.
+     */
+    public boolean isDoingSwA() {
+        return doingSwA;
+    }
 
     /**
      * @return Returns boolean.
@@ -722,6 +735,13 @@ public class MessageContext extends AbstractContext {
      */
     public void setDoingREST(boolean b) {
         doingREST = b;
+    }
+    
+    /**
+     * @param b
+     */
+    public void setDoingSwA(boolean b) {
+        doingSwA = b;
     }
 
     /**
@@ -1029,13 +1049,32 @@ public class MessageContext extends AbstractContext {
         return true;
     }
     
-    public void setAttachment(String contentID, Object dataHandler)
-    {
-    	attachmentsMap.put(contentID,dataHandler);
-    }
+    /**
+	 * Setting of the attachments map should be performed at the receipt of a
+	 * message only. This method is only meant to be used by the Axis2
+	 * internals.
+	 * 
+	 * @param attachments
+	 */
+    public void setAttachmentMap(Attachments attachments) {
+		this.attachments = attachments;
+	}
     
-    public Object getAttachment(String contentID)
-    {
-    	return attachmentsMap.get(contentID);
+    public Attachments getAttachmentMap(){
+    	return attachments;
     }
+
+	public void addAttachment(String contentID, DataHandler dataHandler) {
+		attachments.addDataHandler(contentID, dataHandler);
+	}
+
+	public String addAttachment(DataHandler dataHandler) {
+		String contentID = UUIDGenerator.getUUID();
+		addAttachment(contentID, dataHandler);
+		return contentID;
+	}
+
+	public DataHandler getAttachment(String contentID) {
+		return attachments.getDataHandler(contentID);
+	}
 }

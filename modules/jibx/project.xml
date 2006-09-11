@@ -149,6 +149,14 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javamail.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>jibx</groupId>
             <artifactId>jibx-bind</artifactId>
             <version>${jibx.version}</version>

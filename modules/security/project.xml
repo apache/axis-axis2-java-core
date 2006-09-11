@@ -233,6 +233,14 @@
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javamail.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
 	<!-- For WS-Policy support -->
 	<dependency>
 		<groupId>ws-commons</groupId>

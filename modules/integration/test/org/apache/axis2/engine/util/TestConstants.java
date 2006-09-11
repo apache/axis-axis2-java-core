@@ -33,4 +33,6 @@ public interface TestConstants {
     public static final QName serviceName = new QName("EchoXMLService");
 
     public static final QName operationName = new QName("echoOMElement");
+    
+    public static final QName swaServiceName = new QName("EchoSwAService");
 }

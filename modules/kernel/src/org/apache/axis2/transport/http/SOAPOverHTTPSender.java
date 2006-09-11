@@ -16,6 +16,17 @@
 
 package org.apache.axis2.transport.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.zip.GZIPOutputStream;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MIMEOutputUtils;
@@ -23,26 +34,15 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.zip.GZIPOutputStream;
 
 public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
@@ -159,6 +159,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             this.chunked = chunked;
             this.msgCtxt = msgCtxt;
             this.doingMTOM = msgCtxt.isDoingMTOM();
+            this.doingSWA =  msgCtxt.isDoingSwA();
             this.charSetEnc = charSetEncoding;
             this.soapActionString = soapActionString;
         }
@@ -166,13 +167,27 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         private void handleOMOutput(OutputStream out, boolean doingMTOM)
                 throws XMLStreamException {
             format.setDoOptimize(doingMTOM);
-            // To support NTLM Authentication the following check has been done.
-            if (msgCtxt.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null)
-            {
-                element.serialize(out, format);
-            } else {
-                element.serializeAndConsume(out, format);
-            }
+			format.setDoingSWA(doingSWA);
+
+			if (!doingMTOM & doingSWA) {
+				 StringWriter bufferedSOAPBody = new StringWriter();
+				//To support NTLM Authentication the following check has been
+				// done.
+				if (msgCtxt.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null) {
+					element.serialize(bufferedSOAPBody, format);
+				} else {
+					element.serializeAndConsume(bufferedSOAPBody, format);
+				}
+				MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,out,msgCtxt.getAttachmentMap(), format);
+			} else {
+				// To support NTLM Authentication the following check has been
+				// done.
+				if (msgCtxt.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null) {
+					element.serialize(out, format);
+				} else {
+					element.serializeAndConsume(out, format);
+				}
+			}
         }
 
         public byte[] writeBytes() throws AxisFault {
@@ -186,7 +201,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 					if (doingSWA) {
 			            StringWriter bufferedSOAPBody = new StringWriter();
 			            element.serializeAndConsume(bufferedSOAPBody,format2);
-						MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,bytesOut,new HashMap(), format2);
+						MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,bytesOut,msgCtxt.getAttachmentMap(), format2);
 					} else {
 						element.serializeAndConsume(bytesOut, format2);
 					}

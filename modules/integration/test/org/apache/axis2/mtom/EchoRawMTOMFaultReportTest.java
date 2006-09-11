@@ -26,7 +26,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
-import org.apache.axis2.swa.EchoRawSwATest;
+import org.apache.axis2.swa.EchoRawSwAFileInputTest;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
@@ -48,7 +48,7 @@ public class EchoRawMTOMFaultReportTest extends UtilServerBasedTestCase {
     private QName operationName = new QName("mtomSample");
 
     public EchoRawMTOMFaultReportTest() {
-        super(EchoRawSwATest.class.getName());
+        super(EchoRawMTOMFaultReportTest.class.getName());
     }
 
     public EchoRawMTOMFaultReportTest(String testName) {

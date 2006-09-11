@@ -225,6 +225,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String HTTP_METHOD_GET = "GET";
         public static final String HTTP_METHOD = "HTTP_METHOD";
         public static final String HTTP_METHOD_POST = "POST";
+        
+        public static final String ENABLE_SWA = "enableSwA";
 
         public static final String CONTENT_TYPE = "ContentType";
         public static final String IS_USING_SEPARATE_LISTENER = "IsUsingSeparateListener";

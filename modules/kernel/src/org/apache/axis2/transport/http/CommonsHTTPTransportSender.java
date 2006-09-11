@@ -19,6 +19,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.MIMEOutputUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
@@ -41,6 +42,7 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -160,9 +162,11 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
+            msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
             msgContext.setDoingREST(HTTPTransportUtils.isDoingREST(msgContext));
             format.setSOAP11(msgContext.isSOAP11());
             format.setDoOptimize(msgContext.isDoingMTOM());
+            format.setDoingSWA(msgContext.isDoingSwA());
             format.setCharSetEncoding(charSetEnc);
 
             // Trasnport URL can be different from the WSA-To. So processing
@@ -265,7 +269,16 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
 
         format.setDoOptimize(msgContext.isDoingMTOM());
-        dataOut.serializeAndConsume(out, format);
+		format.setDoingSWA(msgContext.isDoingSwA());
+		if (!(msgContext.isDoingMTOM()) & (msgContext.isDoingSwA())
+				& !(msgContext.isDoingREST())) {
+			StringWriter bufferedSOAPBody = new StringWriter();
+			dataOut.serializeAndConsume(bufferedSOAPBody, format);
+			MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,
+					out, msgContext.getAttachmentMap(), format);
+		} else {
+			dataOut.serializeAndConsume(out, format);
+		}
     }
 
     public void writeMessageWithCommons(MessageContext msgContext,

@@ -16,31 +16,44 @@
 
 package org.apache.axis2.swa;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.llom.OMTextImpl;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.SocketException;
+public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConstants {
 
-public class EchoRawSwATest extends UtilServerBasedTestCase {
 
-    private QName serviceName = new QName("EchoSwAService");
+	private static final Log log = LogFactory.getLog(EchoRawSwATest.class);
 
-    private QName operationName = new QName("echoAttachment");
+    private AxisService service;
+
+    private boolean finish = false;
 
     public EchoRawSwATest() {
         super(EchoRawSwATest.class.getName());
@@ -51,61 +64,71 @@ public class EchoRawSwATest extends UtilServerBasedTestCase {
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawSwATest.class),
-                Constants.TESTING_PATH + "MTOM-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawSwATest.class),Constants.TESTING_PATH + "SwA-enabledRepository");
     }
 
     protected void setUp() throws Exception {
-        AxisService service = new AxisService(serviceName.getLocalPart());
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(
-                Constants.SERVICE_CLASS, EchoSwA.class
-                .getName()));
-        AxisOperation axisOp = new InOutAxisOperation(operationName);
-        axisOp.setMessageReceiver(new RawXMLINOutMessageReceiver());
-        axisOp.setStyle(WSDLConstants.STYLE_DOC);
-        service.addOperation(axisOp);
+        service = Utils.createSimpleService(serviceName, EchoSwA.class.getName(),
+                operationName);
         UtilServer.deployService(service);
-
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
+        UtilServer.unDeployClientService();
     }
+
+    protected SOAPEnvelope createEnvelope() throws Exception {
+    	SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
+        SOAPEnvelope env = fac.getDefaultEnvelope();
+        
+        OMNamespace omNs = fac.createOMNamespace("htp://localhost/my", "my");
+        OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
+        OMElement data = fac.createOMElement("data", omNs);
+        OMText textData = fac.createOMText("Apache Axis2 Rocks !!!");
+        data.addChild(textData);
+        rpcWrapEle.addChild(data);
+        
+        env.getBody().addChild(rpcWrapEle);
+        return env;
+    }
+
 
     public void testEchoXMLSync() throws Exception {
-        Socket socket = new Socket("127.0.0.1", 5555);
-        OutputStream outStream = socket.getOutputStream();
-        socket.getInputStream();
-        InputStream requestMsgInStream = getResourceAsStream("/org/apache/axis2/swa/swainput.bin");
-        int data;
-        while ((data = requestMsgInStream.read()) != -1) {
-            outStream.write(data);
-        }
-        outStream.flush();
-        socket.shutdownOutput();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(socket
-                .getInputStream()));
-        StringBuffer sb = new StringBuffer();
-
-        String response = reader.readLine();
-        while (null != response) {
-            try {
-                sb.append(response.trim());
-                response = reader.readLine();
-            } catch (SocketException e) {
-                break;
-            }
-        }
-
-        assertTrue(sb.toString().indexOf(
-                "Apache Axis2 - The NExt Generation Web Services Engine") > 0);
-        assertTrue(sb.toString().indexOf("multipart/related") > 0);
+        OMElement payload = createEnvelope();
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setTimeOutInMilliSeconds(100000);
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+        options.setTo(targetEPR);
+        
+        ConfigurationContext configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+        
+        ServiceClient sender = new ServiceClient(configContext,null);
+        sender.setOptions(options);
+        OperationClient mepClient = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
+        MessageContext mc = new MessageContext();   
+        mc.setEnvelope(createEnvelope());
+        FileDataSource fileDataSource = new FileDataSource("test-resources/mtom/test.jpg");
+        DataHandler dataHandler = new DataHandler(fileDataSource);
+        mc.addAttachment("FirstAttachment",dataHandler);
+       
+        mepClient.addMessageContext(mc);
+        mepClient.execute(true);
+        MessageContext response = mepClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        DataHandler dataHandler2 = response.getAttachment("FirstAttachment");
+        assertNotNull(dataHandler);
+        compareDataHandlers(dataHandler,dataHandler2);
     }
 
-    private InputStream getResourceAsStream(String path) {
-        return this.getClass().getResourceAsStream(path);
+    protected void compareDataHandlers(DataHandler dataHandler, DataHandler dataHandler2) {
+        String originalTextValue = new OMTextImpl(dataHandler,true,null).getText();
+        String returnedTextValue = new OMTextImpl(dataHandler2,true,null).getText();
+        assertEquals(returnedTextValue, originalTextValue);
     }
-
-
 }

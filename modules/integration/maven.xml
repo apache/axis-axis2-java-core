@@ -479,6 +479,22 @@
         	<copy file="../addressing/target/addressing-${addressing_version}.mar"
         	        	      tofile="target/test-resources/MTOM-fileCache-enabledRepository/modules/addressing-${addressing_version}.mar"/>
 
+            <!-- SwA enabled Repository -->
+              <mkdir dir="target/test-resources/SwA-enabledRepository"/>
+              <mkdir dir="target/test-resources/SwA-enabledRepository/conf"/>
+              <copy file="test-resources/swa/SwA-enabled-axis2.xml"
+                    tofile="target/test-resources/SwA-enabledRepository/conf/axis2.xml"/>
+          	<copy file="../addressing/target/addressing-${addressing_version}.mar"
+          	      tofile="target/test-resources/SwA-enabledRepository/modules/addressing-${addressing_version}.mar"/>
+
+              <!-- SwA file cache enabled Repository -->
+              <mkdir dir="target/test-resources/SwA-fileCache-enabledRepository"/>
+              <mkdir dir="target/test-resources/SwA-fileCache-enabledRepository/conf"/>
+              <copy file="test-resources/swa/SwA-fileCache-enabled-axis2.xml"
+                    tofile="target/test-resources/SwA-fileCache-enabledRepository/conf/axis2.xml"/>
+          	<copy file="../addressing/target/addressing-${addressing_version}.mar"
+          	        	      tofile="target/test-resources/SwA-fileCache-enabledRepository/modules/addressing-${addressing_version}.mar"/>
+
             <!-- Groovy repository -->
             <mkdir dir="target/groovyRepo"/>
             <mkdir dir="target/groovyRepo/conf"/>
