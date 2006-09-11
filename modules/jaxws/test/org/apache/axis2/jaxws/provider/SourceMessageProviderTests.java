@@ -28,10 +28,10 @@ import javax.xml.ws.Service;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-public class SourceProviderTests extends ProviderTestCase {
+public class SourceMessageProviderTests extends ProviderTestCase {
 
-    private String endpointUrl = "http://localhost:8080/axis2/services/SourceProviderService";
-    private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
+    private String endpointUrl = "http://localhost:8080/axis2/services/SourceMessageProviderService";
+    private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceMessageProviderService");
     private String xmlDir = "xml";
 
 
@@ -43,7 +43,7 @@ public class SourceProviderTests extends ProviderTestCase {
             super.tearDown();
     }
 
-    public SourceProviderTests(String name) {
+    public SourceMessageProviderTests(String name) {
         super(name);
     }
     
@@ -59,7 +59,7 @@ public class SourceProviderTests extends ProviderTestCase {
         	Service svc = Service.create(serviceName);
         	svc.addPort(portName,null, endpointUrl);
         	Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, null);
-        	System.out.println(">> Invoking Source Provider Dispatch");
+        	System.out.println(">> Invoking SourceMessageProviderDispatch");
         	Source response = dispatch.invoke(xmlStreamSource);
 
         	System.out.println(">> Response [" + response.toString() + "]");

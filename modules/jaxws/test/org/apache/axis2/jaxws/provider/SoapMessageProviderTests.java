@@ -17,6 +17,7 @@
 package org.apache.axis2.jaxws.provider;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -25,14 +26,17 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-public class SourceProviderTests extends ProviderTestCase {
+public class SoapMessageProviderTests extends ProviderTestCase {
 
-    private String endpointUrl = "http://localhost:8080/axis2/services/SourceProviderService";
-    private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
+    private String endpointUrl = "http://localhost:8080/axis2/services/SoapMessageProviderService";
+    private QName serviceName = new QName("http://ws.apache.org/axis2", "SoapMessageProviderService");
     private String xmlDir = "xml";
+    private String reqMsg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>some request</invoke_str></ns2:invoke></soap:Body></soap:Envelope>";
 
 
     protected void setUp() throws Exception {
@@ -43,26 +47,30 @@ public class SourceProviderTests extends ProviderTestCase {
             super.tearDown();
     }
 
-    public SourceProviderTests(String name) {
+    public SoapMessageProviderTests(String name) {
         super(name);
     }
     
     public void testProviderSource(){
         try{
-        	String resourceDir = new File(providerResourceDir, xmlDir).getAbsolutePath();
-        	String fileName = resourceDir+File.separator+"web.xml";
-        	
-        	File file = new File(fileName);
-        	InputStream inputStream = new FileInputStream(file);
-        	StreamSource xmlStreamSource = new StreamSource(inputStream);
-        	
+//        	String resourceDir = new File(providerResourceDir, xmlDir).getAbsolutePath();
+//        	String fileName = resourceDir+File.separator+"web.xml";
+//        	
+//        	File file = new File(fileName);
+//        	InputStream inputStream = new FileInputStream(file);
+//        	StreamSource xmlStreamSource = new StreamSource(inputStream);
+//        	
         	Service svc = Service.create(serviceName);
         	svc.addPort(portName,null, endpointUrl);
-        	Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, null);
-        	System.out.println(">> Invoking Source Provider Dispatch");
-        	Source response = dispatch.invoke(xmlStreamSource);
+        	Dispatch<SOAPMessage> dispatch = svc.createDispatch(portName, SOAPMessage.class, Service.Mode.MESSAGE);
+        	System.out.println(">> Invoking SourceMessageProviderDispatch");
+            MessageFactory factory = MessageFactory.newInstance();
+            SOAPMessage outboundMessage = factory.createMessage(null, 
+                    new ByteArrayInputStream(reqMsg.getBytes()));
+        	SOAPMessage response = dispatch.invoke(outboundMessage);
 
         	System.out.println(">> Response [" + response.toString() + "]");
+            response.writeTo(System.out);
         	
         }catch(Exception e){
         	e.printStackTrace();

@@ -22,19 +22,24 @@ import java.lang.reflect.Type;
 
 import javax.activation.DataSource;
 import javax.xml.bind.JAXBContext;
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.ws.Provider;
+import javax.xml.ws.Service;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -61,6 +66,7 @@ public class ProviderDispatcher extends JavaDispatcher{
     private BlockFactory blockFactory = null;
 	private Class providerType = null;
     private Provider providerInstance = null;
+    private Service.Mode providerServiceMode = null;
     private Message message = null;
     private Protocol messageProtocol;
 
@@ -92,21 +98,52 @@ public class ProviderDispatcher extends JavaDispatcher{
         Object requestParamValue = null;
         Message message = mc.getMessage();
         if (message != null) {
-            // Save off the protocol info so we can use it when creating
-            // the response message.
+            // Save off the protocol info so we can use it when creating the response message.
             messageProtocol = message.getProtocol();
-            
+            // Determine what type blocks we want to create (String, Source, etc) based on Provider Type
             BlockFactory factory = createBlockFactory(providerType);
-            Block block = message.getBodyBlock(0, null, factory);
-            requestParamValue = block.getBusinessObject(true);
+            
+            // REVIEW: This assumes there is only one endpoint description on the service.  Is that always the case?
+            EndpointDescription endpointDesc = mc.getServiceDescription().getEndpointDescriptions()[0];
+            providerServiceMode = endpointDesc.getServiceModeValue();
+            
+            if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
+                // For MESSAGE mode, work with the entire message, Headers and Body
+                // This is based on logic in org.apache.axis2.jaxws.client.XMLDispatch.getValueFromMessage()
+                if (providerType.equals(SOAPMessage.class)) {
+                    // We can get the SOAPMessage directly from the message itself
+                    requestParamValue = message.getAsSOAPMessage();
+                }
+                else {
+                    // For Source and String, we have to do some conversions using the block factories
+                    // This is similar to the PAYLOAD logic, except it gets the entire message as a block
+                    // rather than just the body block (which is what PAYLOAD mode does).
+                    // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock. This is not performant. Scheu 
+                    OMElement messageOM = message.getAsOMElement();
+                    String stringValue = messageOM.toString();  
+                    QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
+                    XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+                    Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
+                    Block messageBlock = factory.createFrom(stringBlock, null);
+                    requestParamValue = messageBlock.getBusinessObject(true);
+                }
+            }
+            else {
+                // If it is not MESSAGE, then it is PAYLOAD (which is the default); only work with the body 
+                Block block = message.getBodyBlock(0, null, factory);
+                requestParamValue = block.getBusinessObject(true);
+            }
         }
 
+        if (log.isDebugEnabled())
+            log.debug("Provider Type = " + providerType + "; parameter type = " + requestParamValue);
+        
         Object input = providerType.cast(requestParamValue);
-
         if (log.isDebugEnabled()) {
             log.debug("Invoking Provider<" + providerType.getName() + "> with " +
                     "parameter of type " + input.getClass().getName());
         }
+
 
         // Invoke the actual Provider.invoke() method
         Object responseParamValue = null;
@@ -171,20 +208,34 @@ public class ProviderDispatcher extends JavaDispatcher{
      * Create a Message object out of the value object that was returned.
      */
     private Message createMessageFromValue(Object value) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Creating response Message from value of type " + 
-                    value.getClass().getName());
-        }
-        
-        MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(
-                MessageFactory.class);
-        Message message = msgFactory.create(messageProtocol);
+        MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+        Message message = null;
         
         if (value != null) {
             BlockFactory factory = createBlockFactory(providerType);
-            Block block = factory.createFrom(value, null, null);
-            message.setBodyBlock(0, block);
+            if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
+                // For MESSAGE mode, work with the entire message, Headers and Body
+                // This is based on logic in org.apache.axis2.jaxws.client.XMLDispatch.createMessageFromBundle()
+                if (value instanceof SOAPMessage) {
+                    message = msgFactory.createFrom((SOAPMessage) value);
+                }
+                else {
+                    Block block = factory.createFrom(value, null, null);
+                    message = msgFactory.createFrom(block, null);
+                }
+            }
+            else {
+                // PAYLOAD mode deals only with the body of the message.
+                Block block = factory.createFrom(value, null, null);
+                message = msgFactory.create(messageProtocol);
+                message.setBodyBlock(0, block);
+            }
         }
+        
+        if (message == null)
+            // If we didn't create a message above (because there was no value), create one here
+            message = msgFactory.create(messageProtocol);
+            
 
         return message;
     }
@@ -288,6 +339,10 @@ public class ProviderDispatcher extends JavaDispatcher{
         else if (type.equals(Source.class)) {
             blockFactory = (SourceBlockFactory) FactoryRegistry.getFactory(
                     SourceBlockFactory.class);
+        }
+        else if (type.equals(SOAPMessage.class)) {
+            blockFactory = (SOAPEnvelopeBlockFactory) FactoryRegistry.getFactory(
+                    SOAPEnvelopeBlockFactory.class);
         }
         else {
             ExceptionFactory.makeWebServiceException("Unable to find BlockFactory " +

@@ -128,11 +128,44 @@
                 <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/StringMessageProviderService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/provider/stringmsg/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/provider/stringmsg">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
 		<ant:copy toDir="target/test-classes/services/SourceProviderService/">
 			<ant:fileset dir="target/test-classes">
 				<ant:include name="org/apache/axis2/jaxws/provider/source/**"/>
 			</ant:fileset>
 			<ant:fileset dir="test/org/apache/axis2/jaxws/provider/source">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/SourceMessageProviderService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/provider/sourcemsg/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/provider/sourcemsg">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/SoapMessageProviderService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/provider/soapmsg/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/provider/soapmsg">
                 <ant:include name="META-INF/**"/>
 			</ant:fileset>
 			<ant:fileset dir="target/classes">
