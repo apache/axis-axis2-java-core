@@ -221,6 +221,7 @@ public class TransportBindingBuilder {
             sig.setWsConfig(rmd.getConfig());
             boolean bst = false;
             
+            log.debug("Token inclusion: " + token.getInclusion());
             if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
                 //Use thumbprint
                 sig.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);

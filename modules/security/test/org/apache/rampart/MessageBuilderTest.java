@@ -69,6 +69,25 @@ public class MessageBuilderTest extends TestCase {
             fail(e.getMessage());
         }
     }
+    
+    public void testTransportBindingNoBST() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            
+            String policyXml = "test-resources/policy/rampart-transport-binding-no-bst.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+            
+            System.out.println(ctx.getEnvelope());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
 
     /**
      * @throws XMLStreamException
