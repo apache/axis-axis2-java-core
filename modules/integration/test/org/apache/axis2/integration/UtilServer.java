@@ -24,18 +24,11 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.deployment.repository.util.ArchiveFileData;
-import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.Flow;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
@@ -96,9 +89,7 @@ public class UtilServer {
                         + TESTING_PORT + ".....");
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
             }
-
         }
 
         try {
@@ -121,8 +112,8 @@ public class UtilServer {
                 receiver.start();
                 System.out.print("Server started on port "
                         + TESTING_PORT + ".....");
-            } finally {
-
+            } catch (Exception e) {
+                throw new AxisFault(e);
             }
 
             try {
@@ -164,6 +155,7 @@ public class UtilServer {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
+                    //nothing to do here
                 }
             }
             count = 0;
@@ -185,13 +177,12 @@ public class UtilServer {
 
     public static ServiceContext createAdressedEnabledClientSide(
             AxisService service) throws AxisFault {
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(
                         "target/test-resources/integrationRepo", null);
-        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
+        AxisModule axisModule = DeploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
 
@@ -219,33 +210,30 @@ public class UtilServer {
     public static ConfigurationContext createClientConfigurationContext() throws AxisFault {
         File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
 
         ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem(
                 "target/test-resources/integrationRepo",
                 "target/test-resources/integrationRepo/conf/axis2.xml");
-        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
+        AxisModule axisModule = DeploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
         return configContext;
     }
 
     public static ConfigurationContext createClientConfigurationContext(String repo) throws AxisFault {
-        ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem(
+        return ConfigurationContextFactory .createConfigurationContextFromFileSystem(
                 repo,
                 repo + "/conf/axis2.xml");
-        return configContext;
     }
 
     public static ServiceContext createAdressedEnabledClientSide(
             AxisService service, String clientHome) throws AxisFault {
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome, null);
-        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
+        AxisModule axisModule = DeploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);

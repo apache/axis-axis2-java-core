@@ -22,7 +22,6 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -133,13 +132,12 @@ public class UtilServer {
 
     public static ServiceContext createAdressedEnabledClientSide(
             AxisService service) throws AxisFault {
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
-        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
+        AxisModule axisModule = DeploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
 
@@ -152,10 +150,9 @@ public class UtilServer {
     public static ConfigurationContext createClientConfigurationContext() throws AxisFault {
         File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
 
         ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
-        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
+        AxisModule axisModule = DeploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
         configContext.getAxisConfiguration().engageModule(new QName("addressing"));
@@ -164,13 +161,12 @@ public class UtilServer {
 
     public static ServiceContext createAdressedEnabledClientSide(
             AxisService service, String clientHome) throws AxisFault {
-        DeploymentEngine deploymentEngine = new DeploymentEngine();
         File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
 
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome, null);
-        AxisModule axisModule = Utils.buildModule(file, deploymentEngine,
+        AxisModule axisModule = DeploymentEngine.buildModule(file,
                 configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);
