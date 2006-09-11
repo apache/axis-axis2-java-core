@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
@@ -36,6 +37,12 @@ public class X509TokenBuilder implements AssertionBuilder {
         X509Token x509Token = new X509Token();
 
         OMElement policyElement = element.getFirstElement();
+        
+        //Process token inclusion
+        OMAttribute  includeAttr = element.getAttribute(Constants.INCLUDE_TOKEN);
+        if(includeAttr != null) {
+            x509Token.setInclusion(includeAttr.getAttributeValue());
+        }
 
         if (policyElement != null) {
             Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
