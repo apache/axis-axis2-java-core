@@ -59,7 +59,7 @@
 
     <build>
         <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
-        <sourceDirectory>src</sourceDirectory>
+        <sourceDirectory>axis2-ant-plugin/src/main/java</sourceDirectory>
         <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
         <sourceModifications>
