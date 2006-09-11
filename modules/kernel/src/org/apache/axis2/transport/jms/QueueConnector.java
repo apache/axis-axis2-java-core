@@ -205,7 +205,7 @@ public class QueueConnector extends JMSConnector {
             }
 
             protected Destination createTemporaryDestination() throws JMSException {
-                return m_session.createTemporaryryQueue();
+                return m_session.createTemporaryQueue();
             }
 
             protected void deleteTemporaryDestination(Destination destination) throws JMSException {
