@@ -40,6 +40,8 @@ import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.provider.*;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
+import org.apache.axis2.jaxws.sample.NonWrapTests;
+import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.proxy.ProxyNonWrappedTests;
 import org.apache.axis2.proxy.ProxyTests;
 
@@ -82,6 +84,8 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ExceptionFactoryTests.class);
 
         suite.addTestSuite(AddressBookTests.class);
+        suite.addTestSuite(NonWrapTests.class);
+        suite.addTestSuite(WrapTests.class);
         suite.addTestSuite(AddNumbersTests.class);
         
         // Start (and stop) the server only once for all the tests

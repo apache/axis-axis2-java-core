@@ -65,9 +65,15 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	protected MessageContext createRequest(Method method, Object[] args) throws ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, javax.xml.stream.XMLStreamException {
 		MessageContext requestCtx = null;
 		if(isDocLitWrapped()){
+			if (log.isDebugEnabled()) {
+	            log.debug("Creating Doc Lit Wrapped Request for method : " +method.getName());
+	        }
 			return createDocLitWrappedRequest(method, args);
 		}
 		if(isDocLitBare()){
+			if (log.isDebugEnabled()) {
+	            log.debug("Creating Doc Lit Bare Request for method : " +method.getName());
+	        }
 			return createDocLitNONWrappedRequest(method, args);
 		}
 		return requestCtx;
@@ -77,9 +83,15 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	protected Object createResponse(Method method, MessageContext responseContext) throws IllegalAccessException, ClassNotFoundException, JAXBWrapperException, JAXBException, javax.xml.stream.XMLStreamException, MessageException, IntrospectionException, NoSuchFieldException, InvocationTargetException{
 		Object result = null;
 		if(isDocLitWrapped()){
+			if (log.isDebugEnabled()) {
+	            log.debug("Creating Doc Lit Wrapped Response ");
+	        }
 			return createDocLitWrappedResponse(method, responseContext);
 		}
 		if(isDocLitBare()){
+			if (log.isDebugEnabled()) {
+	            log.debug("Creating Doc Lit Bare Request ");
+	        }
 			return createDocLitNONWrappedResponse(method, responseContext);
 		}
 		return result;
@@ -105,13 +117,24 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		String localName = proxyDescriptor.getResponseWrapperLocalName();
 		Map<String, Object> values = getParamValues(objects, names);
 		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
-		
+		if (log.isDebugEnabled()) {
+            log.debug("JAXBWrapperTool attempting to wrap propertes in WrapperClass :" + wrapperClazz);
+        }
 		//TODO:if(@XmlRootElement) annotation found or defined
 		Object jaxbObject = wrapTool.wrap(wrapperClazz, localName,names, values);
+		if (log.isDebugEnabled()) {
+            log.debug("JAXBWrapperTool wrapped following propertes :");
+        }
 		//TODO: if (!@XmlRootElement) annotation not found or not defined then can I use JAXBElement?
 		//JAXBElement jaxbObject = wrapTool.wrapAsJAXBElement(wrapperClazz, requestWrapper.localName(),names, values);
 		JAXBContext ctx = JAXBContext.newInstance(new Class[]{wrapperClazz});
+		if (log.isDebugEnabled()) {
+            log.debug("Attempting to create Block");
+        }
 		Block reqBlock = createJAXBBlock(jaxbObject, ctx);
+		if (log.isDebugEnabled()) {
+            log.debug("JAXBBlock Created");
+        }
 		MessageContext requestCtx = initializeRequest(reqBlock);
 		return requestCtx;
 		
@@ -132,17 +155,29 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		ArrayList<String> names = getParamNames(objects);
 		Map<String, Object> values = getParamValues(objects, names);
 		if(names.size()> SIZE || values.size() > SIZE){
-			throw ExceptionFactory.makeWebServiceException("As per WS-I compliance, Multi part WSDL not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
+			if (log.isDebugEnabled()) {
+	            log.debug("As per WS-I compliance, Multi part WSDL not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
+	        }
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr1"));
 		}
 		for(String name:names){
 			requestObject = values.get(name);
 			if(requestObject == null){
-				throw ExceptionFactory.makeWebServiceException("Method Input parameter for NON Wrapped Request cannot be null");
+				if (log.isDebugEnabled()) {
+		            log.debug("Method Input parameter for NON Wrapped Request cannot be null");
+		        }
+				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr2"));
 			}
 		}
 			
 		ctx = JAXBContext.newInstance(new Class[]{requestObject.getClass()});
+		if (log.isDebugEnabled()) {
+            log.debug("Attempting to create Block");
+        }
 		Block reqBlock = createJAXBBlock(requestObject, ctx);
+		if (log.isDebugEnabled()) {
+            log.debug("Block Created");
+        }
 		MessageContext requestCtx = initializeRequest(reqBlock);
 		return requestCtx;
 	}
@@ -239,7 +274,13 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	private Object getWebResultObject(Class wrapperClazz, Object businessObject, String propertyName) throws JAXBWrapperException{
 		
 		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
+		if (log.isDebugEnabled()) {
+            log.debug("Attempting to unwrap object from WrapperClazz: "+wrapperClazz);
+        }
 		Object[] webResult = wrapTool.unWrap(businessObject,new ArrayList<String>(Arrays.asList(new String[]{propertyName})));
+		if (log.isDebugEnabled()) {
+            log.debug("Object unwrapped");
+        }
 		return webResult[0];
 		
 	}

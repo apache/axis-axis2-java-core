@@ -92,7 +92,20 @@
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -p org.test.dispatch.jaxbsource ${schema.source.dir}/jaxbsource.xsd"/>
     	</java>
-    	
+    	<ant:echo>Generating java from doclit_nonwrap.wsdl for javabean endpoint support</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    		<jvmarg line="${maven.junit.jvmargs}"/>
+    		<classpath refid="maven.dependency.classpath"/>
+    		<classpath location="${compiled.classes.dir}"/>
+    		<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclit_nonwrap.wsdl"/>
+		</java>
+    	<ant:echo>Generating java from doclitwrap.wsdl for javabean endpoint support</ant:echo>
+		<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+			<jvmarg line="${maven.junit.jvmargs}"/>
+			<classpath refid="maven.dependency.classpath"/>
+			<classpath location="${compiled.classes.dir}"/>
+			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitwrap.wsdl"/>
+		</java>
        <!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>
         <javac destdir="${schema.generated.classes.dir}" srcdir="${schema.generated.src.dir}">
@@ -231,6 +244,30 @@
 		  <ant:fileset dir="test/org/apache/axis2/jaxws/sample/addressbook">
 		    <ant:include name="META-INF/**"/>
 		  </ant:fileset>
+		</ant:copy>
+		
+		<ant:copy toDir="target/test-classes/services/DocLitNonWrapService/">
+		  <ant:fileset dir="target/test-classes">
+		    <ant:include name="org/apache/axis2/jaxws/sample/nonwrap/**"/>
+		  </ant:fileset>
+		  <ant:fileset dir="test/org/apache/axis2/jaxws/sample/nonwrap">
+		    <ant:include name="META-INF/**"/>
+		  </ant:fileset>
+		  <ant:fileset dir="target/classes">
+			 <ant:include name="org/apache/axis2/jaxws/server/**"/>
+		  </ant:fileset>
+		</ant:copy>
+		
+		<ant:copy toDir="target/test-classes/services/DocLitWrapService/">
+			<ant:fileset dir="target/test-classes">
+			   	<ant:include name="org/apache/axis2/jaxws/sample/wrap/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/sample/wrap">
+			  	<ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+				<ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
 		</ant:copy>
 		
 		<ant:copy toDir="target/test-classes/services/AddNumbersService/">

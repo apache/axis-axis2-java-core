@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.jws.WebParam;
 import javax.jws.WebResult;
+import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
@@ -78,9 +79,10 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
         OperationDescription opDesc = getOperationDescription(mc);
         mc.setOperationDescription(opDesc);
-
-        Method target = resolveJavaMethodForOperation(mc);
-        Object[] params = getParameterData(target, mc);
+        
+        Mapper mapper = new MapperImpl();
+        Method target = mapper.getJavaMethod(mc, serviceImplClass);
+        Object[] params = mapper.getInputParameterData(mc, target);
 
         //At this point, we have the method that is going to be invoked and
         //the parameter data to invoke it with, so create an instance and 
@@ -88,8 +90,16 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         serviceInstance = createServiceInstance();
         Object response = target.invoke(serviceInstance, params);
         
-        Block responseBlock = createResponseWrapper(response, opDesc);
-
+        if(opDesc.isOneWay()){
+        	//Dont return response message context if its a one way operation.
+        	return null;
+        }
+        if(!opDesc.isOneWay() && target.getReturnType().getName().equals("void")){
+        	//look for holders
+        	throw new UnsupportedOperationException("Holders not supported yet");
+        }
+        Block responseBlock = mapper.getOutputParameterBlock(mc, response, target);
+       
         //Create the Message for the response
         MessageFactory factory = (MessageFactory) FactoryRegistry.getFactory(
                 MessageFactory.class);
@@ -100,112 +110,6 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         responseMsgCtx.setMessage(message);
         
         return responseMsgCtx;
-    }
-    
-    /*
-     * Find the Java method that corresponds to the WSDL operation that was 
-     * targeted by the Axis2 Dispatchers.
-     */
-    // TODO: This should be done using the OperationDescriptor
-    private Method resolveJavaMethodForOperation(MessageContext mc) {
-        QName opName = mc.getOperationName();
-        if (opName == null)
-            // TODO: NLS
-            throw ExceptionFactory.makeWebServiceException("Operation name was not set");
-        
-        String localPart = opName.getLocalPart();
-        Method[] methods = serviceImplClass.getMethods();
-        for (int i = 0; i < methods.length; ++i) {
-            if (localPart.equals(methods[i].getName()))
-                return methods[i];
-        }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("No Java method found for the operation");
-        }
-        // TODO: NLS
-        throw ExceptionFactory.makeWebServiceException("No Java method was found for the operation");
-    }
-    
-    /*
-     * Takes the contents of the message and uses that to prepare the parameters
-     * for the method that will be invoked.
-     */
-    private Object[] getParameterData(Method method, MessageContext mc) {
-        Class[] params = method.getParameterTypes();
-        
-        // If there are no params, we don't need to do anything.
-        if (params.length == 0)
-            return null;
-
-        try {
-            OperationDescription opDesc = mc.getOperationDescription();
-            
-            JAXBContext jbc = createJAXBContext(opDesc);
-            BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            
-            Message msg = mc.getMessage();
-            Block wrapper = msg.getBodyBlock(0, jbc, factory);
-            
-            JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            
-            String[] webParamNames = opDesc.getWebParamNames();
-            ArrayList<String> elements = new ArrayList<String>(Arrays.asList(webParamNames));
-
-            Object param = wrapper.getBusinessObject(true);
-            Object[] contents = wrapperTool.unWrap(param, elements);
-            return contents;
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-    
-    private JAXBContext createJAXBContext(OperationDescription opDesc) {
-        // This will only support Doc/Lit Wrapped params for now.
-        try {
-            String wrapperClass = opDesc.getRequestWrapperClassName();
-            if (wrapperClass != null) {
-                String wrapperPkg = wrapperClass.substring(0, wrapperClass.lastIndexOf("."));
-                JAXBContext jbc = JAXBContext.newInstance(wrapperPkg);
-                return jbc;
-            }
-            else {
-                throw ExceptionFactory.makeWebServiceException("");
-            }
-        } catch (JAXBException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-    }
-    
-    private Block createResponseWrapper(Object response, OperationDescription opDesc) {
-        try {
-            //We'll need a JAXBContext to marshall the response object(s).
-            JAXBContext jbc = createJAXBContext(opDesc);
-            BlockFactory bfactory = (BlockFactory) FactoryRegistry.getFactory(
-                    JAXBBlockFactory.class);
-            
-            String responseWrapper = opDesc.getResponseWrapperClassName();
-            Class responseWrapperClass = Class.forName(responseWrapper, false, Thread.currentThread().getContextClassLoader());
-            JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-
-            String webResult = opDesc.getWebResultName();
-            ArrayList<String> responseParams = new ArrayList<String>();
-            responseParams.add(webResult);
- 
-            ArrayList<String> elements = new ArrayList<String>();
-            elements.add(webResult);
-            
-            Map<String, Object> responseParamValues = new HashMap<String, Object>();
-            responseParamValues.put(webResult, response);
-            
-            Object wrapper = wrapperTool.wrap(responseWrapperClass, 
-                    responseWrapper, responseParams, responseParamValues);
-            
-            Block block = bfactory.createFrom(wrapper ,jbc, null);
-            return block;
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
     }
     
     /*
@@ -232,4 +136,6 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         return op;        
     }
+    
+    
 }
