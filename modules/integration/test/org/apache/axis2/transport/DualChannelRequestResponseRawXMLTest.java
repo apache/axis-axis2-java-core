@@ -26,7 +26,6 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -34,25 +33,20 @@ import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.mail.UtilsMailServer;
-import org.apache.axis2.transport.mail.SimpleMailListener;
 import org.apache.axis2.transport.mail.server.MailServer;
-import org.apache.axis2.transport.mail.server.MailSrvConstants;
+import org.apache.axis2.transport.mail.Constants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 public class DualChannelRequestResponseRawXMLTest extends TestCase {
@@ -106,11 +100,11 @@ public class DualChannelRequestResponseRawXMLTest extends TestCase {
                 Utils.createSimpleService(serviceName,
                         Echo.class.getName(),
                         operationName);
-        UtilServer.start(Constants.TESTING_PATH + "mail-transport-server-enabledRepository");
+        UtilServer.start(org.apache.axis2.Constants.TESTING_PATH + "mail-transport-server-enabledRepository");
         UtilServer.deployService(service);
         mailServer =
-            new MailServer(MailSrvConstants.POP_SERVER_PORT,
-                    MailSrvConstants.SMTP_SERVER_PORT);
+            new MailServer(Constants.POP_SERVER_PORT,
+                    Constants.SMTP_SERVER_PORT);
 /*        SimpleMailListener ml = new SimpleMailListener();
         ml.init(serverConfigContext, serverConfigContext.getAxisConfiguration()
                 .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
@@ -159,7 +153,7 @@ public class DualChannelRequestResponseRawXMLTest extends TestCase {
 
 //        options.setTransport InProtocol("smtp");
 
-        options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
+        options.setTransportInProtocol(org.apache.axis2.Constants.TRANSPORT_MAIL);
 
         options.setUseSeparateListener(true);
 

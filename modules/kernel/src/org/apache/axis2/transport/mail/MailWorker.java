@@ -24,7 +24,6 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -32,7 +31,6 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,10 +67,10 @@ public class MailWorker implements Runnable {
         try {
             TransportInDescription transportIn =
                     configContext.getAxisConfiguration()
-                            .getTransportIn(new QName(Constants.TRANSPORT_MAIL));
+                            .getTransportIn(new QName(org.apache.axis2.Constants.TRANSPORT_MAIL));
             TransportOutDescription transportOut =
                     configContext.getAxisConfiguration()
-                            .getTransportOut(new QName(Constants.TRANSPORT_MAIL));
+                            .getTransportOut(new QName(org.apache.axis2.Constants.TRANSPORT_MAIL));
             if ((transportIn != null) && (transportOut != null)) {
                 // create Message Context
                 msgContext = new MessageContext();
@@ -80,19 +78,21 @@ public class MailWorker implements Runnable {
                 msgContext.setTransportIn(transportIn);
                 msgContext.setTransportOut(transportOut);
                 msgContext.setServerSide(true);
-                msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
+                msgContext.setProperty(Constants.CONTENT_TYPE, mimeMessage.getContentType());
 
                 if (TransportUtils.getCharSetEncoding(mimeMessage.getContentType()) != null) {
-                    msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                           TransportUtils.getCharSetEncoding(
-                                                   mimeMessage.getContentType()));
+                    msgContext.setProperty(
+                            org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
+                            TransportUtils.getCharSetEncoding(
+                                    mimeMessage.getContentType()));
                 } else {
-                    msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                           MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                    msgContext.setProperty(
+                            org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
+                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
                 }
 
-                msgContext.setIncomingTransportName(Constants.TRANSPORT_MAIL);
-                String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION);
+                msgContext.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
+                String soapAction = getMailHeader(Constants.HEADER_SOAP_ACTION);
                 msgContext.setSoapAction(soapAction);
                 if (mimeMessage.getSubject() != null) {
                     msgContext.setTo(new EndpointReference(mimeMessage.getSubject()));
@@ -129,13 +129,16 @@ public class MailWorker implements Runnable {
                 }
             } else {
                 throw new AxisFault(Messages.getMessage("unknownTransport",
-                                                        Constants.TRANSPORT_MAIL));
+                                                        org.apache.axis2.Constants.TRANSPORT_MAIL));
             }
         } catch (Exception e) {
             try {
                 if (msgContext != null) {
-                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
-                    engine.sendFault(faultContext);
+                    if (msgContext.isServerSide()) {
+                        MessageContext faultContext =
+                                engine.createFaultMessageContext(msgContext, e);
+                        engine.sendFault(faultContext);
+                    }
                 } else {
                     log.error(e);
                 }
@@ -143,13 +146,7 @@ public class MailWorker implements Runnable {
                 log.error(e);
             }
         }
-        /*
-         *
-         * This part is ignored for the time being. CT 07-Feb-2005.
-         *
-         * if (msgContext.getProperty(MessageContext.QUIT_REQUESTED) != null) { /
-         * why then, quit! try { server.stop(); } catch (Exception e) { } }
-         */
+        
     }
 
     private String getMailHeader(String headerName) throws AxisFault {

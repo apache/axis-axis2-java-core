@@ -26,7 +26,6 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -111,11 +110,11 @@ public class SimpleMailListener implements Runnable, TransportListener {
     public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
             throws AxisFault {
         this.configurationContext = configurationContext;
-        user = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_USER));
-        host = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_HOST));
-        password = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PASSWORD));
-        port = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.POP3_PORT));
-        replyTo = Utils.getParameterValue(transportIn.getParameter(MailSrvConstants.RAPLY_TO));
+        user = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.POP3_USER));
+        host = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.POP3_HOST));
+        password = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.POP3_PASSWORD));
+        port = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.POP3_PORT));
+        replyTo = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.RAPLY_TO));
         if ((user == null) || (host == null) || (password == null) || (port == null)) {
             if (this.user == null) {
                 throw new AxisFault(Messages.getMessage("canNotBeNull", "User"));

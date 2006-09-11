@@ -19,7 +19,7 @@ package org.apache.axis2.transport.mail.server;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.transport.mail.SimpleMailListener;
+import org.apache.axis2.transport.mail.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -95,8 +95,8 @@ public class MailServer {
     }
 
     public static void main(String args[]) {
-        int smtpPost = MailSrvConstants.SMTP_SERVER_PORT;
-        int popPort = MailSrvConstants.POP_SERVER_PORT;
+        int smtpPost = Constants.SMTP_SERVER_PORT;
+        int popPort = Constants.POP_SERVER_PORT;
 
         if (args.length == 2) {
             try {

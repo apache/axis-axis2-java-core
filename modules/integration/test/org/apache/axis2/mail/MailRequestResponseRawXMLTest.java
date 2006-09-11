@@ -34,22 +34,17 @@ import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.transport.mail.SimpleMailListener;
-import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 public class MailRequestResponseRawXMLTest extends TestCase {

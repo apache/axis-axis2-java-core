@@ -18,19 +18,18 @@ package org.apache.axis2.mail;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.mail.server.MailServer;
-import org.apache.axis2.transport.mail.server.MailSrvConstants;
+import org.apache.axis2.transport.mail.Constants;
 
 import java.io.File;
 
 public class UtilsMailServer {
     private static final String MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH =
-            Constants.TESTING_PATH + "mail-transport-server-enabledRepository";
+            org.apache.axis2.Constants.TESTING_PATH + "mail-transport-server-enabledRepository";
     private static final String MAIL_TRANSPORT_CLIENT_ENABLED_REPO_PATH =
-            Constants.TESTING_PATH + "mail-transport-client-enabledRepository";
+            org.apache.axis2.Constants.TESTING_PATH + "mail-transport-client-enabledRepository";
 
     private static MailServer server;
     private static ConfigurationContext SERVER_CONFIG_CONTEXT;
@@ -45,8 +44,8 @@ public class UtilsMailServer {
             server =
                     new MailServer(
                             SERVER_CONFIG_CONTEXT,
-                            MailSrvConstants.POP_SERVER_PORT,
-                            MailSrvConstants.SMTP_SERVER_PORT);
+                            Constants.POP_SERVER_PORT,
+                            Constants.SMTP_SERVER_PORT);
         }
         runningServerCount++;
         return SERVER_CONFIG_CONTEXT;

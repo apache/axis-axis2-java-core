@@ -17,102 +17,56 @@
 
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.mail.server.MailSrvConstants;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 
-import javax.mail.Authenticator;
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class EMailSender {
-    private String host;
-    private String password;
-    private String smtpPort;
-    private String user;
+    private Properties properties;
     private MessageContext messageContext;
+    private PasswordAuthentication passwordAuthentication;
 
-    public EMailSender(String user, String host, String smtpPort, String password) {
-        this.user = user;
-        this.host = host;
-        this.smtpPort = smtpPort;
-        this.password = password;
-    }
+    public EMailSender() {}
 
     public void setMessageContext(MessageContext messageContext) {
         this.messageContext = messageContext;
     }
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
 
-    public static void main(String[] args) throws Exception {
-        String user = "hemapani";
-        String host = "127.0.0.1";
-        String smtpPort = "25";
-        String password = "hemapani";
-        EMailSender sender = new EMailSender(user, host, smtpPort, password);
-        OMOutputFormat format = new OMOutputFormat();
-
-        sender.send("Testing mail sending", "hemapani@127.0.0.1", "Hellp, testing", format);
-
-        EmailReceiver receiver = new EmailReceiver(user, host, "110", password);
-
-        receiver.connect();
-
-        Message[] msgs = receiver.receive();
-
-        if (msgs != null) {
-            for (int i = 0; i < msgs.length; i++) {
-                MimeMessage msg = (MimeMessage) msgs[i];
-
-                if (msg != null) {
-                }
-
-                msg.setFlag(Flags.Flag.DELETED, true);
-            }
-        }
-
-        receiver.disconnect();
+    public void setPasswordAuthentication(PasswordAuthentication passwordAuthentication) {
+        this.passwordAuthentication = passwordAuthentication;
     }
 
     public void send(String subject, String targetEmail, String message, OMOutputFormat format)
             throws AxisFault {
         try {
-            final PasswordAuthentication authentication =
-                    new PasswordAuthentication(user, password);
-            Properties props = new Properties();
 
-            props.put("mail.user", user);
-            props.put("mail.host", host);
-            props.put("mail.store.protocol", "pop3");
-            props.put("mail.transport.protocol", "smtp");
-            props.put("mail.smtp.port", smtpPort);
-
-            Session session = Session.getInstance(props, new Authenticator() {
+            Session session = Session.getInstance(properties, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return authentication;
+                    return passwordAuthentication;
                 }
             });
             MimeMessage msg = new MimeMessage(session);
 
-            msg.setFrom(new InternetAddress((user)));
+            msg.setFrom(new InternetAddress((passwordAuthentication.getUserName())));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
             msg.setSubject(subject);
 
             String contentType = format.getContentType() != null ? format.getContentType() :
-                                 MailSrvConstants.DEFAULT_CONTENT_TYPE;
+                                 Constants.DEFAULT_CONTENT_TYPE;
             if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                 if (messageContext.getSoapAction() != null) {
-                    msg.setHeader(MailSrvConstants.HEADER_SOAP_ACTION,
+                    msg.setHeader(Constants.HEADER_SOAP_ACTION,
                                   messageContext.getSoapAction());
                     msg.setHeader("Content-Transfer-Encoding", "QUOTED-PRINTABLE");
                 }

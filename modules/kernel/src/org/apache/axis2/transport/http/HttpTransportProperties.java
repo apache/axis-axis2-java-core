@@ -18,6 +18,8 @@ package org.apache.axis2.transport.http;
 
 import org.apache.commons.httpclient.HttpVersion;
 
+import java.util.Properties;
+
 /**
  * Utility bean for setting transport properties in runtime.
  */
@@ -208,5 +210,31 @@ public class HttpTransportProperties {
         public void setPassword(String password) {
             this.password = password;
         }
+    }
+    public static class MailProperties{
+        final Properties mailProperties = new Properties();
+
+        private String password;
+
+        public void addProperty(String key, String value) {
+            mailProperties.put(key,value);
+        }
+
+        public void deleteProperty(String key) {
+            mailProperties.remove(key);
+        }
+
+        public Properties getProperties() {
+            return mailProperties;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
     }
 }
