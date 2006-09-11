@@ -20,6 +20,7 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
@@ -366,7 +367,7 @@ public class AddressingOutHandler extends AddressingHandler {
             while (iterator.hasNext()) {
                 QName key = (QName) iterator.next();
                 OMElement omElement = (OMElement) referenceInformation.get(key);
-                parent.addChild(omElement);
+                parent.addChild(ElementHelper.importOMElement(omElement, parent.getOMFactory()));
             }
         }
     }
@@ -384,7 +385,7 @@ public class AddressingOutHandler extends AddressingHandler {
             while (iterator.hasNext()) {
                 QName key = (QName) iterator.next();
                 OMElement omElement = (OMElement) referenceInformation.get(key);
-                parent.addChild(omElement);
+                parent.addChild(ElementHelper.importOMElement(omElement, parent.getOMFactory()));
 
                 if (processingWSAFinal) {
                     omElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE, Final.WSA_TYPE_ATTRIBUTE_VALUE,
