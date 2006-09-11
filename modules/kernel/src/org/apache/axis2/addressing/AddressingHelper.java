@@ -24,117 +24,124 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class AddressingHelper {
-    
+
     private static final Log log = LogFactory.getLog(AddressingHelper.class);
-    
+
     /**
      * Returns true if the ReplyTo address does not match one of the supported
      * anonymous urls. If the ReplyTo is not set, anonymous is assumed, per the Final
-     * spec. The AddressingInHandler should have set the ReplyTo to non-null in the 
+     * spec. The AddressingInHandler should have set the ReplyTo to non-null in the
      * 2004/08 case to ensure the different semantics. (per AXIS2-885)
-     * 
+     *
      * @param messageContext
      * @return
      */
-    public static boolean isReplyRedirected(MessageContext messageContext){
+    public static boolean isReplyRedirected(MessageContext messageContext) {
         EndpointReference replyTo = messageContext.getReplyTo();
-        if(replyTo == null){
-            if(log.isDebugEnabled()){
+        if (replyTo == null) {
+            if (log.isDebugEnabled()) {
                 log.debug("isReplyRedirected: ReplyTo is null. Returning false");
             }
             return false;
-        }else{
+        } else {
             return !replyTo.hasAnonymousAddress();
         }
     }
-    
+
     /**
      * Returns true if the FaultTo address does not match one of the supported
      * anonymous urls. If the FaultTo is not set, the ReplyTo is checked per the
-     * spec. 
-     * @see isReplyRedirected
+     * spec.
+     *
      * @param messageContext
      * @return
+     * @see isReplyRedirected
      */
-    public static boolean isFaultRedirected(MessageContext messageContext){
+    public static boolean isFaultRedirected(MessageContext messageContext) {
         EndpointReference faultTo = messageContext.getFaultTo();
-        if(faultTo == null){
-            if(log.isDebugEnabled()){
+        if (faultTo == null) {
+            if (log.isDebugEnabled()) {
                 log.debug("isReplyRedirected: FaultTo is null. Returning isReplyRedirected");
             }
             return isReplyRedirected(messageContext);
-        }else{
-            return !faultTo.hasAnonymousAddress(); 
+        } else {
+            return !faultTo.hasAnonymousAddress();
         }
     }
-    
+
     /**
      * Extract the Parameter repreesnting the Anonymous flag from the AxisOperation
      * and return the String value. Return the default of "optional" if not specified.
+     *
      * @param axisOperation
      * @return
      */
-    public static String getAnonymousParameterValue(AxisOperation axisOperation){
-        String value = Utils.getParameterValue(axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME));
-        if(log.isDebugEnabled()){
-            log.debug("getAnonymousParameterValue: value: '"+value+"'");
+    public static String getAnonymousParameterValue(AxisOperation axisOperation) {
+        String value = "";
+        if (axisOperation != null) {
+            value = Utils.getParameterValue(axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME));
+            if (log.isDebugEnabled()) {
+                log.debug("getAnonymousParameterValue: value: '" + value + "'");
+            }
         }
-        if(value == null || "".equals(value.trim())){
+
+        if (value == null || "".equals(value.trim())) {
             value = "optional";
         }
         return value.trim();
     }
-    
+
     /**
      * Set the value of an existing unlocked Parameter representing Anonymous or add a new one if one
      * does not exist. If a locked Parameter of the same name already exists the method will trace and
      * return.
+     *
      * @param axisOperation
      * @param value
      */
-    public static void setAnonymousParameterValue(AxisOperation axisOperation, String value){
-        if(value == null){
-            if(log.isDebugEnabled()){
+    public static void setAnonymousParameterValue(AxisOperation axisOperation, String value) {
+        if (value == null) {
+            if (log.isDebugEnabled()) {
                 log.debug("setAnonymousParameterValue: value passed in is null. return");
             }
             return;
         }
-        
+
         Parameter param = axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
         // If an existing parameter exists
-        if(param !=null){
-            if(log.isDebugEnabled()){
+        if (param != null) {
+            if (log.isDebugEnabled()) {
                 log.debug("setAnonymousParameterValue: Parameter already exists");
             }
             // and is not locked
-            if(!param.isLocked()){
-                if(log.isDebugEnabled()){
-                    log.debug("setAnonymousParameterValue: Parameter not locked. Setting value: "+value);
+            if (!param.isLocked()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("setAnonymousParameterValue: Parameter not locked. Setting value: " + value);
                 }
                 // set the value
                 param.setValue(value);
             }
-        }else{
+        } else {
             // otherwise, if no Parameter exists
-            if(log.isDebugEnabled()){
+            if (log.isDebugEnabled()) {
                 log.debug("setAnonymousParameterValue: Parameter does not exist");
             }
             // Create new Parameter with correct name/value
             param = new Parameter();
             param.setName(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
             param.setValue(value);
-            try{
-                if(log.isDebugEnabled()){
-                    log.debug("setAnonymousParameterValue: Adding parameter with value: "+value);
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("setAnonymousParameterValue: Adding parameter with value: " + value);
                 }
                 // and add it to the AxisOperation object
                 axisOperation.addParameter(param);
-            }catch(AxisFault af){
+            } catch (AxisFault af) {
                 // This should not happen. AxisFault is only ever thrown when a locked Parameter
                 // of the same name already exists and this should be dealt with by the outer
                 // if statement.
-                if(log.isDebugEnabled()){
-                    log.debug("setAnonymousParameterValue: addParameter failed: "+af.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("setAnonymousParameterValue: addParameter failed: " + af.getMessage());
                 }
             }
         }
