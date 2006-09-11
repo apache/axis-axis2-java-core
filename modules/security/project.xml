@@ -133,6 +133,14 @@
             </properties>
         </dependency>
         <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>${xalan.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>${commons.httpclient.version}</version>
