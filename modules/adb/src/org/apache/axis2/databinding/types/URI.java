@@ -1942,12 +1942,9 @@ import java.io.Serializable;
           continue;
         }
       }
-      if (isURICharacter(testChar)) {
-          continue;
-      }
-      else {
-        return false;
-      }
+        if (!isURICharacter(testChar)) {
+          return false;
+        }
     }
     return true;
   }

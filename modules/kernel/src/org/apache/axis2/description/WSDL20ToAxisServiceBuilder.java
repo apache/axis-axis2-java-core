@@ -216,7 +216,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @throws AxisFault
      */
     protected void setup() throws AxisFault {
-        if (setupComplete == true) { // already setup, just do nothing and return
+        if (setupComplete) { // already setup, just do nothing and return
             return;
         }
         try {

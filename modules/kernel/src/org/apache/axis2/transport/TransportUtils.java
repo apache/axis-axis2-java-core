@@ -187,7 +187,7 @@ public class TransportUtils {
 					: null;
 		}
 		fileCacheForAttachments = (Constants.VALUE_TRUE
-				.equals(cacheAttachmentString)) ? true : false;
+                .equals(cacheAttachmentString));
 
 		String attachmentRepoDir = null;
 		String attachmentSizeThreshold = null;
@@ -243,7 +243,7 @@ public class TransportUtils {
         * Leaving this out for backword compatibility with 1.0
         */
         msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
-        
+
         /*
          * Setting the Attachments map to new SwA API
          */

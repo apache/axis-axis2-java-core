@@ -269,11 +269,8 @@ public abstract class JMSVendorAdapter {
             return false;
         }
 
-        if (action == ON_EXCEPTION_ACTION) {
-            return false;
-        }
+        return action != ON_EXCEPTION_ACTION;
 
-        return true;
     }
 
     public void setProperties(Message message, HashMap props) throws JMSException {

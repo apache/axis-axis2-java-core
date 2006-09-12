@@ -607,11 +607,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public boolean hasText() {
         if (state == DELEGATED_STATE) {
             return childReader.hasText();
-        } else if (state==TEXT_STATE){
-            return true;
-        }else{
-            return false;
-        }
+        } else return state == TEXT_STATE;
 
     }
 
@@ -670,11 +666,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         //if not we should ask the child reader for it.
         if (state == DELEGATED_STATE) {
             return childReader.hasName();
-        } else if (state!=TEXT_STATE) {
-            return true;
-        }else{
-            return false;
-        }
+        } else return state != TEXT_STATE;
     }
 
     public String getNamespaceURI() {

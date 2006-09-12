@@ -264,11 +264,7 @@ public class TopicConnector extends JMSConnector {
 
             if (isDurable()) {
                 return other.isDurable() && other.m_subscriptionName.equals(m_subscriptionName);
-            } else if (other.isDurable()) {
-                return false;
-            } else {
-                return true;
-            }
+            } else return !other.isDurable();
         }
 
         public String toString() {

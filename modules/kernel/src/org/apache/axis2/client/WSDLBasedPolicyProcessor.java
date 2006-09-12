@@ -105,7 +105,6 @@ public class WSDLBasedPolicyProcessor {
                     if (moduleList == null) {
                         System.err.println("cannot find a module to process "
                                 + namespace + "type assertions");
-                        continue;
                     } else {
                         for (int i = 0; i < moduleList.size(); i++) {
                             AxisModule axisModule = (AxisModule) moduleList

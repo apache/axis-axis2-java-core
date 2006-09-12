@@ -169,11 +169,11 @@ public class XMLComparatorInterop {
 
                             }
                         }
-                        if(status == true){
+                        if(status){
                             break;
                         }
                     }
-                    if (status == false) {
+                    if (!status) {
                         return false;
                     }
                 } else
@@ -204,17 +204,11 @@ public class XMLComparatorInterop {
 
         }
 
-        if (elementOneAtribCount != elementTwoAtribCount) {
-            return false;
-        }
-        return true;
+        return elementOneAtribCount == elementTwoAtribCount;
     }
 
     private boolean compare(String one, String two) {
-        if (!one.equals(two)) {
-            return false;
-        }
-        return true;
+        return one.equals(two);
     }
 
     private boolean compare(OMNamespace one,OMNamespace two) {

@@ -143,10 +143,7 @@ public class JNDIVendorAdapter extends JMSVendorAdapter {
         String cfJndiName = jmsurl.getPropertyValue(_CONNECTION_FACTORY_JNDI_NAME);
         String originalCfJndiName = originalJMSURL.getPropertyValue(_CONNECTION_FACTORY_JNDI_NAME);
 
-        if (cfJndiName.equalsIgnoreCase(originalCfJndiName)) {
-            return true;
-        }
+        return cfJndiName.equalsIgnoreCase(originalCfJndiName);
 
-        return false;
     }
 }

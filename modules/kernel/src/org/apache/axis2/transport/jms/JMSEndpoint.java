@@ -66,11 +66,8 @@ public abstract class JMSEndpoint {
     }
 
     public boolean equals(Object object) {
-        if ((object == null) || !(object instanceof JMSEndpoint)) {
-            return false;
-        }
+        return !((object == null) || !(object instanceof JMSEndpoint));
 
-        return true;
     }
 
     public int hashCode() {

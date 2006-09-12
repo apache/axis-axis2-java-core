@@ -819,9 +819,7 @@ public class SchemaCompiler {
     public static boolean isSOAP_ENC(String s) {
         if (s.equals(Constants.URI_SOAP11_ENC))
             return true;
-        if (s.equals(Constants.URI_SOAP12_ENC))
-            return true;
-        return false;
+        return s.equals(Constants.URI_SOAP12_ENC);
     }
 
     /**

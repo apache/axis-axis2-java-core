@@ -74,11 +74,8 @@ public class XPathBasedFilter extends Filter {
 		try {
 			AXIOMXPath xpath = new AXIOMXPath (XPathString);
 			List resultList = xpath.selectNodes(firstChild);
-			
-			if (resultList.size()>0)
-				return true;
-			else 
-				return false;
+
+            return resultList.size() > 0;
 		} catch (JaxenException e) {
 			throw new SavanException (e);
 		}

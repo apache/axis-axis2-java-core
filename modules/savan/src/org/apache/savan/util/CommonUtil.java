@@ -75,11 +75,9 @@ public class CommonUtil {
 	}
 	
 	public static boolean isDuration (String timeStr) {
-		if (timeStr.startsWith("p") || timeStr.startsWith("P") || timeStr.startsWith("-p") || timeStr.startsWith("-P"))
-			return true;
-		
-		return false;
-	}
+        return timeStr.startsWith("p") || timeStr.startsWith("P") || timeStr.startsWith("-p") || timeStr.startsWith("-P");
+
+    }
 	
 	public static SubscriberStore getSubscriberStore (AxisService axisService) {
 		Parameter parameter = axisService.getParameter(SavanConstants.SUBSCRIBER_STORE);
