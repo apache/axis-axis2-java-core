@@ -137,7 +137,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
                 query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0)) { // handling meta data exchange stuff
             agent.processListService(req, resp);
-        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) || requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) { // handling list services request
+        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) || requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX))
+        { // handling list services request
             try {
                 agent.handle(req, resp);
             } catch (Exception e) {
@@ -402,12 +403,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        //RUNNING_PORT
+        return getEPRsForService(serviceName, ip)[0];
+    }
+
+    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
+       //RUNNING_PORT
         String port = (String) configContext.getProperty(ListingAgent.RUNNING_PORT);
         if (port == null) {
             port = "8080";
         }
-
         if (ip == null) {
             try {
                 ip = HttpUtils.getIpAddress();
@@ -415,9 +419,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 throw new AxisFault(e);
             }
         }
-
-        return new EndpointReference("http://" + ip + ":" + port + '/' +
+        EndpointReference soapEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
                 configContext.getServiceContextPath() + "/" + serviceName);
+        
+        return new EndpointReference[] {soapEndpoint};
     }
 
     protected MessageContext createMessageContext(HttpServletRequest req,

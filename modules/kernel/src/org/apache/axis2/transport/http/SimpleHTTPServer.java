@@ -199,6 +199,49 @@ public class SimpleHTTPServer implements TransportListener {
     }
 
     /**
+     * replyToEPR
+     * If the user has given host address paramter then it gets the high priority and
+     * ERP will be creatd using that
+     * N:B - hostAddress should be a complete url (http://www.myApp.com/ws)
+     *
+     * @param serviceName
+     * @param ip
+     * @return an EndpointReference
+     * @see org.apache.axis2.transport.TransportListener#getEPRForService(String,String)
+     */
+    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
+        //if host address is present
+        if (hostAddress != null) {
+            if (embedded != null) {
+                return new EndpointReference[] {new EndpointReference(hostAddress + "/" + configurationContext.getServiceContextPath() + "/" + serviceName)};
+            } else {
+                throw new AxisFault("Unable to generate EPR for the transport : http");
+            }
+        }
+        //if the host address is not present
+        String localAddress;
+        if (ip != null) {
+            localAddress = ip;
+        } else {
+            try {
+                localAddress = HttpUtils.getIpAddress();
+                if (localAddress == null) {
+                    localAddress = "127.0.0.1";
+                }
+            } catch (SocketException e) {
+                throw AxisFault.makeFault(e);
+            }
+        }
+        if (embedded != null) {
+            return new EndpointReference[] {new EndpointReference("http://" + localAddress + ":" +
+                    (embedded.getPort())
+                    + "/" + configurationContext.getServiceContextPath() + "/" + serviceName)};
+        } else {
+            throw new AxisFault("Unable to generate EPR for the transport : http");
+        }
+    }
+
+    /**
      * Getter for httpFactory
      */
     public HttpFactory getHttpFactory() {
@@ -226,35 +269,7 @@ public class SimpleHTTPServer implements TransportListener {
      * @see org.apache.axis2.transport.TransportListener#getEPRForService(String,String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        //if host address is present
-        if (hostAddress != null) {
-            if (embedded != null) {
-                return new EndpointReference(hostAddress + "/" + configurationContext.getServiceContextPath() + "/" + serviceName);
-            } else {
-                throw new AxisFault("Unable to generate EPR for the transport : http");
-            }
-        }
-        //if the host address is not present
-        String localAddress;
-        if (ip != null) {
-            localAddress = ip;
-        } else {
-            try {
-                localAddress = HttpUtils.getIpAddress();
-                if (localAddress == null) {
-                    localAddress = "127.0.0.1";
-                }
-            } catch (SocketException e) {
-                throw AxisFault.makeFault(e);
-            }
-        }
-        if (embedded != null) {
-            return new EndpointReference("http://" + localAddress + ":" +
-                    (embedded.getPort())
-                    + "/" + configurationContext.getServiceContextPath() + "/" + serviceName);
-        } else {
-            throw new AxisFault("Unable to generate EPR for the transport : http");
-        }
+        return getEPRsForService(serviceName, ip)[0];
     }
 
     /**

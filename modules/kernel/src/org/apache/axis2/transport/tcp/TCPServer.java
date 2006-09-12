@@ -184,11 +184,16 @@ public class TCPServer implements Runnable, TransportListener {
      * @see org.apache.axis2.transport.TransportListener#getEPRForService(String, String)
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
+        EndpointReference[] epRsForService = getEPRsForService(serviceName, ip);
+        return epRsForService != null ? epRsForService[0] : null;
+    }
+
+    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         //if host address is present
         if (hostAddress != null) {
             if (serversocket != null) {
                 // todo this has to fix
-                return new EndpointReference(hostAddress + "/" + contextPath + serviceName);
+                return new EndpointReference[] {new EndpointReference(hostAddress + "/" + contextPath + serviceName)};
             } else {
                 log.debug("Unable to generate EPR for the transport tcp");
                 return null;
@@ -203,8 +208,8 @@ public class TCPServer implements Runnable, TransportListener {
         }
         if (serversocket != null) {
             // todo this has to fix
-            return new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
-                    + "/" + contextPath + "/" + serviceName);
+            return new EndpointReference[] {new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
+                    + "/" + contextPath + "/" + serviceName)};
         } else {
             log.debug("Unable to generate EPR for the transport tcp");
             return null;

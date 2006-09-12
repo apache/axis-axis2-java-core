@@ -37,5 +37,15 @@ public interface TransportListener {
 
     void stop() throws AxisFault;
 
+    /**
+     * @deprecated Transport listener can expose more than EPRs. So this method should return an array of EPRs.
+     * Deprecating this method for now and please use getEPRsForServices instead.
+     * @param serviceName
+     * @param ip
+     * @return
+     * @throws AxisFault
+     */
     EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault;
+
+    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault;
 }

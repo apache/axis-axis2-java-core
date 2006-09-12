@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -101,8 +102,12 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
                 //To change body of implemented methods use File | Settings | File Templates.
             }
 
-            public EndpointReference getEPRForService(String serviceName, String ip) {
+            public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
                 return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            public EndpointReference[] getEPRsForService(String serviceName, String ip){
+                return null;
             }
         });
         config.addTransportIn(tIn);

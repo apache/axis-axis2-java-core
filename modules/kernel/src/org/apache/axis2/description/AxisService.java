@@ -571,9 +571,9 @@ public class AxisService extends AxisDescription {
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null) {
                     try {
-                        if (listener.getEPRForService(getName(), requestIP) != null) {
-                            String address =
-                                    listener.getEPRForService(getName(), requestIP).getAddress();
+                        EndpointReference eprForService = listener.getEPRForService(getName(), requestIP);
+                        if (eprForService != null) {
+                            String address = eprForService.getAddress();
                             if (address != null) {
                                 eprList.add(address);
                             }
@@ -593,11 +593,9 @@ public class AxisService extends AxisDescription {
                     TransportListener listener = transportIn.getReceiver();
                     if (listener != null) {
                         try {
-                            if (listener.getEPRForService(getName(), requestIP)
-                                    != null) {
-                                String address =
-                                        listener.getEPRForService(getName(),
-                                                requestIP).getAddress();
+                            EndpointReference eprForService = listener.getEPRForService(getName(), requestIP);
+                            if (eprForService != null) {
+                                String address = eprForService.getAddress();
                                 if (address != null) {
                                     eprList.add(address);
                                 }

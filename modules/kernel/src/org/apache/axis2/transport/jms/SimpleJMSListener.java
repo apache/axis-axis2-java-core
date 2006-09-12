@@ -31,7 +31,6 @@ import org.apache.axis2.util.OptionsParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jms.BytesMessage;
 import javax.jms.MessageListener;
 import javax.xml.namespace.QName;
 import java.io.BufferedInputStream;
@@ -254,11 +253,16 @@ public class SimpleJMSListener implements MessageListener, TransportListener {
     }
 
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
+        EndpointReference[] epRsForService = getEPRsForService(serviceName, ip);
+        return epRsForService != null ? epRsForService[0] : null;
+    }
+
+    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         try {
             JMSURLHelper url = new JMSURLHelper("jms:/" + destination);
             if (url != null && url.getProperties() != null && properties != null) {
                 url.getProperties().putAll(properties);
-                return new EndpointReference(url.getURLString());
+                return new EndpointReference[] {new EndpointReference(url.getURLString())};
             } else {
                 return null;
             }

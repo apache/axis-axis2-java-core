@@ -315,6 +315,18 @@ public class JMSListener implements TransportListener {
     }
 
     /**
+     * Returns EPRs for the given service and IP. (Picks up precomputed EPR)
+     *
+     * @param serviceName service name
+     * @param ip          ignored
+     * @return the EPR for the service
+     * @throws AxisFault not used
+     */
+    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
+          return new EndpointReference[]{new EndpointReference((String) serviceNameToEprMap.get(serviceName))};
+    }
+
+    /**
      * Returns the EPR for the given service and IP. (Picks up precomputed EPR)
      *
      * @param serviceName service name
@@ -323,7 +335,7 @@ public class JMSListener implements TransportListener {
      * @throws AxisFault not used
      */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference((String) serviceNameToEprMap.get(serviceName));
+        return getEPRsForService(serviceName, ip)[0];
     }
 
     /**
