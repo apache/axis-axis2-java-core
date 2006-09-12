@@ -102,19 +102,19 @@
 
 
             <xsl:variable name="lenFacet"><xsl:value-of select="@lenFacet"/></xsl:variable>
-           	<xsl:variable name="maxLenFacet"><xsl:value-of select="@maxLenFacet"/></xsl:variable>
-           	<xsl:variable name="minLenFacet"><xsl:value-of select="@minLenFacet"/></xsl:variable>
-           	<xsl:variable name="maxExFacet"><xsl:value-of select="@maxExFacet"/></xsl:variable>
-           	<xsl:variable name="minExFacet"><xsl:value-of select="@minExFacet"/></xsl:variable>
-           	<xsl:variable name="maxInFacet"><xsl:value-of select="@maxInFacet"/></xsl:variable>
-           	<xsl:variable name="minInFacet"><xsl:value-of select="@minInFacet"/></xsl:variable>
-           	<xsl:variable name="patternFacet"><xsl:value-of select="@patternFacet"/></xsl:variable>
+               <xsl:variable name="maxLenFacet"><xsl:value-of select="@maxLenFacet"/></xsl:variable>
+               <xsl:variable name="minLenFacet"><xsl:value-of select="@minLenFacet"/></xsl:variable>
+               <xsl:variable name="maxExFacet"><xsl:value-of select="@maxExFacet"/></xsl:variable>
+               <xsl:variable name="minExFacet"><xsl:value-of select="@minExFacet"/></xsl:variable>
+               <xsl:variable name="maxInFacet"><xsl:value-of select="@maxInFacet"/></xsl:variable>
+               <xsl:variable name="minInFacet"><xsl:value-of select="@minInFacet"/></xsl:variable>
+               <xsl:variable name="patternFacet"><xsl:value-of select="@patternFacet"/></xsl:variable>
             <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
             <xsl:variable name="shortTypeName"
                select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
 
 
-			<xsl:choose>
+            <xsl:choose>
             <xsl:when test="@removed">
 
            /**
@@ -135,14 +135,14 @@
            * @throws RuntimeException
            */
            public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-           	   throw new java.lang.RuntimeException();
+                  throw new java.lang.RuntimeException();
            }
 
            </xsl:when>
            <xsl:otherwise>
                <xsl:choose>
                   <xsl:when test="(@restricted) and (@occuranceChanged) and (not(@typeChanged))">
-               		 <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
+                        <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
 
                      <!-- generate the validator Method, this is specifiacally for validating the arrays-->
@@ -172,7 +172,7 @@
                      */
                      public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
                      <!-- call the validator-->
-                  		  validate<xsl:value-of select="$javaName"/>(param);
+                            validate<xsl:value-of select="$javaName"/>(param);
 
                      <xsl:if test="$choice">
                           clearAllSettingTrackers();
@@ -201,19 +201,19 @@
                   </xsl:when>
                   <xsl:otherwise>
 
-            		/**
-            		* field for <xsl:value-of select="$javaName"/>
-            		<xsl:if test="@attribute">
-            		* This was an Attribute!</xsl:if>
-            		<xsl:if test="@array">
-            		* This was an Array!</xsl:if>
-            		<xsl:if test="@typeChanged">
-            		* Type of this field is a subtype of its original.</xsl:if>
-            		<xsl:if test="(@rewrite) and (@occuranceChanged)">
-            		* This field was an array in <xsl:value-of select="$restriction"/>.</xsl:if>
-            		*/
+                    /**
+                    * field for <xsl:value-of select="$javaName"/>
+                    <xsl:if test="@attribute">
+                    * This was an Attribute!</xsl:if>
+                    <xsl:if test="@array">
+                    * This was an Array!</xsl:if>
+                    <xsl:if test="@typeChanged">
+                    * Type of this field is a subtype of its original.</xsl:if>
+                    <xsl:if test="(@rewrite) and (@occuranceChanged)">
+                    * This field was an array in <xsl:value-of select="$restriction"/>.</xsl:if>
+                    */
 
-            		protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
+                    protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
                     <xsl:if test="enumFacet">
                     private static java.util.HashMap _table_ = new java.util.HashMap();
 
@@ -289,135 +289,135 @@
                     </xsl:if>
                     <xsl:if test="not(enumFacet)">
                     <!-- Generate a tracker only if the min occurs is zero, which means if the user does
-               		not bother to set that value, we do not send it -->
-           			<xsl:if test="$min=0 or $choice">
-           			/*  This tracker boolean wil be used to detect whether the user called the set method
-              		*   for this attribute. It will be used to determine whether to include this field
-               		*   in the serialized XML
-           			*/
-           			protected boolean <xsl:value-of select="$settingTracker"/> = false ;
-           			</xsl:if>
+                       not bother to set that value, we do not send it -->
+                       <xsl:if test="$min=0 or $choice">
+                       /*  This tracker boolean wil be used to detect whether the user called the set method
+                      *   for this attribute. It will be used to determine whether to include this field
+                       *   in the serialized XML
+                       */
+                       protected boolean <xsl:value-of select="$settingTracker"/> = false ;
+                       </xsl:if>
 
-           			/**
-           			* Auto generated getter method
-           			* @return <xsl:value-of select="$propertyType"/>
-           			*/
-           			public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
-               			return <xsl:value-of select="$varName"/>;
-           			}
+                       /**
+                       * Auto generated getter method
+                       * @return <xsl:value-of select="$propertyType"/>
+                       */
+                       public  <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text>get<xsl:value-of select="$javaName"/>(){
+                           return <xsl:value-of select="$varName"/>;
+                       }
 
-           			<!-- When generating the setters, we have to cater differently for the array!-->
-            		<xsl:choose>
-               			<xsl:when test="@array">
-                   		<xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
+                       <!-- When generating the setters, we have to cater differently for the array!-->
+                    <xsl:choose>
+                           <xsl:when test="@array">
+                           <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
 
-                   		<!-- generate the validator Method, this is specifiacally for validating the arrays-->
-                  		/**
-                   		* validate the array for <xsl:value-of select="$javaName"/>
-                   		*/
-                  		protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                     	<xsl:if test="not(@unbound)">
+                           <!-- generate the validator Method, this is specifiacally for validating the arrays-->
+                          /**
+                           * validate the array for <xsl:value-of select="$javaName"/>
+                           */
+                          protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+                         <xsl:if test="not(@unbound)">
                           if (param.length &gt; <xsl:value-of select="@maxOccurs"/>){
                             throw new java.lang.RuntimeException();
                           }
-                      	</xsl:if>
-                      	<xsl:if test="$min!=0">
+                          </xsl:if>
+                          <xsl:if test="$min!=0">
                           if (param.length &lt; <xsl:value-of select="$min"/>){
                             throw new java.lang.RuntimeException();
                           }
-                      	</xsl:if>
-                  		}
+                          </xsl:if>
+                          }
 
 
-                 		/**
-                  		* Auto generated setter method
-                  		* @param param <xsl:value-of select="$javaName"/>
-                  		*/
-                  		public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                  		<!-- call the validator-->
-                   			validate<xsl:value-of select="$javaName"/>(param);
+                         /**
+                          * Auto generated setter method
+                          * @param param <xsl:value-of select="$javaName"/>
+                          */
+                          public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+                          <!-- call the validator-->
+                               validate<xsl:value-of select="$javaName"/>(param);
 
-                   		<xsl:if test="$choice">
-                       		clearAllSettingTrackers();
-                   		</xsl:if>
-                   		<xsl:if test="$min=0 or $choice">
-                       		<!-- the updating of setting tracker for null values should
-                            	 happen if the attribute is marked as nillable. Else
+                           <xsl:if test="$choice">
+                               clearAllSettingTrackers();
+                           </xsl:if>
+                           <xsl:if test="$min=0 or $choice">
+                               <!-- the updating of setting tracker for null values should
+                                 happen if the attribute is marked as nillable. Else
                                  the user can set a null value and it is never marked
                                  as set
-                       		-->
-                       		<xsl:choose>
-                          		<xsl:when test="not(@nillable) and not(@primitive)">
-                              	if (param !=null){
-                              	//update the setting tracker
-                              	<xsl:value-of select="$settingTracker"/> = true;
-                               	}
-                           		</xsl:when>
-                           		<xsl:otherwise>
-                               	//update the setting tracker
-                              	<xsl:value-of select="$settingTracker"/> = true;
-                           		</xsl:otherwise>
-                       		</xsl:choose>
-                   		</xsl:if>
-                  				this.<xsl:value-of select="$varName"/>=param;
-                  		}
+                               -->
+                               <xsl:choose>
+                                  <xsl:when test="not(@nillable) and not(@primitive)">
+                                  if (param !=null){
+                                  //update the setting tracker
+                                  <xsl:value-of select="$settingTracker"/> = true;
+                                   }
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                   //update the setting tracker
+                                  <xsl:value-of select="$settingTracker"/> = true;
+                                   </xsl:otherwise>
+                               </xsl:choose>
+                           </xsl:if>
+                                  this.<xsl:value-of select="$varName"/>=param;
+                          }
 
-                   		<!--
+                           <!--
 
-                       	we special case the 'array' scenario and generate a
-                       	convenience method for adding elements one by one to
-                       	the array. The current implementation is somewhat
-                       	inefficient but gets the job done.Since a primitive
-                       	cannot be treated as an object it has to be ignored!
+                           we special case the 'array' scenario and generate a
+                           convenience method for adding elements one by one to
+                           the array. The current implementation is somewhat
+                           inefficient but gets the job done.Since a primitive
+                           cannot be treated as an object it has to be ignored!
 
-                 		-->
-                 		<xsl:if test="not(@primitive)">
-                 		/**
-                 		* Auto generated add method for the array for convenience
-                 		* @param param <xsl:value-of select="$basePropertyType"/>
-                 		*/
-                 		public void add<xsl:value-of select="$javaName"/>(<xsl:value-of select="$basePropertyType"/> param){
-                   			if (<xsl:value-of select="$varName"/> == null){
-                       		<xsl:value-of select="$varName"/> = new <xsl:value-of select="$propertyType"/>{};
-                   			}
+                         -->
+                         <xsl:if test="not(@primitive)">
+                         /**
+                         * Auto generated add method for the array for convenience
+                         * @param param <xsl:value-of select="$basePropertyType"/>
+                         */
+                         public void add<xsl:value-of select="$javaName"/>(<xsl:value-of select="$basePropertyType"/> param){
+                               if (<xsl:value-of select="$varName"/> == null){
+                               <xsl:value-of select="$varName"/> = new <xsl:value-of select="$propertyType"/>{};
+                               }
 
-                    	<xsl:if test="$choice">
-                           	clearAllSettingTrackers();
-                    	</xsl:if>
-                    	<xsl:if test="$min=0 or $choice">
-                         	//update the setting tracker
-                        	<xsl:value-of select="$settingTracker"/> = true;
-                    	</xsl:if>
+                        <xsl:if test="$choice">
+                               clearAllSettingTrackers();
+                        </xsl:if>
+                        <xsl:if test="$min=0 or $choice">
+                             //update the setting tracker
+                            <xsl:value-of select="$settingTracker"/> = true;
+                        </xsl:if>
 
-                   		java.util.List list =
+                           java.util.List list =
                         org.apache.axis2.databinding.utils.ConverterUtil.toList(<xsl:value-of select="$varName"/>);
-                   		list.add(param);
-                   		this.<xsl:value-of select="$varName"/> =
-                     	(<xsl:value-of select="$propertyType"/>)list.toArray(
+                           list.add(param);
+                           this.<xsl:value-of select="$varName"/> =
+                         (<xsl:value-of select="$propertyType"/>)list.toArray(
                         new <xsl:value-of select="$basePropertyType"/>[list.size()]);
 
-                 		}
-                 		</xsl:if>
-                     	<!-- end of special casing for the array-->
+                         }
+                         </xsl:if>
+                         <!-- end of special casing for the array-->
 
-               			</xsl:when>
-                		<!-- Non array setter method-->
-                		<xsl:otherwise>
-                    	/**
-                   		* Auto generated setter method
-                   		* @param param <xsl:value-of select="$javaName"/>
-                   		*/
-                   		public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                    	<xsl:if test="$choice">
-                        	clearAllSettingTrackers();
-                    	</xsl:if>
-                    	<xsl:if test="$min=0 or $choice">
-                    		//update the setting tracker
-                    	<xsl:value-of select="$settingTracker"/> = true;
-                    	</xsl:if>
+                           </xsl:when>
+                        <!-- Non array setter method-->
+                        <xsl:otherwise>
+                        /**
+                           * Auto generated setter method
+                           * @param param <xsl:value-of select="$javaName"/>
+                           */
+                           public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
+                        <xsl:if test="$choice">
+                            clearAllSettingTrackers();
+                        </xsl:if>
+                        <xsl:if test="$min=0 or $choice">
+                            //update the setting tracker
+                        <xsl:value-of select="$settingTracker"/> = true;
+                        </xsl:if>
 
-                   		<xsl:choose>
+                           <xsl:choose>
                         <xsl:when test="(@restrictionBaseType)">
                            <xsl:choose>
                             <xsl:when test="(@patternFacet)">
@@ -459,20 +459,20 @@
                         </xsl:choose>
                         </xsl:when>
 
-						<xsl:otherwise>
-								this.<xsl:value-of select="$varName"/>=param;
-						</xsl:otherwise>
-						</xsl:choose>
+                        <xsl:otherwise>
+                                this.<xsl:value-of select="$varName"/>=param;
+                        </xsl:otherwise>
+                        </xsl:choose>
 
-                   		}
-                		</xsl:otherwise>
-            		</xsl:choose>
+                           }
+                        </xsl:otherwise>
+                    </xsl:choose>
                     </xsl:if>
 
                   </xsl:otherwise>
                </xsl:choose>
 
-			</xsl:otherwise>
+            </xsl:otherwise>
             </xsl:choose>
 
              <!-- end of xsl:if for not(@inherited) -->
@@ -504,7 +504,7 @@
             <xsl:when test="@type or @anon">
                 <!-- For a type write the passed in QName first-->
 
-		        java.lang.String prefix = parentQName.getPrefix();
+                java.lang.String prefix = parentQName.getPrefix();
                 java.lang.String namespace = parentQName.getNamespaceURI();
 
                 if (namespace != null) {
@@ -521,8 +521,8 @@
                         xmlWriter.setPrefix(prefix, namespace);
                     }
                 } else {
-		    xmlWriter.writeStartElement(parentQName.getLocalPart());
-		}
+            xmlWriter.writeStartElement(parentQName.getLocalPart());
+        }
 
                 <!-- write the type attribute if needed -->
                <xsl:if test="$extension">
@@ -544,25 +544,25 @@
                                                      xmlWriter);
                         </xsl:when>
                         <xsl:when test="@any and @array">
-							 if (<xsl:value-of select="$varName"/> != null) {
-								 for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
-									 writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
+                             if (<xsl:value-of select="$varName"/> != null) {
+                                 for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
+                                     writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
                                                     <xsl:value-of select="$varName"/>[i].getLocalName(),
                                                     <xsl:value-of select="$varName"/>[i].getAttributeValue(),xmlWriter);
-									 }
-							 }
+                                     }
+                             }
                         </xsl:when>
                         <!-- there can never be attribute arrays in the normal case-->
                         <xsl:when test="@optional">
- 							// optional attribute <xsl:value-of select="$propertyName"/>
- 							try {
-								writeAttribute("<xsl:value-of select="$namespace"/>",
+                             // optional attribute <xsl:value-of select="$propertyName"/>
+                             try {
+                                writeAttribute("<xsl:value-of select="$namespace"/>",
                                                "<xsl:value-of select="$propertyName"/>",
-                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);							
-							} catch (NullPointerException e) {
-								// If <xsl:value-of select="$varName"/> was null
-								// it can not be serialized.
-							}
+                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);                            
+                            } catch (NullPointerException e) {
+                                // If <xsl:value-of select="$varName"/> was null
+                                // it can not be serialized.
+                            }
                         </xsl:when>
                         <xsl:otherwise>
                              writeAttribute("<xsl:value-of select="$namespace"/>",
@@ -589,25 +589,25 @@
                                 <xsl:when test="@nillable">
                                     if (<xsl:value-of select="$varName"/>==null){
 
-				        java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
+                        java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
 
-					if (! namespace2.equals("")) {
-						java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
+                    if (! namespace2.equals("")) {
+                        java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
 
-						if (prefix2 == null) {
-							prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                        if (prefix2 == null) {
+                            prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-							xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
-							xmlWriter.writeNamespace(prefix2, namespace2);
-							xmlWriter.setPrefix(prefix2, namespace2);
+                            xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
+                            xmlWriter.writeNamespace(prefix2, namespace2);
+                            xmlWriter.setPrefix(prefix2, namespace2);
 
-						} else {
-							xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
-						}
+                        } else {
+                            xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
+                        }
 
-					} else {
-						xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-					}
+                    } else {
+                        xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
+                    }
 
 
                                        // write the nil attribute
@@ -710,25 +710,25 @@
                             </xsl:choose>
 
                             for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
-                            	        namespace = "<xsl:value-of select="$namespace"/>";
+                                        namespace = "<xsl:value-of select="$namespace"/>";
 
-					if (! namespace.equals("")) {
-						prefix = xmlWriter.getPrefix(namespace);
+                    if (! namespace.equals("")) {
+                        prefix = xmlWriter.getPrefix(namespace);
 
-						if (prefix == null) {
-							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                        if (prefix == null) {
+                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-							xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-							xmlWriter.writeNamespace(prefix, namespace);
-							xmlWriter.setPrefix(prefix, namespace);
+                            xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
+                            xmlWriter.writeNamespace(prefix, namespace);
+                            xmlWriter.setPrefix(prefix, namespace);
 
-						} else {
-							xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
-						}
+                        } else {
+                            xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
+                        }
 
-					} else {
-						xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-					}
+                    } else {
+                        xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
+                    }
 
 
 
@@ -764,25 +764,25 @@
                         </xsl:when>
                         <!-- handle all other cases -->
                          <xsl:otherwise>
-			 		namespace = "<xsl:value-of select="$namespace"/>";
+                     namespace = "<xsl:value-of select="$namespace"/>";
 
-					if (! namespace.equals("")) {
-						prefix = xmlWriter.getPrefix(namespace);
+                    if (! namespace.equals("")) {
+                        prefix = xmlWriter.getPrefix(namespace);
 
-						if (prefix == null) {
-							prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                        if (prefix == null) {
+                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-							xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-							xmlWriter.writeNamespace(prefix, namespace);
-							xmlWriter.setPrefix(prefix, namespace);
+                            xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
+                            xmlWriter.writeNamespace(prefix, namespace);
+                            xmlWriter.setPrefix(prefix, namespace);
 
-						} else {
-							xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
-						}
+                        } else {
+                            xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
+                        }
 
-					} else {
-						xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-					}
+                    } else {
+                        xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
+                    }
 
                              <xsl:choose>
                                  <!-- handle the binary case -->
@@ -820,25 +820,25 @@
                         <xsl:choose>
                             <xsl:when test="$nillable">
                                       if (<xsl:value-of select="$varName"/>==null){
-				        java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
+                        java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
 
-						if (! namespace.equals("")) {
-							java.lang.String prefix = xmlWriter.getPrefix(namespace);
+                        if (! namespace.equals("")) {
+                            java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
-							if (prefix == null) {
-								prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                            if (prefix == null) {
+                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-								xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
-								xmlWriter.writeNamespace(prefix, namespace);
-								xmlWriter.setPrefix(prefix, namespace);
+                                xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
+                                xmlWriter.writeNamespace(prefix, namespace);
+                                xmlWriter.setPrefix(prefix, namespace);
 
-							} else {
-								xmlWriter.writeStartElement(namespace,"<xsl:value-of select="property/@name"/>");
-							}
+                            } else {
+                                xmlWriter.writeStartElement(namespace,"<xsl:value-of select="property/@name"/>");
+                            }
 
-						} else {
-							xmlWriter.writeStartElement("<xsl:value-of select="property/@name"/>");
-						}
+                        } else {
+                            xmlWriter.writeStartElement("<xsl:value-of select="property/@name"/>");
+                        }
 
                                         // write the nil attribute
                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
@@ -861,27 +861,27 @@
                     </xsl:when>
                     <!-- end of ours block-->
                     <xsl:otherwise>
-		        java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
+                java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
 
-			if (! namespace.equals("")) {
-				java.lang.String prefix = xmlWriter.getPrefix(namespace);
+            if (! namespace.equals("")) {
+                java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
-				if (prefix == null) {
-					prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                if (prefix == null) {
+                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-					xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
-					xmlWriter.writeNamespace(prefix, namespace);
-					xmlWriter.setPrefix(prefix, namespace);
+                    xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
+                    xmlWriter.writeNamespace(prefix, namespace);
+                    xmlWriter.setPrefix(prefix, namespace);
 
-				} else {
-					xmlWriter.writeStartElement(namespace,"<xsl:value-of select="property/@name"/>");
-				}
+                } else {
+                    xmlWriter.writeStartElement(namespace,"<xsl:value-of select="property/@name"/>");
+                }
 
-			} else {
-				xmlWriter.writeStartElement("<xsl:value-of select="property/@name"/>");
-			}
+            } else {
+                xmlWriter.writeStartElement("<xsl:value-of select="property/@name"/>");
+            }
 
-			xmlWriter.writeCharacters(
+            xmlWriter.writeCharacters(
                         org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                        xmlWriter.writeEndElement();
                     </xsl:otherwise>
@@ -1217,9 +1217,9 @@
                 </xsl:if>
 
                 <!-- populate attributes here!!!. The attributes are part of an element, not part of a type -->
-				// Note all attributes that were handled. Used to differ normal attributes
-				// from anyAttributes.
-				java.util.Vector handledAttributes = new java.util.Vector();
+                // Note all attributes that were handled. Used to differ normal attributes
+                // from anyAttributes.
+                java.util.Vector handledAttributes = new java.util.Vector();
                 <xsl:for-each select="property[@attribute]">
                     <xsl:variable name="propertyName" select="@name"/>
                     <xsl:variable name="propertyType" select="@type"/>
@@ -1230,8 +1230,8 @@
                     <xsl:variable name="namespace" select="@nsuri"/>
                     <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
 
-					<xsl:if test="$propertyName != 'extraAttributes'">
-					// handle attribute "<xsl:value-of select="$propertyName"/>"
+                    <xsl:if test="$propertyName != 'extraAttributes'">
+                    // handle attribute "<xsl:value-of select="$propertyName"/>"
                     java.lang.String <xsl:value-of select="$attribName"/> =
                       reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                    if (<xsl:value-of select="$attribName"/>!=null){
@@ -1239,30 +1239,30 @@
                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
                                 <xsl:value-of select="$attribName"/>));
                     }
-					handledAttributes.add("<xsl:value-of select="$propertyName"/>");
-					</xsl:if>
+                    handledAttributes.add("<xsl:value-of select="$propertyName"/>");
+                    </xsl:if>
 
-					<!-- Handle anyAttributes here -->
-					<xsl:if test="$propertyName = 'extraAttributes'">
-						// now run through all any or extra attributes
-						// which were not reflected until now
-						for (int i=0; i &lt; reader.getAttributeCount(); i++) {
-							if (!handledAttributes.contains(reader.getAttributeLocalName(i))) {
-								// this is an anyAttribute and we create
-								// an OMAttribute for this
-								org.apache.axiom.om.impl.llom.OMAttributeImpl attr =
-									new org.apache.axiom.om.impl.llom.OMAttributeImpl(
-											reader.getAttributeLocalName(i),
-											new org.apache.axiom.om.impl.dom.NamespaceImpl(
-												reader.getAttributeNamespace(i), reader.getAttributePrefix(i)),
-											reader.getAttributeValue(i),
-											org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                    <!-- Handle anyAttributes here -->
+                    <xsl:if test="$propertyName = 'extraAttributes'">
+                        // now run through all any or extra attributes
+                        // which were not reflected until now
+                        for (int i=0; i &lt; reader.getAttributeCount(); i++) {
+                            if (!handledAttributes.contains(reader.getAttributeLocalName(i))) {
+                                // this is an anyAttribute and we create
+                                // an OMAttribute for this
+                                org.apache.axiom.om.impl.llom.OMAttributeImpl attr =
+                                    new org.apache.axiom.om.impl.llom.OMAttributeImpl(
+                                            reader.getAttributeLocalName(i),
+                                            new org.apache.axiom.om.impl.dom.NamespaceImpl(
+                                                reader.getAttributeNamespace(i), reader.getAttributePrefix(i)),
+                                            reader.getAttributeValue(i),
+                                            org.apache.axiom.om.OMAbstractFactory.getOMFactory());
 
-								// and add it to the extra attributes
-								object.addExtraAttributes(attr);
-							}
-						}
-					</xsl:if>
+                                // and add it to the extra attributes
+                                object.addExtraAttributes(attr);
+                            }
+                        }
+                    </xsl:if>
 
                 </xsl:for-each>
 
@@ -1632,10 +1632,10 @@
         </xsl:if>
 
 
-	<xsl:choose>
-	<xsl:when test="not(@helper)">
+    <xsl:choose>
+    <xsl:when test="not(@helper)">
 
-	public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if>
+    public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if>
         {
         <xsl:choose>
             <xsl:when test="@type">/* This type was generated from the piece of schema that had
@@ -1823,9 +1823,9 @@
         </xsl:for-each>
 
    }
-	</xsl:when>
-	<xsl:otherwise>
-	<!--  Start of helper generation part of the template-->
+    </xsl:when>
+    <xsl:otherwise>
+    <!--  Start of helper generation part of the template-->
 public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$helpername"/> {
 
      <!-- get OMElement methods that allows direct writing. generated inside the helper class-->
@@ -1867,32 +1867,32 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                     <xsl:variable name="varName">typedBean.local<xsl:value-of select="@javaname"/></xsl:variable>
                      <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:choose>
-						<!-- Note - It is assumed that any attributes are OMAttributes-->
+                        <!-- Note - It is assumed that any attributes are OMAttributes-->
                         <xsl:when test="@any and not(@array)">
                             writeAttribute(<xsl:value-of select="$varName"/>.getNamespace().getName(),
                                                      <xsl:value-of select="$varName"/>.getLocalName(),
                                                      <xsl:value-of select="$varName"/>.getAttributeValue(),xmlWriter);
                         </xsl:when>
                         <xsl:when test="@any and @array">
-							 if (<xsl:value-of select="$varName"/> != null) {
-								 for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
-									 writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
+                             if (<xsl:value-of select="$varName"/> != null) {
+                                 for (int i=0;i &lt;<xsl:value-of select="$varName"/>.length;i++){
+                                     writeAttribute(<xsl:value-of select="$varName"/>[i].getNamespace().getName(),
                                                     <xsl:value-of select="$varName"/>[i].getLocalName(),
                                                     <xsl:value-of select="$varName"/>[i].getAttributeValue(),xmlWriter);
-									 }
-							 }
+                                     }
+                             }
                         </xsl:when>
                         <!-- there can never be attribute arrays in the normal case-->
                         <xsl:when test="@optional">
- 							// optional attribute <xsl:value-of select="$propertyName"/>
- 							try {
-								writeAttribute("<xsl:value-of select="$namespace"/>",
+                             // optional attribute <xsl:value-of select="$propertyName"/>
+                             try {
+                                writeAttribute("<xsl:value-of select="$namespace"/>",
                                                "<xsl:value-of select="$propertyName"/>",
                                                org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
-							} catch (NullPointerException e) {
-								// If <xsl:value-of select="$varName"/> was null
-								// it can not be serialized.
-							}
+                            } catch (NullPointerException e) {
+                                // If <xsl:value-of select="$varName"/> was null
+                                // it can not be serialized.
+                            }
                         </xsl:when>
                         <xsl:otherwise>
                              writeAttribute("<xsl:value-of select="$namespace"/>",
@@ -2555,7 +2555,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
             return object;
         }
 
-	 public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName){
+     public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName){
 
         <xsl:value-of select="@package"/>.<xsl:value-of select="@name"/> bean =
          (<xsl:value-of select="@package"/>.<xsl:value-of select="@name"/>)beanObject;
@@ -2758,8 +2758,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         }
 
 }
-	</xsl:otherwise>
-	</xsl:choose>
+    </xsl:otherwise>
+    </xsl:choose>
            <!-- end of main template -->
   </xsl:template>
 

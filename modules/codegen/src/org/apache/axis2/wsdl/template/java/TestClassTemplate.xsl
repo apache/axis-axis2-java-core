@@ -118,7 +118,7 @@
             public <xsl:value-of select="$tempCallbackName"/>(){ super(null);}
 
             public void receiveResult<xsl:value-of select="@name"/>(org.apache.axis2.client.async.AsyncResult result) {
-			    assertNotNull(result.getResponseEnvelope().getBody().getFirstElement());
+                assertNotNull(result.getResponseEnvelope().getBody().getFirstElement());
             }
 
             public void receiveError<xsl:value-of select="@name"/>(java.lang.Exception e) {

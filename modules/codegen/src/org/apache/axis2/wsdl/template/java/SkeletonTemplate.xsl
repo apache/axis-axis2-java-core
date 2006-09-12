@@ -16,8 +16,8 @@
      <xsl:for-each select="method">
          <xsl:variable name="count"><xsl:value-of select="count(output/param)"/></xsl:variable>
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
-		 <!-- regardless of the sync or async status, the generated method signature would be just a usual
-	           java method -->
+         <!-- regardless of the sync or async status, the generated method signature would be just a usual
+               java method -->
         /**
          * Auto generated method signature
          <!--  select only the body parameters  -->
