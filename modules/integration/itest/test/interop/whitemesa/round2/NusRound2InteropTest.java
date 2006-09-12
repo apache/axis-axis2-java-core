@@ -308,7 +308,7 @@ public class NusRound2InteropTest extends WhiteMesaIneterop {
         retEnv = client.sendMsg(util, url, soapAction);
         tempPath = resFilePath + "NusGroupbSimpletypesAsStructRes.xml";
         compareXML(retEnv, tempPath);
-        ;
+        
     }
 
     /**
