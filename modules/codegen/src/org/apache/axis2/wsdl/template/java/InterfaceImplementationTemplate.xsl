@@ -827,6 +827,10 @@
 
             private <xsl:value-of select="@type"/> faultMessage;
 
+            public <xsl:value-of select="@shortName"/>() {
+                super("<xsl:value-of select="@shortName"/>");
+            }
+       
             public <xsl:value-of select="@shortName"/>(String s) {
                super(s);
             }
