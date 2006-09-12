@@ -571,11 +571,14 @@ public class AxisService extends AxisDescription {
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null) {
                     try {
-                        EndpointReference eprForService = listener.getEPRForService(getName(), requestIP);
-                        if (eprForService != null) {
-                            String address = eprForService.getAddress();
-                            if (address != null) {
-                                eprList.add(address);
+                        EndpointReference[] eprsForService = listener.getEPRsForService(getName(), requestIP);
+                        if (eprsForService != null) {
+                            for (int i = 0; i < eprsForService.length; i++) {
+                                EndpointReference endpointReference = eprsForService[i];
+                                String address = endpointReference.getAddress();
+                                if (address != null) {
+                                    eprList.add(address);
+                                }
                             }
                         }
                     } catch (AxisFault axisFault) {
@@ -593,11 +596,14 @@ public class AxisService extends AxisDescription {
                     TransportListener listener = transportIn.getReceiver();
                     if (listener != null) {
                         try {
-                            EndpointReference eprForService = listener.getEPRForService(getName(), requestIP);
-                            if (eprForService != null) {
-                                String address = eprForService.getAddress();
-                                if (address != null) {
-                                    eprList.add(address);
+                            EndpointReference[] eprsForService = listener.getEPRsForService(getName(), requestIP);
+                            if (eprsForService != null) {
+                                for (int j = 0; j < eprsForService.length; j++) {
+                                    EndpointReference endpointReference = eprsForService[i];
+                                    String address = endpointReference.getAddress();
+                                    if (address != null) {
+                                        eprList.add(address);
+                                    }
                                 }
                             }
                         } catch (AxisFault axisFault) {
@@ -1417,6 +1423,7 @@ public class AxisService extends AxisDescription {
 
     /**
      * A quick private sub routine to insert the names
+     *
      * @param nameTable
      * @param s
      */
@@ -1430,41 +1437,42 @@ public class AxisService extends AxisDescription {
 
     /**
      * Run 2  - adjust the names
-     *
      */
     private void adjustSchemaNames(List schemas, Hashtable nameTable) {
         //process the schemas in the main schema list
         for (int i = 0; i < schemas.size(); i++) {
-            adjustSchemaName((XmlSchema) schemas.get(i),nameTable);
+            adjustSchemaName((XmlSchema) schemas.get(i), nameTable);
         }
         //process all the rest in the name table
         Enumeration nameTableKeys = nameTable.keys();
         while (nameTableKeys.hasMoreElements()) {
-            adjustSchemaName((XmlSchema)nameTableKeys.nextElement(),nameTable);
+            adjustSchemaName((XmlSchema) nameTableKeys.nextElement(), nameTable);
 
         }
     }
 
     /**
      * Adjust a single schema
+     *
      * @param parentSchema
      * @param nameTable
      */
     private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable) {
-            XmlSchemaObjectCollection includes = parentSchema.getIncludes();
-            for (int j = 0; j < includes.getCount(); j++) {
-                Object item = includes.getItem(j);
-                if (item instanceof XmlSchemaExternal) {
-                    XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
-                    XmlSchema s = xmlSchemaExternal.getSchema();
-                    adjustSchemaLocation(s, xmlSchemaExternal, nameTable);
-                }
+        XmlSchemaObjectCollection includes = parentSchema.getIncludes();
+        for (int j = 0; j < includes.getCount(); j++) {
+            Object item = includes.getItem(j);
+            if (item instanceof XmlSchemaExternal) {
+                XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
+                XmlSchema s = xmlSchemaExternal.getSchema();
+                adjustSchemaLocation(s, xmlSchemaExternal, nameTable);
             }
+        }
 
     }
 
     /**
      * Adjusts a given schema location
+     *
      * @param s
      * @param xmlSchemaExternal
      * @param nameTable

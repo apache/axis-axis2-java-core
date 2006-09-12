@@ -38,7 +38,7 @@ import java.util.List;
 
 public class ListenerManager {
 
-	private static final Log log = LogFactory.getLog(ListenerManager.class);
+    private static final Log log = LogFactory.getLog(ListenerManager.class);
 
     public static ConfigurationContext defaultConfigurationContext;
 
@@ -72,28 +72,42 @@ public class ListenerManager {
             }
             if (service.isEnableAllTransports()) {
                 Iterator itr_st = startedTransports.values().iterator();
-                if (itr_st.hasNext()) {
+                while (itr_st.hasNext()) {
                     TransportListener transportListener = (TransportListener) itr_st.next();
-                    return transportListener.getEPRForService(serviceName, null);
-                } else {
-                    return null;
+                    EndpointReference[] epRsForService = transportListener.getEPRsForService(serviceName, null);
+                    if (epRsForService != null) {
+                        return epRsForService[0];
+                    }
                 }
+
+                // if nothing can be found return null
+                return null;
+
             } else {
                 List exposeTransport = service.getExposedTransports();
                 TransportListener listener = (TransportListener)
                         startedTransports.get(exposeTransport.get(0));
+
+                EndpointReference[] eprsForService;
                 if (opName == null) {
-                    return listener.getEPRForService(serviceName, null);
-                } else return listener.getEPRForService(serviceName + "/" + opName, null);
+                    eprsForService = listener.getEPRsForService(serviceName, null);
+                } else {
+                    eprsForService = listener.getEPRsForService(serviceName + "/" + opName, null);
+                }
+                return eprsForService != null ? eprsForService[0] : null;
             }
 
         } else {
             TransportInDescription trsIN = configctx.getAxisConfiguration()
                     .getTransportIn(new QName(transportName));
             TransportListener listener = trsIN.getReceiver();
+            EndpointReference[] eprsForService;
             if (opName == null) {
-                return listener.getEPRForService(serviceName, null);
-            } else return listener.getEPRForService(serviceName + "/" + opName, null);
+                eprsForService = listener.getEPRsForService(serviceName, null);
+            } else {
+                eprsForService = listener.getEPRsForService(serviceName + "/" + opName, null);
+            }
+            return eprsForService != null ? eprsForService[0] : null;
         }
     }
 
