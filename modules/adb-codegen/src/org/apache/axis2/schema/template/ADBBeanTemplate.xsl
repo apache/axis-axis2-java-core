@@ -762,11 +762,6 @@
                             <!-- Note - Assumed to be OMElement-->
                             <xsl:value-of select="$varName"/>.serialize(xmlWriter);
                         </xsl:when>
-                        <!-- handle the binary case -->
-                        <xsl:when test="@binary">
-                            org.apache.axiom.om.impl.llom.OMTextImpl binaryTextNode = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
-                            binaryTextNode.internalSerializeAndConsume(xmlWriter);
-                        </xsl:when>
                         <!-- handle all other cases -->
                          <xsl:otherwise>
 			 		namespace = "<xsl:value-of select="$namespace"/>";
@@ -789,8 +784,17 @@
 						xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
 					}
 
-                            xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                            xmlWriter.writeEndElement();
+                             <xsl:choose>
+                                 <!-- handle the binary case -->
+                                 <xsl:when test="@binary">
+                    org.apache.axiom.om.impl.llom.OMTextImpl <xsl:value-of select="$varName"/>_binary = new  org.apache.axiom.om.impl.llom.OMTextImpl( <xsl:value-of select="$varName"/>, org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+                    <xsl:value-of select="$varName"/>_binary.internalSerializeAndConsume(xmlWriter);
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                 </xsl:otherwise>
+                             </xsl:choose>
+                    xmlWriter.writeEndElement();
                         </xsl:otherwise>
                     </xsl:choose>
                     <xsl:if test="$min=0 or $choice">}</xsl:if>
@@ -1322,12 +1326,7 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                             <xsl:if test="not(enumFacet)">
-                            <xsl:if test="not(@binary)">
                             if (reader.isStartElement() &amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())){
-                            </xsl:if>
-                            <xsl:if test="@binary">
-                            if (reader.isStartElement()){
-                            </xsl:if>
                             </xsl:if>
                             <xsl:choose>
                                 <xsl:when test="@array">
@@ -1499,6 +1498,7 @@
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
+                                    reader.next();
                                     if (isReaderMTOMAware
                                             &amp;&amp;
                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
