@@ -133,9 +133,8 @@ public class Rampart implements Module, ModulePolicyExtension  {
 
         InflowConfiguration mergedInConf = mergeInflowConfiguration(
                 staticInflowConfig, moduleInflowConfig);
-        InflowConfiguration finalInConf = mergeInflowConfiguration(mergedInConf,policyInflowConfig);
-        return finalInConf;
-    }     
+        return mergeInflowConfiguration(mergedInConf,policyInflowConfig);
+    }
         
     private OutflowConfiguration calcuateCurrentOutflowConfiguration(
             OutflowConfiguration policyOutflowConfig,
@@ -152,8 +151,7 @@ public class Rampart implements Module, ModulePolicyExtension  {
 
         OutflowConfiguration mergedOutFlowConf = mergeOutflowConfiguration(
                 staticOutflowConfig, moduleOutflowConfig);
-        OutflowConfiguration finalOutFlowConf = mergeOutflowConfiguration(mergedOutFlowConf,policyOutflowConfig);
-        return finalOutFlowConf;
+        return mergeOutflowConfiguration(mergedOutFlowConf,policyOutflowConfig);
     }
     
     

@@ -241,8 +241,7 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 			return null;
 		}
 		
-		String identifier = ideltifierElement.getText().trim();
-		return identifier;
+		return ideltifierElement.getText().trim();
 	}
 	
 	private ExpirationBean getExpirationBeanFromString (String expiresStr) throws SavanException {

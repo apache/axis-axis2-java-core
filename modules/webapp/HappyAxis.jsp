@@ -67,11 +67,9 @@
      */
     public String getInstallHints(HttpServletRequest request) {
 
-        String hint =
-                "<B><I>Note:</I></B> On Tomcat 4.x and Java1.4, you may need to put libraries that contain "
+        return "<B><I>Note:</I></B> On Tomcat 4.x and Java1.4, you may need to put libraries that contain "
                         + "java.* or javax.* packages into CATALINA_HOME/common/lib"
                         + "<br>jaxrpc.jar and saaj.jar are two such libraries.";
-        return hint;
     }
 
     /**
@@ -288,8 +286,7 @@
         }
 
         // check to what is in the classname
-        String saxParserName = saxParser.getClass().getName();
-        return saxParserName;
+        return saxParser.getClass().getName();
     }
 
     /**
@@ -319,8 +316,7 @@
         if (saxParser == null) {
             return null;
         }
-        String location = getLocation(out, saxParser.getClass());
-        return location;
+        return getLocation(out, saxParser.getClass());
     }
 
     private String value;

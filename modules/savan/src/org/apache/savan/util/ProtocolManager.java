@@ -35,9 +35,8 @@ public class ProtocolManager {
 		if (configurationManager==null)
 			throw new SavanException ("Cant find the Configuration Manager");
 		
-		Protocol protocol = (Protocol) configurationManager.getProtocolMap().get("eventing");
+		return (Protocol) configurationManager.getProtocolMap().get("eventing");
 		
-		return protocol;
 	}
 	
 }

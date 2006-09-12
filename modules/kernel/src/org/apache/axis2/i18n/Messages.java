@@ -165,13 +165,11 @@ public class Messages {
     }
 
     public static MessageBundle getMessageBundle() {
-    	MessageBundle messageBundle = getMessageBundle (DEFAULT_MESSAGE_BUNDLE_KEY);
-        return messageBundle;
+        return getMessageBundle (DEFAULT_MESSAGE_BUNDLE_KEY);
     }
     
     public static MessageBundle getMessageBundle(String messageBundleKey) {
-    	MessageBundle messageBundle = (MessageBundle) messageBundleMap.get (messageBundleKey);
-        return messageBundle;
+        return (MessageBundle) messageBundleMap.get (messageBundleKey);
     }
     
     /**

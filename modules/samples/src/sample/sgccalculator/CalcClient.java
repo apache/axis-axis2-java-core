@@ -240,10 +240,9 @@ public class CalcClient {
     }
 
     public static String getServiceGroupContextId(SOAPEnvelope resultEnvelope) {
-        String serviceGroupContextId = resultEnvelope.getHeader()
+        return resultEnvelope.getHeader()
                 .getFirstChildWithName(new QName("ReplyTo"))
                 .getFirstChildWithName(new QName("ReferenceParameters"))
                 .getFirstChildWithName(new QName("ServiceGroupId")).getText();
-        return serviceGroupContextId;
     }
 }

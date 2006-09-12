@@ -331,9 +331,8 @@ public class JavaBeanWriter implements BeanWriter {
             basePackageName = URLProcessor.makePackageName(namespaceURI);
         }
 
-        String packageName = this.packageName == null ? basePackageName
+        return this.packageName == null ? basePackageName
                 : this.packageName + basePackageName;
-        return packageName;
     }
 
     /**

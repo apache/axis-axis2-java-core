@@ -181,8 +181,7 @@ public class Client {
 	private int getIntInput () throws IOException {
         String option = reader.readLine();
         try {
-            int param = Integer.parseInt(option);
-            return param;
+            return Integer.parseInt(option);
         } catch (NumberFormatException e) {
         	//invalid option
         	return -1;
@@ -256,11 +255,9 @@ public class Client {
 		
 		String subscribingAddress = null;
 		if (SUBSCRIBER_1_ID.equals(ID)) {
-			String listner1Address = "http://" + serverIP + ":" + port + listner1AddressPart;
-			subscribingAddress = listner1Address;
+            subscribingAddress = "http://" + serverIP + ":" + port + listner1AddressPart;
 		} else if (SUBSCRIBER_2_ID.equals(ID)) {
-			String listner2Address = "http://" + serverIP + ":" + port + listner2AddressPart;
-			subscribingAddress = listner2Address;
+            subscribingAddress = "http://" + serverIP + ":" + port + listner2AddressPart;
 		}
 	
 		bean.setDeliveryEPR(new EndpointReference (subscribingAddress));
@@ -290,9 +287,7 @@ public class Client {
 	private OMElement getDummyMethodRequestElement() {
 		OMFactory fac = OMAbstractFactory.getOMFactory();
 		OMNamespace namespace = fac.createOMNamespace(applicationNamespaceName,"ns1");
-		OMElement dummyMethodElem = fac.createOMElement(dummyMethod, namespace);
-
-		return dummyMethodElem;
+		return fac.createOMElement(dummyMethod, namespace);
 	}
 	
 }

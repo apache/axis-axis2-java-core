@@ -76,8 +76,7 @@ public class ClientUtils {
             if (replyTo != null) {
                 try {
                     URI uri = new URI(replyTo.getAddress());
-                    String scheme = uri.getScheme();
-                    listenerTransportProtocol = scheme;
+                    listenerTransportProtocol = uri.getScheme();
                 } catch (URISyntaxException e) {
                     //need to ignore
                 }

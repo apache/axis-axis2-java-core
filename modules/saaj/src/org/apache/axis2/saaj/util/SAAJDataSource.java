@@ -423,8 +423,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
             if (readClosed) {
                 throw new java.io.IOException("streamClosed");
             }
-            int ret = new Long(Math.min(Integer.MAX_VALUE, totalsz - bread)).intValue();
-            return ret;
+            return new Long(Math.min(Integer.MAX_VALUE, totalsz - bread)).intValue();
         }
 
         /**

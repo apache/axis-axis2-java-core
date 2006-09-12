@@ -293,8 +293,7 @@ public class ConversationConfiguration {
      */
     private static String getStringValue(OMElement elem) throws RampartException {
         if(elem != null) {
-            String tempVal = elem.getText();
-            return tempVal;
+            return elem.getText();
         }
         return null;
     }

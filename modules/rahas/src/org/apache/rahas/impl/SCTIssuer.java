@@ -102,11 +102,9 @@ public class SCTIssuer implements TokenIssuer {
         }
 
         if (ENCRYPTED_KEY.equals(config.proofTokenType)) {
-            SOAPEnvelope responseEnv = this.doEncryptedKey(config,data);
-            return responseEnv;
+            return this.doEncryptedKey(config,data);
         } else if (BINARY_SECRET.equals(config.proofTokenType)) {
-            SOAPEnvelope responseEnv = this.doBinarySecret(config, data);
-            return responseEnv;
+            return this.doBinarySecret(config, data);
         } else if (COMPUTED_KEY.equals(config.proofTokenType)) {
             // TODO
             throw new UnsupportedOperationException("TODO");

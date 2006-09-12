@@ -102,8 +102,7 @@ public class SimpleJMSListener implements MessageListener, TransportListener {
         }
         Properties cfProps = new Properties();
         cfProps.load(new BufferedInputStream(new FileInputStream(cfFile)));
-        HashMap cfMap = new HashMap(cfProps);
-        return cfMap;
+        return new HashMap(cfProps);
     }
 
     public static final HashMap createConnectorMap(
