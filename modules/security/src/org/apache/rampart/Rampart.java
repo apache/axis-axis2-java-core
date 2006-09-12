@@ -31,10 +31,10 @@ import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 import org.apache.ws.policy.Policy;
-import org.apache.ws.security.policy.WSS4JConfig;
-import org.apache.ws.security.policy.WSS4JConfigBuilder;
-import org.apache.ws.security.policy.extension.WSSCodegenPolicyExtension;
-import org.apache.ws.security.policy.parser.WSSPolicyProcessor;
+import org.apache.ws.security.policy1.WSS4JConfig;
+import org.apache.ws.security.policy1.WSS4JConfigBuilder;
+import org.apache.ws.security.policy1.extension.WSSCodegenPolicyExtension;
+import org.apache.ws.security.policy1.parser.WSSPolicyProcessor;
 
 public class Rampart implements Module, ModulePolicyExtension  {
     private AxisModule module;
