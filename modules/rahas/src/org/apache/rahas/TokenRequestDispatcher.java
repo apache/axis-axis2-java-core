@@ -23,8 +23,7 @@ public class TokenRequestDispatcher {
 
     private TokenRequestDispatcherConfig config;
 
-    public TokenRequestDispatcher(TokenRequestDispatcherConfig config)
-            throws TrustException {
+    public TokenRequestDispatcher(TokenRequestDispatcherConfig config) throws TrustException {
         this.config = config;
     }
 
@@ -38,13 +37,12 @@ public class TokenRequestDispatcher {
 
     /**
      * Processes the incoming request and returns a SOAPEnvelope
-     * @param request 
      * @param inMsgCtx
      * @return
      * @throws TrustException
      */
-    public SOAPEnvelope handle(MessageContext inMsgCtx, MessageContext outMsgCtx)
-            throws TrustException {
+    public SOAPEnvelope handle(MessageContext inMsgCtx,
+                               MessageContext outMsgCtx) throws TrustException {
         
         RahasData data = new RahasData(inMsgCtx);
         
@@ -52,19 +50,17 @@ public class TokenRequestDispatcher {
         String tokenType = data.getTokenType();
         if ((RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_ISSUE).equals(reqType) ||
                 (RahasConstants.WST_NS_05_12 + RahasConstants.REQ_TYPE_ISSUE).equals(reqType)) {
-            TokenIssuer issuer = null;
-            if (tokenType == null
-                    || (tokenType != null && "".equals(tokenType.toString()))) {
+            TokenIssuer issuer;
+            if (tokenType == null ||  tokenType.trim().length() == 0) {
                 issuer = config.getDefaultIssuerInstace();
             } else {
-                issuer = config.getIssuer(tokenType.toString());
+                issuer = config.getIssuer(tokenType);
             }
             
             SOAPEnvelope response = issuer.issue(data);
             
             //set the response wsa/soap action in teh out message context
-            outMsgCtx.getOptions().setAction(
-                    issuer.getResponseAction(data));
+            outMsgCtx.getOptions().setAction(issuer.getResponseAction(data));
             
             return response;
         } else if((RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_VALIDATE).equals(reqType) ||
@@ -77,6 +73,14 @@ public class TokenRequestDispatcher {
                     "renew requests");            
         } else if((RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_CANCEL).equals(reqType) ||
                 (RahasConstants.WST_NS_05_12 + RahasConstants.REQ_TYPE_CANCEL).equals(reqType)) {
+
+            TokenCanceler canceler;
+
+            //TODO : Work-in-progress
+
+//            http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Cancel
+//http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Cancel
+
             throw new UnsupportedOperationException("TODO: handle " +
                     "cancel requests");
         } else {

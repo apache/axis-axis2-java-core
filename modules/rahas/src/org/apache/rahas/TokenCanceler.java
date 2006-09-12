@@ -17,9 +17,10 @@
 package org.apache.rahas;
 
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.om.OMElement;
 
-public interface TokenCanceller {
-    
+public interface TokenCanceler {
+
     /**
      * Cancel the token specified in the request.
      * @param data
@@ -28,7 +29,7 @@ public interface TokenCanceller {
      * @throws TrustException
      */
     public SOAPEnvelope cancel(RahasData data) throws TrustException;
-    
+
     /**
      * Set the configuration file of this TokenCanceller.
      * 
@@ -37,7 +38,7 @@ public interface TokenCanceller {
      * @param configFile
      */
     public void setConfigurationFile(String configFile);
-    
+
     /**
      * Set the configuration element of this TokenCanceller.
      * 
@@ -46,8 +47,8 @@ public interface TokenCanceller {
      * 
      * @param configElement <code>OMElement</code> representing the configuation
      */
-    public void setConfigurationElement(String configElement);
-    
+    public void setConfigurationElement(OMElement configElement);
+
     /**
      * Set the name of the configuration parameter.
      * 
@@ -59,5 +60,5 @@ public interface TokenCanceller {
      * @param configParamName
      */
     public void setConfigurationParamName(String configParamName);
-    
+
 }

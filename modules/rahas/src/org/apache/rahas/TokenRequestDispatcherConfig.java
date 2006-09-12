@@ -29,159 +29,153 @@ public class TokenRequestDispatcherConfig {
 
     public final static String CONFIG_PARAM_KEY = "token-dispatcher-configuration";
     public final static String CONFIG_FILE_KEY = "token-dispatcher-configuration-file";
-    
+
     private final static QName DISPATCHER_CONFIG = new QName("token-dispatcher-configuration");
     public final static QName ISSUER = new QName("issuer");
     public final static QName TOKEN_TYPE = new QName("tokenType");
     public final static QName CLASS_ATTR = new QName("class");
     public final static QName DEFAULT_ATTR = new QName("default");
-    
-    public final static QName CONFIGURATION_FILE = new QName("configuration-file");
-    public final static QName CONFIGURATION_PARAM = new QName("configuration-param");
-    public final static QName CONFIGURATION_ELEMENT = new QName("configuration");
-    
+
+    private final static QName CONFIGURATION_ELEMENT = new QName("configuration");
+
     private Hashtable issuers;
-    
+
     private Hashtable configFiles = new Hashtable();
-    
+
     private Hashtable configElements = new Hashtable();
 
     private Hashtable configParamNames = new Hashtable();
-    
+
     private String defaultIssuerClassName;
-    
-    
+
+
     public static TokenRequestDispatcherConfig load(OMElement configElem)
             throws TrustException {
-        
-        if(!DISPATCHER_CONFIG.equals(configElem.getQName())) {
+
+        if (!DISPATCHER_CONFIG.equals(configElem.getQName())) {
             throw new TrustException("incorrectConfiguration");
         }
-        
         TokenRequestDispatcherConfig conf = new TokenRequestDispatcherConfig();
-        
-        Iterator issuerElems = configElem.getChildrenWithName(ISSUER);
-        while (issuerElems.hasNext()) {
+        for (Iterator issuerElems = configElem.getChildrenWithName(ISSUER);
+             issuerElems.hasNext();) {
+
             OMElement element = (OMElement) issuerElems.next();
             //get the class attr
             String issuerClass = element.getAttributeValue(CLASS_ATTR);
-            if(issuerClass == null) {
+            if (issuerClass == null) {
                 throw new TrustException("missingClassName");
             }
             String isDefault = element.getAttributeValue(DEFAULT_ATTR);
-            if(isDefault != null && "true".equalsIgnoreCase(isDefault)) {
+            if (isDefault != null && "true".equalsIgnoreCase(isDefault)) {
                 //Use the first default issuer as the default isser
-                if(conf.defaultIssuerClassName == null) {
+                if (conf.defaultIssuerClassName == null) {
                     conf.defaultIssuerClassName = issuerClass;
                 } else {
                     throw new TrustException("badDispatcherConfigMultipleDefaultIssuers");
                 }
-            } 
-            
-            //Process configuration file information
-            OMElement issuerConfigFileElement = element.getFirstChildWithName(CONFIGURATION_FILE);
-            String issuerConfigFile = (issuerConfigFileElement != null) ? issuerConfigFileElement.getText() : null;
-            if(issuerConfigFile != null) {
-                conf.configFiles.put(issuerClass, issuerConfigFile);
-            }
-            
-            //Process configuration element information
-            OMElement issuerConfigElement = element.getFirstChildWithName(CONFIGURATION_ELEMENT);
-            if(issuerConfigElement != null) {
-                conf.configElements.put(issuerClass, issuerConfigElement);    
             }
 
-            //Process configuration parameter name information
-            OMElement issuerParamNameElem = element.getFirstChildWithName(CONFIGURATION_PARAM);
-            String issuerParamName = (issuerParamNameElem != null) ? issuerParamNameElem.getText() : null;
-            if(issuerParamName != null) {
-                conf.configParamNames.put(issuerClass, issuerParamName);    
+            for (Iterator configs = element.getChildrenWithName(CONFIGURATION_ELEMENT);
+                 configs.hasNext();) {
+                OMElement configEle = (OMElement) configs.next();
+                String configType =
+                        configEle.getAttribute(new QName("type")).getAttributeValue().trim();
+                if (configType.equalsIgnoreCase("file")) { //Process configuration file information
+                    String issuerConfigFile = configEle.getText();
+                    if (issuerConfigFile != null) {
+                        conf.configFiles.put(issuerClass, issuerConfigFile);
+                    }
+                } else if(configType.equalsIgnoreCase("element")){ //Process configuration element information
+                    conf.configElements.put(issuerClass, configEle);
+                } else if(configType.equalsIgnoreCase("parameter")){ //Process configuration parameter name information
+                    conf.configParamNames.put(issuerClass, configEle.getText());
+                }
             }
-            
+
             //Process token types
             Iterator tokenTypes = element.getChildrenWithName(TOKEN_TYPE);
             while (tokenTypes.hasNext()) {
                 OMElement type = (OMElement) tokenTypes.next();
                 String value = type.getText();
-                if(value == null || "".equals(value)) {
+                if (value == null || "".equals(value)) {
                     throw new TrustException("invalidTokenTypeDefinition",
-                            new String[] { "Issuer", issuerClass });
+                                             new String[]{"Issuer", issuerClass});
                 }
-                if(conf.issuers == null) {
+                if (conf.issuers == null) {
                     conf.issuers = new Hashtable();
                 }
                 //If the token type is not aleady declared then add it to the 
                 //table with the issuer classname
-                if(!conf.issuers.keySet().contains(value)) {
+                if (!conf.issuers.keySet().contains(value)) {
                     conf.issuers.put(value, issuerClass);
                 }
             }
         }
-        
+
         //There must be a defulat issuer
-        if(conf.defaultIssuerClassName == null) {
+        if (conf.defaultIssuerClassName == null) {
             throw new TrustException("defaultIssuerMissing");
         }
-        
+
         return conf;
     }
 
     public static TokenRequestDispatcherConfig load(String configFilePath)
             throws TrustException {
-        FileInputStream fis = null;
-        StAXOMBuilder builder = null;
+        FileInputStream fis;
+        StAXOMBuilder builder;
         try {
             fis = new FileInputStream(configFilePath);
-             builder = new StAXOMBuilder(fis);
+            builder = new StAXOMBuilder(fis);
         } catch (Exception e) {
             throw new TrustException("errorLoadingConfigFile",
-                    new String[] { configFilePath });
+                                     new String[]{configFilePath});
         }
-        
+
         return load(builder.getDocumentElement());
-        
+
     }
-    
+
     public TokenIssuer getDefaultIssuerInstace() throws TrustException {
-        if(this.defaultIssuerClassName != null) {
+        if (this.defaultIssuerClassName != null) {
             try {
                 return createIssuer(this.defaultIssuerClassName);
             } catch (Exception e) {
                 throw new TrustException("cannotLoadClass",
-                        new String[] { this.defaultIssuerClassName }, e);
+                                         new String[]{this.defaultIssuerClassName}, e);
             }
         } else {
             return null;
         }
     }
-    
+
     public String getDefaultIssuerName() {
         return this.defaultIssuerClassName;
     }
-    
-    
+
+
     public TokenIssuer getIssuer(String tokenType) throws TrustException {
         String issuerClassName = null;
         //try to find the isser class name from the tokenType<->issuer map
-        if(this.issuers != null) {
-            issuerClassName = (String)this.issuers.get(tokenType);
+        if (this.issuers != null) {
+            issuerClassName = (String) this.issuers.get(tokenType);
         }
         //If a specific issuer is not found use the default issuer
-        if(issuerClassName == null) {
+        if (issuerClassName == null) {
             issuerClassName = this.defaultIssuerClassName;
         }
         try {
             return createIssuer(issuerClassName);
         } catch (Exception e) {
             throw new TrustException("cannotLoadClass",
-                    new String[] { this.defaultIssuerClassName }, e);
+                                     new String[]{this.defaultIssuerClassName}, e);
         }
-        
+
     }
 
     /**
      * @param issuerClassName
-     * @return
+     * @return TokenIssuer
      */
     private TokenIssuer createIssuer(String issuerClassName) throws Exception {
         TokenIssuer issuer = (TokenIssuer) Loader.loadClass(

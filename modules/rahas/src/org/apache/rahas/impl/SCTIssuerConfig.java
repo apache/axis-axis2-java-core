@@ -50,8 +50,8 @@ public class SCTIssuerConfig {
     protected long ttl = 300000;
     
     private SCTIssuerConfig(OMElement elem) throws TrustException {
-        OMElement proofTokenElem = elem.getFirstChildWithName(
-                new QName("proofToken"));
+        OMElement proofTokenElem =
+                elem.getFirstChildWithName(new QName("proofToken"));
         if (proofTokenElem != null) {
             this.proofTokenType = proofTokenElem.getText().trim();
         }
@@ -64,11 +64,10 @@ public class SCTIssuerConfig {
             throw new TrustException("sctIssuerCryptoPropertiesMissing");
         }
 
-        this.addRequestedAttachedRef = elem
-                .getFirstChildWithName(ADD_REQUESTED_ATTACHED_REF) != null;
-        this.addRequestedUnattachedRef = elem
-                .getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
-        
+        this.addRequestedAttachedRef =
+                elem.getFirstChildWithName(ADD_REQUESTED_ATTACHED_REF) != null;
+        this.addRequestedUnattachedRef =
+                elem.getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
         this.cryptoPropertiesFile = cryptoPropertiesElem.getText().trim();
     }
     
@@ -78,8 +77,8 @@ public class SCTIssuerConfig {
     
     public static SCTIssuerConfig load(String configFilePath)
             throws TrustException {
-        FileInputStream fis = null;
-        StAXOMBuilder builder = null;
+        FileInputStream fis;
+        StAXOMBuilder builder;
         try {
             fis = new FileInputStream(configFilePath);
             builder = new StAXOMBuilder(fis);
@@ -88,7 +87,7 @@ public class SCTIssuerConfig {
                     new String[] { configFilePath });
         }
         
-        return builder != null ? load(builder.getDocumentElement()) : null;
+        return load(builder.getDocumentElement());
     }
     
     

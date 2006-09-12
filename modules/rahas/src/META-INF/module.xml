@@ -2,11 +2,11 @@
     <Description>This module is used to STS enable a service where it adds the RequestSecurityToken operation to a service that the module is engaged to</Description>
 
     <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"/>
-    
+
     <operation name="RequestSecurityToken" mep="http://www.w3.org/2004/08/wsdl/in-out">
         <messageReceiver class="org.apache.rahas.STSMessageReceiver"/>
 
-		<!-- Action mapping to accept SCT requests -->        
+		<!-- Action mapping to accept SCT requests -->
 		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/SCT</actionMapping>
 
 		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue</actionMapping>
@@ -17,16 +17,18 @@
 		<parameter name="token-dispatcher-configuration">
 			<token-dispatcher-configuration>
 				<issuer class="org.apache.rahas.impl.SCTIssuer" default="true">
-					<configuration-param>sct-issuer-config</configuration-param>
+					<configuration type="parameter">sct-issuer-config</configuration>
 					<tokenType>http://schemas.xmlsoap.org/ws/2005/02/sc/sct</tokenType>
 				</issuer>
 				<issuer class="org.apache.rahas.impl.SAMLTokenIssuer">
-					<configuration-param>saml-issuer-config</configuration-param>
+					<configuration type="parameter">saml-issuer-config</configuration>
 					<tokenType>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1</tokenType>
 				</issuer>
-			</token-dispatcher-configuration>
+
+                <!-- TODO: -->
+            </token-dispatcher-configuration>
 		</parameter>
 
      </operation>
-     
+
 </module>

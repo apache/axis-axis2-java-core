@@ -35,27 +35,35 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
     public RahasSAMLTokenCertForHoKV1205Test(String name) {
         super(name);
     }
+
     public OMElement getRequest() {
         try {
-            OMElement rstElem = TrustUtil.createRequestSecurityTokenElement(RahasConstants.VERSION_05_12);
-            OMElement reqTypeElem = TrustUtil.createRequestTypeElement(RahasConstants.VERSION_05_12, rstElem, RahasConstants.REQ_TYPE_ISSUE);
-            OMElement tokenTypeElem = TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, rstElem);
+            OMElement rstElem =
+                    TrustUtil.createRequestSecurityTokenElement(RahasConstants.VERSION_05_12);
+            OMElement reqTypeElem =
+                    TrustUtil.createRequestTypeElement(RahasConstants.VERSION_05_12,
+                                                       rstElem,
+                                                       RahasConstants.REQ_TYPE_ISSUE);
+            OMElement tokenTypeElem =
+                    TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12,
+                                                     rstElem);
             tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
-            
-            TrustUtil.createAppliesToElement(rstElem, 
+
+            TrustUtil.createAppliesToElement(rstElem,
 //                    "http://207.200.37.116/Ping/Scenario4", this.getWSANamespace());
-                    "http://localhost:5555/axis2/services/SecureService", this.getWSANamespace());
+"http://localhost:5555/axis2/services/SecureService", this.getWSANamespace());
             TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12,
-                    rstElem, RahasConstants.KEY_TYPE_PUBLIC_KEY);
+                                           rstElem, RahasConstants.KEY_TYPE_PUBLIC_KEY);
             TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, rstElem, 256);
-            
-            
+
+
             return rstElem;
-            
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
     public OutflowConfiguration getClientOutflowConfiguration() {
         OutflowConfiguration ofc = new OutflowConfiguration();
 
@@ -76,7 +84,7 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
 //                                "{Element}{" + RahasConstants.WSA_NS + "}MessageID;" +
 //                                "{Element}{" + RahasConstants.WSA_NS + "}Action;" +
 //                                "{Element}{" + WSConstants.WSU_NS + "}Timestamp");
-        
+
         return ofc;
     }
 
@@ -87,28 +95,32 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
         ifc.setPasswordCallbackClass(PWCallback.class.getName());
         ifc.setSignaturePropFile("rahas-sec.properties");
         ifc.setEnableSignatureConfirmation(false);
-        
+
         return ifc;
     }
 
     public String getServiceRepo() {
         return "rahas_service_repo_1";
     }
-    
+
     public void validateRsponse(OMElement resp) {
-        OMElement rstr = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.REQUEST_SECURITY_TOKEN_RESPONSE_LN));
+        OMElement rstr =
+                resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12,
+                                                     RahasConstants.REQUEST_SECURITY_TOKEN_RESPONSE_LN));
         assertNotNull("RequestedSecurityToken missing", rstr);
-        OMElement rst = rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+        OMElement rst =
+                rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12,
+                                                     RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
         assertNotNull("RequestedSecurityToken missing", rst);
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);
-        
+
     }
 
     public String getRequestAction() throws TrustException {
         return TrustUtil.getActionValue(RahasConstants.VERSION_05_02, RahasConstants.RST_ACTON_ISSUE);
     }
-    
+
     public Policy getServicePolicy() throws Exception {
         return this.getPolicy("test-resources/rahas/policy/service-policy-symm-binding.xml");
     }
@@ -116,19 +128,23 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
     public Policy getSTSPolicy() throws Exception {
         return this.getPolicy("test-resources/rahas/policy/sts-policy-asymm-binding.xml");
     }
-    
+
 
     public OMElement getRSTTemplate() throws TrustException {
         OMFactory factory = OMAbstractFactory.getOMFactory();
-        OMElement elem = factory.createOMElement(Constants.RST_TEMPLATE.getLocalPart(), factory.createOMNamespace(Constants.RST_TEMPLATE.getNamespaceURI(),"wsp"));
-        
-        TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, elem).setText(RahasConstants.TOK_TYPE_SAML_10);
-        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, elem, RahasConstants.KEY_TYPE_SYMM_KEY);
+        OMElement elem =
+                factory.createOMElement(Constants.RST_TEMPLATE.getLocalPart(),
+                                        factory.createOMNamespace(Constants.RST_TEMPLATE.getNamespaceURI(), "wsp"));
+
+        TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_12, elem).
+                setText(RahasConstants.TOK_TYPE_SAML_10);
+        TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_12, elem,
+                                       RahasConstants.KEY_TYPE_SYMM_KEY);
         TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_12, elem, 256);
-        
+
         return elem;
     }
-    
+
     public int getTrstVersion() {
         return RahasConstants.VERSION_05_12;
     }

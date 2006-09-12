@@ -190,7 +190,8 @@ public class SAMLTokenIssuerConfig {
                 OMAttribute aliasAttr = service.getAttribute(ALIAS);
                 if(aliasAttr == null) {
                     //The certificate alias is a must
-                    throw new TrustException("aliasMissingForService", new String[]{service.getText().trim()});
+                    throw new TrustException("aliasMissingForService",
+                                             new String[]{service.getText().trim()});
                 }
                 if(this.trustedServices == null) {
                     this.trustedServices = new HashMap();
@@ -203,9 +204,7 @@ public class SAMLTokenIssuerConfig {
             //There maybe no trusted services as well, Therefore do not 
             //throw an exception when there are no trusted in the list at the 
             //moment
-            
         }
-            
     }
     
     public static SAMLTokenIssuerConfig load(OMElement elem) throws TrustException {
@@ -214,8 +213,8 @@ public class SAMLTokenIssuerConfig {
     
     public static SAMLTokenIssuerConfig load(String configFilePath)
             throws TrustException {
-        FileInputStream fis = null;
-        StAXOMBuilder builder = null;
+        FileInputStream fis;
+        StAXOMBuilder builder;
         try {
             fis = new FileInputStream(configFilePath);
             builder = new StAXOMBuilder(fis);
@@ -223,8 +222,7 @@ public class SAMLTokenIssuerConfig {
             throw new TrustException("errorLoadingConfigFile",
                     new String[] { configFilePath });
         }
-        
-        return builder != null ? load(builder.getDocumentElement()) : null;
+        return load(builder.getDocumentElement());
     }
     
 }
