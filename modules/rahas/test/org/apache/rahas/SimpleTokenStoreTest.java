@@ -17,13 +17,11 @@
 package org.apache.rahas;
 
 import junit.framework.TestCase;
-
-import java.util.List;
-import java.util.Date;
-
-import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+
+import java.util.Date;
 
 public class SimpleTokenStoreTest extends TestCase {
 
@@ -120,16 +118,15 @@ public class SimpleTokenStoreTest extends TestCase {
             store.add(token6);
             store.add(token7);
 
-            List list = store.getValidTokens();
-            List list2 = store.getExpiredTokens();
-            List list3 = store.getRenewedTokens();
-            List list4 = store.getCancelledTokens();
+            Token[] list = store.getValidTokens();
+            Token[] list2 = store.getExpiredTokens();
+            Token[] list3 = store.getRenewedTokens();
+            Token[] list4 = store.getCancelledTokens();
 
-            assertEquals("Incorrect number of valid tokens", 5, list.size());
-            assertEquals("Incorrect number of expired tokens", 1,
-                         list2.size());
-            assertEquals("Incorrect number of newed tokens", 2, list3.size());
-            assertEquals("Incorrect number of newed tokens", 1, list4.size());
+            assertEquals("Incorrect number of valid tokens", 5, list.length);
+            assertEquals("Incorrect number of expired tokens", 1, list2.length);
+            assertEquals("Incorrect number of newed tokens", 2, list3.length);
+            assertEquals("Incorrect number of newed tokens", 1, list4.length);
 
         } catch (TrustException e) {
             fail(e.getMessage());

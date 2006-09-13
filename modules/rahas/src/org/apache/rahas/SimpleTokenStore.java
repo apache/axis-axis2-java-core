@@ -62,24 +62,24 @@ public class SimpleTokenStore implements TokenStorage {
         return (String[]) identifiers.toArray(new String[identifiers.size()]);
     }
 
-    public List getValidTokens() throws TrustException {
+    public Token[] getValidTokens() throws TrustException {
         return getTokens(new int[]{Token.ISSUED, Token.RENEWED});
     }
 
-    public List getRenewedTokens() throws TrustException {
+    public Token[] getRenewedTokens() throws TrustException {
         return getTokens(Token.RENEWED);
     }
 
 
-    public List getCancelledTokens() throws TrustException {
+    public Token[] getCancelledTokens() throws TrustException {
         return getTokens(Token.CANCELLED);
     }
 
-    public List getExpiredTokens() throws TrustException {
+    public Token[] getExpiredTokens() throws TrustException {
         return getTokens(Token.EXPIRED);
     }
 
-    private List getTokens(int[] states) throws TrustException {
+    private Token[] getTokens(int[] states) throws TrustException {
         processTokenExpiry();
         List tokens = new ArrayList();
         for (Iterator iterator = this.tokens.values().iterator(); iterator.hasNext();) {
@@ -91,10 +91,10 @@ public class SimpleTokenStore implements TokenStorage {
                 }
             }
         }
-        return tokens;
+        return (Token[]) tokens.toArray(new Token[tokens.size()]);
     }
 
-    private List getTokens(int state) throws TrustException {
+    private Token[] getTokens(int state) throws TrustException {
         processTokenExpiry();
         List tokens = new ArrayList();
         for (Iterator iterator = this.tokens.values().iterator(); iterator.hasNext();) {
@@ -103,7 +103,7 @@ public class SimpleTokenStore implements TokenStorage {
                 tokens.add(token);
             }
         }
-        return tokens;
+        return (Token[]) tokens.toArray(new Token[tokens.size()]);
     }
 
     public Token getToken(String id) throws TrustException {

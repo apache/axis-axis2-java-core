@@ -24,28 +24,28 @@ import java.util.List;
  */
 public interface TokenStorage {
     
-    public final static String TOKEN_STORAGE_KEY = "tokenStorage";
+    String TOKEN_STORAGE_KEY = "org.apache.rahas.TokenStorage";
     
     /**
      * Add the given token to the list.
      * @param token The token to be added
      * @throws TrustException
      */
-    public void add(Token token) throws TrustException;
+    void add(Token token) throws TrustException;
     
     /**
      * Update an existing token.
      * @param token
      * @throws TrustException
      */
-    public void update(Token token) throws TrustException;
+    void update(Token token) throws TrustException;
     
     /**
      * Return the list of all token identifiers.
      * @return
      * @throws TrustException
      */
-    public String[] getTokenIdentifiers() throws TrustException;
+    String[] getTokenIdentifiers() throws TrustException;
 
     /**
      * Return the list of <code>EXPIRED</code> tokens.
@@ -54,28 +54,28 @@ public interface TokenStorage {
      * @return
      * @throws TrustException
      */
-    public List getExpiredTokens() throws TrustException;
+    Token[] getExpiredTokens() throws TrustException;
     
     /**
      * Return the list of ISSUED and RENEWED tokens.
      * @return
      * @throws TrustException
      */
-    public List getValidTokens() throws TrustException;
+    Token[] getValidTokens() throws TrustException;
     
     /**
      * Return the list of RENEWED tokens.
      * @return
      * @throws TrustException
      */
-    public List getRenewedTokens() throws TrustException;
+    Token[] getRenewedTokens() throws TrustException;
     
     /**
      * Return the list of CANCELLED tokens
      * @return
      * @throws TrustException
      */
-    public List getCancelledTokens() throws TrustException;
+    Token[] getCancelledTokens() throws TrustException;
     
     /**
      * Returns the <code>Token</code> of the given id
@@ -83,6 +83,6 @@ public interface TokenStorage {
      * @return
      * @throws TrustException
      */
-    public Token getToken(String id) throws TrustException;
+    Token getToken(String id) throws TrustException;
     
 }

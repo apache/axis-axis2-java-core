@@ -43,7 +43,8 @@ public class RahasConstants {
     public final static String REQUEST_SECURITY_TOKEN_LN = "RequestSecurityToken";
     public static final String REQUESTED_PROOF_TOKEN_LN = "RequestedProofToken";
     public static final String REQUEST_SECURITY_TOKEN_RESPONSE_LN = "RequestSecurityTokenResponse";
-    public static final String REQUEST_SECURITY_TOKEN_RESPONSE_COLLECTION_LN = "RequestSecurityTokenResponseCollection";
+    public static final String
+            REQUEST_SECURITY_TOKEN_RESPONSE_COLLECTION_LN ="RequestSecurityTokenResponseCollection";
     public static final String REQUESTED_SECURITY_TOKEN_LN = "RequestedSecurityToken";
     public final static String BINARY_SECRET_LN = "BinarySecret";
     public final static String COMPUTED_KEY_ALGO_LN = "ComputedKeyAlgorithm";
@@ -90,7 +91,8 @@ public class RahasConstants {
 
     
     //Token types
-    public final static String TOK_TYPE_SAML_10="http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1";
+    public final static String TOK_TYPE_SAML_10="http://docs.oasis-open.org/wss/" +
+                                                "oasis-wss-saml-token-profile-1.1#SAMLV1.1";
  
     //Attrs
     public final static String ATTR_TYPE = "Type";
