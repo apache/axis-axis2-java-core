@@ -31,6 +31,7 @@ import org.apache.rahas.TrustUtil;
 import org.apache.rahas.client.STSClient;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.RampartMessageData;
+import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.rampart.policy.model.CryptoConfig;
 import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.ws.secpolicy.Constants;
@@ -38,19 +39,25 @@ import org.apache.ws.secpolicy.model.IssuedToken;
 import org.apache.ws.secpolicy.model.SecureConversationToken;
 import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSPasswordCallback;
+import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.conversation.ConversationConstants;
 import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.util.Loader;
+import org.w3c.dom.Element;
 
+import javax.crypto.KeyGenerator;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
+import java.util.Vector;
 
 public class RampartUtil {
 
@@ -455,7 +462,8 @@ public class RampartUtil {
             id = idAttr.getAttributeValue();
         } else {
             //Add an id
-            OMNamespace ns = elem.getOMFactory().createOMNamespace(WSConstants.WSU_NS, WSConstants.WSU_PREFIX);
+            OMNamespace ns = elem.getOMFactory().createOMNamespace(
+                    WSConstants.WSU_NS, WSConstants.WSU_PREFIX);
             id = "Id-" + elem.hashCode();
             idAttr = elem.getOMFactory().createOMAttribute("Id", ns, id);
             elem.addAttribute(idAttr);
@@ -463,5 +471,70 @@ public class RampartUtil {
         
         return id;
     }
+    
+    public static Element appendChildToSecHeader(RampartMessageData rmd,
+            OMElement elem) {
+        return appendChildToSecHeader(rmd, (Element)elem);
+    }
+    
+    public static Element appendChildToSecHeader(RampartMessageData rmd,
+            Element elem) {
+        Element secHeaderElem = rmd.getSecHeader().getSecurityHeader();
+        return (Element)secHeaderElem.appendChild(secHeaderElem.getOwnerDocument().importNode(
+                elem, true));
+    }
 
+    public static Element insertSiblingAfter(Element child, Element sibling) {
+        if(child.getOwnerDocument().equals(sibling.getOwnerDocument())) {
+            ((OMElement)child).insertSiblingAfter((OMElement)sibling);
+            return sibling;
+        } else {
+            Element newSib = (Element)child.getOwnerDocument().importNode(sibling, true);
+            ((OMElement)child).insertSiblingAfter((OMElement)newSib);
+            return newSib;
+        }
+        
+    }
+    
+    public static Vector getEncryptedParts(RampartMessageData rmd) {
+        RampartPolicyData rpd =  rmd.getPolicyData();
+        Vector parts = rpd.getEncryptedParts();
+        if(rpd.isEntireHeadersAndBodySignatures()) {
+            //TODO: Handle the headers when wsse11:EncryptedHeader is 
+            //implemented
+            parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
+                    .getMsgContext().getEnvelope().getBody()), "Content"));
+            
+        } else if(rpd.isEncryptBody()) {
+            parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
+                    .getMsgContext().getEnvelope().getBody()), "Content"));
+        }
+        
+        return parts;
+    }
+    
+    public static KeyGenerator getEncryptionKeyGenerator(String symEncrAlgo) throws WSSecurityException {
+        KeyGenerator keyGen = null;
+        try {
+            /*
+             * Assume AES as default, so initialize it
+             */
+            keyGen = KeyGenerator.getInstance("AES");
+            if (symEncrAlgo.equalsIgnoreCase(WSConstants.TRIPLE_DES)) {
+                keyGen = KeyGenerator.getInstance("DESede");
+            } else if (symEncrAlgo.equalsIgnoreCase(WSConstants.AES_128)) {
+                keyGen.init(128);
+            } else if (symEncrAlgo.equalsIgnoreCase(WSConstants.AES_192)) {
+                keyGen.init(192);
+            } else if (symEncrAlgo.equalsIgnoreCase(WSConstants.AES_256)) {
+                keyGen.init(256);
+            } else {
+                return null;
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw new WSSecurityException(
+                    WSSecurityException.UNSUPPORTED_ALGORITHM, null, null, e);
+        }
+        return keyGen;
+    }
 }

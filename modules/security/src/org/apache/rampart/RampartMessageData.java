@@ -34,6 +34,7 @@ import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.util.Loader;
 import org.w3c.dom.Document;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 public class RampartMessageData {
@@ -57,6 +58,13 @@ public class RampartMessageData {
      * Key to hold the WS-SecConv version
      */
     public final static String KEY_WSSC_VERSION = "wscVersion";
+    
+    /**
+     * Key to hod the map of security context identifiers against the 
+     * service epr addresses (service scope) or wsa:Action values (operation 
+     * scope).
+     */
+    public final static String KEY_CONTEXT_MAP = "contextMap";
 
     private MessageContext msgContext = null;
 
@@ -101,9 +109,6 @@ public class RampartMessageData {
     private String issuedEncryptionTokenId;
     
     private String issuedSignatureTokenId;
-    
-    private String secConvTokenId;
-    
     
     /**
      * The service policy extracted from the message context.
@@ -348,16 +353,48 @@ public class RampartMessageData {
      * @return Returns the secConvTokenId.
      */
     public String getSecConvTokenId() {
-        return secConvTokenId;
+        return (String)this.getContextMap().get(this.getContextIdentifierKey());
     }
 
     /**
      * @param secConvTokenId The secConvTokenId to set.
      */
     public void setSecConvTokenId(String secConvTokenId) {
-        this.secConvTokenId = secConvTokenId;
+        this.getContextMap().put(this.getContextIdentifierKey(), secConvTokenId);
     }
 
+    /**
+     * Returns the map of security context token identifiers
+     * @return
+     */
+    private Hashtable getContextMap() {
+        //Fist check whether its there
+        Object map = this.msgContext.getConfigurationContext().getProperty(
+                KEY_CONTEXT_MAP);
+        
+        if(map == null) {
+            //If not create a new one
+            map = new Hashtable();
+            //Set the map globally
+            this.msgContext.getConfigurationContext().setProperty(
+                    KEY_CONTEXT_MAP, map);
+        }
+        
+        return (Hashtable)map;
+    }
+    
+    /**
+     * Creates the unique (reproducible) id for to hold the context identifier
+     * of the message exchange.
+     * @return
+     */
+    private String getContextIdentifierKey() {
+        String service = this.msgContext.getTo().getAddress();
+        String action = this.msgContext.getOptions().getAction();
+        
+        return service + ":" + action;
+    }
+    
     /**
      * @return Returns the tokenStorage.
      */
@@ -368,7 +405,8 @@ public class RampartMessageData {
         }
 
         TokenStorage storage = (TokenStorage) this.msgContext
-                .getProperty(TokenStorage.TOKEN_STORAGE_KEY);
+                .getConfigurationContext().getProperty(
+                        TokenStorage.TOKEN_STORAGE_KEY);
 
         if (storage != null) {
             this.tokenStorage = storage;
@@ -396,12 +434,15 @@ public class RampartMessageData {
                 }
             } else {
                 this.tokenStorage = new SimpleTokenStore();
+                
             }
+            
+//            /Set the storage instance
+            this.msgContext.getConfigurationContext().setProperty(
+                    TokenStorage.TOKEN_STORAGE_KEY, this.tokenStorage);
         }
         
-        //Set the storage instance
-        this.msgContext.getConfigurationContext().setProperty(
-                TokenStorage.TOKEN_STORAGE_KEY, this.tokenStorage);
+        
         return tokenStorage;
     }
 

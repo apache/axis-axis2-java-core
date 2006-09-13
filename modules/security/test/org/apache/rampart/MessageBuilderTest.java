@@ -102,11 +102,34 @@ public class MessageBuilderTest extends TestCase {
             builder.build(ctx);
             
             System.out.println(ctx.getEnvelope());
+            
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
     }
+
+    public void testTransportBindingWithDKServerSide() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            ctx.setServerSide(true);
+            
+            String policyXml = "test-resources/policy/rampart-transport-binding-dk.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+            
+            System.out.println(ctx.getEnvelope());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
     
     /**
      * @throws XMLStreamException

@@ -26,16 +26,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
-import org.apache.rahas.TrustException;
 import org.apache.rampart.builder.TransportBindingBuilder;
 import org.apache.rampart.policy.RampartPolicyBuilder;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.rampart.util.Axis2Util;
-import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
-import org.apache.ws.secpolicy.model.IssuedToken;
-import org.apache.ws.secpolicy.model.SecureConversationToken;
-import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.message.WSSecHeader;
@@ -112,8 +107,6 @@ public class MessageBuilder {
     private void processEnvelope(RampartMessageData rmd)
             throws RampartException, WSSecurityException {
         log.info("Before create Message assym....");
-
-        initializeTokens(rmd);
         
         //Nothing to do to handle the other bindings
         RampartPolicyData rpd = rmd.getPolicyData();
@@ -123,98 +116,5 @@ public class MessageBuilder {
         }
         
     }
-
-    /**
-     * Setup the required tokens
-     * @param rmd
-     * @param rpd
-     * @throws RampartException
-     */
-    private void initializeTokens(RampartMessageData rmd) throws RampartException {
-        
-        RampartPolicyData rpd = rmd.getPolicyData();
-        
-        if(rpd.isSymmetricBinding() && !rmd.getMsgContext().isServerSide()) {
-            log.debug("Procesing symmentric binding: " +
-                    "Setting up encryption token and signature token");
-            //Setting up encryption token and signature token
-            
-            Token sigTok = rpd.getSignatureToken();
-            Token encrTok = rpd.getEncryptionToken();
-            if(sigTok instanceof IssuedToken) {
-                
-                log.debug("SignatureToken is an IssuedToken");
-                
-                if(rmd.getIssuedSignatureTokenId() == null) {
-                    log.debug("No Issuedtoken found, requesting a new token");
-                    
-                    IssuedToken issuedToken = (IssuedToken)sigTok;
-                    
-                    String id = RampartUtil.getIssuedToken(rmd, 
-                            issuedToken);
-                    rmd.setIssuedSignatureTokenId(id);
-                    
-                    
-                }
-                
-            } else if(sigTok instanceof SecureConversationToken) {
-                
-                log.debug("SignatureToken is a SecureConversationToken");
-                
-                if(rmd.getSecConvTokenId() == null) {
-                
-                    log.debug("No SecureConversationToken found, " +
-                            "requesting a new token");
-                    
-                    SecureConversationToken secConvTok = 
-                                        (SecureConversationToken) sigTok;
-                    
-                    try {
-                        
-                        String id = RampartUtil.getSecConvToken(rmd, 
-                                secConvTok);
-                        rmd.setSecConvTokenId(id);
-                        
-                    } catch (TrustException e) {
-                        throw new RampartException(e.getMessage(), e);
-                    }
-                }
-            }
-            
-            //If it was the ProtectionToken assertion then sigTok is the
-            //same as encrTok
-            if(sigTok.equals(encrTok) && sigTok instanceof IssuedToken) {
-                
-                log.debug("Symmetric binding uses a ProtectionToken, both" +
-                        " SignatureToken and EncryptionToken are the same");
-                
-                rmd.setIssuedEncryptionTokenId(rmd.getIssuedEncryptionTokenId());
-            } else {
-                //Now we'll have to obtain the encryption token as well :-)
-                //ASSUMPTION: SecureConversationToken is used as a 
-                //ProtectionToken therfore we only have to process a issued 
-                //token here
-                
-                log.debug("Obtaining the Encryption Token");
-                if(rmd.getIssuedEncryptionTokenId() != null) {
-                    
-                    log.debug("EncrytionToken not alredy set");
-
-                    IssuedToken issuedToken = (IssuedToken)encrTok;
-                        
-                    String id = RampartUtil.getIssuedToken(rmd, 
-                            issuedToken);
-                    rmd.setIssuedEncryptionTokenId(id);
-
-                }
-                
-            }
-        }
-        
-        //TODO : Support processing IssuedToken and SecConvToken assertoins
-        //in supporting tokens, right now we only support UsernameTokens and 
-        //X.509 Tokens
-    }
-    
     
 }

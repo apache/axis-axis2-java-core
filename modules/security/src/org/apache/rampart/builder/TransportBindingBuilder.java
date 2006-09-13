@@ -30,29 +30,22 @@ import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.UsernameToken;
 import org.apache.ws.secpolicy.model.X509Token;
-import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
-import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.message.WSSecDKSign;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.WSSecSignature;
-import org.apache.ws.security.message.WSSecTimestamp;
 import org.apache.ws.security.message.WSSecUsernameToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.UnsupportedCallbackException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
-public class TransportBindingBuilder {
+public class TransportBindingBuilder extends BindingBuilder {
 
     private static Log log = LogFactory.getLog(TransportBindingBuilder.class);
     
@@ -62,25 +55,7 @@ public class TransportBindingBuilder {
         
         RampartPolicyData rpd = rmd.getPolicyData();
 
-        Document doc = rmd.getDocument();
-        
-        log.debug("Adding timestamp");
-        
-        WSSecTimestamp timeStampBuilder = new WSSecTimestamp();
-        timeStampBuilder.setWsConfig(rmd.getConfig());
-
-        timeStampBuilder.setTimeToLive(RampartUtil.getTimeToLive(rmd));
-        
-        // add the Timestamp to the SOAP Enevelope
-
-        timeStampBuilder.build(doc, rmd
-                .getSecHeader());
-        
-        log.debug("Timestamp id: " + timeStampBuilder.getId());
-
-        rmd.setTimestampId(timeStampBuilder.getId());
-        
-        log.debug("Adding timestamp: DONE");
+        addTimestamp(rmd);
         
         /*
          * Process Supporting tokens
@@ -100,7 +75,13 @@ public class TransportBindingBuilder {
                     
                     Token token = (Token) iter.next();
                     if(token instanceof UsernameToken) {
-                        addUsernameToken(rmd);
+                        WSSecUsernameToken utBuilder = addUsernameToken(rmd);
+                        
+                        utBuilder.prepare(rmd.getDocument());
+                        
+                        //Add the UT
+                        utBuilder.appendToHeader(rmd.getSecHeader());
+                        
                     } else {
                         throw new RampartException("unsupportedSignedSupportingToken", 
                                 new String[]{"{" +token.getName().getNamespaceURI() 
@@ -150,6 +131,8 @@ public class TransportBindingBuilder {
         }
     }
 
+
+
     /**
      * X.509 signature
      * @param rmd
@@ -164,27 +147,13 @@ public class TransportBindingBuilder {
             //In this case we will have to encrypt the ephmeral key with the 
             //other party's key and then use it as the parent key of the
             // derived keys
-            
-            WSSecEncryptedKey encrKey = new WSSecEncryptedKey();
-            boolean bst = false;
-            if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
-                //Use thumbprint
-                encrKey.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
-            } else {
-                encrKey.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
-                bst = true;
-            }
-            
             try {
-
-                encrKey.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
-                encrKey.setKeySize(rpd.getAlgorithmSuite().getMaximumSymmetricKeyLength());
-                encrKey.setKeyEncAlgo(rpd.getAlgorithmSuite().getAsymmetricKeyWrap());
                 
-                encrKey.prepare(doc, RampartUtil.getEncryptionCrypto(rpd.getRampartConfig()));
+                WSSecEncryptedKey encrKey = getEncryptedKeyBuilder(rmd, token);
                 
-                if(bst) {
-                    encrKey.appendBSTElementToHeader(rmd.getSecHeader());
+                Element bstElem = encrKey.getBinarySecurityTokenElement();
+                if(bstElem != null) {
+                   RampartUtil.appendChildToSecHeader(rmd, bstElem); 
                 }
                 
                 encrKey.appendToHeader(rmd.getSecHeader());
@@ -228,72 +197,18 @@ public class TransportBindingBuilder {
             }
             
         } else {
-            WSSecSignature sig = new WSSecSignature();
-            sig.setWsConfig(rmd.getConfig());
-            boolean bst = false;
-            
-            log.debug("Token inclusion: " + token.getInclusion());
-            if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
-                //Use thumbprint
-                sig.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
-            } else {
-                sig.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
-                bst = true;
-            }
-
-            //Get the user
-            String user = rpd.getRampartConfig().getUser();
-            String password = null;
-
-            if(user != null && !"".equals(user)) {
-                log.debug("User : " + user);
-                
-                //Get the password
-                CallbackHandler handler = RampartUtil.getPasswordCB(rmd);
-                
-                if(handler == null) {
-                    //If the callback handler is missing
-                    throw new RampartException("cbHandlerMissing");
-                }
-                
-                WSPasswordCallback[] cb = { new WSPasswordCallback(user,
-                        WSPasswordCallback.SIGNATURE) };
-                
-                try {
-                    handler.handle(cb);
-                    if(cb[0].getPassword() != null && !"".equals(cb[0].getPassword())) {
-                        password = cb[0].getPassword();
-                        log.debug("Password : " + password);
-                    } else {
-                        //If there's no password then throw an exception
-                        throw new RampartException("noPasswordForUser", 
-                                new String[]{user});
-                    }
-                } catch (IOException e) {
-                    throw new RampartException("errorInGettingPasswordForUser", 
-                            new String[]{user}, e);
-                } catch (UnsupportedCallbackException e) {
-                    throw new RampartException("errorInGettingPasswordForUser", 
-                            new String[]{user}, e);
-                }
-                
-            } else {
-                log.debug("No user value specified in the configuration");
-                throw new RampartException("userMissing");
-            }
-            
-            sig.setUserInfo(user, password);
-            sig.setSignatureAlgorithm(rpd.getAlgorithmSuite().getAsymmetricSignature());
-            sig.setSigCanonicalization(rpd.getAlgorithmSuite().getInclusiveC14n());
             
             try {
-                sig.prepare(doc, RampartUtil.getSignatureCrypto(rpd.getRampartConfig()), rmd.getSecHeader());
+                WSSecSignature sig = this.getSignatureBuider(rmd, token);
+                
 
                 sig.appendBSTElementToHeader(rmd.getSecHeader());
                 
                 Vector sigParts = new Vector();
                 sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));
-                if(rpd.isTokenProtection() && bst) {
+                if (rpd.isTokenProtection()
+                        && !Constants.INCLUDE_NEVER
+                                .equals(token.getInclusion())) {
                     sigParts.add(new WSEncryptionPart(sig.getBSTTokenId()));
                 }
                 
@@ -303,14 +218,16 @@ public class TransportBindingBuilder {
                 
                 sig.computeSignature();
                 
+                return sig.getSignatureValue();    
             } catch (WSSecurityException e) {
                 throw new RampartException("errorInSignatureWithX509Token", e);
             }
             
-            return sig.getSignatureValue();
+            
         }
         
     }
+
 
     /**
      * IssuedToken signature
@@ -409,75 +326,6 @@ public class TransportBindingBuilder {
         }
     }
 
-    /**
-     * Add a UsernameToken to the security header
-     * @param rmd
-     * @param rpd
-     * @param doc
-     * @return 
-     * @throws RampartException
-     */
-    private String addUsernameToken(RampartMessageData rmd) throws RampartException {
-       
-        log.debug("Adding a UsernameToken");
-        
-        RampartPolicyData rpd = rmd.getPolicyData();
-        Document doc = rmd.getDocument();
-        
-        //Get the user
-        String user = rpd.getRampartConfig().getUser();
-        if(user != null && !"".equals(user)) {
-            log.debug("User : " + user);
-            
-            //Get the password
-            CallbackHandler handler = RampartUtil.getPasswordCB(rmd);
-            
-            if(handler == null) {
-                //If the callback handler is missing
-                throw new RampartException("cbHandlerMissing");
-            }
-            
-            WSPasswordCallback[] cb = { new WSPasswordCallback(user,
-                    WSPasswordCallback.USERNAME_TOKEN) };
-            
-            try {
-                handler.handle(cb);
-                
-                //get the password
-                String password = cb[0].getPassword();
-                
-                log.debug("Password : " + password);
-                
-                if(password != null && !"".equals(password)) {
-                    //If the password is available then build the token
-                    
-                    WSSecUsernameToken utBuilder = new WSSecUsernameToken();
-                    //TODO Get the UT type, only WS-Sx spec supports this
-                    utBuilder.setUserInfo(user, password);
-                    
-                    utBuilder.prepare(doc);
-                    //Add the UT
-                    utBuilder.appendToHeader(rmd.getSecHeader());
-                    
-                    return utBuilder.getId();
-                } else {
-                    //If there's no password then throw an exception
-                    throw new RampartException("noPasswordForUser", 
-                            new String[]{user});
-                }
-            } catch (IOException e) {
-                throw new RampartException("errorInGettingPasswordForUser", 
-                        new String[]{user}, e);
-            } catch (UnsupportedCallbackException e) {
-                throw new RampartException("errorInGettingPasswordForUser", 
-                        new String[]{user}, e);
-            }
-            
-        } else {
-            log.debug("No user value specified in the configuration");
-            throw new RampartException("userMissing");
-        }
-        
-    }
+
     
 }

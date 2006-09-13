@@ -30,6 +30,7 @@ import org.apache.ws.security.WSEncryptionPart;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 public class RampartPolicyData {
 
@@ -44,7 +45,7 @@ public class RampartPolicyData {
 
     private boolean includeTimestamp;
 
-    private boolean entireHeaderAndBodySignatures;
+    private boolean entireHeadersAndBodySignatures;
 
     private String protectionOrder;
 
@@ -81,13 +82,13 @@ public class RampartPolicyData {
 
     private boolean encryptBody;
 
-    private ArrayList signedParts;
+    private Vector signedParts;
 
-    private ArrayList signedElements;
+    private Vector signedElements;
 
-    private ArrayList encryptedParts;
+    private Vector encryptedParts;
 
-    private ArrayList encryptedElements;
+    private Vector encryptedElements;
 
     /*
      * Holds the supporting tokens elements
@@ -129,17 +130,17 @@ public class RampartPolicyData {
     /**
      * @return Returns the entireHeaderAndBodySignatures.
      */
-    public boolean isEntireHeaderAndBodySignatures() {
-        return entireHeaderAndBodySignatures;
+    public boolean isEntireHeadersAndBodySignatures() {
+        return entireHeadersAndBodySignatures;
     }
 
     /**
      * @param entireHeaderAndBodySignatures
      *            The entireHeaderAndBodySignatures to set.
      */
-    public void setEntireHeaderAndBodySignatures(
+    public void setEntireHeadersAndBodySignatures(
             boolean entireHeaderAndBodySignatures) {
-        this.entireHeaderAndBodySignatures = entireHeaderAndBodySignatures;
+        this.entireHeadersAndBodySignatures = entireHeaderAndBodySignatures;
     }
 
     /**
@@ -235,7 +236,7 @@ public class RampartPolicyData {
     /**
      * @return Returns the encryptedElements.
      */
-    public ArrayList getEncryptedElements() {
+    public Vector getEncryptedElements() {
         return encryptedElements;
     }
 
@@ -245,7 +246,7 @@ public class RampartPolicyData {
      */
     public void setEncryptedElements(String encElement) {
         if (encryptedElements == null) {
-            encryptedElements = new ArrayList();
+            encryptedElements = new Vector();
         }
         encryptedElements.add(encElement);
     }
@@ -253,7 +254,7 @@ public class RampartPolicyData {
     /**
      * @return Returns the encryptedParts.
      */
-    public ArrayList getEncryptedParts() {
+    public Vector getEncryptedParts() {
         return encryptedParts;
     }
 
@@ -265,10 +266,10 @@ public class RampartPolicyData {
      */
     public void setEncryptedParts(String namespace, String element) {
         if (encryptedParts == null) {
-            encryptedParts = new ArrayList();
+            encryptedParts = new Vector();
         }
         WSEncryptionPart wep = new WSEncryptionPart(element, namespace,
-                "Content");
+                "Element");
         encryptedParts.add(wep);
     }
 
@@ -305,7 +306,7 @@ public class RampartPolicyData {
     /**
      * @return Returns the signedElements.
      */
-    public ArrayList getSignedElements() {
+    public Vector getSignedElements() {
         return signedElements;
     }
 
@@ -315,7 +316,7 @@ public class RampartPolicyData {
      */
     public void setSignedElements(String sigElement) {
         if (signedElements == null) {
-            signedElements = new ArrayList();
+            signedElements = new Vector();
         }
         signedElements.add(sigElement);
     }
@@ -323,7 +324,7 @@ public class RampartPolicyData {
     /**
      * @return Returns the signedParts.
      */
-    public ArrayList getSignedParts() {
+    public Vector getSignedParts() {
         return signedParts;
     }
 
@@ -335,7 +336,7 @@ public class RampartPolicyData {
      */
     public void setSignedParts(String namespace, String element) {
         if (signedParts == null) {
-            signedParts = new ArrayList();
+            signedParts = new Vector();
         }
         WSEncryptionPart wep = new WSEncryptionPart(element, namespace,
                 "Content");
