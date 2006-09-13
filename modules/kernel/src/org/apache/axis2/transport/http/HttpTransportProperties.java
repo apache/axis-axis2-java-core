@@ -117,54 +117,13 @@ public class HttpTransportProperties {
             this.userName = userName;
         }
     }
-    public static class BasicAuthentication{
-        private String host;
-        private int port = -1;
-        private String realm;
-        private String username;
-        private String password;
-
-        public String getHost() {
-            return host;
-        }
-
-        public void setHost(String host) {
-            this.host = host;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public void setPort(int port) {
-            this.port = port;
-        }
-
-        public String getRealm() {
-            return realm;
-        }
-
-        public void setRealm(String realm) {
-            this.realm = realm;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-    }
-    public static class NTLMAuthentication{
+    /*
+    This class is responsible for holding all the necessary information needed for NTML, Digest
+    and Basic Authentication. Authentication itself is handled by httpclient. User doesn't need to
+    warry about what authentication mechanism it uses. Axis2 uses httpclinet's default authentication
+    patterns.
+    */
+    public static class Authenticator{
         private String host;
         private int port = -1;
         private String realm;

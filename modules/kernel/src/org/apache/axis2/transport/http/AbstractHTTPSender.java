@@ -26,23 +26,11 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HeaderElement;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.axis2.util.Utils;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.auth.CredentialsProvider;
-import org.apache.commons.httpclient.auth.AuthScheme;
-import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,6 +57,8 @@ public abstract class AbstractHTTPSender {
     private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
+    protected boolean authenticationEnabled;
+
     /**
      * proxydiscription
      */
@@ -91,7 +81,7 @@ public abstract class AbstractHTTPSender {
             } else {
                 throw new AxisFault(
                         "Parameter " + HTTPConstants.PROTOCOL_VERSION
-                                + " Can have values only HTTP/1.0 or HTTP/1.1");
+                        + " Can have values only HTTP/1.0 or HTTP/1.1");
             }
         }
     }
@@ -145,11 +135,11 @@ public abstract class AbstractHTTPSender {
                     proxyCred = new UsernamePasswordCredentials("", "");
                 } else {
                     proxyCred = new UsernamePasswordCredentials(usrName,
-                            passwd);    // proxy
+                                                                passwd);    // proxy
                 }
             } else {
                 proxyCred = new NTCredentials(usrName, passwd, proxyHostName,
-                        domain);    // NTLM authentication with additionals prams
+                                              domain);    // NTLM authentication with additionals prams
             }
         }
 
@@ -164,16 +154,16 @@ public abstract class AbstractHTTPSender {
 
             proxyHostName = proxyProperties.getProxyHostName();
             if (proxyHostName == null
-                    || proxyHostName.length() == 0) {
+                || proxyHostName.length() == 0) {
                 throw new AxisFault("Proxy Name is not valid");
             }
 
             if (proxyProperties.getUserName().equals(ANONYMOUS)
-                    || proxyProperties.getPassWord().equals(ANONYMOUS)) {
+                || proxyProperties.getPassWord().equals(ANONYMOUS)) {
                 proxyCred = new UsernamePasswordCredentials("", "");
             }
             if (!proxyProperties.getUserName().equals(ANONYMOUS) &&
-                    !proxyProperties.getPassWord().equals(ANONYMOUS)) {
+                !proxyProperties.getPassWord().equals(ANONYMOUS)) {
                 proxyCred = new UsernamePasswordCredentials(
                         proxyProperties.getUserName().trim(),
                         proxyProperties
@@ -181,9 +171,8 @@ public abstract class AbstractHTTPSender {
             }
             if (!proxyProperties.getDomain().equals(ANONYMOUS)) {
                 if (!proxyProperties.getUserName().equals(ANONYMOUS) &&
-                        !proxyProperties.getPassWord().equals(ANONYMOUS) &&
-                        !proxyProperties.getDomain().equals(ANONYMOUS) &&
-                        proxyHostName != null) {
+                    !proxyProperties.getPassWord().equals(ANONYMOUS) &&
+                    !proxyProperties.getDomain().equals(ANONYMOUS)) {
                     proxyCred = new NTCredentials(
                             proxyProperties.getUserName().trim(),
                             proxyProperties.getPassWord().trim(), proxyHostName,
@@ -227,7 +216,7 @@ public abstract class AbstractHTTPSender {
                 } else if (charsetEnc != null) {
                     if (opContext != null) {
                         opContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
+                                              charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
                     }
                 }
             }
@@ -278,9 +267,9 @@ public abstract class AbstractHTTPSender {
                         new GZIPInputStream(in);
             } else {
                 throw new AxisFault("HTTP :"
-                        + "unsupported content-encoding of '"
-                        + contentEncoding.getValue()
-                        + "' found");
+                                    + "unsupported content-encoding of '"
+                                    + contentEncoding.getValue()
+                                    + "' found");
             }
         }
 
@@ -309,7 +298,7 @@ public abstract class AbstractHTTPSender {
             throws AxisFault {
         boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
 
-        boolean authenticationEnabled = serverPreemtiveAuthentication(msgCtx); // server authentication
+        authenticationEnabled = serverPreemtiveAuthentication(msgCtx); // server authentication
         int port = targetURL.getPort();
 
         if (port == -1) {
@@ -328,99 +317,40 @@ public abstract class AbstractHTTPSender {
 
             // proxy configuration
             this.configProxyAuthentication(client, proxyOutSetting, config,
-                    msgCtx);
+                                           msgCtx);
         }
 
         return config;
     }
 
-    private boolean NTLMAuthentication(HttpClient agent,
-                                       MessageContext msgCtx) {
-        HttpTransportProperties.NTLMAuthentication ntlmAuthentication =
-                (HttpTransportProperties.NTLMAuthentication) msgCtx
-                        .getProperty(HTTPConstants.NTLM_AUTHENTICATION);
-        Credentials defaultCredentials;
-        if (ntlmAuthentication != null) {
-
-            if (ntlmAuthentication.getRealm() == null) {
-                defaultCredentials = new UsernamePasswordCredentials(
-                        ntlmAuthentication.getUsername(),
-                        ntlmAuthentication.getPassword());
-            } else {
-                defaultCredentials = new NTCredentials(
-                        ntlmAuthentication.getUsername(),
-                        ntlmAuthentication.getPassword(),
-                        ntlmAuthentication.getHost(),
-                        ntlmAuthentication.getRealm());
-            }
-            agent.getState().setCredentials(new AuthScope(
-                    ntlmAuthentication.getHost(),
-                    ntlmAuthentication.getPort(),
-                    AuthScope.ANY_REALM,
-                    AuthScope.ANY_SCHEME), defaultCredentials);
-            setCredentialsProvider(agent, defaultCredentials);
-            return true;
-        }
-        return false;
-
-    }
-
-    private void setCredentialsProvider(HttpClient agent, final Credentials credentials) {
-        agent.getParams().setParameter(CredentialsProvider.PROVIDER, new CredentialsProvider() {
-            public Credentials getCredentials(AuthScheme authScheme, String string, int i, boolean b)
-                    throws CredentialsNotAvailableException {
-                return credentials;
-            }
-        });
-    }
-
-    private void configServerPreemtiveAuthenticaiton(HttpClient agent,
-                                                     MessageContext msgCtx,
-                                                     HostConfiguration config,
-                                                     URL targetURL) {
+    /*
+    This will handle server Authentication, It could be either NTLM, Digest or Basic Authentication
+    */
+    protected void configServerPreemtiveAuthenticaiton(HttpClient agent,
+                                                       MessageContext msgCtx,
+                                                       HostConfiguration config,
+                                                       URL targetURL) throws AxisFault {
         config.setHost(targetURL.getHost(), targetURL.getPort(),
-                targetURL.getProtocol());
+                       targetURL.getProtocol());
 
         agent.getParams().setAuthenticationPreemptive(true);
 
+        HttpTransportProperties.Authenticator authenticator;
+        Object obj = msgCtx.getProperty(HTTPConstants.AUTHENTICATE);
+        if (obj != null) {
+            if (obj instanceof HttpTransportProperties.Authenticator) {
+                authenticator = (HttpTransportProperties.Authenticator) obj;
+                agent.getParams().setParameter(
+                        CredentialsProvider.PROVIDER,
+                        new HTTPCredentialProvider(authenticator.getHost(),
+                                                   authenticator.getRealm(),
+                                                   authenticator.getUsername(),
+                                                   authenticator.getPassword()));
 
-        Credentials defaultCredentials = null;
-
-        // check for NTLM Authentication
-        boolean bntlm = NTLMAuthentication(agent, msgCtx);
-
-        HttpTransportProperties.BasicAuthentication basicAuthentication =
-                (HttpTransportProperties.BasicAuthentication) msgCtx
-                        .getProperty(HTTPConstants.BASIC_AUTHENTICATION);
-
-        if (basicAuthentication != null && !bntlm) {
-            defaultCredentials = new UsernamePasswordCredentials(
-                    basicAuthentication.getUsername(),
-                    basicAuthentication.getPassword());
-            if (basicAuthentication.getPort() == -1 ||
-                    basicAuthentication.getHost() == null) {
-                agent.getState()
-                        .setCredentials(AuthScope.ANY, defaultCredentials);
             } else {
-                if (basicAuthentication.getRealm() == null) {
-                    agent.getState().setCredentials(new AuthScope(
-                            basicAuthentication.getHost(),
-                            basicAuthentication.getPort(),
-                            AuthScope.ANY_REALM,
-                            AuthScope.ANY_SCHEME), defaultCredentials);
-
-                } else {
-                    agent.getState().setCredentials(new AuthScope(
-                            basicAuthentication.getHost(),
-                            basicAuthentication.getPort(),
-                            basicAuthentication.getRealm(),
-                            AuthScope.ANY_SCHEME),
-                            defaultCredentials);
-                }
+                throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
             }
-            setCredentialsProvider(agent, defaultCredentials);
         }
-
 
     }
 
@@ -460,8 +390,7 @@ public abstract class AbstractHTTPSender {
 
     private boolean serverPreemtiveAuthentication(MessageContext msgContext) {
 
-        return (msgContext.getProperty(HTTPConstants.BASIC_AUTHENTICATION) !=
-                null || msgContext.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null);
+        return (msgContext.getProperty(HTTPConstants.AUTHENTICATE) != null);
     }
 
     private boolean isProxyListed(MessageContext msgCtx) throws AxisFault {
@@ -615,7 +544,7 @@ public abstract class AbstractHTTPSender {
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
             if (!msgCtxt.isSOAP11() && (soapActionString != null)
-                    && !"".equals(soapActionString.trim())) {
+                && !"".equals(soapActionString.trim())) {
                 contentType =
                         contentType + ";action=\"" + soapActionString + "\";";
             }
@@ -629,14 +558,17 @@ public abstract class AbstractHTTPSender {
     }
 
     protected HttpClient getHttpClient(MessageContext msgContext) {
-        HttpClient httpClient = null;
+        HttpClient httpClient;
         Object reuse = msgContext.getOptions().getProperty(HTTPConstants.REUSE_HTTP_CLIENT);
         if (reuse != null && JavaUtils.isTrueExplicitly(reuse)) {
-            httpClient = (HttpClient) msgContext.getConfigurationContext().getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
+            httpClient = (HttpClient) msgContext.getConfigurationContext()
+                    .getProperty(HTTPConstants.CACHED_HTTP_CLIENT);
             if (httpClient == null) {
-                MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+                MultiThreadedHttpConnectionManager connectionManager =
+                        new MultiThreadedHttpConnectionManager();
                 httpClient = new HttpClient(connectionManager);
-                msgContext.getConfigurationContext().setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
+                msgContext.getConfigurationContext()
+                        .setProperty(HTTPConstants.CACHED_HTTP_CLIENT, httpClient);
             }
         } else {
             httpClient = new HttpClient();
@@ -653,10 +585,10 @@ public abstract class AbstractHTTPSender {
         return httpClient;
     }
 
-    protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url, HttpMethod method) throws IOException {
+    protected void executeMethod(HttpClient httpClient, MessageContext msgContext, URL url,
+                                 HttpMethod method) throws IOException {
         HostConfiguration config = this.getHostConfiguration(httpClient, msgContext, url);
         msgContext.setProperty(HTTPConstants.HTTP_METHOD, method);
-
 
         // set the custom headers, if available
         addCustomHeaders(method, msgContext);
@@ -664,13 +596,12 @@ public abstract class AbstractHTTPSender {
         // add compression headers if needed
         if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_ACCEPT_GZIP)) {
             method.addRequestHeader(HTTPConstants.HEADER_ACCEPT_ENCODING,
-                    HTTPConstants.COMPRESSION_GZIP);
+                                    HTTPConstants.COMPRESSION_GZIP);
         }
         if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_GZIP_REQUEST)) {
             method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                    HTTPConstants.COMPRESSION_GZIP);
+                                    HTTPConstants.COMPRESSION_GZIP);
         }
-
 
 
         httpClient.executeMethod(config, method);
@@ -705,7 +636,8 @@ public abstract class AbstractHTTPSender {
         String userAgentString = "Axis2";
         boolean locked = false;
         if (messageContext.getParameter(HTTPConstants.USER_AGENT) != null) {
-            OMElement userAgentElement = messageContext.getParameter(HTTPConstants.USER_AGENT).getParameterElement();
+            OMElement userAgentElement =
+                    messageContext.getParameter(HTTPConstants.USER_AGENT).getParameterElement();
             userAgentString = userAgentElement.getText().trim();
             OMAttribute lockedAttribute = userAgentElement.getAttribute(new QName("locked"));
             if (lockedAttribute != null) {

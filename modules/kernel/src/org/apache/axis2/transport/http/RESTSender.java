@@ -144,6 +144,9 @@ public class RESTSender extends AbstractHTTPSender {
             throws MalformedURLException, AxisFault, IOException {
         String param = getParam(msgContext);
         GetMethod getMethod = new GetMethod();
+        if (authenticationEnabled) {
+            getMethod.setDoAuthentication(true);
+        }
 
         if (param != null && param.length() > 0) {
             getMethod.setPath(url.getFile() + "?" + param);
@@ -172,7 +175,6 @@ public class RESTSender extends AbstractHTTPSender {
         if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
             processResponse(getMethod, msgContext);
         } else if (getMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
-            return;
         } else if (getMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
             Header contenttypeHheader =
                     getMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
@@ -198,8 +200,10 @@ public class RESTSender extends AbstractHTTPSender {
         // handle multiple
         HttpClient httpClient = getHttpClient(msgContext);
 
-        // todo giving proxy and NTLM support
         PostMethod postMethod = new PostMethod(url.toString());
+        if(authenticationEnabled) {
+            postMethod.setDoAuthentication(true);
+        }
         String httpContentType;
 
         if (msgContext.getProperty(Constants.Configuration.CONTENT_TYPE) != null) {
@@ -227,8 +231,7 @@ public class RESTSender extends AbstractHTTPSender {
             if (reqData.bodyRequest == null) {
                 reqData.bodyRequest = "0";
             }
-            postMethod.setRequestEntity(new AxisRESTRequestEntity(reqData.bodyRequest,
-                    charEncoding, msgContext, httpContentType));
+            postMethod.setRequestEntity(new AxisRESTRequestEntity(reqData.bodyRequest,httpContentType));
 
         } else {
             postMethod.setPath(url.getPath());
@@ -321,16 +324,11 @@ public class RESTSender extends AbstractHTTPSender {
     }
 
     public class AxisRESTRequestEntity implements RequestEntity {
-        private String charSetEnc;
         private String contentType;
-        private MessageContext msgCtxt;
         private String postRequestBody;
 
-        public AxisRESTRequestEntity(String postRequestBody, String charSetEnc,
-                                     MessageContext msgCtxt, String contentType) {
+        public AxisRESTRequestEntity(String postRequestBody,String contentType) {
             this.postRequestBody = postRequestBody;
-            this.charSetEnc = charSetEnc;
-            this.msgCtxt = msgCtxt;
             this.contentType = contentType;
         }
 

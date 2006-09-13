@@ -54,6 +54,9 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         // handle multiple
         HttpClient httpClient = getHttpClient(msgContext);
         PostMethod postMethod = new PostMethod(url.toString());
+        if (authenticationEnabled) {
+            postMethod.setDoAuthentication(true);
+        }
 
         String charEncoding =
                 (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
@@ -173,7 +176,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 				 StringWriter bufferedSOAPBody = new StringWriter();
 				//To support NTLM Authentication the following check has been
 				// done.
-				if (msgCtxt.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null) {
+				if (msgCtxt.getProperty(HTTPConstants.AUTHENTICATE) != null) {
 					element.serialize(bufferedSOAPBody, format);
 				} else {
 					element.serializeAndConsume(bufferedSOAPBody, format);
@@ -182,7 +185,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 			} else {
 				// To support NTLM Authentication the following check has been
 				// done.
-				if (msgCtxt.getProperty(HTTPConstants.NTLM_AUTHENTICATION) != null) {
+				if (msgCtxt.getProperty(HTTPConstants.AUTHENTICATE) != null) {
 					element.serialize(out, format);
 				} else {
 					element.serializeAndConsume(out, format);
