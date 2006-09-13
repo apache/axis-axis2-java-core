@@ -18,76 +18,41 @@
 package org.apache.axis2.transport.mail;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.i18n.Messages;
 
-import javax.mail.Authenticator;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Store;
+import javax.mail.*;
 import java.util.Properties;
 
 public class EmailReceiver {
-    private String host;
-    private Folder inbox;
-    private String password;
-    private String popPort;
+
+    private URLName urlName;
+    private Properties pop3Properties;
+    private Folder folder;
+    /* This store could be either POP3Store or POP3SSLStore */
     private Store store;
-    private String user;
 
-    public EmailReceiver(String user, String host, String popPort, String password)
-            throws AxisFault {
-        this.user = user;
-        this.host = host;
-        this.popPort = popPort;
-        this.password = password;
 
-        if (this.user == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "User"));
-        }
+    public EmailReceiver() {
+    }
 
-        if (this.host == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "Host"));
-        }
+    public void setUrlName(URLName urlName) {
+        this.urlName = urlName;
+    }
 
-        if (this.popPort == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "port"));
-        }
-
-        if (this.password == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "Password"));
-        }
+    public void setPop3Properties(Properties pop3Properties) {
+        this.pop3Properties = pop3Properties;
     }
 
     public void connect() throws AxisFault {
         try {
-            final PasswordAuthentication authentication = new PasswordAuthentication(user,
-                    password);
-            Properties props = new Properties();
 
-            props.put("mail.user", user);
-            props.put("mail.host", host);
-            props.put("mail.store.protocol", "pop3");
-            props.put("mail.transport.protocol", "smtp");
-            if (Integer.parseInt(popPort) != 110) {
-                props.put("mail.pop3.port", popPort);
-            }
+            Session session = Session.getInstance(pop3Properties,null);
+            store = session.getStore(urlName);
 
-            Session session = Session.getInstance(props, new Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return authentication;
-                }
-            });
-
-            store = session.getStore();
             store.connect();
 
-            Folder root = store.getDefaultFolder();
+            folder = store.getDefaultFolder();
 
-            inbox = root.getFolder("inbox");
+            folder = folder.getFolder("inbox");
         } catch (NoSuchProviderException e) {
             throw new AxisFault(e);
         } catch (MessagingException e) {
@@ -97,18 +62,18 @@ public class EmailReceiver {
 
     public void disconnect() throws AxisFault {
         try {
-            inbox.close(true);
+            folder.close(true);
             store.close();
         } catch (MessagingException e) {
             throw new AxisFault(e);
         }
     }
 
-    public Message[] receive() throws AxisFault {
+    public Message[] receiveMessages() throws AxisFault {
         try {
-            inbox.open(Folder.READ_WRITE);
+            folder.open(Folder.READ_WRITE);
 
-            Message[] msgs = inbox.getMessages();
+            Message[] msgs = folder.getMessages();
 
             if (msgs.length == 0) {
                 return null;

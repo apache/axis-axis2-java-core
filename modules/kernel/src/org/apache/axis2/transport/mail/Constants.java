@@ -24,15 +24,16 @@ public class Constants {
 
     public final static String SMTP_USER = "mail.smtp.user";
     public final static String SMTP_PORT = "mail.smtp.port";
-    public final static String SMTP_PASSWORD = "mail.smtp.password";
     public final static String SMTP_HOST = "mail.smtp.host";
+     public final static String SMTP_USER_PASSWORD = "transport.mail.smtp.password";
 
     public final static String POP3_USER = "mail.pop3.user";
     public final static String POP3_PORT = "mail.pop3.port";
-    public final static String POP3_PASSWORD = "mail.pop3.password";
+    public final static String POP3_PASSWORD = "transport.mail.pop3.password";
     public final static String POP3_HOST = "mail.pop3.host";
+    public final static String STORE_PROTOCOL = "mail.store.protocol";
 
-    public final static String SMTP_USER_PASSWORD = "transport.mail.smtp.password";
+
     public final static String RAPLY_TO = "transport.mail.replyToAddress";
 
     public final static int SMTP_SERVER_PORT = (1024 + 25);

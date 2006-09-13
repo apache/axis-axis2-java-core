@@ -27,6 +27,7 @@ import org.apache.axis2.client.ServiceClient;
 
 /**
  * This is a Client progam that accesses 'MyService' web service in Axis2 samples
+ * @deprecated 
  */
 public class MailClient {
 

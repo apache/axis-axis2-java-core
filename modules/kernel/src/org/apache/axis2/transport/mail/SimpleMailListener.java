@@ -17,119 +17,139 @@
 
 package org.apache.axis2.transport.mail;
 
+import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.njms.DefaultThreadFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.mail.Flags;
 import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.URLName;
 import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Properties;
 
 /**
- * This is a simple implementation of an SMTP/POP3 server for processing SOAP
- * requests via Apache's xml-axis2. This is not intended for production use. Its
- * intended uses are for demos, debugging, and performance profiling.
+ * This is the implementation for Mail Listener in Axis2. It has the full capability
+ * of connecting to a POP3 or IMPA server with SSL or regualar connection. This listener intend
+ * to use as a server in client side as well with the involcation is Async with addressing.
  */
 
-/*
- * TODO ISSUES -- 1. Message.getMessage -- All messages are hardcoded in the
- * code till a replacement or a working verion of this is put into Axis 2. When
- * internationalization work is done this can be fixed. CT 15-Feb-2005
- *
- */
+
 public class SimpleMailListener implements Runnable, TransportListener {
     private static final Log log = LogFactory.getLog(SimpleMailListener.class);
 
-    // Are we doing threads?
-    private static boolean doThreads = true;
     private ConfigurationContext configurationContext = null;
 
-    // are we stopped?
-    // latch to true if stop() is called
-    private boolean stopped = false;
-    private String host;
-    private String password;
-    private String port;
-    private String replyTo;
-    private String user;
+    private boolean running = true;
+    /*password and replyTo is Axis2 specific*/
+    private String user = "";
+    private String replyTo = "";
+
+    /*This hold properties for pop3 or impa server connection*/
+    private Properties pop3Properties = new Properties();
+
+    private EmailReceiver receiver = null;
+
+    /*Time has been put from best guest*/
+    private static final int LISTENER_WAIT_INTERVAL = 3000;
+
+    private ExecutorService workerPool;
+
+    private static final int WORKERS_MAX_THREADS = 5;
+    private static final long WORKER_KEEP_ALIVE = 60L;
+    private static final TimeUnit TIME_UNIT = TimeUnit.SECONDS;
+
+    private LinkedBlockingQueue messageQueue;
 
     public SimpleMailListener() {
     }
 
-    public SimpleMailListener(String host, String port, String userid, String password,
-                              String dir) throws AxisFault {
-        this.host = host;
-        this.port = port;
-        this.user = userid;
-        this.password = password;
-
-        try {
-            File repo = new File(dir);
-            if (repo.exists()) {
-                File axis2xml = new File(repo, "axis2.xml");
-                this.configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        dir, axis2xml.getName());
-            } else {
-                throw new Exception("repository not found");
-            }
-        } catch (Exception e) {
-            log.info(e.getMessage());
-        }
-        try {
-            log.info("Sleeping for a bit to let the engine start up.");
-            Thread.sleep(2000);
-        } catch (InterruptedException e1) {
-            log.debug(e1.getMessage(), e1);
-        }
-        ListenerManager listenerManager = configurationContext.getListenerManager();
-        TransportInDescription trsIn = new TransportInDescription(
-                new QName(Constants.TRANSPORT_MAIL));
-        trsIn.setReceiver(this);
-        if (listenerManager == null) {
-            listenerManager = new ListenerManager();
-            listenerManager.init(configurationContext);
-        }
-        listenerManager.addListener(trsIn, true);
-    }
-
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.transport.TransportListener#init(org.apache.axis2.context.ConfigurationContext, org.apache.axis2.description.TransportInDescription)
-     */
     public void init(ConfigurationContext configurationContext, TransportInDescription transportIn)
             throws AxisFault {
         this.configurationContext = configurationContext;
-        user = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.POP3_USER));
-        host = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.POP3_HOST));
-        password = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.POP3_PASSWORD));
-        port = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.POP3_PORT));
-        replyTo = Utils.getParameterValue(transportIn.getParameter(org.apache.axis2.transport.mail.Constants.RAPLY_TO));
-        if ((user == null) || (host == null) || (password == null) || (port == null)) {
-            if (this.user == null) {
-                throw new AxisFault(Messages.getMessage("canNotBeNull", "User"));
-            }
 
-            if (this.host == null) {
-                throw new AxisFault(Messages.getMessage("canNotBeNull", "Host"));
-            }
+        ArrayList mailParameters = transportIn.getParameters();
 
-            if (this.port == null) {
-                throw new AxisFault(Messages.getMessage("canNotBeNull", "Port"));
+        replyTo = Utils.getParameterValue(
+                transportIn.getParameter(org.apache.axis2.transport.mail.Constants.RAPLY_TO));
+
+        String password = "";
+        String host = "";
+        String protocol = "";
+        String port = "";
+        URLName urlName;
+
+        for (Iterator iterator = mailParameters.iterator(); iterator.hasNext();) {
+            Parameter param = (Parameter) iterator.next();
+            String paramKey = param.getName();
+            String paramValue = Utils.getParameterValue(param);
+            if (paramKey == null || paramValue == null) {
+                throw new AxisFault(Messages.getMessage("canNotBeNull",
+                                                        "Parameter name nor value should be null"));
+
             }
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "Password"));
+            pop3Properties.setProperty(paramKey, paramValue);
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.POP3_USER)) {
+                user = paramValue;
+            }
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.POP3_PASSWORD)) {
+                password = paramValue;
+            }
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.POP3_HOST)) {
+                host = paramValue;
+            }
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.STORE_PROTOCOL)) {
+                protocol = paramValue;
+            }
+            if (paramKey.equals(org.apache.axis2.transport.mail.Constants.POP3_PORT)) {
+                port = paramValue;
+            }
 
         }
+        if (password.equals("") || user.equals("") || host.equals("") || protocol.equals("")) {
+            throw new AxisFault("Password or User or Host or Protocol can not be null");
+        }
+
+        if (port.equals("")) {
+            urlName = new URLName(protocol, host, -1, "", user, password);
+        } else {
+            urlName = new URLName(protocol, host, Integer.parseInt(port), "", user, password);
+        }
+
+        receiver = new EmailReceiver();
+        receiver.setPop3Properties(pop3Properties);
+        receiver.setUrlName(urlName);
+
+
     }
 
     /**
@@ -144,8 +164,9 @@ public class SimpleMailListener implements Runnable, TransportListener {
             File repo = new File(dir);
             if (repo.exists()) {
                 File axis2xml = new File(repo, "axis2.xml");
-                configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                        dir, axis2xml.getName());
+                configurationContext =
+                        ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                                dir, axis2xml.getName());
             } else {
                 throw new AxisFault("repository not found");
             }
@@ -156,7 +177,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
             if (transportIn != null) {
                 sas.init(configurationContext, transportIn);
                 log.info("Starting the SimpleMailListener with repository "
-                        + new File(args[0]).getAbsolutePath());
+                         + new File(args[0]).getAbsolutePath());
                 sas.start();
             } else {
                 log.info(
@@ -172,37 +193,33 @@ public class SimpleMailListener implements Runnable, TransportListener {
     public void run() {
 
         // Accept and process requests from the socket
-        if (!stopped) {
-            String logMessage = "Mail listner is being setup to listen to the address " + user
-                    + "@" + host + " On port " + port;
-            log.info(logMessage);
+        if (running) {
+            log.info("Mail listner strated to listen to the address " + user);
         }
 
-        while (!stopped) {
+        while (running) {
             try {
-                EmailReceiver receiver = new EmailReceiver(user, host, port, password);
                 receiver.connect();
 
-                Message[] msgs = receiver.receive();
+                Message[] msgs = receiver.receiveMessages();
 
                 if ((msgs != null) && (msgs.length > 0)) {
                     log.info(msgs.length + " Message Found");
 
                     for (int i = 0; i < msgs.length; i++) {
                         MimeMessage msg = (MimeMessage) msgs[i];
-                        if (msg != null) {
-                            MailWorker worker = new MailWorker(msg, configurationContext);
-                            worker.run();
-                            msg.setFlag(Flags.Flag.DELETED, true);
+                        MessageContext mc = createMessageContextToMailWorker(msg);
+                        if (mc != null) {
+                          messageQueue.add(mc);
                         }
-
+                        msg.setFlag(Flags.Flag.DELETED, true);
                     }
                 }
 
                 receiver.disconnect();
 
-                // Waiting for 3 seconds.
-                Thread.sleep(3000);
+                Thread.sleep(LISTENER_WAIT_INTERVAL);
+
             } catch (Exception e) {
                 log.error("Error in SimpleMailListener" + e);
             }
@@ -210,76 +227,130 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     }
 
-    /**
-     * Start this server as a NON-daemon.
-     */
-    public void start() throws AxisFault {
-        start(false);
+    private MessageContext createMessageContextToMailWorker(MimeMessage msg) throws Exception {
+
+        MessageContext msgContext = null;
+        TransportInDescription transportIn =
+                configurationContext.getAxisConfiguration()
+                        .getTransportIn(
+                                new QName(org.apache.axis2.Constants.TRANSPORT_MAIL));
+        TransportOutDescription transportOut =
+                configurationContext.getAxisConfiguration()
+                        .getTransportOut(
+                                new QName(org.apache.axis2.Constants.TRANSPORT_MAIL));
+        if ((transportIn != null) && (transportOut != null)) {
+            // create Message Context
+            msgContext = new MessageContext();
+            msgContext.setConfigurationContext(configurationContext);
+            msgContext.setTransportIn(transportIn);
+            msgContext.setTransportOut(transportOut);
+            msgContext.setServerSide(true);
+            msgContext.setProperty(org.apache.axis2.transport.mail.Constants.CONTENT_TYPE,
+                                   msg.getContentType());
+
+            if (TransportUtils.getCharSetEncoding(msg.getContentType()) != null) {
+                msgContext.setProperty(
+                        org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
+                        TransportUtils.getCharSetEncoding(
+                                msg.getContentType()));
+            } else {
+                msgContext.setProperty(
+                        org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
+                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
+            }
+
+            msgContext.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
+            String soapAction = getMailHeader(msg,
+                                              org.apache.axis2.transport.mail.Constants.HEADER_SOAP_ACTION);
+            msgContext.setSoapAction(soapAction);
+            if (msg.getSubject() != null) {
+                msgContext.setTo(new EndpointReference(msg.getSubject()));
+            }
+
+            // Create the SOAP Message
+            // SMTP basically a text protocol, thus, following would be the optimal way to build the
+            // SOAP11/12 body from it.
+            String message = msg.getContent().toString();
+            ByteArrayInputStream bais =
+                    new ByteArrayInputStream(message.getBytes());
+            XMLStreamReader reader =
+                    StAXUtils.createXMLStreamReader(bais);
+            String soapNamespaceURI;
+            if (msg.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
+                > -1) {
+                soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            } else if (msg.getContentType().indexOf(
+                    SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            } else {
+                log.warn(
+                        "MailWorker found a message other than text/xml or application/soap+xml");
+                return null;
+            }
+
+            StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
+            SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+            msgContext.setEnvelope(envelope);
+        }
+        return msgContext;
+    }
+
+    private String getMailHeader(MimeMessage msg, String headerName) throws AxisFault {
+        try {
+            String values[] = msg.getHeader(headerName);
+
+            if (values != null) {
+                return values[0];
+            } else {
+                return null;
+            }
+        } catch (MessagingException e) {
+            throw new AxisFault(e);
+        }
     }
 
     /**
-     * Start this server.
-     * <p/>
-     * Spawns a worker thread to listen for HTTP requests.
-     *
-     * @param daemon a boolean indicating if the thread should be a daemon.
+     * Start this listener
      */
-    public void start(boolean daemon) throws AxisFault {
-        if (this.user == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "User"));
-        }
+    public void start() throws AxisFault {
+        workerPool = new ThreadPoolExecutor(1,
+                                            WORKERS_MAX_THREADS, WORKER_KEEP_ALIVE, TIME_UNIT,
+                                            new LinkedBlockingQueue(),
+                                            new DefaultThreadFactory(
+                                                    new ThreadGroup("Mail Worker thread group"),
+                                                    "MailWorker"));
 
-        if (this.host == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "Host"));
-        }
+        messageQueue = new LinkedBlockingQueue();
 
-        if (this.port == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "Port"));
-        }
+        this.configurationContext.getThreadPool().execute(this);
 
-        if (this.password == null) {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "Password"));
-        }
-
-        if (doThreads) {
-            this.configurationContext.getThreadPool().execute(this);
-        } else {
-            run();
-        }
+        MailWorkerManager mailWorkerManager = new MailWorkerManager(configurationContext,
+                                                                    messageQueue, workerPool,
+                                                                    WORKERS_MAX_THREADS);
+        mailWorkerManager.start();
     }
 
     /**
      * Stop this server.
      * <p/>
-     * This will interrupt any pending accept().
      */
     public void stop() {
-
-        /*
-         * Close the server socket cleanly, but avoid fresh accepts while the
-         * socket is closing.
-         */
-        stopped = true;
-        log.info("Quiting the mail listner");
+        running = true;
+        if (!workerPool.isShutdown()) {
+            workerPool.shutdown();
+        }
+        log.info("Stopping the mail listner");
     }
 
-    public boolean getDoThreads() {
-        return doThreads;
-    }
 
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.transport.TransportListener#replyToEPR(java.lang.String)
-     */
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
         return getEPRsForService(serviceName, ip)[0];
     }
 
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-        return new EndpointReference[] {new EndpointReference(Constants.TRANSPORT_MAIL + ":" + replyTo + configurationContext.getServiceContextPath() + "/" + serviceName)};  //To change body of implemented methods use File | Settings | File Templates.
+        return new EndpointReference[]{new EndpointReference(Constants.TRANSPORT_MAIL + ":" +
+                                                             replyTo + configurationContext
+                .getServiceContextPath() + "/" + serviceName)};
     }
 
-    public void setDoThreads(boolean value) {
-        doThreads = value;
-    }
 }
