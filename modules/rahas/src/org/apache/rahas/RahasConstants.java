@@ -56,7 +56,8 @@ public class RahasConstants {
     public final static String ENTROPY_LN = "Entropy";
     public final static String APPLIES_TO_LN = "AppliesTo";
     public final static String LIFETIME_LN = "Lifetime";
-    
+    public final static String REQUESTED_TOKEN_CANCELED = "RequestedTokenCancelled";
+
     
     //Key types
     public final static String KEY_TYPE_SYMM_KEY = "/SymmetricKey";

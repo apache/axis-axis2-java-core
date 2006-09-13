@@ -20,9 +20,15 @@ import org.apache.rahas.RahasData;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
 import org.apache.rahas.RahasConstants;
+import org.apache.rahas.TokenStorage;
+import org.apache.rahas.Token;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.context.MessageContext;
+
+import javax.xml.namespace.QName;
 
 /**
  * 
@@ -32,6 +38,10 @@ public class TokenCancelerImpl implements TokenCanceler {
     private String configFile;
     private OMElement configElement;
     private String configParamName;
+    private static final QName QNAME_CANCEL_TARGET = new QName("CancelTarget");
+    private static final QName QNAME_SEC_TOKEN_REF = new QName("SecurityTokenReference");
+    private static final QName QNAME_REFERENCE = new QName("Reference");
+    private static final QName QNAME_URI = new QName("URI");
 
     /**
      * Cancel the token specified in the request.
@@ -70,9 +80,71 @@ public class TokenCancelerImpl implements TokenCanceler {
                                      new String[]{SCTIssuerConfig.SCT_ISSUER_CONFIG
                                              .getLocalPart()});
         }
-        
-        //TODO: Method implementation
-        return null;
+
+        OMElement rstEle = data.getRstElement();
+        OMElement cancelTargetEle = rstEle.getFirstChildWithName(QNAME_CANCEL_TARGET);
+        if (cancelTargetEle == null) {
+            throw new TrustException("requiredElementNotFound",
+                                     new String[]{QNAME_CANCEL_TARGET.getLocalPart()});
+        }
+        OMElement secTokenRefEle = cancelTargetEle.getFirstChildWithName(QNAME_SEC_TOKEN_REF);
+        String tokenId;
+        if (secTokenRefEle != null) {
+
+            /*
+            <o:SecurityTokenReference
+                 xmlns:o="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+              <o:Reference URI="urn:uuid:8e6a3a95-fd1b-4c24-96d4-28e875025ff7"
+                           ValueType="http://schemas.xmlsoap.org/ws/2005/02/sc/sct" />
+            </o:SecurityTokenReference>
+            */
+            OMElement referenceEle = secTokenRefEle.getFirstChildWithName(QNAME_REFERENCE);
+            if (referenceEle != null) {
+                OMAttribute uri = referenceEle.getAttribute(QNAME_URI);
+                if (uri != null) {
+                    tokenId = uri.getAttributeValue();
+                } else {
+                    throw new TrustException("cannotDetermineTokenId");
+                }
+            } else {
+                throw new TrustException("cannotDetermineTokenId");
+            }
+        } else {
+            // TODO: we need to handle situation where the token itself is contained within the
+            // TODO:  <wst:CancelTarget> element
+            throw new TrustException("cannotDetermineTokenId");
+        }
+
+        // Cancel the token
+        MessageContext inMsgCtx = data.getInMessageContext();
+        TokenStorage tokenStore = TrustUtil.getTokenStore(inMsgCtx);
+        Token token = tokenStore.getToken(tokenId);
+        if (token == null) {
+            throw new TrustException("tokenNotFound", new String[]{tokenId});
+        }
+        token.setState(Token.CANCELLED);
+        tokenStore.update(token);
+
+        // Create the response SOAP Envelope
+        SOAPEnvelope responseEnv =
+                TrustUtil.
+                        createSOAPEnvelope(inMsgCtx.getEnvelope().getNamespace().getNamespaceURI());
+        OMElement rstrElem;
+        int version = data.getVersion();
+        if (RahasConstants.VERSION_05_02 == version) {
+            rstrElem = TrustUtil
+                    .createRequestSecurityTokenResponseElement(version, responseEnv.getBody());
+        } else {
+            OMElement rstrcElem = TrustUtil
+                    .createRequestSecurityTokenResponseCollectionElement(
+                            version, responseEnv.getBody());
+
+            rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(version, rstrcElem);
+        }
+        OMElement reqTokenCanceledEle =
+                TrustUtil.createRequestedTokenCanceledElement(version, rstrElem);
+        responseEnv.getBody().addChild(reqTokenCanceledEle);
+        return responseEnv;
     }
 
     /**

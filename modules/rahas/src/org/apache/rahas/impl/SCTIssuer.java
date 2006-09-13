@@ -219,17 +219,14 @@ public class SCTIssuer implements TokenIssuer {
                                 .getName() });
             }
     
-            SecurityContextToken sct = new SecurityContextToken(this.getWSCVersion(data.getTokenType()), doc);
+            SecurityContextToken sct =
+                    new SecurityContextToken(this.getWSCVersion(data.getTokenType()), doc);
     
-            OMElement rstrElem = TrustUtil
-                    .createRequestSecurityTokenResponseElement(wstVersion, env
-                            .getBody());
+            OMElement rstrElem =
+                    TrustUtil.createRequestSecurityTokenResponseElement(wstVersion, env.getBody());
     
-            OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(
-                    wstVersion, rstrElem);
-    
+            OMElement rstElem = TrustUtil.createRequestedSecurityTokenElement(wstVersion, rstrElem);
             rstElem.addChild((OMElement) sct.getElement());
-            
             String tokenType = data.getTokenType();
     
             if (config.addRequestedAttachedRef) {
