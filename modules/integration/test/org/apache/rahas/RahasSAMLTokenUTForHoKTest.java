@@ -74,7 +74,7 @@ public class RahasSAMLTokenUTForHoKTest extends TestClient {
     }
 
     public String getRequestAction()  throws TrustException {
-        return TrustUtil.getActionValue(RahasConstants.VERSION_05_02, RahasConstants.RST_ACTON_ISSUE);
+        return TrustUtil.getActionValue(RahasConstants.VERSION_05_02, RahasConstants.RST_ACTION_ISSUE);
     }
 
     public void validateRsponse(OMElement resp) {

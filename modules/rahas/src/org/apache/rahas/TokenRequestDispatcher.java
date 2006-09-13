@@ -74,15 +74,20 @@ public class TokenRequestDispatcher {
         } else if((RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_CANCEL).equals(reqType) ||
                 (RahasConstants.WST_NS_05_12 + RahasConstants.REQ_TYPE_CANCEL).equals(reqType)) {
 
-            TokenCanceler canceler;
+            TokenCanceler canceler = config.getDefaultCancelerInstance();
+            SOAPEnvelope response = canceler.cancel(data);
+
+            //set the response wsa/soap action in the out message context
+            outMsgCtx.getOptions().setAction(canceler.getResponseAction(data));
+            return response;
 
             //TODO : Work-in-progress
 
 //            http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Cancel
 //http://schemas.xmlsoap.org/ws/2005/02/trust/RSTR/Cancel
 
-            throw new UnsupportedOperationException("TODO: handle " +
-                    "cancel requests");
+//            throw new UnsupportedOperationException("TODO: handle " +
+//                    "cancel requests");
         } else {
             throw new TrustException(TrustException.INVALID_REQUEST);
         }

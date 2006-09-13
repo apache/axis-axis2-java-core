@@ -18,6 +18,8 @@ package org.apache.rahas.impl;
 import org.apache.rahas.TokenCanceler;
 import org.apache.rahas.RahasData;
 import org.apache.rahas.TrustException;
+import org.apache.rahas.TrustUtil;
+import org.apache.rahas.RahasConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.description.Parameter;
@@ -109,5 +111,17 @@ public class TokenCancelerImpl implements TokenCanceler {
      */
     public void setConfigurationParamName(String configParamName) {
         this.configParamName = configParamName;
+    }
+
+    /**
+     * Returns the <code>wsa:Action</code> of the response.
+     *
+     * @param data A populated <code>RahasData</code> instance
+     * @return Returns the <code>wsa:Action</code> of the response
+     * @throws org.apache.rahas.TrustException
+     *
+     */
+    public String getResponseAction(RahasData data) throws TrustException {
+        return TrustUtil.getActionValue(data.getVersion(), RahasConstants.RSTR_ACTION_CANCEL);
     }
 }

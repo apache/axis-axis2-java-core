@@ -92,7 +92,7 @@ public class RahasSAMLTokenV1205Test extends TestClient {
     }
 
     public String getRequestAction() throws TrustException {
-        return TrustUtil.getActionValue(RahasConstants.VERSION_05_12, RahasConstants.RST_ACTON_ISSUE);
+        return TrustUtil.getActionValue(RahasConstants.VERSION_05_12, RahasConstants.RST_ACTION_ISSUE);
     }
 
     /* (non-Javadoc)

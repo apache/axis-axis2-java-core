@@ -1,5 +1,6 @@
 <module name="rahas">
-    <Description>This module is used to STS enable a service where it adds the RequestSecurityToken operation to a service that the module is engaged to</Description>
+    <Description>This module is used to STS enable a service where it adds
+        the RequestSecurityToken operation to a service that the module is engaged to</Description>
 
     <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"/>
 
@@ -16,7 +17,8 @@
 
 		<parameter name="token-dispatcher-configuration">
 			<token-dispatcher-configuration>
-				<issuer class="org.apache.rahas.impl.SCTIssuer" default="true">
+                <!-- Issuers. You may have many issuers. -->
+                <issuer class="org.apache.rahas.impl.SCTIssuer" default="true">
 					<configuration type="parameter">sct-issuer-config</configuration>
 					<tokenType>http://schemas.xmlsoap.org/ws/2005/02/sc/sct</tokenType>
 				</issuer>
@@ -25,7 +27,11 @@
 					<tokenType>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1</tokenType>
 				</issuer>
 
-                <!-- TODO: -->
+                <!-- Only a single canceler is allowed -->
+                <canceler class="org.apache.rahas.impl.TokenCancelerImpl">
+					<configuration type="parameter">token-canceler-config</configuration>
+				</canceler>
+
             </token-dispatcher-configuration>
 		</parameter>
 

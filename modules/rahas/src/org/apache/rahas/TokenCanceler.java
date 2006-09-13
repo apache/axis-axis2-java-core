@@ -23,42 +23,51 @@ public interface TokenCanceler {
 
     /**
      * Cancel the token specified in the request.
-     * @param data
-     *            A populated <code>RahasData</code> instance
+     *
+     * @param data A populated <code>RahasData</code> instance
      * @return
      * @throws TrustException
      */
-    public SOAPEnvelope cancel(RahasData data) throws TrustException;
+    SOAPEnvelope cancel(RahasData data) throws TrustException;
 
     /**
      * Set the configuration file of this TokenCanceller.
-     * 
-     * This is the text value of the &lt;configuration-file&gt; element of the 
+     * <p/>
+     * This is the text value of the &lt;configuration-file&gt; element of the
      * token-dispatcher-configuration
+     *
      * @param configFile
      */
-    public void setConfigurationFile(String configFile);
+    void setConfigurationFile(String configFile);
 
     /**
      * Set the configuration element of this TokenCanceller.
-     * 
-     * This is the &lt;configuration&gt; element of the 
+     * <p/>
+     * This is the &lt;configuration&gt; element of the
      * token-dispatcher-configuration
-     * 
+     *
      * @param configElement <code>OMElement</code> representing the configuation
      */
-    public void setConfigurationElement(OMElement configElement);
+    void setConfigurationElement(OMElement configElement);
 
     /**
      * Set the name of the configuration parameter.
-     * 
+     * <p/>
      * If this is used then there must be a
      * <code>org.apache.axis2.description.Parameter</code> object available in
      * the via the messageContext when the <code>TokenIssuer</code> is called.
-     * 
-     * @see org.apache.axis2.description.Parameter
+     *
      * @param configParamName
+     * @see org.apache.axis2.description.Parameter
      */
-    public void setConfigurationParamName(String configParamName);
+    void setConfigurationParamName(String configParamName);
 
+    /**
+     * Returns the <code>wsa:Action</code> of the response.
+     *
+     * @param data A populated <code>RahasData</code> instance
+     * @return Returns the <code>wsa:Action</code> of the response
+     * @throws TrustException
+     */
+    String getResponseAction(RahasData data) throws TrustException;
 }

@@ -55,7 +55,7 @@ public class STSRequester {
         Options options = new Options();
         options.setTo(new EndpointReference(config.getStsEPRAddress()));
         
-        options.setAction(TrustUtil.getActionValue(config.getWstVersion(), RahasConstants.RST_ACTON_SCT));
+        options.setAction(TrustUtil.getActionValue(config.getWstVersion(), RahasConstants.RST_ACTION_SCT));
 
         //Get the security configurations
         Parameter outFlowParam = msgCtx

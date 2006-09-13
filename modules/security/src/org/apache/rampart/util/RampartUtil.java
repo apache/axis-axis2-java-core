@@ -310,7 +310,7 @@ public class RampartUtil {
             RampartException {
         String action = TrustUtil.getActionValue(
                 rmd.getWstVersion(),
-                RahasConstants.RST_ACTON_SCT);
+                RahasConstants.RST_ACTION_SCT);
         
         // Get sts epr
         String issuerEprAddress = RampartUtil
@@ -365,7 +365,7 @@ public class RampartUtil {
 
         try {
             String action = TrustUtil.getActionValue(rmd.getWstVersion(),
-                    RahasConstants.RST_ACTON_ISSUE);
+                    RahasConstants.RST_ACTION_ISSUE);
 
             // Get sts epr
             String issuerEprAddress = RampartUtil.processIssuerAddress(issuedToken

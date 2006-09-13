@@ -275,13 +275,13 @@ public class TrustUtil {
     }
     
     public static String getActionValue(int version, String action) throws TrustException {
-        if(RahasConstants.RST_ACTON_ISSUE.equals(action) || 
-                RahasConstants.RST_ACTON_CANCEL.equals(action) || 
-                RahasConstants.RST_ACTON_RENEW.equals(action) ||
-                RahasConstants.RST_ACTON_VALIDATE.equals(action) ||
-                RahasConstants.RST_ACTON_SCT.equals(action) ||
+        if(RahasConstants.RST_ACTION_ISSUE.equals(action) ||
+                RahasConstants.RST_ACTION_CANCEL.equals(action) ||
+                RahasConstants.RST_ACTOIN_RENEW.equals(action) ||
+                RahasConstants.RST_ACTOIN_VALIDATE.equals(action) ||
+                RahasConstants.RST_ACTION_SCT.equals(action) ||
                 RahasConstants.RSTR_ACTON_ISSUE.equals(action) || 
-                RahasConstants.RSTR_ACTON_CANCEL.equals(action) || 
+                RahasConstants.RSTR_ACTION_CANCEL.equals(action) ||
                 RahasConstants.RSTR_ACTON_RENEW.equals(action) ||
                 RahasConstants.RSTR_ACTON_VALIDATE.equals(action) ||
                 RahasConstants.RSTR_ACTON_SCT.equals(action)) {

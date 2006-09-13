@@ -68,24 +68,24 @@ public class RahasConstants {
     //ComputedKey algos
     public final static String COMPUTED_KEY_PSHA1 =  "/CK/PSHA1";
     
-//  RequestTypes
+    //  RequestTypes
     public final static String REQ_TYPE_ISSUE = "/Issue";
     public final static String REQ_TYPE_VALIDATE = "/Validate";
     public final static String REQ_TYPE_RENEW = "/Renew";
     public final static String REQ_TYPE_CANCEL = "/Cancel";
     
     //RST actions
-    public final static String RST_ACTON_ISSUE =  "/RST/Issue";
-    public final static String RST_ACTON_VALIDATE = "/RST/Renew";
-    public final static String RST_ACTON_RENEW = "/RST/Cancel";
-    public final static String RST_ACTON_CANCEL = "/RST/Validate";
-    public final static String RST_ACTON_SCT = "/RST/SCT";
+    public final static String RST_ACTION_ISSUE =  "/RST" + REQ_TYPE_ISSUE;
+    public final static String RST_ACTOIN_VALIDATE = "/RST" + REQ_TYPE_VALIDATE;
+    public final static String RST_ACTOIN_RENEW = "/RST" + REQ_TYPE_RENEW;
+    public final static String RST_ACTION_CANCEL = "/RST" + REQ_TYPE_CANCEL;
+    public final static String RST_ACTION_SCT = "/RST/SCT";
     
     //RSTR actions
-    public final static String RSTR_ACTON_ISSUE = "/RSTR/Issue";
-    public final static String RSTR_ACTON_VALIDATE = "/RSTR/Renew";
-    public final static String RSTR_ACTON_RENEW = "/RSTR/Cancel";
-    public final static String RSTR_ACTON_CANCEL = "/RSTR/Validate";
+    public final static String RSTR_ACTON_ISSUE = "/RSTR" + REQ_TYPE_ISSUE;
+    public final static String RSTR_ACTON_VALIDATE = "/RSTR" + REQ_TYPE_VALIDATE;
+    public final static String RSTR_ACTON_RENEW = "/RSTR" + REQ_TYPE_RENEW;
+    public final static String RSTR_ACTION_CANCEL = "/RSTR" + REQ_TYPE_CANCEL;
     public final static String RSTR_ACTON_SCT = "/RSTR/SCT";
 
     
