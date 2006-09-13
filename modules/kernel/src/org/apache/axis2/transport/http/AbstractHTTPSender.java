@@ -30,7 +30,6 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -340,12 +339,27 @@ public abstract class AbstractHTTPSender {
         if (obj != null) {
             if (obj instanceof HttpTransportProperties.Authenticator) {
                 authenticator = (HttpTransportProperties.Authenticator) obj;
-                agent.getParams().setParameter(
-                        CredentialsProvider.PROVIDER,
-                        new HTTPCredentialProvider(authenticator.getHost(),
-                                                   authenticator.getRealm(),
-                                                   authenticator.getUsername(),
-                                                   authenticator.getPassword()));
+                String username = authenticator.getUsername();
+                String password = authenticator.getPassword();
+                String host = authenticator.getHost();
+                String realm = authenticator.getRealm();
+                int port = authenticator.getPort();
+
+                Credentials creds;
+
+                if (host == null && realm == null && port == -1) {
+                    creds = new UsernamePasswordCredentials(username,password);
+                    agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
+                } else if (host != null && port == -1 && realm != null) {
+                    creds = new NTCredentials(username, password, host, realm);
+                    agent.getState().setCredentials(new AuthScope(host, AuthScope.ANY_PORT), creds);
+                } else if (host != null && port > -1 && realm != null) {
+                    creds = new NTCredentials(username, password, host, realm);
+                    agent.getState().setCredentials(new AuthScope(host, port, realm), creds);
+                } else {
+                    throw new AxisFault("Credential setting is not valid");
+                }
+
 
             } else {
                 throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
