@@ -861,24 +861,30 @@
                     </xsl:when>
                     <!-- end of ours block-->
                     <xsl:otherwise>
+                        <xsl:if test="not(property/@simple)">
                 java.lang.String namespace = "<xsl:value-of select="property/@nsuri"/>";
-
+                java.lang.String localName = "<xsl:value-of select="property/@name"/>";
+                        </xsl:if>
+                        <xsl:if test="property/@simple">
+                java.lang.String namespace = parentQName.getNamespaceURI();
+                java.lang.String localName = parentQName.getLocalPart();
+                        </xsl:if>
             if (! namespace.equals("")) {
                 java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                 if (prefix == null) {
                     prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-                    xmlWriter.writeStartElement(prefix,"<xsl:value-of select="property/@name"/>", namespace);
+                    xmlWriter.writeStartElement(prefix, localName, namespace);
                     xmlWriter.writeNamespace(prefix, namespace);
                     xmlWriter.setPrefix(prefix, namespace);
 
                 } else {
-                    xmlWriter.writeStartElement(namespace,"<xsl:value-of select="property/@name"/>");
+                    xmlWriter.writeStartElement(namespace, localName);
                 }
 
             } else {
-                xmlWriter.writeStartElement("<xsl:value-of select="property/@name"/>");
+                xmlWriter.writeStartElement(localName);
             }
 
             xmlWriter.writeCharacters(
@@ -1326,7 +1332,7 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                             <xsl:if test="not(enumFacet)">
-                            if (reader.isStartElement() &amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())){
+                            if (reader.isStartElement() <xsl:if test="not(@simple)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
                             </xsl:if>
                             <xsl:choose>
                                 <xsl:when test="@array">

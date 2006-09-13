@@ -82,13 +82,12 @@ public class SchemaConstants {
 
     //bit patterns for the types
     public static final int ATTRIBUTE_TYPE = 0x01;
-    //public static final int ANY = 0x02;
     public static final int ELEMENT_TYPE = 0x02;
-    //public static final int ANY_ATTRIBUTE_TYPE = 0x08;
     public static final int ARRAY_TYPE = 0x04;
     public static final int ANY_TYPE = 0x08;
     public static final int BINARY_TYPE = 0x10;
     public static final int OPTIONAL_TYPE = 0x20;
+    public static final int SIMPLE_TYPE = 0x40;
 
     public static class SchemaPropertyNames{
 

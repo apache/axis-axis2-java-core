@@ -347,7 +347,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Gets whether a given QName refers to an array.
+     * Gets whether a given QName refers to binary.
      *
      * @param qName
      * @return Returns boolean.
@@ -357,6 +357,19 @@ public class BeanWriterMetaInfoHolder {
         return state != null && getStatus(state.intValue(),
                 SchemaConstants.BINARY_TYPE);
     }
+
+    /**
+     * Gets whether a given QName refers to Simple Type.
+     *
+     * @param qName
+     * @return Returns boolean.
+     */
+    public boolean getSimpleTypeStatusForQName(QName qName) {
+        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        return state != null && getStatus(state.intValue(),
+                SchemaConstants.SIMPLE_TYPE);
+    }
+
     /**
      * Gets whether a given QName has the any attribute status.
      *

@@ -474,6 +474,11 @@ public class CStructWriter implements BeanWriter {
             if (metainf.getBinaryStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "binary", "yes", property);
             }
+
+            if (metainf.getSimpleTypeStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "simple", "yes", property);
+            }
+
             //put the min occurs count irrespective of whether it's an array or not
             long minOccurs = metainf.getMinOccurs(name);
             XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);

@@ -261,6 +261,7 @@ public class JavaBeanWriter implements BeanWriter {
             if(qName == null) {
                 qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
             }
+            metainf.addtStatus(qName, SchemaConstants.SIMPLE_TYPE);
             return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
@@ -646,6 +647,11 @@ public class JavaBeanWriter implements BeanWriter {
             if (metainf.getBinaryStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "binary", "yes", property);
             }
+
+            if (metainf.getSimpleTypeStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "simple", "yes", property);
+            }
+
             // put the min occurs count irrespective of whether it's an array or
             // not
             long minOccurs = metainf.getMinOccurs(name);
