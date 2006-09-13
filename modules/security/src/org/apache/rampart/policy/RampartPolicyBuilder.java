@@ -252,7 +252,7 @@ public class RampartPolicyBuilder {
     private static void symmAsymmBinding(
             SymmetricAsymmetricBindingBase binding, RampartPolicyData rpd) {
         rpd.setEntireHeadersAndBodySignatures(binding
-                .isEntireHeaderAndBodySignatures());
+                .isEntireHeadersAndBodySignatures());
         rpd.setProtectionOrder(binding.getProtectionOrder());
         rpd.setSignatureProtection(binding.isSignatureProtection());
         rpd.setTokenProtection(binding.isTokenProtection());

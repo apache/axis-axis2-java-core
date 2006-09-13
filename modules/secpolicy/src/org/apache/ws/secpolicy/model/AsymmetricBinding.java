@@ -85,7 +85,7 @@ public class AsymmetricBinding extends SymmetricAsymmetricBindingBase {
             asymmetricBinding = new AsymmetricBinding();
             
             asymmetricBinding.setAlgorithmSuite((AlgorithmSuite) iterator.next());
-            asymmetricBinding.setEntireHeaderAndBodySignatures(isEntireHeaderAndBodySignatures());
+            asymmetricBinding.setEntireHeadersAndBodySignatures(isEntireHeadersAndBodySignatures());
             asymmetricBinding.setIncludeTimestamp(isIncludeTimestamp());
             asymmetricBinding.setInitiatorToken(getInitiatorToken());
             asymmetricBinding.setLayout(getLayout());

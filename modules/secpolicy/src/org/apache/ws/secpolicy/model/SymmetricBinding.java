@@ -123,7 +123,7 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
             symmetricBinding.setAlgorithmSuite(algorithmSuite);
             
             symmetricBinding.setEncryptionToken(getEncryptionToken());
-            symmetricBinding.setEntireHeaderAndBodySignatures(isEntireHeaderAndBodySignatures());
+            symmetricBinding.setEntireHeadersAndBodySignatures(isEntireHeadersAndBodySignatures());
             symmetricBinding.setIncludeTimestamp(isIncludeTimestamp());
             symmetricBinding.setLayout(getLayout());
             symmetricBinding.setProtectionOrder(getProtectionOrder());

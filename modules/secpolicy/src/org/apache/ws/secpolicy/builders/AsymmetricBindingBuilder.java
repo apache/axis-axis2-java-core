@@ -85,7 +85,7 @@ public class AsymmetricBindingBuilder implements AssertionBuilder {
                 asymmetricBinding.setProtectionOrder(Constants.SIGN_BEFORE_ENCRYPTING);
                 
             } else if (Constants.ONLY_SIGN_ENTIRE_HEADERS_AND_BODY.equals(name.getLocalPart())) {
-                asymmetricBinding.setEntireHeaderAndBodySignatures(true);
+                asymmetricBinding.setEntireHeadersAndBodySignatures(true);
             }
         }
     }

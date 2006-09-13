@@ -26,21 +26,21 @@ public abstract class SymmetricAsymmetricBindingBase extends Binding {
     
     private boolean tokenProtection;
     
-    private boolean entireHeaderAndBodySignatures;
+    private boolean entireHeadersAndBodySignatures;
 
     /**
      * @return Returns the entireHeaderAndBodySignatures.
      */
-    public boolean isEntireHeaderAndBodySignatures() {
-        return entireHeaderAndBodySignatures;
+    public boolean isEntireHeadersAndBodySignatures() {
+        return entireHeadersAndBodySignatures;
     }
 
     /**
      * @param entireHeaderAndBodySignatures The entireHeaderAndBodySignatures to set.
      */
-    public void setEntireHeaderAndBodySignatures(
+    public void setEntireHeadersAndBodySignatures(
             boolean entireHeaderAndBodySignatures) {
-        this.entireHeaderAndBodySignatures = entireHeaderAndBodySignatures;
+        this.entireHeadersAndBodySignatures = entireHeaderAndBodySignatures;
     }
 
     /**
