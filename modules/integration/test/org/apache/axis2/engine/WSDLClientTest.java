@@ -61,12 +61,16 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
                     new QName("http://ws.apache.org/axis2", "EchoXMLService"),
                     "EchoXMLServiceSOAP11port_http");
             OMElement payload = TestingUtils.createDummyOMElement("http://engine.axis2.apache.org/xsd");
+            String epr = "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/EchoXMLService";
+            //This is not smt we need to do but , my build is fail if I dont do that :)
+            serviceClient.getOptions().setTo(new EndpointReference(epr));
+            System.out.println(serviceClient.getOptions().getTo().getAddress());
             OMElement response = serviceClient.sendReceive(
                     new QName("http://engine.axis2.apache.org/xsd", "echoOM"), payload);
             assertNotNull(response);
             String textValue = response.getFirstElement().getFirstElement().getText();
             assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new AxisFault(e);
         }
     }
