@@ -176,7 +176,7 @@ public class TransportUtils {
 		boolean fileCacheForAttachments;
 
 		if (cacheAttachmentProperty != null) {
-			cacheAttachmentProperty = cacheAttachmentProperty;
+			cacheAttachmentString = (String)cacheAttachmentProperty;
 			fileCacheForAttachments = (Constants.VALUE_TRUE
 					.equals(cacheAttachmentString));
 		} else {
@@ -208,7 +208,7 @@ public class TransportUtils {
 
 			Object attachmentSizeThresholdProperty = msgContext
 					.getProperty(Constants.Configuration.FILE_SIZE_THRESHOLD);
-			if (attachmentRepoDirProperty == null) {
+			if (attachmentSizeThresholdProperty != null) {
 				attachmentSizeThreshold = (String) attachmentSizeThresholdProperty;
 			} else {
 				Parameter attachmentSizeThresholdParameter = msgContext
