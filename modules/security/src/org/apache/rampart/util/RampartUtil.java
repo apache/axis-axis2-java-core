@@ -54,7 +54,6 @@ import javax.crypto.KeyGenerator;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
-
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 import java.util.Vector;
@@ -71,7 +70,7 @@ public class RampartUtil {
         CallbackHandler cbHandler = null;
         
         if (cbHandlerClass != null) {
-            Class cbClass = null;
+            Class cbClass;
             try {
                 cbClass = Loader.loadClass(classLoader, cbHandlerClass);
             } catch (ClassNotFoundException e) {
@@ -96,10 +95,9 @@ public class RampartUtil {
         
         log.debug("loading class : " + cbHandlerClass);
         
-        CallbackHandler cbHandler = null;
-        
+        CallbackHandler cbHandler;
         if (cbHandlerClass != null) {
-            Class cbClass = null;
+            Class cbClass;
             try {
                 cbClass = Loader.loadClass(classLoader, cbHandlerClass);
             } catch (ClassNotFoundException e) {
@@ -132,7 +130,7 @@ public class RampartUtil {
                                                int doAction)
             throws RampartException {
 
-        WSPasswordCallback pwCb = null;
+        WSPasswordCallback pwCb;
         int reason = 0;
 
         switch (doAction) {
@@ -364,7 +362,6 @@ public class RampartUtil {
      * @param rmd
      * @param issuedToken
      * @return
-     * @throws TrustException
      * @throws RampartException
      */
     public static String getIssuedToken(RampartMessageData rmd,
@@ -429,17 +426,11 @@ public class RampartUtil {
             String servceEprAddress = rmd.getMsgContext()
                     .getOptions().getTo().getAddress();
     
-            // Request type
-            String reqType = TrustUtil.getWSTNamespace(rmd
-                    .getWstVersion())
-                    + RahasConstants.REQ_TYPE_ISSUE;
-            
             //Make the request
             org.apache.rahas.Token rst = 
                 client.requestSecurityToken(servicePolicy, 
                                             issuerEpr,
                                             issuerPolicy, 
-                                            reqType, 
                                             servceEprAddress);
             
             //Add the token to token storage
@@ -456,7 +447,7 @@ public class RampartUtil {
     }
     
     public static String addWsuIdToElement(OMElement elem) {
-        String id = null;
+        String id;
         OMAttribute idAttr = elem.getAttribute(new QName(WSConstants.WSU_NS, "Id"));
         if(idAttr != null) {
             id = idAttr.getAttributeValue();
@@ -514,7 +505,7 @@ public class RampartUtil {
     }
     
     public static KeyGenerator getEncryptionKeyGenerator(String symEncrAlgo) throws WSSecurityException {
-        KeyGenerator keyGen = null;
+        KeyGenerator keyGen;
         try {
             /*
              * Assume AES as default, so initialize it

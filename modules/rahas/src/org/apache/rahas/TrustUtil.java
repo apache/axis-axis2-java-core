@@ -67,7 +67,7 @@ public class TrustUtil {
                                                       OMElement parent) throws TrustException {
         return createOMElement(parent,
                                getWSTNamespace(version),
-                               RahasConstants.REQUEST_SECURITY_TOKEN_RESPONSE_LN,
+                               RahasConstants.IssuanceBindingLocalNames.REQUEST_SECURITY_TOKEN_RESPONSE,
                                RahasConstants.WST_PREFIX);
     }
 
@@ -76,7 +76,8 @@ public class TrustUtil {
                                                                 OMElement parent) throws TrustException {
         String ns = getWSTNamespace(version);
         return createOMElement(parent, ns,
-                               RahasConstants.REQUEST_SECURITY_TOKEN_RESPONSE_COLLECTION_LN,
+                               RahasConstants.IssuanceBindingLocalNames.
+                                       REQUEST_SECURITY_TOKEN_RESPONSE_COLLECTION,
                                RahasConstants.WST_PREFIX);
     }
 
@@ -84,37 +85,41 @@ public class TrustUtil {
             int version, OMElement parent) throws TrustException {
         String ns = getWSTNamespace(version);
         return createOMElement(parent, ns,
-                               RahasConstants.REQUESTED_SECURITY_TOKEN_LN,
+                               RahasConstants.IssuanceBindingLocalNames.REQUESTED_SECURITY_TOKEN,
                                RahasConstants.WST_PREFIX);
     }
 
     public static OMElement createRequestSecurityTokenElement(int version) throws TrustException {
         String ns = getWSTNamespace(version);
         OMFactory fac = OMAbstractFactory.getOMFactory();
-        return fac.createOMElement(RahasConstants.REQUEST_SECURITY_TOKEN_LN,
-                                   ns,
-                                   RahasConstants.WST_PREFIX);
+        return fac.
+                createOMElement(RahasConstants.IssuanceBindingLocalNames.REQUEST_SECURITY_TOKEN,
+                                ns,
+                                RahasConstants.WST_PREFIX);
     }
 
     public static OMElement createRequestedProofTokenElement(
             int version, OMElement parent) throws TrustException {
         String ns = getWSTNamespace(version);
         return createOMElement(parent, ns,
-                               RahasConstants.REQUESTED_PROOF_TOKEN_LN, RahasConstants.WST_PREFIX);
+                               RahasConstants.IssuanceBindingLocalNames.REQUESTED_PROOF_TOKEN,
+                               RahasConstants.WST_PREFIX);
     }
 
     public static OMElement createEntropyElement(
             int version, OMElement parent) throws TrustException {
         String ns = getWSTNamespace(version);
         return createOMElement(parent, ns,
-                               RahasConstants.ENTROPY_LN, RahasConstants.WST_PREFIX);
+                               RahasConstants.IssuanceBindingLocalNames.ENTROPY,
+                               RahasConstants.WST_PREFIX);
     }
 
-    public static OMElement createComputedKeyElement(
-            int version, OMElement parent) throws TrustException {
-        String ns = getWSTNamespace(version);
-        return createOMElement(parent, ns,
-                               RahasConstants.COMPUTED_KEY_LN, RahasConstants.WST_PREFIX);
+    public static OMElement createComputedKeyElement(int version,
+                                                     OMElement parent) throws TrustException {
+        return createOMElement(parent,
+                               getWSTNamespace(version),
+                               RahasConstants.IssuanceBindingLocalNames.COMPUTED_KEY,
+                               RahasConstants.WST_PREFIX);
     }
 
     public static OMElement createRequestTypeElement(int version,
@@ -124,7 +129,7 @@ public class TrustUtil {
 
         OMElement elem = createOMElement(parent,
                                          ns,
-                                         RahasConstants.REQUEST_TYPE_LN,
+                                         RahasConstants.IssuanceBindingLocalNames.REQUEST_TYPE,
                                          RahasConstants.WST_PREFIX);
 
         if (RahasConstants.REQ_TYPE_ISSUE.equals(value)
@@ -141,16 +146,18 @@ public class TrustUtil {
 
     public static OMElement createTokenTypeElement(int version,
                                                    OMElement parent) throws TrustException {
-        String ns = getWSTNamespace(version);
-        return createOMElement(parent, ns,
-                               RahasConstants.TOKEN_TYPE_LN, RahasConstants.WST_PREFIX);
+        return createOMElement(parent,
+                               getWSTNamespace(version),
+                               RahasConstants.IssuanceBindingLocalNames.TOKEN_TYPE,
+                               RahasConstants.WST_PREFIX);
     }
 
     public static OMElement createtTokenTypeElement(int version,
                                                     OMElement parent) throws TrustException {
-        String ns = getWSTNamespace(version);
-        return createOMElement(parent, ns,
-                               RahasConstants.TOKEN_TYPE_LN, RahasConstants.WST_PREFIX);
+        return createOMElement(parent,
+                               getWSTNamespace(version),
+                               RahasConstants.IssuanceBindingLocalNames.TOKEN_TYPE,
+                               RahasConstants.WST_PREFIX);
     }
 
     public static OMElement createBinarySecretElement(
@@ -159,7 +166,8 @@ public class TrustUtil {
             String type) throws TrustException {
         String ns = getWSTNamespace(version);
         OMElement elem = createOMElement(parent, ns,
-                                         RahasConstants.BINARY_SECRET_LN, RahasConstants.WST_PREFIX);
+                                         RahasConstants.IssuanceBindingLocalNames.BINARY_SECRET,
+                                         RahasConstants.WST_PREFIX);
         if (type != null) {
             elem.addAttribute(elem.getOMFactory().createOMAttribute(
                     RahasConstants.ATTR_TYPE, null, ns + type));
@@ -173,7 +181,7 @@ public class TrustUtil {
         String ns = getWSTNamespace(version);
         OMElement elem = createOMElement(parent,
                                          ns,
-                                         RahasConstants.COMPUTED_KEY_ALGO_LN,
+                                         RahasConstants.IssuanceBindingLocalNames.COMPUTED_KEY_ALGO,
                                          RahasConstants.WST_PREFIX);
         elem.setText(ns + algoId);
         return elem;
@@ -186,7 +194,8 @@ public class TrustUtil {
                                          String refValueType) throws TrustException {
         String ns = getWSTNamespace(version);
         OMElement elem = createOMElement(parent, ns,
-                                         RahasConstants.REQUESTED_UNATTACHED_REFERENCE_LN,
+                                         RahasConstants.IssuanceBindingLocalNames.
+                                                 REQUESTED_UNATTACHED_REFERENCE,
                                          RahasConstants.WST_PREFIX);
         elem.addChild((OMElement) createSecurityTokenReference(
                 ((Element) parent).getOwnerDocument(), refUri, refValueType));
@@ -199,7 +208,8 @@ public class TrustUtil {
                                                        String refValueType) throws TrustException {
         String ns = getWSTNamespace(version);
         OMElement elem = createOMElement(parent, ns,
-                                         RahasConstants.REQUESTED_ATTACHED_REFERENCE_LN,
+                                         RahasConstants.IssuanceBindingLocalNames.
+                                                 REQUESTED_ATTACHED_REFERENCE,
                                          RahasConstants.WST_PREFIX);
         elem.addChild((OMElement) createSecurityTokenReference(
                 ((Element) parent).getOwnerDocument(), refUri, refValueType));
@@ -211,7 +221,7 @@ public class TrustUtil {
                                                  int size) throws TrustException {
         String ns = getWSTNamespace(version);
         OMElement ksElem = createOMElement(parent, ns,
-                                           RahasConstants.KEY_SIZE_LN,
+                                           RahasConstants.IssuanceBindingLocalNames.KEY_SIZE,
                                            RahasConstants.WST_PREFIX);
         ksElem.setText(Integer.toString(size));
         return ksElem;
@@ -222,7 +232,7 @@ public class TrustUtil {
                                                  String type) throws TrustException {
         String ns = getWSTNamespace(version);
         OMElement ktElem = createOMElement(parent, ns,
-                                           RahasConstants.KEY_TYPE_LN,
+                                           RahasConstants.IssuanceBindingLocalNames.KEY_TYPE,
                                            RahasConstants.WST_PREFIX);
         if (RahasConstants.KEY_TYPE_BEARER.equals(type) ||
             RahasConstants.KEY_TYPE_PUBLIC_KEY.equals(type) ||
@@ -239,7 +249,7 @@ public class TrustUtil {
                                                 OMElement parent) throws TrustException {
         return createOMElement(parent,
                                getWSTNamespace(version),
-                               RahasConstants.REQUESTED_TOKEN_CANCELED,
+                               RahasConstants.CancelBindingLocalNames.REQUESTED_TOKEN_CANCELED,
                                RahasConstants.WST_PREFIX);
     }
 
@@ -251,7 +261,7 @@ public class TrustUtil {
         String ns = getWSTNamespace(version);
 
         OMElement ltElem = createOMElement(parent, ns,
-                                           RahasConstants.LIFETIME_LN,
+                                           RahasConstants.IssuanceBindingLocalNames.LIFETIME,
                                            RahasConstants.WST_PREFIX);
 
         OMElement createdElem = createOMElement(ltElem, WSConstants.WSU_NS,
@@ -287,7 +297,8 @@ public class TrustUtil {
                                                    String address, String addressingNs) {
         OMElement appliesToElem = createOMElement(parent,
                                                   RahasConstants.WSP_NS,
-                                                  RahasConstants.APPLIES_TO_LN,
+                                                  RahasConstants.IssuanceBindingLocalNames.
+                                                          APPLIES_TO,
                                                   RahasConstants.WSP_PREFIX);
 
         OMElement eprElem = createOMElement(appliesToElem,
@@ -421,5 +432,14 @@ public class TrustUtil {
         } catch (Exception e) {
             throw new TrustException("Error in creating the ephemeral key", e);
         }
+    }
+
+    public static OMElement createCancelTargetElement(int version,
+                                                      OMElement parent) throws TrustException {
+        return createOMElement(parent,
+                               getWSTNamespace(version),
+                               RahasConstants.CancelBindingLocalNames.CANCEL_TARGET,
+                               RahasConstants.WST_PREFIX);
+
     }
 }

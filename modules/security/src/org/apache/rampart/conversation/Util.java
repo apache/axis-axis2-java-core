@@ -41,7 +41,7 @@ public class Util {
      * availabale then it will try to create a <code>Crypto</code> instance
      * using available configuration information and will set it as the
      * <code>Crypto</code> instance of the configuration.
-     * 
+     *
      * @param config
      * @return
      * @throws RahasException
@@ -53,14 +53,14 @@ public class Util {
         } else {
             Crypto crypto = null;
             if (config.getCryptoClassName() != null
-                    && config.getCryptoProperties() != null) {
+                && config.getCryptoProperties() != null) {
                 crypto = CryptoFactory.getInstance(config.getCryptoClassName(),
-                        config.getCryptoProperties());
+                                                   config.getCryptoProperties());
             } else if (config.getCryptoPropertiesFile() != null) {
                 if (config.getClassLoader() != null) {
                     crypto = CryptoFactory
                             .getInstance(config.getCryptoPropertiesFile(),
-                                    config.getClassLoader());
+                                         config.getClassLoader());
                 } else {
                     crypto = CryptoFactory.getInstance(config
                             .getCryptoPropertiesFile());
@@ -76,17 +76,21 @@ public class Util {
     public static void processRSTR(OMElement rstr, ConversationConfiguration config)
             throws Exception {
         // Extract the SecurityContextToken
-        
+
         String ns = null;
-        
-        OMElement rstElem = rstr.getFirstChildWithName(new QName(
-                RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
-        if(rstElem != null) {
+
+        OMElement rstElem =
+                rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02,
+                                                     RahasConstants.IssuanceBindingLocalNames.
+                                                             REQUESTED_SECURITY_TOKEN));
+        if (rstElem != null) {
             ns = RahasConstants.WST_NS_05_02;
         } else {
             //At this point we certainthe version is the WS-SX version
-            rstElem = rstr.getFirstChildWithName(new QName(
-                    RahasConstants.WST_NS_05_12, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+            rstElem =
+                    rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12,
+                                                         RahasConstants.IssuanceBindingLocalNames.
+                                                                 REQUESTED_SECURITY_TOKEN));
             ns = RahasConstants.WST_NS_05_12;
         }
         Token token = null;
@@ -97,7 +101,8 @@ public class Util {
                         (Element) sctElem);
                 token = new Token(sct.getIdentifier(), sctElem, rstr
                         .getFirstChildWithName(new QName(ns,
-                                RahasConstants.LIFETIME_LN)));
+                                                         RahasConstants.IssuanceBindingLocalNames.
+                                                                 LIFETIME)));
                 resgisterContext(sct.getIdentifier(), config);
             } else {
                 throw new RampartException("sctMissingInResponse");
@@ -109,40 +114,46 @@ public class Util {
         // Process RequestedProofToken and extract the secret
         byte[] secret = null;
         OMElement rpt = rstr.getFirstChildWithName(new QName(ns,
-                RahasConstants.REQUESTED_PROOF_TOKEN_LN));
+                                                             RahasConstants.IssuanceBindingLocalNames.REQUESTED_PROOF_TOKEN));
         if (rpt != null) {
             OMElement elem = rpt.getFirstElement();
 
             if (WSConstants.ENC_KEY_LN.equals(elem.getLocalName())
-                    && WSConstants.ENC_NS.equals(elem.getNamespace().getNamespaceURI())) {
+                && WSConstants.ENC_NS.equals(elem.getNamespace().getNamespaceURI())) {
                 // Handle the xenc:EncryptedKey case
                 EncryptedKeyProcessor processor = new EncryptedKeyProcessor();
                 processor.handleToken((Element) elem, null, Util
                         .getCryptoInstace(config),
-                        getCallbackHandlerInstance(config), null, new Vector(),
-                        null);
+                                      getCallbackHandlerInstance(config), null, new Vector(),
+                                      null);
                 secret = processor.getDecryptedBytes();
-            } else if (RahasConstants.BINARY_SECRET_LN.equals(elem.getLocalName())
-                    && RahasConstants.WST_NS_05_02.equals(elem.getNamespace().getNamespaceURI())) {
+            } else if (RahasConstants.IssuanceBindingLocalNames.
+                    BINARY_SECRET.equals(elem.getLocalName())
+                       && RahasConstants.WST_NS_05_02.equals(elem.getNamespace().getNamespaceURI()))
+            {
                 // Handle the wst:BinarySecret case
                 secret = Base64.decode(elem.getText());
             } else {
-                throw new TrustException("notSupported", new String[] { "{"
-                        + elem.getNamespace().getNamespaceURI() + "}"
-                        + elem.getLocalName() });
+                throw new TrustException("notSupported", new String[]{"{"
+                                                                      + elem.getNamespace().getNamespaceURI() + "}"
+                                                                      + elem.getLocalName()});
             }
         } else {
             throw new TrustException("rptMissing");
         }
 
         // Check for attached ref
-        OMElement reqAttElem = rstr.getFirstChildWithName(new QName(
-                RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_ATTACHED_REFERENCE_LN));
+        OMElement reqAttElem =
+                rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02,
+                                                     RahasConstants.IssuanceBindingLocalNames.
+                                                             REQUESTED_ATTACHED_REFERENCE));
         OMElement reqAttRef = reqAttElem == null ? null : reqAttElem
                 .getFirstElement();
 
-        OMElement reqUnattElem = rstr.getFirstChildWithName(new QName(
-                RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_UNATTACHED_REFERENCE_LN));
+        OMElement reqUnattElem =
+                rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02,
+                                                     RahasConstants.IssuanceBindingLocalNames.
+                                                             REQUESTED_UNATTACHED_REFERENCE));
         OMElement reqUnattRef = reqUnattElem == null ? null : reqUnattElem
                 .getFirstElement();
 
@@ -151,7 +162,7 @@ public class Util {
         token.setSecret(secret);
         config.getTokenStore().add(token);
     }
-    
+
     private static CallbackHandler getCallbackHandlerInstance(
             ConversationConfiguration config) throws Exception {
         if (config.getPasswordCallbackRef() != null) {
@@ -172,28 +183,27 @@ public class Util {
     }
 
     /**
-     * This registers the security context mapping ?e context identifier to 
+     * This registers the security context mapping ?e context identifier to
      * the wsa:Action/soapAction or the service address, depending on the scope.
-     * 
+     *
      * @param identifier The security context identifier
-     * @param config The ConversationConfiguration instance
-     * @throws RampartException 
-     *      If scope is "operation" and the wsa:Action is not available.
-     *      If scope is "service" and the wsa:To is missing.  
+     * @param config     The ConversationConfiguration instance
+     * @throws RampartException If scope is "operation" and the wsa:Action is not available.
+     *                          If scope is "service" and the wsa:To is missing.
      */
     public static void resgisterContext(String identifier, ConversationConfiguration config) throws RampartException {
         config.setContextIdentifier(identifier);
-        
-        if(config.getScope().equals(ConversationConfiguration.SCOPE_OPERATION)) {
+
+        if (config.getScope().equals(ConversationConfiguration.SCOPE_OPERATION)) {
             String action = config.getMsgCtx().getSoapAction();
-            if(action != null) {
+            if (action != null) {
                 config.getContextMap().put(action, identifier);
             } else {
                 throw new RampartException("missingWSAAction");
             }
         } else {
             String to = config.getMsgCtx().getTo().getAddress();
-            if(to != null) {
+            if (to != null) {
                 config.getContextMap().put(to, identifier);
             } else {
                 throw new RampartException("missingWSATo");
@@ -202,5 +212,5 @@ public class Util {
         //TODO
         //this.contextMap
     }
-    
+
 }

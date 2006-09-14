@@ -38,10 +38,14 @@ public class TokenCancelerImpl implements TokenCanceler {
     private String configFile;
     private OMElement configElement;
     private String configParamName;
-    private static final QName QNAME_CANCEL_TARGET = new QName("CancelTarget");
-    private static final QName QNAME_SEC_TOKEN_REF = new QName("SecurityTokenReference");
-    private static final QName QNAME_REFERENCE = new QName("Reference");
-    private static final QName QNAME_URI = new QName("URI");
+    
+    private static final QName QNAME_CANCEL_TARGET =
+            new QName(RahasConstants.CancelBindingLocalNames.CANCEL_TARGET);
+    private static final QName QNAME_SEC_TOKEN_REF =
+            new QName(RahasConstants.CancelBindingLocalNames.SECURITY_TOKEN_REF);
+    private static final QName QNAME_REFERENCE =
+            new QName(RahasConstants.CancelBindingLocalNames.REFERENCE);
+    private static final QName QNAME_URI = new QName(RahasConstants.CancelBindingLocalNames.URI);
 
     /**
      * Cancel the token specified in the request.

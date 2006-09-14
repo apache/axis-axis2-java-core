@@ -79,7 +79,7 @@ public class RahasSAMLTokenTest extends TestClient {
             Axis2Util.useDOOM(false);
             StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
                     .getPullParser(new QName(RahasConstants.WST_NS_05_02,
-                            RahasConstants.REQUEST_SECURITY_TOKEN_LN))));
+                            RahasConstants.IssuanceBindingLocalNames.REQUEST_SECURITY_TOKEN))));
 
             OMElement rstElem = builder.getDocumentElement();
 
@@ -102,7 +102,9 @@ public class RahasSAMLTokenTest extends TestClient {
     }
     
     public void validateRsponse(OMElement resp) {
-        OMElement rst = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02, RahasConstants.REQUESTED_SECURITY_TOKEN_LN));
+        OMElement rst = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_02,
+                                                             RahasConstants.IssuanceBindingLocalNames.
+                                                                     REQUESTED_SECURITY_TOKEN));
         assertNotNull("RequestedSecurityToken missing", rst);
         OMElement elem = rst.getFirstChildWithName(new QName(XML.SAML_NS, "Assertion"));
         assertNotNull("Missing SAML Assertoin", elem);

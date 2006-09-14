@@ -67,15 +67,14 @@ public class RahasData {
     private byte[] responseEntropy;
 
     private String addressingNs;
-    
+
     private String soapNs;
 
     /**
      * Create a new RahasData instance and populate it with the information from
      * the request.
-     * 
-     * @throws TrustException
-     *             <code>RequestSecurityToken</code> element is invalid.
+     *
+     * @throws TrustException <code>RequestSecurityToken</code> element is invalid.
      */
     public RahasData(MessageContext inMessageContext) throws TrustException {
 
@@ -90,7 +89,7 @@ public class RahasData {
 
         this.rstElement = this.inMessageContext.getEnvelope().getBody()
                 .getFirstElement();
-        
+
         this.soapNs = this.inMessageContext.getEnvelope().getNamespace()
                 .getNamespaceURI();
 
@@ -113,7 +112,7 @@ public class RahasData {
         this.processKeySize();
 
         this.processAppliesTo();
-        
+
         this.processEntropy();
 
     }
@@ -121,7 +120,7 @@ public class RahasData {
     /**
      * Processes the authenticated user information from the WSS4J security
      * resutls.
-     * 
+     *
      * @throws TrustException
      */
     private void processWSS4JSecurityResults() throws TrustException {
@@ -147,11 +146,11 @@ public class RahasData {
                     WSSecurityEngineResult wser = (WSSecurityEngineResult) wsSecEngineResults
                             .get(j);
                     if (wser.getAction() == WSConstants.SIGN
-                            && wser.getPrincipal() != null) {
+                        && wser.getPrincipal() != null) {
                         this.clientCert = wser.getCertificate();
                         this.principal = wser.getPrincipal();
                     } else if (wser.getAction() == WSConstants.UT
-                            && wser.getPrincipal() != null) {
+                               && wser.getPrincipal() != null) {
                         this.principal = wser.getPrincipal();
                     }
                 }
@@ -167,7 +166,8 @@ public class RahasData {
 
         OMElement appliesToElem = this.rstElement
                 .getFirstChildWithName(new QName(RahasConstants.WSP_NS,
-                        RahasConstants.APPLIES_TO_LN));
+                                                 RahasConstants.IssuanceBindingLocalNames.
+                                                         APPLIES_TO));
 
         if (appliesToElem != null) {
             OMElement eprElem = appliesToElem.getFirstElement();
@@ -184,7 +184,7 @@ public class RahasData {
                                 this.addressingNs,
                                 AddressingConstants.EPR_ADDRESS));
                 if (addrElem != null && addrElem.getText() != null
-                        && !"".equals(addrElem.getText().trim())) {
+                    && !"".equals(addrElem.getText().trim())) {
                     this.appliesToAddress = addrElem.getText().trim();
                 } else {
                     throw new TrustException("invalidAppliesToElem");
@@ -194,29 +194,29 @@ public class RahasData {
             }
         }
     }
-    
+
     private void processRequestType() throws TrustException {
         OMElement reqTypeElem = this.rstElement
                 .getFirstChildWithName(new QName(this.wstNs,
-                        RahasConstants.REQUEST_TYPE_LN));
+                                                 RahasConstants.IssuanceBindingLocalNames.REQUEST_TYPE));
 
         if (reqTypeElem == null
-                || (reqTypeElem != null && reqTypeElem.getText() != null && ""
-                        .equals(reqTypeElem.getText().trim()))) {
+            || (reqTypeElem != null && reqTypeElem.getText() != null && ""
+                .equals(reqTypeElem.getText().trim()))) {
             throw new TrustException(TrustException.INVALID_REQUEST);
         } else {
             this.requestType = reqTypeElem.getText().trim();
-        }        
-       
+        }
+
     }
-    
+
     private void processTokenType() {
         OMElement tokTypeElem = this.rstElement
                 .getFirstChildWithName(new QName(this.wstNs,
-                        RahasConstants.TOKEN_TYPE_LN));
+                                                 RahasConstants.IssuanceBindingLocalNames.TOKEN_TYPE));
 
         if (tokTypeElem != null && tokTypeElem.getText() != null
-                && !"".equals(tokTypeElem.getText().trim())) {
+            && !"".equals(tokTypeElem.getText().trim())) {
             this.tokenType = tokTypeElem.getText().trim();
         }
     }
@@ -227,7 +227,7 @@ public class RahasData {
     private void processKeyType() {
         OMElement keyTypeElem = this.rstElement
                 .getFirstChildWithName(new QName(this.wstNs,
-                        RahasConstants.KEY_TYPE_LN));
+                                                 RahasConstants.IssuanceBindingLocalNames.KEY_TYPE));
         if (keyTypeElem != null) {
             String text = keyTypeElem.getText();
             if (text != null && !"".equals(text.trim())) {
@@ -235,34 +235,36 @@ public class RahasData {
             }
         }
     }
-    
+
     /**
      * Finds the KeySize and creates an empty ephmeral key.
-     * 
+     *
      * @throws TrustException
      */
     private void processKeySize() throws TrustException {
-        OMElement keySizeElem = this.rstElement
-                .getFirstChildWithName(new QName(this.wstNs,
-                        RahasConstants.KEY_SIZE_LN));
+        OMElement keySizeElem =
+                this.rstElement
+                        .getFirstChildWithName(new QName(this.wstNs,
+                                                         RahasConstants.IssuanceBindingLocalNames.
+                                                                 KEY_SIZE));
         if (keySizeElem != null) {
             String text = keySizeElem.getText();
             if (text != null && !"".equals(text.trim())) {
                 try {
                     //Set key size
                     this.keysize = Integer.parseInt(text.trim());
-                    
+
                     //Create an empty array to hold the key
                     this.ephmeralKey = new byte[this.keysize];
                 } catch (NumberFormatException e) {
                     throw new TrustException(TrustException.INVALID_REQUEST,
-                            new String[] { "invalid wst:Keysize value" }, e);
+                                             new String[]{"invalid wst:Keysize value"}, e);
                 }
             }
         }
         this.keysize = -1;
     }
-    
+
 
     /**
      * Process wst:Entropy element in the request.
@@ -270,18 +272,18 @@ public class RahasData {
     private void processEntropy() throws TrustException {
         OMElement entropyElem = this.rstElement
                 .getFirstChildWithName(new QName(this.wstNs,
-                        RahasConstants.ENTROPY_LN));
-        
-        if(entropyElem != null) {
+                                                 RahasConstants.IssuanceBindingLocalNames.ENTROPY));
+
+        if (entropyElem != null) {
             OMElement binSecElem = entropyElem.getFirstElement();
             if (binSecElem != null && binSecElem.getText() != null
-                    && !"".equals(binSecElem.getText())) {
+                && !"".equals(binSecElem.getText())) {
                 this.requestEntropy = Base64.decode(binSecElem.getText());
             } else {
                 throw new TrustException("malformedEntropyElement",
-                        new String[] { entropyElem.toString() });
+                                         new String[]{entropyElem.toString()});
             }
-            
+
         }
     }
 
@@ -418,5 +420,5 @@ public class RahasData {
         this.ephmeralKey = ephmeralKey;
     }
 
-    
+
 }
