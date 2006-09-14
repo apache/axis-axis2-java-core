@@ -339,28 +339,31 @@ public abstract class AbstractHTTPSender {
         if (obj != null) {
             if (obj instanceof HttpTransportProperties.Authenticator) {
                 authenticator = (HttpTransportProperties.Authenticator) obj;
+
                 String username = authenticator.getUsername();
                 String password = authenticator.getPassword();
                 String host = authenticator.getHost();
-                String realm = authenticator.getRealm();
+                String domain = authenticator.getDomain();
+
                 int port = authenticator.getPort();
+                String realm = authenticator.getRealm();
 
                 Credentials creds;
 
-                if (host == null && realm == null && port == -1) {
-                    creds = new UsernamePasswordCredentials(username,password);
-                    agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
-                } else if (host != null && port == -1 && realm != null) {
-                    creds = new NTCredentials(username, password, host, realm);
-                    agent.getState().setCredentials(new AuthScope(host, AuthScope.ANY_PORT), creds);
-                } else if (host != null && port > -1 && realm != null) {
-                    creds = new NTCredentials(username, password, host, realm);
+                if (host != null) {
+                    if (domain != null) {
+                        /*Credentials for NTLM Authentication*/
+                        creds = new NTCredentials(username, password, host, domain);
+                    } else {
+                        /*Credentials for Digest and Basic Authentication*/
+                        creds = new UsernamePasswordCredentials(username, password);
+                    }
                     agent.getState().setCredentials(new AuthScope(host, port, realm), creds);
                 } else {
-                    throw new AxisFault("Credential setting is not valid");
+                    /*Credentials only for Digest and Basic Authentication*/
+                    creds = new UsernamePasswordCredentials(username, password);
+                    agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
                 }
-
-
             } else {
                 throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
             }

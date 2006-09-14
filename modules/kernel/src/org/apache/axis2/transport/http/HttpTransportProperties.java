@@ -17,6 +17,7 @@ package org.apache.axis2.transport.http;
  */
 
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.auth.AuthScope;
 
 import java.util.Properties;
 
@@ -124,10 +125,17 @@ public class HttpTransportProperties {
     patterns.
     */
     public static class Authenticator{
+        /*host that needed to be authenticated with*/
         private String host;
-        private int port = -1;
-        private String realm;
+        /*port of the host that needed to be authenticated with*/
+        private int port = AuthScope.ANY_PORT;
+        /*Realm for authentication scope*/
+        private String realm = AuthScope.ANY_REALM;
+        /*Domain needed by NTCredentials for NT Domain*/
+        private String domain;
+        /*User for authenticate*/
         private String username;
+        /*Password of the user for authenticate*/
         private String password;
 
         public String getHost() {
@@ -168,6 +176,14 @@ public class HttpTransportProperties {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
         }
     }
     public static class MailProperties{
