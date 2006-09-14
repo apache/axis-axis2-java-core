@@ -18,6 +18,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -34,8 +35,11 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.FactoryConfigurationError;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -144,7 +148,7 @@ public class RESTSender extends AbstractHTTPSender {
             throws MalformedURLException, AxisFault, IOException {
         String param = getParam(msgContext);
         GetMethod getMethod = new GetMethod();
-        if (authenticationEnabled) {
+        if (isAuthenticationEnabled(msgContext)) {
             getMethod.setDoAuthentication(true);
         }
 
@@ -201,7 +205,7 @@ public class RESTSender extends AbstractHTTPSender {
         HttpClient httpClient = getHttpClient(msgContext);
 
         PostMethod postMethod = new PostMethod(url.toString());
-        if(authenticationEnabled) {
+        if(isAuthenticationEnabled(msgContext)) {
             postMethod.setDoAuthentication(true);
         }
         String httpContentType;
@@ -321,6 +325,123 @@ public class RESTSender extends AbstractHTTPSender {
         }
 
         return paraString;
+    }
+
+    public class AxisRequestEntity implements RequestEntity {
+        private boolean doingMTOM = false;
+        private byte[] bytes;
+        private String charSetEnc;
+        private boolean chunked;
+        private OMElement element;
+        private MessageContext msgCtxt;
+        private String soapActionString;
+
+        public AxisRequestEntity(OMElement element, boolean chunked,
+                                 MessageContext msgCtxt,
+                                 String charSetEncoding,
+                                 String soapActionString) {
+            this.element = element;
+            this.chunked = chunked;
+            this.msgCtxt = msgCtxt;
+            this.doingMTOM = msgCtxt.isDoingMTOM();
+            this.charSetEnc = charSetEncoding;
+            this.soapActionString = soapActionString;
+        }
+
+        private void handleOMOutput(OutputStream out, boolean doingMTOM)
+                throws XMLStreamException {
+            format.setDoOptimize(doingMTOM);
+            element.serializeAndConsume(out, format);
+        }
+
+        public byte[] writeBytes() throws AxisFault {
+            try {
+                ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+
+                if (!doingMTOM) {
+                    OMOutputFormat format2 = new OMOutputFormat();
+
+                    format2.setCharSetEncoding(charSetEnc);
+                    element.serializeAndConsume(bytesOut, format2);
+
+                    return bytesOut.toByteArray();
+                } else {
+                    format.setCharSetEncoding(charSetEnc);
+                    format.setDoOptimize(true);
+                    element.serializeAndConsume(bytesOut, format);
+
+                    return bytesOut.toByteArray();
+                }
+            } catch (XMLStreamException e) {
+                throw new AxisFault(e);
+            } catch (FactoryConfigurationError e) {
+                throw new AxisFault(e);
+            }
+        }
+
+        public void writeRequest(OutputStream out) throws IOException {
+            try {
+                {
+                    if (chunked) {
+                        this.handleOMOutput(out, doingMTOM);
+                    } else {
+                        if (bytes == null) {
+                            bytes = writeBytes();
+                        }
+
+                        out.write(bytes);
+                    }
+                }
+
+                out.flush();
+            } catch (XMLStreamException e) {
+                throw new AxisFault(e);
+            } catch (FactoryConfigurationError e) {
+                throw new AxisFault(e);
+            } catch (IOException e) {
+                throw new AxisFault(e);
+            }
+        }
+
+        public long getContentLength() {
+            try {
+                {
+                    if (chunked) {
+                        return -1;
+                    } else {
+                        if (bytes == null) {
+                            bytes = writeBytes();
+                        }
+
+                        return bytes.length;
+                    }
+                }
+            } catch (AxisFault e) {
+                return -1;
+            }
+        }
+
+        public String getContentType() {
+            String encoding = format.getCharSetEncoding();
+            String contentType = format.getContentType();
+
+            if (encoding != null) {
+                contentType += "; charset=" + encoding;
+            }
+
+            // action header is not mandated in SOAP 1.2. So putting it, if available
+            if (!msgCtxt.isSOAP11() && (soapActionString != null)
+                && !"".equals(soapActionString.trim())) {
+                contentType =
+                        contentType + ";action=\"" + soapActionString + "\";";
+            }
+
+            return contentType;
+        }
+
+        public boolean isRepeatable() {
+            return true;
+        }
     }
 
     public class AxisRESTRequestEntity implements RequestEntity {

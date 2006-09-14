@@ -382,8 +382,9 @@ public class HTTPConstants {
     public static final String PROXY = "PROXY";
     public static final String MAIL_SMTP = "_MAIL_SMTP_";
     public static final String MAIL_POP3 = "_MAIL_POP3_";
-    public static final String AUTHENTICATE = "_NTML_DIGEST_BASIC_AUTHENTICATION_";
+    public static final String AUTHENTICATE = "_NTLM_DIGEST_BASIC_AUTHENTICATION_";
     public static final String MTOM_RECEIVED_CONTENT_TYPE = "MTOM_RECEIVED";
+    public static final String ALLOW_RETRY = "_ALLOW_RETRY_";
 
     /**
      * Field ISE[]

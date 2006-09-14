@@ -28,23 +28,30 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HeaderElement;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.NTCredentials;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
@@ -55,8 +62,6 @@ public abstract class AbstractHTTPSender {
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
     private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
-
-    protected boolean authenticationEnabled;
 
     /**
      * proxydiscription
@@ -297,7 +302,8 @@ public abstract class AbstractHTTPSender {
             throws AxisFault {
         boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
 
-        authenticationEnabled = serverPreemtiveAuthentication(msgCtx); // server authentication
+        
+        boolean authenticationEnabled = isAuthenticationEnabled(msgCtx);
         int port = targetURL.getPort();
 
         if (port == -1) {
@@ -307,14 +313,15 @@ public abstract class AbstractHTTPSender {
         // to see the host is a proxy and in the proxy list - available in axis2.xml
         HostConfiguration config = new HostConfiguration();
 
-        if (!isHostProxy && !authenticationEnabled) {
-            config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
-        } else if (authenticationEnabled) {
+        if (authenticationEnabled) {
             // premtive authentication Basic or NTLM
-            this.configServerPreemtiveAuthenticaiton(client, msgCtx, config, targetURL);
-        } else {
+            this.setAuthenticationInfo(client, msgCtx, config, targetURL);
+        }
 
             // proxy configuration
+        if (!isHostProxy) {
+            config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
+        } else {
             this.configProxyAuthentication(client, proxyOutSetting, config,
                                            msgCtx);
         }
@@ -322,17 +329,19 @@ public abstract class AbstractHTTPSender {
         return config;
     }
 
+    protected boolean isAuthenticationEnabled(MessageContext msgCtx) {
+        return (msgCtx.getProperty(HTTPConstants.AUTHENTICATE) != null);
+    }
+
     /*
     This will handle server Authentication, It could be either NTLM, Digest or Basic Authentication
     */
-    protected void configServerPreemtiveAuthenticaiton(HttpClient agent,
+    protected void setAuthenticationInfo(HttpClient agent,
                                                        MessageContext msgCtx,
                                                        HostConfiguration config,
                                                        URL targetURL) throws AxisFault {
         config.setHost(targetURL.getHost(), targetURL.getPort(),
                        targetURL.getProtocol());
-
-        agent.getParams().setAuthenticationPreemptive(true);
 
         HttpTransportProperties.Authenticator authenticator;
         Object obj = msgCtx.getProperty(HTTPConstants.AUTHENTICATE);
@@ -350,6 +359,8 @@ public abstract class AbstractHTTPSender {
 
                 Credentials creds;
 
+                agent.getParams().setAuthenticationPreemptive(authenticator.getPreemptiveAuthentication());
+
                 if (host != null) {
                     if (domain != null) {
                         /*Credentials for NTLM Authentication*/
@@ -364,6 +375,32 @@ public abstract class AbstractHTTPSender {
                     creds = new UsernamePasswordCredentials(username, password);
                     agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
                 }
+
+                List schemes = authenticator.getAuthSchemes();
+                if (schemes != null && schemes.size() > 0) {
+                    List authPrefs = new ArrayList(3);
+                    for (int i = 0; i < schemes.size(); i++) {
+                        if (schemes.get(i) instanceof AuthPolicy) {
+                            authPrefs.add(schemes.get(i));
+                            continue;
+                        }
+                        String scheme = (String) schemes.get(i);
+                        if (HttpTransportProperties.Authenticator.BASIC.equals(scheme)) {
+                            authPrefs.add(AuthPolicy.BASIC);
+                        } else if (HttpTransportProperties.Authenticator.NTLM.equals(scheme)) {
+                            authPrefs.add(AuthPolicy.NTLM);
+                        } else if (HttpTransportProperties.Authenticator.DIGEST.equals(scheme)) {
+                            authPrefs.add(AuthPolicy.DIGEST);
+                        }
+                    }
+                    // If it is NTLM, then definitely switch on the RETRY flag.
+                    if (authPrefs.indexOf(AuthPolicy.NTLM) != -1) {
+                        msgCtx.setProperty(HTTPConstants.ALLOW_RETRY, Boolean.TRUE);
+                    }
+                    agent.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY,
+                            authPrefs);
+                }
+
             } else {
                 throw new AxisFault("HttpTransportProperties.Authenticator class cast exception");
             }
@@ -401,13 +438,6 @@ public abstract class AbstractHTTPSender {
             // If there's a problem log it and use the default values
             log.error("Invalid timeout value format: not a number", nfe);
         }
-    }
-
-    //Server Preemptive Authentication RUNTIME
-
-    private boolean serverPreemtiveAuthentication(MessageContext msgContext) {
-
-        return (msgContext.getProperty(HTTPConstants.AUTHENTICATE) != null);
     }
 
     private boolean isProxyListed(MessageContext msgCtx) throws AxisFault {
@@ -455,123 +485,6 @@ public abstract class AbstractHTTPSender {
 
     public void setFormat(OMOutputFormat format) {
         this.format = format;
-    }
-
-    public class AxisRequestEntity implements RequestEntity {
-        private boolean doingMTOM = false;
-        private byte[] bytes;
-        private String charSetEnc;
-        private boolean chunked;
-        private OMElement element;
-        private MessageContext msgCtxt;
-        private String soapActionString;
-
-        public AxisRequestEntity(OMElement element, boolean chunked,
-                                 MessageContext msgCtxt,
-                                 String charSetEncoding,
-                                 String soapActionString) {
-            this.element = element;
-            this.chunked = chunked;
-            this.msgCtxt = msgCtxt;
-            this.doingMTOM = msgCtxt.isDoingMTOM();
-            this.charSetEnc = charSetEncoding;
-            this.soapActionString = soapActionString;
-        }
-
-        private void handleOMOutput(OutputStream out, boolean doingMTOM)
-                throws XMLStreamException {
-            format.setDoOptimize(doingMTOM);
-            element.serializeAndConsume(out, format);
-        }
-
-        public byte[] writeBytes() throws AxisFault {
-            try {
-                ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-
-                if (!doingMTOM) {
-                    OMOutputFormat format2 = new OMOutputFormat();
-
-                    format2.setCharSetEncoding(charSetEnc);
-                    element.serializeAndConsume(bytesOut, format2);
-
-                    return bytesOut.toByteArray();
-                } else {
-                    format.setCharSetEncoding(charSetEnc);
-                    format.setDoOptimize(true);
-                    element.serializeAndConsume(bytesOut, format);
-
-                    return bytesOut.toByteArray();
-                }
-            } catch (XMLStreamException e) {
-                throw new AxisFault(e);
-            } catch (FactoryConfigurationError e) {
-                throw new AxisFault(e);
-            }
-        }
-
-        public void writeRequest(OutputStream out) throws IOException {
-            try {
-                {
-                    if (chunked) {
-                        this.handleOMOutput(out, doingMTOM);
-                    } else {
-                        if (bytes == null) {
-                            bytes = writeBytes();
-                        }
-
-                        out.write(bytes);
-                    }
-                }
-
-                out.flush();
-            } catch (XMLStreamException e) {
-                throw new AxisFault(e);
-            } catch (FactoryConfigurationError e) {
-                throw new AxisFault(e);
-            } catch (IOException e) {
-                throw new AxisFault(e);
-            }
-        }
-
-        public long getContentLength() {
-            try {
-                {
-                    if (chunked) {
-                        return -1;
-                    } else {
-                        if (bytes == null) {
-                            bytes = writeBytes();
-                        }
-
-                        return bytes.length;
-                    }
-                }
-            } catch (AxisFault e) {
-                return -1;
-            }
-        }
-
-        public String getContentType() {
-            String encoding = format.getCharSetEncoding();
-            String contentType = format.getContentType();
-
-            if (encoding != null) {
-                contentType += "; charset=" + encoding;
-            }
-
-            // action header is not mandated in SOAP 1.2. So putting it, if available
-            if (!msgCtxt.isSOAP11() && (soapActionString != null)
-                && !"".equals(soapActionString.trim())) {
-                contentType =
-                        contentType + ";action=\"" + soapActionString + "\";";
-            }
-
-            return contentType;
-        }
-
-        public boolean isRepeatable() {
-            return true;
-        }
     }
 
     protected HttpClient getHttpClient(MessageContext msgContext) {

@@ -54,7 +54,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         // handle multiple
         HttpClient httpClient = getHttpClient(msgContext);
         PostMethod postMethod = new PostMethod(url.toString());
-        if (authenticationEnabled) {
+        if (isAuthenticationEnabled(msgContext)) {
             postMethod.setDoAuthentication(true);
         }
 
@@ -174,18 +174,14 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
 			if (!doingMTOM & doingSWA) {
 				 StringWriter bufferedSOAPBody = new StringWriter();
-				//To support NTLM Authentication the following check has been
-				// done.
-				if (msgCtxt.getProperty(HTTPConstants.AUTHENTICATE) != null) {
+				if (msgCtxt.getProperty(HTTPConstants.ALLOW_RETRY) != null) {
 					element.serialize(bufferedSOAPBody, format);
 				} else {
 					element.serializeAndConsume(bufferedSOAPBody, format);
 				}
 				MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,out,msgCtxt.getAttachmentMap(), format);
 			} else {
-				// To support NTLM Authentication the following check has been
-				// done.
-				if (msgCtxt.getProperty(HTTPConstants.AUTHENTICATE) != null) {
+				if (msgCtxt.getProperty(HTTPConstants.ALLOW_RETRY) != null) {
 					element.serialize(out, format);
 				} else {
 					element.serializeAndConsume(out, format);
