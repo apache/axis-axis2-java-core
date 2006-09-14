@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
+import java.io.File;
 
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected static final String C_STUB_PREFIX = "axis2_stub_";
@@ -98,14 +99,14 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
 
         CStubHeaderWriter writerHStub =
-                new CStubHeaderWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                new CStubHeaderWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerHStub);
 
 
         CStubSourceWriter writerCStub =
-                new CStubSourceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+                new CStubSourceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerCStub);
@@ -124,12 +125,12 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
 
         CSkelHeaderWriter skeletonWriter = new CSkelHeaderWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                "src"), this.codeGenConfiguration.getOutputLanguage());
+                SRC_DIR_NAME), this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriter);
 
         CSkelSourceWriter skeletonWriterStub = new CSkelSourceWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                "src"), this.codeGenConfiguration.getOutputLanguage());
+                SRC_DIR_NAME), this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriterStub);
     }
@@ -140,7 +141,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected void writeCServiceSkeleton() throws Exception {
 
         Document skeletonModel = createDOMDocumentForServiceSkeletonXML();
-        CSvcSkeletonWriter writer = new CSvcSkeletonWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
+        CSvcSkeletonWriter writer = new CSvcSkeletonWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                                     codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, writer);
@@ -158,7 +159,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             // Write the service xml in a folder with the
             Document serviceXMLModel = createDOMDocumentForServiceXML();
             ClassWriter serviceXmlWriter =
-                    new CServiceXMLWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(), "src"),
+                    new CServiceXMLWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
                             this.codeGenConfiguration.getOutputLanguage());
 
             writeClass(serviceXMLModel, serviceXmlWriter);
@@ -611,5 +612,27 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         return paramElement;
     }
+
+    /**
+     * Gets the output directory for source files.
+     *
+     * @param outputDir
+     * @return Returns File.
+     */
+    protected File getOutputDirectory(File outputDir, String dir2) {
+        if (dir2 != null && !"".equals(dir2)) {
+            if (outputDir.getName().equals(".")) {
+                outputDir = new File(outputDir, dir2);
+            }
+        }
+
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
+
+        return outputDir;
+    }
+
+
 }
 
