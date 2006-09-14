@@ -29,21 +29,16 @@ import org.apache.ws.secpolicy.model.IssuedToken;
 import org.apache.ws.secpolicy.model.SecureConversationToken;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
-import org.apache.ws.secpolicy.model.UsernameToken;
-import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.message.WSSecDKEncrypt;
+import org.apache.ws.security.message.WSSecDKSign;
 import org.apache.ws.security.message.WSSecEncrypt;
-import org.apache.ws.security.message.WSSecEncryptedKey;
-import org.apache.ws.security.message.WSSecUsernameToken;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Vector;
 
 
@@ -81,6 +76,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
     private void doEncryptBeforeSig(RampartMessageData rmd) throws RampartException {
         
         RampartPolicyData rpd = rmd.getPolicyData();
+        
+        Vector signatureValues = new Vector();
         
         Token encryptionToken = rpd.getEncryptionToken();
         if(encryptionToken != null) {
@@ -181,65 +178,95 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             
             RampartUtil.appendChildToSecHeader(rmd, refList);
             
-            //Now add the supporting tokens
+            this.setInsertionLocation(refList);
+
+//          Now add the supporting tokens
             SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
             
-            Vector sigParts = rpd.getSignedParts();
+            HashMap sigSuppTokMap = this.handleSupportingTokens(rmd, sgndSuppTokens);
             
-            this.setInsertionLocation(refList);
-            
-            if(sgndSuppTokens != null && sgndSuppTokens.getTokens() != null &&
-                    sgndSuppTokens.getTokens().size() > 0) {
-                log.debug("Processing signed supporting tokens");
-                
-                ArrayList tokens = sgndSuppTokens.getTokens();
-                for (Iterator iter = tokens.iterator(); iter.hasNext();) {
-                    
-                    Token token = (Token) iter.next();
-                    if(token instanceof UsernameToken) {
-                        WSSecUsernameToken utBuilder = addUsernameToken(rmd);
-                        
-                        utBuilder.prepare(rmd.getDocument());
-                        
-                        //Add the UT
-                        Element elem = utBuilder.getUsernameTokenElement();
-                        RampartUtil.insertSiblingAfter(this.getInsertionLocation(), elem);
-                        
-                        //Move the insert location to th enext element
-                        this.setInsertionLocation(elem);
-                        
-                        WSEncryptionPart part = new WSEncryptionPart(utBuilder
-                                .getId());
-                        sigParts.add(part);
-                        
-                    } else {
-                        throw new RampartException("unsupportedSignedSupportingToken", 
-                                new String[]{"{" +token.getName().getNamespaceURI() 
-                                + "}" + token.getName().getLocalPart()});
-                    }
-                }
-            }
-            
-            //Endorsing Supporting Tokens 
             SupportingToken endSuppTokens = rpd.getEndorsingSupportingTokens();
 
-            //The list to hold tokens
-            ArrayList endSuppTokList = this.handleSupportingTokens(rmd, endSuppTokens);
+            HashMap endSuppTokMap = this.handleSupportingTokens(rmd, endSuppTokens);
 
             SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
             
-            ArrayList sgndEndSuppTokList = this.handleSupportingTokens(rmd, sgndEndSuppTokens);
-            
+            HashMap sgndEndSuppTokMap = this.handleSupportingTokens(rmd, sgndEndSuppTokens);
+
+            //Setup signature parts
+            Vector sigParts = addSignatureParts(sigSuppTokMap, rpd.getSignedParts());
+            sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
             
             //Sign the message
+            //We should use the same key in the case of EncryptBeforeSig
+            if(encryptionToken.isDerivedKeys()) {
+                try {
+                    WSSecDKSign dkSign = new WSSecDKSign();
+
+                    OMElement ref = tok.getAttachedReference();
+                    if(ref == null) {
+                        ref = tok.getUnattachedReference();
+                    }
+                    if(ref != null) {
+                        dkSign.setExternalKey(tok.getSecret(), (Element) 
+                                doc.importNode((Element) ref, true));
+                    } else {
+                        dkSign.setExternalKey(tok.getSecret(), tok.getId());
+                    }
+
+                    //Set the algo info
+                    dkSign.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
+                    
+                    
+                    dkSign.prepare(doc);
+                    
+                    sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));                          
+                    
+                    if(rpd.isTokenProtection() && attached) {
+                        sigParts.add(new WSEncryptionPart(tokenId));
+                    }
+                    
+                    dkSign.setParts(sigParts);
+                    
+                    dkSign.addReferencesToSign(sigParts, rmd.getSecHeader());
+                    
+                    //Do signature
+                    dkSign.computeSignature();
+                    
+                    signatureValues.add(dkSign.getSignatureValue());
+                    
+                    //Add elements to header
+                    this.setInsertionLocation(RampartUtil
+                            .insertSiblingAfter(this.getInsertionLocation(),
+                                    dkSign.getdktElement()));
+
+                    this.setInsertionLocation(RampartUtil.insertSiblingAfter(
+                            this.getInsertionLocation(), dkSign
+                                    .getSignatureElement()));
+                    this.mainSigId = RampartUtil.addWsuIdToElement((OMElement)dkSign.getSignatureElement());
+                    
+                } catch (ConversationException e) {
+                    throw new RampartException(
+                            "errorInDerivedKeyTokenSignature", e);
+                } catch (WSSecurityException e) {
+                    throw new RampartException(
+                            "errorInDerivedKeyTokenSignature", e);
+                }
+            } else {
+                //TODO :  Example SAMLTOken Signature
+            }
             
-            String sigId = null;
+            //Do endorsed signatures
+            this.doEndorsedSignatures(rmd, endSuppTokMap);
+            
+            //Do signed endorsing signatures
+            this.doEndorsedSignatures(rmd, sgndEndSuppTokMap);
             
             //Check for signature protection
-            if(rpd.isSignatureProtection()) {
+            if(rpd.isSignatureProtection() && this.mainSigId != null) {
                 //Now encrypt the signature using the above token
                 Vector secondEncrParts = new Vector();
-                secondEncrParts.add(new WSEncryptionPart(sigId, "Element"));
+                secondEncrParts.add(new WSEncryptionPart(this.mainSigId, "Element"));
                 
                 Element secondRefList = null;
                 
@@ -266,7 +293,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             }
         }
     }
-
+    
+    
     
     /**
      * Setup the required tokens

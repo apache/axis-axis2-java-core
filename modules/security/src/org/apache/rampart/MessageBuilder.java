@@ -31,10 +31,8 @@ import org.apache.rampart.policy.RampartPolicyBuilder;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.secpolicy.WSSPolicyException;
-import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.message.WSSecHeader;
-import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 
 import java.io.ByteArrayInputStream;
@@ -56,10 +54,7 @@ public class MessageBuilder {
          */
         Document doc = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx.getEnvelope(), false);
         msgCtx.setEnvelope((SOAPEnvelope)doc.getDocumentElement());
-        
-        SOAPConstants soapConstants = WSSecurityUtil.getSOAPConstants(doc
-                .getDocumentElement());
-        
+
         WSSecHeader secHeader = new WSSecHeader();
         secHeader.insertSecurityHeader(doc);
 

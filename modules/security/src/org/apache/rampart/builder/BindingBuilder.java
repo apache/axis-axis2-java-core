@@ -31,8 +31,11 @@ import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.UsernameToken;
 import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.conversation.ConversationException;
+import org.apache.ws.security.message.WSSecDKSign;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.WSSecSignature;
 import org.apache.ws.security.message.WSSecTimestamp;
@@ -46,12 +49,17 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
 
 public abstract class BindingBuilder {
     private static Log log = LogFactory.getLog(BindingBuilder.class);
             
     private Element insertionLocation;
+    
+    protected String mainSigId = null;
     
     /**
      * @param rmd
@@ -249,11 +257,11 @@ public abstract class BindingBuilder {
      * @param suppTokens
      * @throws RampartException
      */
-    protected ArrayList handleSupportingTokens(RampartMessageData rmd, SupportingToken suppTokens)
+    protected HashMap handleSupportingTokens(RampartMessageData rmd, SupportingToken suppTokens)
             throws RampartException {
         
         //Create the list to hold the tokens
-        ArrayList endSuppTokList = new ArrayList();
+        HashMap endSuppTokMap = new HashMap();
         
         if(suppTokens != null && suppTokens.getTokens() != null &&
                 suppTokens.getTokens().size() > 0) {
@@ -284,7 +292,7 @@ public abstract class BindingBuilder {
                     this.setInsertionLocation(siblingElem);
                     
                     //Add the extracted token
-                    endSuppTokList.add(endSuppTok);
+                    endSuppTokMap.put(token, endSuppTok);
                     
                 } else if(token instanceof X509Token) {
                     //Get the to be added
@@ -315,7 +323,7 @@ public abstract class BindingBuilder {
                                         (OMElement)encrKey.getEncryptedKeyElement(),
                                         now, new Date(now.getTime() + 300000));
                             
-                            endSuppTokList.add(endSuppTok);
+                            endSuppTokMap.put(token, endSuppTok);
                             
                         } catch (WSSecurityException e) {
                             throw new RampartException("errorCreatingEncryptedKey", e);
@@ -332,7 +340,7 @@ public abstract class BindingBuilder {
                                     .getInsertionLocation(), bstElem);
                             this.setInsertionLocation(bstElem);
                         }
-                        endSuppTokList.add(sig);
+                        endSuppTokMap.put(token, sig);
                     }
                 } else if(token instanceof UsernameToken) {
                     WSSecUsernameToken utBuilder = addUsernameToken(rmd);
@@ -347,9 +355,10 @@ public abstract class BindingBuilder {
                     this.setInsertionLocation(elem);
                     Date now = new Date();
                     try {
-                        endSuppTokList.add(new org.apache.rahas.Token(utBuilder
-                            .getId(), (OMElement)elem, now,
-                            new Date(now.getTime() + 300000)));
+                        org.apache.rahas.Token tempTok = new org.apache.rahas.Token(
+                                utBuilder.getId(), (OMElement) elem, now,
+                                new Date(now.getTime() + 300000));
+                        endSuppTokMap.put(token, tempTok);
                     } catch (TrustException e) {
                         throw new RampartException("errorCreatingRahasToken", e);
                     }
@@ -357,7 +366,35 @@ public abstract class BindingBuilder {
             }
         }
         
-        return endSuppTokList;
+        return endSuppTokMap;
+    }
+    /**
+     * @param sigSuppTokMap
+     * @param sigParts
+     * @throws RampartException
+     */
+    protected Vector addSignatureParts(HashMap tokenMap, Vector sigParts) throws RampartException {
+        
+        Set entrySet = tokenMap.entrySet();
+        
+        for (Iterator iter = entrySet.iterator(); iter.hasNext();) {
+            Object tempTok =  iter.next();
+            WSEncryptionPart part = null;
+            if(tempTok instanceof org.apache.rahas.Token) {
+                part = new WSEncryptionPart(
+                        ((org.apache.rahas.Token) tempTok).getId());
+            } else if(tempTok instanceof WSSecSignature) {
+                WSSecSignature tempSig = (WSSecSignature) tempTok;
+                if(tempSig.getBSTTokenId() != null) {
+                    part = new WSEncryptionPart(tempSig.getBSTTokenId());
+                }
+            } else {
+              throw new RampartException("UnsupportedTokenInSupportingToken");  
+            }
+            sigParts.add(part);
+        }
+                
+        return sigParts;
     }
 
     
@@ -367,6 +404,115 @@ public abstract class BindingBuilder {
 
     public void setInsertionLocation(Element insertionLocation) {
         this.insertionLocation = insertionLocation;
+    }
+    
+    
+    protected Vector doEndorsedSignatures(RampartMessageData rmd, HashMap tokenMap) throws RampartException {
+        
+        Set tokenSet = tokenMap.keySet();
+        
+        Vector sigValues = new Vector();
+        
+        for (Iterator iter = tokenSet.iterator(); iter.hasNext();) {
+            
+            Token token = (Token)iter.next();
+            
+            Object tempTok = tokenMap.get(token);
+            
+            Vector sigParts = new Vector();
+            sigParts.add(new WSEncryptionPart(this.mainSigId));
+            
+            if (tempTok instanceof org.apache.rahas.Token) {
+                org.apache.rahas.Token tok = (org.apache.rahas.Token)tempTok;
+                if(rmd.getPolicyData().isTokenProtection()) {
+                    sigParts.add(new WSEncryptionPart(tok.getId()));
+                }
+                
+                this.doSignature(rmd, token, (org.apache.rahas.Token)tempTok, sigParts);
+                
+            } else if (tempTok instanceof WSSecSignature) {
+                WSSecSignature sig = (WSSecSignature)tempTok;
+                if(rmd.getPolicyData().isTokenProtection() &&
+                        sig.getBSTTokenId() != null) {
+                    sigParts.add(new WSEncryptionPart(sig.getBSTTokenId()));
+                }
+                
+                try {
+                    sig.addReferencesToSign(sigParts, rmd.getSecHeader());
+                    sig.computeSignature();
+                } catch (WSSecurityException e) {
+                    throw new RampartException("errorInSignatureWithX509Token", e);
+                }
+                sigValues.add(sig.getSignatureValue());
+            }
+        } 
+
+        return sigValues;
+            
+    }
+    
+    
+    protected byte[] doSignature(RampartMessageData rmd, Token policyToken, org.apache.rahas.Token tok, Vector sigParts) throws RampartException {
+        
+        Document doc = rmd.getDocument();
+        RampartPolicyData rpd = rmd.getPolicyData();
+        
+        if(policyToken.isDerivedKeys()) {
+            try {
+                WSSecDKSign dkSign = new WSSecDKSign();
+
+                OMElement ref = tok.getAttachedReference();
+                if(ref == null) {
+                    ref = tok.getUnattachedReference();
+                }
+                if(ref != null) {
+                    dkSign.setExternalKey(tok.getSecret(), (Element) 
+                            doc.importNode((Element) ref, true));
+                } else {
+                    dkSign.setExternalKey(tok.getSecret(), tok.getId());
+                }
+
+                //Set the algo info
+                dkSign.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
+                
+                
+                dkSign.prepare(doc);
+                
+                sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));                          
+                
+                if(rpd.isTokenProtection()) {
+                    sigParts.add(new WSEncryptionPart(tok.getId()));
+                }
+                
+                dkSign.setParts(sigParts);
+                
+                dkSign.addReferencesToSign(sigParts, rmd.getSecHeader());
+                
+                //Do signature
+                dkSign.computeSignature();
+                
+                //Add elements to header
+                this.setInsertionLocation(RampartUtil
+                        .insertSiblingAfter(this.getInsertionLocation(),
+                                dkSign.getdktElement()));
+
+                this.setInsertionLocation(RampartUtil.insertSiblingAfter(
+                        this.getInsertionLocation(), dkSign
+                                .getSignatureElement()));
+
+                return dkSign.getSignatureValue();
+                
+            } catch (ConversationException e) {
+                throw new RampartException(
+                        "errorInDerivedKeyTokenSignature", e);
+            } catch (WSSecurityException e) {
+                throw new RampartException(
+                        "errorInDerivedKeyTokenSignature", e);
+            }
+        } else {
+            //TODO :  Example SAMLTOken Signature
+            throw new UnsupportedOperationException("TODO");
+        }
     }
     
 }
