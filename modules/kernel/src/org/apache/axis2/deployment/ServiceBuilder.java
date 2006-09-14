@@ -163,6 +163,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
             excludeops.add("init");
             excludeops.add("setOperationContext");
+            excludeops.add("startUp");
             excludeops.add("destroy");
 
             //<schema targetNamespace="http://x.y.z"/>

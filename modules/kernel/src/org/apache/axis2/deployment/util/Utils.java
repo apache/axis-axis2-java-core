@@ -312,9 +312,6 @@ public class Utils {
                                                            TypeTable table) throws AxisFault {
         AxisOperation operation;
         String opName = jmethod.getSimpleName();
-        if ("init".equals(opName)) {
-            return null;
-        }
         if (jmethod.getReturnType().isVoidType()) {
             operation = AxisOperationFactory.getAxisOperation(WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY);
         } else {

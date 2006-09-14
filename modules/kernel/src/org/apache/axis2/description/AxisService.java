@@ -1269,6 +1269,7 @@ public class AxisService extends AxisDescription {
             excludeOpeartion.add("init");
             excludeOpeartion.add("setOperationContext");
             excludeOpeartion.add("destroy");
+            excludeOpeartion.add("startUp");
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
