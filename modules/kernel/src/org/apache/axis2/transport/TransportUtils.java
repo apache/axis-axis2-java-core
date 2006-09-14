@@ -169,14 +169,15 @@ public class TransportUtils {
 			InputStream inStream, String contentTypeString) throws OMException,
 			XMLStreamException, FactoryConfigurationError {
 		StAXBuilder builder = null;
-		
+
 		Object cacheAttachmentProperty = msgContext
 				.getProperty(Constants.Configuration.CACHE_ATTACHMENTS);
 		String cacheAttachmentString = null;
 		boolean fileCacheForAttachments;
 
-		if (cacheAttachmentProperty != null) {
-			cacheAttachmentString = (String)cacheAttachmentProperty;
+		if (cacheAttachmentProperty != null
+				&& cacheAttachmentProperty instanceof String) {
+			cacheAttachmentString = (String) cacheAttachmentProperty;
 			fileCacheForAttachments = (Constants.VALUE_TRUE
 					.equals(cacheAttachmentString));
 		} else {
@@ -187,7 +188,7 @@ public class TransportUtils {
 					: null;
 		}
 		fileCacheForAttachments = (Constants.VALUE_TRUE
-                .equals(cacheAttachmentString));
+				.equals(cacheAttachmentString)) ? true : false;
 
 		String attachmentRepoDir = null;
 		String attachmentSizeThreshold = null;
@@ -208,7 +209,8 @@ public class TransportUtils {
 
 			Object attachmentSizeThresholdProperty = msgContext
 					.getProperty(Constants.Configuration.FILE_SIZE_THRESHOLD);
-			if (attachmentSizeThresholdProperty != null) {
+			if (attachmentSizeThresholdProperty != null
+					&& attachmentSizeThresholdProperty instanceof String) {
 				attachmentSizeThreshold = (String) attachmentSizeThresholdProperty;
 			} else {
 				Parameter attachmentSizeThresholdParameter = msgContext
@@ -243,7 +245,7 @@ public class TransportUtils {
         * Leaving this out for backword compatibility with 1.0
         */
         msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
-
+        
         /*
          * Setting the Attachments map to new SwA API
          */
