@@ -132,7 +132,7 @@ public class RahasData {
          * we will not be encrypting the response
          */
 
-        Vector results = null;
+        Vector results;
         if ((results = (Vector) this.inMessageContext
                 .getProperty(WSHandlerConstants.RECV_RESULTS)) == null) {
             throw new TrustException(TrustException.REQUEST_FAILED);
@@ -198,22 +198,21 @@ public class RahasData {
     private void processRequestType() throws TrustException {
         OMElement reqTypeElem = this.rstElement
                 .getFirstChildWithName(new QName(this.wstNs,
-                                                 RahasConstants.IssuanceBindingLocalNames.REQUEST_TYPE));
+                                                 RahasConstants.LocalNames.REQUEST_TYPE));
 
-        if (reqTypeElem == null
-            || (reqTypeElem != null && reqTypeElem.getText() != null && ""
-                .equals(reqTypeElem.getText().trim()))) {
+        if (reqTypeElem == null ||
+            reqTypeElem.getText() == null ||
+            reqTypeElem.getText().trim().length() == 0) {
             throw new TrustException(TrustException.INVALID_REQUEST);
         } else {
             this.requestType = reqTypeElem.getText().trim();
         }
-
     }
 
     private void processTokenType() {
         OMElement tokTypeElem = this.rstElement
                 .getFirstChildWithName(new QName(this.wstNs,
-                                                 RahasConstants.IssuanceBindingLocalNames.TOKEN_TYPE));
+                                                 RahasConstants.LocalNames.TOKEN_TYPE));
 
         if (tokTypeElem != null && tokTypeElem.getText() != null
             && !"".equals(tokTypeElem.getText().trim())) {

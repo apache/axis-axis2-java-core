@@ -82,7 +82,7 @@ public class RahasSAMLTokenUTForBearerV1205Test extends TestClient {
 
     public void validateRsponse(OMElement resp) {
         OMElement rstr = resp.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12,
-                                                              RahasConstants.IssuanceBindingLocalNames.
+                                                              RahasConstants.LocalNames.
                                                                       REQUEST_SECURITY_TOKEN_RESPONSE));
         assertNotNull("RequestedSecurityToken missing", rstr);
         OMElement rst = rstr.getFirstChildWithName(new QName(RahasConstants.WST_NS_05_12,

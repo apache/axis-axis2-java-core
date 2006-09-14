@@ -18,6 +18,7 @@ package org.apache.rahas.client;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.util.Base64;
@@ -89,11 +90,8 @@ public class STSClient {
      * Default is 300 seconds (5 mins)
      */
     private int ttl = 300;
-
     private Crypto crypto;
-
     private CallbackHandler cbHandler;
-
     private ConfigurationContext configCtx;
 
     public STSClient(ConfigurationContext configCtx) throws TrustException {
@@ -122,7 +120,7 @@ public class STSClient {
             OMElement response = client.sendReceive(rstQn,
                                                     createIssueRequest(requestType, appliesTo));
 
-            return this.processIssueResponse(version, response);
+            return processIssueResponse(version, response);
         } catch (AxisFault e) {
             log.error("errorInObtainingToken", e);
             throw new TrustException("errorInObtainingToken", new String[]{issuerAddress});
@@ -144,9 +142,7 @@ public class STSClient {
             String requestType =
                     TrustUtil.getWSTNamespace(version) + RahasConstants.REQ_TYPE_CANCEL;
             ServiceClient client = getServiceClient(rstQn, issuerAddress);
-
-            return processCancelResponse(version,
-                                         client.sendReceive(rstQn,
+            return processCancelResponse(client.sendReceive(rstQn,
                                                             createCancelRequest(requestType,
                                                                                 tokenId)));
         } catch (AxisFault e) {
@@ -191,8 +187,7 @@ public class STSClient {
         //Get the RequestedAttachedReference
         OMElement reqAttElem = rstr.getFirstChildWithName(new QName(
                 ns, RahasConstants.IssuanceBindingLocalNames.REQUESTED_ATTACHED_REFERENCE));
-        OMElement reqAttRef = reqAttElem == null ? null : reqAttElem
-                .getFirstElement();
+        OMElement reqAttRef = reqAttElem == null ? null : reqAttElem.getFirstElement();
 
         //Get the RequestedUnattachedReference
         OMElement reqUnattElem =
@@ -230,7 +225,7 @@ public class STSClient {
         //Handle proof token
         OMElement rpt =
                 rstr.getFirstChildWithName(new QName(ns,
-                                                     RahasConstants.IssuanceBindingLocalNames.
+                                                     RahasConstants.LocalNames.
                                                              REQUESTED_PROOF_TOKEN));
 
         byte[] secret = null;
@@ -241,7 +236,7 @@ public class STSClient {
                 throw new TrustException("invalidRPT");
             }
             if (child.getQName().equals(new QName(ns,
-                                                  RahasConstants.IssuanceBindingLocalNames.
+                                                  RahasConstants.LocalNames.
                                                           BINARY_SECRET))) {
                 //First check for the binary secret
                 String b64Secret = child.getText();
@@ -307,9 +302,15 @@ public class STSClient {
         return token;
     }
 
-    private boolean processCancelResponse(int version, OMElement response) throws TrustException {
-        //TODO: impl
-        return false;
+    private boolean processCancelResponse(OMElement response) {
+        /*
+        <wst:RequestSecurityTokenResponse>
+            <wst:RequestedTokenCancelled/>
+        </wst:RequestSecurityTokenResponse>
+        */
+        return response.
+                getFirstChildWithName(new QName(RahasConstants.
+                        CancelBindingLocalNames.REQUESTED_TOKEN_CANCELED)) != null;
     }
 
     /**
@@ -489,26 +490,8 @@ public class STSClient {
 
     private OMElement createCancelRequest(String requestType,
                                           String tokenId) throws TrustException {
-        /*
-       <wst:RequestSecurityToken>
-            <wst:RequestType>
-            http://schemas.xmlsoap.org/ws/2005/02/trust/Cancel
-            </wst:RequestType>
-            <wst:CancelTarget>
-                    <o:SecurityTokenReference
-                         xmlns:o="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-                      <o:Reference URI="urn:uuid:8e6a3a95-fd1b-4c24-96d4-28e875025ff7"
-                                   ValueType="http://schemas.xmlsoap.org/ws/2005/02/sc/sct" />
-                    </o:SecurityTokenReference>
-            </wst:CancelTarget>
-        </wst:RequestSecurityToken>
-        */
-        OMElement rst = TrustUtil.createRequestSecurityTokenElement(version);
-        TrustUtil.createRequestTypeElement(this.version, rst, requestType);
-        OMElement cancelTargetEle = TrustUtil.createCancelTargetElement(this.version, rst);
 
-        // TODO: add SecurityTokenReference to cancelTargetEle
-        return rst;
+        return TrustUtil.createCancelRequest(requestType, tokenId, version);
     }
 
     /**

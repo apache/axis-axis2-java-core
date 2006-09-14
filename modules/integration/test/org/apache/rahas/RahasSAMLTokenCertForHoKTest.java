@@ -76,7 +76,7 @@ public class RahasSAMLTokenCertForHoKTest extends TestClient {
             Axis2Util.useDOOM(false);
             StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
                     .getPullParser(new QName(RahasConstants.WST_NS_05_02,
-                            RahasConstants.IssuanceBindingLocalNames.REQUEST_SECURITY_TOKEN))));
+                            RahasConstants.LocalNames.REQUEST_SECURITY_TOKEN))));
 
             OMElement rstElem = builder.getDocumentElement();
 

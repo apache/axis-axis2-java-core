@@ -39,6 +39,9 @@ import java.text.DateFormat;
 import java.util.Date;
 
 public class TrustUtil {
+    private static final String WSSE_NAMESPACE_URI =
+            "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
+    private static final String WSSE_PREFIX = "wsse";
 
     /**
      * Create a wsse:Reference element with the given uri and the value type
@@ -67,7 +70,7 @@ public class TrustUtil {
                                                       OMElement parent) throws TrustException {
         return createOMElement(parent,
                                getWSTNamespace(version),
-                               RahasConstants.IssuanceBindingLocalNames.REQUEST_SECURITY_TOKEN_RESPONSE,
+                               RahasConstants.LocalNames.REQUEST_SECURITY_TOKEN_RESPONSE,
                                RahasConstants.WST_PREFIX);
     }
 
@@ -76,7 +79,7 @@ public class TrustUtil {
                                                                 OMElement parent) throws TrustException {
         String ns = getWSTNamespace(version);
         return createOMElement(parent, ns,
-                               RahasConstants.IssuanceBindingLocalNames.
+                               RahasConstants.LocalNames.
                                        REQUEST_SECURITY_TOKEN_RESPONSE_COLLECTION,
                                RahasConstants.WST_PREFIX);
     }
@@ -93,7 +96,7 @@ public class TrustUtil {
         String ns = getWSTNamespace(version);
         OMFactory fac = OMAbstractFactory.getOMFactory();
         return fac.
-                createOMElement(RahasConstants.IssuanceBindingLocalNames.REQUEST_SECURITY_TOKEN,
+                createOMElement(RahasConstants.LocalNames.REQUEST_SECURITY_TOKEN,
                                 ns,
                                 RahasConstants.WST_PREFIX);
     }
@@ -102,7 +105,7 @@ public class TrustUtil {
             int version, OMElement parent) throws TrustException {
         String ns = getWSTNamespace(version);
         return createOMElement(parent, ns,
-                               RahasConstants.IssuanceBindingLocalNames.REQUESTED_PROOF_TOKEN,
+                               RahasConstants.LocalNames.REQUESTED_PROOF_TOKEN,
                                RahasConstants.WST_PREFIX);
     }
 
@@ -129,7 +132,7 @@ public class TrustUtil {
 
         OMElement elem = createOMElement(parent,
                                          ns,
-                                         RahasConstants.IssuanceBindingLocalNames.REQUEST_TYPE,
+                                         RahasConstants.LocalNames.REQUEST_TYPE,
                                          RahasConstants.WST_PREFIX);
 
         if (RahasConstants.REQ_TYPE_ISSUE.equals(value)
@@ -148,7 +151,7 @@ public class TrustUtil {
                                                    OMElement parent) throws TrustException {
         return createOMElement(parent,
                                getWSTNamespace(version),
-                               RahasConstants.IssuanceBindingLocalNames.TOKEN_TYPE,
+                               RahasConstants.LocalNames.TOKEN_TYPE,
                                RahasConstants.WST_PREFIX);
     }
 
@@ -156,7 +159,7 @@ public class TrustUtil {
                                                     OMElement parent) throws TrustException {
         return createOMElement(parent,
                                getWSTNamespace(version),
-                               RahasConstants.IssuanceBindingLocalNames.TOKEN_TYPE,
+                               RahasConstants.LocalNames.TOKEN_TYPE,
                                RahasConstants.WST_PREFIX);
     }
 
@@ -166,7 +169,7 @@ public class TrustUtil {
             String type) throws TrustException {
         String ns = getWSTNamespace(version);
         OMElement elem = createOMElement(parent, ns,
-                                         RahasConstants.IssuanceBindingLocalNames.BINARY_SECRET,
+                                         RahasConstants.LocalNames.BINARY_SECRET,
                                          RahasConstants.WST_PREFIX);
         if (type != null) {
             elem.addAttribute(elem.getOMFactory().createOMAttribute(
@@ -441,5 +444,42 @@ public class TrustUtil {
                                RahasConstants.CancelBindingLocalNames.CANCEL_TARGET,
                                RahasConstants.WST_PREFIX);
 
+    }
+
+    public static OMElement createCancelRequest(String requestType,
+                                                String tokenId,
+                                                int version) throws TrustException {
+        /*
+       <wst:RequestSecurityToken>
+            <wst:RequestType>
+            http://schemas.xmlsoap.org/ws/2005/02/trust/Cancel
+            </wst:RequestType>
+            <wst:CancelTarget>
+                    <o:SecurityTokenReference
+                         xmlns:o="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+                      <o:Reference URI="urn:uuid:8e6a3a95-fd1b-4c24-96d4-28e875025ff7"
+                                   ValueType="http://schemas.xmlsoap.org/ws/2005/02/sc/sct" />
+                    </o:SecurityTokenReference>
+            </wst:CancelTarget>
+        </wst:RequestSecurityToken>
+        */
+        OMElement rst = TrustUtil.createRequestSecurityTokenElement(version);
+        TrustUtil.createRequestTypeElement(version, rst, requestType);
+        OMElement cancelTargetEle = TrustUtil.createCancelTargetElement(version, rst);
+        OMFactory factory = DOOMAbstractFactory.getOMFactory();
+        OMElement secTokenRefEle =
+                factory.createOMElement(RahasConstants.CancelBindingLocalNames.SECURITY_TOKEN_REF,
+                                        WSSE_NAMESPACE_URI,
+                                        WSSE_PREFIX);
+        OMElement refEle =
+                factory.createOMElement(RahasConstants.CancelBindingLocalNames.REFERENCE,
+                                        WSSE_NAMESPACE_URI,
+                                        WSSE_PREFIX);
+        refEle.addAttribute(factory.createOMAttribute(RahasConstants.CancelBindingLocalNames.URI,
+                                                      null, tokenId));
+        secTokenRefEle.addChild(refEle);
+        cancelTargetEle.addChild(secTokenRefEle);
+
+        return rst;
     }
 }

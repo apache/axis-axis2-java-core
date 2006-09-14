@@ -37,73 +37,74 @@ public class RahasConstants {
     public final static String WSP_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     public final static String WSP_PREFIX = "wsp";
 
-    public static class IssuanceBindingLocalNames {
-        public final static String REQUEST_TYPE = "RequestType";
-        public final static String TOKEN_TYPE = "TokenType";
-        public final static String REQUEST_SECURITY_TOKEN = "RequestSecurityToken";
-        public static final String REQUESTED_PROOF_TOKEN = "RequestedProofToken";
+    public static class LocalNames {
+        public static final String REQUEST_SECURITY_TOKEN = "RequestSecurityToken";
         public static final String REQUEST_SECURITY_TOKEN_RESPONSE = "RequestSecurityTokenResponse";
+        public static final String REQUEST_TYPE = "RequestType";
+        public static final String TOKEN_TYPE = "TokenType";
+        public static final String REQUESTED_PROOF_TOKEN = "RequestedProofToken";
         public static final String
                 REQUEST_SECURITY_TOKEN_RESPONSE_COLLECTION = "RequestSecurityTokenResponseCollection";
-        public static final String REQUESTED_SECURITY_TOKEN = "RequestedSecurityToken";
         public final static String BINARY_SECRET = "BinarySecret";
-        public final static String COMPUTED_KEY_ALGO = "ComputedKeyAlgorithm";
-        public final static String COMPUTED_KEY = "ComputedKey";
-        public final static String REQUESTED_ATTACHED_REFERENCE = "RequestedAttachedReference";
-        public final static String REQUESTED_UNATTACHED_REFERENCE = "RequestedUnattachedReference";
-        public final static String KEY_SIZE = "KeySize";
-        public final static String KEY_TYPE = "KeyType";
-        public final static String ENTROPY = "Entropy";
-        public final static String APPLIES_TO = "AppliesTo";
-        public final static String LIFETIME = "Lifetime";
+    }
+
+    public static class IssuanceBindingLocalNames {
+        public static final String REQUESTED_SECURITY_TOKEN = "RequestedSecurityToken";
+        public static final String COMPUTED_KEY_ALGO = "ComputedKeyAlgorithm";
+        public static final String COMPUTED_KEY = "ComputedKey";
+        public static final String REQUESTED_ATTACHED_REFERENCE = "RequestedAttachedReference";
+        public static final String REQUESTED_UNATTACHED_REFERENCE = "RequestedUnattachedReference";
+        public static final String KEY_SIZE = "KeySize";
+        public static final String KEY_TYPE = "KeyType";
+        public static final String ENTROPY = "Entropy";
+        public static final String APPLIES_TO = "AppliesTo";
+        public static final String LIFETIME = "Lifetime";
     }
 
     public static class CancelBindingLocalNames {
-        public final static String REQUESTED_TOKEN_CANCELED = "RequestedTokenCancelled";
-        public final static String CANCEL_TARGET = "CancelTarget";
-        public final static String SECURITY_TOKEN_REF = "SecurityTokenReference";
-        public final static String REFERENCE = "Reference";
-        public final static String URI = "URI";
+        public static final String REQUESTED_TOKEN_CANCELED = "RequestedTokenCancelled";
+        public static final String CANCEL_TARGET = "CancelTarget";
+        public static final String SECURITY_TOKEN_REF = "SecurityTokenReference";
+        public static final String REFERENCE = "Reference";
+        public static final String URI = "URI";
     }
 
     //Key types
-    public final static String KEY_TYPE_SYMM_KEY = "/SymmetricKey";
-    public final static String KEY_TYPE_PUBLIC_KEY = "/PublicKey";
-    public final static String KEY_TYPE_BEARER = "/Bearer";
+    public static final String KEY_TYPE_SYMM_KEY = "/SymmetricKey";
+    public static final String KEY_TYPE_PUBLIC_KEY = "/PublicKey";
+    public static final String KEY_TYPE_BEARER = "/Bearer";
 
     //Attr values
-    public final static String BIN_SEC_TYPE_NONCE = "/Nonce";
+    public static final String BIN_SEC_TYPE_NONCE = "/Nonce";
 
     //ComputedKey algos
-    public final static String COMPUTED_KEY_PSHA1 = "/CK/PSHA1";
+    public static final String COMPUTED_KEY_PSHA1 = "/CK/PSHA1";
 
     //  RequestTypes
-    public final static String REQ_TYPE_ISSUE = "/Issue";
-    public final static String REQ_TYPE_VALIDATE = "/Validate";
-    public final static String REQ_TYPE_RENEW = "/Renew";
-    public final static String REQ_TYPE_CANCEL = "/Cancel";
+    public static final String REQ_TYPE_ISSUE = "/Issue";
+    public static final String REQ_TYPE_VALIDATE = "/Validate";
+    public static final String REQ_TYPE_RENEW = "/Renew";
+    public static final String REQ_TYPE_CANCEL = "/Cancel";
 
     //RST actions
-    public final static String RST_ACTION_ISSUE = "/RST" + REQ_TYPE_ISSUE;
-    public final static String RST_ACTOIN_VALIDATE = "/RST" + REQ_TYPE_VALIDATE;
-    public final static String RST_ACTOIN_RENEW = "/RST" + REQ_TYPE_RENEW;
-    public final static String RST_ACTION_CANCEL = "/RST" + REQ_TYPE_CANCEL;
-    public final static String RST_ACTION_SCT = "/RST/SCT";
+    public static final String RST_ACTION_ISSUE = "/RST" + REQ_TYPE_ISSUE;
+    public static final String RST_ACTOIN_VALIDATE = "/RST" + REQ_TYPE_VALIDATE;
+    public static final String RST_ACTOIN_RENEW = "/RST" + REQ_TYPE_RENEW;
+    public static final String RST_ACTION_CANCEL = "/RST" + REQ_TYPE_CANCEL;
+    public static final String RST_ACTION_SCT = "/RST/SCT";
 
     //RSTR actions
-    public final static String RSTR_ACTON_ISSUE = "/RSTR" + REQ_TYPE_ISSUE;
-    public final static String RSTR_ACTON_VALIDATE = "/RSTR" + REQ_TYPE_VALIDATE;
-    public final static String RSTR_ACTON_RENEW = "/RSTR" + REQ_TYPE_RENEW;
-    public final static String RSTR_ACTION_CANCEL = "/RSTR" + REQ_TYPE_CANCEL;
-    public final static String RSTR_ACTON_SCT = "/RSTR/SCT";
+    public static final String RSTR_ACTON_ISSUE = "/RSTR" + REQ_TYPE_ISSUE;
+    public static final String RSTR_ACTON_VALIDATE = "/RSTR" + REQ_TYPE_VALIDATE;
+    public static final String RSTR_ACTON_RENEW = "/RSTR" + REQ_TYPE_RENEW;
+    public static final String RSTR_ACTION_CANCEL = "/RSTR" + REQ_TYPE_CANCEL;
+    public static final String RSTR_ACTON_SCT = "/RSTR/SCT";
 
 
     //Token types
-    public final static String TOK_TYPE_SAML_10 = "http://docs.oasis-open.org/wss/" +
+    public static final String TOK_TYPE_SAML_10 = "http://docs.oasis-open.org/wss/" +
                                                   "oasis-wss-saml-token-profile-1.1#SAMLV1.1";
 
     //Attrs
-    public final static String ATTR_TYPE = "Type";
-
-
+    public static final String ATTR_TYPE = "Type";
 }

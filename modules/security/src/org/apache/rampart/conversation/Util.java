@@ -114,7 +114,8 @@ public class Util {
         // Process RequestedProofToken and extract the secret
         byte[] secret = null;
         OMElement rpt = rstr.getFirstChildWithName(new QName(ns,
-                                                             RahasConstants.IssuanceBindingLocalNames.REQUESTED_PROOF_TOKEN));
+                                                             RahasConstants.LocalNames.
+                                                                     REQUESTED_PROOF_TOKEN));
         if (rpt != null) {
             OMElement elem = rpt.getFirstElement();
 
@@ -127,9 +128,8 @@ public class Util {
                                       getCallbackHandlerInstance(config), null, new Vector(),
                                       null);
                 secret = processor.getDecryptedBytes();
-            } else if (RahasConstants.IssuanceBindingLocalNames.
-                    BINARY_SECRET.equals(elem.getLocalName())
-                       && RahasConstants.WST_NS_05_02.equals(elem.getNamespace().getNamespaceURI()))
+            } else if (RahasConstants.LocalNames.BINARY_SECRET.equals(elem.getLocalName()) &&
+                       RahasConstants.WST_NS_05_02.equals(elem.getNamespace().getNamespaceURI()))
             {
                 // Handle the wst:BinarySecret case
                 secret = Base64.decode(elem.getText());
