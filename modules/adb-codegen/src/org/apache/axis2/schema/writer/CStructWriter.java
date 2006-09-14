@@ -53,6 +53,7 @@ public class CStructWriter implements BeanWriter {
 
     private Map modelMap = new HashMap();
     private static final String DEFAULT_PACKAGE = "adb";
+    private static final String DEFAULT_C_CLASS_NAME = "axiom_node_t*";
 
     private Map baseTypeMap = new JavaTypeMap().getTypeMap();
 
@@ -305,8 +306,9 @@ public class CStructWriter implements BeanWriter {
             BeanWriterMetaInfoHolder metainf, ArrayList propertyNames, Map typeMap
     ) throws SchemaCompilationException {
 
-        Element rootElt = XSLTUtils.getElement(model, "bean");
+        Element rootElt = XSLTUtils.getElement(model, "class");
         XSLTUtils.addAttribute(model, "name", className, rootElt);
+        XSLTUtils.addAttribute(model, "caps-name", className.toUpperCase(), rootElt);
         XSLTUtils.addAttribute(model, "originalName", originalName, rootElt);
         XSLTUtils.addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
         XSLTUtils.addAttribute(model, "nsprefix", getPrefixForURI(qName.getNamespaceURI(), qName.getPrefix()), rootElt);
@@ -405,39 +407,39 @@ public class CStructWriter implements BeanWriter {
 
             XSLTUtils.addAttribute(model, "name", xmlName, property);
 
+
             XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(), property);
-            String javaName = makeUniqueCStructName(propertyNames, xmlName);
-            XSLTUtils.addAttribute(model, "javaname", javaName, property);
+            XSLTUtils.addAttribute(model, "prefix", name.getPrefix(), property);
 
-            String javaClassNameForElement = metainf.getClassNameForQName(name);
+            String CName = xmlName;//makeUniqueCStructName(propertyNames, xmlName);
+            XSLTUtils.addAttribute(model, "cname", CName, property);
 
-            if (javaClassNameForElement == null) {
-                throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.typeMissing", name.toString()));
+
+            String CClassNameForElement = metainf.getClassNameForQName(name);
+
+            if (CClassNameForElement == null) {
+                CClassNameForElement = CStructWriter.DEFAULT_C_CLASS_NAME;
             }
+            CClassNameForElement=   getShortTypeName(CClassNameForElement);
 
-            int arrayBracketIndex = -1;
-            arrayBracketIndex = javaClassNameForElement.indexOf('[');
-            if (  arrayBracketIndex > 0) {
-                javaClassNameForElement = javaClassNameForElement.substring(0, arrayBracketIndex );
-            }
 
-            XSLTUtils.addAttribute(model, "type", javaClassNameForElement, property);
+            XSLTUtils.addAttribute(model, "type", CClassNameForElement, property);
 
 
             /**
              * Caps for use in C macros
              */
-            XSLTUtils.addAttribute(model, "caps-name", xmlName.toUpperCase(), property);
-            XSLTUtils.addAttribute(model, "caps-type", javaClassNameForElement.toUpperCase(), property);
+            XSLTUtils.addAttribute(model, "caps-cname", CName.toUpperCase(), property);
+            XSLTUtils.addAttribute(model, "caps-type", CClassNameForElement.toUpperCase(), property);
 
-            if (PrimitiveTypeFinder.isPrimitive(javaClassNameForElement)){
+            if (PrimitiveTypeFinder.isPrimitive(CClassNameForElement)){
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
             }
             //add an attribute that says the type is default
-            if (isDefault(javaClassNameForElement)){
+            if (isDefault(CClassNameForElement)){
                 XSLTUtils.addAttribute(model, "default", "yes", property);
             }
-
+            
             if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
                 XSLTUtils.addAttribute(model, "ours", "yes", property);
             }
@@ -456,10 +458,10 @@ public class CStructWriter implements BeanWriter {
                 if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))){
                     shortTypeName= metainf.getSchemaQNameForQName(name).getLocalPart();
                 }else{
-                    shortTypeName =  getShortTypeName(javaClassNameForElement);
+                    shortTypeName =  getShortTypeName(CClassNameForElement);
                 }
             }else{
-                shortTypeName =  getShortTypeName(javaClassNameForElement);
+                shortTypeName =  getShortTypeName(CClassNameForElement);
             }
             XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
 
@@ -496,15 +498,15 @@ public class CStructWriter implements BeanWriter {
                 XSLTUtils.addAttribute(
                         model,
                         "arrayBaseType",
-                        javaClassNameForElement,
+                        CClassNameForElement,
                         property);
 
                 long maxOccurs = metainf.getMaxOccurs(name);
                 if (maxOccurs == Long.MAX_VALUE) {
                     XSLTUtils.addAttribute(model, "unbound", "yes", property);
-                } else {
-                    XSLTUtils.addAttribute(model, "maxOccurs", maxOccurs + "", property);
                 }
+                XSLTUtils.addAttribute(model, "maxOccurs", maxOccurs + "", property);
+
             }
         }
     }
@@ -682,8 +684,7 @@ public class CStructWriter implements BeanWriter {
         if (typeClassName.endsWith("[]")){
             typeClassName = typeClassName.substring(0,typeClassName.lastIndexOf("["));
         }
-
-        return typeClassName.substring(typeClassName.lastIndexOf(".")+1, typeClassName.length());
+        return typeClassName;
 
     }
 

@@ -19,21 +19,35 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.*;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.AxisMessage;
+import org.apache.ws.policy.Policy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 
 public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
-    protected static final String C_PREFIX ="axis2_";
-    protected static final String C_STUB_SUFFIX = "_stub";
+    protected static final String C_STUB_PREFIX = "axis2_stub_";
+    protected static final String C_SKEL_PREFIX = "axis2_skel_";
+    protected static final String C_SVC_SKEL_PREFIX = "axis2_svc_skel_";
+    protected static final String C_STUB_SUFFIX = "";
     protected static final String C_SKEL_SUFFIX = "";
-    protected static final String C_SVC_SKEL_SUFFIX = "_svc_skeleton";
+    protected static final String C_SVC_SKEL_SUFFIX = "";
+
+    protected static final String JAVA_DEFAULT_TYPE = "org.apache.axiom.om.OMElement";
+    protected static final String C_DEFAULT_TYPE = "axiom_node_t*";
+
+    protected static final String C_OUR_TYPE_PREFIX = "axis2_";
+    protected static final String C_OUR_TYPE_SUFFIX = "_t*";
     /**
      * Emit the stub
      *
@@ -43,9 +57,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         try {
             // write interface implementations
-            writeCStubSource();
-
-            writeCStubHeader();
+            writeCStub();
 
 
         } catch (Exception e) {
@@ -62,8 +74,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     public void emitSkeleton() throws CodeGenerationException {
         try {
              // write skeleton
-            writeCSkelSource();
-            writeCSkelHeader();
+            writeCSkel();
 
             // write a Service Skeleton for this particular service.
             writeCServiceSkeleton();
@@ -77,11 +88,11 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     }
 
     /**
-     * Writes the Stub header.
+     * Writes the Stub.
      *
      * @throws Exception
      */
-    protected void writeCStubHeader() throws Exception {
+    protected void writeCStub() throws Exception {
 
         // first check for the policies in this service and write them
         Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
@@ -91,17 +102,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerHStub);
-    }
 
-    /**
-     * Writes the Stub source.
-     *
-     * @throws Exception
-     */
-    protected void writeCStubSource() throws Exception {
-
-        // first check for the policies in this service and write them
-        Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
 
         CStubSourceWriter writerCStub =
                 new CStubSourceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), "src"),
@@ -110,12 +111,14 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         writeClass(interfaceImplModel, writerCStub);
     }
 
+
+
     /**
-     * Writes the Skel header.
+     * Writes the Skel.
      *
      * @throws Exception
      */
-    protected void writeCSkelHeader() throws Exception {
+    protected void writeCSkel() throws Exception {
 
         Document skeletonModel = createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
 
@@ -124,22 +127,13 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 "src"), this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriter);
-    }
-
-    /**
-     * Writes the Skel source.
-     *
-     * @throws Exception
-     */
-    protected void writeCSkelSource() throws Exception {
-
-        Document skeletonModel = createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
 
         CSkelSourceWriter skeletonWriterStub = new CSkelSourceWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
                 "src"), this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriterStub);
     }
+
     /**
      * @throws Exception
      */
@@ -175,17 +169,21 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
      */
     protected Document createDOMDocumentForInterfaceImplementation() throws Exception {
 
-        String localPart = makeJavaClassName(axisService.getName());
-        String stubName = C_PREFIX + localPart + C_STUB_SUFFIX;
+        String serviceName = axisService.getName();
+        String serviceTns = axisService.getTargetNamespace();
+        String serviceCName = makeCClassName(axisService.getName());
+        String stubName = C_STUB_PREFIX + serviceCName + C_STUB_SUFFIX;
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
 
         addAttribute(doc, "name", stubName, rootElement);
-        addAttribute(doc, "servicename", localPart, rootElement);
+        addAttribute( doc,"prefix", stubName, rootElement); //prefix to be used by the functions
+        addAttribute(doc, "qname", serviceName + "|" + serviceTns, rootElement);
+        addAttribute(doc, "servicename", serviceCName, rootElement);
         addAttribute(doc, "package", "", rootElement);
 
-        addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
-        addAttribute(doc, "interfaceName", localPart, rootElement);
+        addAttribute(doc, "namespace", serviceTns, rootElement);
+        addAttribute(doc, "interfaceName", serviceCName, rootElement);
 
         /* The following block of code is same as for the
          * AxisServiceBasedMultiLanguageEmitter createDOMDocumentForInterfaceImplementation()
@@ -251,12 +249,17 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
 
-        String localPart = makeJavaClassName(axisService.getName());
-        String skelName = C_PREFIX + localPart + C_SKEL_SUFFIX;
+        String serviceCName = makeCClassName(axisService.getName());
+        String skelName = C_SKEL_PREFIX + serviceCName + C_SKEL_SUFFIX;
 
         // only the name is used
         addAttribute(doc, "name", skelName , rootElement);
         addAttribute(doc, "package", "", rootElement);
+        String serviceName = axisService.getName();
+        String serviceTns = axisService.getTargetNamespace();
+        addAttribute( doc,"prefix", skelName, rootElement); //prefix to be used by the functions
+        addAttribute(doc, "qname", serviceName + "|" + serviceTns, rootElement);
+
 
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
@@ -273,13 +276,19 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
 
-        String localPart = makeJavaClassName(axisService.getName());
-        String svcSkelName = C_PREFIX + localPart + C_SVC_SKEL_SUFFIX;
-        String skelName = C_PREFIX + localPart + C_SKEL_SUFFIX;
+        String localPart = makeCClassName(axisService.getName());
+        String svcSkelName = C_SVC_SKEL_PREFIX + localPart + C_SVC_SKEL_SUFFIX;
+        String skelName = C_SKEL_PREFIX + localPart + C_SKEL_SUFFIX;
 
         // only the name is used
         addAttribute(doc, "name", svcSkelName , rootElement);
+        addAttribute(doc, "prefix", svcSkelName , rootElement); //prefix to be used by the functions
+        String serviceName = axisService.getName();
+        String serviceTns = axisService.getTargetNamespace();
+        addAttribute(doc, "qname", serviceName + "|" + serviceTns, rootElement);
+
         addAttribute(doc, "svcname", skelName , rootElement);
+        addAttribute(doc, "svcop_prefix", skelName , rootElement);
         addAttribute(doc, "package", "", rootElement);
 
         fillSyncAttributes(doc, rootElement);
@@ -287,7 +296,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
         // add SOAP version
         addSoapVersion(doc, rootElement);
-        
+
         //attach a list of faults
         rootElement.appendChild(getUniqueListofFaults(doc));
 
@@ -300,69 +309,307 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
      * @param word
      * @return Returns character removed string.
      */
-    protected String makeJavaClassName(String word) {
+    protected String makeCClassName(String word) {
         //currently avoid only java key words
+
         if (JavaUtils.isJavaKeyword(word)) {
             return JavaUtils.makeNonJavaKeyword(word);
         }
         return word;
     }
 
-    /**
-     * @param doc
-     * @param operation
-     * @param param
-     */
-    protected void  addOursAttri (Document doc, AxisOperation operation, Element param ){
 
+    /**
+     * Loads the operations
+     * @param doc
+     * @param rootElement
+     * @param mep
+     * @return operations found
+     */
+    protected boolean loadOperations(Document doc, Element rootElement, String mep) {
+        Element methodElement;
+        String portTypeName = makeJavaClassName(axisService.getName());
+
+        Iterator operations = axisService.getOperations();
+        boolean opsFound = false;
+        while (operations.hasNext()) {
+            AxisOperation axisOperation = (AxisOperation) operations.next();
+
+            // populate info holder with mep information. This will used in determining which
+            // message receiver to use, etc.,
+
+            String messageExchangePattern = axisOperation.getMessageExchangePattern();
+            if (infoHolder.get(messageExchangePattern) == null) {
+                infoHolder.put(messageExchangePattern, Boolean.TRUE);
+            }
+
+            if (mep == null) {
+
+                opsFound = true;
+
+                List soapHeaderInputParameterList = new ArrayList();
+                List soapHeaderOutputParameterList = new ArrayList();
+
+                methodElement = doc.createElement("method");
+
+                String localPart = axisOperation.getName().getLocalPart();
+                String opCName = makeCClassName(localPart);
+                String opNS = axisOperation.getName().getNamespaceURI();
+
+                addAttribute(doc, "name", opCName, methodElement);
+                addAttribute(doc, "localpart", localPart, methodElement);
+                addAttribute(doc, "qname", localPart+ "|"+ opNS, methodElement);
+
+                addAttribute(doc, "namespace", opNS, methodElement);
+                String style = axisOperation.getStyle();
+                addAttribute(doc, "style", style, methodElement);
+                addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                        methodElement);
+
+
+                addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
+                addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
+
+
+                addSOAPAction(doc, methodElement, axisOperation);
+                //add header ops for input
+                addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
+                //add header ops for output
+                addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
+
+                PolicyInclude policyInclude = axisOperation.getPolicyInclude();
+                Policy policy = policyInclude.getPolicy();
+                if (policy != null) {
+                    addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
+                }
+
+                methodElement.appendChild(getInputElement(doc, axisOperation, soapHeaderInputParameterList));
+                methodElement.appendChild(getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
+                methodElement.appendChild(getFaultElement(doc, axisOperation));
+
+                rootElement.appendChild(methodElement);
+            } else {
+                //mep is present - we move ahead only if the given mep matches the mep of this operation
+
+                if (mep.equals(axisOperation.getMessageExchangePattern())) {
+                    //at this point we know it's true
+                    opsFound = true;
+                    List soapHeaderInputParameterList = new ArrayList();
+                    List soapHeaderOutputParameterList = new ArrayList();
+                    methodElement = doc.createElement("method");
+                    String localPart = axisOperation.getName().getLocalPart();
+                    String opCName = makeCClassName(localPart);
+                    String opNS = axisOperation.getName().getNamespaceURI();
+
+                    addAttribute(doc, "name", opCName, methodElement);
+                    addAttribute(doc, "localpart", localPart, methodElement);
+                    addAttribute(doc, "qname", localPart+ "|"+ opNS, methodElement);
+
+                    addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
+                    addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
+                    addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                            methodElement);
+
+                    addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
+                    addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
+
+
+                    addSOAPAction(doc, methodElement, axisOperation);
+                    addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
+                    addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
+
+                    /*
+                     * Setting the policy of the operation
+                     */
+
+                    Policy policy = axisOperation.getPolicyInclude().getPolicy();
+                    if (policy != null) {
+                        addAttribute(doc, "policy",
+                                PolicyUtil.getPolicyAsString(policy),
+                                methodElement);
+                    }
+
+
+                    methodElement.appendChild(getInputElement(doc,
+                            axisOperation, soapHeaderInputParameterList));
+                    methodElement.appendChild(getOutputElement(doc,
+                            axisOperation, soapHeaderOutputParameterList));
+                    methodElement.appendChild(getFaultElement(doc,
+                            axisOperation));
+
+                    rootElement.appendChild(methodElement);
+                    //////////////////////
+                }
+
+            }
+
+        }
+
+        return opsFound;
+    }
+
+
+    /**
+     * A convenient method for the generating the parameter
+     * element
+     *
+     * @param doc
+     * @param paramName
+     * @param paramType
+     * @param opName
+     * @param paramName
+     */
+    protected Element generateParamComponent(Document doc,
+                                             String paramName,
+                                             String paramType,
+                                             QName opName,
+                                             String partName,
+                                             boolean isPrimitive) {
+
+        Element paramElement = doc.createElement("param");
+        //return paramElement;/*
+        addAttribute(doc, "name",
+                paramName, paramElement);
+
+        String typeMappingStr = (paramType == null)
+                ? ""
+                : paramType;
+
+
+        if ( JAVA_DEFAULT_TYPE == typeMappingStr)
+        {
+            typeMappingStr = C_DEFAULT_TYPE;
+        }
+
+        addAttribute(doc, "type", typeMappingStr, paramElement);
+        addAttribute(doc, "caps-type", typeMappingStr.toUpperCase(), paramElement);
+
+
+        //adds the short type
+        addShortType(paramElement,paramType);
+
+        // add an extra attribute to say whether the type mapping is the default
+        if (mapper.getDefaultMappingName().equals(paramType)) {
+            addAttribute(doc, "default", "yes", paramElement);
+        }
+        addAttribute(doc, "value", getParamInitializer(paramType), paramElement);
+        // add this as a body parameter
+        addAttribute(doc, "location", "body", paramElement);
+
+        //if the opName and partName are present , add them
+        if (opName!=null){
+            addAttribute(doc,"opname",opName.getLocalPart(),paramElement);
+
+        }
+        if (partName!= null){
+            addAttribute(doc,"partname",
+                    JavaUtils.capitalizeFirstChar(partName),
+                    paramElement);
+        }
+
+        if (isPrimitive){
+            addAttribute(doc,"primitive","yes",paramElement);
+        }
+
+        // the following methods are moved from addOurs functioin
         Map typeMap =  CTypeInfo.getTypeMap();
         Iterator it= typeMap.keySet().iterator();
-
-        AxisMessage inputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        QName typeMapping = inputMessage.getElementQName();
-
-        String paramType = this.mapper.getTypeMappingName(inputMessage.getElementQName());
-        if ( doc ==null || paramType==null || param==null){
-            return;
-        }
-        addAttribute(doc, "caps-type", paramType.toUpperCase(), param);
-
         boolean isOurs = true;
         while (it.hasNext()){
-            if (it.next().equals(typeMapping)){
+            if (it.next().equals(typeMappingStr)){
                 isOurs = false;
                 break;
             }
         }
 
-        if ( isOurs && !paramType.equals("") && !paramType.equals("void") &&
-                !paramType.equals("org.apache.axiom.om.OMElement") ){
-            addAttribute(doc, "ours", "yes", param);
+        if ( isOurs && !typeMappingStr.equals("") && !typeMappingStr.equals("void") &&
+                !typeMappingStr.equals(C_DEFAULT_TYPE) ){
+            addAttribute(doc, "ours", "yes", paramElement);
         }
-    }
-
-    /**
-     * @param doc
-     * @param operation
-     * @return Returns the parameter element.
-     */
-    protected Element[] getInputParamElement(Document doc, AxisOperation operation) {
-        Element[] param = super.getInputParamElement( doc, operation);
-        for (int i = 0; i < param.length; i++) {
-           addOursAttri ( doc, operation, param[i]);
+        else
+        {
+            isOurs = false;
         }
-        return param;
-    }
 
+        if ( isOurs)
+        {
+            typeMappingStr = C_OUR_TYPE_PREFIX + typeMappingStr + C_OUR_TYPE_SUFFIX;
+        }
+
+        addAttribute(doc, "axis2-type", typeMappingStr, paramElement);
+        addAttribute(doc, "axis2-caps-type", typeMappingStr.toUpperCase(), paramElement);
+
+        return paramElement;  //*/
+    }
     /**
      * @param doc
      * @param operation
      * @return Returns Element.
      */
     protected Element getOutputParamElement(Document doc, AxisOperation operation) {
-        Element param = super.getOutputParamElement( doc, operation);
-        addOursAttri ( doc, operation, param);
-        return param;
+        Element paramElement = doc.createElement("param");
+        AxisMessage outputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+        String typeMappingStr;
+        String parameterName;
+
+        if (outputMessage != null) {
+            parameterName = this.mapper.getParameterName(outputMessage.getElementQName());
+            String typeMapping = this.mapper.getTypeMappingName(outputMessage.getElementQName());
+            typeMappingStr = (typeMapping == null)
+                    ? ""
+                    : typeMapping;
+        } else {
+            parameterName = "";
+            typeMappingStr = "";
+        }
+
+        if ( JAVA_DEFAULT_TYPE == typeMappingStr)
+        {
+            typeMappingStr = C_DEFAULT_TYPE;
+        }
+        addAttribute(doc, "name", parameterName, paramElement);
+        addAttribute(doc, "type", typeMappingStr, paramElement);
+        addAttribute(doc, "caps-type", typeMappingStr.toUpperCase(), paramElement);
+
+
+        // the following methods are moved from addOurs functioin
+        Map typeMap =  CTypeInfo.getTypeMap();
+        Iterator it= typeMap.keySet().iterator();
+        boolean isOurs = true;
+        while (it.hasNext()){
+            if (it.next().equals(typeMappingStr)){
+                isOurs = false;
+                break;
+            }
+        }
+
+        if ( isOurs && !typeMappingStr.equals("") && !typeMappingStr.equals("void") &&
+                !typeMappingStr.equals(C_DEFAULT_TYPE) ){
+            addAttribute(doc, "ours", "yes", paramElement);
+        }
+        else
+        {
+            isOurs = false;
+        }
+
+        if ( isOurs)
+        {
+            typeMappingStr = C_OUR_TYPE_PREFIX + typeMappingStr + C_OUR_TYPE_SUFFIX;
+        }
+        //adds the short type
+        addShortType(paramElement,typeMappingStr);
+
+
+        // add an extra attribute to say whether the type mapping is the default
+        if (mapper.getDefaultMappingName().equals(typeMappingStr)) {
+            addAttribute(doc, "default", "yes", paramElement);
+        }
+
+        // add this as a body parameter
+        addAttribute(doc, "location", "body", paramElement);
+        addAttribute(doc, "opname", operation.getName().getLocalPart(), paramElement);
+
+        return paramElement;
     }
 }
 

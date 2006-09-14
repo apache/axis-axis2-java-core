@@ -59,7 +59,7 @@ public class CTypeInfo extends Constants{
         //as for the base 64 encoded binary stuff we map it to a javax.
         // activation.Datahandler object
         CTypeInfo.addTypemapping(XSD_BASE64,
-                "axis2_base64_binary_t*");
+                "void*");
 
         CTypeInfo.addTypemapping(XSD_HEXBIN,
                 "void*");
