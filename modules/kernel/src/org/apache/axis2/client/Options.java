@@ -37,15 +37,18 @@ import java.util.Map;
  */
 
 /**
- * The proposal related for this is here :
- * http://marc.theaimsgroup.com/?l=axis2-dev&m=113320384108037&w=2 Client can
- * fill this options and give to any class extending from MEPClient. All those
- * classes will be getting parameters using this.
+ * Holder for operation client options. This is used by the other classes in
+ * this package to configure various aspects of how a client communicates with a
+ * service. It exposes a number of predefined properties as part of the API
+ * (with specific getXXX and setXXX methods), and also allows for arbitrary
+ * named properties to be passed using a properties map with the property name
+ * as the key value. Instances of this class can be chained together for
+ * property inheritance, so that if a property is not set in one instance it
+ * will check its parent for a setting.
  */
 public class Options {
-
-    public static final String COPY_PROPERTIES = "CopyProperties";
-
+    
+    /** Default blocking timeout value. */
     public static final int DEFAULT_TIMEOUT_MILLISECONDS = 30 * 1000;
 
     private Options parent;
@@ -92,8 +95,6 @@ public class Options {
      */
     protected TransportOutDescription transportOut;
 
-    private String senderTransportProtocol;
-
     private EndpointReference to;
 
     //To control , session managment , default is set to true , if user wants he can set that to true
@@ -117,6 +118,11 @@ public class Options {
         this.parent = parent;
     }
 
+    /**
+     * Get WS-Addressing Action / SOAP Action string.
+     * 
+     * @return action
+     */
     public String getAction() {
         if (action == null && parent != null) {
             return parent.getAction();
@@ -124,6 +130,11 @@ public class Options {
         return action;
     }
 
+    /**
+     * Get WS-Addressing FaultTo endpoint reference.
+     * 
+     * @return endpoint
+     */
     public EndpointReference getFaultTo() {
         if (faultTo == null && parent != null) {
             return parent.getFaultTo();
@@ -131,6 +142,11 @@ public class Options {
         return faultTo;
     }
 
+    /**
+     * Set WS-Addressing From endpoint reference.
+     * 
+     * @return endpoint
+     */
     public EndpointReference getFrom() {
         if (from == null && parent != null) {
             return parent.getFrom();
@@ -138,6 +154,11 @@ public class Options {
         return from;
     }
 
+    /**
+     * Get listener used for incoming message.
+     * 
+     * @return listener
+     */
     public TransportListener getListener() {
         if (listener == null && parent != null) {
             return parent.getListener();
@@ -145,6 +166,11 @@ public class Options {
         return listener;
     }
 
+    /**
+     * Get transport used for incoming message.
+     * 
+     * @return transport information
+     */
     public TransportInDescription getTransportIn() {
         if (transportIn == null && parent != null) {
             return parent.getTransportIn();
@@ -152,6 +178,11 @@ public class Options {
         return transportIn;
     }
 
+    /**
+     * Get transport protocol used for incoming message.
+     * 
+     * @return name protocol name ("http", "tcp", etc.)
+     */
     public String getTransportInProtocol() {
         if (transportInProtocol == null && parent != null) {
             return parent.getTransportInProtocol();
@@ -159,6 +190,11 @@ public class Options {
         return transportInProtocol;
     }
 
+    /**
+     * Get WS-Addressing MessageId.
+     * 
+     * @return uri string
+     */
     public String getMessageId() {
         if (messageId == null && parent != null) {
             return parent.getMessageId();
@@ -167,22 +203,34 @@ public class Options {
         return messageId;
     }
 
+    /**
+     * Get a copy of the general option properties. Because of the way options
+     * are stored this does not include properties with specific get/set
+     * methods, only the general properties identified by a text string. The
+     * returned map merges properties inherited from parent options, if any, to
+     * give a complete set of property definitions as seen by users of this
+     * options instance. The returned copy is not "live", so changes you make to
+     * the copy are not reflected in the actual option settings. However, you
+     * can make the modified values take effect with a call to {@link
+     * #setProperties(Map)}, 
+     * 
+     * @return copy of general properties
+     */
     public Map getProperties() {
-        if (properties.size() == 0 && parent != null) {
-            Map properties = parent.getProperties();
-
-            if (properties.size() > 0) {
-                HashMap ret = new HashMap(properties);
-                ret.putAll(properties);
-                return ret;
-            }
+        if (parent == null) {
+            return new HashMap(properties);
+        } else {
+            Map props = parent.getProperties();
+            props.putAll(properties);
+            return props;
         }
-        return properties;
     }
 
     /**
+     * Get named property value.
+     * 
      * @param key
-     * @return the value realeted to this key. Null, if not found.
+     * @return the value related to this key. <code>null</code>, if not found.
      */
     public Object getProperty(String key) {
         Object myPropValue = properties.get(key);
@@ -192,6 +240,16 @@ public class Options {
         return myPropValue;
     }
 
+    /**
+     * Get WS-Addressing RelatesTo item with a specified type. If there are
+     * multiple RelatesTo items defined with the same type, the one returned
+     * by this method is arbitrary - if you need to handle this case, you can
+     * instead use the {@link #getRelationships()} to retrieve all the items
+     * and check for multiple matches.
+     * 
+     * @param type relationship type (URI)
+     * @return item of specified type
+     */
     public RelatesTo getRelatesTo(String type) {
         if (relationships == null && parent != null) {
             return parent.getRelatesTo(type);
@@ -207,8 +265,10 @@ public class Options {
     }
 
     /**
-     *
-     * @return the relates to which has the type http://www.w3.org/2005/08/addressing/reply
+     * Get WS-Addressing RelatesTo item which has the specific type
+     * "http://www.w3.org/2005/08/addressing/reply"
+     * 
+     * @return item
      */
     public RelatesTo getRelatesTo() {
         if (relationships == null && parent != null) {
@@ -225,6 +285,11 @@ public class Options {
         return null;
     }
 
+    /**
+     * Get all WS-Addressing RelatesTo items.
+     * 
+     * @return array of items
+     */
     public RelatesTo[] getRelationships() {
         if (relationships == null && parent != null) {
             return parent.getRelationships();
@@ -235,10 +300,20 @@ public class Options {
         return (RelatesTo[]) relationships.toArray(new RelatesTo[relationships.size()]);
     }
 
+    /**
+     * Set WS-Addressing RelatesTo items.
+     * 
+     * @param list
+     */
     public void setRelationships(RelatesTo[] list) {
         relationships = list == null ? null : Arrays.asList(list);
     }
 
+    /**
+     * Get WS-Addressing ReplyTo endpoint reference.
+     * 
+     * @return endpoint
+     */
     public EndpointReference getReplyTo() {
         if (replyTo == null && parent != null) {
             return parent.getReplyTo();
@@ -246,6 +321,11 @@ public class Options {
         return replyTo;
     }
 
+    /**
+     * Get outbound transport description.
+     * 
+     * @return description
+     */
     public TransportOutDescription getTransportOut() {
         if (transportOut == null && parent != null) {
             return parent.getTransportOut();
@@ -254,14 +334,11 @@ public class Options {
         return transportOut;
     }
 
-    public String getSenderTransportProtocol() {
-        if (senderTransportProtocol == null && parent != null) {
-            return parent.getSenderTransportProtocol();
-        }
-
-        return senderTransportProtocol;
-    }
-
+    /**
+     * Get SOAP version being used.
+     * 
+     * @return version
+     */
     public String getSoapVersionURI() {
         if (soapVersionURI == null && parent != null) {
             return parent.getSoapVersionURI();
@@ -286,6 +363,11 @@ public class Options {
                 : timeOutInMilliSeconds;
     }
 
+    /**
+     * Get WS-Addressing To endpoint reference.
+     * 
+     * @return endpoint
+     */
     public EndpointReference getTo() {
         if (to == null && parent != null) {
             return parent.getTo();
@@ -301,6 +383,8 @@ public class Options {
      * that facility. If this is false, the response message will just be
      * returned to the application, irrespective of whether it has a Fault or
      * not.
+     * 
+     * @return <code>true</code> if exception to be thrown
      */
     public boolean isExceptionToBeThrownOnSOAPFault() {
         if (isExceptionToBeThrownOnSOAPFault == null && parent != null) {
@@ -311,6 +395,13 @@ public class Options {
                 || isExceptionToBeThrownOnSOAPFault.booleanValue();
     }
 
+    /**
+     * Check whether the two SOAP Messages are be sent over same channel or over
+     * separate channels. Only duplex transports such as http and tcp support a
+     * <code>false</code> value.
+
+     * @return separate channel flag
+     */
     public boolean isUseSeparateListener() {
         if (useSeparateListener == null && parent != null) {
             useSeparateListener = parent.useSeparateListener;
@@ -320,14 +411,29 @@ public class Options {
                 && useSeparateListener.booleanValue();
     }
 
+    /**
+     * Get parent instance providing default property values.
+     * 
+     * @return parent (<code>null</code> if none)
+     */
     public Options getParent() {
         return parent;
     }
 
+    /**
+     * Set parent instance providing default property values.
+     * 
+     * @param parent (<code>null</code> if none)
+     */
     public void setParent(Options parent) {
         this.parent = parent;
     }
 
+    /**
+     * Set WS-Addressing Action / SOAP Action string.
+     *
+     * @param action
+     */
     public void setAction(String action) {
         this.action = action;
     }
@@ -348,37 +454,64 @@ public class Options {
                 .valueOf(exceptionToBeThrownOnSOAPFault);
     }
 
+    /**
+     * Set WS-Addressing FaultTo endpoint reference.
+     * 
+     * @param faultTo endpoint
+     */
     public void setFaultTo(EndpointReference faultTo) {
         this.faultTo = faultTo;
     }
 
+    /**
+     * Set WS-Addressing From endpoint reference.
+     * 
+     * @param from endpoint
+     */
     public void setFrom(EndpointReference from) {
         this.from = from;
     }
 
+    /**
+     * Set listener used for incoming message.
+     * 
+     * @param listener
+     */
     public void setListener(TransportListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Set transport used for incoming message.
+     * 
+     * @param transportIn
+     */
     public void setTransportIn(TransportInDescription transportIn) {
         this.transportIn = transportIn;
     }
 
+    /**
+     * Set transport protocol used for incoming message.
+     * 
+     * @param transportInProtocol ("http", "tcp", etc.)
+     */
     public void setTransportInProtocol(String transportInProtocol) {
         this.transportInProtocol = transportInProtocol;
     }
 
+    /**
+     * Set WS-Addressing MessageId.
+     * 
+     * @param messageId URI string
+     */
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
 
     /**
-     * This will set the properties to the context. But in setting that one may
-     * need to "copy" all the properties from the source properties to the
-     * target properties. To enable this we introduced a property
-     * (org.apache.axis2.client.Options#COPY_PROPERTIES) so that if set to
-     * Boolean(true), this code will copy the whole thing, without just
-     * referencing to the source.
+     * Set the general property definitions. Due to the way properties are
+     * stored, this will not effect the values of predefined properties with
+     * specific get/set methods.
      *
      * @param properties
      */
@@ -387,10 +520,9 @@ public class Options {
     }
 
     /**
-     * Properties you need to pass in to the message context must be set via
-     * this. If there is a method to the set this property, within this class,
-     * its encouraged to use that method, without duplicating stuff or making
-     * room for bugs.
+     * General properties you need to pass in to the message context must be set
+     * via this method. This method can only be used for properties which do not
+     * have specific get/set methods.
      *
      * @param propertyKey
      * @param property
@@ -399,6 +531,11 @@ public class Options {
         properties.put(propertyKey, property);
     }
 
+    /**
+     * Add WS-Addressing RelatesTo item.
+     * 
+     * @param relatesTo
+     */
     public void addRelatesTo(RelatesTo relatesTo) {
         if(relationships == null) {
             relationships = new ArrayList(5);
@@ -406,18 +543,30 @@ public class Options {
         relationships.add(relatesTo);
     }
 
+    /**
+     * Set WS-Addressing ReplyTo endpoint.
+     * 
+     * @param replyTo endpoint
+     */
     public void setReplyTo(EndpointReference replyTo) {
         this.replyTo = replyTo;
     }
 
+    /**
+     * Set transport used for outgoing message.
+     * 
+     * @param transportOut
+     */
     public void setTransportOut(TransportOutDescription transportOut) {
         this.transportOut = transportOut;
     }
 
     /**
-     * Sets the transport to be used for sending the SOAP Message
+     * Set transport used for outgoing message.
      *
-     * @param senderTransport
+     * @param senderTransport transport name in Axis2 configuration
+     * ("http", "tcp", etc.)
+     * @param axisConfiguration
      * @throws AxisFault if the transport is not found
      */
     public void setSenderTransport(String senderTransport,
@@ -431,6 +580,13 @@ public class Options {
         }
     }
 
+    /**
+     * Set the SOAP version to be used.
+     * 
+     * @param soapVersionURI
+     * @see org.apache.axis2.namespace.Constants#URI_SOAP11_ENV
+     * @see org.apache.axis2.namespace.Constants#URI_SOAP12_ENV
+     */
     public void setSoapVersionURI(String soapVersionURI) {
         this.soapVersionURI = soapVersionURI;
     }
@@ -446,6 +602,11 @@ public class Options {
         this.timeOutInMilliSeconds = timeOutInMilliSeconds;
     }
 
+    /**
+     * Set WS-Addressing To endpoint.
+     * 
+     * @param to endpoint
+     */
     public void setTo(EndpointReference to) {
         this.to = to;
     }
@@ -455,12 +616,15 @@ public class Options {
      * follows: <blockquote>
      * <p/>
      * <pre>
-     *  [transportOut, transportIn, useSeparateListener]
+     *  [senderTransport, listenerTransport, useSeparateListener]
      *  http, http, true
      *  http, http, false
-     *  http,smtp,true
-     *  smtp,http,true
-     *  smtp,smtp,true
+     *  http, smtp, true
+     *  smtp, http, true
+     *  smtp, smtp, true
+     *  tcp,  tcp,  true
+     *  tcp,  tcp,  false
+     *  etc.
      * </pre>
      * <p/>
      * </blockquote>
@@ -498,12 +662,11 @@ public class Options {
         }
 
         setTransportInProtocol(listenerTransport);
-        this.senderTransportProtocol = senderTransport;
     }
 
     /**
      * Used to specify whether the two SOAP Messages are be sent over same
-     * channel or over separate channels.The value of this variable depends on
+     * channel or over separate channels. The value of this variable depends on
      * the transport specified. For e.g., if the transports are different this
      * is true by default. HTTP transport supports both cases while SMTP
      * transport supports only two channel case.
@@ -514,6 +677,13 @@ public class Options {
         this.useSeparateListener = Boolean.valueOf(useSeparateListener);
     }
 
+    /**
+     * Add WS-Addressing ReferenceParameter child element. Multiple child
+     * may be used.
+     * TODO Add get method, implement handling.
+     * 
+     * @param referenceParameter
+     */
     public void addReferenceParameter(OMElement referenceParameter) {
         if (referenceParameters == null) {
             referenceParameters = new ArrayList(5);
@@ -522,10 +692,22 @@ public class Options {
         referenceParameters.add(referenceParameter);
     }
 
+    /**
+     * Check if session management is enabled.
+     * 
+     * @return <code>true</code> if enabled
+     */
     public boolean isManageSession() {
         return manageSession;
     }
 
+    /**
+     * Set session management enabled state. When session management is enabled,
+     * the engine will automatically send session data (such as the service
+     * group id, or HTTP cookies) as part of requests.
+     * 
+     * @param manageSession <code>true</code> if enabling sessions
+     */
     public void setManageSession(boolean manageSession) {
         this.manageSession = manageSession;
     }

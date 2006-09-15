@@ -141,7 +141,7 @@ public class ListenerManager {
     }
 
     /**
-     * To stop all the transports
+     * Stop all the transports and notify modules of shutdown.
      */
     public synchronized void stop() throws AxisFault {
         Iterator itr_st = startedTransports.values().iterator();
