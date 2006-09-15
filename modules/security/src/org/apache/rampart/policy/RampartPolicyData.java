@@ -24,11 +24,8 @@ import org.apache.ws.secpolicy.model.AlgorithmSuite;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.Trust10;
-import org.apache.ws.secpolicy.model.X509Token;
-import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -365,24 +362,6 @@ public class RampartPolicyData {
      */
     public RampartConfig getRampartConfig() {
         return rampartConfig;
-    }
-
-
-    private static void initializeRampartPolicyToken(RampartPolicyToken tok,
-            X509Token x509Tok) throws WSSPolicyException {
-        tok.tokenType = RampartPolicyToken.X509_TOKEN;
-
-        if (x509Tok.isRequireIssuerSerialReference()) {
-            tok.keyIdentifier = WSConstants.ISSUER_SERIAL;
-        } else if (x509Tok.isRequireThumbprintReference()) {
-            tok.keyIdentifier = WSConstants.THUMBPRINT_IDENTIFIER;
-        } else if (x509Tok.isRequireEmbeddedTokenReference()) {
-            tok.keyIdentifier = WSConstants.BST_DIRECT_REFERENCE;
-        } else {
-            throw new WSSPolicyException(
-                    "Unknown key reference specifier for X509Token");
-
-        }
     }
 
     /**
