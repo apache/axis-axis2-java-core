@@ -475,7 +475,10 @@ public class RampartUtil {
                 elem, true));
     }
 
-    public static Element insertSiblingAfter(Element child, Element sibling) {
+    public static Element insertSiblingAfter(RampartMessageData rmd, Element child, Element sibling) {
+        if(child == null) {
+            appendChildToSecHeader(rmd, sibling);
+        }
         if(child.getOwnerDocument().equals(sibling.getOwnerDocument())) {
             ((OMElement)child).insertSiblingAfter((OMElement)sibling);
             return sibling;
@@ -487,18 +490,44 @@ public class RampartUtil {
         
     }
     
+    public static Element insertSiblingBefore(RampartMessageData rmd, Element child, Element sibling) {
+        if(child == null) {
+            appendChildToSecHeader(rmd, sibling);
+        }
+        if(child.getOwnerDocument().equals(sibling.getOwnerDocument())) {
+            ((OMElement)child).insertSiblingBefore((OMElement)sibling);
+            return sibling;
+        } else {
+            Element newSib = (Element)child.getOwnerDocument().importNode(sibling, true);
+            ((OMElement)child).insertSiblingBefore((OMElement)newSib);
+            return newSib;
+        }
+        
+    }
+    
     public static Vector getEncryptedParts(RampartMessageData rmd) {
         RampartPolicyData rpd =  rmd.getPolicyData();
         Vector parts = rpd.getEncryptedParts();
+        if(rpd.isEncryptBody()) {
+            parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
+                    .getMsgContext().getEnvelope().getBody()), "Content"));
+        }
+        
+        return parts;
+    }
+    
+    public static Vector getSignedParts(RampartMessageData rmd) {
+        RampartPolicyData rpd =  rmd.getPolicyData();
+        Vector parts = rpd.getSignedParts();
         if(rpd.isEntireHeadersAndBodySignatures()) {
             //TODO: Handle the headers when wsse11:EncryptedHeader is 
             //implemented
             parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
-                    .getMsgContext().getEnvelope().getBody()), "Content"));
+                    .getMsgContext().getEnvelope().getBody())));
             
         } else if(rpd.isEncryptBody()) {
             parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
-                    .getMsgContext().getEnvelope().getBody()), "Content"));
+                    .getMsgContext().getEnvelope().getBody())));
         }
         
         return parts;

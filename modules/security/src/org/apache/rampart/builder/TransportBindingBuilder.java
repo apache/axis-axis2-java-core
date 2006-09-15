@@ -325,7 +325,4 @@ public class TransportBindingBuilder extends BindingBuilder {
             return null;
         }
     }
-
-
-    
 }

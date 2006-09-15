@@ -39,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 
@@ -59,16 +60,14 @@ public class SymmetricBindingBuilder extends BindingBuilder {
         //Setup required tokens
         initializeTokens(rmd);
         
-        if(rmd.isClientSide()) {
             
-            if(Constants.ENCRYPT_BEFORE_SIGNING.equals(rpd.getProtectionOrder())) {
-                this.doEncryptBeforeSig(rmd);
-            } else {
-            }
+        if(Constants.ENCRYPT_BEFORE_SIGNING.equals(rpd.getProtectionOrder())) {
+            this.doEncryptBeforeSig(rmd);
         } else {
-            
+            this.doSignBeforeEncrypt(rmd);
         }
-        
+
+    
         log.debug("SymmetricBindingBuilder build invoked : DONE");
         
     }
@@ -97,17 +96,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             /*
              * Get hold of the token from the token storage
              */
-            try {
-                tok = rmd.getTokenStorage().getToken(tokenId);
-            } catch (TrustException e) {
-                throw new RampartException("errorInRetrievingTokenId", 
-                        new String[]{tokenId}, e);
-            }
-            
-            if(tok == null) {
-                throw new RampartException("errorInRetrievingTokenId", 
-                        new String[]{tokenId});
-            }
+            tok = this.getToken(rmd, tokenId);
 
             /*
              * Attach the token into the message based on token inclusion 
@@ -129,9 +118,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             Vector encrParts = RampartUtil.getEncryptedParts(rmd);
             
             Document doc = rmd.getDocument();
-            
 
-            
             if(encryptionToken.isDerivedKeys()) {
                 log.debug("Use drived keys");
                 
@@ -237,12 +224,14 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                     
                     //Add elements to header
                     this.setInsertionLocation(RampartUtil
-                            .insertSiblingAfter(this.getInsertionLocation(),
+                            .insertSiblingAfter(rmd, 
+                                    this.getInsertionLocation(),
                                     dkSign.getdktElement()));
 
                     this.setInsertionLocation(RampartUtil.insertSiblingAfter(
-                            this.getInsertionLocation(), dkSign
-                                    .getSignatureElement()));
+                            rmd, 
+                            this.getInsertionLocation(),
+                            dkSign.getSignatureElement()));
                     this.mainSigId = RampartUtil.addWsuIdToElement((OMElement)dkSign.getSignatureElement());
                     
                 } catch (ConversationException e) {
@@ -257,44 +246,284 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             }
             
             //Do endorsed signatures
-            this.doEndorsedSignatures(rmd, endSuppTokMap);
+            Vector endSigVals = this.doEndorsedSignatures(rmd, endSuppTokMap);
+            for (Iterator iter = endSigVals.iterator(); iter.hasNext();) {
+                signatureValues.add(iter.next());
+            }
             
             //Do signed endorsing signatures
-            this.doEndorsedSignatures(rmd, sgndEndSuppTokMap);
+            Vector sigEndSigVals = this.doEndorsedSignatures(rmd, sgndEndSuppTokMap);
+            for (Iterator iter = sigEndSigVals.iterator(); iter.hasNext();) {
+                signatureValues.add(iter.next());
+            }
+            
+            Vector secondEncrParts = new Vector();
             
             //Check for signature protection
             if(rpd.isSignatureProtection() && this.mainSigId != null) {
                 //Now encrypt the signature using the above token
-                Vector secondEncrParts = new Vector();
                 secondEncrParts.add(new WSEncryptionPart(this.mainSigId, "Element"));
-                
-                Element secondRefList = null;
-                
-                if(encryptionToken.isDerivedKeys()) {
-                    try {
-                        secondRefList = dkEncr.encryptForExternalRef(null, 
-                                secondEncrParts);
-                        RampartUtil.insertSiblingAfter(encrDKTokenElem, 
-                                secondRefList);
-                    } catch (WSSecurityException e) {
-                        throw new RampartException("errorInDKEncr");
-                    }
-                } else {
-                    try {
-                        //Encrypt, get hold of the ref list and add it
-                        secondRefList = encr.encryptForExternalRef(null,
-                                encrParts);
-                        RampartUtil.insertSiblingAfter(encrTokenElement,
-                                secondRefList);
-                    } catch (WSSecurityException e) {
-                        throw new RampartException("errorInEncryption", e);
-                    }    
-                }
             }
+            Element secondRefList = null;
+            
+            if(encryptionToken.isDerivedKeys()) {
+                try {
+                    secondRefList = dkEncr.encryptForExternalRef(null, 
+                            secondEncrParts);
+                    RampartUtil.insertSiblingAfter(
+                            rmd, 
+                            encrDKTokenElem, 
+                            secondRefList);
+                } catch (WSSecurityException e) {
+                    throw new RampartException("errorInDKEncr");
+                }
+            } else {
+                try {
+                    //Encrypt, get hold of the ref list and add it
+                    secondRefList = encr.encryptForExternalRef(null,
+                            encrParts);
+                    RampartUtil.insertSiblingAfter(
+                            rmd, 
+                            encrTokenElement,
+                            secondRefList);
+                } catch (WSSecurityException e) {
+                    throw new RampartException("errorInEncryption", e);
+                }    
+            }
+        } else {
+            throw new RampartException("encryptionTokenMissing");
         }
     }
-    
-    
+
+
+    public void doSignBeforeEncrypt(RampartMessageData rmd) throws RampartException {
+
+        RampartPolicyData rpd = rmd.getPolicyData();
+        Document doc = rmd.getDocument();
+        
+        Token sigToken = rpd.getSignatureToken();
+        
+        String encrTokId = null;
+        String sigTokId = null;
+        
+        org.apache.rahas.Token encrTok = null;
+        org.apache.rahas.Token sigTok = null;
+        
+        Element sigTokElem = null;
+        
+        Vector signatureValues = new Vector();
+        
+        if(sigToken != null) {
+            if(sigToken instanceof SecureConversationToken) {
+                sigTokId = rmd.getIssuedSignatureTokenId();
+            } else if(sigToken instanceof IssuedToken) {
+                sigTokId = rmd.getSecConvTokenId();
+            }
+        } else {
+            throw new RampartException("signatureTokenMissing");
+        }
+        
+        sigTok = this.getToken(rmd, sigTokId);
+
+        if(Constants.INCLUDE_ALWAYS.equals(sigToken.getInclusion()) ||
+                Constants.INCLUDE_ONCE.equals(sigToken.getInclusion())) {
+            sigTokElem = RampartUtil.appendChildToSecHeader(rmd, sigTok.getToken());
+        }
+
+        this.setInsertionLocation(sigTokElem);
+        
+        Vector sigParts = null;
+        
+//      Now add the supporting tokens
+        SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
+        
+        HashMap sigSuppTokMap = this.handleSupportingTokens(rmd, sgndSuppTokens);
+        
+        SupportingToken endSuppTokens = rpd.getEndorsingSupportingTokens();
+
+        HashMap endSuppTokMap = this.handleSupportingTokens(rmd, endSuppTokens);
+
+        SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
+        
+        HashMap sgndEndSuppTokMap = this.handleSupportingTokens(rmd, sgndEndSuppTokens);
+
+        //Setup signature parts
+        sigParts = addSignatureParts(sigSuppTokMap, rpd.getSignedParts());
+        sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
+        
+        //Sign the message
+        //We should use the same key in the case of EncryptBeforeSig
+        if(sigToken.isDerivedKeys()) {
+            try {
+                WSSecDKSign dkSign = new WSSecDKSign();
+
+                OMElement ref = sigTok.getAttachedReference();
+                if(ref == null) {
+                    ref = sigTok.getUnattachedReference();
+                }
+                if(ref != null) {
+                    dkSign.setExternalKey(sigTok.getSecret(), (Element) 
+                            doc.importNode((Element) ref, true));
+                } else {
+                    
+                    dkSign.setExternalKey(sigTok.getSecret(), sigTok.getId());
+                }
+
+                //Set the algo info
+                dkSign.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
+                
+                
+                dkSign.prepare(doc);
+                
+                sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));                          
+                
+                if(rpd.isTokenProtection() && sigTokElem != null) {
+                    sigParts.add(new WSEncryptionPart(sigTokId));
+                }
+                
+                dkSign.setParts(sigParts);
+                
+                dkSign.addReferencesToSign(sigParts, rmd.getSecHeader());
+                
+                //Do signature
+                dkSign.computeSignature();
+                
+                signatureValues.add(dkSign.getSignatureValue());
+                
+                //Add elements to header
+                this.setInsertionLocation(RampartUtil
+                        .insertSiblingAfter(
+                                rmd, 
+                                this.getInsertionLocation(),
+                                dkSign.getdktElement()));
+
+                this.setInsertionLocation(RampartUtil.insertSiblingAfter(
+                        rmd, 
+                        this.getInsertionLocation(), 
+                        dkSign.getSignatureElement()));
+                this.mainSigId = RampartUtil.addWsuIdToElement((OMElement)dkSign.getSignatureElement());
+                
+            } catch (ConversationException e) {
+                throw new RampartException(
+                        "errorInDerivedKeyTokenSignature", e);
+            } catch (WSSecurityException e) {
+                throw new RampartException(
+                        "errorInDerivedKeyTokenSignature", e);
+            }
+        } else {
+            //TODO :  Example SAMLTOken Signature
+        }
+
+        //Do endorsed signatures
+        Vector endSigVals = this.doEndorsedSignatures(rmd, endSuppTokMap);
+        for (Iterator iter = endSigVals.iterator(); iter.hasNext();) {
+            signatureValues.add(iter.next());
+        }
+        
+        //Do signed endorsing signatures
+        Vector sigEndSigVals = this.doEndorsedSignatures(rmd, sgndEndSuppTokMap);
+        for (Iterator iter = sigEndSigVals.iterator(); iter.hasNext();) {
+            signatureValues.add(iter.next());
+        }
+
+        //Encryption
+        Token encrToken = rpd.getEncryptionToken();
+        Element encrTokElem = null;
+        if(sigToken.equal(encrToken)) {
+            //Use the same token
+            encrTokId = sigTokId;
+            encrTok = sigTok;
+            encrTokElem = sigTokElem;
+        } else {
+            encrTokId = rmd.getIssuedEncryptionTokenId();
+            encrTok = this.getToken(rmd, encrTokId);
+            
+            if(Constants.INCLUDE_ALWAYS.equals(encrToken.getInclusion()) ||
+                    Constants.INCLUDE_ONCE.equals(encrToken.getInclusion())) {
+                encrTokElem = (Element)sigTok.getToken();
+                
+                //Add the encrToken element before the sigToken element
+                RampartUtil.insertSiblingBefore(rmd, sigTokElem, encrTokElem);
+            }
+            
+        }
+        
+        Vector encrParts = RampartUtil.getEncryptedParts(rmd);
+        
+        //Check for signature protection
+        if(rpd.isSignatureProtection() && this.mainSigId != null) {
+            //Now encrypt the signature using the above token
+            encrParts.add(new WSEncryptionPart(this.mainSigId, "Element"));
+        }
+        Element refList = null;
+        
+        if(encrToken.isDerivedKeys()) {
+            
+            try {
+                WSSecDKEncrypt dkEncr = new WSSecDKEncrypt();
+                
+                if(encrTokElem != null && encrTok.getAttachedReference() != null) {
+                    
+                    dkEncr.setExternalKey(encrTok.getSecret(), (Element) doc
+                            .importNode((Element) encrTok.getAttachedReference(),
+                                    true));
+                    
+                } else if(encrTok.getUnattachedReference() != null) {
+                    dkEncr.setExternalKey(encrTok.getSecret(), (Element) doc
+                            .importNode((Element) encrTok.getUnattachedReference(),
+                                    true));
+                }
+                
+                Element encrDKTokenElem = null;
+                try {
+                    encrDKTokenElem = dkEncr.getdktElement();
+                    RampartUtil.insertSiblingAfter(rmd, encrTokElem, encrDKTokenElem);
+                    dkEncr.prepare(doc);
+                    
+                    refList = dkEncr.encryptForExternalRef(null, encrParts);
+                    
+                } catch (WSSecurityException e) {
+                    throw new RampartException("errorInDKEncr");
+                } catch (ConversationException e) {
+                    throw new RampartException("errorInDKEncr");
+                }
+                
+                refList = dkEncr.encryptForExternalRef(null, 
+                        encrParts);
+                RampartUtil.insertSiblingAfter(rmd, 
+                                                encrDKTokenElem, 
+                                                refList);
+                                                
+            } catch (WSSecurityException e) {
+                throw new RampartException("errorInDKEncr");
+            }
+        } else {
+            try {
+                
+                WSSecEncrypt encr = new WSSecEncrypt();
+                
+                encr.setWsConfig(rmd.getConfig());
+                
+                encr.setEphemeralKey(encrTok.getSecret());
+                encr.setDocument(doc);
+                
+                try {
+                    //Encrypt, get hold of the ref list and add it
+                    refList = encr.encryptForExternalRef(null, encrParts);
+                } catch (WSSecurityException e) {
+                    throw new RampartException("errorInEncryption", e);
+                }
+
+                //Encrypt, get hold of the ref list and add it
+                refList = encr.encryptForExternalRef(null, encrParts);
+                RampartUtil.insertSiblingAfter(rmd,
+                                                encrTokElem,
+                                                refList);
+            } catch (WSSecurityException e) {
+                throw new RampartException("errorInEncryption", e);
+            }    
+        }
+    }
     
     /**
      * Setup the required tokens

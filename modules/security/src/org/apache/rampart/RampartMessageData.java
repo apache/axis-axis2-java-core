@@ -79,14 +79,6 @@ public class RampartMessageData {
     private String timestampId;
     
     private Document document;
-    
-    private Vector encryptionParts;
-    
-    private Vector signatureParts;
-    
-    private Vector endorsedSignatureParts;
-    
-    private Vector signedEndorsedSignatureParts;
 
     private TokenStorage tokenStorage;
     
@@ -168,55 +160,6 @@ public class RampartMessageData {
             throw new RampartException("errorInExtractingMsgProps", e);
         }
         
-    }
-    
-    /**
-     * @return Returns the encryptionParts.
-     */
-    public Vector getEncryptionParts() {
-        return encryptionParts;
-    }
-
-    /**
-     * @param encryptionParts The encryptionParts to set.
-     */
-    public void setEncryptionParts(Vector encryptionParts) {
-        this.encryptionParts = encryptionParts;
-    }
-
-    /**
-     * @return Returns the endorsedSignatureParts.
-     */
-    public Vector getEndorsedSignatureParts() {
-        return endorsedSignatureParts;
-    }
-
-    /**
-     * @param endorsedSignatureParts The endorsedSignatureParts to set.
-     */
-    public void addEndorsedSignaturePart(String id) {
-        if(this.endorsedSignatureParts == null) {
-            this.endorsedSignatureParts = new Vector();
-        }
-        
-        this.endorsedSignatureParts.add(id);
-    }
-
-    /**
-     * @return Returns the signatureParts.
-     */
-    public Vector getSignatureParts() {
-        return signatureParts;
-    }
-
-    /**
-     * @param signatureParts The signatureParts to set.
-     */
-    public void addSignaturePart(String id) {
-        if(this.signatureParts == null) {
-            this.signatureParts = new Vector();
-        }
-        this.signatureParts.add(id);
     }
 
     /**
@@ -519,20 +462,4 @@ public class RampartMessageData {
     public boolean isClientSide() {
         return isClientSide;
     }
-
-    /**
-     * @return Returns the signedendorsedSignatureParts.
-     */
-    public Vector getSignedEndorsedSignatureParts() {
-        return signedEndorsedSignatureParts;
-    }
-
-    public void addSignedEndorsedSignatureParts(String id) {
-        if(this.signedEndorsedSignatureParts == null) {
-            this.signedEndorsedSignatureParts = new Vector();
-        }
-        
-        this.signedEndorsedSignatureParts.add(id);
-    }
-
 }

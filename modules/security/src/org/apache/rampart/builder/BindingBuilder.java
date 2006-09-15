@@ -287,7 +287,7 @@ public abstract class BindingBuilder {
                     
                     //Add the token to the header
                     Element siblingElem = RampartUtil
-                            .insertSiblingAfter(this.getInsertionLocation(),
+                            .insertSiblingAfter(rmd, this.getInsertionLocation(),
                                     (Element) endSuppTok.getToken());
                     this.setInsertionLocation(siblingElem);
                     
@@ -305,13 +305,13 @@ public abstract class BindingBuilder {
                             Element bstElem = encrKey.getBinarySecurityTokenElement();
                             if(bstElem != null) {
                                Element siblingElem = RampartUtil
-                                        .insertSiblingAfter(this.getInsertionLocation(),
+                                        .insertSiblingAfter(rmd, this.getInsertionLocation(),
                                                 bstElem);
                                this.setInsertionLocation(siblingElem);
                             }
                             
                             Element siblingElem = RampartUtil
-                                    .insertSiblingAfter(
+                                    .insertSiblingAfter(rmd, 
                                             this.getInsertionLocation(),
                                             encrKey.getEncryptedKeyElement());
                             
@@ -336,8 +336,8 @@ public abstract class BindingBuilder {
                         WSSecSignature sig = this.getSignatureBuider(rmd, token);
                         Element bstElem = sig.getBinarySecurityTokenElement();
                         if(bstElem != null) {   
-                            bstElem = RampartUtil.insertSiblingAfter(this
-                                    .getInsertionLocation(), bstElem);
+                            bstElem = RampartUtil.insertSiblingAfter(rmd, 
+                                    this.getInsertionLocation(), bstElem);
                             this.setInsertionLocation(bstElem);
                         }
                         endSuppTokMap.put(token, sig);
@@ -349,7 +349,7 @@ public abstract class BindingBuilder {
                     
                     //Add the UT
                     Element elem = utBuilder.getUsernameTokenElement();
-                    RampartUtil.insertSiblingAfter(this.getInsertionLocation(), elem);
+                    RampartUtil.insertSiblingAfter(rmd, this.getInsertionLocation(), elem);
                     
                     //Move the insert location to th enext element
                     this.setInsertionLocation(elem);
@@ -493,12 +493,14 @@ public abstract class BindingBuilder {
                 
                 //Add elements to header
                 this.setInsertionLocation(RampartUtil
-                        .insertSiblingAfter(this.getInsertionLocation(),
+                        .insertSiblingAfter(rmd, 
+                                this.getInsertionLocation(),
                                 dkSign.getdktElement()));
 
                 this.setInsertionLocation(RampartUtil.insertSiblingAfter(
-                        this.getInsertionLocation(), dkSign
-                                .getSignatureElement()));
+                        rmd, 
+                        this.getInsertionLocation(), 
+                        dkSign.getSignatureElement()));
 
                 return dkSign.getSignatureValue();
                 
@@ -513,6 +515,31 @@ public abstract class BindingBuilder {
             //TODO :  Example SAMLTOken Signature
             throw new UnsupportedOperationException("TODO");
         }
+    }
+    
+    /**
+     * Get hold of the token from the token storage
+     * @param rmd
+     * @param tokenId
+     * @param tok
+     * @return
+     * @throws RampartException
+     */
+    protected org.apache.rahas.Token getToken(RampartMessageData rmd, 
+                    String tokenId) throws RampartException {
+        org.apache.rahas.Token tok = null;
+        try {
+            tok = rmd.getTokenStorage().getToken(tokenId);
+        } catch (TrustException e) {
+            throw new RampartException("errorInRetrievingTokenId", 
+                    new String[]{tokenId}, e);
+        }
+        
+        if(tok == null) {
+            throw new RampartException("errorInRetrievingTokenId", 
+                    new String[]{tokenId});
+        }
+        return tok;
     }
     
 }
