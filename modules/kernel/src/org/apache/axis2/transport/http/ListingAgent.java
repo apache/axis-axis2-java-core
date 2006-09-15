@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 public class ListingAgent extends AbstractAgent {
 
     private static final String LIST_MULTIPLE_SERVICE_JSP_NAME =
@@ -112,6 +113,29 @@ public class ListingAgent extends AbstractAgent {
         processListServices(httpServletRequest, httpServletResponse);
     }
 
+    private String extractHostAndPort(String filePart, boolean isHttp) {
+        int ipindex = filePart.indexOf("//");
+        String ip = null;
+        if (ipindex >= 0) {
+            ip = filePart.substring(ipindex + 2, filePart.length());
+            int seperatorIndex = ip.indexOf(":");
+            int slashIndex = ip.indexOf("/");
+            String port;
+            if (seperatorIndex >= 0) {
+                ip = ip.substring(0, seperatorIndex);
+                port = ip.substring(seperatorIndex + 1, slashIndex);
+            } else {
+                ip = ip.substring(0, slashIndex);
+                port = "80";
+            }
+            if (isHttp) {
+                configContext.setProperty(RUNNING_PORT, port);
+            }
+        }
+        return ip;
+    }
+
+
     public void processListService(HttpServletRequest req,
                                    HttpServletResponse res)
             throws IOException, ServletException {
@@ -127,51 +151,24 @@ public class ListingAgent extends AbstractAgent {
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(serviceName);
             if (serviceObj != null) {
-                if (wsdl2 >=0) {
+                boolean isHttp = "http".equals(req.getScheme());
+                if (wsdl2 >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
-                    int ipindex = filePart.indexOf("//");
-                    String ip = null;
-                    if (ipindex >= 0) {
-                        ip = filePart.substring(ipindex + 2, filePart.length());
-                        int seperatorIndex = ip.indexOf(":");
-                        int slashIndex = ip.indexOf("/");
-                        String port = ip.substring(seperatorIndex + 1,
-                                slashIndex);
-                        if ("http".equals(req.getScheme())) {
-                            configContext.setProperty(RUNNING_PORT, port);
-                        }
-                        if (seperatorIndex > 0) {
-                            ip = ip.substring(0, seperatorIndex);
-                        }
-                    }
+                    String ip = extractHostAndPort(filePart, isHttp);
                     ((AxisService) serviceObj).printWSDL2(out, ip, configContext.getServiceContextPath());
                     out.flush();
                     out.close();
                     return;
-                } else   if (wsdl >=0) {
+                } else if (wsdl >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
-                    int ipindex = filePart.indexOf("//");
-                    String ip = null;
-                    if (ipindex >= 0) {
-                        ip = filePart.substring(ipindex + 2, filePart.length());
-                        int seperatorIndex = ip.indexOf(":");
-                        int slashIndex = ip.indexOf("/");
-                        String port = ip.substring(seperatorIndex + 1,
-                                slashIndex);
-                        if ("http".equals(req.getScheme())) {
-                            configContext.setProperty(RUNNING_PORT, port);
-                        }
-                        if (seperatorIndex > 0) {
-                            ip = ip.substring(0, seperatorIndex);
-                        }
-                    }
+                    String ip = extractHostAndPort(filePart, isHttp);
                     ((AxisService) serviceObj).printWSDL(out, ip, configContext.getServicePath());
                     out.flush();
                     out.close();
                     return;
-                } else if (xsd >=0) {
+                } else if (xsd >= 0) {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     AxisService axisService = (AxisService) serviceObj;
