@@ -34,6 +34,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.AxisCallback;
@@ -142,7 +143,8 @@ public class AxisInvocationController implements InvocationController {
                 
                 // For now, just take all of the properties that were in the 
                 // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
-                axisRequestMsgCtx.setProperty(Options.COPY_PROPERTIES, Boolean.TRUE);
+                axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
+                    Boolean.TRUE);
                 axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
                 if (log.isDebugEnabled()) {
                     log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
@@ -265,7 +267,8 @@ public class AxisInvocationController implements InvocationController {
                 
                 // For now, just take all of the properties that were in the 
                 // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
-                axisRequestMsgCtx.setProperty(Options.COPY_PROPERTIES, Boolean.TRUE);
+                axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
+                    Boolean.TRUE);
                 axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
                 if (log.isDebugEnabled()) {
                     log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
@@ -402,7 +405,8 @@ public class AxisInvocationController implements InvocationController {
                 
                 // For now, just take all of the properties that were in the 
                 // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
-                axisRequestMsgCtx.setProperty(Options.COPY_PROPERTIES, Boolean.TRUE);
+                axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
+                    Boolean.TRUE);
                 axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
                 if (log.isDebugEnabled()) {
                     log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());

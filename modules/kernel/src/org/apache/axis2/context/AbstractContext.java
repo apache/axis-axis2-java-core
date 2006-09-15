@@ -17,8 +17,6 @@
 
 package org.apache.axis2.context;
 
-import org.apache.axis2.client.Options;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,6 +26,11 @@ import java.util.Map;
  * This is the top most level of the Context hierachy and is a bag of properties.
  */
 public abstract class AbstractContext {
+
+    /**
+     * Property used to indicate copying of properties is needed by context. 
+     */
+    public static final String COPY_PROPERTIES = "CopyProperties";
 
     protected long lastTouchedTime;
 
@@ -78,17 +81,16 @@ public abstract class AbstractContext {
     /**
      * This will set the properties to the context. But in setting that one may need to "copy" all
      * the properties from the source properties to the target properties. To enable this we introduced
-     * a property (org.apache.axis2.client.Options#COPY_PROPERTIES) so that if set to true, this code
+     * a property ({@link #COPY_PROPERTIES}) so that if set to true, this code
      * will copy the whole thing, without just referencing to the source.
      *
      * @param properties
-     * @see org.apache.axis2.client.Options#COPY_PROPERTIES
      */
     public void setProperties(Map properties) {
         if (properties == null) {
             this.properties = null;
         } else {
-            Boolean copyProperties = ((Boolean) properties.get(Options.COPY_PROPERTIES));
+            Boolean copyProperties = ((Boolean) properties.get(COPY_PROPERTIES));
 
             if ((copyProperties != null) && copyProperties.booleanValue()) {
                 Iterator iterator = properties.keySet().iterator();
