@@ -167,7 +167,7 @@ public class ListingAgent extends AbstractAgent {
                             ip = ip.substring(0, seperatorIndex);
                         }
                     }
-                    ((AxisService) serviceObj).printWSDL(out, ip, configContext.getServiceContextPath());
+                    ((AxisService) serviceObj).printWSDL(out, ip, configContext.getServicePath());
                     out.flush();
                     out.close();
                     return;
