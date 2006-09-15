@@ -68,7 +68,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected transient ServletConfig servletConfig;
 
     private transient ListingAgent agent;
-    private String contextRoot;
+    private String contextRoot = null;
 
     protected boolean enableRESTInAxis2MainServlet = false;
     protected boolean disableREST = false;
@@ -117,6 +117,29 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     }
 
+    /**
+     * Set the context root if it is not set already. 
+     * 
+     * @param req
+     */
+    public void initContextRoot(HttpServletRequest req) {
+        if (contextRoot == null) {
+            String [] parts = JavaUtils.split(req.getContextPath(), '/');
+            if (parts != null) {
+                for (int i = 0; i < parts.length; i++) {
+                    if (parts[i].length() > 0) {
+                        contextRoot = parts[i];
+                        break;
+                    }
+                }
+            }
+            if (contextRoot == null || req.getContextPath().equals("/")) {
+                contextRoot = "/";
+            }
+            configContext.setContextRoot(contextRoot);
+        }
+    }
+
     /*
     * (non-Javadoc)
     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -125,6 +148,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
+
+        initContextRoot(req);
+        
         // this method is also used to serve for the listServices request.
 
         String requestURI = req.getRequestURI();
@@ -174,6 +200,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      */
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
+
+        initContextRoot(req);
 
         MessageContext msgContext;
         OutputStream out = res.getOutputStream();
@@ -315,18 +343,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (parameter != null) {
             disableSeperateEndpointForREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
         }
-
-        // HACK ALERT!!! - Is there a better way to get the webapp name?
-        try {
-            String[] array = servletConfig.getServletContext().getResource("/").toString().split("/");
-            contextRoot = array[array.length - 1];
-            configContext.setContextRoot(contextRoot);
-        } catch (Exception e) {
-        }
-        if (contextRoot == null) {
-            contextRoot = "axis2";
-        }
-        this.configContext.setContextRoot(contextRoot);
     }
 
     public void init() throws ServletException {
