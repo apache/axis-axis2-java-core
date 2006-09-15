@@ -122,8 +122,8 @@ public class ListingAgent extends AbstractAgent {
             int slashIndex = ip.indexOf("/");
             String port;
             if (seperatorIndex >= 0) {
-                ip = ip.substring(0, seperatorIndex);
                 port = ip.substring(seperatorIndex + 1, slashIndex);
+                ip = ip.substring(0, seperatorIndex);
             } else {
                 ip = ip.substring(0, slashIndex);
                 port = "80";
