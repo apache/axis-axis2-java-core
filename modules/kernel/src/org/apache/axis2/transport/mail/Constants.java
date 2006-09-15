@@ -36,6 +36,8 @@ public class Constants {
 
     public final static String RAPLY_TO = "transport.mail.replyToAddress";
 
+    public final static String LISTENER_INTERVAL = "transport.listener.interval";
+
     public final static int SMTP_SERVER_PORT = (1024 + 25);
 
     public final static String SERVER_DOMAIN = "localhost";

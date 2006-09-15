@@ -79,8 +79,13 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     private EmailReceiver receiver = null;
 
-    /*Time has been put from best guest*/
-    private static final int LISTENER_WAIT_INTERVAL = 3000;
+    /**
+     * Time has been put from best guest. Let the default be 3 mins.
+     * This value is configuralble from Axis2.xml. Under mail transport listener
+     * simply set the following parameter.
+     * <parameter name="transport.listener.interval ">[custom listener interval]</parameter>
+     */
+    private int listenerWaitInterval = 1000 * 60 * 3;
 
     private ExecutorService workerPool;
 
@@ -101,6 +106,12 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
         replyTo = Utils.getParameterValue(
                 transportIn.getParameter(org.apache.axis2.transport.mail.Constants.RAPLY_TO));
+        Parameter listenerWaitIntervalParam = transportIn
+                .getParameter(org.apache.axis2.transport.mail.Constants.LISTENER_INTERVAL);
+        if (listenerWaitIntervalParam != null) {
+            listenerWaitInterval =
+                    Integer.parseInt(Utils.getParameterValue(listenerWaitIntervalParam));
+        }
 
         String password = "";
         String host = "";
@@ -210,7 +221,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         MimeMessage msg = (MimeMessage) msgs[i];
                         MessageContext mc = createMessageContextToMailWorker(msg);
                         if (mc != null) {
-                          messageQueue.add(mc);
+                            messageQueue.add(mc);
                         }
                         msg.setFlag(Flags.Flag.DELETED, true);
                     }
@@ -218,10 +229,14 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
                 receiver.disconnect();
 
-                Thread.sleep(LISTENER_WAIT_INTERVAL);
-
             } catch (Exception e) {
                 log.error("Error in SimpleMailListener" + e);
+            } finally {
+                try {
+                    Thread.sleep(listenerWaitInterval);
+                } catch (InterruptedException e) {
+                    log.warn("Error Encountered " + e);
+                }
             }
         }
 
