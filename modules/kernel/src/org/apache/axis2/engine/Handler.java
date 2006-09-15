@@ -22,8 +22,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 
-import javax.xml.namespace.QName;
-
 /**
  * Interface Handler
  */
@@ -45,10 +43,9 @@ public interface Handler {
      * Invoke is called to do the actual work of the Handler object.
      * If there is a fault during the processing of this method it is
      * invoke's job to catch the exception and undo any partial work
-     * that has been completed.  Once we leave 'invoke' if a fault
-     * is thrown, this class's 'onFault' method will be called.
-     * Invoke should rethrow any exceptions it catches, wrapped in
-     * an AxisFault.
+     * that has been completed.
+     * 
+     * N.B. This method may be called concurrently from multiple threads.
      *
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.
