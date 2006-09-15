@@ -167,22 +167,32 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             
             this.setInsertionLocation(refList);
 
-//          Now add the supporting tokens
-            SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
+            HashMap sigSuppTokMap = null;
+            HashMap endSuppTokMap = null;
+            HashMap sgndEndSuppTokMap = null;
+            Vector sigParts = RampartUtil.getSignedParts(rmd);
             
-            HashMap sigSuppTokMap = this.handleSupportingTokens(rmd, sgndSuppTokens);
+            if(rmd.isClientSide()) {
             
-            SupportingToken endSuppTokens = rpd.getEndorsingSupportingTokens();
-
-            HashMap endSuppTokMap = this.handleSupportingTokens(rmd, endSuppTokens);
-
-            SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
-            
-            HashMap sgndEndSuppTokMap = this.handleSupportingTokens(rmd, sgndEndSuppTokens);
-
-            //Setup signature parts
-            Vector sigParts = addSignatureParts(sigSuppTokMap, rpd.getSignedParts());
-            sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
+    //          Now add the supporting tokens
+                SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
+                
+                sigSuppTokMap = this.handleSupportingTokens(rmd, sgndSuppTokens);
+                
+                SupportingToken endSuppTokens = rpd.getEndorsingSupportingTokens();
+    
+                endSuppTokMap = this.handleSupportingTokens(rmd, endSuppTokens);
+    
+                SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
+                
+                sgndEndSuppTokMap = this.handleSupportingTokens(rmd, sgndEndSuppTokens);
+    
+                //Setup signature parts
+                sigParts = addSignatureParts(sigSuppTokMap, sigParts);
+                sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
+            } else {
+                //TODO: Add sig confirmation
+            }
             
             //Sign the message
             //We should use the same key in the case of EncryptBeforeSig
@@ -245,16 +255,18 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 //TODO :  Example SAMLTOken Signature
             }
             
-            //Do endorsed signatures
-            Vector endSigVals = this.doEndorsedSignatures(rmd, endSuppTokMap);
-            for (Iterator iter = endSigVals.iterator(); iter.hasNext();) {
-                signatureValues.add(iter.next());
-            }
-            
-            //Do signed endorsing signatures
-            Vector sigEndSigVals = this.doEndorsedSignatures(rmd, sgndEndSuppTokMap);
-            for (Iterator iter = sigEndSigVals.iterator(); iter.hasNext();) {
-                signatureValues.add(iter.next());
+            if(rmd.isClientSide()) {
+                //Do endorsed signatures
+                Vector endSigVals = this.doEndorsedSignatures(rmd, endSuppTokMap);
+                for (Iterator iter = endSigVals.iterator(); iter.hasNext();) {
+                    signatureValues.add(iter.next());
+                }
+                
+                //Do signed endorsing signatures
+                Vector sigEndSigVals = this.doEndorsedSignatures(rmd, sgndEndSuppTokMap);
+                for (Iterator iter = sigEndSigVals.iterator(); iter.hasNext();) {
+                    signatureValues.add(iter.next());
+                }
             }
             
             Vector secondEncrParts = new Vector();
@@ -332,25 +344,32 @@ public class SymmetricBindingBuilder extends BindingBuilder {
 
         this.setInsertionLocation(sigTokElem);
         
-        Vector sigParts = null;
-        
-//      Now add the supporting tokens
-        SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
-        
-        HashMap sigSuppTokMap = this.handleSupportingTokens(rmd, sgndSuppTokens);
-        
-        SupportingToken endSuppTokens = rpd.getEndorsingSupportingTokens();
 
-        HashMap endSuppTokMap = this.handleSupportingTokens(rmd, endSuppTokens);
-
-        SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
+        HashMap sigSuppTokMap = null;
+        HashMap endSuppTokMap = null;
+        HashMap sgndEndSuppTokMap = null;
+        Vector sigParts = RampartUtil.getSignedParts(rmd);
         
-        HashMap sgndEndSuppTokMap = this.handleSupportingTokens(rmd, sgndEndSuppTokens);
-
-        //Setup signature parts
-        sigParts = addSignatureParts(sigSuppTokMap, rpd.getSignedParts());
-        sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
-        
+        if(rmd.isClientSide()) {
+    //      Now add the supporting tokens
+            SupportingToken sgndSuppTokens = rpd.getSignedSupportingTokens();
+            
+            sigSuppTokMap = this.handleSupportingTokens(rmd, sgndSuppTokens);
+            
+            SupportingToken endSuppTokens = rpd.getEndorsingSupportingTokens();
+    
+            endSuppTokMap = this.handleSupportingTokens(rmd, endSuppTokens);
+    
+            SupportingToken sgndEndSuppTokens = rpd.getSignedEndorsingSupportingTokens();
+            
+            sgndEndSuppTokMap = this.handleSupportingTokens(rmd, sgndEndSuppTokens);
+    
+            //Setup signature parts
+            sigParts = addSignatureParts(sigSuppTokMap, rpd.getSignedParts());
+            sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
+        } else {
+            //TODO: Add sig confirmation
+        }
         //Sign the message
         //We should use the same key in the case of EncryptBeforeSig
         if(sigToken.isDerivedKeys()) {
@@ -414,18 +433,19 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             //TODO :  Example SAMLTOken Signature
         }
 
-        //Do endorsed signatures
-        Vector endSigVals = this.doEndorsedSignatures(rmd, endSuppTokMap);
-        for (Iterator iter = endSigVals.iterator(); iter.hasNext();) {
-            signatureValues.add(iter.next());
+        if(rmd.isClientSide()) {
+            //Do endorsed signatures
+            Vector endSigVals = this.doEndorsedSignatures(rmd, endSuppTokMap);
+            for (Iterator iter = endSigVals.iterator(); iter.hasNext();) {
+                signatureValues.add(iter.next());
+            }
+            
+            //Do signed endorsing signatures
+            Vector sigEndSigVals = this.doEndorsedSignatures(rmd, sgndEndSuppTokMap);
+            for (Iterator iter = sigEndSigVals.iterator(); iter.hasNext();) {
+                signatureValues.add(iter.next());
+            }
         }
-        
-        //Do signed endorsing signatures
-        Vector sigEndSigVals = this.doEndorsedSignatures(rmd, sgndEndSuppTokMap);
-        for (Iterator iter = sigEndSigVals.iterator(); iter.hasNext();) {
-            signatureValues.add(iter.next());
-        }
-
         //Encryption
         Token encrToken = rpd.getEncryptionToken();
         Element encrTokElem = null;
