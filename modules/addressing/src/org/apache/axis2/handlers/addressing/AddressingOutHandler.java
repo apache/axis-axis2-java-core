@@ -90,8 +90,8 @@ public class AddressingOutHandler extends AddressingHandler {
         }
         addressingNamespaceObject = factory.createOMNamespace(
                 namespace, WSA_DEFAULT_PREFIX);
-        anonymousURI = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
-        relationshipType = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_DEFAULT_RELATIONSHIP_TYPE : Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE;
+        String anonymousURI = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
+        String relationshipType = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_DEFAULT_RELATIONSHIP_TYPE : Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE;
 
 
         Options messageContextOptions = msgContext.getOptions();
@@ -123,7 +123,7 @@ public class AddressingOutHandler extends AddressingHandler {
         processToEPR(messageContextOptions, envelope, addressingNamespaceObject, namespace, replaceHeaders);
 
         // processing WSA replyTo
-        processReplyTo(envelope, messageContextOptions, msgContext, addressingNamespaceObject, namespace, replaceHeaders);
+        processReplyTo(envelope, messageContextOptions, msgContext, addressingNamespaceObject, namespace, anonymousURI, replaceHeaders);
 
         // processing WSA From
         processFromEPR(messageContextOptions, envelope, addressingNamespaceObject, namespace, replaceHeaders);
@@ -141,7 +141,7 @@ public class AddressingOutHandler extends AddressingHandler {
         processWSAAction(messageContextOptions, envelope, msgContext, addressingNamespaceObject, replaceHeaders);
 
         // processing WSA RelatesTo
-        processRelatesTo(envelope, messageContextOptions, addressingNamespaceObject, replaceHeaders);
+        processRelatesTo(envelope, messageContextOptions, addressingNamespaceObject, relationshipType, replaceHeaders);
 
         // process fault headers, if present
         processFaultsInfoIfPresent(envelope, msgContext, addressingNamespaceObject, replaceHeaders);
@@ -181,7 +181,7 @@ public class AddressingOutHandler extends AddressingHandler {
         }
     }
 
-    private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions, OMNamespace addressingNamespaceObject, boolean replaceHeaders) {
+    private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions, OMNamespace addressingNamespaceObject, String replyRelationshipType, boolean replaceHeaders) {
         if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject,replaceHeaders))
         {
             RelatesTo[] relatesTo = messageContextOptions.getRelationships();
@@ -198,7 +198,7 @@ public class AddressingOutHandler extends AddressingHandler {
                     if (relatesToHeader != null) {
                         if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) || "".equals(relationshipType)) {
                             relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                                    this.relationshipType,
+                                    replyRelationshipType,
                                     addressingNamespaceObject);
                         } else {
                             relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
@@ -227,7 +227,7 @@ public class AddressingOutHandler extends AddressingHandler {
         }
     }
 
-    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, String namespace, boolean replaceHeaders) {
+    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, String namespace, String anonymousURI, boolean replaceHeaders) {
         EndpointReference epr = null;
         if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject, replaceHeaders))
         {

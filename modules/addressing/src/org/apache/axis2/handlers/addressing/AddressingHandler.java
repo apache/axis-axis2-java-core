@@ -29,9 +29,6 @@ public abstract class AddressingHandler extends AbstractHandler implements Addre
 
     protected String addressingNamespace = Final.WSA_NAMESPACE;  // defaulting to final version
     protected String addressingVersion = null;
-    protected String anonymousURI = Final.WSA_ANONYMOUS_URL;   // defaulting to final version
-    protected String relationshipType = Final.WSA_DEFAULT_RELATIONSHIP_TYPE; // defaulting to final version
-
 
     protected static final Log log = LogFactory.getLog(AddressingHandler.class);
 

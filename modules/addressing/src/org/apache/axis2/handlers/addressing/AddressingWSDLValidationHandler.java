@@ -40,7 +40,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
         // Check that if wsaddressing=required that addressing headers were found inbound
         checkUsingAddressing(msgContext);
         // Check that if anonymous flag is in effect that the replyto and faultto are valid
-        checkAnonymous(msgContext);
+        //checkAnonymous(msgContext);
     }
     
     /**
