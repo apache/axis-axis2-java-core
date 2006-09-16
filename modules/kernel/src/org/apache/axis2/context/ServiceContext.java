@@ -73,7 +73,6 @@ public class ServiceContext extends AbstractContext {
      * for a given service
      *
      * @param transport : Name of the transport
-     * @return
      * @throws AxisFault
      */
     public EndpointReference getMyEPR(String transport) throws AxisFault {

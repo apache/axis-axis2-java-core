@@ -56,7 +56,6 @@ public class Java2WSDLCommandLineOption implements Java2WSDLConstants {
 
        /**
         * @return Returns the type.
-        * @see <code>CommandLineOptionConstans</code>
         */
        public String getOptionType() {
            return type;

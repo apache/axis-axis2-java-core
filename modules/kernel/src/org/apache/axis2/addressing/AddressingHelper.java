@@ -34,7 +34,6 @@ public class AddressingHelper {
      * 2004/08 case to ensure the different semantics. (per AXIS2-885)
      *
      * @param messageContext
-     * @return
      */
     public static boolean isReplyRedirected(MessageContext messageContext) {
         EndpointReference replyTo = messageContext.getReplyTo();
@@ -54,7 +53,6 @@ public class AddressingHelper {
      * spec.
      *
      * @param messageContext
-     * @return
      * @see isReplyRedirected
      */
     public static boolean isFaultRedirected(MessageContext messageContext) {
@@ -74,7 +72,6 @@ public class AddressingHelper {
      * and return the String value. Return the default of "optional" if not specified.
      *
      * @param axisOperation
-     * @return
      */
     public static String getAnonymousParameterValue(AxisOperation axisOperation) {
         String value = "";

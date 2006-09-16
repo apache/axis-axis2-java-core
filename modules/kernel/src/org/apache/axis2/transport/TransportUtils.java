@@ -279,7 +279,6 @@ public class TransportUtils {
      *
      * @param is
      * @param charSetEncoding
-     * @return
      * @throws java.io.IOException
      */
     private static Reader getReader(InputStream is, String charSetEncoding) throws IOException {
