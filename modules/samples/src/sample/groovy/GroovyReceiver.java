@@ -41,7 +41,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
-
+import java.io.StringReader;
 public class GroovyReceiver
     extends AbstractInOutSyncMessageReceiver
     implements MessageReceiver {
@@ -87,17 +87,16 @@ public class GroovyReceiver
             writer.flush();
             String value = writer.toString();
             if (value != null) {
-                InputStream in = new ByteArrayInputStream(value.getBytes());
                 GroovyClassLoader loader = new GroovyClassLoader();
                 Class groovyClass = loader.parseClass(groovyFileStream);
                 GroovyObject groovyObject =
                     (GroovyObject) groovyClass.newInstance();
-                Object[] arg = { in };
+                Object[] arg = { new StringReader(value) };
                 Object obj = groovyObject.invokeMethod(methodName, arg);
                 if (obj == null) {
                     throw new AxisFault(Messages.getMessage("groovyNoanswer"));
                 }
-                
+
                 SOAPFactory fac = null;
                 if(inMessage.isSOAP11()){
                     fac = OMAbstractFactory.getSOAP11Factory();
@@ -118,7 +117,7 @@ public class GroovyReceiver
             }
         } catch (Exception e) {
             throw new AxisFault(e);
-        } 
+        }
     }
 
     private OMElement getpayLoad(String str) throws XMLStreamException {
