@@ -232,7 +232,7 @@ public class AddressingOutHandler extends AddressingHandler {
         if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject, replaceHeaders))
         {
         	epr = messageContextOptions.getReplyTo();
-	        if(msgContext.isServerSide()){	        	
+	        if(msgContext.isServerSide() && (msgContext.getAxisService()!=null) && Constants.SCOPE_SOAP_SESSION.equals(msgContext.getAxisService().getScope())){	        	
 	            if (epr == null) {//optional
 	                ServiceContext serviceContext = msgContext.getServiceContext();
 	                if (serviceContext != null &&
