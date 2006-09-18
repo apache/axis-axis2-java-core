@@ -406,13 +406,19 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     processParameters(itr, transportout, axisConfig);
                     // adding to axis2 config
                     axisConfig.addTransportOut(transportout);
+                } catch (NoClassDefFoundError e) {
+                    log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                 } catch (ClassNotFoundException e) {
+                    log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                     throw new DeploymentException(e);
                 } catch (IllegalAccessException e) {
+                    log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                     throw new DeploymentException(e);
                 } catch (InstantiationException e) {
+                    log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                     throw new DeploymentException(e);
                 } catch (AxisFault axisFault) {
+                    log.debug(Messages.getMessage("errorinloadingts", clasName), axisFault);
                     throw new DeploymentException(axisFault);
                 }
             }
