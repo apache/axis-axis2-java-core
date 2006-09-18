@@ -14,25 +14,16 @@
     <ul>
       <li><a href="#21">Programming Model</a></li>
       <li><a href="#22">Simple Spring config example</a></li>
-      <li><a href="#22">Inside a Servlet Container</a></li>
-      <li><a href="#22">Outside a Servlet Container</a></li>
-      <li><a href="#23">Enabling MTOM Optimization at Server Side</a></li>
-      <li><a href="#24">Accessing Received Binary Data (Sample Code) </a>
+      <li><a href="#23">Inside a Servlet Container</a></li>
+      <li><a href="#24">Outside a Servlet Container</a></li>
+      <li><a href="#25">Putting it all together</a></li>
+      <li><a href="#26">Spring inside an AAR </a>
         <ul>
-          <li><a href="#241">Service</a></li>
-          <li><a href="#242">Client</a></li>
+          <li><a href="#261">The Spring inside an AAR layout</a></li>
+          <li><a href="#262">The Spring inside an AAR init class</a></li>
         </ul>
-      </li>
-      <li><a href="#25">MTOM Databinding</a>
     </ul>
   </li>
-  <li><a href="#3">SOAP with Attachments with Axis2</a></li>
-  <li><a href="#4">Advanced Topics </a>
-    <ul>
-      <li><a href="#41">File Caching for Attachments</a></li>
-    </ul>
-  </li>
-</ul>
 <a name="1"></a>
 
 <h2>Introduction</h2>
@@ -78,14 +69,13 @@ configure Spring via a WAR file's web.xml. Lets add a context-param and a listen
       &lt;param-value&gt;/WEB-INF/applicationContext.xml&lt;/param-value&gt;
     &lt;/context-param&gt;</pre>
 
-<p>Next we will show two examples of Spring's /WEB-INF/applicationContext.xml referenced in the web.xml listener -  one with a servlet container, and one without. The first example 
-should be familair to any Spring user: </p>
+<p>Next we will show two examples of Spring's /WEB-INF/applicationContext.xml referenced in the web.xml listener -  one with a servlet container, and one without. </p>
 
 <a name="23"></a>
 
 <h3>Inside a Servlet Container</h3>
 
-<p>This 'inside a servlet container' exampe applicationContext.xml should be familair to any Spring user: </p>
+<p>This 'inside a servlet container' example applicationContext.xml should be familair to any Spring user: </p>
 
 <pre> &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
@@ -104,6 +94,28 @@ should be familair to any Spring user: </p>
 &lt;/beans&gt;
 </pre>
 
+<p>If the service is running in a Servlet Container, ie, Axis2 will be able to get a hold of 
+ServletContext, the services.xml for the example would be using SpringServletContextObjectSupplier such as: </p>
+
+<pre> &lt;service name="SpringAwareService"&gt;
+    &lt;description&gt;
+        simple spring example
+    &lt;/description&gt;
+    &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;org.apache.axis2.extensions.spring.receivers.SpringServletContextObjectSupplier&lt;/parameter&gt;
+    &lt;parameter name="SpringBeanName" locked="false"&gt;springAwareService&lt;/parameter&gt;
+    &lt;operation name="getValue"&gt;
+        &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
+    &lt;/operation&gt;
+&lt;/service&gt; </pre>
+
+<p>While the above example uses RawXMLINOutMessageReceiver as its messageReceiver class,
+all Message Receivers are currently supported, as would be
+any Message Receiver that extends org.apache.axis2.receivers.AbstractMessageReceiver . </p>
+
+<a name="24"></a>
+
+<h3>Outside a Servlet Container</h3>
+
 <p> In the case Axis2 can't get a ServletContext, you have the option of defining a bean that takes 
 advantage of Spring's internal abilities (ApplicationContextAware interface, specifically) to 
 provide an Application Context to Axis2, with a bean ref 'applicationContext' :
@@ -112,7 +124,7 @@ provide an Application Context to Axis2, with a bean ref 'applicationContext' :
 &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
 
 &lt;beans&gt;
-  &lt;!-- Configure spring to give a hook to axis2 --&gt;
+  &lt;!-- Configure spring to give a hook to axis2 without a ServletContext --&gt;
   &lt;bean id="applicationContext" 
     class="org.apache.axis2.extensions.spring.receivers.ApplicationContextHolder" /&gt;
 
@@ -130,25 +142,6 @@ provide an Application Context to Axis2, with a bean ref 'applicationContext' :
   &lt;/bean&gt;
 &lt;/beans&gt;</pre>
 
-<p>If the service is running in a Servlet Container, ie, Axis2 will be able to get a hold of 
-ServletContext, the services.xml for the example would be using SpringServletContextObjectSupplier such as: </p>
-
-<pre> &lt;service name="SpringAwareService"&gt;
-    &lt;description&gt;
-        simple spring example
-    &lt;/description&gt;
-    &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;org.apache.axis2.extensions.spring.receivers.SpringServletContextObjectSupplier&lt;/parameter&gt;
-    &lt;parameter name="SpringBeanName" locked="false"&gt;springAwareService&lt;/parameter&gt;
-    &lt;operation name="getValue"&gt;
-        &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
-    &lt;/operation&gt;
-&lt;/service&gt; </pre>
-
-<p>Lets move now to the Axis2 services.xml file. Note that while we are using RawXMLINOutMessageReceiver 
-as the Message Receiver, currently all Message Receviers extend AbstractMessageReceiver and therefore are 
-automatically supported.</p>
-
-
 <p>If the service is _NOT_ running in a Servlet Container, ie, Axis2 will _NOT_ be able to get a hold of 
 ServletContext, the services.xml for the example would be using SpringAppContextAwareObjectSupplier such as: </p>
 
@@ -162,6 +155,10 @@ ServletContext, the services.xml for the example would be using SpringAppContext
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
 &lt;/service&gt; </pre>
+
+<p>While the above example uses RawXMLINOutMessageReceiver as its messageReceiver class,
+all Message Receivers are currently supported, as would be
+any Message Receiver that extends org.apache.axis2.receivers.AbstractMessageReceiver . </p>
 
 <p>In a non-servlet container environment, one way you could load the applicationContext.xml file 
 is in a place that will be run once, upon start-up, execute: </p>
@@ -178,8 +175,13 @@ is in a place that will be run once, upon start-up, execute: </p>
            ctx.refresh();</pre>
  }
 
+<a name="25"></a>
+
+<h3>Putting it all together</h3>
+
 <p>From here, its just standard Axis2 coding, only now the service has Spring wiring
-capabilities. The service is below: </p>
+capabilities. The implementation is the same whether using either SpringServletContextObjectSupplier or 
+SpringAppContextAwareObjectSupplier. The service is below: </p>
 <pre>package spring;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -301,5 +303,122 @@ client, you should see this output:</p>
 Response: &lt;example1:string xmlns:example1="http://springExample.org/example1" 
   xmlns:tns="http://ws.apache.org/axis2"&gt;Spring, emerge thyself&lt;/example1:string&gt;
 </pre>
+
+<a name="26"></a>
+
+<h3>Spring inside an AAR</h3>
+
+<p>Frequently Axis2 users wish to run Spring inside the AAR. Here we show you how. There are four things 
+to be aware of here: (A) You need to configure Spring to use the Axis2 Service Classloader. (B) Its up to you
+to load Spring, though we give an example below. (C) For reasons such as classloader isolation the 
+SpringAppContextAwareObjectSupplier is the best choice. (D) The springframework jar and axis2-spring-*.jar will 
+be placed inside the AAR under the lib directory.</p>
+
+<ul>
+  <li><strong><a name="261"></a>The Spring inside an AAR layout</strong></li>
+</ul>
+<source><pre>
+./springExample.aar
+./META-INF
+./META-INF/MANIFEST.MF
+./META-INF/services.xml
+./applicationContext.xml
+./lib
+./lib/axis2-spring-SNAPSHOT.jar
+./lib/spring.jar
+./spring
+./spring/MyBean.class
+./spring/MyBeanImpl.class
+./spring/SpringAwareService.class
+./spring/SpringInit.class
+</pre>
+</source>
+
+<ul>
+  <li><strong><a name="262"></a>The Spring inside an AAR init class</strong></li>
+</ul>
+<p>One way to initialize Spring is to use the org.apache.axis2.engine.Service. IMPORTANT: this interface at the
+time of this writing is being discussed for refactoring. We'll update the Spring docs ASAP, just be aware that this interface name perhaps will change, though the functionality will be probably be in place somewhere. The 
+important part for us is the startUp() method and setting Spring to use the Service classloader: </p>
+
+<source><pre>package spring;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.engine.Service;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.AxisService;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+public class SpringInit implements Service {
+	
+    private static Log logger = LogFactory
+	.getLog(SpringInit .class);
+
+    // The web service
+    public OMElement springInit(OMElement ignore) {
+
+    }
+
+    public void init(ServiceContext serviceContext) {
+        
+    }
+
+    public void setOperationContext(OperationContext arg0) {
+
+    }
+
+    public void destroy(ServiceContext arg0) {
+
+    }
+
+     /**
+     * this will be called during the deployement time of the service. irrespective
+     * of the service scope this method will be called
+     */
+    public void startUp(ConfigurationContext ignore, AxisService service) {
+ 
+        ClassLoader classLoader = service.getClassLoader();
+        ClassPathXmlApplicationContext appCtx = new
+        ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"}, false);
+            appCtx.setClassLoader(classLoader);
+            appCtx.refresh();
+        if (logger.isDebugEnabled()) {
+            logger.debug("\n\nstartUp() set spring classloader via axisService.getClassLoader() ... ");
+        }
+    }
+}</pre>
+</source>
+
+<p>Here's the services.xml that now includes SpringInit and the needed load-on-startup parameter. </p>
+<source><pre>
+&lt;serviceGroup&gt;
+  &lt;service name="SpringInit"&gt;
+    &lt;description&gt;
+        This is a sample Web Service with two operations,echo and ping.
+    &lt;/description&gt;
+    &lt;parameter name="ServiceClass" locked="false"&gt;spring.SpringInit&lt;/parameter&gt;
+    &lt;parameter name="load-on-startup" locked="false"&gt;true&lt;/parameter&gt;
+    &lt;operation name="springInit"&gt;
+        &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
+    &lt;/operation&gt;
+  &lt;/service&gt;
+  &lt;service name="SpringAwareService"&gt;
+     &lt;description&gt;
+         simple spring example
+     &lt;/description&gt;
+     &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier&lt;/parameter&gt;
+     &lt;parameter name="SpringBeanName" locked="false"&gt;springAwareService&lt;/parameter&gt;
+     &lt;operation name="getValue"&gt;
+         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
+     &lt;/operation&gt;
+  &lt;/service&gt;
+&lt;/serviceGroup&gt;
+</pre>
+</source>
 </body>
 </html>
