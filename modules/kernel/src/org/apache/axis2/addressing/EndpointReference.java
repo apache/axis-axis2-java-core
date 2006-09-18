@@ -196,10 +196,20 @@ public class EndpointReference implements Serializable {
 
     }
 
+    /**
+     * 
+     * @return
+     * @deprecated
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 
+     * @param name
+     * @deprecated
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -214,6 +224,11 @@ public class EndpointReference implements Serializable {
         this.referenceParameters = referenceParameters;
     }
 
+    /**
+     * 
+     * @param eprOMElement
+     * @deprecated use {@link org.apache.axis2.addressing.EndpointReferenceHelper#fromOM(OMElement)} instead.
+     */
     public void fromOM(OMElement eprOMElement) {
         setAddress(eprOMElement.getFirstChildWithName(new QName("Address")).getText());
         OMElement refParamElement = eprOMElement.getFirstChildWithName(new QName(AddressingConstants.EPR_REFERENCE_PARAMETERS));
@@ -260,6 +275,15 @@ public class EndpointReference implements Serializable {
         }
     }
 
+    /**
+     * 
+     * @param nsurl
+     * @param localName
+     * @param prefix
+     * @return
+     * @throws AxisFault
+     * @deprecated  use {@link org.apache.axis2.addressing.EndpointReferenceHelper#toOM(EndpointReference, QName, String)} instead.
+     */
     public OMElement toOM(String nsurl, String localName, String prefix) throws AxisFault {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         if (prefix != null) {

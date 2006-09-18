@@ -32,6 +32,8 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
@@ -187,8 +189,7 @@ public class EventingClient {
 		SubscriptionResponseData data = new SubscriptionResponseData ();
 		
 		OMElement subscriberManagerElement = responseMessagePayload.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.SubscriptionManager));
-		EndpointReference managerEPR = new EndpointReference ("");
-		managerEPR.fromOM(subscriberManagerElement);
+		EndpointReference managerEPR = EndpointReferenceHelper.fromOM(subscriberManagerElement);
 		data.setSubscriptionManager(managerEPR);
 		
 		OMElement expiresElement = responseMessagePayload.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.Expires));
@@ -243,8 +244,7 @@ public class EventingClient {
 		
 		EndpointReference endToEPR = bean.getEndToEPR();
 		if (bean.getEndToEPR()!=null) {
-			//TODO when Axis2 get corrected, use the method which takes an addressing version as a param.
-			OMElement endToElement = endToEPR.toOM(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.EndTo,EventingConstants.EVENTING_PREFIX);
+			OMElement endToElement = EndpointReferenceHelper.toOM(endToEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.EndTo,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
 			subscriptionElement.addChild(endToElement);
 		}
 		
@@ -253,7 +253,7 @@ public class EventingClient {
 			throw new Exception ("Delivery EPR is not set");
 		
 		OMElement deliveryElement = factory.createOMElement(EventingConstants.ElementNames.Delivery,ens);
-		OMElement notifyToElement = deliveryEPR.toOM(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.NotifyTo,EventingConstants.EVENTING_PREFIX);
+		OMElement notifyToElement = EndpointReferenceHelper.toOM(deliveryEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.NotifyTo,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
 
 		deliveryElement.addChild(notifyToElement);
 		subscriptionElement.addChild(deliveryElement);

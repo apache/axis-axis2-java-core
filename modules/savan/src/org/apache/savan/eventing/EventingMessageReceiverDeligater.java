@@ -25,6 +25,8 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.utils.ConverterUtil;
@@ -81,7 +83,7 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 		OMElement subscribeResponseElement = factory.createOMElement(EventingConstants.ElementNames.SubscribeResponse,ens);
 		OMElement subscriptionManagerElement = null;
 		try {
-			subscriptionManagerElement = subscriptionManagerEPR.toOM(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.SubscriptionManager,EventingConstants.EVENTING_PREFIX);
+			subscriptionManagerElement = EndpointReferenceHelper.toOM(subscriptionManagerEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.SubscriptionManager,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
 		} catch (AxisFault e) {
 			throw new SavanException (e);
 		}

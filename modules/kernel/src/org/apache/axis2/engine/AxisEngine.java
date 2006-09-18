@@ -191,15 +191,10 @@ public class AxisEngine {
         }
 
         EndpointReference faultTo = processingContext.getFaultTo();
-        SOAPEnvelope env = processingContext.getEnvelope();
         if (faultTo != null && !doNotSendFaultUsingFaultTo) {
             faultContext.setTo(processingContext.getFaultTo());
-        } else if (env != null && !doNotSendFaultUsingFaultTo && processingContext.isHeaderPresent() && env.getHeader().getFirstChildWithName(new QName("FaultTo")) != null) {
-            OMElement faultToElement = env.getHeader().getFirstChildWithName(new QName("FaultTo"));
-            faultTo = new EndpointReference("");
-            faultTo.fromOM(faultToElement);
-            faultContext.setTo(faultTo);
-        } else if (processingContext.getReplyTo() != null) {
+        }
+        else {
             faultContext.setTo(processingContext.getReplyTo());
         }
         

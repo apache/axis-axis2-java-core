@@ -32,6 +32,8 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.types.Duration;
@@ -104,9 +106,15 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		
 		OMElement endToElement = subscribeElement.getFirstChildWithName(new QName (EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.EndTo));
 		if (endToElement!=null) {
-			EndpointReference endToEPR = new EndpointReference ("");
-			endToEPR.fromOM(endToElement);
-			
+			EndpointReference endToEPR = null;
+            
+            try {
+                endToEPR = EndpointReferenceHelper.fromOM(endToElement);
+            }
+            catch (AxisFault af) {
+                throw new SavanException(af);
+            }
+            
 			eventingSubscriber.setEndToEPr(endToEPR);
 		}
 		
@@ -118,9 +126,15 @@ public class EventingSubscriptionProcessor extends SubscriptionProcessor {
 		if (notifyToElement==null)
 			throw new SavanException ("NotifyTo element is null");
 		
-		EndpointReference notifyToEPr = new EndpointReference ("");
-		notifyToEPr.fromOM(notifyToElement);
-		
+		EndpointReference notifyToEPr = null;
+        
+        try {
+            notifyToEPr = EndpointReferenceHelper.fromOM(notifyToElement);
+        }
+        catch (AxisFault af) {    
+            throw new SavanException(af);
+        }
+        
 		OMAttribute deliveryModeAttr = deliveryElement.getAttribute(new QName (EventingConstants.ElementNames.Mode));
 		String deliveryMode = null;
 		if (deliveryModeAttr!=null) {
