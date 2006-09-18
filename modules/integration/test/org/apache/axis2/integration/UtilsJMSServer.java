@@ -19,7 +19,7 @@ package org.apache.axis2.integration;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.transport.njms.JMSListener;
+import org.apache.axis2.transport.jms.JMSListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceGroupContext;

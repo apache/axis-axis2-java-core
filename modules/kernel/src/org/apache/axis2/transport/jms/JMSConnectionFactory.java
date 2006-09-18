@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.apache.axis2.transport.njms;
+package org.apache.axis2.transport.jms;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +48,7 @@ import java.util.Map;
  * defined in the Axis2 configuration.
  *
  * e.g.
- *   <transportReceiver name="jms" class="org.apache.axis2.transport.njms.JMSListener">
+ *   <transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener">
  *       <parameter name="myTopicConnectionFactory" locked="false">
  *       	<parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
  *       	<parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
