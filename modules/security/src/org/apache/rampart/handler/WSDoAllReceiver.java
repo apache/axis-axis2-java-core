@@ -38,7 +38,6 @@ import org.apache.rampart.util.Axis2Util;
 import org.apache.rampart.util.HandlerParameterDecoder;
 import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.RequestData;
@@ -154,7 +153,6 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             Util.processRSTR(elem, config);
         }
 
-        WSSecurityEngine secEngine = new WSSecurityEngine();
         secEngine.processSecurityHeader(config.getDocument(), null,
                 new ConversationCallbackHandler(config), config
                         .getCrypto());

@@ -62,31 +62,31 @@ public class RampartUtil {
 
     private static Log log = LogFactory.getLog(RampartUtil.class);
     
-    public static CallbackHandler getPasswordCB(ClassLoader classLoader,
-            String cbHandlerClass) throws RampartException {
-
-        log.debug("loading class : " + cbHandlerClass);
-        
-        CallbackHandler cbHandler = null;
-        
-        if (cbHandlerClass != null) {
-            Class cbClass;
-            try {
-                cbClass = Loader.loadClass(classLoader, cbHandlerClass);
-            } catch (ClassNotFoundException e) {
-                throw new RampartException("cannotLoadPWCBClass", 
-                        new String[]{cbHandlerClass}, e);
-            }
-            try {
-                cbHandler = (CallbackHandler) cbClass.newInstance();
-            } catch (java.lang.Exception e) {
-                throw new RampartException("cannotCreatePWCBInstance",
-                        new String[]{cbHandlerClass}, e);
-            }
-        }
-        
-        return cbHandler;
-    }
+//    public static CallbackHandler getPasswordCB(ClassLoader classLoader,
+//            String cbHandlerClass) throws RampartException {
+//
+//        log.debug("loading class : " + cbHandlerClass);
+//        
+//        CallbackHandler cbHandler = null;
+//        
+//        if (cbHandlerClass != null) {
+//            Class cbClass;
+//            try {
+//                cbClass = Loader.loadClass(classLoader, cbHandlerClass);
+//            } catch (ClassNotFoundException e) {
+//                throw new RampartException("cannotLoadPWCBClass", 
+//                        new String[]{cbHandlerClass}, e);
+//            }
+//            try {
+//                cbHandler = (CallbackHandler) cbClass.newInstance();
+//            } catch (java.lang.Exception e) {
+//                throw new RampartException("cannotCreatePWCBInstance",
+//                        new String[]{cbHandlerClass}, e);
+//            }
+//        }
+//        
+//        return cbHandler;
+//    }
     
     public static CallbackHandler getPasswordCB(RampartMessageData rmd) throws RampartException {
 

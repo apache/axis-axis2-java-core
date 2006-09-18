@@ -21,9 +21,11 @@ import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -139,6 +141,7 @@ public class MessageBuilderTest extends TestCase {
     private MessageContext getMsgCtx() throws XMLStreamException, FactoryConfigurationError, AxisFault {
         MessageContext ctx = new MessageContext();
         ctx.setAxisService(new AxisService("TestService"));
+        ctx.setAxisOperation(new OutInAxisOperation(new QName("http://rampart.org", "test")));
         
         XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(soapMsg.getBytes()));
         ctx.setEnvelope(new StAXSOAPModelBuilder(reader, null).getSOAPEnvelope());

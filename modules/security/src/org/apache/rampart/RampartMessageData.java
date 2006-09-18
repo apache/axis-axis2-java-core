@@ -16,26 +16,37 @@
 
 package org.apache.rampart;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyEngine;
 import org.apache.rahas.RahasConstants;
 import org.apache.rahas.SimpleTokenStore;
 import org.apache.rahas.TokenStorage;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
+import org.apache.rampart.policy.RampartPolicyBuilder;
 import org.apache.rampart.policy.RampartPolicyData;
+import org.apache.rampart.util.Axis2Util;
+import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSSConfig;
+import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.util.Loader;
 import org.w3c.dom.Document;
 
+import javax.xml.namespace.QName;
+
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 public class RampartMessageData {
     
@@ -112,11 +123,21 @@ public class RampartMessageData {
     
     private boolean sender;
 
-    public RampartMessageData(MessageContext msgCtx, Document doc, boolean sender) throws RampartException {
+    public RampartMessageData(MessageContext msgCtx, boolean sender) throws RampartException {
+        
+        DocumentBuilderFactoryImpl.setDOOMRequired(true);
+        
         this.msgContext = msgCtx;
-        this.document = doc;
         
         try {
+            
+            /*
+             * First get the SOAP envelope as document, then create a security
+             * header and insert into the document (Envelope)
+             */
+            this.document = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx.getEnvelope(), false);
+            msgCtx.setEnvelope((SOAPEnvelope)this.document.getDocumentElement());
+            
             //Extract known properties from the msgCtx
             
             if(msgCtx.getProperty(KEY_WST_VERSION) != null) {
@@ -127,16 +148,50 @@ public class RampartMessageData {
                 this.secConvVersion = TrustUtil.getWSTVersion((String)msgCtx.getProperty(KEY_WSSC_VERSION));
             }
             
-            //This is for a user to set policy in from the client
+            //If the policy is already available in the service, then use it
+            
+            String operationPolicyKey = getOperationPolicyKey(msgCtx);
+            if(msgCtx.getProperty(operationPolicyKey) != null) {
+                this.servicePolicy = (Policy)msgCtx.getProperty(operationPolicyKey);
+            } 
+            
+            String svcPolicyKey = getServicePolicyKey(msgCtx);
+            if(this.servicePolicy == null && msgCtx.getProperty(svcPolicyKey) != null) {
+                this.servicePolicy = (Policy)msgCtx.getProperty(svcPolicyKey);
+            }
+            
             if(msgCtx.getProperty(KEY_RAMPART_POLICY) != null) {
                 this.servicePolicy = (Policy)msgCtx.getProperty(KEY_RAMPART_POLICY);
             }
             
-            //If the policy is already available in the service, then use it
-            if(msgCtx.getParameter(KEY_RAMPART_POLICY) != null) {
-                this.servicePolicy = (Policy)msgCtx.getProperty(getPolicyKey(msgCtx));
+            /*
+             * Init policy:
+             * When creating the RampartMessageData instance we 
+             * extract the service policy is set in the msgCtx.
+             * If it is missing then try to obtain from the configuration files.
+             */
+            if(this.servicePolicy == null) {
+                if(msgCtx.isServerSide()) {
+                    this.servicePolicy = msgCtx.getEffectivePolicy();
+                } else {
+                    Parameter param = msgCtx.getParameter(RampartMessageData.KEY_RAMPART_POLICY);
+                    if(param != null) {
+                        OMElement policyElem = param.getParameterElement().getFirstElement();
+                        this.servicePolicy = PolicyEngine.getPolicy(policyElem);
+                    }
+                }
+                
+                //Set the policy in the config ctx
+                msgCtx.getConfigurationContext().setProperty(
+                        RampartMessageData.getOperationPolicyKey(msgCtx), this.servicePolicy);
             }
             
+            
+            List it = (List)this.servicePolicy.getAlternatives().next();
+            
+            //Process policy and build policy data
+            this.policyData = RampartPolicyBuilder.build(it);
+
             this.isClientSide = !msgCtx.isServerSide();
             this.sender = sender;
             
@@ -153,10 +208,17 @@ public class RampartMessageData {
             }
             
             this.config = WSSConfig.getDefaultWSConfig();
+
+            this.secHeader = new WSSecHeader();
+            secHeader.insertSecurityHeader(this.document);
             
         } catch (TrustException e) {
             throw new RampartException("errorInExtractingMsgProps", e);
         } catch (AxisFault e) {
+            throw new RampartException("errorInExtractingMsgProps", e);
+        } catch (WSSPolicyException e) {
+            throw new RampartException("errorInExtractingMsgProps", e);
+        } catch (WSSecurityException e) {
             throw new RampartException("errorInExtractingMsgProps", e);
         }
         
@@ -435,13 +497,25 @@ public class RampartMessageData {
      * @param msgCtx
      * @return
      */
-    public static String getPolicyKey(MessageContext msgCtx) {
-        return RampartMessageData.KEY_RAMPART_POLICY
-                + msgCtx.getAxisService().getName() + "{"
-                + msgCtx.getAxisOperation().getName().getNamespaceURI()
-                + "}" + msgCtx.getAxisOperation().getName().getLocalPart();
+    public static String getOperationPolicyKey(MessageContext msgCtx) {
+        return createPolicyKey(msgCtx.getAxisService().getName(), 
+                msgCtx.getAxisOperation().getName());
     }
 
+    public static String getServicePolicyKey(MessageContext msgCtx) {
+        return  createPolicyKey(msgCtx.getAxisService().getName(), null);
+    }
+    
+    public static String createPolicyKey(String service, QName operation) {
+        if(operation != null) {
+            return RampartMessageData.KEY_RAMPART_POLICY + service
+                    + "{" + operation.getNamespaceURI() + "}"
+                    + operation.getLocalPart();
+        } else {
+            return RampartMessageData.KEY_RAMPART_POLICY + service;
+        }
+    }
+    
     /**
      * @return Returns the timestampId.
      */
