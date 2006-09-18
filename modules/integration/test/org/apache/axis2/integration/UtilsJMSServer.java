@@ -17,24 +17,25 @@
 package org.apache.axis2.integration;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.transport.njms.JMSListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.transport.jms.JNDIVendorAdapter;
-import org.apache.axis2.transport.jms.SimpleJMSListener;
+import org.apache.axis2.description.TransportInDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.activemq.broker.BrokerService;
 
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.util.HashMap;
 
 public class UtilsJMSServer {
-    private static int count = 0;
-
-    private static SimpleJMSListener receiver;
+    private static JMSListener receiver;
 
     public static final int TESTING_PORT = 5555;
 
@@ -60,52 +61,37 @@ public class UtilsJMSServer {
     }
 
     public static synchronized void start() throws Exception {
-        if (count == 0) {
-
-            HashMap connectorMap = new HashMap();
-            HashMap cfMap = new HashMap();
-            String destination = "dynamicQueues/BAR";
-            String username = null;
-            String password = null;
-            boolean doThreads = true;
-
-            cfMap.put(JNDIVendorAdapter.CONTEXT_FACTORY,
-                    "org.activemq.jndi.ActiveMQInitialContextFactory");
-            cfMap.put(JNDIVendorAdapter.PROVIDER_URL, "tcp://localhost:61616");
-
-            // start JMS server
+            // start JMS Listener
             File file = new File(REPOSITORY_JMS);
             System.out.println(file.getAbsoluteFile());
             if (!file.exists()) {
                 throw new Exception("Repository directory does not exist");
             }
 
-            ConfigurationContext er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(file
+            ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(file
                     .getAbsolutePath(),REPOSITORY_JMS + "/conf/axis2.xml");
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e1) {
                 throw new AxisFault("Thread interuptted", e1);
             }
-            receiver = new SimpleJMSListener(
-                    REPOSITORY_JMS,
-                    connectorMap, cfMap, destination, username, password,
-                    doThreads);
+            receiver = new JMSListener();
+            ListenerManager listenerManager = configurationContext.getListenerManager();
+            TransportInDescription trsIn = configurationContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_JMS));
+            trsIn.setReceiver(receiver);
+            if (listenerManager == null) {
+                listenerManager = new ListenerManager();
+                listenerManager.init(configurationContext);
+            }
+            listenerManager.addListener(trsIn, true);
+            receiver.init(configurationContext, trsIn);
             receiver.start();
-
-        }
-        count++;
     }
 
     public static synchronized void stop() {
         try {
-            if (count == 1) {
                 receiver.stop();
-                count = 0;
                 System.out.print("Server stopped .....");
-            } else {
-                count--;
-            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

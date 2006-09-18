@@ -271,11 +271,6 @@ public class HTTPConstants {
     public static final String HEADER_COOKIE = "Cookie";
 
     /**
-     * Field HEADER_CONTENT_TYPE_JMS
-     */
-    public static final String HEADER_CONTENT_TYPE_JMS = "ContentType";
-
-    /**
      * Field HEADER_CONTENT_TYPE
      */
     public static final String HEADER_CONTENT_TYPE = "Content-Type";

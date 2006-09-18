@@ -23,15 +23,15 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.transport.njms.JMSConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -40,27 +40,29 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilsJMSServer;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.activemq.broker.BrokerService;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
 public class JMSEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference("jms:/dynamicQueues/BAR?ConnectionFactoryJNDIName=ConnectionFactory&java.naming.factory.initial=org.activemq.jndi.ActiveMQInitialContextFactory&java.naming.provider.url=tcp://localhost:61616");
+            new EndpointReference("jms:/EchoXMLService?"+JMSConstants.CONFAC_JNDI_NAME_PARAM+"=ConnectionFactory&java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory&java.naming.provider.url=tcp://localhost:61616");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
 
-    private AxisService service;
+
+    String destination = "EchoXMLService";
+    BrokerService broker = new BrokerService();
+
     private AxisService clientService;
     private ConfigurationContext configContext;
 
@@ -76,13 +78,21 @@ public class JMSEchoRawXMLTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
+        // Start ActiveMQ embedded broker
+        broker.addConnector("tcp://localhost:61616");
+        broker.start();
+
         UtilsJMSServer.start();
 
         //create and deploy the service
-        service =
-                Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+        AxisService service = Utils.createSimpleService(serviceName,
+                Echo.class.getName(),
+                operationName);
+        service.getExposedTransports().add(Constants.TRANSPORT_JMS);
+        Parameter param = new Parameter();
+        param.setName(JMSConstants.DEST_PARAM);
+        param.setValue(destination);
+        service.getParameters().add(param);
         UtilsJMSServer.deployService(service);
         clientService = Utils.createSimpleServiceforClient(serviceName,
                 Echo.class.getName(),
@@ -92,6 +102,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     protected void tearDown() throws Exception {
         UtilsJMSServer.stop();
+        broker.stop();
     }
 
     private OMElement createPayload() {
@@ -190,7 +201,7 @@ public class JMSEchoRawXMLTest extends TestCase {
                 System.out));
 
     }
-
+    
     public void testEchoXMLSyncMC() throws Exception {
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY, Constants.TESTING_REPOSITORY + "/conf/axis2.xml");

@@ -117,7 +117,6 @@ public class JMSListener implements TransportListener {
 
         while (services.hasNext()) {
             AxisService service = (AxisService) services.next();
-            boolean process = service.isEnableAllTransports();
             if (JMSUtils.isJMSService(service)) {
                 processService(service);
             }
@@ -323,7 +322,11 @@ public class JMSListener implements TransportListener {
      * @throws AxisFault not used
      */
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-          return new EndpointReference[]{new EndpointReference((String) serviceNameToEprMap.get(serviceName))};
+        //Strip out the operation name
+        if (serviceName.indexOf('/') != -1) {
+            serviceName = serviceName.substring(0, serviceName.indexOf('/'));
+        }
+        return new EndpointReference[]{new EndpointReference((String) serviceNameToEprMap.get(serviceName))};
     }
 
     /**
@@ -464,5 +467,9 @@ public class JMSListener implements TransportListener {
 
         public void serviceGroupUpdate(AxisEvent event, AxisServiceGroup serviceGroup) {
         }
+    }
+
+    public ConfigurationContext getConfigurationContext() {
+        return this.axisConf;
     }
 }

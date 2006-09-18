@@ -630,6 +630,9 @@ public class AxisEngine {
 
             // write the Message to the Wire
             TransportOutDescription transportOut = msgContext.getTransportOut();
+            if(transportOut == null) {
+                throw new AxisFault("Transport out has not been set");
+            }
             TransportSender sender = transportOut.getSender();
             // This boolean property only used in client side fireAndForget invocation
             //It will set a property into message context and if some one has set the
