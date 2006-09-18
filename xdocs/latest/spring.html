@@ -338,7 +338,8 @@ be placed inside the AAR under the lib directory.</p>
   <li><strong><a name="262"></a>The Spring inside an AAR init class</strong></li>
 </ul>
 <p>One way to initialize Spring is to use the org.apache.axis2.engine.Service. IMPORTANT: this interface at the
-time of this writing is being discussed for refactoring. We'll update the Spring docs ASAP, just be aware that this interface name perhaps will change, though the functionality will be probably be in place somewhere. The 
+time of this writing is being discussed for refactoring. We'll update the Spring docs ASAP, just be aware that 
+this interface name perhaps will change, though the functionality will be probably be in place somewhere. The 
 important part for us is the startUp() method and setting Spring to use the Service classloader: </p>
 
 <source><pre>package spring;
@@ -399,7 +400,7 @@ public class SpringInit implements Service {
 &lt;serviceGroup&gt;
   &lt;service name="SpringInit"&gt;
     &lt;description&gt;
-        This is a sample Web Service with two operations,echo and ping.
+        This is a spring sample Web Service with two operations.
     &lt;/description&gt;
     &lt;parameter name="ServiceClass" locked="false"&gt;spring.SpringInit&lt;/parameter&gt;
     &lt;parameter name="load-on-startup" locked="false"&gt;true&lt;/parameter&gt;
