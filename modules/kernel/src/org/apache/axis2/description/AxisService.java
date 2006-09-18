@@ -514,19 +514,6 @@ public class AxisService extends AxisDescription {
         return schema;
     }
 
-    public void printPolicy(OutputStream out) throws AxisFault {
-        PolicyUtil.writePolicy(getPolicyInclude(), out);
-    }
-
-    public void printPolicy(OutputStream out, String operationName) throws AxisFault {
-        AxisOperation axisOperation = getOperation(new QName(operationName));
-        if (axisOperation == null) {
-            throw new AxisFault(Messages.getMessage("invalidoperation",
-                    operationName));
-        }
-        PolicyUtil.writePolicy(axisOperation.getPolicyInclude(), out);
-    }
-
     public AxisConfiguration getAxisConfiguration() {
         if (getParent() != null) {
             return (AxisConfiguration) getParent().getParent();

@@ -2,10 +2,10 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.neethi.PolicyRegistry;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.resolver.URIResolver;
-import org.apache.ws.policy.util.PolicyRegistry;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;

@@ -187,7 +187,7 @@ public class SupportingToken extends AbstractSecurityAssertion
     }
 
     public short getType() {
-        return Assertion.ASSERTION;
+        return org.apache.neethi.Constants.TYPE_ASSERTION;
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {

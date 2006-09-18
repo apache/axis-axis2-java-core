@@ -6,17 +6,16 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.PolicyConstants;
-import org.apache.ws.policy.PolicyReference;
-import org.apache.ws.policy.util.DOMPolicyReader;
-import org.apache.ws.policy.util.PolicyFactory;
+import org.apache.neethi.Constants;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyReference;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -768,14 +767,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             String MEP = getMEP(wsdl4jOperation);
             axisOperation = AxisOperationFactory.getOperationDescription(MEP);
             axisOperation.setName(opName);
-
-            //All policy includes must share same registry
-            PolicyInclude pi = axisOperation.getPolicyInclude();
-            if (pi == null) {
-                pi = new PolicyInclude();
-                axisOperation.setPolicyInclude(pi);
-            }
-            pi.setPolicyRegistry(registry);
+            
+            // setting the PolicyInclude property of the AxisOperation 
+            PolicyInclude policyInclude = new PolicyInclude(axisOperation);
+            axisOperation.setPolicyInclude(policyInclude);
         }
 
         copyExtensibleElements(wsdl4jOperation.getExtensibilityElements(), dif,
@@ -1511,24 +1506,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             "location"));
                 } else if (WSDLConstants.WSDL11Constants.POLICY
                         .equals(unknown.getElementType())) {
-
-                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
-                            .getPolicyReader(PolicyFactory.DOM_POLICY_READER);
-                    Policy policy = policyReader.readPolicy(unknown
-                            .getElement());
-
+                    
+                    Policy policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
                     addPolicy(description, originOfExtensibilityElements,
                             policy);
 
                 } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE.equals(unknown
                         .getElementType())) {
-
-                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
-                            .getPolicyReader(PolicyFactory.DOM_POLICY_READER);
-                    PolicyReference policyRef = policyReader
-                            .readPolicyReference(unknown.getElement());
-                    addPolicyRef(description, originOfExtensibilityElements,
-                            policyRef);
+                    
+                    PolicyReference policyReference = (PolicyReference) PolicyUtil.getPolicyComponent(unknown.getElement());
+                    addPolicyRef(description, originOfExtensibilityElements, policyReference);
+                    
                 } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
                         .equals(unknown.getElementType())
                         || AddressingConstants.Submission.WSAW_USING_ADDRESSING
@@ -1898,9 +1886,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         for (Iterator iterator = extAttributes.keySet().iterator(); iterator
                 .hasNext();) {
             key = (QName) iterator.next();
-            if (PolicyConstants.POLICY_NAMESPACE_URI.equals(key
+            
+            if (Constants.URI_POLICY_NS.equals(key
                     .getNamespaceURI())
                     && "PolicyURIs".equals(key.getLocalPart())) {
+                
                 value = (QName) extAttributes.get(key);
                 String policyURIs = value.getLocalPart();
 
@@ -1909,8 +1899,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                     PolicyReference ref;
                     for (int i = 0; i < uris.length; i++) {
-                        ref = new PolicyReference(uris[i]);
-
+                        ref = new PolicyReference();
+                        ref.setURI(uris[i]);
+                        
                         if (PORT_TYPE.equals(origin)) {
                             PolicyInclude include = description
                                     .getPolicyInclude();
@@ -1921,7 +1912,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
             }
         }
-
     }
 
     /**
@@ -1939,19 +1929,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (extElement instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) extElement;
                 if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown.getElementType())) {
-
-                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
-                            .getPolicyReader(PolicyFactory.DOM_POLICY_READER);
-                    Policy policy = policyReader.readPolicy(unknown
-                            .getElement());
-
-                    if (policy.getId() != null) {
-                        registry.register(policy.getId(), policy);
+                    
+                    Policy policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
+                    
+                    String key;
+                    if ((key = policy.getName()) != null || (key = policy.getId()) != null) {
+                        registry.register(key, policy);
                     }
-
-                    if (policy.getName() != null) {
-                        registry.register(policy.getName(), policy);
-                    }
+                    
                 }
             }
         }

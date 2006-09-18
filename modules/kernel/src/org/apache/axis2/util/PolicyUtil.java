@@ -16,81 +16,131 @@
 
 package org.apache.axis2.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axis2.description.PolicyInclude;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.util.PolicyFactory;
-import org.apache.ws.policy.util.PolicyWriter;
-import org.apache.ws.policy.util.StAXPolicyWriter;
+import org.apache.neethi.Constants;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyComponent;
+import org.apache.neethi.PolicyEngine;
+import org.apache.neethi.PolicyReference;
+import org.apache.woden.internal.util.dom.DOM2Writer;
+import org.w3c.dom.Element;
 
 public class PolicyUtil {
-    
-	public static void writePolicy(PolicyInclude policy, OutputStream out) {
-		if (policy != null) {
-			Policy pl = policy.getEffectivePolicy();
-			if (pl != null) {
-				PolicyWriter write = PolicyFactory
-						.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
-				write.writePolicy(pl, out);
-				try {
-					out.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else {
-				PrintWriter write = new PrintWriter(out);
-				write.write("<policy>no policy found</policy>");
-				write.flush();
-				write.close();
-			}
-		} else {
-			PrintWriter write = new PrintWriter(out);
-			write.write("<policy>no policy found</policy>");
-			write.flush();
-			write.close();
-		}
-	}
 
-	public static String getPolicyAsString(Policy policy) {
-		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		StAXPolicyWriter pwtr = (StAXPolicyWriter) PolicyFactory
-				.getPolicyWriter(PolicyFactory.StAX_POLICY_WRITER);
-		
-		pwtr.writePolicy(policy, baos);
-		return getSafeString(baos.toString());
-	}
-	
-	private static String getSafeString(String unsafeString) {
-		StringBuffer sbuf = new StringBuffer();
-		
-		char[] chars = unsafeString.toCharArray();
-		
-		for (int i = 0; i < chars.length; i++) {
-			char c = chars[i];
-			
-			switch (c) {
-				case '\\' :
-					sbuf.append('\\'); sbuf.append('\\');
-					break;
-				case '"' :
-					sbuf.append('\\'); sbuf.append('"');
-					break;
-				case '\n':
-					sbuf.append('\\'); sbuf.append('n'); 
-					break;
-				case '\r':
-					sbuf.append('\\'); sbuf.append('r'); 
-					break;
-				default :
-					sbuf.append(c);					
-			}			
-		}
-		
-		return sbuf.toString();
-	}
+    private static String getSafeString(String unsafeString) {
+        StringBuffer sbuf = new StringBuffer();
+
+        char[] chars = unsafeString.toCharArray();
+
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+
+            switch (c) {
+            case '\\':
+                sbuf.append('\\');
+                sbuf.append('\\');
+                break;
+            case '"':
+                sbuf.append('\\');
+                sbuf.append('"');
+                break;
+            case '\n':
+                sbuf.append('\\');
+                sbuf.append('n');
+                break;
+            case '\r':
+                sbuf.append('\\');
+                sbuf.append('r');
+                break;
+            default:
+                sbuf.append(c);
+            }
+        }
+
+        return sbuf.toString();
+    }
+
+    public static OMElement getPolicyComponentAsOMElement(
+            PolicyComponent component) throws XMLStreamException,
+            FactoryConfigurationError {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLStreamWriter writer = XMLOutputFactory.newInstance()
+                .createXMLStreamWriter(baos);
+
+        component.serialize(writer);
+        writer.flush();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        return OMXMLBuilderFactory.createStAXOMBuilder(
+                OMAbstractFactory.getOMFactory(),
+                XMLInputFactory.newInstance().createXMLStreamReader(bais))
+                .getDocumentElement();
+    }
+
+    public static PolicyComponent getPolicyComponentFromOMElement(
+            OMElement policyComponent) throws IllegalArgumentException {
+
+        if (policyComponent instanceof Policy) {
+            return PolicyEngine.getPolicy(policyComponent);
+
+        } else if (policyComponent instanceof PolicyReference) {
+            return PolicyEngine.getPolicyReference(policyComponent);
+
+        } else {
+            throw new IllegalArgumentException(
+                    "Agrument is neither a <wsp:Policy> nor a <wsp:PolicyReference> element");
+        }
+    }
+
+    public static PolicyComponent getPolicyComponent(Element element) {
+
+        String xmlString;
+        ByteArrayInputStream bais;
+
+        if (Constants.URI_POLICY_NS.equals(element.getNamespaceURI())) {
+
+            if (Constants.ELEM_POLICY.equals(element.getLocalName())) {
+                xmlString = DOM2Writer.nodeToString(element);
+                bais = new ByteArrayInputStream(xmlString.getBytes());
+
+                PolicyEngine.getPolicy(bais);
+            } else if (Constants.ELEM_POLICYREF.equals(element
+                    .getLocalName())) {
+                xmlString = DOM2Writer.nodeToString(element);
+                bais = new ByteArrayInputStream(xmlString.getBytes());
+
+                PolicyEngine.getPolicyReferene(bais);
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "Agrument is neither a <wsp:Policy> nor a <wsp:PolicyReference> element");
+    }
+
+    public static String policyComponentToString(PolicyComponent policyComponent)
+            throws XMLStreamException, FactoryConfigurationError {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLStreamWriter writer = XMLOutputFactory.newInstance()
+                .createXMLStreamWriter(baos);
+        
+        policyComponent.serialize(writer);
+        writer.flush();
+
+        return baos.toString();
+    }
 }

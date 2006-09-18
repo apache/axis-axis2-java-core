@@ -6,9 +6,13 @@ public class Constants {
 
     public static final String P_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     
-    public static final QName POLICY = new QName(P_NS, "Policy");    
+    public static final String P_PREFIX = "wsp";
+    
+    public static final QName POLICY = new QName(P_NS, "Policy", P_PREFIX);    
     
     public final static String SP_NS = "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy";
+    
+    public final static String SP_PREFIX = "sp";
     
     public final static String ATTR_INCLUDE_TOKEN = "IncludeToken";
 
@@ -157,6 +161,19 @@ public class Constants {
 
     public final static String STRT10 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#STR-Transform";
     
+    ////////////////////////////////////////////////////////////////////////
+    
+    public static final String INCLUSIVE_C14N = "InclusiveC14N";
+    
+    public static final String SOAP_NORMALIZATION_10 = "SoapNormalization10";
+    
+    public static final String STR_TRANSFORM_10 = "STRTransform10";
+    
+    public static final String XPATH10 = "XPath10";
+    
+    public static final String XPATH_FILTER20 = "XPathFilter20"; 
+    
+    ///////////////////////////////////////////////////////////////////////
     
     
     
@@ -164,9 +181,18 @@ public class Constants {
     
     public static final QName TRANSPORT_BINDING = new QName(SP_NS, "TransportBinding");
     
-    public static final QName ALGORITHM_SUITE = new QName(SP_NS, "AlgorithmSuite");
+    public static final QName ALGORITHM_SUITE = new QName(SP_NS, "AlgorithmSuite", Constants.SP_PREFIX);
         
-    public static final QName LAYOUT = new QName(SP_NS, "Layout");
+    public static final QName LAYOUT = new QName(SP_NS, "Layout", SP_PREFIX);
+    
+    /////////////////////
+    
+    public static final QName STRICT = new QName(Constants.SP_NS, "Strict");
+    public static final QName LAX = new QName(Constants.SP_NS, "Lax");
+    public static final QName LAXTSFIRST = new QName(Constants.SP_NS, "LaxTsFirst");
+    public static final QName LAXTSLAST = new QName(Constants.SP_NS,"LaxTsLast");
+    
+    //////////////////
     
     public static final QName INCLUDE_TIMESTAMP = new QName(SP_NS, "IncludeTimestamp");
     

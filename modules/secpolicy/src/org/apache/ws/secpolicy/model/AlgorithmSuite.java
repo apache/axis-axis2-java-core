@@ -15,20 +15,17 @@
  */
 package org.apache.ws.secpolicy.model;
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.neethi.All;
-import org.apache.neethi.ExactlyOne;
-import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.WSSPolicyException;
 
 public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
+
+    private String algoSuiteString;
 
     private String symmetricSignature = Constants.HMAC_SHA1;
 
@@ -87,6 +84,9 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
      * @see Constants#ALGO_SUITE_TRIPLE_DES_SHA256_RSA15
      */
     public void setAlgorithmSuite(String algoSuite) {
+        setAlgoSuiteString(algoSuite);
+        this.algoSuiteString = algoSuite;
+
         // TODO: Optimize this :-)
         if (Constants.ALGO_SUITE_BASIC256.equals(algoSuite)) {
             this.digest = Constants.SHA1;
@@ -374,6 +374,14 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
         xPath = path;
     }
 
+    private void setAlgoSuiteString(String algoSuiteString) {
+        this.algoSuiteString = algoSuiteString;
+    }
+
+    private String getAlgoSuiteString() {
+        return algoSuiteString;
+    }
+
     public QName getName() {
         return Constants.ALGORITHM_SUITE;
     }
@@ -384,6 +392,61 @@ public class AlgorithmSuite extends AbstractConfigurableSecurityAssertion {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+
+        String localName = Constants.ALGORITHM_SUITE.getLocalPart();
+        String namespaceURI = Constants.ALGORITHM_SUITE.getNamespaceURI();
+
+        String prefix = writer.getPrefix(Constants.ALGORITHM_SUITE
+                .getNamespaceURI());
+
+        if (prefix == null) {
+            prefix = Constants.ALGORITHM_SUITE.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+
+        writer.writeStartElement(prefix, localName, namespaceURI);
+        writer.writeNamespace(prefix, namespaceURI);
+
+        // <wsp:Policy>
+        writer.writeStartElement(Constants.POLICY.getPrefix(), Constants.POLICY
+                .getLocalPart(), Constants.POLICY.getNamespaceURI());
+        
+        //
+        writer.writeStartElement(prefix, getAlgoSuiteString(), namespaceURI);
+        writer.writeEndElement();
+
+        if (Constants.C14N.equals(getInclusiveC14n())) {
+            writer.writeStartElement(prefix, Constants.INCLUSIVE_C14N, prefix);
+            writer.writeEndElement();
+        }
+
+        if (Constants.SNT.equals(getSoapNormalization())) {
+            writer.writeStartElement(prefix, Constants.SOAP_NORMALIZATION_10,
+                    namespaceURI);
+            writer.writeEndElement();
+        }
+
+        if (Constants.STRT10.equals(getStrTransform())) {
+            writer.writeStartElement(prefix, Constants.STR_TRANSFORM_10,
+                    namespaceURI);
+            writer.writeEndElement();
+        }
+
+        if (Constants.XPATH.equals(getXPath())) {
+            writer.writeStartElement(prefix, Constants.XPATH10, namespaceURI);
+            writer.writeEndElement();
+        }
+
+        if (Constants.XPATH20.equals(getXPath())) {
+            writer.writeStartElement(prefix, Constants.XPATH_FILTER20,
+                    namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:AlgorithmSuite>
+        writer.writeEndElement();
     }
 }

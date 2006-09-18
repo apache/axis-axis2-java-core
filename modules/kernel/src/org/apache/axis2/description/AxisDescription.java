@@ -20,10 +20,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.ws.policy.All;
-import org.apache.ws.policy.ExactlyOne;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.PrimitiveAssertion;
+import org.apache.neethi.Policy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -162,96 +159,98 @@ public abstract class AxisDescription implements ParameterInclude,
     public void applyPolicy(Policy policy) throws AxisFault {
         AxisConfiguration configuration = getAxisConfiguration();
 
-        this.policyInclude.setPolicy(policy);
-
-        Policy effPolicy = this.policyInclude.getEffectivePolicy();
-        ExactlyOne exactlyOne = (ExactlyOne) effPolicy.getTerms().get(0);
-
-        ArrayList list = new ArrayList();
-
-        for (Iterator iterator = exactlyOne.getTerms().iterator(); iterator.hasNext();) {
-            All all = (All) iterator.next();
-            if (!checkAllternative(all.getTerms(), configuration)) {
-                list.add(all);
-            }
-        }
-
-        exactlyOne.getTerms().removeAll(list);
-
-        if (exactlyOne.isEmpty()) {
-            throw new AxisFault("can't find any Alternative with known Policy assertions");
-        }
-
-        Map modules = configuration.getModules();
-
-        for (Iterator iterator = modules.values().iterator(); iterator.hasNext();) {
-            AxisModule module = (AxisModule) iterator.next();
-            // TODO needs to implement this method
-//            module.validate(effPolicy);
-        }
-
-        if (exactlyOne.isEmpty()) {
-            throw new AxisFault("can't find any compaitible Alternative");
-        }
-
-        // pick an arbitary Alternative
-        All target = (All) exactlyOne.getTerms().get(0);
-        exactlyOne.getTerms().removeAll(exactlyOne.getTerms());
-        exactlyOne.addTerm(target);
-
-        List requiredModules =  getModulesForAlternative(target.getTerms(), configuration);
-
-        for (Iterator iterator = requiredModules.iterator(); iterator.hasNext();) {
-            AxisModule module = (AxisModule) iterator.next();
-            if (! isEngaged(module.getName())) {
-                engageModule(module, configuration);
-            } else {
-                // TODO needs to implement this method
-//                module.applyPolicy(effPolicy, this);
-            }
-        }
+//        this.policyInclude.setPolicy(policy);
+//
+//        Policy effPolicy = this.policyInclude.getEffectivePolicy();
+//        ExactlyOne exactlyOne = (ExactlyOne) effPolicy.getTerms().get(0);
+//
+//        ArrayList list = new ArrayList();
+//
+//        for (Iterator iterator = exactlyOne.getTerms().iterator(); iterator.hasNext();) {
+//            All all = (All) iterator.next();
+//            if (!checkAllternative(all.getTerms(), configuration)) {
+//                list.add(all);
+//            }
+//        }
+//
+//        exactlyOne.getTerms().removeAll(list);
+//
+//        if (exactlyOne.isEmpty()) {
+//            throw new AxisFault("can't find any Alternative with known Policy assertions");
+//        }
+//
+//        Map modules = configuration.getModules();
+//
+//        for (Iterator iterator = modules.values().iterator(); iterator.hasNext();) {
+//            AxisModule module = (AxisModule) iterator.next();
+//            // TODO needs to implement this method
+////            module.validate(effPolicy);
+//        }
+//
+//        if (exactlyOne.isEmpty()) {
+//            throw new AxisFault("can't find any compaitible Alternative");
+//        }
+//
+//        // pick an arbitary Alternative
+//        All target = (All) exactlyOne.getTerms().get(0);
+//        exactlyOne.getTerms().removeAll(exactlyOne.getTerms());
+//        exactlyOne.addTerm(target);
+//
+//        List requiredModules =  getModulesForAlternative(target.getTerms(), configuration);
+//
+//        for (Iterator iterator = requiredModules.iterator(); iterator.hasNext();) {
+//            AxisModule module = (AxisModule) iterator.next();
+//            if (! isEngaged(module.getName())) {
+//                engageModule(module, configuration);
+//            } else {
+//                // TODO needs to implement this method
+////                module.applyPolicy(effPolicy, this);
+//            }
+//        }
 
     }
 
     private List getModulesForAlternative(List primitiveTerms, AxisConfiguration configuration) {
 
-        ArrayList namespaceURIs = new ArrayList();
-        ArrayList modulesList = new ArrayList();
-
-        PrimitiveAssertion primitive;
-        String namespaceURI;
-
-        for (Iterator iterator = primitiveTerms.iterator(); iterator.hasNext();) {
-            primitive = (PrimitiveAssertion) iterator.next();
-            namespaceURI = primitive.getName().getNamespaceURI();
-
-            if (! namespaceURIs.contains(namespaceURI)) {
-                namespaceURIs.add(namespaceURI);
-            }
-        }
-
-        for (Iterator iterator = namespaceURIs.iterator(); iterator.hasNext();) {
-            modulesList.addAll(configuration.getModulesForPolicyNamesapce((String) iterator.next()));
-        }
-
-        return modulesList;
+//        ArrayList namespaceURIs = new ArrayList();
+//        ArrayList modulesList = new ArrayList();
+//
+//        PrimitiveAssertion primitive;
+//        String namespaceURI;
+//
+//        for (Iterator iterator = primitiveTerms.iterator(); iterator.hasNext();) {
+//            primitive = (PrimitiveAssertion) iterator.next();
+//            namespaceURI = primitive.getName().getNamespaceURI();
+//
+//            if (! namespaceURIs.contains(namespaceURI)) {
+//                namespaceURIs.add(namespaceURI);
+//            }
+//        }
+//
+//        for (Iterator iterator = namespaceURIs.iterator(); iterator.hasNext();) {
+//            modulesList.addAll(configuration.getModulesForPolicyNamesapce((String) iterator.next()));
+//        }
+//
+//        return modulesList;
+        throw new UnsupportedOperationException("TODO");
     }
     
     private boolean checkAllternative(List terms, AxisConfiguration configuration) {
-
-        PrimitiveAssertion assertion;
-
-        for (Iterator iterator = terms.iterator(); iterator.hasNext();) {
-            assertion = (PrimitiveAssertion) iterator.next();
-
-            String namespace = assertion.getName().getNamespaceURI();
-            List modulesList = configuration.getModulesForPolicyNamesapce(namespace);
-            if (modulesList != null) {
-                return false;
-            }
-
-        }
-        return true;
+//
+//        PrimitiveAssertion assertion;
+//
+//        for (Iterator iterator = terms.iterator(); iterator.hasNext();) {
+//            assertion = (PrimitiveAssertion) iterator.next();
+//
+//            String namespace = assertion.getName().getNamespaceURI();
+//            List modulesList = configuration.getModulesForPolicyNamesapce(namespace);
+//            if (modulesList != null) {
+//                return false;
+//            }
+//
+//        }
+//        return true;
+        throw new UnsupportedOperationException("TODO");
     }
 
     

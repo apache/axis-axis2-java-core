@@ -28,10 +28,11 @@ import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.modules.PolicyExtension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.util.Constants;
-import org.apache.ws.policy.All;
-import org.apache.ws.policy.ExactlyOne;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.PrimitiveAssertion;
+import org.apache.neethi.All;
+import org.apache.neethi.Assertion;
+import org.apache.neethi.ExactlyOne;
+import org.apache.neethi.Policy;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -39,8 +40,11 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class PolicyEvaluator implements CodeGenExtension {
@@ -142,62 +146,41 @@ public class PolicyEvaluator implements CodeGenExtension {
     private void processPolicies(Document document, Element rootElement,
                                  Policy policy, QName opName,Map ns2Exts) {
 
-        if (!policy.isNormalized()) {
-            policy = (Policy) policy.normalize();
-        }
-
         HashMap map = new HashMap();
-
-        ExactlyOne XOR = (ExactlyOne) policy.getTerms()
-                .get(0);
-        All iAND = (All) XOR.getTerms().get(
-                0);
-        All AND = new All();
-        AND.addTerms(iAND.getTerms());
-
-        for (Iterator iterator = AND.getTerms().iterator(); iterator.hasNext();) {
-
-            All nAND = new All();
-            PrimitiveAssertion pa = (PrimitiveAssertion) iterator.next();
-
-            String namespace = pa.getName().getNamespaceURI();
-            nAND.addTerm(pa);
-
-            while (iterator.hasNext()) {
-                pa = (PrimitiveAssertion) iterator.next();
-
-                if (namespace.equals(pa.getName().getNamespaceURI())) {
-                    nAND.addTerm(pa);
+        
+        for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
+            
+            String targetNamesapce = null;
+            Assertion assertion;
+            List assertionList;
+            
+            for (Iterator assertions = ((List) iterator.next()).iterator(); assertions.hasNext();) {
+                assertion = (Assertion) iterator.next();
+                targetNamesapce = assertion.getName().getNamespaceURI();
+                
+                if ((assertionList = (List) map.get(targetNamesapce)) == null)  {
+                    assertionList = new ArrayList();
+                    map.put(targetNamesapce,assertionList);
                 }
+                
+                assertionList.add(assertions);
             }
-
-            map.put(namespace, nAND);
-            AND.getTerms().removeAll(nAND.getTerms());
-
-            iterator = AND.getTerms().iterator();
+            
+            // here we pick the first policy alternative and ignor the rest
+            break;
         }
-
+                
         for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
-            String namespace = (String) iterator.next();
-            PolicyExtension policyExtension = (PolicyExtension) ns2Exts.get(namespace);
-
-//			AxisModule axisModule = (AxisModule) ns2modules.get(namespace);
+            String targetNamespace = (String) iterator.next();
+            PolicyExtension policyExtension = (PolicyExtension) ns2Exts.get(targetNamespace);
 
             if (policyExtension == null) {
                 System.err.println("cannot find a PolicyExtension to process "
-                        + namespace + "type assertions");
+                        + targetNamespace + "type assertions");
                 continue;
             }
-
-            Policy nPolicy = new Policy();
-            ExactlyOne nXOR = new ExactlyOne();
-            nPolicy.addTerm(nXOR);
-
-            All nAND = (All) map
-                    .get(namespace);
-            nXOR.addTerm(nAND);
-
-            policyExtension.addMethodsToStub(document, rootElement, opName, nPolicy);
+            
+            policyExtension.addMethodsToStub(document, rootElement, opName, (List) map.get(targetNamespace));
         }
     }
 
@@ -221,29 +204,31 @@ public class PolicyEvaluator implements CodeGenExtension {
             this.configuration = configuration;
         }
 
-        public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
+        public void addMethodsToStub(Document document, Element element, QName operationName, List assertions) {
+            
+            // FIXME
 
-            if (!setOnce) {
-                 Object plainBase64PropertyMap = configuration.getProperty(Constants.PLAIN_BASE_64_PROPERTY_KEY);
-                 configuration.putProperty(Constants.BASE_64_PROPERTY_KEY, plainBase64PropertyMap);
-
-                 setOnce = true;
-            }
-
-            Element optimizeContent = document.createElement("optimizeContent");
-            Element opNameElement = document.createElement("opName");
-
-            opNameElement.setAttribute("ns-url", operationName.getNamespaceURI());
-            opNameElement.setAttribute("localName", operationName.getLocalPart());
-
-            optimizeContent.appendChild(opNameElement);
-
-            element.appendChild(optimizeContent);
+//            if (!setOnce) {
+//                 Object plainBase64PropertyMap = configuration.getProperty(Constants.PLAIN_BASE_64_PROPERTY_KEY);
+//                 configuration.putProperty(Constants.BASE_64_PROPERTY_KEY, plainBase64PropertyMap);
+//
+//                 setOnce = true;
+//            }
+//
+//            Element optimizeContent = document.createElement("optimizeContent");
+//            Element opNameElement = document.createElement("opName");
+//
+//            opNameElement.setAttribute("ns-url", operationName.getNamespaceURI());
+//            opNameElement.setAttribute("localName", operationName.getLocalPart());
+//
+//            optimizeContent.appendChild(opNameElement);
+//
+//            element.appendChild(optimizeContent);
         }
     }
 
     class EncodePolicyExtension implements PolicyExtension {
-        public void addMethodsToStub(Document document, Element element, QName operationName, Policy policy) {
+        public void addMethodsToStub(Document document, Element element, QName operationName, List assertions) {
             // TODO implement encoding
         }
     }

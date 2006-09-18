@@ -16,8 +16,9 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.policy.Policy;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -547,7 +548,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Policy servicePolicy = policyInclude.getPolicy();
 
         if (servicePolicy != null) {
-            String policyString = PolicyUtil.getPolicyAsString(servicePolicy);
+            String policyString = PolicyUtil.policyComponentToString(servicePolicy);
             addAttribute(doc, "policy", policyString, rootElement);
         }
 
@@ -1414,8 +1415,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 PolicyInclude policyInclude = axisOperation.getPolicyInclude();
                 Policy policy = policyInclude.getPolicy();
+                
+                
                 if (policy != null) {
-                    addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
+                    try  {
+                    addAttribute(doc, "policy", PolicyUtil.policyComponentToString(policy), methodElement);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(" Can't serialize the policy ..");
+                    }
                 }
 
                 methodElement.appendChild(getInputElement(doc, axisOperation, soapHeaderInputParameterList));
@@ -1455,9 +1462,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                     Policy policy = axisOperation.getPolicyInclude().getPolicy();
                     if (policy != null) {
+                        try  {
                         addAttribute(doc, "policy",
-                                PolicyUtil.getPolicyAsString(policy),
+                                PolicyUtil.policyComponentToString(policy),
                                 methodElement);
+                        } catch (Exception ex) {
+                            throw new RuntimeException("can't serialize the policy ..");
+                        }
                     }
 
 

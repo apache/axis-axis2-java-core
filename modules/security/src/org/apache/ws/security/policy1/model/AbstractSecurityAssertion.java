@@ -16,6 +16,7 @@
 package org.apache.ws.security.policy1.model;
 
 import org.apache.neethi.Assertion;
+import org.apache.neethi.Constants;
 
 public abstract class AbstractSecurityAssertion implements Assertion{
 
@@ -30,7 +31,7 @@ public abstract class AbstractSecurityAssertion implements Assertion{
     }
 
     public short getType() {
-        return Assertion.ASSERTION;
+        return Constants.TYPE_ASSERTION;
     }    
 
 }

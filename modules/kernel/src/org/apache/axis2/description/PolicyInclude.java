@@ -18,9 +18,10 @@ package org.apache.axis2.description;
 
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.i18n.Messages;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.PolicyReference;
-import org.apache.ws.policy.util.PolicyRegistry;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyReference;
+import org.apache.neethi.PolicyRegistry;
+import org.apache.neethi.PolicyRegistryImpl;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -79,18 +80,18 @@ public class PolicyInclude {
 	private Hashtable wrapperElements = new Hashtable();
 
 	public PolicyInclude() {
-		reg = new PolicyRegistry();
+		reg = new PolicyRegistryImpl();
 	}
-	
+    
 	public PolicyInclude(AxisDescription axisDescription) {
-		reg = new PolicyRegistry();
-		setDescription(axisDescription);
 		
 		if (axisDescription.getParent() != null) {
 			PolicyInclude parentPolicyInclude = axisDescription.getParent().getPolicyInclude();
-			reg.setParent(parentPolicyInclude.getPolicyRegistry());
-		}
-		
+            reg = new PolicyRegistryImpl(parentPolicyInclude.getPolicyRegistry());
+		} else {
+		    reg = new PolicyRegistryImpl();
+        }
+        setDescription(axisDescription);
 	}
 
 	public void setPolicyRegistry(PolicyRegistry reg) {
@@ -103,25 +104,30 @@ public class PolicyInclude {
 
 	public void setPolicy(Policy policy) {
 		wrapperElements.clear();
-		
-		if (policy.getPolicyURI() != null && policy.getPolicyURI().equals("")) {
-			policy.setId(UUIDGenerator.getUUID());
-		}
-		
-		Wrapper wrapper = new Wrapper(PolicyInclude.ANON_POLICY, policy);
-		wrapperElements.put(policy.getPolicyURI(), wrapper);
-		
+        
+        if (policy.getName() == null && policy.getId() == null) {
+            policy.setId(UUIDGenerator.getUUID());
+        }
+        
+        Wrapper wrapper = new Wrapper(PolicyInclude.ANON_POLICY, policy);
+        if (policy.getName() != null) {
+            wrapperElements.put(policy.getName(), wrapper);
+        } else {
+            wrapperElements.put(policy.getId(), wrapper);
+        }
+        
 		useCacheP = false;
 	}
 	
 	public void updatePolicy(Policy policy) {
-		String policyURI = policy.getPolicyURI();
+		String key;
+        
+        if ((key = policy.getName()) == null && (key = policy.getId()) == null) {
+            // TODO throw more meaningful exception ..
+            throw new RuntimeException("policy doesn't have a name or an id ");            
+        }
 		
-		if (policyURI == null && "".equals(policyURI)) {
-			throw new RuntimeException(Messages.getMessage("emptypolicy"));
-		}
-		
-		Wrapper wrapper = (Wrapper) wrapperElements.get(policyURI);
+		Wrapper wrapper = (Wrapper) wrapperElements.get(key);
 		wrapper.value = policy;
 		
 		useCacheP = false;		
@@ -158,7 +164,7 @@ public class PolicyInclude {
 
 			if (policyElement instanceof PolicyReference) {
 				p = (Policy) ((PolicyReference) policyElement)
-						.normalize(getPolicyRegistry());
+						.normalize(getPolicyRegistry(), false);
 
 			} else if (policyElement instanceof Policy) {
 				p = (Policy) policyElement;
@@ -167,10 +173,10 @@ public class PolicyInclude {
 				// TODO AxisFault?
 				throw new RuntimeException();
 			}
-
-			result = (result == null) ? (Policy) p.normalize(reg)
-					: (Policy) result.merge(p, reg);
-		}
+            
+            result = (result == null) ? (Policy) p : (Policy) result.merge(p);
+        }
+        
 		this.policy = result;
 		useCacheP(true);
 	}
@@ -187,7 +193,7 @@ public class PolicyInclude {
 			} else {
 				
 				if (getPolicy() != null) {
-					result = (Policy) parentPolicy.merge(getPolicy(), reg);
+					result = (Policy) parentPolicy.merge(getPolicy());
 					
 				} else {
 					result = parentPolicy;
@@ -245,38 +251,38 @@ public class PolicyInclude {
 		return policyElementList;
 	}
 
-	public void registerPolicy(Policy policy) {
-		reg.register(policy.getPolicyURI(), policy);
+	public void registerPolicy(String key, Policy policy) {
+		reg.register(key, policy);
 	}
 
-	public Policy getPolicy(String policyURI) {
-		return reg.lookup(policyURI);
+	public Policy getPolicy(String key) {
+		return reg.lookup(key);
 	}
 
 	public void addPolicyElement(int type, Policy policy) {
-		if (policy.getPolicyURI() == null || policy.getPolicyURI().equals("")) {
-			policy.setId(UUIDGenerator.getUUID());
-		}
-		Wrapper wrapper = new Wrapper(type, policy);
-		wrapperElements.put(policy.getPolicyURI(), wrapper);
-
-        if (policy.getId() != null) {
-            reg.register(policy.getId(), policy);
+        
+        String key;
+        
+        if ((key = policy.getName()) == null && (key = policy.getId()) == null) {
+            policy.setId(UUIDGenerator.getUUID());
         }
         
-        if (policy.getName() != null) {
-            reg.register(policy.getName(), policy);
-        }
+        key = (policy.getName() != null) ? policy.getName() : policy.getId();
+        
+		Wrapper wrapper = new Wrapper(type, policy);
+		wrapperElements.put(key, wrapper);
+        reg.register(key, policy);
 	}
 
 	public void addPolicyRefElement(int type, PolicyReference policyReference) {
 		Wrapper wrapper = new Wrapper(type, policyReference);
-		wrapperElements.put(policyReference.getPolicyURIString(), wrapper);
+		wrapperElements.put(policyReference.getURI(), wrapper);
 	}
 
 	public void invalidate() {
 		
 		if (description != null) {
+            //FIXME
 //			Iterator children = description.getChildren();
 //			
 //			if (children != null) {

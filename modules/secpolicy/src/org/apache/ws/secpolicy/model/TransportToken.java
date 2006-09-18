@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.neethi.Assertion;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
@@ -76,7 +75,7 @@ public class TransportToken extends AbstractSecurityAssertion {
     }
 
     public short getType() {
-        return Assertion.ASSERTION;
+        return org.apache.neethi.Constants.TYPE_ASSERTION;
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {

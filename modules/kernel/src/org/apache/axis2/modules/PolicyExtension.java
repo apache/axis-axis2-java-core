@@ -16,13 +16,14 @@
 
 package org.apache.axis2.modules;
 
-import org.apache.ws.policy.Policy;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 public interface PolicyExtension {
-	public void addMethodsToStub(Document document, Element element, QName methodName,Policy policy);
+	public void addMethodsToStub(Document document, Element element, QName methodName, List assertions);
 
 }

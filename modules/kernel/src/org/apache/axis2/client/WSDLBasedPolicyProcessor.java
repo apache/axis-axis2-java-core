@@ -18,117 +18,147 @@ package org.apache.axis2.client;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.ws.policy.All;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.PrimitiveAssertion;
-import org.apache.ws.policy.ExactlyOne;
+import org.apache.neethi.Assertion;
+import org.apache.neethi.Policy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
 
 public class WSDLBasedPolicyProcessor {
-	private HashMap ns2modules = new HashMap();
-	private ConfigurationContext configctx;
-	
-	
-	public WSDLBasedPolicyProcessor(ConfigurationContext configctx){
-		//create the Map for namespaces to modules this is 1:N mapping
-		// so we got to use array lists
-		this.configctx = configctx;
-		AxisConfiguration axisConfiguration = configctx.getAxisConfiguration();
-		for (Iterator iterator = axisConfiguration.getModules().values()
-				.iterator(); iterator.hasNext();) {
-			AxisModule axisModule = (AxisModule) iterator.next();
-			String[] namespaces = axisModule.getSupportedPolicyNamespaces();
+    private HashMap ns2modules = new HashMap();
 
-			if (namespaces == null) {
-				continue;
-			}
+    public WSDLBasedPolicyProcessor(ConfigurationContext configctx) {
+        AxisConfiguration axisConfiguration = configctx.getAxisConfiguration();
+        for (Iterator iterator = axisConfiguration.getModules().values()
+                .iterator(); iterator.hasNext();) {
+            AxisModule axisModule = (AxisModule) iterator.next();
+            String[] namespaces = axisModule.getSupportedPolicyNamespaces();
 
-			for (int i = 0; i < namespaces.length; i++) {
-				ArrayList moduleList = null;
-				Object obj = ns2modules.get(namespaces[i]);
-				if(obj == null){
-					moduleList = new ArrayList(5);
-					ns2modules.put(namespaces[i], moduleList);
-				}else{
-					moduleList = (ArrayList)obj;
-				}
-				moduleList.add(axisModule);
-				
-			}
-		}
-		
-	}
-	
-	
-	
-	public void configureServicePolices(AxisService axisService) throws AxisFault{
-		Iterator operations = axisService.getOperations();
-		while(operations.hasNext()){
-			AxisOperation axisOp = (AxisOperation)operations.next();
-			//TODO we support only Operation level Policy now
-			configureOperationPolices(axisOp);
-		}
-	}
-	
-	
-	public void configureOperationPolices(AxisOperation op) throws AxisFault {
-        PolicyInclude policyInclude = op.getPolicyInclude();
+            if (namespaces == null) {
+                continue;
+            }
 
-        if (policyInclude != null) {
-            Policy policy = policyInclude.getEffectivePolicy();
-            if (policy != null) {
-                if (!policy.isNormalized()) {
-                    policy = (Policy) policy.normalize();
+            for (int i = 0; i < namespaces.length; i++) {
+                ArrayList moduleList = null;
+                Object obj = ns2modules.get(namespaces[i]);
+                if (obj == null) {
+                    moduleList = new ArrayList(5);
+                    ns2modules.put(namespaces[i], moduleList);
+                } else {
+                    moduleList = (ArrayList) obj;
                 }
+                moduleList.add(axisModule);
 
-                ExactlyOne XOR = (ExactlyOne) policy
-                        .getTerms().get(0);
-                All AND = (All) XOR
-                        .getTerms().get(0);
+            }
+        }
 
-                Iterator pAsserations = AND.getTerms().iterator();
-                while (pAsserations.hasNext()) {
-                    PrimitiveAssertion pa = (PrimitiveAssertion) pAsserations
-                            .next();
-                    String namespace = pa.getName().getNamespaceURI();
-                    ArrayList moduleList = (ArrayList) ns2modules
-                            .get(namespace);
+    }
 
-                    if (moduleList == null) {
-                        System.err.println("cannot find a module to process "
-                                + namespace + "type assertions");
-                    } else {
-                        for (int i = 0; i < moduleList.size(); i++) {
-                            AxisModule axisModule = (AxisModule) moduleList
-                                    .get(i);
-                            Iterator engagedModules = op.getEngagedModules()
-                                    .iterator();
-                            boolean found = false;
-                            while (engagedModules.hasNext()) {
-                                AxisModule module = (AxisModule) engagedModules
-                                        .next();
-                                if (module.getName().equals(
-                                        axisModule.getName())) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
-                                op.engageModule(axisModule, configctx
-                                        .getAxisConfiguration());
-                                axisModule.getModule().engageNotify(op);
-                            }
-                        }
+    public void configureServicePolices(AxisService axisService)
+            throws AxisFault {
+        Iterator operations = axisService.getOperations();
+        while (operations.hasNext()) {
+            AxisOperation axisOp = (AxisOperation) operations.next();
+            // TODO we support only Operation level Policy now
+            configureOperationPolices(axisOp);
+        }
+    }
+
+    public void configureOperationPolices(AxisOperation op) throws AxisFault {
+        PolicyInclude policyInclude = op.getPolicyInclude();
+        Policy policy = policyInclude.getEffectivePolicy();
+        if (policy != null) {
+
+            policy = (Policy) policy.normalize(policyInclude
+                    .getPolicyRegistry(), false);
+
+            for (Iterator iterator = policy.getAlternatives(); iterator
+                    .hasNext();) {
+
+                List namespaceList = new ArrayList();
+                Assertion assertion;
+
+                /*
+                 * Fist we computes the set of distinct namesapces of assertions
+                 * of this particular policy alternative.
+                 */
+                for (Iterator assertions = ((List) iterator.next()).iterator(); assertions
+                        .hasNext();) {
+
+                    assertion = (Assertion) iterator.next();
+                    QName name = assertion.getName();
+                    String namespaceURI = name.getNamespaceURI();
+
+                    if (!namespaceList.contains(namespaceURI)) {
+                        namespaceList.add(namespaceURI);
                     }
                 }
+
+                /*
+                 * Now we compute all the modules that are are involved in
+                 * process assertions that are belonged to any of the namespace
+                 * list.
+                 */
+                List modulesToEngage;
+               
+                for (Iterator namespaces = namespaceList.iterator(); iterator
+                        .hasNext();) {
+                    String namespace = (String) namespaces.next();
+                    modulesToEngage = (List) ns2modules.get(namespace);
+
+                    if (modulesToEngage == null) {
+                        /*
+                         * If there isn't a single module that is not interested
+                         * of assertions that belongs to a particular namespace,
+                         * we simply ignor it.
+                         */
+                        System.err
+                                .println("cannot find any modules to process "
+                                        + namespace + "type assertions");
+                        // TODO: Log this ..
+                        continue;
+                        
+                    } else {
+                        engageModulesToAxisDescription(modulesToEngage, op);
+                    }
+                }
+                
+
+                /*
+                 * We only pick the first policy alternative. Other policy
+                 * alternatives are ignored.
+                 */
+                break;
+            }
+        }
+    }
+
+    /**
+     * Engages the list of Modules to the specified AxisDescription. 
+     */
+    private void engageModulesToAxisDescription(List modulesToEngage,
+            AxisDescription axisDescription) throws AxisFault {
+        AxisModule axisModule;
+        QName moduleName;
+
+        for (Iterator iterator = modulesToEngage.iterator(); iterator.hasNext();) {
+            axisModule = (AxisModule) iterator.next();
+            moduleName = axisModule.getName();
+
+            if (!axisDescription.isEngaged(moduleName)) {
+                axisDescription.engageModule(axisModule, axisDescription
+                        .getAxisConfiguration());
+                (axisModule.getModule()).engageNotify(axisDescription);
             }
         }
     }

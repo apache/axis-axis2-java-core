@@ -26,11 +26,12 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.modules.PolicyExtension;
+import org.apache.neethi.Policy;
 import org.apache.rampart.util.HandlerParameterDecoder;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
-import org.apache.ws.policy.Policy;
+
 import org.apache.ws.security.policy1.WSS4JConfig;
 import org.apache.ws.security.policy1.WSS4JConfigBuilder;
 import org.apache.ws.security.policy1.extension.WSSCodegenPolicyExtension;
@@ -45,68 +46,72 @@ public class Rampart implements Module, ModulePolicyExtension  {
     }
 
     public void engageNotify(AxisDescription axisDescription) throws AxisFault {
-        Policy policy = axisDescription.getPolicyInclude().getEffectivePolicy();
-        if (axisDescription instanceof AxisOperation && policy != null) {
-            try {
-                WSSPolicyProcessor wssPolicyProcessor = new WSSPolicyProcessor();
-                wssPolicyProcessor.setup();
-                wssPolicyProcessor.processPolicy((Policy)policy.normalize(axisDescription.getPolicyInclude().getPolicyRegistry()));
-
-                //create server side config
-                WSS4JConfig serverConfig = WSS4JConfigBuilder
-                        .build(wssPolicyProcessor.getRootPED()
-                                .getTopLevelPEDs());
-
-                InflowConfiguration policyInflowConfig = serverConfig
-                        .getInflowConfiguration();
-
-                Parameter infp = calcuateCurrentInflowConfiguration(policyInflowConfig,axisDescription).getProperty();
-                
-                if (infp != null) {
-                    infp.setName(WSSHandlerConstants.INFLOW_SECURITY_SERVER);
-                    axisDescription.addParameter(infp);                    
-                }
-                                
-                OutflowConfiguration policyOutflowConfig = serverConfig.getOutflowConfiguration();
-                Parameter outfp = calcuateCurrentOutflowConfiguration(policyOutflowConfig,axisDescription).getProperty();
-                
-                if (outfp != null) {
-                    outfp.setName(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER);
-                    axisDescription.addParameter(outfp);                    
-                }
-                
-                
-                
-                //create client side config
-                wssPolicyProcessor = new WSSPolicyProcessor();
-                wssPolicyProcessor.setup();
-                wssPolicyProcessor.processPolicy(policy);
-                
-                WSS4JConfig clientConfig = WSS4JConfigBuilder
-                .build(wssPolicyProcessor.getRootPED()
-                        .getTopLevelPEDs(), isServerSide(axisDescription));
-
-                policyInflowConfig = clientConfig.getInflowConfiguration();
-
-                infp = calcuateCurrentInflowConfiguration(policyInflowConfig,axisDescription).getProperty();
-                
-                if (infp != null) {
-                    infp.setName(WSSHandlerConstants.INFLOW_SECURITY_CLIENT);
-                    axisDescription.addParameter(infp);
-                }
         
-                 policyOutflowConfig = clientConfig.getOutflowConfiguration();
-                 outfp = calcuateCurrentOutflowConfiguration(policyOutflowConfig, axisDescription).getProperty();
-                 
-                 if (outfp != null) {
-                     outfp.setName(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT);
-                     axisDescription.addParameter(outfp);
-                 }
-                 
-            } catch (Exception e) {
-                throw new AxisFault(e.getMessage(), e);
-            }
-        }
+        // TODO do the appropriate based on the Neethi2 policy object ..        
+        Policy policy = axisDescription.getPolicyInclude().getEffectivePolicy();
+        
+        
+//        if (axisDescription instanceof AxisOperation && policy != null) {
+//            try {
+//                WSSPolicyProcessor wssPolicyProcessor = new WSSPolicyProcessor();
+//                wssPolicyProcessor.setup();
+//                wssPolicyProcessor.processPolicy((Policy)policy.normalize(axisDescription.getPolicyInclude().getPolicyRegistry()));
+//
+//                //create server side config
+//                WSS4JConfig serverConfig = WSS4JConfigBuilder
+//                        .build(wssPolicyProcessor.getRootPED()
+//                                .getTopLevelPEDs());
+//
+//                InflowConfiguration policyInflowConfig = serverConfig
+//                        .getInflowConfiguration();
+//
+//                Parameter infp = calcuateCurrentInflowConfiguration(policyInflowConfig,axisDescription).getProperty();
+//                
+//                if (infp != null) {
+//                    infp.setName(WSSHandlerConstants.INFLOW_SECURITY_SERVER);
+//                    axisDescription.addParameter(infp);                    
+//                }
+//                                
+//                OutflowConfiguration policyOutflowConfig = serverConfig.getOutflowConfiguration();
+//                Parameter outfp = calcuateCurrentOutflowConfiguration(policyOutflowConfig,axisDescription).getProperty();
+//                
+//                if (outfp != null) {
+//                    outfp.setName(WSSHandlerConstants.OUTFLOW_SECURITY_SERVER);
+//                    axisDescription.addParameter(outfp);                    
+//                }
+//                
+//                
+//                
+//                //create client side config
+//                wssPolicyProcessor = new WSSPolicyProcessor();
+//                wssPolicyProcessor.setup();
+//                wssPolicyProcessor.processPolicy(policy);
+//                
+//                WSS4JConfig clientConfig = WSS4JConfigBuilder
+//                .build(wssPolicyProcessor.getRootPED()
+//                        .getTopLevelPEDs(), isServerSide(axisDescription));
+//
+//                policyInflowConfig = clientConfig.getInflowConfiguration();
+//
+//                infp = calcuateCurrentInflowConfiguration(policyInflowConfig,axisDescription).getProperty();
+//                
+//                if (infp != null) {
+//                    infp.setName(WSSHandlerConstants.INFLOW_SECURITY_CLIENT);
+//                    axisDescription.addParameter(infp);
+//                }
+//        
+//                 policyOutflowConfig = clientConfig.getOutflowConfiguration();
+//                 outfp = calcuateCurrentOutflowConfiguration(policyOutflowConfig, axisDescription).getProperty();
+//                 
+//                 if (outfp != null) {
+//                     outfp.setName(WSSHandlerConstants.OUTFLOW_SECURITY_CLIENT);
+//                     axisDescription.addParameter(outfp);
+//                 }
+//                 
+//            } catch (Exception e) {
+//                throw new AxisFault(e.getMessage(), e);
+//            }
+//        }
     }
 
     public void shutdown(ConfigurationContext configurationContext) throws AxisFault {

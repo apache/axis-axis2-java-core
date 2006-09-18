@@ -17,6 +17,7 @@
 package org.apache.rampart.policy.model;
 
 import org.apache.neethi.Assertion;
+import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 
@@ -177,7 +178,7 @@ public class RampartConfig implements Assertion {
     }
 
     public short getType() {
-        return Assertion.ASSERTION;
+        return Constants.TYPE_ASSERTION;
     }
 
     /**

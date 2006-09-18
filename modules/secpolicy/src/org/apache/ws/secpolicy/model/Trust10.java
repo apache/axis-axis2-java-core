@@ -20,7 +20,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.neethi.Assertion;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
@@ -129,11 +128,8 @@ public class Trust10 extends AbstractSecurityAssertion {
         throw new UnsupportedOperationException("TODO Sanka");
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.PolicyComponent#getType()
-     */
     public short getType() {
-        return Assertion.ASSERTION;
+        return org.apache.neethi.Constants.TYPE_ASSERTION;
     }
 
 }

@@ -31,10 +31,7 @@ import org.apache.ws.secpolicy.model.Layout;
 
 public class LayoutBuilder implements AssertionBuilder {
     
-    private static final QName STRICT = new QName(Constants.SP_NS, "Strict");
-    private static final QName LAX = new QName(Constants.SP_NS, "Lax");
-    private static final QName LAXTSFIRST = new QName(Constants.SP_NS, "LaxTsFirst");
-    private static final QName LAXTSLAST = new QName(Constants.SP_NS,"LaxTsLast");
+    
 
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
         Layout layout = new Layout();
@@ -60,13 +57,13 @@ public class LayoutBuilder implements AssertionBuilder {
             Assertion assertion = (Assertion) iterator.next();
             QName qname = assertion.getName();
             
-            if (STRICT.equals(qname)) {
+            if (Constants.STRICT.equals(qname)) {
                 parent.setValue(Constants.LAYOUT_STRICT);
-            } else if (LAX.equals(qname)) {
+            } else if (Constants.LAX.equals(qname)) {
                 parent.setValue(Constants.LAYOUT_LAX);
-            } else if (LAXTSFIRST.equals(qname)) {
+            } else if (Constants.LAXTSFIRST.equals(qname)) {
                 parent.setValue(Constants.LAYOUT_LAX_TIMESTAMP_FIRST);
-            } else if (LAXTSLAST.equals(qname)) {
+            } else if (Constants.LAXTSLAST.equals(qname)) {
                 parent.setValue(Constants.LAYOUT_LAX_TIMESTAMP_LAST);
             }
             

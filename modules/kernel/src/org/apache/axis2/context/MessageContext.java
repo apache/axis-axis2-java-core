@@ -29,7 +29,7 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.ws.policy.Policy;
+import org.apache.neethi.Policy;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;

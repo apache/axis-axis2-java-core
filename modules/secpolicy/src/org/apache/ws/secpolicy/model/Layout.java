@@ -23,10 +23,10 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
-public class Layout extends AbstractSecurityAssertion  {
-   
+public class Layout extends AbstractSecurityAssertion {
+
     private String value = Constants.LAYOUT_LAX;
-    
+
     /**
      * @return Returns the value.
      */
@@ -35,19 +35,21 @@ public class Layout extends AbstractSecurityAssertion  {
     }
 
     /**
-     * @param value The value to set.
+     * @param value
+     *            The value to set.
      */
     public void setValue(String value) {
-        if(Constants.LAYOUT_LAX.equals(value) ||
-                Constants.LAYOUT_STRICT.equals(value) ||
-                Constants.LAYOUT_LAX_TIMESTAMP_FIRST.equals(value) ||
-                Constants.LAYOUT_LAX_TIMESTAMP_LAST.equals(value)) {
-                 this.value = value;
-             } else {
-//                 throw new WSSPolicyException("Incorrect layout value : " + value);
-             }
+        if (Constants.LAYOUT_LAX.equals(value)
+                || Constants.LAYOUT_STRICT.equals(value)
+                || Constants.LAYOUT_LAX_TIMESTAMP_FIRST.equals(value)
+                || Constants.LAYOUT_LAX_TIMESTAMP_LAST.equals(value)) {
+            this.value = value;
+        } else {
+            // throw new WSSPolicyException("Incorrect layout value : " +
+            // value);
+        }
     }
-    
+
     public QName getName() {
         return Constants.LAYOUT;
     }
@@ -57,6 +59,44 @@ public class Layout extends AbstractSecurityAssertion  {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+
+        String localName = Constants.LAYOUT.getLocalPart();
+        String namespaceURI = Constants.LAYOUT.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+
+        if (prefix == null) {
+            prefix = Constants.LAYOUT.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+
+        // <sp:Layout>
+        writer.writeStartElement(prefix, localName, namespaceURI);
+
+        // <wsp:Policy>
+        writer.writeStartElement(Constants.POLICY.getPrefix(), Constants.POLICY
+                .getLocalPart(), Constants.POLICY.getNamespaceURI());
+
+        // .. <sp:Strict /> | <sp:Lax /> | <sp:LaxTsFirst /> | <sp:LaxTsLast /> ..
+        if (Constants.LAYOUT_STRICT.equals(value)) {
+            writer.writeStartElement(prefix, Constants.STRICT.getLocalPart(), namespaceURI);
+            
+        } else if (Constants.LAYOUT_LAX.equals(value)) {
+            writer.writeStartElement(prefix, Constants.LAX.getLocalPart(), namespaceURI);
+            
+        } else if (Constants.LAYOUT_LAX_TIMESTAMP_FIRST.equals(value)) {
+            writer.writeStartElement(prefix, Constants.LAXTSFIRST.getLocalPart(), namespaceURI);
+            
+        } else if (Constants.LAYOUT_LAX_TIMESTAMP_LAST.equals(value)) {
+            writer.writeStartElement(prefix, Constants.LAXTSLAST.getLocalPart(), namespaceURI);
+        }
+        
+        writer.writeEndElement();
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:Layout>
+        writer.writeEndElement();
     }
 }

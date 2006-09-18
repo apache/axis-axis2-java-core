@@ -24,7 +24,7 @@ import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.AxisMessage;
-import org.apache.ws.policy.Policy;
+import org.apache.neethi.Policy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -381,7 +381,11 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 PolicyInclude policyInclude = axisOperation.getPolicyInclude();
                 Policy policy = policyInclude.getPolicy();
                 if (policy != null) {
-                    addAttribute(doc, "policy", PolicyUtil.getPolicyAsString(policy), methodElement);
+                    try {
+                        addAttribute(doc, "policy", PolicyUtil.policyComponentToString(policy), methodElement);
+                    } catch (Exception ex) {
+                        throw new RuntimeException("can't serialize the policy to a String " , ex);
+                    }
                 }
 
                 methodElement.appendChild(getInputElement(doc, axisOperation, soapHeaderInputParameterList));
@@ -425,9 +429,13 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
                     Policy policy = axisOperation.getPolicyInclude().getPolicy();
                     if (policy != null) {
+                        try {
                         addAttribute(doc, "policy",
-                                PolicyUtil.getPolicyAsString(policy),
+                                PolicyUtil.policyComponentToString(policy),
                                 methodElement);
+                        } catch (Exception ex) {
+                            throw new RuntimeException("can't serialize the policy to a String", ex);
+                        }
                     }
 
 

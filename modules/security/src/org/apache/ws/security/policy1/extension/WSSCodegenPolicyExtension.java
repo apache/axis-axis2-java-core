@@ -15,59 +15,57 @@
  */
 package org.apache.ws.security.policy1.extension;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.modules.PolicyExtension;
-import org.apache.rampart.handler.config.OutflowConfiguration;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.security.policy1.WSS4JConfig;
-import org.apache.ws.security.policy1.WSS4JConfigBuilder;
-import org.apache.ws.security.policy1.model.RootPolicyEngineData;
-import org.apache.ws.security.policy1.parser.WSSPolicyProcessor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class WSSCodegenPolicyExtension implements PolicyExtension {
 
     public void addMethodsToStub(Document document, Element element,
-            QName methodName, Policy policy) {
-        try {
-            WSSPolicyProcessor processor = new WSSPolicyProcessor();
-            processor.setup();
-            
-            if (!policy.isNormalized()) {
-                policy = (Policy) policy.normalize();
-            }
-            
-            processor.processPolicy(policy);
-                
-            RootPolicyEngineData data = processor.getRootPED();
-            
-            WSS4JConfig wss4jConfig = WSS4JConfigBuilder.build(data.getTopLevelPEDs(), false);
-            OutflowConfiguration outflowConfiguration = wss4jConfig.getOutflowConfiguration();
-            
-            Element secElement = document.createElement("security-codegen-policy-extensions");
-            
-            String actionItems = outflowConfiguration.getActionItems();
-            
-            if (actionItems != null) {
-                String[] actions = actionItems.split(" ");
-                
-                Element child;
-                String localname;
-                for (int i = 0; i < actions.length; i++) {
-                    localname = actions[i].toLowerCase() + "-action";
-                    child = document.createElement(localname);
-                    secElement.appendChild(child);
-                }
-            }
-            
-            element.appendChild(secElement);
-            
-        } catch (Exception nsme) {
-            throw new RuntimeException("error in WSSPolicyExtension " , nsme);
-            
-        }
+            QName methodName, List assertions) {
+        
+        // FIXME 
+//        try {
+//            WSSPolicyProcessor processor = new WSSPolicyProcessor();
+//            processor.setup();
+//            
+//            if (!policy.isNormalized()) {
+//                policy = (Policy) policy.normalize();
+//            }
+//            
+//            processor.processPolicy(policy);
+//                
+//            RootPolicyEngineData data = processor.getRootPED();
+//            
+//            WSS4JConfig wss4jConfig = WSS4JConfigBuilder.build(data.getTopLevelPEDs(), false);
+//            OutflowConfiguration outflowConfiguration = wss4jConfig.getOutflowConfiguration();
+//            
+//            Element secElement = document.createElement("security-codegen-policy-extensions");
+//            
+//            String actionItems = outflowConfiguration.getActionItems();
+//            
+//            if (actionItems != null) {
+//                String[] actions = actionItems.split(" ");
+//                
+//                Element child;
+//                String localname;
+//                for (int i = 0; i < actions.length; i++) {
+//                    localname = actions[i].toLowerCase() + "-action";
+//                    child = document.createElement(localname);
+//                    secElement.appendChild(child);
+//                }
+//            }
+//            
+//            element.appendChild(secElement);
+//            
+//        } catch (Exception nsme) {
+//            throw new RuntimeException("error in WSSPolicyExtension " , nsme);
+//            
+//        }
     }
 
 }
