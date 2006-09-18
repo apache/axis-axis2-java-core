@@ -39,7 +39,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.transport.njms.DefaultThreadFactory;
+import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

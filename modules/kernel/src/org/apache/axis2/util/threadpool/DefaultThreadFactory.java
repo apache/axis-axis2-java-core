@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package org.apache.axis2.transport.njms;
+package org.apache.axis2.util.threadpool;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory;
 import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +23,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
  * Creates threads with the given name prefix
  */
 public class DefaultThreadFactory implements ThreadFactory {
-
+                                 
     final ThreadGroup group;
     final AtomicInteger count;
     final String namePrefix;

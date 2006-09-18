@@ -285,7 +285,7 @@ public class JMSListener implements TransportListener {
                 1,
                 WORKERS_MAX_THREADS, WORKER_KEEP_ALIVE, TIME_UNIT,
                 new LinkedBlockingQueue(),
-                new DefaultThreadFactory(
+                new org.apache.axis2.util.threadpool.DefaultThreadFactory(
                         new ThreadGroup("JMS Worker thread group"),
                         "JMSWorker"));
 
