@@ -666,9 +666,6 @@ public class AxisEngine {
             
             ArrayList outFaultPhases = new ArrayList();
             outFaultPhases.addAll((ArrayList) faultExecutionChain.clone());
-            outFaultPhases.addAll((ArrayList) msgContext.getConfigurationContext()
-                    .getAxisConfiguration().getOutFaultFlow().clone());
-            
             msgContext.setExecutionChain((ArrayList) outFaultPhases.clone());
             msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
             invoke(msgContext);
@@ -678,7 +675,7 @@ public class AxisEngine {
             msgContext.setExecutionChain(
                     (ArrayList) msgContext.getConfigurationContext()
                             .getAxisConfiguration().getOutFaultFlow().clone());
-            msgContext.setFLOW(MessageContext.OUT_FLOW);
+            msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
             invoke(msgContext);
 
             // Actually send the SOAP Fault
