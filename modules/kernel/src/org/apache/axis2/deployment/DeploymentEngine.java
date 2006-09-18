@@ -451,8 +451,9 @@ public class DeploymentEngine implements DeploymentConstants {
             File out = new File(webLocation, serviceFileName);
             int BUFFER = 1024;
             byte data[] = new byte[BUFFER];
+            FileInputStream fin = new FileInputStream(in);
             ZipInputStream zin = new ZipInputStream(
-                    new FileInputStream(in));
+                    fin);
             ZipEntry entry;
             while ((entry = zin.getNextEntry()) != null) {
                 ZipEntry zip = new ZipEntry(entry);
@@ -475,6 +476,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
             }
             zin.close();
+            fin.close();
         } catch (IOException e) {
             log.info(e.getMessage());
         }

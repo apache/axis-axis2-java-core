@@ -106,8 +106,10 @@ public class ArchiveReader implements DeploymentConstants {
         // get attribute values
         if (!extractService) {
             ZipInputStream zin = null;
+            FileInputStream fin = null;
             try {
-                zin = new ZipInputStream(new FileInputStream(filename));
+                fin = new FileInputStream(filename);
+                zin = new ZipInputStream(fin);
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equalsIgnoreCase(SERVICES_XML)) {
@@ -124,6 +126,13 @@ public class ArchiveReader implements DeploymentConstants {
                 if (zin != null) {
                     try {
                         zin.close();
+                    } catch (IOException e) {
+                        log.info(Messages.getMessage("errorininputstreamclose"));
+                    }
+                }
+                if (fin != null) {
+                    try {
+                        fin.close();
                     } catch (IOException e) {
                         log.info(Messages.getMessage("errorininputstreamclose"));
                     }
@@ -259,9 +268,10 @@ public class ArchiveReader implements DeploymentConstants {
             }
         } else {
             ZipInputStream zin;
-
+            FileInputStream fin;
             try {
-                zin = new ZipInputStream(new FileInputStream(serviceFile));
+                fin = new FileInputStream(serviceFile);
+                zin = new ZipInputStream(fin);
 
                 //TODO Check whether this WSDL is empty
 
@@ -315,6 +325,11 @@ public class ArchiveReader implements DeploymentConstants {
                 } catch (IOException e) {
                     log.info(e);
                 }
+                try {
+                    fin.close();
+                } catch (IOException e) {
+                    log.info(e);
+                }
             } catch (FileNotFoundException e) {
                 throw new DeploymentException(e);
             } catch (IOException e) {
@@ -335,8 +350,10 @@ public class ArchiveReader implements DeploymentConstants {
         boolean foundmoduleXML = false;
         if (!explodedDir) {
             ZipInputStream zin;
+            FileInputStream fin;
             try {
-                zin = new ZipInputStream(new FileInputStream(archiveFile.getAbsolutePath()));
+                fin = new FileInputStream(archiveFile.getAbsolutePath());
+                zin = new ZipInputStream(fin);
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equalsIgnoreCase(MODULE_XML)) {
@@ -352,6 +369,7 @@ public class ArchiveReader implements DeploymentConstants {
                     }
                 }
                 zin.close();
+                fin.close();
                 if (!foundmoduleXML) {
                     throw new DeploymentException(
                             Messages.getMessage(
@@ -364,7 +382,7 @@ public class ArchiveReader implements DeploymentConstants {
             File file = new File(archiveFile.getAbsolutePath(), MODULE_XML);
 
             if (file.exists() || (file = new File(archiveFile.getAbsolutePath(), MODULE_XML.toLowerCase())).exists()) {
-                InputStream in;
+                InputStream in = null;
                 try {
                     in = new FileInputStream(file);
                     ModuleBuilder builder = new ModuleBuilder(in, module, axisConfig);
@@ -377,6 +395,14 @@ public class ArchiveReader implements DeploymentConstants {
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND, e.getMessage()));
+                } finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            log.info(Messages.getMessage("errorininputstreamclose"));
+                        }
+                    }
                 }
             } else {
                 throw new DeploymentException(

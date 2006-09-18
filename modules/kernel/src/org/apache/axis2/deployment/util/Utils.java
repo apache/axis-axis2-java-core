@@ -94,11 +94,13 @@ public class Utils {
             String urlString = url.toString();
             InputStream in = url.openStream();
             ZipInputStream zin;
+            FileInputStream fin = null;
             if (antiJARLocking) {
                 File inputFile = createTempFile(urlString.substring(urlString.length() - 4), in);
                 in.close();
                 array.add(inputFile.toURL());
-                zin = new ZipInputStream(new FileInputStream(inputFile));
+                fin = new FileInputStream(inputFile);
+                zin = new ZipInputStream(fin);
             } else {
                 array.add(url);
                 zin = new ZipInputStream(in);
@@ -119,6 +121,12 @@ public class Utils {
                 }
             }
             zin.close();
+            if (!antiJARLocking) {
+                in.close();
+            }
+            if (fin != null) {
+                fin.close();
+            }
             return (URL[]) array.toArray(new URL[array.size()]);
         } catch (Exception e) {
             throw new RuntimeException(e);
