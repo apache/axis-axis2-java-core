@@ -23,16 +23,20 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 <h2>Contents</h2>
 <ul>
   <li><a href="#Download_Axis2">Download Axis2</a></li>
-  <li><p><a href="#requirements">System Requirements</a></p></li>
-  <li><p><a href="#source">Axis2 Source Distribution</a></p></li>
-  <ul>
-  <li><a href="#_Toc96698083">Setting up the Environment and Tools</a>
-    <ul>
-      <li><p><a href="#maven">Maven</a></p></li>
-    </ul>
-    <li><a href="#_Toc96698085">Building Axis2 using the Source Distribution</a></li>
+  <li><p><a href="#requirements">System Requirements</a></p>
   </li>
-  </ul>
+  <li><p><a href="#source">Axis2 Source Distribution</a></p>
+    <ul>
+      <li><a href="#_Toc96698083">Setting up the Environment and Tools</a>
+        <ul>
+          <li><p><a href="#maven">Maven</a></p>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#_Toc96698085">Building Axis2 using the Source
+        Distribution</a></li>
+    </ul>
+  </li>
   <li><p><a href="#_Toc96698086">Installing Axis2 in a Servlet
     Container</a></p>
     <ul>
@@ -166,9 +170,9 @@ Axis2 is version 1.0.</p>
     <tr>
       <td>Maven</td>
       <td>1.0.2 or higher in Maven 1.x series (<a
-        href="http://maven.apache.org/maven-1.x/start/download.html">download</a>). <strong>Please
-        download maven 1.x version. Axis2 is not compatible with maven2
-        yet.</strong>
+        href="http://maven.apache.org/maven-1.x/start/download.html">download</a>).
+        <strong>Please download maven 1.x version. Axis2 is not compatible
+        with maven2 yet.</strong>
 
         <p>Required only for building Axis2 from source distribution</p>
       </td>
@@ -197,8 +201,10 @@ Axis2 is version 1.0.</p>
 <p>Running the Maven build will automatically download the required jars when
 using source distribution.</p>
 <a name="source"></a>
+
 <h2>Axis2 Source Distribution</h2>
 <a name="_Toc96698083"></a>
+
 <h3>Setting Up the Environment and Tools</h3>
 <a name="maven"></a>
 
@@ -239,6 +245,7 @@ target="_blank">here </a>.</p>
 
 <p>Once maven is properly installed you can start building Axis2.</p>
 <a name="_Toc96698085"></a>
+
 <h3>Building Axis2 using the Source Distribution</h3>
 
 <p>The <a href="http://ws.apache.org/axis2/download.cgi"
@@ -286,12 +293,12 @@ deployed.</p>
   alt=""></strong></p>
 
   <p></p>
-  <li>Use the link "Validate" to ensure that everything is fine and smooth. If the
-    validation fails then the war has failed to install properly or some
-    essential jars are missing. At such a situation the documentation of the
-    particular servlet container should be consulted to find the problem. The
-    following page is a successful validation. Note the statement core Axis2
-    libraries are present.
+  <li>Use the link "Validate" to ensure that everything is fine and smooth.
+    If the validation fails then the war has failed to install properly or
+    some essential jars are missing. At such a situation the documentation of
+    the particular servlet container should be consulted to find the problem.
+    The following page is a successful validation. Note the statement core
+    Axis2 libraries are present.
     <p></p>
   </li>
 
@@ -313,11 +320,11 @@ deployed.</p>
   <p>The uploaded jar files will be stored in the default service directory.
   For Axis2 this will be the &lt;webapps&gt;/axis2/WEB-INF/services
   directory. Once a service is uploaded it will be installed instantly.</p>
-
-  <p>Since Axis2 supports hot deployment one can drop the service jar
-  directly through the file system to the above mentioned services
-  directory.It will also cause the service to be automatically installed
-  without the container being restarted.</p>
+  <a name="hot_deployment"></a>
+  <p>Since Axis2 supports <strong>hot deployment</strong> one can drop the
+  service jar directly through the file system to the above mentioned
+  services directory.It will also cause the service to be automatically
+  installed without the container being restarted.</p>
 
   <p>Use the 'Services' link on the Web Application home page to check the
   successful installation of a service. The services and the operations of
