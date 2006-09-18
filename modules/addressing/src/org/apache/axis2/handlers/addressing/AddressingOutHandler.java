@@ -16,10 +16,8 @@
 
 package org.apache.axis2.handlers.addressing;
 
-import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -31,6 +29,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
@@ -39,7 +38,6 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -120,16 +118,16 @@ public class AddressingOutHandler extends AddressingHandler {
         }
 
         // processing WSA To
-        processToEPR(messageContextOptions, envelope, addressingNamespaceObject, namespace, replaceHeaders);
+        processToEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders);
 
         // processing WSA replyTo
-        processReplyTo(envelope, messageContextOptions, msgContext, addressingNamespaceObject, namespace, anonymousURI, replaceHeaders);
-
+        processReplyTo(envelope, messageContextOptions, msgContext, addressingNamespaceObject, anonymousURI, replaceHeaders);
+        
         // processing WSA From
-        processFromEPR(messageContextOptions, envelope, addressingNamespaceObject, namespace, replaceHeaders);
+        processFromEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders);
 
         // processing WSA FaultTo
-        processFaultToEPR(messageContextOptions, envelope, addressingNamespaceObject, namespace, replaceHeaders);
+        processFaultToEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders);
 
         String messageID = messageContextOptions.getMessageId();
         if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, envelope,
@@ -211,23 +209,23 @@ public class AddressingOutHandler extends AddressingHandler {
         }
     }
 
-    private void processFaultToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, String namespace, boolean replaceHeaders) {
+    private void processFaultToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders) throws AxisFault {
         EndpointReference epr;
         epr = messageContextOptions.getFaultTo();
         if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_FAULT_TO, envelope, addressingNamespaceObject, namespace, replaceHeaders);
+            addToSOAPHeader(epr, AddressingConstants.WSA_FAULT_TO, envelope, addressingNamespaceObject, replaceHeaders);
         }
     }
 
-    private void processFromEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, String namespace, boolean replaceHeaders) {
+    private void processFromEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders) throws AxisFault {
         EndpointReference epr;
         epr = messageContextOptions.getFrom();
         if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_FROM, envelope, addressingNamespaceObject, namespace, replaceHeaders);
+            addToSOAPHeader(epr, AddressingConstants.WSA_FROM, envelope, addressingNamespaceObject, replaceHeaders);
         }
     }
 
-    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, String namespace, String anonymousURI, boolean replaceHeaders) {
+    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, String anonymousURI, boolean replaceHeaders) throws AxisFault {
         EndpointReference epr = null;
         if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject, replaceHeaders))
         {
@@ -257,11 +255,11 @@ public class AddressingOutHandler extends AddressingHandler {
         			epr = new EndpointReference(anonymousURI);
         		}
         	}
-	        addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope, addressingNamespaceObject, namespace, replaceHeaders);
+            addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope, addressingNamespaceObject, replaceHeaders);
         }
     }
 
-    private void processToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, String namespace, boolean replaceHeaders) {
+    private void processToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders) {
         EndpointReference epr = messageContextOptions.getTo();
         if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject, replaceHeaders))
         {
@@ -274,7 +272,7 @@ public class AddressingOutHandler extends AddressingHandler {
                 SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
                 toHeaderBlock.setText(address);
             }
-            processToEPRReferenceInformation(referenceParameters, envelope.getHeader(),addressingNamespaceObject, namespace);
+            processToEPRReferenceInformation(referenceParameters, envelope.getHeader(),addressingNamespaceObject);
         }
     }
 
@@ -292,84 +290,19 @@ public class AddressingOutHandler extends AddressingHandler {
         return null;
     }
 
-    protected void addToSOAPHeader(EndpointReference epr,
-                                   String type,
-                                   SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, String namespace, boolean replaceHeaders) {
+    private void addToSOAPHeader(EndpointReference epr,
+                                 String type,
+                                 SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders) throws AxisFault {
         if (epr == null || isAddressingHeaderAlreadyAvailable(type, envelope, addressingNamespaceObject,replaceHeaders))
         {
             return;
         }
 
-        SOAPHeaderBlock soapHeaderBlock =
-                envelope.getHeader().addHeaderBlock(type, addressingNamespaceObject);
+        String namespace = addressingNamespaceObject.getNamespaceURI();
+        String prefix = addressingNamespaceObject.getPrefix();
 
-        // add epr address
-        String address = epr.getAddress();
-        if (!"".equals(address) && address != null) {
-            OMElement addressElement = envelope.getOMFactory().createOMElement(EPR_ADDRESS, addressingNamespaceObject, soapHeaderBlock);
-            addressElement.setText(address);
-        }
-
-        // add reference parameters
-        Map referenceParameters = epr.getAllReferenceParameters();
-        if (referenceParameters != null) {
-            OMElement reference =
-                    envelope.getOMFactory().createOMElement(
-                            EPR_REFERENCE_PARAMETERS,
-                            addressingNamespaceObject, soapHeaderBlock);
-            processReferenceInformation(referenceParameters, reference, namespace);
-
-        }
-
-        // add xs:any
-        ArrayList omElements = epr.getExtensibleElements();
-        if (omElements != null) {
-            for (int i = 0; i < omElements.size(); i++) {
-                soapHeaderBlock.addChild((OMElement) omElements.get(i));
-            }
-        }
-
-        // add metadata
-        ArrayList metaDataList = epr.getMetaData();
-        if (metaDataList != null) {
-            OMElement metadata =
-                    envelope.getOMFactory().createOMElement(
-                            Final.WSA_METADATA,
-                            addressingNamespaceObject, soapHeaderBlock);
-            for (int i = 0; i < metaDataList.size(); i++) {
-                metadata.addChild((OMNode) metaDataList.get(i));
-            }
-
-        }
-
-        if (epr.getAttributes() != null) {
-            Iterator attrIter = epr.getAttributes().iterator();
-            while (attrIter.hasNext()) {
-                OMAttribute omAttributes = (OMAttribute) attrIter.next();
-                soapHeaderBlock.addAttribute(omAttributes);
-            }
-        }
-
-
-    }
-
-
-    /**
-     * This will add reference parameters and/or reference properties in to the message
-     *
-     * @param referenceInformation
-     */
-    private void processReferenceInformation(Map referenceInformation, OMElement parent, String namespace) {
-
-        boolean processingWSAFinal = Final.WSA_NAMESPACE.equals(namespace);
-        if (referenceInformation != null && parent != null) {
-            Iterator iterator = referenceInformation.keySet().iterator();
-            while (iterator.hasNext()) {
-                QName key = (QName) iterator.next();
-                OMElement omElement = (OMElement) referenceInformation.get(key);
-                parent.addChild(ElementHelper.importOMElement(omElement, parent.getOMFactory()));
-            }
-        }
+        OMElement soapHeaderBlock = EndpointReferenceHelper.toOM(epr, new QName(namespace, type, prefix), namespace);
+        envelope.getHeader().addChild(soapHeaderBlock);
     }
 
     /**
@@ -377,9 +310,9 @@ public class AddressingOutHandler extends AddressingHandler {
      *
      * @param referenceInformation
      */
-    private void processToEPRReferenceInformation(Map referenceInformation, OMElement parent, OMNamespace addressingNamespaceObject, String namespace) {
+    private void processToEPRReferenceInformation(Map referenceInformation, OMElement parent, OMNamespace addressingNamespaceObject) {
 
-        boolean processingWSAFinal = Final.WSA_NAMESPACE.equals(namespace);
+        boolean processingWSAFinal = Final.WSA_NAMESPACE.equals(addressingNamespaceObject.getNamespaceURI());
         if (referenceInformation != null && parent != null) {
             Iterator iterator = referenceInformation.keySet().iterator();
             while (iterator.hasNext()) {
@@ -390,12 +323,10 @@ public class AddressingOutHandler extends AddressingHandler {
                 if (processingWSAFinal) {
                     omElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE, Final.WSA_TYPE_ATTRIBUTE_VALUE,
                             addressingNamespaceObject);
-
                 }
             }
         }
     }
-
 
     /**
      * This will check for the existence of message information headers already in the message. If there are already headers,

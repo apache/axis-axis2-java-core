@@ -39,6 +39,13 @@ public class FinalFaultsHelper{
     }
 
     //      wsa:MissingAddressInEPR
+    public static void triggerMissingAddressInEPRFault(MessageContext messageContext, String incorrectHeaderName) throws AxisFault {
+        if(log.isDebugEnabled()){
+            log.debug("triggerMissingAddressInEPRFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
+        }
+        triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "MissingAddressInEPR", Final.FAULT_INVALID_HEADER_REASON);
+    }
+
     //      wsa:DuplicateMessageID
     //      wsa:ActionMismatch
     public static void triggerActionMismatchFault(MessageContext messageContext) throws AxisFault {

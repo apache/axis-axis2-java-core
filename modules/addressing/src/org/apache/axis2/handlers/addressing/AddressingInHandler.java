@@ -17,21 +17,18 @@
 package org.apache.axis2.handlers.addressing;
 
 import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.Utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,14 +36,11 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 public abstract class AddressingInHandler extends AddressingHandler implements AddressingConstants {
 
     private static final long serialVersionUID = 3907988439637261572L;
-    private OMNamespace addressingNSObject;
 
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
@@ -94,7 +88,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         if (addressingHeaders != null && addressingHeaders.size() > 0) {
             msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
-            addressingNSObject = ((OMElement) addressingHeaders.get(0)).findNamespace(namespace, "");
+
 			if(log.isDebugEnabled()) {
 				log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
 			}
@@ -106,8 +100,6 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 				log.debug("No Headers present corresponding to " + addressingVersion);
 			}
         }
-
-
     }
 
     protected Options extractAddressingInformation(SOAPHeader header, MessageContext messageContext,
@@ -154,16 +146,16 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
                 extractToEPRInformation(soapHeaderBlock, messageContextOptions, header, namespace);
             } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
-                extractFromEPRInformation(messageContextOptions, soapHeaderBlock, namespace);
+                extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
             } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreReplyTo) {
-                extractReplyToEPRInformation(messageContextOptions, soapHeaderBlock, namespace);
+                extractReplyToEPRInformation(soapHeaderBlock, namespace, messageContext);
             } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
-                extractFaultToEPRInformation(messageContextOptions, soapHeaderBlock, namespace);
+                extractFaultToEPRInformation(soapHeaderBlock, namespace, messageContext);
             } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
                 messageContextOptions.setMessageId(soapHeaderBlock.getText());
                 soapHeaderBlock.setProcessed();
             } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
-                extractActionInformation(messageContextOptions, soapHeaderBlock, namespace, messageContext);
+                extractActionInformation(soapHeaderBlock, namespace, messageContext);
             } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                 extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
             }
@@ -224,37 +216,37 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         soapHeaderBlock.setProcessed();
     }
 
-    private void extractFaultToEPRInformation(Options messageContextOptions, SOAPHeaderBlock soapHeaderBlock, String addressingNamespace) {
-        EndpointReference epr;
-        epr = messageContextOptions.getFaultTo();
+    private void extractFaultToEPRInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, MessageContext messageContext) throws AxisFault {
+        Options messageContextOptions = messageContext.getOptions();
+        EndpointReference epr = messageContextOptions.getFaultTo();
         if (epr == null) {
             epr = new EndpointReference("");
             messageContextOptions.setFaultTo(epr);
         }
-        extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
+        extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
         soapHeaderBlock.setProcessed();
     }
 
-    private void extractReplyToEPRInformation(Options messageContextOptions, SOAPHeaderBlock soapHeaderBlock, String addressingNamespace) {
-        EndpointReference epr;
-        epr = messageContextOptions.getReplyTo();
+    private void extractReplyToEPRInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, MessageContext messageContext) throws AxisFault {
+        Options messageContextOptions = messageContext.getOptions();
+        EndpointReference epr = messageContextOptions.getReplyTo();
         if (epr == null) {
             epr = new EndpointReference("");
             messageContextOptions.setReplyTo(epr);
         }
-        extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
+        extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
         soapHeaderBlock.setProcessed();
     }
 
-    private void extractFromEPRInformation(Options messageContextOptions, SOAPHeaderBlock soapHeaderBlock, String addressingNamespace) {
-        EndpointReference epr;
-        epr = messageContextOptions.getFrom();
+    private void extractFromEPRInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, MessageContext messageContext) throws AxisFault {
+        Options messageContextOptions = messageContext.getOptions();
+        EndpointReference epr = messageContextOptions.getFrom();
         if (epr == null) {
             epr = new EndpointReference("");  // I don't know the address now. Let me pass the empty string now and fill this
             // once I process the Elements under this.
             messageContextOptions.setFrom(epr);
         }
-        extractEPRInformation(soapHeaderBlock, epr, addressingNamespace);
+        extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
         soapHeaderBlock.setProcessed();
     }
 
@@ -274,7 +266,8 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     //We assume that any action that already exists in the message context must be the
     //soapaction. We compare that action to the WS-Addressing action, and if they are
     //different we throw a fault.
-    private void extractActionInformation(Options messageContextOptions, SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, MessageContext messageContext) throws AxisFault {
+    private void extractActionInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, MessageContext messageContext) throws AxisFault {
+        Options messageContextOptions = messageContext.getOptions();
         String soapAction = messageContextOptions.getAction();
         
         if (soapAction != null && !"".equals(soapAction)) {
@@ -296,13 +289,12 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
      * @param epr
      * @param addressingNamespace
      */
-    protected abstract void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr, String addressingNamespace);
-
-    /**
-     * @param expectedQName
-     * @param actualQName
-     */
-    protected boolean checkElement(QName expectedQName, QName actualQName) {
-        return (expectedQName.getLocalPart().equals(actualQName.getLocalPart()) && expectedQName.getNamespaceURI().equals(actualQName.getNamespaceURI()));
+    private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr, String addressingNamespace, MessageContext messageContext) throws AxisFault {
+        try {
+            EndpointReferenceHelper.fromOM(epr, headerBlock, addressingNamespace);
+        }
+        catch (AxisFault af) {
+            FinalFaultsHelper.triggerMissingAddressInEPRFault(messageContext, headerBlock.getLocalName());
+        }
     }
 }

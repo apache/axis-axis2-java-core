@@ -1,23 +1,15 @@
 package org.apache.axis2.handlers.addressing;
 
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.FinalFaultsHelper;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -55,47 +47,6 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
         // TODO : Chinthaka
     }
 
-    protected void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr, String addressingNamespace) {
-
-        Iterator childElements = headerBlock.getChildElements();
-        while (childElements.hasNext()) {
-            OMElement eprChildElement = (OMElement) childElements.next();
-            if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_ADDRESS),
-                    eprChildElement.getQName())) {
-                epr.setAddress(eprChildElement.getText());
-            } else
-            if (checkElement(new QName(addressingNamespace, AddressingConstants.EPR_REFERENCE_PARAMETERS)
-                    , eprChildElement.getQName())) {
-
-                Iterator referenceParameters = eprChildElement.getChildElements();
-                while (referenceParameters.hasNext()) {
-                    OMElement element = (OMElement) referenceParameters.next();
-                    epr.addReferenceParameter(element);
-                }
-            } else
-            if (checkElement(new QName(addressingNamespace, AddressingConstants.Submission.EPR_REFERENCE_PROPERTIES)
-                    , eprChildElement.getQName())) {
-
-                // since we have the model for WS-Final, we don't have a place to keep this reference properties.
-                // The only compatible place is reference properties
-
-                Iterator referenceParameters = eprChildElement.getChildElements();
-                while (referenceParameters.hasNext()) {
-                    OMElement element = (OMElement) referenceParameters.next();
-                    epr.addReferenceParameter(element);
-                }
-            }else {
-                epr.addExtensibleElement(eprChildElement);
-            }
-        }
-        
-        Iterator allAttributes = headerBlock.getAllAttributes();
-        while (allAttributes.hasNext()) {
-            OMAttribute attribute = (OMAttribute) allAttributes.next();
-            epr.addAttribute(attribute);
-        }
-    }
-    
     protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
         if (!alreadyFoundAddrHeader.contains(WSA_TO)) {
             // Should write a new SubmissionFaults class but for the moment use the FinalFaults
