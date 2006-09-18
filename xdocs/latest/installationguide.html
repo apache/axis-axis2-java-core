@@ -23,15 +23,16 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 <h2>Contents</h2>
 <ul>
   <li><a href="#Download_Axis2">Download Axis2</a></li>
-  <li><p><a href="#requirements">System Requirements</a></p>
-  </li>
+  <li><p><a href="#requirements">System Requirements</a></p></li>
+  <li><p><a href="#source">Axis2 Source Distribution</a></p></li>
+  <ul>
   <li><a href="#_Toc96698083">Setting up the Environment and Tools</a>
     <ul>
-      <li><p><a href="#maven">Maven</a></p>
-      </li>
-      <li><a href="#_Toc96698085">The Axis2 Source Distribution</a></li>
+      <li><p><a href="#maven">Maven</a></p></li>
     </ul>
+    <li><a href="#_Toc96698085">Building Axis2 using the Source Distribution</a></li>
   </li>
+  </ul>
   <li><p><a href="#_Toc96698086">Installing Axis2 in a Servlet
     Container</a></p>
     <ul>
@@ -134,16 +135,16 @@ Axis2 is version 1.0.</p>
         </ul>
       </td>
     </tr>
-    <tr>
-      <td><a name="Plugin" id="Plugin">Plugin Distribution</a></td>
-      <td>This will contain the plugins that are created for Eclipse and
-      IDEA.</td>
-      <td><ul>
-          <li>IntelliJ IDEA plugins</li>
-          <li>Eclipse plugins</li>
-        </ul>
-      </td>
-    </tr>
+    <!--<tr>
+    <td><a name="Plugin" id="Plugin">Plugin Distribution</a></td>
+    <td>This will contain the plugins that are created for Eclipse and
+    IDEA.</td>
+    <td><ul>
+    <li>IntelliJ IDEA plugins</li>
+    <li>Eclipse plugins</li>
+    </ul>
+    </td>
+    </tr>-->
   </tbody>
 </table>
 <a name="requirements"></a>
@@ -158,17 +159,14 @@ Axis2 is version 1.0.</p>
 
         <p>Environment</p>
       </td>
-      <td>1.4 (It has not been fully tested on the latest JRE 1.5)
-
-        <p>For instructions on setting up the JRE in different operating
-        systems, visit <a
-        href="http://java.sun.com/">http://java.sun.com</a></p>
-      </td>
+      <td>1.4 or 1.5 (For instructions on setting up the JRE in different
+        operating systems, visit <a
+        href="http://java.sun.com/">http://java.sun.com</a>)</td>
     </tr>
     <tr>
       <td>Maven</td>
       <td>1.0.2 or higher in Maven 1.x series (<a
-        href="http://maven.apache.org/">download</a>). <strong>Please
+        href="http://maven.apache.org/maven-1.x/start/download.html">download</a>). <strong>Please
         download maven 1.x version. Axis2 is not compatible with maven2
         yet.</strong>
 
@@ -183,7 +181,7 @@ Axis2 is version 1.0.</p>
       <td>Disk</td>
       <td>No minimum requirement.
 
-        <p>Approximately 20 MB will be used for war distribution</p>
+        <p>Approximately 7 MB will be used for war distribution</p>
       </td>
     </tr>
     <tr>
@@ -198,19 +196,20 @@ Axis2 is version 1.0.</p>
 
 <p>Running the Maven build will automatically download the required jars when
 using source distribution.</p>
+<a name="source"></a>
+<h2>Axis2 Source Distribution</h2>
 <a name="_Toc96698083"></a>
-
-<h2>Setting Up the Environment and Tools</h2>
+<h3>Setting Up the Environment and Tools</h3>
 <a name="maven"></a>
 
-<h3>Maven</h3>
+<h4>Maven</h4>
 
 <p>The Axis2 build is based on <a href="http://maven.apache.org/maven-1.x/"
 target="_blank">Maven </a>. Hence the only prerequisite to build Axis2 from
 source distribution is to have Maven installed. Extensive instruction guides
 are available at the Maven site.This guide however contains the easiest path
 for quick environment setting. Advanced users who wish to know more about
-Maven can visit <a href="http://maven.apache.org/start/index.html"
+Maven can visit <a href="http://maven.apache.org/maven-1.x/start/index.html"
 target="_blank">here </a>.</p>
 <ul>
   <li>MS Windows</li>
@@ -235,13 +234,12 @@ src="images/clip_image002.jpg" height="211" width="477"></p>
 downloaded expand it to a directory of choice and set the environment
 variable MAVEN_HOME and add MAVEN_HOME/bin to the path as well. More
 instructions for installing Maven in Unix based operating systems can be
-found <a href="http://maven.apache.org/start/install.html"
+found <a href="http://maven.apache.org/download.html#Installation"
 target="_blank">here </a>.</p>
 
 <p>Once maven is properly installed you can start building Axis2.</p>
 <a name="_Toc96698085"></a>
-
-<h3>The Axis2 Source Distribution</h3>
+<h3>Building Axis2 using the Source Distribution</h3>
 
 <p>The <a href="http://ws.apache.org/axis2/download.cgi"
 target="_blank">source distribution </a> is available as a zipped archive.
@@ -280,7 +278,7 @@ deployed.</p>
     in order to capture the new web application. Refer your servlet container
     documentation for more information about this.)</li>
   <li>Once the WAR is successfully installed, test it by pointing the web
-    browser to the <strong>http:// &lt;host :port&gt;/ axis2. </strong>It
+    browser to the <strong>http://&lt;host :port&gt;/axis2. </strong>It
     should produce the following page which is the <strong>Axis2 Web
     Application Home Page</strong>.</li>
 
@@ -288,7 +286,7 @@ deployed.</p>
   alt=""></strong></p>
 
   <p></p>
-  <li>Use validate link to ensure that everything is fine and smooth. If the
+  <li>Use the link "Validate" to ensure that everything is fine and smooth. If the
     validation fails then the war has failed to install properly or some
     essential jars are missing. At such a situation the documentation of the
     particular servlet container should be consulted to find the problem. The
@@ -330,7 +328,7 @@ deployed.</p>
 
   <p></p>
 
-  <p>If the service has deployment time error it will list those services as
+  <p>If the service has deployment time errors it will list those services as
   faulty services. If you click on the link you can see the your deployment
   fault error message(s).</p>
 
