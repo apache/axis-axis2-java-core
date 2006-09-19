@@ -2,6 +2,7 @@ This is a new JMS transport implementation for Axis2. The transport receiver mus
 one or more connection factories:
 
 Sample axis2.xml
+================
 
     <transportReceiver name="jms" class="org.apache.axis2.transport.njms.JMSListener">
         <parameter name="myTopicConnectionFactory" locked="false">        	        	
@@ -21,13 +22,14 @@ Sample axis2.xml
         </parameter>
     </transportReceiver>
     
-If a connection factory named "default" (as shown above) is defined, this would be used for Services which does
-not explicitly specify the connection factory that should be used. The services.xml of a Service should indicate
+If a connection factory named "default" (as shown above) is defined, this would be used for services which does
+not explicitly specify the connection factory that should be used. The services.xml of a service should indicate
 the connection factory and the destination name to be associated with. If a destination is not specified, the
 implementation would create a JMS Queue with the service name. The JMS destination should ideally be created
 and administered through the JMS provider utilities.
 
 Sample services.xml
+===================
 
 <service name="echo">
 		<transports>
@@ -39,13 +41,15 @@ Sample services.xml
     <parameter name="transport.jms.Destination" locked="true">dynamicTopics/something.TestTopic</parameter>
 </service>
 
-Files making up this JMS implementation
-JMSListener.java
-JMSConnectionFactory.java
-JMSMessageReceiver.java
-JMSOutTransportInfo.java
-JMSSender.java
-JMSConstants.java
-JMSUtils.java
-AxisJMSException.java
-DefaultThreadFactory.java
+Files Making Up This JMS Implementation
+=======================================
+
+* JMSListener.java
+* JMSConnectionFactory.java
+* JMSMessageReceiver.java
+* JMSOutTransportInfo.java
+* JMSSender.java
+* JMSConstants.java
+* JMSUtils.java
+* AxisJMSException.java
+* DefaultThreadFactory.java
