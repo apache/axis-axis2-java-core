@@ -1,5 +1,4 @@
-This is a new JMS transport implementation for Axis2. The transport receiver must be configured as follows, with
-one or more connection factories:
+This is a new JMS (Java Messaging Service) Transport implementation for Apache Axis2. The transport receiver must be configured as follows, with one or more connection factories:
 
 Sample axis2.xml
 ================
