@@ -409,7 +409,7 @@ happen either in the server or in the Client.</p>
     message by looking at various transport headers, add data into message
     context etc.</li>
   <li><strong>Pre-Dispatch Phase</strong>- The main functionality of the
-    handlers are in this phase is to populate message context in order to do
+    handlers in this phase is to populate message context in order to do
     the dispatching. As an example, processing of addressing headers of the
     SOAP message happen in this phase.Addressing handlers extract information
     and put them in to the message context.</li>
@@ -443,7 +443,7 @@ initiated by the</p>
 <a href="#mr">Message Receiver</a> or the Client API implementation.Phases of
 the <em>Out Pipe</em> are described below:
 <ol>
-  <li>Message Initialize Phase - Fist phase of the <em>Out Pipe</em>. Serves
+  <li>Message Initialize Phase - First phase of the <em>Out Pipe</em>. Serves
     as the placeholder for the custom handlers</li>
   <li>User Phases - This executes handlers in user defined phases</li>
   <li>Transports Phase - Execute any transport handlers taken from the
