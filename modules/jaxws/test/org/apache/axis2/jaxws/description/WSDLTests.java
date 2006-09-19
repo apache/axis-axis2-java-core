@@ -79,7 +79,7 @@ public class WSDLTests extends TestCase {
         Service service = null;
 
         String namespaceURI= "http://ws.apache.org/axis2/tests";
-        String localPart = "EchoService";
+        String localPart = "EchoService_nullWSDL";
         service = Service.create(new QName(namespaceURI, localPart));
         assertNotNull("Service not created", service);
         

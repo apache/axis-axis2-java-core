@@ -19,6 +19,8 @@ package org.apache.axis2.jaxws;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.util.Constants;
 
 
@@ -42,7 +44,7 @@ public class ClientConfigurationFactory {
     }
 
     /**
-     * Loads up a ConfigurationContext object using the WAS-specific configuration builder.
+     * Loads up a ConfigurationContext object using the configuration builder.
      * @return a ConfigurationContext object that is suitable for the client environment
      */
     public synchronized ConfigurationContext getClientConfigurationContext() {
@@ -54,10 +56,21 @@ public class ClientConfigurationFactory {
                 configContext = ConfigurationContextFactory
                         .createConfigurationContextFromFileSystem(repoPath, axisConfigPath);
             } catch (AxisFault e) {
+                // TODO: Add RAS logging and processing
                 e.printStackTrace();
             }
         }
         
         return configContext;
+    }
+    
+    /**
+     * Perform any final client-specific configuration on a newly created AxisService.
+     * 
+     * @param service A newly created AxisService on which to perform any final client-related configuration.
+     * @throws DeploymentException
+     * @throws Exception
+     */
+    public synchronized void completeAxis2Configuration(AxisService service) throws DeploymentException, Exception {
     }
 }

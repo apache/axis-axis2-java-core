@@ -35,7 +35,7 @@ public class DescriptionRegistry {
 		
 	}
 	
-	public ServiceDescription getServiceDescription(DescriptionKey key){
+	synchronized public ServiceDescription getServiceDescription(DescriptionKey key){
 		ServiceDescription sd = cache.get(key);
 		if(sd == null){
 			sd = DescriptionFactory.createServiceDescription(key.getWsdlUrl(), key.getServiceName(), key.getServiceClass());

@@ -36,12 +36,7 @@ import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.jaxws.ClientConfigurationFactory;
-import org.apache.axis2.jaxws.ClientMediator;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.JAXWSClientContext;
 import org.apache.axis2.jaxws.client.JAXBDispatch;
@@ -71,7 +66,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 
     private ServiceDescription serviceDescription;
     private QName serviceQname;
-    private ClientMediator mediator = null;
     private ServiceClient serviceClient = null;
     // If no binding ID is available, use this one
     private static String DEFAULT_BINDING_ID = SOAPBinding.SOAP11HTTP_BINDING;
@@ -80,7 +74,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	super();
     	this.serviceQname = qname;
     	ports = new Hashtable<QName, PortData>();
-    	mediator = new ClientMediator();
 
         if(!isValidServiceName()){
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", ""));
@@ -417,15 +410,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 	        }
         }
     }
-    
-    //TODO We should hang AxisConfiguration from ServiceDescription or something parent to ServiceDescription
-    private ConfigurationContext getAxisConfigContext() {
-    	ClientConfigurationFactory factory = ClientConfigurationFactory.newInstance(); 
-    	ConfigurationContext configCtx = factory.getClientConfigurationContext();
-    	return configCtx;
-    	
-    }
-    
+
     private ServiceDescription getServiceDescription(URL url, QName serviceName, Class clazz ){
     	DescriptionKey key = new DescriptionKey(serviceName, url, clazz);
     	return DescriptionRegistry.getRegistry().getServiceDescription(key);

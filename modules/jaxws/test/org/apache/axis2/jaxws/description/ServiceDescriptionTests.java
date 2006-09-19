@@ -32,13 +32,14 @@ import junit.framework.TestCase;
  * and other Description classes is done in WSDLDescriptionTests.
  */
 public class ServiceDescriptionTests extends TestCase {
-    private static final String namespaceURI= "http://ws.apache.org/axis2/tests";
+    private static final String namespaceURI= "http://org.apache.axis2.jaxws.description.ServiceDescriptionTests";
     private static final String localPart = "EchoService";
     private static final QName serviceQName = new QName(namespaceURI, localPart);
     
     public void testNullWSDL() {
 
-        ServiceDescription serviceDescription = new ServiceDescription(null, serviceQName, javax.xml.ws.Service.class);
+        QName uniqueQName = new QName(namespaceURI, localPart + "_testNullWSDL");
+        ServiceDescription serviceDescription = new ServiceDescription(null, uniqueQName, javax.xml.ws.Service.class);
         assertNotNull("Service description not created with null WSDL", serviceDescription);
     }
     
@@ -81,7 +82,8 @@ public class ServiceDescriptionTests extends TestCase {
     }
     
     public void testValidServiceSubclass() {
-        ServiceDescription serviceDescription = new ServiceDescription(null, serviceQName, ServiceSubclass.class);
+        QName uniqueQName = new QName(namespaceURI, localPart + "_testValidServiceSubclass");
+        ServiceDescription serviceDescription = new ServiceDescription(null, uniqueQName, ServiceSubclass.class);
         assertNotNull("Service description not created with valid Service subclass", serviceDescription);
     }
 }

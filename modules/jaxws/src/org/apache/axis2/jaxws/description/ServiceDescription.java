@@ -97,6 +97,7 @@ TBD
  */
 public class ServiceDescription {
     private AxisService axisService;
+    private ConfigurationContext configContext;
 
     private URL wsdlURL;
     private QName serviceQName;
@@ -153,6 +154,8 @@ public class ServiceDescription {
         setupAxisService();
         buildDescriptionHierachy();
         addAnonymousAxisOperations();
+        // This will set the serviceClient field after adding the AxisService to the AxisConfig
+        getServiceClient();
     }
 
     /**
@@ -187,7 +190,7 @@ public class ServiceDescription {
         EndpointDescription endpointDescription = new EndpointDescription(serviceImplClass, null, this);
         addEndpointDescription(endpointDescription);
         
-        // TODO: (JLB) The ServiceQName instance variable should be set based on annotation or default
+        // TODO: The ServiceQName instance variable should be set based on annotation or default
 
         // The anonymous AxisOperations are currently NOT added here.  The reason 
         // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
@@ -290,7 +293,9 @@ public class ServiceDescription {
         // Patterned after AxisService.createClientSideAxisService
         serviceBuilder.setServerSide(false);
         try {
+            // TODO: This probably needs to use the target namespace like buildAxisServiceFromNoWSDL does
             axisService = serviceBuilder.populateService();
+            axisService.setName(serviceQName.toString());
         } catch (AxisFault e) {
             // TODO We should not swallow a fault here.
             log.warn(Messages.getMessage("warnAxisFault", e.toString()));
@@ -299,22 +304,17 @@ public class ServiceDescription {
     
     private void buildAxisServiceFromNoWSDL() {
         // TODO: Refactor this to create from annotations.
-//        if (true) return;
-//        
-//        // Patterned after ServiceClient.createAnonymousService()
-//        String serviceName = null;
-//        if (serviceQName != null) {
+        String serviceName = null;
+        if (serviceQName != null) {
+            // TODO: This uses TNS in the AxisService name, but using WSDL does not
+            serviceName = serviceQName.toString();
 //            serviceName = serviceQName.getLocalPart();
-//        }
-//        else {
-//            serviceName = ServiceClient.ANON_SERVICE;
-//        }
-//        // Make this service name unique.  The Axis2 engine assumes that a service it can not find is a client-side service.
-//        // See org.apache.axis2.client.ServiceClient.configureServiceClient()
-//        axisService = new AxisService(serviceName + this.hashCode());
-//        axisService.addOperation(new RobustOutOnlyAxisOperation(ServiceClient.ANON_ROBUST_OUT_ONLY_OP));
-//        axisService.addOperation(new OutOnlyAxisOperation(ServiceClient.ANON_OUT_ONLY_OP));
-//        axisService.addOperation(new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP));
+        }
+        else {
+            // Make this service name unique.  The Axis2 engine assumes that a service it can not find is a client-side service.
+            serviceName = ServiceClient.ANON_SERVICE + this.hashCode();
+        }
+        axisService = new AxisService(serviceName);
     }
     
     private void buildDescriptionHierachy() {
@@ -387,10 +387,12 @@ public class ServiceDescription {
     	return serviceClient;
     }
     
-    private ConfigurationContext getAxisConfigContext() {
-    	ClientConfigurationFactory factory = ClientConfigurationFactory.newInstance(); 
-    	ConfigurationContext configCtx = factory.getClientConfigurationContext();
-    	return configCtx;
+    public ConfigurationContext getAxisConfigContext() {
+        if (configContext == null) {
+            ClientConfigurationFactory factory = ClientConfigurationFactory.newInstance(); 
+            configContext = factory.getClientConfigurationContext();
+        }
+    	return configContext;
     	
     }
 }

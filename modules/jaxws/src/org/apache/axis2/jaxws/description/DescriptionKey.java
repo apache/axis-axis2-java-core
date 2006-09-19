@@ -44,22 +44,26 @@ public class DescriptionKey {
 		}
 		
 		DescriptionKey description = (DescriptionKey)o;
-		if(description.wsdlUrl == null){
-			return false;
-		}
+
+        // TODO: Currently, only the Service QName is used to base key equality
+//		if(description.wsdlUrl == null){
+//			return false;
+//		}
 		
 		if(serviceName == null){
 			throw ExceptionFactory.makeWebServiceException(org.apache.axis2.i18n.Messages.getMessage("DescriptionRegistryErr0"));
 		}
-		
-		return description.serviceName.equals(this.serviceName) && description.wsdlUrl.equals(this.wsdlUrl); 
+        // TODO: Currently, only the Service QName is used to base key equality
+//        return description.serviceName.equals(this.serviceName) && description.wsdlUrl.equals(this.wsdlUrl); 
+		return description.serviceName.equals(this.serviceName); 
 	}
 	@Override
 	public int hashCode() {
 		
 		int hash = 1;
 		hash = 31*hash + ((serviceName==null)? 0:serviceName.hashCode());
-		hash = hash +((wsdlUrl == null) ? 0 : wsdlUrl.hashCode());
+        // TODO: Currently, only the Service QName is used to base key equality
+//		hash = hash +((wsdlUrl == null) ? 0 : wsdlUrl.hashCode());
 		return hash;
 		
 	}
