@@ -388,15 +388,6 @@
             <exclude>**/SOAP12Testing/**/*.java</exclude>
         </excludes>
       </sourceModification>
-        <sourceModification>
-          <className>javax.management.MalformedObjectNameException</className>
-          <property/>
-          <directory/>
-          <includes>
-              <include>**/jms/*.java</include>
-          </includes>
-          <excludes/>
-        </sourceModification>
     </sourceModifications>
         <unitTest>
             <includes>
