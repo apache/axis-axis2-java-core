@@ -21,15 +21,15 @@ href="userguide1.html">1</a>, <a href="userguide2.html">2</a>, <a
 href="userguide3.html">3</a>, <b>4</b>, <a href="userguide5.html">5</a></p>
 
 <p><b><font size="4">Note (on samples):</font></b> All samples mentioned in
-the user's guide are located at <b>"samples/userguide/src"</b> directory of
-the binary distribution.</p>
+the user's guide are located at <b>"samples/src"</b> directory of the binary
+distribution.</p>
 
 <h2><a name="Modules"></a>Modules</h2>
 
 <p>Axis2 provides an extended support for modules (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about modules in Axis2). Let's create a custom module and deploy
-it to the MyService which we created earlier. Following steps shows the
+it to the MyService which we created earlier. Following steps show the
 actions that need to be performed to deploy a custom module for a given Web
 Service:</p>
 <ol>
@@ -56,7 +56,7 @@ Module</a></h3>
 
 <p>Let's write a simple logging module for our sample. This module contains
 one handler that just logs the message that is passed through it. Axis2 uses
-."mar" (Module Archive) to deploy modules in Axis2. Following diagram shows
+".mar" (Module Archive) to deploy modules in Axis2. Following diagram shows
 the file structure inside that needs to be there in the ".mar" archive. Let's
 create all these and see how it works.</p>
 
@@ -144,7 +144,7 @@ follows:</p>
    &lt;/INfaultflow&gt;
 &lt;/module&gt;</pre>
 
-<p>As it can be seen there are four phases defined in this "module.xml"</p>
+<p>As it can be seen there are four flows defined in this "module.xml"</p>
 <ol>
   <li>inflow - Represents the handler chain that will run when a message is
     coming in. </li>
@@ -152,7 +152,7 @@ follows:</p>
     that will run when the message is going out. </p>
   </li>
   <li><p style="margin-bottom: 0in">Outfaultflow - Represents the handler
-    chain that will run when there is a fault and the fault is going out </p>
+    chain that will run when there is a fault and the fault is going out</p>
   </li>
   <li><p>INfaultflow - Represents the handler chain that will run when there
     is a fault and the fault is coming in </p>
@@ -161,10 +161,10 @@ follows:</p>
 
 <p>Following set of tags describe the name of the handler, handler class and
 the phase in which this handler is going to run. "InFlowLogHandler" is the
-name given for the particular instance of this handler. The value of class
-attribute is the actual implementation class for this handler. Since we are
-writing logging handler, we can reuse the same handler in all these phases.
-However this may not be the same for all the modules. "&lt;order
+name given for the particular instance of this handler class. The value of
+class attribute is the actual implementation class for this handler. Since we
+are writing logging handler, we can reuse the same handler in all these
+phases. However this may not be the same for all the modules. "&lt;order
 phase="loggingPhase" /&gt;" describes the phase in which this handler
 runs.</p>
 <pre>&lt;handler name="InFlowLogHandler" class="userguide.loggingmodule.LogHandler"&gt;
@@ -181,7 +181,7 @@ target="_blank">here</a></p>
 <p>In this handler the phase "loggingPhase" is defined by the module writer.
 It is not a pre-defined handler phase, hence the module writer should
 introduce it to the "axis2.xml" (NOT the services.xml) so that Axis2 engine
-knows where to place the handler in different "flows" ( InFlow, OutFlow,
+knows where to place the handler in different "flows" ( inFlow, outFlow,
 etc.). Following xml lines show the respective changes made to the
 "axis2.xml" in order to deploy this logging module in Axis2 engine. This is
 an extract of the phase section of the "axis2.xml".</p>
@@ -219,7 +219,7 @@ an extract of the phase section of the "axis2.xml".</p>
             &lt;/handler&gt;
         &lt;/phase&gt;
         &lt;!--  System pre defined phases       --&gt;
-        &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --&gt;
+        &lt;!--   After Postdispatch phase module author or service author can add any phase he wants      --&gt;
         &lt;phase name="OperationInPhase"/&gt;
         &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
     &lt;/phaseOrder&gt;
@@ -227,8 +227,8 @@ an extract of the phase section of the "axis2.xml".</p>
         &lt;!--      user can add his own phases to this area  --&gt;
         &lt;phase name="OperationOutPhase"/&gt;
         &lt;phase name="<font color="#33cc00">loggingPhase</font>"/&gt;
-        &lt;!--system predefined phase--&gt;
-        &lt;!--these phase will run irrespective of the service--&gt;
+        &lt;!--system predefined phases--&gt;
+        &lt;!--these phases will run irrespective of the service--&gt;
         &lt;phase name="PolicyDetermination"/&gt;
         &lt;phase name="MessageOut"/&gt;
     &lt;/phaseOrder/&gt;
@@ -291,7 +291,7 @@ the module will be executed in their respective phases as described by the
 
 <p>Before deploying the module we need to create the ".mar" file for this
 module. This can be done, using the "jar" command and then renaming the
-created jar file. Or you can find the "Logging.mar" that is already created
+created jar file. Or you can find the "logging.mar" that is already created
 for you in the "Axis2Home/samples/userguide" directory.</p>
 
 <h4><a name="Step7_:_Deploy_the_Module_in_Axis2">Step7 : Deploy the Module in
