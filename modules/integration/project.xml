@@ -392,10 +392,10 @@
           <className>javax.management.MalformedObjectNameException</className>
           <property/>
           <directory/>
-          <includes/>
-          <excludes>
-              <exclude>**/jms/*.java</exclude>
-          </excludes>
+          <includes>
+              <include>**/jms/*.java</include>
+          </includes>
+          <excludes/>
         </sourceModification>
     </sourceModifications>
         <unitTest>
