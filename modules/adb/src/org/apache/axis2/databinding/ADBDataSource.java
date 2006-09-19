@@ -48,7 +48,9 @@ public abstract class ADBDataSource implements OMDataSource {
      * @throws XMLStreamException
      */
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-       serialize(StAXUtils.createXMLStreamWriter(output));
+        XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(output);
+        serialize(xmlStreamWriter);
+        xmlStreamWriter.flush();
     }
 
     /**
