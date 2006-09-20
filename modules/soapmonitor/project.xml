@@ -38,6 +38,14 @@
             <version>${axiom.version}</version>
         </dependency>
         <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>neethi</artifactId>
+            <version>${neethi.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>										    
+	<dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>

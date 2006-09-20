@@ -23,6 +23,10 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.modules.PolicyExtension;
+
+import org.apache.neethi.Assertion;
+import org.apache.neethi.Policy;
+
 import org.apache.ws.security.policy1.extension.WSSCodegenPolicyExtension;
 
 public class Rampart implements Module, ModulePolicyExtension  {
@@ -37,10 +41,19 @@ public class Rampart implements Module, ModulePolicyExtension  {
     }
 
     public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
-        // Do nothing
+        // at the moment, nothing needs to be done ..
     }
 
     public PolicyExtension getPolicyExtension() {
         return new WSSCodegenPolicyExtension();
+    }
+
+    public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault {
+        // TODO 
+    }
+
+    public boolean canSupportAssertion(Assertion assertion) {
+        // TODO
+        return true;
     }
 }

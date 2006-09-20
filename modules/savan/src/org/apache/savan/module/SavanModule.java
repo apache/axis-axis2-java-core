@@ -26,6 +26,8 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.modules.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.neethi.Assertion;
+import org.apache.neethi.Policy;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
 import org.apache.savan.configuration.ConfigurationManager;
@@ -64,5 +66,16 @@ public class SavanModule implements Module  {
 
 	public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
 	}
+
+    public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault {
+        // TODO
+    }
+
+    public boolean canSupportAssertion(Assertion assertion) {
+        // TODO 
+        return true;
+    }
+    
+    
 
 }

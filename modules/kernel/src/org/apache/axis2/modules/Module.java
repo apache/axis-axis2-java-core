@@ -22,6 +22,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.neethi.Assertion;
+import org.apache.neethi.Policy;
 
 /**
  * Every module provides an implementation of this class. Modules are in one of
@@ -51,6 +53,25 @@ public interface Module {
      */
     void engageNotify(AxisDescription axisDescription) throws AxisFault;
     
+    /**
+     * Evalute whether it can support the specified assertion and returns true if the assertion can
+     * be supported. 
+     *  
+     * @param assertion the assertion that the module must decide whether it can support or not. 
+     * @return true if the specified assertion can be supported by the module
+     */
+    public boolean canSupportAssertion(Assertion assertion);
+    
+    /**
+     * Evaluates specified policy for the specified AxisDescription. It computes the configuration that 
+     * is appropriate to support the policy and stores it the appropriate description.
+     * 
+     * @param policy the policy that is applicable for the specified AxisDescription
+     * @throws AxisFault if anything goes wrong. 
+     */
+    public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault;
+    
+            
     // shutdown the module
     public void shutdown(ConfigurationContext configurationContext) throws AxisFault;
 }

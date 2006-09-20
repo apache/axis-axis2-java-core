@@ -4,6 +4,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.modules.Module;
+import org.apache.neethi.Assertion;
+import org.apache.neethi.Policy;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -32,4 +34,13 @@ public class InavalidModuleImpl implements Module {
     // shutdown the module
     public void shutdown(ConfigurationContext configurationContext) throws AxisFault {
     }
+
+    public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault {
+    }
+
+    public boolean canSupportAssertion(Assertion assertion) {
+        return true;
+    }
+    
+    
 }
