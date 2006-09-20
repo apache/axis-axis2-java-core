@@ -38,7 +38,7 @@ users ranging from simple, less time consuming  operations such as
 using client applications) these Web Service we cannot use some simple
 generic invocation paradigm that suites all the timing complexities involved
 in the service operations. For example, if we use a single transport channel
-(such as HTTP) to invoke a Web Service with and IN-OUT operation that take
+(such as HTTP) to invoke a Web Service with an IN-OUT operation that takes
 long time to complete, then most of the time we may end up with "connection
 time outs". On the other hand, if there are simultaneous service invocations
 that  we need to perform from a single client application, then the use of a
@@ -71,7 +71,7 @@ behavior that we can get using the <strong>Non-Blocking API</strong> as
 
 <p>Both these mechanisms use single transport connection to send the request
 and to receive the response. They severely lags the capability of using two
-transport connections for the request and the response (either One-Way of
+transport connections for the request and the response (either One-Way or
 Two-Way). So both these mechanisms fail to address the problem of long
 running transactions (the transport connection may time-out before the
 operation completes). A possible solution would be to use <strong>two
@@ -330,7 +330,7 @@ asynchrony!!</strong></p>
 <p><font color="#0000ff"><font color="#000000">The boolean flag (value true)
 in the "<b>options.setUseSeparateListener(...)</b>" method informs the Axis2
 engine to use separate transport connections for request and response.
-Finally "<b>serviceClient.finalizeInvoke()</b>" informs the Axis2 engine to
+Finally "<b>service.finalizeInvoke()</b>" informs the Axis2 engine to
 stop the client side listener started to retrieve the
 response.</font></font></p>
 
@@ -344,7 +344,7 @@ the "<strong>pre-dispatch</strong>" phase (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about phases)  and hence "engaging" means simply adding module
 reference in the "axis2.xml" (NOT the "services.xml"). Now add the following
-line to the "axis2.xml" that you can find in the "/webapps/axis2/WEB-INF"
+line to the "axis2.xml" that you can find in the "/webapps/axis2/WEB-INF/conf"
 directory in the servlet container. 
 <pre style="margin-bottom: 0.2in"> &lt;module ref="addressing"/&gt;</pre>
 
