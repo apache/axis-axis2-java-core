@@ -53,14 +53,14 @@ follows in order to configure the JMSListener and the JMS Sender</p>
 connection factory (named as "default" ~ JMSConstants.DEFAULT_CONFAC_NAME)
 for use by Axis2 services using the JMS transport. This connection factory
 would be used by any service which does not explicitly specify a connection
-factory name in its services.xml. <span style="color: #FF0000">The
-configuration required to associate a (local) Axis2 connection factory to an
-actual implementation must be provided as shown above, to specify the JNDI
-URL, initial context factory class and the JNDI name of the actual JMS
-connection factory to be used.</span> You may also specify the parameters
-"java.naming.security.principal" and "java.naming.security.credentials" if
-required, to access the actual connection factory. The example shown above
-uses an ActiveMQ JMS implementation.</p>
+factory name in its services.xml. The configuration required to associate a
+(local) Axis2 connection factory to an actual implementation must be provided
+as shown above, to specify the JNDI URL, initial context factory class and
+the JNDI name of the actual JMS connection factory is to be used. You may
+also specify the parameters "java.naming.security.principal" and
+"java.naming.security.credentials" if required, to access the actual
+connection factory. The example shown above uses an ActiveMQ JMS
+implementation.</p>
 <pre><strong>axis2.xml</strong>
   &lt;parameter name="myTopicConnectionFactory" locked="false"&gt;</pre>
 <pre>    &lt;parameter name="java.naming.factory.initial" locked="false"&gt;org.apache.activemq.jndi.ActiveMQInitialContextFactory&lt;/parameter&gt;</pre>
@@ -110,10 +110,10 @@ provide the following optional parameters.</p>
 
 <h2>Writing Services to Use The JMS Transport</h2>
 
-<p>This section assumes that you are already familiar with <a href=""><span
-style="color: #FF0000">writing service implementations</span></a> for Axis2,
-and provides information to enable you to write your own service
-implementations which are exposed over JMS.</p>
+<p>This section assumes that you are already familiar with <a
+href="userguide2.html">writing service implementations</a> for Axis2, and
+provides information to enable you to write your own service implementations
+which are exposed over JMS.</p>
 
 <p><strong>Echo - Service implementation and services.xml</strong></p>
 
@@ -125,7 +125,7 @@ messages over a JMS Queue named "Echo" (which is the name of the service).
 This service will be exposed over all defined Axis2 transports, and the
 resulting URL for the service over JMS would be:</p>
 
-<p></p>
+<p><span style="color: #FF0000">&lt;URL&gt;</span></p>
 <pre><strong>Echo.java</strong></pre>
 <pre>  public class Echo {</pre>
 <pre>    public String echoString(String in) {</pre>
@@ -160,6 +160,8 @@ exposed over the JMS transport, and that the custom connection factory named
 "myTopcConnectionFactory" should be used to listen for requests at the JMS
 destination named "dynamicTopics/something.TestTopic". The JMS URL to access
 this service is:</p>
+
+<p><span style="color: #FF0000">&lt;URL&gt;</span></p>
 <pre><strong>Echo2.java</strong></pre>
 <pre>  public class Echo2 {</pre>
 <pre>    public String echoString(String in) {</pre>
