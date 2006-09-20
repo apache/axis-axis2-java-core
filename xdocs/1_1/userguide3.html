@@ -23,7 +23,7 @@ href="userguide4.html">4</a>, <a href="userguide5.html">5</a></p>
 <p><b><font size="4">Note (on samples):</font></b> In this page of the user's
 guide we will look at how to write Web Service Clients using Axis2. All
 samples mentioned in this guide are located at the <b><font
-color="#000000">"samples/src"</font></b> directory of the binary
+color="#000000">"samples\userguide\src"</font></b> directory of the binary
 distribution. So... let's explore the samples.</p>
 
 <h2><a name="Web_Service_Clients_Using_Axis2">Web Service Clients Using
@@ -330,9 +330,8 @@ asynchrony!!</strong></p>
 <p><font color="#0000ff"><font color="#000000">The boolean flag (value true)
 in the "<b>options.setUseSeparateListener(...)</b>" method informs the Axis2
 engine to use separate transport connections for request and response.
-Finally "<b>service.finalizeInvoke()</b>" informs the Axis2 engine to
-stop the client side listener started to retrieve the
-response.</font></font></p>
+Finally "<b>service.finalizeInvoke()</b>" informs the Axis2 engine to stop
+the client side listener started to retrieve the response.</font></font></p>
 
 <p>Before we run the sample client we have one more step to perform. As
 mentioned earlier Axis2 uses addressing based correlation mechanism, hence we
@@ -344,8 +343,8 @@ the "<strong>pre-dispatch</strong>" phase (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about phases)  and hence "engaging" means simply adding module
 reference in the "axis2.xml" (NOT the "services.xml"). Now add the following
-line to the "axis2.xml" that you can find in the "/webapps/axis2/WEB-INF/conf"
-directory in the servlet container. 
+line to the "axis2.xml" that you can find in the
+"/webapps/axis2/WEB-INF/conf" directory in the servlet container. 
 <pre style="margin-bottom: 0.2in"> &lt;module ref="addressing"/&gt;</pre>
 
 <p>Note: <font color="#000000">Once you change the "axis2.xml" you need to
