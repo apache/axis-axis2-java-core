@@ -8,12 +8,6 @@
     xmlns:maven="jelly:maven"
     xmlns:deploy="deploy"
     xmlns:ant="jelly:ant">
-    
-    <goal name="java2sec:copy">
-        <mkdir dir="${basedir}/test-resources/java2sec/test/classes"/>        
-        <copy toFile="${basedir}/test-resources/java2sec/test/classes/org/apache/axis2/java/security/less/LessPermission.class" file="${basedir}/target/test-classes/org/apache/axis2/java/security/less/LessPermission.class"/>
-     </goal>   
-     
     <postGoal name="test:compile">
       <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
         <j:jelly xmlns="jelly:ant">
@@ -26,31 +20,6 @@
         </j:jelly>
         <ant:copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml"/>
       </j:if>
-      <mkdir dir="${basedir}/target/test-resources/Java2Sec/more"/>        
-      <mkdir dir="${basedir}/target/test-resources/Java2Sec/less"/>        
-      
-      <ant:jar destfile="${maven.build.dir}/test-resources/Java2Sec/more/MorePermission.jar" update="true">
-            <fileset dir="target/test-classes">
-                <include name="org/apache/axis2/java/security/driver/*"/>
-                <include name="org/apache/axis2/java/security/action/*"/>
-                <include name="org/apache/axis2/java/security/interf/*"/>
-                <include name="org/apache/axis2/java/security/more/*"/>
-            </fileset>
-      </ant:jar>
-      
-      <ant:delete dir="${basedir}/target/test-classes/org/apache/axis2/java/security/dirver" />   
-      <ant:delete dir="${basedir}/target/test-classes/org/apache/axis2/java/security/more" />
-      <ant:delete dir="${basedir}/target/test-classes/org/apache/axis2/java/security/action" />
-      <ant:delete dir="${basedir}/target/test-classes/org/apache/axis2/java/security/interf" />
-       
-      <ant:jar destfile="${maven.build.dir}/test-resources/Java2Sec/less/LessPermission.jar" update="true">
-            <fileset dir="target/test-classes">
-                <include name="org/apache/axis2/java/security/less/*"/>
-            </fileset>
-      </ant:jar>
-      
-      <ant:delete dir="${basedir}/target/test-classes/org/apache/axis2/java/security/less" />
-
     </postGoal>
     <preGoal name="itest:compile">
         <u:file var="file" name="${maven.itest.src}"/>

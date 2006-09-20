@@ -44,12 +44,6 @@
 
 
         <!-- external JARs -->
-        <dependency>
-          <groupId>maven</groupId>
-          <artifactId>maven-test-plugin</artifactId>
-          <type>plugin</type>
-          <version>${maven.test.plugin.version}</version>
-       </dependency>
         
         <dependency>
             <groupId>commons-logging</groupId>
