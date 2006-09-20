@@ -79,6 +79,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     protected void setUp() throws Exception {
         // Start ActiveMQ embedded broker
+        broker.setUseJmx(false);
         broker.addConnector("tcp://localhost:61616");
         broker.start();
 
