@@ -31,7 +31,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
@@ -40,8 +40,6 @@ import junit.framework.TestCase;
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class MessageBuilderTest extends TestCase {
-
-    static final String soapMsg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + "<SOAP-ENV:Body>" + "<add xmlns=\"http://ws.apache.org/counter/counter_port_type\">" + "<value xmlns=\"\">15</value>" + "</add>" + "</SOAP-ENV:Body>\r\n       \r\n" + "</SOAP-ENV:Envelope>";
 
     public MessageBuilderTest() {
         super();
@@ -132,18 +130,38 @@ public class MessageBuilderTest extends TestCase {
         }
     }
 
+
+    public void testAsymmBinding() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            
+            String policyXml = "test-resources/policy/rampart-asymm-binding-1.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+            
+            System.out.println(ctx.getEnvelope());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+    
     
     /**
      * @throws XMLStreamException
      * @throws FactoryConfigurationError
      * @throws AxisFault
      */
-    private MessageContext getMsgCtx() throws XMLStreamException, FactoryConfigurationError, AxisFault {
+    private MessageContext getMsgCtx() throws Exception {
         MessageContext ctx = new MessageContext();
         ctx.setAxisService(new AxisService("TestService"));
         ctx.setAxisOperation(new OutInAxisOperation(new QName("http://rampart.org", "test")));
         
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(soapMsg.getBytes()));
+        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream("test-resources/policy/soapmessage.xml"));
         ctx.setEnvelope(new StAXSOAPModelBuilder(reader, null).getSOAPEnvelope());
         return ctx;
     }

@@ -191,9 +191,9 @@ public class TransportBindingBuilder extends BindingBuilder {
                 return dkSig.getSignatureValue();
                 
             } catch (WSSecurityException e) {
-                throw new RampartException("errorCreatingEncryptedKey", e);
+                throw new RampartException("errorInDerivedKeyTokenSignature", e);
             } catch (ConversationException e) {
-                throw new RampartException("errorCreatingEncryptedKey", e);
+                throw new RampartException("errorInDerivedKeyTokenSignature", e);
             }
             
         } else {

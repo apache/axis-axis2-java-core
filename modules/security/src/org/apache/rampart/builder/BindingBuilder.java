@@ -61,6 +61,8 @@ public abstract class BindingBuilder {
     
     protected String mainSigId = null;
     
+    protected Element timestampElement;
+    
     /**
      * @param rmd
      * @param doc
@@ -68,20 +70,21 @@ public abstract class BindingBuilder {
     protected void addTimestamp(RampartMessageData rmd) {
         log.debug("Adding timestamp");
         
-        WSSecTimestamp timeStampBuilder = new WSSecTimestamp();
-        timeStampBuilder.setWsConfig(rmd.getConfig());
+        WSSecTimestamp timestampBuilder = new WSSecTimestamp();
+        timestampBuilder.setWsConfig(rmd.getConfig());
 
-        timeStampBuilder.setTimeToLive(RampartUtil.getTimeToLive(rmd));
+        timestampBuilder.setTimeToLive(RampartUtil.getTimeToLive(rmd));
         
         // add the Timestamp to the SOAP Enevelope
 
-        timeStampBuilder.build(rmd.getDocument(), rmd
+        timestampBuilder.build(rmd.getDocument(), rmd
                 .getSecHeader());
         
-        log.debug("Timestamp id: " + timeStampBuilder.getId());
+        log.debug("Timestamp id: " + timestampBuilder.getId());
 
-        rmd.setTimestampId(timeStampBuilder.getId());
+        rmd.setTimestampId(timestampBuilder.getId());
         
+        this.timestampElement = timestampBuilder.getElement();
         log.debug("Adding timestamp: DONE");
     }
     
@@ -160,7 +163,7 @@ public abstract class BindingBuilder {
      * @throws WSSecurityException
      * @throws RampartException
      */
-    protected WSSecEncryptedKey getEncryptedKeyBuilder(RampartMessageData rmd, Token token) throws WSSecurityException, RampartException {
+    protected WSSecEncryptedKey getEncryptedKeyBuilder(RampartMessageData rmd, Token token) throws RampartException {
         
         RampartPolicyData rpd = rmd.getPolicyData();
         Document doc = rmd.getDocument();
@@ -172,13 +175,17 @@ public abstract class BindingBuilder {
         } else {
             encrKey.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
         }
-        encrKey.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
-        encrKey.setKeySize(rpd.getAlgorithmSuite().getMaximumSymmetricKeyLength());
-        encrKey.setKeyEncAlgo(rpd.getAlgorithmSuite().getAsymmetricKeyWrap());
-        
-        encrKey.prepare(doc, RampartUtil.getEncryptionCrypto(rpd.getRampartConfig()));
-        
-        return encrKey;
+        try {
+            encrKey.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
+            encrKey.setKeySize(rpd.getAlgorithmSuite().getMaximumSymmetricKeyLength());
+            encrKey.setKeyEncAlgo(rpd.getAlgorithmSuite().getAsymmetricKeyWrap());
+            
+            encrKey.prepare(doc, RampartUtil.getEncryptionCrypto(rpd.getRampartConfig()));
+            
+            return encrKey;
+        } catch (WSSecurityException e) {
+            throw new RampartException("errorCreatingEncryptedKey", e);
+        }
     }
     
     
@@ -325,8 +332,6 @@ public abstract class BindingBuilder {
                             
                             endSuppTokMap.put(token, endSuppTok);
                             
-                        } catch (WSSecurityException e) {
-                            throw new RampartException("errorCreatingEncryptedKey", e);
                         } catch (TrustException e) {
                             throw new RampartException("errorCreatingRahasToken", e);
                         }
@@ -428,7 +433,7 @@ public abstract class BindingBuilder {
                     sigParts.add(new WSEncryptionPart(tok.getId()));
                 }
                 
-                this.doSignature(rmd, token, (org.apache.rahas.Token)tempTok, sigParts);
+                this.doSymmSignature(rmd, token, (org.apache.rahas.Token)tempTok, sigParts);
                 
             } else if (tempTok instanceof WSSecSignature) {
                 WSSecSignature sig = (WSSecSignature)tempTok;
@@ -452,7 +457,7 @@ public abstract class BindingBuilder {
     }
     
     
-    protected byte[] doSignature(RampartMessageData rmd, Token policyToken, org.apache.rahas.Token tok, Vector sigParts) throws RampartException {
+    protected byte[] doSymmSignature(RampartMessageData rmd, Token policyToken, org.apache.rahas.Token tok, Vector sigParts) throws RampartException {
         
         Document doc = rmd.getDocument();
         RampartPolicyData rpd = rmd.getPolicyData();

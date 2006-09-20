@@ -70,7 +70,7 @@ public class RampartPolicyBuilder {
             if (assertion instanceof Binding) {
                 if (assertion instanceof SymmetricBinding) {
                     processSymmetricPolicyBinding((SymmetricBinding) assertion, rpd);
-                } else if(assertion instanceof SymmetricBinding) {
+                } else if(assertion instanceof AsymmetricBinding) {
                     processAsymmetricPolicyBinding((AsymmetricBinding) assertion, rpd);
                 } else {
                     processTransportBinding((TransportBinding) assertion, rpd);

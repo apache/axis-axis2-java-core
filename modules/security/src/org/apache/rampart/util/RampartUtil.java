@@ -55,6 +55,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
 import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -62,32 +63,7 @@ public class RampartUtil {
 
     private static Log log = LogFactory.getLog(RampartUtil.class);
     
-//    public static CallbackHandler getPasswordCB(ClassLoader classLoader,
-//            String cbHandlerClass) throws RampartException {
-//
-//        log.debug("loading class : " + cbHandlerClass);
-//        
-//        CallbackHandler cbHandler = null;
-//        
-//        if (cbHandlerClass != null) {
-//            Class cbClass;
-//            try {
-//                cbClass = Loader.loadClass(classLoader, cbHandlerClass);
-//            } catch (ClassNotFoundException e) {
-//                throw new RampartException("cannotLoadPWCBClass", 
-//                        new String[]{cbHandlerClass}, e);
-//            }
-//            try {
-//                cbHandler = (CallbackHandler) cbClass.newInstance();
-//            } catch (java.lang.Exception e) {
-//                throw new RampartException("cannotCreatePWCBInstance",
-//                        new String[]{cbHandlerClass}, e);
-//            }
-//        }
-//        
-//        return cbHandler;
-//    }
-    
+
     public static CallbackHandler getPasswordCB(RampartMessageData rmd) throws RampartException {
 
         ClassLoader classLoader = rmd.getMsgContext().getAxisService().getClassLoader();
@@ -477,30 +453,31 @@ public class RampartUtil {
 
     public static Element insertSiblingAfter(RampartMessageData rmd, Element child, Element sibling) {
         if(child == null) {
-            appendChildToSecHeader(rmd, sibling);
-        }
-        if(child.getOwnerDocument().equals(sibling.getOwnerDocument())) {
-            ((OMElement)child).insertSiblingAfter((OMElement)sibling);
-            return sibling;
+            return appendChildToSecHeader(rmd, sibling);
         } else {
-            Element newSib = (Element)child.getOwnerDocument().importNode(sibling, true);
-            ((OMElement)child).insertSiblingAfter((OMElement)newSib);
-            return newSib;
+            if(child.getOwnerDocument().equals(sibling.getOwnerDocument())) {
+                ((OMElement)child).insertSiblingAfter((OMElement)sibling);
+                return sibling;
+            } else {
+                Element newSib = (Element)child.getOwnerDocument().importNode(sibling, true);
+                ((OMElement)child).insertSiblingAfter((OMElement)newSib);
+                return newSib;
+            }
         }
-        
     }
     
     public static Element insertSiblingBefore(RampartMessageData rmd, Element child, Element sibling) {
         if(child == null) {
-            appendChildToSecHeader(rmd, sibling);
-        }
-        if(child.getOwnerDocument().equals(sibling.getOwnerDocument())) {
-            ((OMElement)child).insertSiblingBefore((OMElement)sibling);
-            return sibling;
+            return appendChildToSecHeader(rmd, sibling);
         } else {
-            Element newSib = (Element)child.getOwnerDocument().importNode(sibling, true);
-            ((OMElement)child).insertSiblingBefore((OMElement)newSib);
-            return newSib;
+            if(child.getOwnerDocument().equals(sibling.getOwnerDocument())) {
+                ((OMElement)child).insertSiblingBefore((OMElement)sibling);
+                return sibling;
+            } else {
+                Element newSib = (Element)child.getOwnerDocument().importNode(sibling, true);
+                ((OMElement)child).insertSiblingBefore((OMElement)newSib);
+                return newSib;
+            }
         }
         
     }
@@ -519,15 +496,21 @@ public class RampartUtil {
     public static Vector getSignedParts(RampartMessageData rmd) {
         RampartPolicyData rpd =  rmd.getPolicyData();
         Vector parts = rpd.getSignedParts();
+        SOAPEnvelope envelope = rmd
+                            .getMsgContext().getEnvelope();
         if(rpd.isEntireHeadersAndBodySignatures()) {
-            //TODO: Handle the headers when wsse11:EncryptedHeader is 
-            //implemented
-            parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
-                    .getMsgContext().getEnvelope().getBody())));
+            Iterator childElems = envelope.getHeader().getChildElements();
+            while (childElems.hasNext()) {
+                OMElement element = (OMElement) childElems.next();
+                if(!element.getQName().equals(new QName(WSConstants.WSSE_NS, WSConstants.WSSE_LN)) &&
+                        !element.getQName().equals(new QName(WSConstants.WSSE11_NS, WSConstants.WSSE_LN))) {
+                    parts.add(new WSEncryptionPart(addWsuIdToElement(element)));
+                }
+            }
+            parts.add(new WSEncryptionPart(addWsuIdToElement(envelope.getBody())));
             
         } else if(rpd.isEncryptBody()) {
-            parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
-                    .getMsgContext().getEnvelope().getBody())));
+            parts.add(new WSEncryptionPart(addWsuIdToElement(envelope.getBody())));
         }
         
         return parts;

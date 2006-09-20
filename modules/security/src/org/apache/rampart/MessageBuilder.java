@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.rampart.builder.AsymmetricBindingBuilder;
 import org.apache.rampart.builder.SymmetricBindingBuilder;
 import org.apache.rampart.builder.TransportBindingBuilder;
 import org.apache.rampart.policy.RampartPolicyData;
@@ -47,7 +48,8 @@ public class MessageBuilder {
             SymmetricBindingBuilder builder = new SymmetricBindingBuilder();
             builder.build(rmd);
         } else {
-           //TODO Handle AsymmtricBinding 
+            AsymmetricBindingBuilder builder = new AsymmetricBindingBuilder();
+            builder.build(rmd);
         }
     }
 

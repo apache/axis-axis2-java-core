@@ -83,7 +83,7 @@ public class STSRequester {
 
         try {
             OMElement rstElem = TrustUtil.createRequestSecurityTokenElement(config.getWstVersion());
-            OMElement reqTypeElem = TrustUtil.createRequestTypeElement(config.getWstVersion(), rstElem, RahasConstants.REQ_TYPE_ISSUE);
+            TrustUtil.createRequestTypeElement(config.getWstVersion(), rstElem, RahasConstants.REQ_TYPE_ISSUE);
             OMElement tokenTypeElem = TrustUtil.createTokenTypeElement(config.getWstVersion(), rstElem);
             tokenTypeElem.setText(ConversationConstants.getWSCNs(ConversationConstants.DEFAULT_VERSION) + ConversationConstants.TOKEN_TYPE_SECURITY_CONTEXT_TOKEN);
             
@@ -104,8 +104,6 @@ public class STSRequester {
                 TrustUtil.createKeySizeElement(config.getWstVersion(), rstElem, nonceLength * 8);
             }
 
-            String str = rstElem.toString();
-            
             OMElement tempResult = client.sendReceive(rstQn, rstElem);
             Axis2Util.useDOOM(true);
             OMElement tempelem = Axis2Util.toDOOM(DOOMAbstractFactory.getOMFactory(), tempResult);

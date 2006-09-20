@@ -79,13 +79,13 @@ public class RampartPolicyData {
 
     private boolean encryptBody;
 
-    private Vector signedParts;
+    private Vector signedParts = new Vector();
 
-    private Vector signedElements;
+    private Vector signedElements = new Vector();
 
-    private Vector encryptedParts;
+    private Vector encryptedParts = new Vector();
 
-    private Vector encryptedElements;
+    private Vector encryptedElements = new Vector();
 
     /*
      * Holds the supporting tokens elements
@@ -242,9 +242,7 @@ public class RampartPolicyData {
      *            The encrypted Element (XPath) to set.
      */
     public void setEncryptedElements(String encElement) {
-        if (encryptedElements == null) {
-            encryptedElements = new Vector();
-        }
+
         encryptedElements.add(encElement);
     }
 
@@ -262,9 +260,6 @@ public class RampartPolicyData {
      *            The part's element name.
      */
     public void setEncryptedParts(String namespace, String element) {
-        if (encryptedParts == null) {
-            encryptedParts = new Vector();
-        }
         WSEncryptionPart wep = new WSEncryptionPart(element, namespace,
                 "Element");
         encryptedParts.add(wep);
@@ -312,9 +307,7 @@ public class RampartPolicyData {
      *            The signed Element (XPath) to set.
      */
     public void setSignedElements(String sigElement) {
-        if (signedElements == null) {
-            signedElements = new Vector();
-        }
+
         signedElements.add(sigElement);
     }
 
@@ -332,9 +325,7 @@ public class RampartPolicyData {
      *            The part's element name.
      */
     public void setSignedParts(String namespace, String element) {
-        if (signedParts == null) {
-            signedParts = new Vector();
-        }
+
         WSEncryptionPart wep = new WSEncryptionPart(element, namespace,
                 "Content");
         signedParts.add(wep);

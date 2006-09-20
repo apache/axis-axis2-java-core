@@ -26,11 +26,9 @@ import org.apache.axis2.modules.PolicyExtension;
 import org.apache.ws.security.policy1.extension.WSSCodegenPolicyExtension;
 
 public class Rampart implements Module, ModulePolicyExtension  {
-    private AxisModule module;
 
     public void init(ConfigurationContext configContext, AxisModule module)
             throws AxisFault {
-        this.module = module;
     }
 
     public void engageNotify(AxisDescription axisDescription) throws AxisFault {
