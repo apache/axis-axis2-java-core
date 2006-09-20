@@ -250,10 +250,11 @@ available in the class path in order to compile the generated classes.</p>
 <h4><a name="Implement_the_Business_Logic">Implement the Business
 Logic</a></h4>
 
-<p>Locate the skeleton class that can be found under src/org/apache/axis2/userguide directory
-with the name "Axis2SampleDocLitServiceSkeleton.java". This is the skeleton
-for our Web service and we can now easily implement the business logic. The
-WSDL we have used has three operations:<!--<li><p style="margin-bottom: 0in">echoVoid   - Operation that does not
+<p>Locate the skeleton class that can be found under
+src/org/apache/axis2/userguide directory with the name
+"Axis2SampleDocLitServiceSkeleton.java". This is the skeleton for our Web
+service and we can now easily implement the business logic. The WSDL we have
+used has three operations:<!--<li><p style="margin-bottom: 0in">echoVoid   - Operation that does not
 accept any input parameters  and also provide no out put parameters. Just
 perform some task </p>
 </li>-->
@@ -281,8 +282,8 @@ the explanation purpose we do not need anything to be implemented here.</p>
 <h4><a name="echoString">echoString</a></h4>
 
 <p>Locate the following code segment  in the
-"Axis2SampleDocLitPortTypeSkeleton.java"  and fill the business logic as
-shown below.</p>
+"Axis2SampleDocLitServiceSkeleton.java"  and fill the business logic as shown
+below.</p>
 <pre> public org.apache.axis2.userguide.xsd.EchoStringReturnDocument echoString
    (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4 ){
       //Todo fill this with the necessary business logic
@@ -399,14 +400,15 @@ then type the following command in a command line.</p>
 
 <p>Deploying the service  is just a matter of dropping the ".aar" in to
 "services" directory that can be found in the "\webapps\axis2\WEB-INF" of
-your servlet container, hence copy the "Axis2SampleDocLitPortType.aar" into the "<b>services</b>"
-directory. Once these steps are completed, please start the servlet container
-(if you have not already started) and check the link "Services" on the <a
-href="http://localhost:8080/axis2/index.jsp" target="_blank">Home Page of
-Axis2 Web Application</a> (http://localhost:8080/axis2/index.jsp) and see
-whether the Axis2SampleDocLitPortType is deployed properly. If you can see
-the following output then you have successfully deployed
-Axis2SampleDocLitPortType on Axis2.</p>
+your servlet container, hence copy the "Axis2SampleDocLitPortType.aar" into
+the "<b>services</b>" directory. Once these steps are completed, please start
+the servlet container (if you have not already started) and check the link
+"Services" on the <a href="http://localhost:8080/axis2/index.jsp"
+target="_blank">Home Page of Axis2 Web Application</a>
+(http://localhost:8080/axis2/index.jsp) and see whether the
+Axis2SampleDocLitPortType is deployed properly. If you can see the following
+output then you have successfully deployed Axis2SampleDocLitPortType on
+Axis2.</p>
 
 <p align="center"><img src="images/userguide/ServiceDeployed.jpg"
 name="Graphic4" align="bottom" border="0"></p>
