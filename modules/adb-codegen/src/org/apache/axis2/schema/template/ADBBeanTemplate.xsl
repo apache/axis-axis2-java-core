@@ -1515,7 +1515,7 @@
                                     } else {
                                         if (reader.hasText()) {
                                             //Do the usual conversion
-                                            java.lang.String content = reader.getElementText();
+                                            java.lang.String content = reader.getText();
                                             object.set<xsl:value-of select="$javaName"/>(
                                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
                                         } else
@@ -2497,7 +2497,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                     } else {
                                         if (reader.hasText()) {
                                             //Do the usual conversion
-                                            java.lang.String content = reader.getElementText();
+                                            java.lang.String content = reader.getText();
                                             object.set<xsl:value-of select="$javaName"/>(
                                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
                                         } else
