@@ -401,7 +401,6 @@
 		<exclude>**org/apache/axis2/transport/DualChannelRequestResponseRawXMLTest.class</exclude>
                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.class</exclude>
                 <exclude>**/ScenarioST1Test.class</exclude>
-		<exclude>**/JMSEchoRawXMLTest.class</exclude>
                 <exclude>**/samples/wsdl/perf2/*.class</exclude>
 
 
