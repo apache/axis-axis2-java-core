@@ -10,13 +10,13 @@
          xmlns:ant="jelly:ant">
     <j:set var="samples.dir" value="target/samples"/>
 
-    <postGoal name="itest:compilex">
+    <postGoal name="itest:compile">
         <mkdir dir="target/itest-classes/modules"/>
         <copy file="../addressing/target/addressing-${addressing_version}.mar"
               tofile="target/itest-classes/modules/addressing-${addressing_version}.mar"/>
     </postGoal>
 
-    <preGoal name="test:compilex">
+    <preGoal name="test:compile">
         <!-- Set a property that can be picked up from the ant build.xml's -->
         <ant:property name="maven.class.path" refid="maven.dependency.classpath"/>
 
@@ -170,7 +170,7 @@
         </j:if>
     </preGoal>
 
-    <postGoal name="test:compilex">
+    <postGoal name="test:compile">
         <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
 
 			<!-- Service classes for the SecConv tests -->
