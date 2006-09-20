@@ -98,7 +98,7 @@ public class RahasConstants {
     public static final String RSTR_ACTON_VALIDATE = "/RSTR" + REQ_TYPE_VALIDATE;
     public static final String RSTR_ACTON_RENEW = "/RSTR" + REQ_TYPE_RENEW;
     public static final String RSTR_ACTION_CANCEL = "/RSTR" + REQ_TYPE_CANCEL;
-    public static final String RSTR_ACTON_SCT = "/RSTR/SCT";
+    public static final String RSTR_ACTION_SCT = "/RSTR/SCT";
 
 
     //Token types

@@ -57,7 +57,7 @@ public class SCTIssuer implements TokenIssuer {
     private String configParamName;
 
     /**
-     * Issue a SecuritycontextToken based on the wsse:Signature or
+     * Issue a {@link SecurityContextToken} based on the wsse:Signature or
      * wsse:UsernameToken
      * 
      * This will support returning the SecurityContextToken with the following
@@ -288,7 +288,7 @@ public class SCTIssuer implements TokenIssuer {
     }
 
     public String getResponseAction(RahasData data) throws TrustException {
-        return TrustUtil.getActionValue(data.getVersion(), RahasConstants.RSTR_ACTON_SCT);
+        return TrustUtil.getActionValue(data.getVersion(), RahasConstants.RSTR_ACTION_SCT);
     }
 
     /**

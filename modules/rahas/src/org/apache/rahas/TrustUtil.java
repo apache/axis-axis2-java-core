@@ -326,7 +326,7 @@ public class TrustUtil {
             RahasConstants.RSTR_ACTION_CANCEL.equals(action) ||
             RahasConstants.RSTR_ACTON_RENEW.equals(action) ||
             RahasConstants.RSTR_ACTON_VALIDATE.equals(action) ||
-            RahasConstants.RSTR_ACTON_SCT.equals(action)) {
+            RahasConstants.RSTR_ACTION_SCT.equals(action)) {
 
             return getWSTNamespace(version) + action;
         }
