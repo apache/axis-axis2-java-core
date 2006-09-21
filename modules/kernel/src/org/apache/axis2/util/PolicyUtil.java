@@ -117,13 +117,14 @@ public class PolicyUtil {
                 xmlString = DOM2Writer.nodeToString(element);
                 bais = new ByteArrayInputStream(xmlString.getBytes());
 
-                PolicyEngine.getPolicy(bais);
+                return PolicyEngine.getPolicy(bais);
+                
             } else if (Constants.ELEM_POLICYREF.equals(element
                     .getLocalName())) {
                 xmlString = DOM2Writer.nodeToString(element);
                 bais = new ByteArrayInputStream(xmlString.getBytes());
 
-                PolicyEngine.getPolicyReferene(bais);
+                return PolicyEngine.getPolicyReferene(bais);
             }
         }
 
