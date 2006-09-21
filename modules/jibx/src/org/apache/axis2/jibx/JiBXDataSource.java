@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -63,7 +62,7 @@ public class JiBXDataSource implements OMDataSource
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
         try {
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
-            ctx.setOutput(output, "UTF-8"); // shouldn't the content type be taken from OMOutputFormat itself ? -- Chinthaka
+            ctx.setOutput(output, "UTF-8"); // TODO shouldn't the content type be taken from OMOutputFormat itself ? -- Chinthaka
             outObject.marshal(ctx);
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);

@@ -26,6 +26,11 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
@@ -54,6 +59,32 @@ import org.w3c.dom.Element;
  */
 public class CodeGenerationUtility {
     private static final String SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
+    private static final String UNWRAP_OPTION = "unwrap";
+    
+    /**
+     * Configure the code generation based on the supplied parameters and WSDL.
+     * 
+     * @param path binding path
+     * @param configuration 
+     */
+    public static void engage(String path, CodeGenConfiguration configuration) {
+
+        // get all elements for operations, and matching type definitions
+        HashMap defsmap = new HashMap();
+        Iterator operations = configuration.getAxisService().getOperations();
+        while (operations.hasNext()) {
+            AxisOperation o =  (AxisOperation)operations.next();
+            accumulateElements(o, defsmap, configuration);
+        }
+        
+        // When unwrapping is enabled this needs to check each particular
+        //  operation to see if it can be unwrapped; if not, check if the
+        //  operation can be handled as wrapped; if not, fail.
+        
+        // store typemapping to configuration
+        boolean unwrap = configuration.getProperties().containsKey(UNWRAP_OPTION);
+        configuration.setTypeMapper(processBinding(path, defsmap, unwrap));
+    }
 
     /**
      * Get type mappings from binding definition. If unwrapping is enabled, this
@@ -68,7 +99,7 @@ public class CodeGenerationUtility {
      * @param unwrap flag for elements to be unwrapped where possible
      * @return map from qname to class name
      */
-    public static TypeMapper getBindingMap(String path, HashMap defsmap,
+    private static TypeMapper processBinding(String path, HashMap defsmap,
         boolean unwrap) {
         
         // make sure the binding definition file is present
@@ -142,7 +173,10 @@ public class CodeGenerationUtility {
             collectTopLevelComponents(binding, null, elementMap,
                 complexTypeMap, simpleTypeMap);
             
-            // populate type mapper for all elements used by service
+            // check handling for each operation - first try unwrapping, if
+            //  enabled, storing results directly into codegen configuration for
+            //  passing to the template; if unwrapping fails, try straight
+            //  doc/lit
             TypeMapper mapper = new JavaTypeMapper();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             for (Iterator iter = defsmap.keySet().iterator(); iter.hasNext();) {
@@ -404,6 +438,7 @@ public class CodeGenerationUtility {
      * 
      * @param iter iterator for elements in list
      * @param dns default namespace if not overridden
+     * @return default namespace
      */
     private static String findDefaultNS(Iterator iter, String dns) {
         while (iter.hasNext()) {
@@ -516,5 +551,45 @@ public class CodeGenerationUtility {
             }
         }
         return null;
+    }
+
+    /**
+     * Accumulate the QNames of all message elements used by an interface. Based on
+     *
+     * @param op
+     * @param config 
+     * @param elements
+     */
+    private static void accumulateElements(AxisOperation op, HashMap defsmap, CodeGenConfiguration config) {
+        String MEP = op.getMessageExchangePattern();
+        if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
+            AxisMessage msg = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            if (msg != null) {
+                addElementType(msg, defsmap, config);
+            }
+        }
+    
+        if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
+            AxisMessage msg = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            if (msg != null) {
+                addElementType(msg, defsmap, config);
+            }
+        }
+    }
+
+    /**
+     * Add message element information to schema definition mappings.
+     * 
+     * @param msg
+     * @param defsmap
+     * @param configuration 
+     */
+    private static void addElementType(AxisMessage msg, HashMap defsmap, CodeGenConfiguration config) {
+        QName qname = msg.getElementQName();
+        XmlSchemaElement element =
+            config.getAxisService().getSchemaElement(qname);
+        if (qname != null) {
+            defsmap.put(qname, element);
+        }
     }
 }
