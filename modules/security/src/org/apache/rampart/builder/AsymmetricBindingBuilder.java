@@ -111,15 +111,11 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                         RampartUtil.appendChildToSecHeader(rmd, bstElem);
                     }
 
-                    if (Constants.INCLUDE_ALWAYS.equals(encryptionToken
-                            .getInclusion())
-                            || Constants.INCLUDE_ONCE.equals(encryptionToken
-                                    .getInclusion())) {
-                        // Add the EncryptedKey
-                        encrTokenElement = encrKey.getEncryptedKeyElement();
-                        RampartUtil.appendChildToSecHeader(rmd,
-                                encrTokenElement);
-                    }
+
+                    // Add the EncryptedKey
+                    encrTokenElement = encrKey.getEncryptedKeyElement();
+                    this.encrTokenElement = RampartUtil.appendChildToSecHeader(rmd,
+                            encrTokenElement);
 
                     // Create the DK encryption builder
                     dkEncr = new WSSecDKEncrypt();
@@ -129,8 +125,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     dkEncr.prepare(doc);
 
                     // Get and add the DKT element
-                    encrDKTokenElem = dkEncr.getdktElement();
-                    RampartUtil.appendChildToSecHeader(rmd, encrDKTokenElem);
+                    encrDKTokenElem = RampartUtil.appendChildToSecHeader(rmd, dkEncr.getdktElement());
 
                     refList = dkEncr.encryptForExternalRef(null, encrParts);
 
@@ -152,14 +147,10 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     if (bstElem != null) {
                         RampartUtil.appendChildToSecHeader(rmd, bstElem);
                     }
-                    if (Constants.INCLUDE_ALWAYS.equals(encryptionToken
-                            .getInclusion())
-                            || Constants.INCLUDE_ONCE.equals(encryptionToken
-                                    .getInclusion())) {
-                        encrTokenElement = encr.getEncryptedKeyElement();
-                        RampartUtil.appendChildToSecHeader(rmd,
-                                encrTokenElement);
-                    }
+
+                    this.encrTokenElement = encr.getEncryptedKeyElement();
+                    this.encrTokenElement = RampartUtil.appendChildToSecHeader(rmd,
+                            encrTokenElement);
 
                     refList = encr.encryptForExternalRef(null, encrParts);
 

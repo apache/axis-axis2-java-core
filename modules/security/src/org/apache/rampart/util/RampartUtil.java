@@ -49,6 +49,7 @@ import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.util.Loader;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.crypto.KeyGenerator;
 import javax.security.auth.callback.Callback;
@@ -447,8 +448,9 @@ public class RampartUtil {
     public static Element appendChildToSecHeader(RampartMessageData rmd,
             Element elem) {
         Element secHeaderElem = rmd.getSecHeader().getSecurityHeader();
-        return (Element)secHeaderElem.appendChild(secHeaderElem.getOwnerDocument().importNode(
-                elem, true));
+        Node node = secHeaderElem.getOwnerDocument().importNode(
+                        elem, true);
+        return (Element)secHeaderElem.appendChild(node);
     }
 
     public static Element insertSiblingAfter(RampartMessageData rmd, Element child, Element sibling) {
