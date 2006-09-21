@@ -331,7 +331,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
         }
         
         //Do encryption
-        Token encrToken = rpd.getEncryptionToken();
+        Token encrToken = rpd.getRecipientToken();
         if(encrToken != null) {
             Element refList = null;
             Vector encrParts = RampartUtil.getEncryptedParts(rmd);
@@ -372,22 +372,32 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     encr.setWsConfig(rmd.getConfig());
                     
                     encr.setDocument(doc);
+                    encr.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
                     encr.prepare(doc, RampartUtil.getEncryptionCrypto(rpd
                             .getRampartConfig()));
                     
+                    this.setInsertionLocation(this.timestampElement);
                     if(encr.getBSTTokenId() != null) {
                         this.setInsertionLocation(RampartUtil
-                                .insertSiblingBefore(rmd,
-                                        this.timestampElement,
+                                .insertSiblingAfter(rmd,
+                                        this.getInsertionLocation(),
                                         encr.getBinarySecurityTokenElement()));
                     }
                     
+                    Element encryptedKeyElement = encr.getEncryptedKeyElement();
+                    this.setInsertionLocation(RampartUtil
+                            .insertSiblingAfter(rmd,
+                                    this.getInsertionLocation(),
+                                    encryptedKeyElement));
+                    
                     //Encrypt, get hold of the ref list and add it
-                    refList = encr.encryptForExternalRef(null, encrParts);
+                    refList = encr.encryptForInternalRef(null, encrParts);
     
-                    RampartUtil.insertSiblingAfter(rmd,
-                                                    this.getInsertionLocation(),
-                                                    refList);
+                    //Add internal refs
+                    encryptedKeyElement.appendChild(refList);
+//                    RampartUtil.insertSiblingAfter(rmd,
+//                                                    this.getInsertionLocation(),
+//                                                    refList);
                 } catch (WSSecurityException e) {
                     throw new RampartException("errorInEncryption", e);
                 }    

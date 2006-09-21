@@ -485,10 +485,8 @@ public class RampartUtil {
     public static Vector getEncryptedParts(RampartMessageData rmd) {
         RampartPolicyData rpd =  rmd.getPolicyData();
         Vector parts = rpd.getEncryptedParts();
-        if(rpd.isEncryptBody()) {
-            parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
+        parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
                     .getMsgContext().getEnvelope().getBody()), "Content"));
-        }
         
         return parts;
     }
