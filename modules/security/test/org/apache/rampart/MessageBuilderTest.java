@@ -150,6 +150,44 @@ public class MessageBuilderTest extends TestCase {
         }
     }
     
+    public void testAsymmBindingServerSide() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            
+            ctx.setServerSide(true);
+            String policyXml = "test-resources/policy/rampart-asymm-binding-1.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+            
+            System.out.println(ctx.getEnvelope());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+    
+    public void testAsymmBindingWithDK() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            
+            String policyXml = "test-resources/policy/rampart-asymm-binding-2-sig-dk.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+            
+            System.out.println(ctx.getEnvelope());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
     
     /**
      * @throws XMLStreamException

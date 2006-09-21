@@ -412,6 +412,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
         Document doc = rmd.getDocument();
 
         sigToken = rpd.getInitiatorToken();
+        this.sigParts = RampartUtil.getSignedParts(rmd);
 
         if (sigToken.isDerivedKeys()) {
             // Set up the encrypted key to use
@@ -424,7 +425,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     .getSymmetricSignature());
 
             try {
-                dkSign.prepare(doc);
+                dkSign.prepare(doc, rmd.getSecHeader());
 
                 sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));
 
