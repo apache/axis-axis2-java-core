@@ -71,20 +71,22 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     contains(configuration.getDatabindingType())) {
                 throw new CodeGenerationException(
                         CodegenMessages.getMessage("extension.unsupportedforunwrapping"));
-            }
+            } else if (!ConfigPropertyFileLoader.getUnwrapDirectFrameworkNames().
+                    contains(configuration.getDatabindingType())) {
 
-            //walk the schema and find the top level elements
-            AxisService axisService = configuration.getAxisService();
+                //walk the schema and find the top level elements
+                AxisService axisService = configuration.getAxisService();
 
-            for (Iterator operations = axisService.getOperations();
-                 operations.hasNext();) {
-                AxisOperation op = (AxisOperation) operations.next();
+                for (Iterator operations = axisService.getOperations();
+                     operations.hasNext();) {
+                    AxisOperation op = (AxisOperation) operations.next();
 
-                if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
-                    walkSchema(op.getMessage(
-                            WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+                    if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
+                        walkSchema(op.getMessage(
+                                WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+                    }
+
                 }
-
             }
         }
     }

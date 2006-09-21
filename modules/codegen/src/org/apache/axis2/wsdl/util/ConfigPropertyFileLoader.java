@@ -46,6 +46,7 @@ public class ConfigPropertyFileLoader {
     private static String[] languageTypes;
     private static String[] databindingFrameworkNames;
     private static String[] unwrapSuppoerteddatabindingFrameworkNames;
+    private static String[] unwrapDirectdatabindingFrameworkNames;
 
     private static Map languageEmitterMap;
     private static Map languageSpecificPropertiesMap;
@@ -63,6 +64,7 @@ public class ConfigPropertyFileLoader {
     private static final String EMITTER_CLASS_KEY = "codegen.emitters";
     private static final String DATA_BINDING_FRAMEWORK_NAME_KEY = "codegen.databinding.frameworks";
     private static final String DATA_BINDING_UNWRAP_SUPPORTED_FRAMEWORK_NAME_KEY = "codegen.databinding.unwrap.supported";
+    private static final String DATA_BINDING_UNWRAP_DIRECT_FRAMEWORK_NAME_KEY = "codegen.databinding.unwrap.direct";
     private static final String DATA_BINDING_FRAMEWORK_DEFAULT_NAME_KEY = "codegen.databinding.frameworks.default";
     private static final String DATA_BINDING_FRAMEWORK_EXTENSION_NAME_KEY = "codegen.databinding.extensions";
     private static final String DATA_BINDING_TEMPLATE_NAME_KEY_PREFIX = "codegen.databinding.";
@@ -163,6 +165,12 @@ public class ConfigPropertyFileLoader {
             tempString = props.getProperty(DATA_BINDING_UNWRAP_SUPPORTED_FRAMEWORK_NAME_KEY);
             if (tempString != null) {
                 unwrapSuppoerteddatabindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
+            }
+
+            //load the unwrap supported data binding framework names
+            tempString = props.getProperty(DATA_BINDING_UNWRAP_DIRECT_FRAMEWORK_NAME_KEY);
+            if (tempString != null) {
+                unwrapDirectdatabindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
             }
 
             //populate the data binding framework name to extension name map
@@ -333,6 +341,16 @@ public class ConfigPropertyFileLoader {
     public static List getUnwrapSupportedFrameworkNames(){
         return Arrays.asList(unwrapSuppoerteddatabindingFrameworkNames);
     }
+
+    /**
+     * Get the list of data binding frameworks that handle unwrapping directly.
+     * 
+     * @return names
+     */
+    public static List getUnwrapDirectFrameworkNames(){
+        return Arrays.asList(unwrapDirectdatabindingFrameworkNames);
+    }
+    
     /**
      * Gets the default language name.
      *

@@ -16,28 +16,24 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.WSDLUtil;
-import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-
-import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
 
+import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+
+/**
+ * Code generation data binding extension for JiBX support. JiBX currently
+ * requires a predefined binding definition to be supplied in order to be used
+ * with Axis2.
+ */
 public class JiBXExtension extends AbstractDBProcessingExtension {
 
+    /** Name of "extra" option used to supply binding definition path. */
     public static final String BINDING_PATH_OPTION = "bindingfile";
-    public static final String UNWRAP_OPTION = "unwrap";
-    public static final String JIBX_MODEL_CLASS =
+    private static final String JIBX_MODEL_CLASS =
             "org.jibx.binding.model.BindingElement";
-    public static final String JIBX_UTILITY_CLASS =
+    private static final String JIBX_UTILITY_CLASS =
             "org.apache.axis2.jibx.CodeGenerationUtility";
-    public static final String BINDING_MAP_METHOD = "getBindingMap";
+    private static final String JIBX_UTILITY_METHOD = "engage";
 
     public void engage(CodeGenConfiguration configuration) {
 
@@ -49,8 +45,8 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
         // check the JiBX binding definition file specified
         String path = (String)configuration.getProperties().get(BINDING_PATH_OPTION);
         if (path == null) {
-            throw new RuntimeException("jibx binding option requires -" +
-                    BINDING_PATH_OPTION + " {file path} parameter");
+            throw new RuntimeException("jibx binding option currently requires -" +
+                    BINDING_PATH_OPTION + " {file-path} parameter");
         }
         try {
 
@@ -69,25 +65,10 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
                 throw new RuntimeException("JiBX binding extension not in classpath");
             }
             
-            // check if unwrapping message elements
-            boolean unwrap = configuration.getProperties().containsKey(UNWRAP_OPTION);
-
-            // get all elements for operations, and matching type definitions
-            HashMap defsmap = new HashMap();
-            Iterator operations = configuration.getAxisService().getOperations();
-            while (operations.hasNext()) {
-                AxisOperation o =  (AxisOperation)operations.next();
-                accumulateElements(o, defsmap, configuration);
-            }
-            
             // invoke utility class method for actual processing
-            Method method = clazz.getMethod(BINDING_MAP_METHOD,
-                new Class[] { String.class, HashMap.class, boolean.class });
-            TypeMapper mapper = (TypeMapper)method.invoke(null,
-                new Object[] { path, defsmap, Boolean.valueOf(unwrap) });
-
-            // set the type mapper to the config
-            configuration.setTypeMapper(mapper);
+            Method method = clazz.getMethod(JIBX_UTILITY_METHOD,
+                new Class[] { String.class, CodeGenConfiguration.class });
+            method.invoke(null, new Object[] { path, configuration });
 
 /*            // invoke utility class method for actual processing
             Method method = clazz.getMethod(BINDING_MAP_METHOD,
@@ -135,45 +116,5 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
             }
         }
 
-    }
-
-    /**
-     * Accumulate the QNames of all message elements used by an interface. Based on
-     *
-     * @param op
-     * @param config 
-     * @param elements
-     */
-    private void accumulateElements(AxisOperation op, HashMap defsmap, CodeGenConfiguration config) {
-        String MEP = op.getMessageExchangePattern();
-        if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
-            AxisMessage msg = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            if (msg != null) {
-                addElementType(msg, defsmap, config);
-            }
-        }
-
-        if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
-            AxisMessage msg = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            if (msg != null) {
-                addElementType(msg, defsmap, config);
-            }
-        }
-    }
-
-    /**
-     * Add message element information to schema definition mappings.
-     * 
-     * @param msg
-     * @param defsmap
-     * @param configuration 
-     */
-    private void addElementType(AxisMessage msg, HashMap defsmap, CodeGenConfiguration config) {
-        QName qname = msg.getElementQName();
-        XmlSchemaElement element =
-            config.getAxisService().getSchemaElement(qname);
-        if (qname != null) {
-            defsmap.put(qname, element);
-        }
     }
 }

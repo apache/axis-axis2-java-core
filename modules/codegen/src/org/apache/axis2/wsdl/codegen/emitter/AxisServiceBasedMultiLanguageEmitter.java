@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -894,7 +895,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 Document classModel = createDocumentForMessageReceiver(
                         mep,
                         codeGenConfiguration.isServerSideInterface());
-                debugLogDocument("Document for message receiver:", classModel);
+                debugLogDocument("Document for message receiver (mep=" + mep +
+                        "):", classModel);
                 //write the class only if any methods are found
                 if (Boolean.TRUE.equals(infoHolder.get(mep))) {
                     MessageReceiverWriter writer =
@@ -1045,20 +1047,32 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //at this point we may need to capture the extra parameters passes to the
         //particular databinding framework
-        //these parameters showup in the property map and we can just copy these items over
-        //to an extra element.
+        //these parameters showup in the property map with String keys, and we
+        //can just copy these items over to the <extra> element.
+        //this code allows both simple values, which are written as name="value"
+        //attributes of the <extra> element, and Element values with property
+        //names starting with "databinders/extra", which are written as child
+        //elements of the <extra> element (with the property name unused, in
+        //this case)
         Element extraElement = addElement(doc, "extra", null, rootElement);
         Map propertiesMap = codeGenConfiguration.getProperties();
-        for (Iterator it = propertiesMap.keySet().iterator();
-             it.hasNext();){
+        for (Iterator it = propertiesMap.keySet().iterator(); it.hasNext();){
             Object key = it.next();
-            Object value = propertiesMap.get(key);
-            //if the value is null set it to empty string
-            if (value==null) value="";
-            //add the property to the extra element only if both
-            //are strings
-            if (key instanceof String && value instanceof String){
-                 addAttribute(doc,(String)key,(String)value, extraElement);
+            if (key instanceof String) {
+                Object value = propertiesMap.get(key);
+                if (value instanceof Element) {
+                    if (((String)key).startsWith("databinders/extra")) {
+                        // append child element
+                        extraElement.appendChild(doc.importNode((Element)value, true));
+                    }
+                } else {
+                    //if the value is null set it to empty string
+                    if (value==null) value="";
+                    //add key="value" attribute to element iff value a string
+                    if (value instanceof String){
+                         addAttribute(doc,(String)key,(String)value, extraElement);
+                    }
+                }
             }
         }
 
@@ -1386,98 +1400,16 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             if (mep == null) {
 
                 opsFound = true;
-
-                List soapHeaderInputParameterList = new ArrayList();
-                List soapHeaderOutputParameterList = new ArrayList();
-
-                methodElement = doc.createElement("method");
-
-                String localPart = axisOperation.getName().getLocalPart();
-
-                addAttribute(doc, "name", localPart, methodElement);
-                addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
-                String style = axisOperation.getStyle();
-                addAttribute(doc, "style", style, methodElement);
-                addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
-                        methodElement);
-
-
-                addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
-                addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
-
-
-                addSOAPAction(doc, methodElement, axisOperation);
-                addOutputAndFaultActions(doc, methodElement, axisOperation);
-                //add header ops for input
-                addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
-                //add header ops for output
-                addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
-
-                PolicyInclude policyInclude = axisOperation.getPolicyInclude();
-                Policy policy = policyInclude.getPolicy();
-                
-                
-                if (policy != null) {
-                    try  {
-                    addAttribute(doc, "policy", PolicyUtil.policyComponentToString(policy), methodElement);
-                    } catch (Exception ex) {
-                        throw new RuntimeException(" Can't serialize the policy ..");
-                    }
-                }
-
-                methodElement.appendChild(getInputElement(doc, axisOperation, soapHeaderInputParameterList));
-                methodElement.appendChild(getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
-                methodElement.appendChild(getFaultElement(doc, axisOperation));
-
+                methodElement = generateMethodElement(doc, portTypeName, axisOperation);
                 rootElement.appendChild(methodElement);
+                
             } else {
                 //mep is present - we move ahead only if the given mep matches the mep of this operation
 
                 if (mep.equals(axisOperation.getMessageExchangePattern())) {
                     //at this point we know it's true
                     opsFound = true;
-                    List soapHeaderInputParameterList = new ArrayList();
-                    List soapHeaderOutputParameterList = new ArrayList();
-                    methodElement = doc.createElement("method");
-                    String localPart = axisOperation.getName().getLocalPart();
-
-                    addAttribute(doc, "name", localPart, methodElement);
-                    addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
-                    addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
-                    addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
-                            methodElement);
-
-                    addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
-                    addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
-
-
-                    addSOAPAction(doc, methodElement, axisOperation);
-                    addOutputAndFaultActions(doc, methodElement, axisOperation);
-                    addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
-                    addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
-
-                    /*
-                     * Setting the policy of the operation
-                     */
-
-                    Policy policy = axisOperation.getPolicyInclude().getPolicy();
-                    if (policy != null) {
-                        try  {
-                        addAttribute(doc, "policy",
-                                PolicyUtil.policyComponentToString(policy),
-                                methodElement);
-                        } catch (Exception ex) {
-                            throw new RuntimeException("can't serialize the policy ..");
-                        }
-                    }
-
-
-                    methodElement.appendChild(getInputElement(doc,
-                            axisOperation, soapHeaderInputParameterList));
-                    methodElement.appendChild(getOutputElement(doc,
-                            axisOperation, soapHeaderOutputParameterList));
-                    methodElement.appendChild(getFaultElement(doc,
-                            axisOperation));
+                    methodElement = generateMethodElement(doc, portTypeName, axisOperation);
 
                     rootElement.appendChild(methodElement);
                     //////////////////////
@@ -1487,6 +1419,69 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
         return opsFound;
+    }
+
+    /**
+     * Common code to generate a <method> element from an operation.
+     * 
+     * @param doc
+     * @param portTypeName
+     * @param axisOperation
+     * @return generated element
+     * @throws DOMException
+     */
+    private Element generateMethodElement(Document doc, String portTypeName, AxisOperation axisOperation) throws DOMException {
+        Element methodElement;
+        List soapHeaderInputParameterList = new ArrayList();
+        List soapHeaderOutputParameterList = new ArrayList();
+        methodElement = doc.createElement("method");
+        String localPart = axisOperation.getName().getLocalPart();
+
+        addAttribute(doc, "name", localPart, methodElement);
+        addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
+        addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
+        addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+                methodElement);
+        addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
+        addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
+        
+        // check for this operation to be handled directly by databinding code generation 
+        Parameter dbmethname = axisOperation.getParameter(Constants.DATABINDING_GENERATED_RECEIVER);
+        if (dbmethname != null) {
+            addAttribute(doc, "usedbmethod", (String)dbmethname.getValue(), methodElement);
+        }
+        Parameter dbgenimpl = axisOperation.getParameter(Constants.DATABINDING_GENERATED_IMPLEMENTATION);
+        if (dbgenimpl != null && Boolean.TRUE.equals(dbgenimpl.getValue())) {
+            addAttribute(doc, "usdbimpl", "true", methodElement);
+        }
+
+        addSOAPAction(doc, methodElement, axisOperation);
+        addOutputAndFaultActions(doc, methodElement, axisOperation);
+        addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
+        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
+
+        /*
+         * Setting the policy of the operation
+         */
+        Policy policy = axisOperation.getPolicyInclude().getPolicy();
+        if (policy != null) {
+            try  {
+            addAttribute(doc, "policy",
+                    PolicyUtil.policyComponentToString(policy),
+                    methodElement);
+            } catch (Exception ex) {
+                throw new RuntimeException("can't serialize the policy ..");
+            }
+        }
+
+
+        methodElement.appendChild(getInputElement(doc,
+                axisOperation, soapHeaderInputParameterList));
+        methodElement.appendChild(getOutputElement(doc,
+                axisOperation, soapHeaderOutputParameterList));
+        methodElement.appendChild(getFaultElement(doc,
+                axisOperation));
+        return methodElement;
     }
 
     // ==================================================================
