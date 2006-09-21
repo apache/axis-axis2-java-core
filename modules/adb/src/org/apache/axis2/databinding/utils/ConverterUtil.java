@@ -166,6 +166,13 @@ public class ConverterUtil {
     public static String convertToString(UnsignedLong o) {
         return o.toString();
     }
+     public static String convertToString(QName o) {
+         if(o!=null){
+             return o.getLocalPart();
+         } else {
+             return "";
+         }
+    }
 
     public static String convertToString(Object o) {
         return o.toString();

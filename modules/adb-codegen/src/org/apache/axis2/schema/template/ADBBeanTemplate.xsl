@@ -581,6 +581,9 @@
                     <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:variable name="settingTracker">local<xsl:value-of select="@javaname"/>Tracker</xsl:variable>
 
+                    <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
+                    <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
+
 
                     <xsl:if test="$min=0 or $choice"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
                     <xsl:choose>
@@ -791,7 +794,32 @@
                     <xsl:value-of select="$varName"/>_binary.internalSerializeAndConsume(xmlWriter);
                                  </xsl:when>
                                  <xsl:otherwise>
-                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                      <xsl:if test="not(@primitive)">
+                                          if (<xsl:value-of select="$varName"/>==null){
+                                          // write the nil attribute
+                                          writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                         }else{
+                                               <xsl:if test="$propertyTypeName=$propertyType">
+                                                    java.lang.String namespaceURI =<xsl:value-of select="$varName"/>.getNamespaceURI();
+                                                    if(namespaceURI !=null){
+                                                       prefix = <xsl:value-of select="$varName"/>.getPrefix();
+                                                       if (prefix == null) {
+                                                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                      }
+                                                     xmlWriter.writeNamespace(prefix,namespaceURI );
+                                                     xmlWriter.writeCharacters(prefix + ":"+ org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                                    } else {
+                                                       xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                                    }
+                                               </xsl:if>
+                                              <xsl:if test="not($propertyTypeName=$propertyType)">
+                                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                               </xsl:if>
+                                         }
+                                    </xsl:if>
+                                    <xsl:if test="@primitive">
+                                       xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                  </xsl:if>
                                  </xsl:otherwise>
                              </xsl:choose>
                     xmlWriter.writeEndElement();
@@ -886,7 +914,6 @@
             } else {
                 xmlWriter.writeStartElement(localName);
             }
-
             xmlWriter.writeCharacters(
                         org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                        xmlWriter.writeEndElement();
