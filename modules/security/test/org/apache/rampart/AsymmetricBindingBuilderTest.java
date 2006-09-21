@@ -18,6 +18,12 @@ package org.apache.rampart;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.neethi.Policy;
+import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.conversation.ConversationConstants;
+
+import javax.xml.namespace.QName;
+
+import java.util.ArrayList;
 
 public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
     
@@ -33,7 +39,13 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
             
-            System.out.println(ctx.getEnvelope());
+            ArrayList list = new ArrayList();
+            
+            list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+            
+            this.verifySecHeader(list.iterator(), ctx.getEnvelope());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -53,7 +65,13 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
             
-            System.out.println(ctx.getEnvelope());
+            ArrayList list = new ArrayList();
+            
+            list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+            
+            this.verifySecHeader(list.iterator(), ctx.getEnvelope());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -72,7 +90,17 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
             
-            System.out.println(ctx.getEnvelope());
+            ArrayList list = new ArrayList();
+            
+            list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(WSConstants.WSSE_NS, WSConstants.BINARY_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(ConversationConstants.WSC_NS_05_02, ConversationConstants.DERIVED_KEY_TOKEN_LN));
+            list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+            
+            this.verifySecHeader(list.iterator(), ctx.getEnvelope());
+            
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -91,7 +119,18 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
             
-            System.out.println(ctx.getEnvelope());
+            ArrayList list = new ArrayList();
+            
+            list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
+            list.add(new QName(WSConstants.WSSE_NS, WSConstants.BINARY_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(ConversationConstants.WSC_NS_05_02, ConversationConstants.DERIVED_KEY_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.REF_LIST_LN));
+            list.add(new QName(ConversationConstants.WSC_NS_05_02, ConversationConstants.DERIVED_KEY_TOKEN_LN));
+            list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+            
+            this.verifySecHeader(list.iterator(), ctx.getEnvelope());
+            
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -110,7 +149,17 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
             
-            System.out.println(ctx.getEnvelope());
+            ArrayList list = new ArrayList();
+            
+            list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(ConversationConstants.WSC_NS_05_02, ConversationConstants.DERIVED_KEY_TOKEN_LN));
+            list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+            list.add(new QName(ConversationConstants.WSC_NS_05_02, ConversationConstants.DERIVED_KEY_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.REF_LIST_LN));
+             
+            this.verifySecHeader(list.iterator(), ctx.getEnvelope());
+            
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -130,7 +179,14 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
             
-            System.out.println(ctx.getEnvelope());
+            ArrayList list = new ArrayList();
+            
+            list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.REF_LIST_LN));
+             
+            this.verifySecHeader(list.iterator(), ctx.getEnvelope());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());

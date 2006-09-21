@@ -99,5 +99,7 @@ public class TransportBindingBuilderTest extends MessageBuilderTestBase {
             fail(e.getMessage());
         }
     }
+
+    
     
 }

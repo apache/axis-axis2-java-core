@@ -16,7 +16,9 @@
 
 package org.apache.rampart;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -24,6 +26,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
+import org.apache.ws.security.WSConstants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -32,6 +35,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -48,11 +53,6 @@ public class MessageBuilderTestBase extends TestCase {
     public MessageBuilderTestBase(String arg0) {
         super(arg0);
     }
-
-    
-    
-
-
 
     /**
      * @throws XMLStreamException
@@ -72,6 +72,29 @@ public class MessageBuilderTestBase extends TestCase {
     protected Policy loadPolicy(String xmlPath) throws Exception {
         StAXOMBuilder builder = new StAXOMBuilder(xmlPath);
         return PolicyEngine.getPolicy(builder.getDocumentElement());
+    }
+    
+    protected void verifySecHeader(Iterator qnameList, SOAPEnvelope env) {
+        Iterator secHeaderChildren = env.getHeader().getFirstChildWithName(
+                new QName(WSConstants.WSSE_NS, 
+                        WSConstants.WSSE_LN)).getChildElements();
+        
+        while (secHeaderChildren.hasNext()) {
+            OMElement  element = (OMElement ) secHeaderChildren.next();
+            if(qnameList.hasNext()) {
+                if(!element.getQName().equals(qnameList.next())) {
+                    fail("Incorrect Element" + element);
+                } 
+            } else {
+                fail("Extra child in the security header: " + element.toString());
+            }
+        }
+        
+        if(qnameList.hasNext()) {
+            fail("Incorrect number of children in the security header: " +
+                    "next expected element"
+                    + ((QName) qnameList.next()).toString());
+        }
     }
     
 }

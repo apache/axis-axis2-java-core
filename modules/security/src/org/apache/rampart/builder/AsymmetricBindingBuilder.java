@@ -407,7 +407,10 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
 
         if (sigToken.isDerivedKeys()) {
             // Set up the encrypted key to use
-            setupEncryptedKey(rmd);
+            if(this.encrKey == null) {
+                setupEncryptedKey(rmd);
+            }
+            
             WSSecDKSign dkSign = new WSSecDKSign();
             dkSign.setExternalKey(encrKey.getEphemeralKey(), encrKey.getId());
 
