@@ -19,10 +19,6 @@ package org.apache.rampart;
 import org.apache.axis2.context.MessageContext;
 import org.apache.neethi.Policy;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class TransportBindingBuilderTest extends MessageBuilderTestBase {
 
     public void testTransportBinding() {
@@ -103,4 +99,5 @@ public class TransportBindingBuilderTest extends MessageBuilderTestBase {
             fail(e.getMessage());
         }
     }
+    
 }

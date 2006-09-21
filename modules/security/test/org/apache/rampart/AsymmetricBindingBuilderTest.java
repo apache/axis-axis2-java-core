@@ -19,10 +19,6 @@ package org.apache.rampart;
 import org.apache.axis2.context.MessageContext;
 import org.apache.neethi.Policy;
 
-/**
- *
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
     
     public void testAsymmBinding() {
@@ -121,4 +117,23 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
         }
     }
     
+    
+    public void testAsymmBindingEncrBeforeSig() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            
+            String policyXml = "test-resources/policy/rampart-asymm-binding-5-ebs.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+            
+            System.out.println(ctx.getEnvelope());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
 }
