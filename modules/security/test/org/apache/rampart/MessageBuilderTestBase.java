@@ -1,0 +1,77 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.rampart;
+
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyEngine;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import java.io.FileInputStream;
+
+import junit.framework.TestCase;
+
+/**
+ *
+ * @author Ruchith Fernando (ruchith.fernando@gmail.com)
+ */
+public class MessageBuilderTestBase extends TestCase {
+
+    public MessageBuilderTestBase() {
+        super();
+    }
+
+    public MessageBuilderTestBase(String arg0) {
+        super(arg0);
+    }
+
+    
+    
+
+
+
+    /**
+     * @throws XMLStreamException
+     * @throws FactoryConfigurationError
+     * @throws AxisFault
+     */
+    protected MessageContext getMsgCtx() throws Exception {
+        MessageContext ctx = new MessageContext();
+        ctx.setAxisService(new AxisService("TestService"));
+        ctx.setAxisOperation(new OutInAxisOperation(new QName("http://rampart.org", "test")));
+        
+        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream("test-resources/policy/soapmessage.xml"));
+        ctx.setEnvelope(new StAXSOAPModelBuilder(reader, null).getSOAPEnvelope());
+        return ctx;
+    }
+    
+    protected Policy loadPolicy(String xmlPath) throws Exception {
+        StAXOMBuilder builder = new StAXOMBuilder(xmlPath);
+        return PolicyEngine.getPolicy(builder.getDocumentElement());
+    }
+    
+}
