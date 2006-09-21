@@ -278,8 +278,6 @@ public abstract class AxisOperation extends AxisDescription
         return operation;
     }
 
-    
-    
 
     /**
      * Returns as existing OperationContext related to this message if one exists.
@@ -306,10 +304,10 @@ public abstract class AxisOperation extends AxisDescription
                     configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext && log.isDebugEnabled()) {
-            	log.debug("Cannot correlate inbound message RelatesTo value ["+msgContext.getRelatesTo()+"] to in-progree MEP");
-        	}
+                log.debug("Cannot correlate inbound message RelatesTo value [" + msgContext.getRelatesTo() + "] to in-progree MEP");
+            }
         }
-        
+
         return operationContext;
     }
 
@@ -522,7 +520,9 @@ public abstract class AxisOperation extends AxisDescription
     public abstract void setRemainingPhasesInFlow(ArrayList list);
 
     public void setStyle(String style) {
-        this.style = style;
+        if (!"".equals(style)) {
+            this.style = style;
+        }
     }
 
     public void setWsamappingList(ArrayList wsamappingList) {
@@ -556,16 +556,16 @@ public abstract class AxisOperation extends AxisDescription
         this.soapAction = soapAction;
     }
 
-    public String getInputAction(){
+    public String getInputAction() {
         String result = getSoapAction();
-        if(result==null || "".equals(result)){
-            if(wsamappingList!=null && !wsamappingList.isEmpty()){
+        if (result == null || "".equals(result)) {
+            if (wsamappingList != null && !wsamappingList.isEmpty()) {
                 result = wsamappingList.get(0).toString();
             }
         }
         return result;
     }
-    
+
     public String getOutputAction() {
         return outputAction;
     }

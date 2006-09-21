@@ -102,7 +102,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private static int prefixCounter = 0;
     public static final String NAMESPACE_URI = "namespace";
     public static final String TRAGET_NAMESPACE = "targetNamespace";
-    
+
     /**
      * keep track of whether setup code related to the entire wsdl is complete.
      * Note that WSDL11ToAllAxisServices will call setup multiple times, so this
@@ -235,16 +235,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw new AxisFault(e);
         }
     }
-    
+
     /**
      * contains all code which gathers non-service specific information from the wsdl.
-     * <p>
+     * <p/>
      * After all the setup completes successfully, the setupComplete field is set so that
      * any subsequent calls to setup() will result in a no-op.
      * Note that subclass WSDL11ToAllAxisServicesBuilder will call populateService for
      * each port in the WSDL.  Separating the non-service specific information here allows
      * WSDL11ToAllAxisServicesBuilder to only do this work 1 time per WSDL, instead of for
      * each port on each service.
+     *
      * @throws WSDLException if readInTheWSDLFile fails
      */
     protected void setup() throws WSDLException {
@@ -269,9 +270,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         setupComplete = true; // if any part of setup fails, don't mark setupComplete
         return;
     }
-    
 
-    
+
     /**
      * Populate a map of targetNamespace vs DOM schema element
      * This is used to grab the correct schema element when adding
@@ -282,7 +282,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private Map populateSchemaMap(Types wsdl4jTypes) {
         Map schemaMap = new HashMap();
-        if (wsdl4jTypes!=null){
+        if (wsdl4jTypes != null) {
             List typesExtensibilityElements = wsdl4jTypes.getExtensibilityElements();
             for (int i = 0; i < typesExtensibilityElements.size(); i++) {
                 Object o = typesExtensibilityElements.get(i);
@@ -318,7 +318,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (services.size() > 0) {
                 //pick the first service - we don't really have a choice here
                 service = (Service) services.values().toArray()[0];
-            } 
+            }
         }
         if (service != null) {
             copyExtensibleElements(service.getExtensibilityElements(), dif,
@@ -343,9 +343,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     }
                 }
             }
-    
+
             axisService.setName(service.getQName().getLocalPart());
-    
+
             if (port != null) {
                 copyExtensibleElements(port.getExtensibilityElements(), dif,
                         axisService, PORT);
@@ -579,9 +579,26 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 break;
 
             } else if (extElement instanceof UnknownExtensibilityElement) {
-                //in the case of unknown extensibilty elements we'll have to look at the
-                //SOAP 1.2 namespace
+                if (WSDLConstants.WSDL11Constants.SOAP_12_BODY.equals(extElement
+                        .getElementType())) {
+                    if (isWrapped) {
+                        //The schema for this should be already made ! Find the QName from
+                        //the list and add it - the name for this is just the
+                        inMessage.setElementQName((QName) resolvedRpcWrappedElementMap.get(wsdl4jOperation.getName()));
 
+                    } else {
+                        //pick the first part from the list and take that as the relevant part
+                        //it is somewhat questionnable whether the first part gets picked
+                        //but we'll have to take a chance here
+                        Map wsdl4jPartsMap = wsdl4jMessage.getParts();
+                        if (!wsdl4jPartsMap.isEmpty()) {
+                            Part wsdl4jPart = (Part) wsdl4jPartsMap.values().toArray()[0];
+                            if (wsdl4jPart.getElementName() != null) {
+                                inMessage.setElementQName(wsdl4jPart.getElementName());
+                            }
+                        }
+                    }
+                }
                 //todo - add the code here to process the SOAP 1.2 body
                 break;
             }
@@ -608,10 +625,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
             QName name = wsdl4jMessagePart.getElementName();
             if (name == null) {
-                name = wsdl4jMessagePart.getTypeName(); 
+                name = wsdl4jMessagePart.getTypeName();
             }
             if (name == null) {
-                throw new WSDLProcessingException("Element reference / Type name  missing for " + bindingPartsList.get(0) + "!" );
+                throw new WSDLProcessingException("Element reference / Type name  missing for " + bindingPartsList.get(0) + "!");
             }
             inMessage.setElementQName(wsdl4jMessagePart.getElementName());
 
@@ -674,9 +691,26 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 break;
 
             } else if (extElement instanceof UnknownExtensibilityElement) {
-                //in the case of unknown extensibilty elements we'll have to look at the
-                //SOAP 1.2 namespace
+                if (WSDLConstants.WSDL11Constants.SOAP_12_BODY.equals(extElement
+                        .getElementType())) {
+                    if (isWrapped) {
+                        //The schema for this should be already made ! Find the QName from
+                        //the list and add it - the name for this is just the
+                        outMessage.setElementQName((QName) resolvedRpcWrappedElementMap.get(wsdl4jOperation.getName()));
 
+                    } else {
+                        //pick the first part from the list and take that as the relevant part
+                        //it is somewhat questionnable whether the first part gets picked
+                        //but we'll have to take a chance here
+                        Map wsdl4jPartsMap = wsdl4jMessage.getParts();
+                        if (!wsdl4jPartsMap.isEmpty()) {
+                            Part wsdl4jPart = (Part) wsdl4jPartsMap.values().toArray()[0];
+                            if (wsdl4jPart.getElementName() != null) {
+                                outMessage.setElementQName(wsdl4jPart.getElementName());
+                            }
+                        }
+                    }
+                }
                 //todo - add the code here to process the SOAP 1.2 body
                 break;
             }
@@ -767,8 +801,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             String MEP = getMEP(wsdl4jOperation);
             axisOperation = AxisOperationFactory.getOperationDescription(MEP);
             axisOperation.setName(opName);
-            
-            // setting the PolicyInclude property of the AxisOperation 
+
+            // setting the PolicyInclude property of the AxisOperation
             PolicyInclude policyInclude = new PolicyInclude(axisOperation);
             axisOperation.setPolicyInclude(policyInclude);
         }
@@ -1264,8 +1298,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 schemaElement.setAttributeNS(XML_NAMESPACE_URI,
                         NAMESPACE_DECLARATION_PREFIX + namespacePrefixMap.get(s).toString(), s);
             }
-            
-            if(schemaElement.getAttributeNS(XML_NAMESPACE_URI, xsdPrefix).length()==0){
+
+            if (schemaElement.getAttributeNS(XML_NAMESPACE_URI, xsdPrefix).length() == 0) {
                 schemaElement.setAttributeNS(XML_NAMESPACE_URI,
                         NAMESPACE_DECLARATION_PREFIX + xsdPrefix, XMLSCHEMA_NAMESPACE_URI);
             }
@@ -1374,7 +1408,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             wsdl4jDefinition.getNamespaces().putAll(namespaces);
                             //copy types
                             Types t = importedDef.getTypes();
-                            if(t != null){
+                            if (t != null) {
                                 List typesList = t.getExtensibilityElements();
                                 for (int j = 0; j < typesList.size(); j++) {
                                     Types types = wsdl4JDefinition.getTypes();
@@ -1385,7 +1419,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                     types
                                             .addExtensibilityElement((ExtensibilityElement) typesList
                                                     .get(j));
-    
+
                                 }
                             }
 
@@ -1506,17 +1540,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             "location"));
                 } else if (WSDLConstants.WSDL11Constants.POLICY
                         .equals(unknown.getElementType())) {
-                    
+
                     Policy policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
                     addPolicy(description, originOfExtensibilityElements,
                             policy);
 
                 } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE.equals(unknown
                         .getElementType())) {
-                    
+
                     PolicyReference policyReference = (PolicyReference) PolicyUtil.getPolicyComponent(unknown.getElement());
                     addPolicyRef(description, originOfExtensibilityElements, policyReference);
-                    
+
                 } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
                         .equals(unknown.getElementType())
                         || AddressingConstants.Submission.WSAW_USING_ADDRESSING
@@ -1538,8 +1572,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 } else if (AddressingConstants.Final.WSAW_ANONYMOUS.equals(unknown.getElementType())) {
                     if (originOfExtensibilityElements.equals(BINDING_OPERATION)) {
                         AxisOperation axisOperation = (AxisOperation) description;
-                        if(unknown.getElement().getFirstChild()!=null &&
-                                unknown.getElement().getFirstChild().getNodeType() == Node.TEXT_NODE){
+                        if (unknown.getElement().getFirstChild() != null &&
+                                unknown.getElement().getFirstChild().getNodeType() == Node.TEXT_NODE) {
                             String anonymousValue = unknown.getElement().getFirstChild().getNodeValue();
                             AddressingHelper.setAnonymousParameterValue(axisOperation, anonymousValue);
                         }
@@ -1886,11 +1920,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         for (Iterator iterator = extAttributes.keySet().iterator(); iterator
                 .hasNext();) {
             key = (QName) iterator.next();
-            
+
             if (Constants.URI_POLICY_NS.equals(key
                     .getNamespaceURI())
                     && "PolicyURIs".equals(key.getLocalPart())) {
-                
+
                 value = (QName) extAttributes.get(key);
                 String policyURIs = value.getLocalPart();
 
@@ -1901,7 +1935,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     for (int i = 0; i < uris.length; i++) {
                         ref = new PolicyReference();
                         ref.setURI(uris[i]);
-                        
+
                         if (PORT_TYPE.equals(origin)) {
                             PolicyInclude include = description
                                     .getPolicyInclude();
@@ -1929,14 +1963,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (extElement instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) extElement;
                 if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown.getElementType())) {
-                    
+
                     Policy policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
-                    
+
                     String key;
                     if ((key = policy.getName()) != null || (key = policy.getId()) != null) {
                         registry.register(key, policy);
                     }
-                    
+
                 }
             }
         }
