@@ -9,7 +9,7 @@
 <h1>Mail Transport Configuration</h1>
 
 <p>This document provides the guidelines on how to configure Axis2 in order
-to get mail transport working.</p>
+to get the mail transport working.</p>
 
 <p><i>Send your feedback or questions to: <a
 href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix
@@ -29,61 +29,55 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>Introduction</h2>
 
-<p>The inner workings of the mail transport has two parts, the transport
-sender and the transport listener. The transport listener is a basic email
-client which will be on a loop checking for new messages for a particular
-email address. When an email comes in it will be tunneled into the Axis
-engine.</p>
+<p>The inner workings of the mail transport has been divided into two parts, the transport
+sender for smtp and the transport listener for pop3. The transport listener will listen to a particular email address periodically. When an email comes in it will be tunneled into the Axis
+engine. On the other hand mail transport sender sends emails to a mail server for a particular email address.</p>
 
 <p>Mail transport can be used against a generic mail server or it can be used
 like a mailet. The simple mailet provided with Axis2 will direct any message
 that is coming to a particular address into the Axis engine. The engine will
 process the message and will use the Transport sender to send the reply.</p>
 
-<p>To get started on the mail transport you need the following additional jar
-dependencies on the classpath.</p>
-<ol>
-  <li>javamail</li>
-  <li>activation</li>
-</ol>
+<p>The mail transports has been written with the use of Sun's JavaMail and Activation jars. These should be available in your classpath to get the mail transport work.</p>
 
-<p>We use the Geronimo version of these jars to compile but you will need the
-sun version to run the code. Specifically we are using
-geronimo-spec-javamail-[version].jar and
-geronimo-spec-activation-[version].jar. These will be downloaded by maven
-when you run the maven build.</p>
 <a name="sender"></a>
 
 <h2>Transport Sender</h2>
 
 <p>You need to have a mail account to activate the mail functionality. This
-can either be a generic mail server or you can start up a James mail server.
-The Mail transport sender can be activated by adding following entry to the
-axis2.xml file.</p>
+can either be a generic mail server or you can start up a James mail server, which will be available <a href="http://james.apache.org/">here</a>.</p>
+
+<p>JavaMail sets its properties to a Properties object. To get this facilities available from every property can be mapped to a Parameter in Axis2. Mapping has been done as follows,</p>
+
+<ul>
+    <li>Every JavaMail property can be set to @name of the &lt;parameter/&gt;. Thus, SSL connection is mapped the way it is done in JavaMail</li>
+    <li>Few properties, such as password etc are set to @name with the prefix "transport"</li>
+</ul>
+
+
+<p>For a non-SSL connection, as an example,mail transport sender can be activated by adding following entry to the axis2.xml file.</p>
+
 <source><pre>   &lt;transportSender name="mail" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
-        &lt;parameter name="transport.mail.smtp.host" locked="xsd:false"&gt;smtp server host&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.port" locked="xsd:false"&gt;Port on the server for pop&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.host" locked="false"&gt;smtp server host&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.user" locked="false"&gt;user name&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.smtp.password" locked="false"&gt;password&lt;/parameter&gt;     
    &lt;/transportSender&gt;
   </pre>
 </source><a name="receiver"></a>
 
 <h2>Transport Receiver</h2>
 
-<p>The mail Listener can be activated by adding the following entry to the
+<p>For a non-SSL connection,as an example,mail Listener can be activated by adding the following entry to the
 axis2.xml file.</p>
 <source><pre>   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
-        &lt;parameter name="transport.mail.pop3.host" locked="xsd:false"&gt;pop server host&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.user" locked="xsd:false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.password" locked="xsd:false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.port" locked="xsd:false"&gt;Port on the server for smtp&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.replyToAddress" locked="xsd:false"&gt;email address&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.host" locked="false"&gt;pop server host&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.user" locked="false"&gt;user name&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.password" locked="false"&gt;password&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.replyToAddress" locked="false"&gt;email address&lt;/parameter&gt;
   &lt;/transportReceiver&gt;
   </pre>
 </source>
-<p>At the Client side if the Mail Listener is needed it is automatically
-started by Axis2.</p>
+
 <a name="server"></a>
 
 <h2>Using Mail Transport in the Server Side</h2>
@@ -98,28 +92,22 @@ jars in the classpath.</p>
 
 <p>Following code segment shows how to send a oneway SOAP message using the
 mail transport, this needs the Transport Sender configured.</p>
-<source><pre>        OMElement payload = ....
+<source><pre>        
+        OMElement payload = ....
+        String targetEPR = "mail:axis2@localhost/axis2/services/Foo";
 
-        AxisService service = new AxisService(serviceName.getLocalPart());
-        AxisOperation axisOperation = new OutOnlyAxisOperation(
-        );
-        axisOperation.setName(operationName);
-        axisOperation.setMessageReceiver(new MessageReceiver() {
-            public void receive(MessageContext messageCtx) {
-                envelope = messageCtx.getEnvelope();
-            }
-        });
-        service.addOperation(axisOperation);
-        //configContext.getAxisConfiguration().addService(service);
+        ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
+                axis2XML);
 
-        ServiceClient servicClient = new ServiceClient(clientConfigContext, service);
+        ServiceClient servicClient = new ServiceClient(configurationContext, null);
 
         Options options = new Options();
         options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_MAIL);
 
         servicClient.setOptions(options);
 
-        servicClient.fireAndForget(operationName, payload);</pre>
+        servicClient.sendRobust(payload);</pre>
 </source><a name="james"></a>
 
 <h2>Configure James as SMTP and POP Server</h2>
