@@ -211,8 +211,7 @@
 				</includes>
 			</resource>
 		</resources>
-    </build>
-    <unitTest>
+	<unitTest>
 	  <resources>
 		<resource>
 		  <targetPath>../test-resources</targetPath>
@@ -220,5 +219,6 @@
 	    </resource>
 	  </resources>
 	</unitTest>
+    </build>
     <reports/>
 </project>
