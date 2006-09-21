@@ -301,7 +301,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     sgndEndSuppTokens);
 
             // Setup signature parts
-            sigParts = addSignatureParts(sigSuppTokMap, rpd.getSignedParts());
+            sigParts = addSignatureParts(sigSuppTokMap, sigParts);
             sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
         } else {
             // TODO: Add sig confirmation
@@ -345,6 +345,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     }
                     
                     dkEncr.setExternalKey(encrKey.getEphemeralKey(), encrKey.getId());
+                    dkEncr.prepare(doc);
                     Element encrDKTokenElem = null;
                     encrDKTokenElem = dkEncr.getdktElement();
                     RampartUtil.insertSiblingAfter(rmd, this.encrTokenElement, encrDKTokenElem);
@@ -412,7 +413,6 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
         Document doc = rmd.getDocument();
 
         sigToken = rpd.getInitiatorToken();
-        this.sigParts = RampartUtil.getSignedParts(rmd);
 
         if (sigToken.isDerivedKeys()) {
             // Set up the encrypted key to use
@@ -498,7 +498,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
      */
     private void setupEncryptedKey(RampartMessageData rmd) throws RampartException {
         encrKey = this.getEncryptedKeyBuilder(rmd, sigToken);
-
+        
         Element bstElem = encrKey.getBinarySecurityTokenElement();
         if (bstElem != null) {
             // If a BST is available then use it
@@ -506,12 +506,9 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     this.getInsertionLocation(), bstElem));
         }
 
-        if (Constants.INCLUDE_ALWAYS.equals(sigToken.getInclusion())
-                || Constants.INCLUDE_ONCE.equals(sigToken.getInclusion())) {
-            // Add the EncryptedKey
-            encrTokenElement = encrKey.getEncryptedKeyElement();
-            this.setInsertionLocation(RampartUtil.insertSiblingAfter(rmd,
-                    this.getInsertionLocation(), encrTokenElement));
-        }
+        // Add the EncryptedKey
+        this.encrTokenElement = encrKey.getEncryptedKeyElement();
+        this.setInsertionLocation(RampartUtil.insertSiblingAfter(rmd,
+                this.getInsertionLocation(), encrTokenElement));
     }
 }
