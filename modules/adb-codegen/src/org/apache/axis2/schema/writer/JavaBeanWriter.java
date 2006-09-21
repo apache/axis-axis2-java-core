@@ -1140,6 +1140,7 @@ public class JavaBeanWriter implements BeanWriter {
             }
 
             if (wrapClasses) {
+                rootElt = (Element) globalWrappedDocument.importNode(rootElt, true);
                 //add to the global wrapped document
                 globalWrappedDocument.getDocumentElement().appendChild(rootElt);
             } else {
