@@ -35,7 +35,7 @@ public class ModuleEngageTest extends TestCase {
             DeploymentException,
             AxisFault,
             XMLStreamException {
-        String filename = "./target/test-resources/deployment";
+        String filename = System.getProperty("basedir")+"/target/test-resources/deployment";
         ac = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename,null)
                 .getAxisConfiguration();
         AxisModule module = ac.getModule(new QName("module1"));

@@ -1,5 +1,6 @@
 package org.apache.axis2.addressing.wsdl;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 
@@ -17,18 +18,17 @@ import junit.framework.TestCase;
 
 public class WSDL11ActionHelperTest extends TestCase {
 
-	String testWSDLFile = "wsdl/actionTests.wsdl";
+	String testWSDLFile = "/target/test-resources/wsdl/actionTests.wsdl";
 	
 	Definition definition;
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-
         reader.setFeature("javax.wsdl.importDocuments", false);
         reader.setFeature("javax.wsdl.verbose", false);
 
-        URL wsdlFile = getClass().getClassLoader().getResource(testWSDLFile);
+        URL wsdlFile = new File(System.getProperty("basedir")+testWSDLFile).toURL();//getClass().getClassLoader().getResource(testWSDLFile);
         definition =  reader.readWSDL(wsdlFile.toString());
 	}
 

@@ -61,7 +61,10 @@
       <groupId>backport-util-concurrent</groupId>
       <artifactId>backport-util-concurrent</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>woodstox</groupId>
+      <artifactId>wstx-asl</artifactId>
+    </dependency>
     <!-- Added this to support WS Policy in Axis2 -->
     <dependency>
       <groupId>org.apache.ws.commons</groupId>
@@ -72,4 +75,69 @@
       <artifactId>woden</artifactId>
     </dependency>
   </dependencies>
+  <build>
+  <testResources>
+   <testResource>
+    <targetPath>../test-resources</targetPath>
+    <directory>test-resources</directory>
+    <includes>
+     <include>**/**</include>
+    </includes>
+   </testResource>
+  </testResources>
+  <plugins>
+  	<plugin>
+  		<artifactId>maven-surefire-plugin</artifactId>
+  		<inherited>true</inherited>
+  		<configuration>
+  			<skip>false</skip>
+  			<excludes>
+                <exclude>**/*Abstract*.java</exclude>
+                <exclude>**/*Util*.java</exclude>
+                <exclude>**/*PhaseResolvingTest.java</exclude>
+            </excludes>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+  		</configuration>
+  	</plugin>
+  	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <id>process-test-resources</id>
+            <phase>process-test-resources</phase>
+            <configuration>
+              <tasks>
+				<ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/service2"/>
+	            <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/echo"/>
+	            <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/invalidservice"/>
+	            <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/outservice"/>
+	            <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/module1"/>
+	            <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/serviceModule"/>
+	            <copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml"/>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant-antlr</artifactId>
+            <version>1.6.5</version>
+          </dependency>
+          <dependency>
+            <groupId>antlr</groupId>
+            <artifactId>antlrall</artifactId>
+            <version>2.7.4</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+  </plugins>
+  </build>
 </project>

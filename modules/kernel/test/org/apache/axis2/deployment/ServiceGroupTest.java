@@ -24,7 +24,7 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 public class ServiceGroupTest extends TestCase {
     AxisConfiguration ar;
-    String repo ="./test-resources/deployment/serviceGroupRepo";
+    String repo = System.getProperty("basedir")+"/test-resources/deployment/serviceGroupRepo";
 
 
 

@@ -212,5 +212,13 @@
 			</resource>
 		</resources>
     </build>
+    <unitTest>
+	  <resources>
+		<resource>
+		  <targetPath>../test-resources</targetPath>
+	      <directory>test-resources</directory>
+	    </resource>
+	  </resources>
+	</unitTest>
     <reports/>
 </project>
