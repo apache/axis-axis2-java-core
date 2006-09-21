@@ -25,7 +25,9 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import org.apache.axis2.jaxws.message.util.DOMReader;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
@@ -140,14 +142,24 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 		// TODO not sure if this is always the most performant way to do this.
 		if (busObj instanceof DOMSource) {
 			// Let's use our own DOMReader for now...
-			Element element = (Element) ((DOMSource)busObj).getNode();
+			Element element = null;
+			
+			//TODO busObj can be any of the subclasses of Node -- Document, Elemeent, Entity, Text, ETC.
+			//May need to add code to check for other supported Node type other than Document and Element.
+			Node node = ((DOMSource)busObj).getNode();
+			if(node instanceof Document){
+				element = ((Document)node).getDocumentElement();
+			}else{
+				element = (Element) ((DOMSource)busObj).getNode();
+			}
 			
 			// We had some problems with testers producing DOMSources w/o Namespaces.  
 			// It's easy to catch this here.
 			if (element.getLocalName() == null) {
 				throw new XMLStreamException(ExceptionFactory.makeMessageException(Messages.getMessage("JAXBSourceNamespaceErr")));
 			}
-			return new DOMReader((Element) ((DOMSource)busObj).getNode());
+			
+			return new DOMReader(element);
 		} 
 		
 		if(busObj instanceof StreamSource){

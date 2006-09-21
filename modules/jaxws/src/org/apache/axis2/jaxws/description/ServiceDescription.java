@@ -34,11 +34,13 @@ import javax.wsdl.WSDLException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.RobustOutOnlyAxisOperation;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
@@ -97,6 +99,7 @@ TBD
  */
 public class ServiceDescription {
     private AxisService axisService;
+    private ClientConfigurationFactory clientConfigFactory;
     private ConfigurationContext configContext;
 
     private URL wsdlURL;
@@ -156,6 +159,20 @@ public class ServiceDescription {
         addAnonymousAxisOperations();
         // This will set the serviceClient field after adding the AxisService to the AxisConfig
         getServiceClient();
+        // Give the configuration builder a chance to finalize configuration for this service
+        try {
+            getClientConfigurationFactory().completeAxis2Configuration(axisService);
+        } catch (DeploymentException e) {
+            // TODO RAS
+            // TODO NLS
+            e.printStackTrace();
+            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
+        } catch (Exception e) {
+            // TODO RAS
+            // TODO NLS
+            e.printStackTrace();
+            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
+        }
     }
 
     /**
@@ -284,6 +301,22 @@ public class ServiceDescription {
         else {
             buildAxisServiceFromNoWSDL();
         }
+        
+        if (axisService == null)
+            // TODO: RAS & NLS
+            throw ExceptionFactory.makeWebServiceException("Unable to create AxisService for " + serviceQName);
+
+        // Save the Service QName as a parameter.
+        Parameter serviceNameParameter = new Parameter();
+        serviceNameParameter.setName(WSDL11ToAllAxisServicesBuilder.WSDL_SERVICE_QNAME);
+        serviceNameParameter.setValue(serviceQName);
+        try {
+            axisService.addParameter(serviceNameParameter);
+        } 
+        catch (AxisFault e) {
+            // TODO RAS
+            e.printStackTrace();
+        }
     }
 
     private void buildAxisServiceFromWSDL() {
@@ -389,10 +422,17 @@ public class ServiceDescription {
     
     public ConfigurationContext getAxisConfigContext() {
         if (configContext == null) {
-            ClientConfigurationFactory factory = ClientConfigurationFactory.newInstance(); 
+            ClientConfigurationFactory factory = getClientConfigurationFactory(); 
             configContext = factory.getClientConfigurationContext();
         }
     	return configContext;
     	
+    }
+    
+    private ClientConfigurationFactory getClientConfigurationFactory() {
+        if (clientConfigFactory == null) {
+            clientConfigFactory = ClientConfigurationFactory.newInstance(); 
+        }
+        return clientConfigFactory;
     }
 }

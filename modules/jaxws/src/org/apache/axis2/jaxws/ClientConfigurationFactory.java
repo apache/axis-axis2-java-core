@@ -29,18 +29,16 @@ import org.apache.axis2.jaxws.util.Constants;
  */
 public class ClientConfigurationFactory {
     
-    private static ClientConfigurationFactory instance = new ClientConfigurationFactory();
-    
     private ConfigurationContext configContext = null;
     
     protected ClientConfigurationFactory(){
     }
 
     /**
-     * Returns the singleton ClientConfigurationFactory object.
+     * Returns a ClientConfigurationFactory object.
      */
     public static ClientConfigurationFactory newInstance() {
-        return instance;
+        return new ClientConfigurationFactory();
     }
 
     /**

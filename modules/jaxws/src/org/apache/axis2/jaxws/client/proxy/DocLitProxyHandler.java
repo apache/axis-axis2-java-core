@@ -320,6 +320,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	public ArrayList<String> getParamNames(Object[] objects){ 
         ArrayList<String> names = proxyDescriptor.getParamNames();
         //TODO Should this logic be moved to Operation Description.
+        argList = null;
 		ArrayList<Object> paramValues = createArgList(names, objects);
 		if(names.size() == paramValues.size()){
 			return names;
@@ -373,9 +374,9 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		}
 		return values;
 	}
-	
+	//TODO Implement createNameValuePair method so we can remove getParamName and getParamObject and only call this method once. 
 	private ArrayList<Object> createArgList(ArrayList<String> names, Object[] objects){
-		if(this.argList !=null){
+		if(argList !=null){
 			return argList;
 		}
 		argList = new ArrayList<Object>();
