@@ -8,16 +8,40 @@
 	<operation name="echo">
 		<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 		<actionMapping>urn:echo</actionMapping>
-	</operation>    
+	</operation>
 
-    <parameter name="sct-issuer-config">
+ <!--   <parameter name="sct-issuer-config">
 		<sct-issuer-config>
 			<proofToken>EncryptedKey</proofToken>
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
 			<addRequestedAttachedRef />
 		</sct-issuer-config>
+    </parameter>-->
+
+    <parameter name="sct-issuer-config">
+        <sct-issuer-config>
+            <addRequestedAttachedRef/>
+            <addRequestedUnattachedRef/>
+            <cryptoProperties>sctIssuer.properties</cryptoProperties>
+
+            <!--
+               Key computation mechanism
+               1 - Use Request Entropy
+               2 - Provide Entropy
+               3 - Use Own Key
+            -->
+            <keyComputation>3</keyComputation>
+
+            <!--
+               proofKeyType element is valid only if the keyComputation is set to 3
+               i.e. Use Own Key
+
+               Valid values are: EncryptedKey & BinarySecret
+            -->
+            <proofKeyType>EncryptedKey</proofKeyType>
+        </sct-issuer-config>
     </parameter>
-    
+
      <parameter name="token-canceler-config">
 		<token-canceler-config>
 			<!--<proofToken>EncryptedKey</proofToken>-->
@@ -50,5 +74,5 @@
 	<passwordCallbackClass xmlns="">org.apache.axis2.security.sc.PWCallback</passwordCallbackClass>
       </action>
     </parameter>
-    
+
 </service>

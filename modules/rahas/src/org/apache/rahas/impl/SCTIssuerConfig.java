@@ -27,40 +27,21 @@ import java.io.FileInputStream;
 /**
  * SCTIssuer Configuration processor
  */
-public class SCTIssuerConfig {
+public class SCTIssuerConfig extends AbstractIssuerConfig{
 
     public final static QName SCT_ISSUER_CONFIG = new QName("sct-issuer-config");
-    public final static QName ADD_REQUESTED_ATTACHED_REF = new QName("addRequestedAttachedRef");
-    public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
-    
-    
-    protected String proofTokenType = SCTIssuer.ENCRYPTED_KEY;
-
-    protected String cryptoPropertiesFile = null;
-    
-    protected boolean addRequestedAttachedRef;
-    
-    protected boolean addRequestedUnattachedRef;
-    
     protected byte[] requesterEntropy;
-    
-    protected int keySize;
-    
-    //TODO: get from config
-    protected long ttl = 300000;
-    
+
     private SCTIssuerConfig(OMElement elem) throws TrustException {
-        OMElement proofTokenElem =
-                elem.getFirstChildWithName(new QName("proofToken"));
-        if (proofTokenElem != null) {
-            this.proofTokenType = proofTokenElem.getText().trim();
+        OMElement proofKeyElem = elem.getFirstChildWithName(PROOF_KEY_TYPE);
+        if (proofKeyElem != null) {
+            this.proofKeyType = proofKeyElem.getText().trim();
         }
 
         OMElement cryptoPropertiesElem = elem
                 .getFirstChildWithName(new QName("cryptoProperties"));
 
-        if (!SCTIssuer.BINARY_SECRET.equals(proofTokenType)
-                && cryptoPropertiesElem == null) {
+        if (!TokenIssuerUtil.BINARY_SECRET.equals(proofKeyType) && cryptoPropertiesElem == null) {
             throw new TrustException("sctIssuerCryptoPropertiesMissing");
         }
 
@@ -69,6 +50,10 @@ public class SCTIssuerConfig {
         this.addRequestedUnattachedRef =
                 elem.getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
         this.cryptoPropertiesFile = cryptoPropertiesElem.getText().trim();
+        OMElement keyCompElem = elem.getFirstChildWithName(KeyComputation.KEY_COMPUTATION);
+        if (keyCompElem != null && keyCompElem.getText() != null && !"".equals(keyCompElem)) {
+            this.keyComputation = Integer.parseInt(keyCompElem.getText());
+        }
     }
     
     public static SCTIssuerConfig load(OMElement elem) throws TrustException {
@@ -89,7 +74,4 @@ public class SCTIssuerConfig {
         
         return load(builder.getDocumentElement());
     }
-    
-    
-
 }

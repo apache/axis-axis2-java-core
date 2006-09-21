@@ -12,10 +12,25 @@
 
     <parameter name="sct-issuer-config">
 		<sct-issuer-config>
-			<proofToken>EncryptedKey</proofToken>
 			<cryptoProperties>sctIssuer.properties</cryptoProperties>
 			<addRequestedAttachedRef />
-		</sct-issuer-config>
+
+            <!--
+               Key computation mechanism
+               1 - Use Request Entropy
+               2 - Provide Entropy
+               3 - Use Own Key
+            -->
+            <keyComputation>3</keyComputation>
+
+            <!--
+               proofKeyType element is valid only if the keyComputation is set to 3
+               i.e. Use Own Key
+
+               Valid values are: EncryptedKey & BinarySecret
+            -->
+            <proofKeyType>BinarySecret</proofKeyType>
+        </sct-issuer-config>
     </parameter>
     
     <parameter xmlns="" name="sc-configuration">

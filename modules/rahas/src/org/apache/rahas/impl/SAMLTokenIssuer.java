@@ -33,11 +33,8 @@ import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
-import org.apache.ws.security.conversation.ConversationException;
-import org.apache.ws.security.conversation.dkalgo.P_SHA1;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.util.Base64;
-import org.apache.ws.security.util.WSSecurityUtil;
 import org.apache.ws.security.util.XmlSchemaDateFormat;
 import org.apache.xml.security.signature.XMLSignature;
 import org.apache.xml.security.utils.EncryptionConstants;
@@ -110,7 +107,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
         SOAPEnvelope env =
                 TrustUtil.
                         createSOAPEnvelope(inMsgCtx.getEnvelope().getNamespace().getNamespaceURI());
-        Crypto crypto = CryptoFactory.getInstance(config.cryptoPropFile,
+        Crypto crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile,
                                                   inMsgCtx.getAxisService().getClassLoader());
 
         //Creation and expiration times
@@ -155,35 +152,34 @@ public class SAMLTokenIssuer implements TokenIssuer {
         }
 
         OMElement rstrElem;
-        int version = data.getVersion();
-        if (RahasConstants.VERSION_05_02 == version) {
-            rstrElem = TrustUtil
-                    .createRequestSecurityTokenResponseElement(version, env.getBody());
+        int wstVersion = data.getVersion();
+        if (RahasConstants.VERSION_05_02 == wstVersion) {
+            rstrElem =
+                    TrustUtil.createRequestSecurityTokenResponseElement(wstVersion, env.getBody());
         } else {
-            OMElement rstrcElem = TrustUtil
-                    .createRequestSecurityTokenResponseCollectionElement(
-                            version, env.getBody());
-
-            rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(version, rstrcElem);
+            OMElement rstrcElem =
+                    TrustUtil.createRequestSecurityTokenResponseCollectionElement(wstVersion,
+                                                                                  env.getBody());
+            rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(wstVersion, rstrcElem);
         }
 
-        TrustUtil.createtTokenTypeElement(version,
+        TrustUtil.createtTokenTypeElement(wstVersion,
                                           rstrElem).setText(RahasConstants.TOK_TYPE_SAML_10);
 
         if (keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY)) {
-            TrustUtil.createKeySizeElement(version, rstrElem, keySize);
+            TrustUtil.createKeySizeElement(wstVersion, rstrElem, keySize);
         }
 
         if (config.addRequestedAttachedRef) {
-            TrustUtil.createRequestedAttachedRef(version,
+            TrustUtil.createRequestedAttachedRef(wstVersion,
                                                  rstrElem,
                                                  "#" + assertion.getId(),
                                                  RahasConstants.TOK_TYPE_SAML_10);
         }
 
         if (config.addRequestedUnattachedRef) {
-            TrustUtil.createRequestedUnattachedRef(version, rstrElem, assertion
-                    .getId(), RahasConstants.TOK_TYPE_SAML_10);
+            TrustUtil.createRequestedUnattachedRef(wstVersion, rstrElem, assertion.getId(),
+                                                   RahasConstants.TOK_TYPE_SAML_10);
         }
 
         if (data.getAppliesToAddress() != null) {
@@ -195,20 +191,25 @@ public class SAMLTokenIssuer implements TokenIssuer {
         DateFormat zulu = new XmlSchemaDateFormat();
 
         // Add the Lifetime element
-        TrustUtil.createLifetimeElement(version, rstrElem, zulu
+        TrustUtil.createLifetimeElement(wstVersion, rstrElem, zulu
                 .format(creationTime), zulu.format(expirationTime));
 
         //Create the RequestedSecurityToken element and add the SAML token to it
         OMElement reqSecTokenElem = TrustUtil
-                .createRequestedSecurityTokenElement(version, rstrElem);
+                .createRequestedSecurityTokenElement(wstVersion, rstrElem);
+        Token assertionToken;
         try {
             Node tempNode = assertion.toDOM();
-            reqSecTokenElem.addChild((OMNode) ((Element) rstrElem)
-                    .getOwnerDocument().importNode(tempNode, true));
+            reqSecTokenElem.
+                    addChild((OMNode) ((Element) rstrElem).getOwnerDocument().importNode(tempNode,
+                                                                                         true));
 
             // Store the token
-            Token assertionToken = new Token(assertion.getId(), (OMElement) assertion
-                    .toDOM(), creationTime, expirationTime);
+            assertionToken = new Token(assertion.getId(),
+                                       (OMElement) assertion.toDOM(),
+                                       creationTime,
+                                       expirationTime);
+
             // At this point we definitely have the secret
             // Otherwise it should fail with an exception earlier
             assertionToken.setSecret(data.getEphmeralKey());
@@ -218,40 +219,16 @@ public class SAMLTokenIssuer implements TokenIssuer {
             throw new TrustException("samlConverstionError", e);
         }
 
-
         if (keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY) &&
-                config.keyComputation != SAMLTokenIssuerConfig.KEY_COMP_USE_REQ_ENT) {
+            config.keyComputation != SAMLTokenIssuerConfig.KeyComputation.KEY_COMP_USE_REQ_ENT) {
 
             //Add the RequestedProofToken
-            OMElement reqProofTokElem =
-                    TrustUtil.createRequestedProofTokenElement(version, rstrElem);
-
-            if (config.keyComputation == SAMLTokenIssuerConfig.KEY_COMP_PROVIDE_ENT
-                && data.getRequestEntropy() != null) {
-                //If we there's requestor entropy and its configured to provide
-                //entropy then we have to set the entropy value and
-                //set the RPT to include a ComputedKey element
-
-                OMElement respEntrElem = TrustUtil.createEntropyElement(
-                        version, rstrElem);
-
-                TrustUtil.createBinarySecretElement(version, respEntrElem,
-                                                    RahasConstants.BIN_SEC_TYPE_NONCE).setText(
-                        Base64.encode(data.getResponseEntropy()));
-
-                OMElement compKeyElem = TrustUtil.createComputedKeyElement(
-                        version, reqProofTokElem);
-                compKeyElem.setText(data.getWstNs()
-                                    + RahasConstants.COMPUTED_KEY_PSHA1);
-            } else {
-                //In all other cases use send the key in a binary sectret element
-
-                //TODO : Provide a config option to set this type to encrypted key
-                OMElement binSecElem = TrustUtil.createBinarySecretElement(version,
-                                                                           reqProofTokElem, null);
-                binSecElem.setText(Base64.encode(data.getEphmeralKey()));
-
-            }
+            TokenIssuerUtil.handleRequestedProofToken(data,
+                                                      wstVersion,
+                                                      config,
+                                                      rstrElem,
+                                                      assertionToken,
+                                                      doc);
         }
 
         // Unset the DOM impl to default
@@ -301,8 +278,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
             try {
 
                 //Get ApliesTo to figureout which service to issue the token for
-                serviceCert = getServiceCert(data.getRstElement(),
-                                             config,
+                serviceCert = getServiceCert(config,
                                              crypto,
                                              data.getAppliesToAddress());
 
@@ -320,26 +296,10 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 keysize = (keysize != -1) ? keysize : config.keySize;
                 encrKeyBuilder.setKeySize(keysize);
 
-                boolean reqEntrPresent = data.getRequestEntropy() != null;
-
-                if (reqEntrPresent &&
-                    config.keyComputation != SAMLTokenIssuerConfig.KEY_COMP_USE_OWN_KEY) {
-                    //If there is requestor entropy and if the issuer is not
-                    //configured to use its own key
-
-                    if (config.keyComputation == SAMLTokenIssuerConfig.KEY_COMP_PROVIDE_ENT) {
-                        data.setResponseEntropy(WSSecurityUtil.generateNonce(config.keySize / 8));
-                        P_SHA1 p_sha1 = new P_SHA1();
-                        encrKeyBuilder.setEphemeralKey(p_sha1.createKey(data.getRequestEntropy(),
-                                                                        data.getResponseEntropy(),
-                                                                        0,
-                                                                        keysize / 8));
-                    } else {
-                        //If we reach this its expected to use the requestor's 
-                        //entropy
-                        encrKeyBuilder.setEphemeralKey(data.getRequestEntropy());
-                    }
-                }// else : We have to use our own key here, so don't set the key
+                encrKeyBuilder.
+                        setEphemeralKey(TokenIssuerUtil.getSharedSecret(data,
+                                                                        config.keyComputation,
+                                                                        keysize));
 
                 //Set key encryption algo
                 encrKeyBuilder.setKeyEncAlgo(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSA15);
@@ -356,9 +316,6 @@ public class SAMLTokenIssuer implements TokenIssuer {
                 //Extract the Encryptedkey DOM element 
                 encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
             } catch (WSSecurityException e) {
-                throw new TrustException("errorInBuildingTheEncryptedKeyForPrincipal",
-                                         new String[]{serviceCert.getSubjectDN().getName()}, e);
-            } catch (ConversationException e) {
                 throw new TrustException("errorInBuildingTheEncryptedKeyForPrincipal",
                                          new String[]{serviceCert.getSubjectDN().getName()}, e);
             }
@@ -403,15 +360,13 @@ public class SAMLTokenIssuer implements TokenIssuer {
      * Uses the <code>wst:AppliesTo</code> to figure out the certificate to
      * encrypt the secret in the SAML token
      *
-     * @param request
      * @param config
      * @param crypto
      * @param serviceAddress The address of the service
      * @return
      * @throws WSSecurityException
      */
-    private X509Certificate getServiceCert(OMElement request,
-                                           SAMLTokenIssuerConfig config,
+    private X509Certificate getServiceCert(SAMLTokenIssuerConfig config,
                                            Crypto crypto,
                                            String serviceAddress) throws WSSecurityException {
 
