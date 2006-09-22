@@ -600,13 +600,13 @@ public class ConverterUtil {
      * @param source
      * @return Returns QName.
      */
-    public static QName convertToQName(String source) {
+    public static QName convertToQName(String source, String nameSpaceuri) {
         source = source.trim();
         int colon = source.lastIndexOf(":");
-        String namespace = colon < 0 ? "" : "";// todo Fix this. Need to take a namespace with this
         //context.getNamespaceURI(source.substring(0, colon));
         String localPart = colon < 0 ? source : source.substring(colon + 1);
-        return new QName(namespace, localPart);
+        String perfix =    colon <= 0 ? "" : source.substring(0,colon);
+        return new QName(nameSpaceuri, localPart,perfix);
     }
 
     /* ################################################################# */
