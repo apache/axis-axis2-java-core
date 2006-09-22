@@ -148,10 +148,7 @@ public class AxisEngine {
         faultContext.setTransportOut(processingContext.getTransportOut());
 
         faultContext.setMessageID(UUIDGenerator.getUUID());
-        faultContext.addRelatesTo(
-                new RelatesTo(
-                        processingContext.getOptions().getMessageId(),
-                        AddressingConstants.Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE));
+        faultContext.addRelatesTo(new RelatesTo(processingContext.getOptions().getMessageId()));
         faultContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                 processingContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
