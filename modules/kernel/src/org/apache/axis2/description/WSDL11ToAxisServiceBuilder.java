@@ -222,7 +222,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (firstChild.getNodeType() == Node.TEXT_NODE) {
                     serviceDes = firstChild.getNodeValue();
                 } else {
-                    serviceDes = DOM2Writer.nodeToString(firstChild);
+                    serviceDes = DOM2Writer.nodeToString(firstChild, new HashMap());
                 }
                 axisService.setServiceDescription(serviceDes);
             }
