@@ -5,13 +5,19 @@
     <parameter name="hotdeployment" locked="false">true</parameter>
     <parameter name="hotupdate" locked="false">false</parameter>
     <parameter name="enableMTOM" locked="false">false</parameter>
+    <parameter name="enableSwA" locked="false">false</parameter>
+
+    <!--Uncomment if you want to enable file caching for attachments -->
+    <!--parameter name="cacheAttachments" locked="false">true</parameter>
+    <parameter name="attachmentDIR" locked="false"></parameter>
+    <parameter name="sizeThreshold" locked="false">4000</parameter-->
 
     <!--This will give out the timout of the configuration contexts, in seconds-->
     <parameter name="ConfigContextTimeoutInterval" locked="false">30</parameter>
 
     <!--During a fault, stacktrace can be sent with the fault message. The following flag will control -->
     <!--that behaviour.-->
-    <parameter name="sendStacktraceDetailsWithFaults" locked="false">true</parameter>
+    <parameter name="sendStacktraceDetailsWithFaults" locked="false">false</parameter>
 
     <!--If there aren't any information available to find out the fault reason, we set the message of the expcetion-->
     <!--as the faultreason/Reason. But when a fault is thrown from a service or some where, it will be -->
