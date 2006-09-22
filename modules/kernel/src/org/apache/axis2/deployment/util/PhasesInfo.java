@@ -239,11 +239,10 @@ public class PhasesInfo {
         for (int i = 0; i < OUTPhases.size(); i++) {
             Phase phase = (Phase) OUTPhases.get(i);
             String phaseName = phase.getPhaseName();
-
-            if (!(PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phaseName)
-                    || PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName))) {
-                oprationOUTPhases.add(copyPhase(phase));
+            if (PhaseMetadata.PHASE_MESSAGE_OUT.equals(phaseName)) {
+                break;
             }
+            oprationOUTPhases.add(copyPhase(phase));
         }
 
         return oprationOUTPhases;
