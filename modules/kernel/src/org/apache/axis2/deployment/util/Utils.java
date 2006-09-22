@@ -299,6 +299,12 @@ public class Utils {
                             Java2WSDLConstants.RESPONSE));
                     outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
                 }
+                if (jmethod.getExceptionTypes().length > 0) {
+                    AxisMessage faultMessage = new AxisMessage();
+                    faultMessage.setName(jmethod.getSimpleName() + "Fault");
+                    faultMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName() + "Fault"));
+                    operation.setFaultMessages(faultMessage);
+                }
             } else {
                 operation = getAxisOperationforJmethod(jmethod, table);
                 MessageReceiver mr = axisService.getMessageReceiver(

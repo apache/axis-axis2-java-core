@@ -136,7 +136,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
     private void generateTypes(OMFactory fac, OMElement defintions)
             throws Exception {
         OMElement wsdlTypes = fac.createOMElement("types", wsdl);
-                // wrap the Schema elements with this start and end tags to create a
+        // wrap the Schema elements with this start and end tags to create a
         // document root
         // under which the schemas can fall into
 
@@ -159,12 +159,12 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
     private void generateMessages(OMFactory fac, OMElement definitions) {
         Hashtable namespaceMap = new Hashtable();
-        String namespacePrefix = null;
-        String namespaceURI = null;
-        QName messagePartType = null;
+        String namespacePrefix;
+        String namespaceURI;
+        QName messagePartType;
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-             if (!jmethod.isPublic()) {
+            if (!jmethod.isPublic()) {
                 continue;
             }
 
@@ -221,6 +221,31 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                         namespacePrefix + COLON_SEPARATOR
                                 + jmethod.getSimpleName() + RESPONSE, null);
             }
+
+            if (jmethod.getExceptionTypes().length > 0) {
+                if ((messagePartType = typeTable.getComplexSchemaType(jmethod.getSimpleName() + "Fault")) != null) {
+                    namespaceURI = messagePartType.getNamespaceURI();
+                    if ((namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
+                        namespacePrefix = generatePrefix();
+                        namespaceMap.put(namespaceURI, namespacePrefix);
+                    }
+                    //Response Message
+                    OMElement responseMessge = fac.createOMElement(
+                            MESSAGE_LOCAL_NAME, wsdl);
+                    responseMessge.addAttribute(ATTRIBUTE_NAME, jmethod
+                            .getSimpleName()
+                            + "Fault", null);
+                    definitions.addChild(responseMessge);
+                    OMElement responsePart = fac.createOMElement(
+                            PART_ATTRIBUTE_NAME, wsdl);
+                    responseMessge.addChild(responsePart);
+                    responsePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
+
+                    responsePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
+                            namespacePrefix + COLON_SEPARATOR
+                                    + jmethod.getSimpleName() + "Fault", null);
+                }
+            }
         }
 
         // now add these unique namespaces to the the definitions element
@@ -266,6 +291,15 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 message.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
                         + COLON_SEPARATOR + jmethod.getSimpleName()
                         + RESPONSE_MESSAGE, null);
+                operation.addChild(message);
+            }
+            if (jmethod.getExceptionTypes().length > 0) {
+                message = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
+                message.addAttribute(MESSAGE_LOCAL_NAME, tns.getPrefix()
+                        + COLON_SEPARATOR + jmethod.getSimpleName()
+                        + "Fault", null);
+                message.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName()
+                        + "Fault", null);
                 operation.addChild(message);
             }
         }
@@ -341,6 +375,14 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                         "namespace", targetNamespace);
                 operation.addChild(output);
             }
+
+            if (jmethod.getExceptionTypes().length > 0) {
+
+                OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
+                addExtensionElement(fac, fault, soap, SOAP_BODY, SOAP_USE, use,
+                        "namespace", targetNamespace);
+                operation.addChild(fault);
+            }
         }
     }
 
@@ -381,6 +423,13 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 addExtensionElement(fac, output, soap12, SOAP_BODY, SOAP_USE, use,
                         "namespace", targetNamespace);
                 operation.addChild(output);
+            }
+             if (jmethod.getExceptionTypes().length > 0) {
+
+                OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
+                addExtensionElement(fac, fault, soap12, SOAP_BODY, SOAP_USE, use,
+                        "namespace", targetNamespace);
+                operation.addChild(fault);
             }
         }
     }

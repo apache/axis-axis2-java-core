@@ -53,6 +53,7 @@ public interface Java2WSDLConstants {
     String ATTRIBUTE_NAME = "name";
     String REQUEST_MESSAGE = "RequestMessage";
     String RESPONSE_MESSAGE = "ResponseMessage";
+    String FAULT_MESSAGE = "Message";
     String MESSAGE_SUFFIX = "Message";
     String REQUEST = "Request";
     String RESPONSE = "Response";
