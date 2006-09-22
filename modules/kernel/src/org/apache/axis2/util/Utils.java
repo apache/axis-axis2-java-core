@@ -82,7 +82,6 @@ public class Utils {
             newmsgCtx.setReplyTo(replyToEPR);
         }
 
-        newmsgCtx.setFaultTo(oldOptions.getTo());
         newmsgCtx.addRelatesTo(new RelatesTo(oldOptions.getMessageId())); //Uses the default relationship type
 
         AxisOperation ao = inMessageContext.getAxisOperation();
