@@ -14,11 +14,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -47,8 +43,10 @@ import java.util.Map;
  * will check its parent for a setting.
  */
 public class Options {
-    
-    /** Default blocking timeout value. */
+
+    /**
+     * Default blocking timeout value.
+     */
     public static final int DEFAULT_TIMEOUT_MILLISECONDS = 30 * 1000;
 
     private Options parent;
@@ -120,7 +118,7 @@ public class Options {
 
     /**
      * Get WS-Addressing Action / SOAP Action string.
-     * 
+     *
      * @return action
      */
     public String getAction() {
@@ -132,7 +130,7 @@ public class Options {
 
     /**
      * Get WS-Addressing FaultTo endpoint reference.
-     * 
+     *
      * @return endpoint
      */
     public EndpointReference getFaultTo() {
@@ -144,7 +142,7 @@ public class Options {
 
     /**
      * Set WS-Addressing From endpoint reference.
-     * 
+     *
      * @return endpoint
      */
     public EndpointReference getFrom() {
@@ -156,7 +154,7 @@ public class Options {
 
     /**
      * Get listener used for incoming message.
-     * 
+     *
      * @return listener
      */
     public TransportListener getListener() {
@@ -168,7 +166,7 @@ public class Options {
 
     /**
      * Get transport used for incoming message.
-     * 
+     *
      * @return transport information
      */
     public TransportInDescription getTransportIn() {
@@ -180,7 +178,7 @@ public class Options {
 
     /**
      * Get transport protocol used for incoming message.
-     * 
+     *
      * @return name protocol name ("http", "tcp", etc.)
      */
     public String getTransportInProtocol() {
@@ -192,7 +190,7 @@ public class Options {
 
     /**
      * Get WS-Addressing MessageId.
-     * 
+     *
      * @return uri string
      */
     public String getMessageId() {
@@ -212,8 +210,8 @@ public class Options {
      * options instance. The returned copy is not "live", so changes you make to
      * the copy are not reflected in the actual option settings. However, you
      * can make the modified values take effect with a call to {@link
-     * #setProperties(Map)}, 
-     * 
+     * #setProperties(Map)},
+     *
      * @return copy of general properties
      */
     public Map getProperties() {
@@ -228,7 +226,7 @@ public class Options {
 
     /**
      * Get named property value.
-     * 
+     *
      * @param key
      * @return the value related to this key. <code>null</code>, if not found.
      */
@@ -246,7 +244,7 @@ public class Options {
      * by this method is arbitrary - if you need to handle this case, you can
      * instead use the {@link #getRelationships()} to retrieve all the items
      * and check for multiple matches.
-     * 
+     *
      * @param type relationship type (URI)
      * @return item of specified type
      */
@@ -254,10 +252,10 @@ public class Options {
         if (relationships == null && parent != null) {
             return parent.getRelatesTo(type);
         }
-        for(int i=0;relationships != null && i<relationships.size();i++) {
+        for (int i = 0; relationships != null && i < relationships.size(); i++) {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
-            if(relationshipType.equals(type)) {
+            if (relationshipType.equals(type)) {
                 return relatesTo;
             }
         }
@@ -267,18 +265,19 @@ public class Options {
     /**
      * Get WS-Addressing RelatesTo item which has the specific type
      * "http://www.w3.org/2005/08/addressing/reply"
-     * 
+     *
      * @return item
      */
     public RelatesTo getRelatesTo() {
         if (relationships == null && parent != null) {
             return parent.getRelatesTo();
         }
-        for(int i=0;relationships != null && i<relationships.size();i++) {
+        for (int i = 0; relationships != null && i < relationships.size(); i++) {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
             if (relationshipType.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)
-                || relationshipType.equals(AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE)) {
+                    || relationshipType.equals(AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE))
+            {
                 return relatesTo;
             }
         }
@@ -287,22 +286,22 @@ public class Options {
 
     /**
      * Get all WS-Addressing RelatesTo items.
-     * 
+     *
      * @return array of items
      */
     public RelatesTo[] getRelationships() {
         if (relationships == null && parent != null) {
             return parent.getRelationships();
         }
-        if(relationships == null) {
-            return null;                                 
+        if (relationships == null) {
+            return null;
         }
         return (RelatesTo[]) relationships.toArray(new RelatesTo[relationships.size()]);
     }
 
     /**
      * Set WS-Addressing RelatesTo items.
-     * 
+     *
      * @param list
      */
     public void setRelationships(RelatesTo[] list) {
@@ -311,7 +310,7 @@ public class Options {
 
     /**
      * Get WS-Addressing ReplyTo endpoint reference.
-     * 
+     *
      * @return endpoint
      */
     public EndpointReference getReplyTo() {
@@ -323,7 +322,7 @@ public class Options {
 
     /**
      * Get outbound transport description.
-     * 
+     *
      * @return description
      */
     public TransportOutDescription getTransportOut() {
@@ -336,7 +335,7 @@ public class Options {
 
     /**
      * Get SOAP version being used.
-     * 
+     *
      * @return version
      */
     public String getSoapVersionURI() {
@@ -365,7 +364,7 @@ public class Options {
 
     /**
      * Get WS-Addressing To endpoint reference.
-     * 
+     *
      * @return endpoint
      */
     public EndpointReference getTo() {
@@ -383,7 +382,7 @@ public class Options {
      * that facility. If this is false, the response message will just be
      * returned to the application, irrespective of whether it has a Fault or
      * not.
-     * 
+     *
      * @return <code>true</code> if exception to be thrown
      */
     public boolean isExceptionToBeThrownOnSOAPFault() {
@@ -399,7 +398,7 @@ public class Options {
      * Check whether the two SOAP Messages are be sent over same channel or over
      * separate channels. Only duplex transports such as http and tcp support a
      * <code>false</code> value.
-
+     *
      * @return separate channel flag
      */
     public boolean isUseSeparateListener() {
@@ -413,7 +412,7 @@ public class Options {
 
     /**
      * Get parent instance providing default property values.
-     * 
+     *
      * @return parent (<code>null</code> if none)
      */
     public Options getParent() {
@@ -422,7 +421,7 @@ public class Options {
 
     /**
      * Set parent instance providing default property values.
-     * 
+     *
      * @param parent (<code>null</code> if none)
      */
     public void setParent(Options parent) {
@@ -456,7 +455,7 @@ public class Options {
 
     /**
      * Set WS-Addressing FaultTo endpoint reference.
-     * 
+     *
      * @param faultTo endpoint
      */
     public void setFaultTo(EndpointReference faultTo) {
@@ -465,7 +464,7 @@ public class Options {
 
     /**
      * Set WS-Addressing From endpoint reference.
-     * 
+     *
      * @param from endpoint
      */
     public void setFrom(EndpointReference from) {
@@ -474,7 +473,7 @@ public class Options {
 
     /**
      * Set listener used for incoming message.
-     * 
+     *
      * @param listener
      */
     public void setListener(TransportListener listener) {
@@ -483,7 +482,7 @@ public class Options {
 
     /**
      * Set transport used for incoming message.
-     * 
+     *
      * @param transportIn
      */
     public void setTransportIn(TransportInDescription transportIn) {
@@ -492,7 +491,7 @@ public class Options {
 
     /**
      * Set transport protocol used for incoming message.
-     * 
+     *
      * @param transportInProtocol ("http", "tcp", etc.)
      */
     public void setTransportInProtocol(String transportInProtocol) {
@@ -501,7 +500,7 @@ public class Options {
 
     /**
      * Set WS-Addressing MessageId.
-     * 
+     *
      * @param messageId URI string
      */
     public void setMessageId(String messageId) {
@@ -523,6 +522,186 @@ public class Options {
      * General properties you need to pass in to the message context must be set
      * via this method. This method can only be used for properties which do not
      * have specific get/set methods.
+     * <p/>
+     * Here are some of the properties supported in Axis2.
+     * <p/>
+     * <a name="GenConst"></a></p>
+     * <h3>Generic Constants</h3>
+     * <ul>
+     * <a name="TRANSPORT_URL"></a></p>
+     * <p/>
+     * <li><strong>org.apache.axis2.Constants.Configuration.TRANSPORT_URL</strong>
+     * <p>Sometimes you want to send your SOAP message through a node, before it reaches to its destination. This means you want to give transport URL different from the URL of the ultimate destination. A typical example would be wanting to send this SOAP (or REST)message through a transparent proxy or through a message monitoring applet. How can that be done using the ServiceClient API?</p>
+     * <pre>
+     * options.setTo("http://destination.org");
+     * options.setProperty(MessageContextConstants.TRANSPORT_URL, "http://myProxy.org");
+     * </pre><p>This will send your SOAP message to "http://myProxy.org", but if WS-Addressing is enabled, wsa:To will contain "http://destination.org" as To address.</p>
+     * </li>
+     * <p>  <a name="CHARACTER_SET_ENCODING"></a></p>
+     * <li><b>org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING</b>
+     * <p>This will enable user to set the character set encoding scheme to be used when sending the message. Default is set to "UTF-8"</p></li>
+     * <p/>
+     * <p><a name="ENABLE_MTOM"></a></p>
+     * <li><b>org.apache.axis2.Constants.Configuration.ENABLE_MTOM</b>
+     * <p>This will enable/disable MTOM support for outgoing messages.</p>
+     * <p>Possible values are: </p>
+     * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
+     * </li>
+     * </ul>
+     * <p><a name="Addressing"></a></p>
+     * <h3>WS-Addressing Module Specific Constants</h3>
+     * <ul>
+     * <p/>
+     * <a name="WS_ADDRESSING_VERSION"></a></p>
+     * <li><b>org.apache.axis2.addressing.AddressingConstants.WS_ADDRESSING_VERSION</b>
+     * <p>This will enable to select one of the two WS-Addressing versions available, if WS-Addressing is engaged.</p>
+     * <p>Possible values are:</p>
+     * <pre>
+     * org.apache.axis2.addressing.AddressingConstants.Final.WSA_NAMESPACE
+     * and
+     * org.apache.axis2.addressing.AddressingConstants.Submission.WSA_NAMESPACE</pre>
+     * </li>
+     * <p>  <a name="REPLACE_ADDRESSING_HEADERS"></a></p>
+     * <li><b>org.apache.axis2.addressing.AddressingConstants.REPLACE_ADDRESSING_HEADERS</b>
+     * <p/>
+     * <p>AddressingOutHandler picks up the addressing information from the message context and set them to the outgoing message. But someone may have already put some addressing headers, before the AddressingOutHandler. This flag will notify the handler whether to override them or not.</p>
+     * <p>Possible values are: </p>
+     * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
+     * </li>
+     * <p>  <a name="DISABLE_ADDRESSING_FOR_OUT_MESSAGES"></a></p>
+     * <li><b>org.apache.axis2.addressing.AddressingConstants.<br />
+     * DISABLE_ADDRESSING_FOR_OUT_MESSAGES</b>
+     * <p>If WS-Addressing is engaged globally or some how in effect for this particular invocation, this will disable Axis2 from putting WS-Addressing headers in to the out going SOAP message. (Note that Axis2 will not put addressing headers to the outgoing message, irrespective of the above flag, if the incoming message did not contain addressing headers).</p>
+     * <p/>
+     * <p>Possible values are:</p>
+     * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
+     * </li>
+     * </ul>
+     * <p><a name="HTTPConstants"></a></p>
+     * <h3>HTTP Constants</h3>
+     * <ul>
+     * <a name="CHUNKED"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.CHUNKED</b>
+     * <p>This will enable/disable chunking support. </p>
+     * <p/>
+     * <p>Possible values are:</p>
+     * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
+     * </li>
+     * <p><a name="NTLM"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.NTLM_AUTHENTICATION</b>
+     * <p>This enables the user to pass in NTLM authentication information, such as host, port, realm, username, password to be used with HTTP transport sender. </p>
+     * <p>The value should always be an instance of:  </p>
+     * <pre>org.apache.axis2.transport.http.HttpTransportProperties.
+     * NTLMAuthentication</pre>
+     * </li>
+     * <p/>
+     * <p><a name="PROXY"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.PROXY</b>
+     * <p>This enables the user to pass in proxy information, such as proxy host name, port, domain, username, password to be used with HTTP transport sender. </p>
+     * <p>The value should always be an instance of:</p>
+     * <pre>org.apache.axis2.transport.http.HttpTransportProperties.ProxyProperties</pre>
+     * </li>
+     * <p><a name="BASIC_AUTHENTICATION"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.BASIC_AUTHENTICATION</b>
+     * <p>This enables the user to pass in basic authentication information, such as host, port, realm, username, password to be used with HTTP transport sender. </p>
+     * <p/>
+     * <p>The value should always be an instance of: </p>
+     * <pre>org.apache.axis2.transport.http.HttpTransportProperties.BasicAuthentication</pre>
+     * </li>
+     * <p><a name="SO_TIMEOUT"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT</b>
+     * <p>This enables the user to pass in socket timeout value as an Integer. If nothing is set, the default value is 60000 milli seconds.</p>
+     * </li>
+     * <p><a name="CON_TIMEOUT"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT</b>
+     * <p/>
+     * <p>This enables the user to pass in connection timeout value as an Integer. If nothing is set, the default value is 60000 milli seconds.</p>
+     * </li>
+     * <p><a name="USER_AGENT"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.USER_AGENT</b>
+     * <p>This enables the user to set the user agent header in the outgoing HTTP request. Default value is "Axis2"</p>
+     * </li>
+     * <p><a name="GZIP"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.MC_GZIP_REQUEST</b>
+     * <p>If set this will GZip your request and send over to the destination. Before doing this, you must make sure that the receiving end supports GZip compressed streams. <br></p>
+     * <p/>
+     * <p>Possible values are: </p>
+     * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
+     * </li>
+     * <p><a name="ACCEPT_GZIP"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.MC_ACCEPT_GZIP</b>
+     * <p>Whether or not you send a gzip-ped request, you can choose to receive GZIP back from the server using this flag.</p>
+     * <p>Possible values are: </p>
+     * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
+     * </li>
+     * <p/>
+     * <p><a name="COOKIE"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING</b>
+     * <p>This enables the user to set the cookie string header in the outgoing HTTP request.</p>
+     * </li>
+     * <p><a name="HTTP_PROTOCOL_VERSION"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.HTTP_PROTOCOL_VERSION</b>
+     * <p>This will set the HTTP protocol version to be used in sending the SOAP requests. </p>
+     * <p>Possible values are :</p>
+     * <pre>
+     * <p/>
+     * HTTP/1.1 - HTTPConstants.HEADER_PROTOCOL_11
+     * HTTP/1.0 - HTTPConstants.HEADER_PROTOCOL_10
+     * </pre><p>    Default is to use HTTP/1.1.</li>
+     * <p><a name="HTTP_HEADERS"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.HTTP_HEADERS</b>
+     * <p>You might sometimes want to send your own custom HTTP headers. You can set an ArrayList filled with </p>
+     * <pre>org.apache.commons.httpclient.Header</pre><p> objects using the above property. You must not try to override the Headers the Axis2 engine is setting to the outgoing message.</p>
+     * </li>
+     * <p><a name="REUSE_HTTP_CLIENT"></a></p>
+     * <p/>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.REUSE_HTTP_CLIENT</b>
+     * <p>You might want to use the same HTTPClient instance for multiple invocations. This flag will notify the engine to use the same HTTPClient between invocations.</p>
+     * </li>
+     * <p><a name="CACHED_HTTP_CLIENT"></a></p>
+     * <li><b>org.apache.axis2.transport.http.HTTPConstants.CACHED_HTTP_CLIENT</b>
+     * <p>If user had requested to re-use an HTTPClient using the above property, this property can be used to set a custom HTTPClient to be re-used.</p>
+     * </li>
+     * </ul>
+     * <p><a name="REST"></a></p>
+     * <p/>
+     * <h3>Constants to be used in a REST Invocation</h3>
+     * <ul>
+     * <a name="ENABLE_REST"></a></p>
+     * <li><b>org.apache.axis2.transport.http.Constants.Configuration.ENABLE_REST</b>
+     * <p>Enabling REST using the above flag will send your request as a REST invocation. </p>
+     * <p>Possible values are: </p>
+     * <pre>"true"/"false" or Boolean.TRUE/Boolean.FALSE</pre>
+     * </li>
+     * <p><a name="HTTP_METHOD"></a></p>
+     * <li><b>org.apache.axis2.transport.http.Constants.Configuration.HTTP_METHOD</b>
+     * <p/>
+     * <p>This will help the user to pick the HTTP method to be used during a REST invocation. </p>
+     * <p>Possible values are :</p>
+     * <pre>
+     * org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET
+     * and
+     * org.apache.axis2.Constants.Configuration.HTTP_METHOD_POST
+     * </pre><p>    Default is to use POST method.</li>
+     * <p><a name="CONTENT_TYPE"></a>  </p>
+     * <li><b>org.apache.axis2.transport.http.Constants.Configuration.CONTENT_TYPE</b>
+     * <p>This will help the user to pick the content type to be used during a REST<br />
+     * <p/>
+     * invocation. </p>
+     * <p>Possible values are :</p>
+     * <ul>
+     * <li>application/xml                   -<br />
+     * <pre>HTTPConstants.MEDIA_TYPE_APPLICATION_XML</pre></li>
+     * <li>application/x-www-form-urlencoded -<br />
+     * <pre>HTTPConstants.MEDIA_TYPE_X_WWW_FORM</pre></li>
+     * <li>text/xml                          -<br />
+     * <pre>MEDIA_TYPE_TEXT_XML</pre></li>
+     * <p/>
+     * <li>multipart/related                 -<br />
+     * <pre>MEDIA_TYPE_MULTIPART_RELATED</pre></li>
+     * </ul>
+     * </li>
+     * </ul>
      *
      * @param propertyKey
      * @param property
@@ -533,11 +712,11 @@ public class Options {
 
     /**
      * Add WS-Addressing RelatesTo item.
-     * 
+     *
      * @param relatesTo
      */
     public void addRelatesTo(RelatesTo relatesTo) {
-        if(relationships == null) {
+        if (relationships == null) {
             relationships = new ArrayList(5);
         }
         relationships.add(relatesTo);
@@ -545,7 +724,7 @@ public class Options {
 
     /**
      * Set WS-Addressing ReplyTo endpoint.
-     * 
+     *
      * @param replyTo endpoint
      */
     public void setReplyTo(EndpointReference replyTo) {
@@ -554,7 +733,7 @@ public class Options {
 
     /**
      * Set transport used for outgoing message.
-     * 
+     *
      * @param transportOut
      */
     public void setTransportOut(TransportOutDescription transportOut) {
@@ -564,8 +743,8 @@ public class Options {
     /**
      * Set transport used for outgoing message.
      *
-     * @param senderTransport transport name in Axis2 configuration
-     * ("http", "tcp", etc.)
+     * @param senderTransport   transport name in Axis2 configuration
+     *                          ("http", "tcp", etc.)
      * @param axisConfiguration
      * @throws AxisFault if the transport is not found
      */
@@ -582,7 +761,7 @@ public class Options {
 
     /**
      * Set the SOAP version to be used.
-     * 
+     *
      * @param soapVersionURI
      * @see org.apache.axis2.namespace.Constants#URI_SOAP11_ENV
      * @see org.apache.axis2.namespace.Constants#URI_SOAP12_ENV
@@ -604,7 +783,7 @@ public class Options {
 
     /**
      * Set WS-Addressing To endpoint.
-     * 
+     *
      * @param to endpoint
      */
     public void setTo(EndpointReference to) {
@@ -681,7 +860,7 @@ public class Options {
      * Add WS-Addressing ReferenceParameter child element. Multiple child
      * may be used.
      * TODO Add get method, implement handling.
-     * 
+     *
      * @param referenceParameter
      */
     public void addReferenceParameter(OMElement referenceParameter) {
@@ -694,7 +873,7 @@ public class Options {
 
     /**
      * Check if session management is enabled.
-     * 
+     *
      * @return <code>true</code> if enabled
      */
     public boolean isManageSession() {
@@ -705,7 +884,7 @@ public class Options {
      * Set session management enabled state. When session management is enabled,
      * the engine will automatically send session data (such as the service
      * group id, or HTTP cookies) as part of requests.
-     * 
+     *
      * @param manageSession <code>true</code> if enabling sessions
      */
     public void setManageSession(boolean manageSession) {
