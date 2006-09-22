@@ -16,6 +16,7 @@
 
 package org.apache.rampart;
 
+import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -33,15 +34,10 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
 /**
- *
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class MessageBuilderTestBase extends TestCase {
@@ -63,38 +59,40 @@ public class MessageBuilderTestBase extends TestCase {
         MessageContext ctx = new MessageContext();
         ctx.setAxisService(new AxisService("TestService"));
         ctx.setAxisOperation(new OutInAxisOperation(new QName("http://rampart.org", "test")));
-        
-        XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream("test-resources/policy/soapmessage.xml"));
+
+        XMLStreamReader reader =
+                XMLInputFactory.newInstance().
+                        createXMLStreamReader(new FileInputStream("test-resources/policy/soapmessage.xml"));
         ctx.setEnvelope(new StAXSOAPModelBuilder(reader, null).getSOAPEnvelope());
         return ctx;
     }
-    
+
     protected Policy loadPolicy(String xmlPath) throws Exception {
         StAXOMBuilder builder = new StAXOMBuilder(xmlPath);
         return PolicyEngine.getPolicy(builder.getDocumentElement());
     }
-    
+
     protected void verifySecHeader(Iterator qnameList, SOAPEnvelope env) {
-        Iterator secHeaderChildren = env.getHeader().getFirstChildWithName(
-                new QName(WSConstants.WSSE_NS, 
-                        WSConstants.WSSE_LN)).getChildElements();
-        
+        Iterator secHeaderChildren =
+                env.getHeader().
+                        getFirstChildWithName(new QName(WSConstants.WSSE_NS,
+                                                        WSConstants.WSSE_LN)).getChildElements();
+
         while (secHeaderChildren.hasNext()) {
-            OMElement  element = (OMElement ) secHeaderChildren.next();
-            if(qnameList.hasNext()) {
-                if(!element.getQName().equals(qnameList.next())) {
+            OMElement element = (OMElement) secHeaderChildren.next();
+            if (qnameList.hasNext()) {
+                if (!element.getQName().equals(qnameList.next())) {
                     fail("Incorrect Element" + element);
-                } 
+                }
             } else {
                 fail("Extra child in the security header: " + element.toString());
             }
         }
-        
-        if(qnameList.hasNext()) {
+
+        if (qnameList.hasNext()) {
             fail("Incorrect number of children in the security header: " +
-                    "next expected element"
-                    + ((QName) qnameList.next()).toString());
+                 "next expected element" + qnameList.next().toString());
         }
     }
-    
+
 }

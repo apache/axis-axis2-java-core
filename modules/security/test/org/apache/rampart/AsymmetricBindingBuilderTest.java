@@ -38,7 +38,7 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
-            
+
             ArrayList list = new ArrayList();
             
             list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
