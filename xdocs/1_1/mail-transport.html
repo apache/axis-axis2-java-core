@@ -22,7 +22,7 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
   <li><a href="#intro">Introduction</a></li>
   <li><a href="#axis2">Using Simple Mail Server Included in Axis2</a></li>
   <li><a href="#generic">Using a Generic Mail Server</a></li>
-  <li><a href="#mailet">Calling Axis Through a James Mailet</a></li>
+  <!--li><a href="#mailet">Calling Axis Through a James Mailet</a></li-->
 </ul>
 <a name="prologue"></a>
 
@@ -38,20 +38,19 @@ system telling it what that days business activity was and in the morning
 when the store opens there will be a reply to that mail with new instructions
 and updates. It is a lot like the way the old business worked but with a
 modern touch. Similarly Axis2 mail transport can be used to implement
-SETI@HOME through mail.</p>
+asynchronous messaging through mail.</p>
 <a name="intro"></a>
 
 <h2>Introduction</h2>
 
 <p>To start you will first need to go through the <a
 href="mail-configuration.html" target="_blank">Mail Transport
-Configuration</a> document. It will give you all the information you need on
-how to configure Axis2 to get mail transport working.</p>
+Configuration</a> document. It will provide the user with the first hand experience in setting up the mail transports to co-exists with Axis2.</p>
 
 <p>Broadly speaking there are 3 ways of calling a service through mail.</p>
 
 <blockquote>
-  1. Using the simple mail server included in Axis2.<br>
+  1. Using the simple mail server included in Axis2.(not recommended in production)<br>
   2. Using a generic mail server.<br>
   3. Using mailets.<br>
 </blockquote>
@@ -62,11 +61,7 @@ how to configure Axis2 to get mail transport working.</p>
 option 3 is somewhat harder.The mailet scenario however does provide a more
 robust and useful solution in a production environment.</p>
 
-<p>If you are not a guru in mail related issues you should probably get
-started on the simple mail server that has been provided with Axis2. Once you
-get the hang of the Axis2 related issues then you can move on to tackle the
-mail beast. Please do keep in mind that the mail server we have implemented
-is ONLY FOR DEMONSTRATION/TESTING PURPOSES.</p>
+<p>It is very easy to start learning the workings of mail transports with the aid of Simple Mail Server that provides with Axis2. Once you get the hang of the Axis2 related issues then you can move on to tackle the mail beast. Please do note that the Simple Mail Server that provides with Axis2 is not graded for production use.</p>
 <a name="axis2"></a>
 
 <h2>1. Using Simple Mail Server Included in Axis2</h2>
@@ -165,8 +160,8 @@ call the axisService that was setup on the previous code listing.</p>
     }</pre>
 </source>
 <p>This will call the service that was setup on the server and will poll the
-mail server till the response is received.Thats all there is to it. Please do
-note that serviceName and operationName need to be QNames.</p>
+mail server till the response is received.Please do note that serviceName and operationName need to be QNames.</p>
+
 <a name="generic"></a>
 
 <h2>2. Using a Generic Mail Server</h2>
@@ -207,113 +202,11 @@ same and there will be some modification to the server-side code.</p>
         serverConfigContext.getAxisConfiguration().addService(service);</pre>
 </source>
 <p>Note that a separate ConfigurationContext needs to be created and used.</p>
-<a name="mailet"></a>
+<!--a name="mailet"></a>
 
-<h3>3. Calling Axis Through a James Mailet</h3>
+<h3>3. Calling Axis2 Through a Mailet</h3-->
 
-<p>This process will be a bit more challenging than the other two methods but
-will provide a really elegant way to use the mail transport. Before we get
-started you will have to go though the James documents <a
-href="http://james.apache.org/custom_matcher_2_1.html"
-target="_blank">Writing a Custom Matcher</a> and <a
-href="http://james.apache.org/custom_mailet_2_1.html" target="_blank">Writing
-a Custom Mailet</a>.</p>
 
-<p>Now that we know the James part of it lets dive into to the Axis2 part of
-the code. Once you have set up the James side of business we need to use the
-same functionality that is used in the above code. Have a look at the code
-listing below for more details</p>
-<source><pre>    public void processMail(ConfigurationContext confContext, MimeMessage mimeMessage) {
-        // create an Axis server
-        AxisEngine engine = new AxisEngine(confContext);
-        MessageContext msgContext = null;
-
-        // create and initialize a message context
-        try {
-            msgContext = new MessageContext();
-            msgContext.setConfigurationContext(confContext);
-            msgContext.setTransportIn(confContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
-            msgContext.setTransportOut(confContext.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_MAIL)));
-
-            msgContext.setServerSide(true);
-            msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, mimeMessage.getContentType());
-            msgContext.setProperty(MessageContext.CHARACTER_SET_ENCODING,
-                    mimeMessage.getEncoding());
-            String soapAction = getMailHeader(MailSrvConstants.HEADER_SOAP_ACTION, mimeMessage);
-            if (soapAction == null){
-            	soapAction = mimeMessage.getSubject();
-            }
-
-            msgContext.setSoapAction(soapAction);
-            msgContext.setIncomingTransportName(Constants.TRANSPORT_MAIL);
-
-            String serviceURL = mimeMessage.getSubject();
-
-            if (serviceURL == null) {
-                serviceURL = "";
-            }
-
-            String replyTo = ((InternetAddress) mimeMessage.getReplyTo()[0]).getAddress();
-
-            if (replyTo != null) {
-                msgContext.setReplyTo(new EndpointReference(replyTo));
-            }
-
-            String recepainets = ((InternetAddress) mimeMessage.getAllRecipients()[0]).getAddress();
-
-            if (recepainets != null) {
-                msgContext.setTo(new EndpointReference(recepainets + "/" + serviceURL));
-            }
-
-            // add the SOAPEnvelope
-            String message = mimeMessage.getContent().toString();
-
-            log.info("message[" + message + "]");
-
-            ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
-            XMLStreamReader reader =
-                    StAXUtils.createXMLStreamReader(bais);
-            String soapNamespaceURI = "";
-
-            if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-                soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            } else if (mimeMessage.getContentType().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE)
-                    > -1) {
-                soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            }
-
-            StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
-            SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
-
-            msgContext.setEnvelope(envelope);
-
-            if (envelope.getBody().hasFault()) {
-                engine.receiveFault(msgContext);
-            } else {
-                engine.receive(msgContext);
-            }
-        } catch (Exception e) {
-            try {
-                if (msgContext != null) {
-                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
-
-                    engine.sendFault(faultContext);
-                }
-            } catch (Exception e1) {
-                log.error(e);
-            }
-        }
-    }</pre>
-</source>
-<p>If you don't happen to have a ConfigurationContext lying around to call
-this method you can use the following bit of code to get one. Once you create
-one you can store that on the mailet and keep using it.</p>
-<source><pre>            File file = new File(MAIL_TRANSPORT_SERVER_ENABLED_REPO_PATH);
-            SERVER_CONFIG_CONTEXT =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                    	file.getAbsolutePath(), file.getAbsolutePath() + "/conf/axis2.xml");
-</pre>
-</source>
 <p></p>
 </body>
 </html>

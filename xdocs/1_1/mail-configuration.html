@@ -30,7 +30,7 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 <h2>Introduction</h2>
 
 <p>The inner workings of the mail transport has been divided into two parts, the transport
-sender for smtp and the transport listener for pop3. The transport listener will listen to a particular email address periodically. When an email comes in it will be tunneled into the Axis
+sender for smtp and the transport listener for pop3. The transport listener will listen to a particular email address periodically. When an email comes in it will be tunneled into an Axis2
 engine. On the other hand mail transport sender sends emails to a mail server for a particular email address.</p>
 
 <p>Mail transport can be used against a generic mail server or it can be used
@@ -47,7 +47,7 @@ process the message and will use the Transport sender to send the reply.</p>
 <p>You need to have a mail account to activate the mail functionality. This
 can either be a generic mail server or you can start up a James mail server, which will be available <a href="http://james.apache.org/">here</a>.</p>
 
-<p>JavaMail sets its properties to a Properties object. To get this facilities available from every property can be mapped to a Parameter in Axis2. Mapping has been done as follows,</p>
+<p>JavaMail sets its properties to a Properties object. In Axis2, this has been mapped to a Parameter object. Mapping has been done as follows,</p>
 
 <ul>
     <li>Every JavaMail property can be set to @name of the &lt;parameter/&gt;. Thus, SSL connection is mapped the way it is done in JavaMail</li>
@@ -58,31 +58,94 @@ can either be a generic mail server or you can start up a James mail server, whi
 <p>For a non-SSL connection, as an example,mail transport sender can be activated by adding following entry to the axis2.xml file.</p>
 
 <source><pre>   &lt;transportSender name="mail" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
-        &lt;parameter name="mail.smtp.host" locked="false"&gt;smtp server host&lt;/parameter&gt;
-        &lt;parameter name="mail.smtp.user" locked="false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.smtp.password" locked="false"&gt;password&lt;/parameter&gt;     
+        &lt;parameter name="mail.smtp.host" locked="false"&gt;localhost&lt;/parameter&gt;
+        &lt;parameter name="mail.smtp.user" locked="false"&gt;mary&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.smtp.password" locked="false"&gt;mary&lt;/parameter&gt;     
    &lt;/transportSender&gt;
   </pre>
-</source><a name="receiver"></a>
+</source>
+
+<p>In runtime tuning a client to set mail transport as easy as follows,</p>
+<source>
+<pre>
+...
+
+Options options =  new Options();
+HttpTransportProperties.MailProperties mailProps 
+                    = new HttpTransportProperties.MailProperties();
+mailProps.addProperty("mail.smtp.host","localhost");
+mailProps.addProperty("mail.smtp.user","mary");
+mailProps.setPassword("mary");
+
+options.setProperty(HTTPConstants.MAIL_SMTP,mailProps);
+
+...
+</pre>
+</source>
+
+Thus, a user familiar with setting up a SSL connection, he should easily do it with the MailProperties object. For Ex: tuning the sender to talk to gmail account. This configuration should also be done with &lt;parameter/&gt; in Axis2.xml.
+
+<source>
+<pre>
+...
+HttpTransportProperties.MailProperties props = 
+                  new HttpTransportProperties.MailProperties();
+        props.put("mail.smtp.user", "address@gmail.com");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "465");
+        props.put("mail.smtp.starttls.enable","true");
+        props.put("mail.smtp.auth", "true");
+        //props.put("mail.smtp.debug", "true"); // if the user wants
+        props.put("mail.smtp.socketFactory.port", "465");
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.socketFactory.fallback", "false");
+        props.setPassword("password");
+
+...
+</pre>
+</source>	
+
+
+<a name="receiver"></a>
 
 <h2>Transport Receiver</h2>
 
 <p>For a non-SSL connection,as an example,mail Listener can be activated by adding the following entry to the
 axis2.xml file.</p>
 <source><pre>   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
-        &lt;parameter name="mail.pop3.host" locked="false"&gt;pop server host&lt;/parameter&gt;
-        &lt;parameter name="mail.pop3.user" locked="false"&gt;user name&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.pop3.password" locked="false"&gt;password&lt;/parameter&gt;
-        &lt;parameter name="transport.mail.replyToAddress" locked="false"&gt;email address&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.host" locked="false"&gt;localhost&lt;/parameter&gt;
+        &lt;parameter name="mail.pop3.user" locked="false"&gt;bob&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.pop3.password" locked="false"&gt;bob&lt;/parameter&gt;
+        &lt;parameter name="transport.mail.replyToAddress" locked="false"&gt;bob@localhost&lt;/parameter&gt;
   &lt;/transportReceiver&gt;
   </pre>
+</source>
+
+<p><i>Note:</i> The @name="transport.mail.replyToAddress" is an important parameter. It supply the Endpoint reference to the listener.</p>
+
+<p>For an advanced user, this can be set to a SSL connection. As an example, lets use this transport listener to pop from a specified gmail account.</p>
+
+<source>
+<pre>
+&lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
+	&lt;parameter name="mail.pop3.host" locked="false"&gt;pop.gmail.com&lt;/parameter&gt;
+	&lt;parameter name="mail.pop3.user" locked="false"&gt;address@gmail.com&lt;/parameter&gt;
+	&lt;parameter name="mail.pop3.socketFactory.class" locked="false"&gt;javax.net.ssl.SSLSocketFactory&lt;/parameter&gt;
+	&lt;parameter name="mail.pop3.socketFactory.fallback" locked="false"&gt;false&lt;/parameter&gt;
+	&lt;parameter name="mail.pop3.port" locked="false"&gt;995&lt;/parameter&gt;
+	&lt;parameter name="mail.pop3.socketFactory.port" locked="false"&gt;995&lt;/parameter&gt;
+	&lt;parameter name="transport.mail.pop3.password" locked="false"&gt;password&lt;/parameter&gt;
+	&lt;parameter name="transport.mail.replyToAddress" locked="false"&gt;address@gmail.com&lt;/parameter&gt;
+&lt;/transportReceiver&gt;
+
+</pre>
 </source>
 
 <a name="server"></a>
 
 <h2>Using Mail Transport in the Server Side</h2>
 
-<p>If the Mail Listener is need to be started as the server it can be done
+<p>If the Mail Listener is need to be started as a standalone mail listener, it can be done
 with following command with the all the axis2 jars and the mail dependency
 jars in the classpath.</p>
 <source><pre>java org.apache.axis2.transport.mail.SimpleMailListener repository-directory</pre>
@@ -90,7 +153,7 @@ jars in the classpath.</p>
 
 <h2>Using Mail Transport in the Client Side</h2>
 
-<p>Following code segment shows how to send a oneway SOAP message using the
+<p>Following code segment shows how to send a one-way (IN-Only MEP) SOAP message using the
 mail transport, this needs the Transport Sender configured.</p>
 <source><pre>        
         OMElement payload = ....
