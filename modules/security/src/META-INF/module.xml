@@ -8,7 +8,7 @@
 
     <outflow>
         <handler name="SecurityOutHandler" class="org.apache.rampart.handler.WSDoAllSender">
-            <order phase="MessageOut"/>
+            <order phase="Security" phaseLast="true"/>
         </handler>
     </outflow>
     <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"/>

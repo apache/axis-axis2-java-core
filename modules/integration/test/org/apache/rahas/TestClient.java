@@ -70,6 +70,7 @@ public abstract class TestClient extends TestCase {
             System.setProperty("javax.net.ssl.keyStoreType", "JKS");
             System.setProperty("javax.net.ssl.trustStore", "/home/ruchith/Desktop/interop/certs/interop2.jks");
             System.setProperty("javax.net.ssl.trustStorePassword", "password");
+            System.setProperty("javax.net.ssl.trustStoreType","JKS");
 
             options.setTo(new EndpointReference("http://127.0.0.1:" + port + "/axis2/services/SecureService"));
 //            options.setTo(new EndpointReference("http://127.0.0.1:" + 9090 + "/axis2/services/UTSAMLHoK"));

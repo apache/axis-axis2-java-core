@@ -19,6 +19,7 @@ package org.apache.axis2.security;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.oasis.ping.PingPortStub;
 import org.apache.rampart.handler.WSSHandlerConstants;
@@ -58,9 +59,10 @@ public class InteropScenarioClient {
         PingDocument pingDoc = PingDocument.Factory.newInstance();
         pingDoc.setPing(ping);
 
-        PingPortStub stub = new PingPortStub(ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(clientRepo,
-                        clientRepo + "/conf/axis2.xml"), url);
+        ConfigurationContext configCtx = ConfigurationContextFactory
+                        .createConfigurationContextFromFileSystem(clientRepo,
+                                clientRepo + "/conf/axis2.xml");
+        PingPortStub stub = new PingPortStub(configCtx, url);
 
         // Enable MTOM to those scenarios where they are configured using:
         // <optimizeParts>xpathExpression</optimizeParts>

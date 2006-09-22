@@ -146,6 +146,7 @@
         <!--these phase will run irrespective of the service-->
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
+        <phase name="Security"/>
     </phaseOrder>
     <phaseOrder type="INfaultflow">
         <phase name="PreDispatch"/>
