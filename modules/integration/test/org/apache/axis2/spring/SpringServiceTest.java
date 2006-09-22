@@ -36,7 +36,6 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -131,6 +130,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(Constants.SERVICE_OBJECT_SUPPLIER, supplierName));
+        service.addParameter(new Parameter(Constants.SERVICE_FORCE_TCCL, "true"));
         service.addParameter(new Parameter(SpringAppContextAwareObjectSupplier.SERVICE_SPRING_BEANNAME, beanName));
 
         AxisOperation axisOp = new InOutAxisOperation(opName);
@@ -153,6 +153,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(Constants.SERVICE_OBJECT_SUPPLIER, supplierName));
+        service.addParameter(new Parameter(Constants.SERVICE_FORCE_TCCL, "true"));
         service.addParameter(new Parameter(SpringAppContextAwareObjectSupplier.SERVICE_SPRING_BEANNAME, beanName));
 
         AxisOperation axisOp = new OutInAxisOperation(opName);

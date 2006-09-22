@@ -24,6 +24,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.MultiParentClassLoader;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -39,9 +40,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 //    public static final String SERVICE_CLASS = "ServiceClass";
 //    public static final String SERVICE_OBJECT_SUPPLIER = "ServiceObjectSupplier";
     public static final String SCOPE = "scope";
+    protected boolean forceTCCL = false;
 
     protected void saveTCCL(MessageContext msgContext) {
-        if (msgContext.getAxisService() != null &&
+        if (forceTCCL && msgContext.getAxisService() != null &&
                 msgContext.getAxisService().getClassLoader() != null) {
             Thread.currentThread().setContextClassLoader(new MultiParentClassLoader(new URL[]{}, new ClassLoader[]{
                     msgContext.getAxisService().getClassLoader(),
@@ -51,9 +53,11 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     }
 
     protected void restoreTCCL() {
-        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        if (tccl != null && tccl instanceof MultiParentClassLoader) {
-            Thread.currentThread().setContextClassLoader(((MultiParentClassLoader) tccl).getParents()[1]);
+        if(forceTCCL) {
+            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+            if (tccl != null && tccl instanceof MultiParentClassLoader) {
+                Thread.currentThread().setContextClassLoader(((MultiParentClassLoader) tccl).getParents()[1]);
+            }
         }
     }
 
@@ -71,6 +75,13 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                     msgContext.getOperationContext().getServiceContext().getAxisService();
             ClassLoader classLoader = service.getClassLoader();
 
+            if(service.getParameter(Constants.SERVICE_FORCE_TCCL) != null) {
+                Parameter serviceObjectParam =
+                        service.getParameter(Constants.SERVICE_FORCE_TCCL);
+                String value = ((String)
+                        serviceObjectParam.getValue()).trim();
+                forceTCCL = JavaUtils.isTrue(value);
+            }
             // allow alternative definition of makeNewServiceObject
             if (service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER) != null) {
                 Parameter serviceObjectParam =

@@ -106,6 +106,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     //Parameter name of Service impl class
     public static final String SERVICE_CLASS = "ServiceClass";
     public static final String SERVICE_OBJECT_SUPPLIER = "ServiceObjectSupplier";
+    public static final String SERVICE_FORCE_TCCL = "forceTCCL";
 
     /**
      * Field REQUEST_URL_PREFIX
