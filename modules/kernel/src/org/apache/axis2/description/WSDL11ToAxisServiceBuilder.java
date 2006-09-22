@@ -674,7 +674,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                                 (QName) resolvedRpcWrappedElementMap.get(
                                         wsdl4jOperation.getName() + WRAPPED_OUTPUTNAME_SUFFIX));
 
-                    } else {
+                    } else if(wsdl4jMessage != null){
                         //pick the first part from the list and take that as the relevant part
                         //it is somewhat questionable whether the first part gets picked
                         //but we'll have to take a chance here
