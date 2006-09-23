@@ -145,7 +145,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 OMAttribute classNameAttribute = targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
                 String className = classNameAttribute.getAttributeValue();
                 try {
-                    Class classInstance = Class.forName(className);
+                	ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                    Class classInstance = classLoader.loadClass(className);
                     TargetResolver tr = (TargetResolver) classInstance.newInstance();
                     axisConfig.addTargetResolver(tr);
                 } catch (Exception e) {
