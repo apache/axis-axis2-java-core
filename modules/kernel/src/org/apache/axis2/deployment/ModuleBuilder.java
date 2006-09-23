@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
@@ -57,7 +58,7 @@ public class ModuleBuilder extends DescriptionBuilder {
 
         try {
             if ((moduleClassName != null) && !"".equals(moduleClassName)) {
-                moduleClass = Class.forName(moduleClassName, true, module.getModuleClassLoader());
+                moduleClass = Loader.loadClass(module.getModuleClassLoader(), moduleClassName);
                 module.setModule((Module) moduleClass.newInstance());
             }
         } catch (Exception e) {

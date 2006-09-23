@@ -5,6 +5,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
@@ -77,7 +78,7 @@ public class Utils {
         Class handlerClass;
 
         try {
-            handlerClass = Class.forName(handlername, true, loader1);
+            handlerClass = Loader.loadClass(loader1, handlername);
             handler = (Handler) handlerClass.newInstance();
             handler.init(desc);
             desc.setHandler(handler);
@@ -204,7 +205,7 @@ public class Utils {
         Class handlerClass;
 
         try {
-            handlerClass = Class.forName(className, true, loader1);
+            handlerClass = Loader.loadClass(loader1, className);
         } catch (ClassNotFoundException e) {
             throw new AxisFault(e.getMessage());
         }
@@ -230,8 +231,8 @@ public class Utils {
             // other looks.
             implInfoParam = axisService.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
             if (implInfoParam != null) {
-                Class serviceObjectMaker = Class.forName(((String)
-                        implInfoParam.getValue()).trim(), true, serviceClassLoader);
+                Class serviceObjectMaker = Loader.loadClass(serviceClassLoader, ((String)
+                        implInfoParam.getValue()).trim());
 
                 // Find static getServiceObject() method, call it if there
                 Method method = serviceObjectMaker.

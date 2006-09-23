@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -129,8 +130,9 @@ public class DependencyManager {
             Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);
             if (implInfoParam != null) {
                 try {
-                    Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
-                            classLoader);
+                    Class implClass = Loader.loadClass(
+                            classLoader,
+                            ((String) implInfoParam.getValue()).trim());
                     Object serviceImpl = implClass.newInstance();
                     serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceImpl);
                     initServiceClass(serviceImpl, serviceContext);
@@ -152,8 +154,9 @@ public class DependencyManager {
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
         if (implInfoParam != null) {
             try {
-                Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
-                        classLoader);
+                Class implClass = Loader.loadClass(
+                        classLoader,
+                        ((String) implInfoParam.getValue()).trim());
                 Object serviceImpl = implClass.newInstance();
                 if (serviceImpl instanceof Service) {
                     org.apache.axis2.engine.Service service = (Service) serviceImpl;

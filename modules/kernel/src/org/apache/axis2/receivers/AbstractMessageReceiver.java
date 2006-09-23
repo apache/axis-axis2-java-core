@@ -25,6 +25,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.MultiParentClassLoader;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -86,8 +87,8 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             if (service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER) != null) {
                 Parameter serviceObjectParam =
                         service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER);
-                Class serviceObjectMaker = Class.forName(((String)
-                        serviceObjectParam.getValue()).trim(), true, classLoader);
+                Class serviceObjectMaker = Loader.loadClass(classLoader, ((String)
+                        serviceObjectParam.getValue()).trim());
 
                 // Find static getServiceObject() method, call it if there   
                 Method method = serviceObjectMaker.
@@ -99,8 +100,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
             Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);
             if (implInfoParam != null) {
-                Class implClass = Class.forName(((String) implInfoParam.getValue()).trim(), true,
-                        classLoader);
+                Class implClass = Loader.loadClass(
+                        classLoader,
+                        ((String) implInfoParam.getValue()).trim());
 
                 return implClass.newInstance();
             } else {

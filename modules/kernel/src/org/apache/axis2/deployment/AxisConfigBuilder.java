@@ -32,6 +32,7 @@ import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.TargetResolver;
+import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -145,8 +146,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 OMAttribute classNameAttribute = targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
                 String className = classNameAttribute.getAttributeValue();
                 try {
-                	ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                    Class classInstance = classLoader.loadClass(className);
+                    Class classInstance = Loader.loadClass(className);
                     TargetResolver tr = (TargetResolver) classInstance.newInstance();
                     axisConfig.addTargetResolver(tr);
                 } catch (Exception e) {
@@ -213,8 +213,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     return;
                 }
 
-                Class observerclass = Class.forName(clasName, true,
-                        Thread.currentThread().getContextClassLoader());
+                Class observerclass = Loader.loadClass(clasName);
                 observer = (AxisObserver) observerclass.newInstance();
                 // processing Parameters
                 // Processing service level parameters
@@ -332,12 +331,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     try {
                         String clasName = trsClas.getAttributeValue();
                         Class receiverClass;
-                        try {
-                            receiverClass = Class.forName(clasName, true, Thread.currentThread().getContextClassLoader()); // Try the application class loader
-                        } catch (ClassNotFoundException e) {
-                            receiverClass = Class.forName(clasName); // Try the axis2 classloader
-                        }
-
+                        receiverClass = Loader.loadClass(clasName); 
 
                         TransportListener receiver =
                                 (TransportListener) receiverClass.newInstance();
@@ -389,11 +383,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Class sender;
 
                 try {
-                    try {
-                        sender = Class.forName(clasName, true, Thread.currentThread().getContextClassLoader()); // Try the application class loader
-                    } catch (ClassNotFoundException e) {
-                        sender = Class.forName(clasName); // Try the axis2 classloader
-                    }
+                    sender = Loader.loadClass(clasName);
 
                     TransportSender transportSender = (TransportSender) sender.newInstance();
 
@@ -431,7 +421,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         if (className == null) {
             return new Phase();
         }
-        Class phaseClass = axisConfig.getSystemClassLoader().loadClass(className);
+        Class phaseClass = Loader.loadClass(axisConfig.getSystemClassLoader(), className);
         return (Phase) phaseClass.newInstance();
     }
 }

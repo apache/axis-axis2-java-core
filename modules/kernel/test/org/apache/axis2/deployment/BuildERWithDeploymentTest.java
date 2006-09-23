@@ -17,6 +17,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -47,7 +48,7 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
           assertTrue(provider instanceof RawXMLINOutMessageReceiver);*/
             ClassLoader cl = service.getClassLoader();
             assertNotNull(cl);
-            Class.forName("org.apache.axis2.Echo2", true, cl);
+            Loader.loadClass(cl, "org.apache.axis2.Echo2");
             assertNotNull(service.getName());
             assertNotNull(service.getParameter("para2"));
 

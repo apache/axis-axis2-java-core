@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.WSInfoList;
+import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -129,7 +130,7 @@ public class RepositoryListener implements DeploymentConstants {
      */
     private String getLocation() {
         try {
-            Class clazz = Class.forName("org.apache.axis2.engine.AxisEngine");
+            Class clazz = Loader.loadClass("org.apache.axis2.engine.AxisEngine");
             java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
             String location = url.toString();
             if (location.startsWith("jar")) {

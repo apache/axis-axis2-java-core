@@ -85,7 +85,7 @@ public class XMLUtils {
     {
         if (factoryClassName != null) {
             try {
-                saxFactory = (SAXParserFactory)Class.forName(factoryClassName).
+                saxFactory = (SAXParserFactory)Loader.loadClass(factoryClassName).
                     newInstance();
                 /*
                  * Set the system property only if it is not already set to

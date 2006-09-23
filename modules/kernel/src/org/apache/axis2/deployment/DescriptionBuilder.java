@@ -24,6 +24,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -167,7 +168,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             Class messageReceiver;
 
             if ((className != null) && !"".equals(className)) {
-                messageReceiver = Class.forName(className, true, loader);
+                messageReceiver = Loader.loadClass(loader, className);
                 receiver = (MessageReceiver) messageReceiver.newInstance();
             }
         } catch (ClassNotFoundException e) {

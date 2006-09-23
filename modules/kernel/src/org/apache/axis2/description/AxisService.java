@@ -34,6 +34,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1304,7 +1305,7 @@ public class AxisService extends AxisDescription {
                                             AxisConfiguration axisConfig) throws AxisFault {
         Class clazz;
         try {
-            clazz = Class.forName("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+            clazz = Loader.loadClass("org.apache.axis2.rpc.receivers.RPCMessageReceiver");
         } catch (ClassNotFoundException e) {
             throw new AxisFault("ClassNotFoundException occured during message receiver loading"
                     + e.getMessage());
