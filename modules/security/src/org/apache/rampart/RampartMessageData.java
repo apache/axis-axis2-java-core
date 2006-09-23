@@ -187,11 +187,13 @@ public class RampartMessageData {
             }
             
             
-            List it = (List)this.servicePolicy.getAlternatives().next();
-            
-            //Process policy and build policy data
-            this.policyData = RampartPolicyBuilder.build(it);
+            if(this.servicePolicy != null){
+                List it = (List)this.servicePolicy.getAlternatives().next();
 
+                //Process policy and build policy data
+                this.policyData = RampartPolicyBuilder.build(it);
+            }
+            
             this.isClientSide = !msgCtx.isServerSide();
             this.sender = sender;
             
@@ -498,8 +500,11 @@ public class RampartMessageData {
      * @return
      */
     public static String getOperationPolicyKey(MessageContext msgCtx) {
-        return createPolicyKey(msgCtx.getAxisService().getName(), 
-                msgCtx.getAxisOperation().getName());
+        if(msgCtx.getAxisOperation() != null) {
+            return createPolicyKey(msgCtx.getAxisService().getName(), 
+                    msgCtx.getAxisOperation().getName());
+        }
+        return null;
     }
 
     public static String getServicePolicyKey(MessageContext msgCtx) {

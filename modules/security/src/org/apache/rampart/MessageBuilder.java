@@ -33,12 +33,14 @@ public class MessageBuilder {
     
     public void build(MessageContext msgCtx) throws WSSPolicyException,
             RampartException, WSSecurityException, AxisFault {
-        
 
         RampartMessageData rmd = new RampartMessageData(msgCtx, true);
         
-//      Nothing to do to handle the other bindings
         RampartPolicyData rpd = rmd.getPolicyData();
+        if(rpd == null) {
+            return;
+        }
+        
         if(rpd.isTransportBinding()) {
             log.debug("Building transport binding");
             TransportBindingBuilder building = new TransportBindingBuilder();

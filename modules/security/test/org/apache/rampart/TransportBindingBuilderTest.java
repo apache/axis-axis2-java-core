@@ -39,8 +39,6 @@ public class TransportBindingBuilderTest extends MessageBuilderTestBase {
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
 
-            System.out.println(ctx.getEnvelope());
-
             List list = new ArrayList();
             list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
             list.add(new QName(WSConstants.WSSE_NS, WSConstants.USERNAME_TOKEN_LN));
@@ -66,8 +64,6 @@ public class TransportBindingBuilderTest extends MessageBuilderTestBase {
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
 
-            System.out.println(ctx.getEnvelope());
-
             List list = new ArrayList();
             list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
             list.add(new QName(WSConstants.WSSE_NS, WSConstants.USERNAME_TOKEN_LN));
@@ -91,8 +87,6 @@ public class TransportBindingBuilderTest extends MessageBuilderTestBase {
 
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
-
-            System.out.println(ctx.getEnvelope());
 
             List list = new ArrayList();
             list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
@@ -120,8 +114,6 @@ public class TransportBindingBuilderTest extends MessageBuilderTestBase {
 
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
-
-            System.out.println(ctx.getEnvelope());
 
             List list = new ArrayList();
             list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));

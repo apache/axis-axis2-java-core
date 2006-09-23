@@ -16,6 +16,7 @@
 
 package org.apache.rampart.handler;
 
+import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -23,11 +24,14 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
 import org.apache.rampart.RampartEngine;
 import org.apache.rampart.RampartException;
+import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.Vector;
 
@@ -59,12 +63,24 @@ public class RampartReceiver implements Handler {
         Vector wsResult;
         try {
             wsResult = engine.process(msgContext);
+            
+            //Convert back to LLOM
+            Document doc = ((Element)msgContext.getEnvelope()).getOwnerDocument();
+            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc));
         } catch (WSSecurityException e) {
             throw new AxisFault(e);
         } catch (WSSPolicyException e) {
             throw new AxisFault(e);
         } catch (RampartException e) {
             throw new AxisFault(e);
+        } finally {
+            // Reset the document builder factory
+            DocumentBuilderFactoryImpl.setDOOMRequired(false);
+
+        }
+        
+        if(wsResult == null) {
+            return;
         }
         
         Vector results = null;

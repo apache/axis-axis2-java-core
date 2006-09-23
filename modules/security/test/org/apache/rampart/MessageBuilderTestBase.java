@@ -16,7 +16,6 @@
 
 package org.apache.rampart;
 
-import junit.framework.TestCase;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -34,8 +33,11 @@ import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
 import java.io.FileInputStream;
 import java.util.Iterator;
+
+import junit.framework.TestCase;
 
 /**
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)

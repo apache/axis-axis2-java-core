@@ -469,6 +469,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 
                 log.debug("SignatureToken is a SecureConversationToken");
                 
+                //TODO check for an existing token and use it 
+                
                 if(rmd.getSecConvTokenId() == null) {
                 
                     log.debug("No SecureConversationToken found, " +

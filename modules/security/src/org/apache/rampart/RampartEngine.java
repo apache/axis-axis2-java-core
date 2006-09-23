@@ -35,7 +35,9 @@ public class RampartEngine {
         
         RampartMessageData rmd = new RampartMessageData(msgCtx, false);
         RampartPolicyData rpd = rmd.getPolicyData();
-        
+        if(rpd == null) {
+            return null;
+        }
         Vector results = null;
         
         WSSecurityEngine engine = new WSSecurityEngine();
