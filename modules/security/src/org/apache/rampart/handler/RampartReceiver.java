@@ -68,10 +68,13 @@ public class RampartReceiver implements Handler {
             Document doc = ((Element)msgContext.getEnvelope()).getOwnerDocument();
             msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc));
         } catch (WSSecurityException e) {
+            e.printStackTrace();
             throw new AxisFault(e);
         } catch (WSSPolicyException e) {
+            e.printStackTrace();
             throw new AxisFault(e);
         } catch (RampartException e) {
+            e.printStackTrace();
             throw new AxisFault(e);
         } finally {
             // Reset the document builder factory

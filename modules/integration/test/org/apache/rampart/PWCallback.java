@@ -1,34 +1,28 @@
-package org.apache.rahas;
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.rampart;
 
 import org.apache.ws.security.WSPasswordCallback;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
+
 import java.io.IOException;
-
-
-
-/**
-
- * Class PWCallback
-
- */
 
 public class PWCallback implements CallbackHandler {
 
@@ -114,11 +108,11 @@ public class PWCallback implements CallbackHandler {
 
                 if (pc.getUsage() == WSPasswordCallback.USERNAME_TOKEN_UNKNOWN) {
 
-                	if(pc.getIdentifer().equals("Ron") && pc.getPassword().equals("noR")) {
+                    if(pc.getIdentifer().equals("Ron") && pc.getPassword().equals("noR")) {
 
                         return;
 
-                	}
+                    }
                     
                     if(pc.getIdentifer().equals("joe") && pc.getPassword().equals("eoj")) {
 
@@ -130,7 +124,7 @@ public class PWCallback implements CallbackHandler {
 
                         return;
 
-                    }               	
+                    }                   
 
                     throw new UnsupportedCallbackException(callbacks[i],
 

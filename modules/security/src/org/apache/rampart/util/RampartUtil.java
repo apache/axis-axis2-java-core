@@ -171,7 +171,7 @@ public class RampartUtil {
                 Properties prop = cryptoConfig.getProp();
                 return CryptoFactory.getInstance(provider, prop);
             } else {
-                throw new RampartException("missingEncryptionCrypto");
+                return null;
             }
         }
     }
@@ -195,7 +195,7 @@ public class RampartUtil {
             Properties prop = cryptoConfig.getProp();
             return CryptoFactory.getInstance(provider, prop);
         } else {
-            throw new RampartException("missingSignatureCrypto");
+            return null;
         }
     }
     
