@@ -35,7 +35,6 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -44,53 +43,21 @@ import java.util.Map;
 public class AddressingOutHandler extends AddressingHandler {
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-
-        SOAPFactory factory = (SOAPFactory)msgContext.getEnvelope().getOMFactory();
-        
-        OMNamespace addressingNamespaceObject;
-        String namespace = addressingNamespace;
-
         // it should be able to disable addressing by some one.
         Object property = msgContext.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
-        if (property == null && msgContext.getOperationContext() != null) {
-            // check in the IN message context, if available
-            MessageContext inMsgCtxt = msgContext.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            if (inMsgCtxt != null) {
-                property = inMsgCtxt.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
-            }
-        }
         if (property != null && JavaUtils.isTrueExplicitly(property)) {
             log.debug("Addressing is disabled .....");
             return;
         }
 
-
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
-        if (addressingVersionFromCurrentMsgCtxt != null) {
-            // since we support only two addressing versions I can avoid multiple  ifs here.
-            // see that if message context property holds something other than Final.WSA_NAMESPACE
-            // we always defaults to Submission.WSA_NAMESPACE. Hope this is fine.
-            namespace = Final.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt)
-                    ? Final.WSA_NAMESPACE : Submission.WSA_NAMESPACE;
-        } else if (msgContext.getOperationContext() != null)
-        { // check for a IN message context, else default to WSA Final
-            MessageContext inMessageContext = msgContext.getOperationContext()
-                    .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            if (inMessageContext != null) {
-                namespace =
-                        (String) inMessageContext.getProperty(
-                                WS_ADDRESSING_VERSION);
-            }
-        }
-
-        if (namespace == null || "".equals(namespace)) {
-            namespace = Final.WSA_NAMESPACE;
-        }
-        addressingNamespaceObject = factory.createOMNamespace(
-                namespace, WSA_DEFAULT_PREFIX);
+        String namespace = Submission.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt)
+                    ? Submission.WSA_NAMESPACE : Final.WSA_NAMESPACE;
+        
+        SOAPFactory factory = (SOAPFactory) msgContext.getEnvelope().getOMFactory();
+        OMNamespace addressingNamespaceObject = factory.createOMNamespace(namespace, WSA_DEFAULT_PREFIX);
         String anonymousURI = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
         String relationshipType = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_DEFAULT_RELATIONSHIP_TYPE : Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE;
-
 
         Options messageContextOptions = msgContext.getOptions();
         SOAPEnvelope envelope = msgContext.getEnvelope();
@@ -143,9 +110,6 @@ public class AddressingOutHandler extends AddressingHandler {
 
         // process fault headers, if present
         processFaultsInfoIfPresent(envelope, msgContext, addressingNamespaceObject, replaceHeaders);
-
-        // We are done, cleanup the references
-        addressingNamespaceObject = null;
     }
 
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,
