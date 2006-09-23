@@ -1271,7 +1271,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     .toArray(new Element[namespaceImportsMap.size()]);
             for (int i = 0; i < namespaceImports.length; i++) {
                 if (!namespaceURI.equals(namespaceImports[i].getAttribute(NAMESPACE_URI))) {
-                    schemaElement.appendChild(namespaceImports[i]);
+                    schemaElement.appendChild(ownerDocument.
+                            importNode(namespaceImports[i], true));
                 }
             }
 
