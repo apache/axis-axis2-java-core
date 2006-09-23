@@ -151,7 +151,11 @@ public class AxisEngine {
         faultContext.addRelatesTo(new RelatesTo(processingContext.getOptions().getMessageId()));
         faultContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                 processingContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
-
+        faultContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+                processingContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION));
+        faultContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
+                processingContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES));
+        
         // register the fault message context
         if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null) {
             processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());

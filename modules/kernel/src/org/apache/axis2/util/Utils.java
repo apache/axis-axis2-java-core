@@ -60,12 +60,16 @@ public class Utils {
         newmsgCtx.setSessionContext(inMessageContext.getSessionContext());
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
         newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
-
+        
         Options oldOptions =
                 inMessageContext.getOptions();
 
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
         newmsgCtx.setTo(oldOptions.getReplyTo());
+        newmsgCtx.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+                inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION));
+        newmsgCtx.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
+                inMessageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES));
 
         // do Target Resolution
         newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(newmsgCtx);
