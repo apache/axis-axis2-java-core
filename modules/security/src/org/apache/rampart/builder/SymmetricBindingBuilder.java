@@ -78,7 +78,13 @@ public class SymmetricBindingBuilder extends BindingBuilder {
         Vector signatureValues = new Vector();
         
         Token encryptionToken = rpd.getEncryptionToken();
-        if(encryptionToken != null) {
+        Vector encrParts = RampartUtil.getEncryptedParts(rmd);
+
+        if(encryptionToken == null && encrParts.size() > 0) {
+            throw new RampartException("encryptionTokenMissing");
+        }
+        
+        if(encryptionToken != null && encrParts.size() > 0) {
             //The encryption token can be an IssuedToken or a 
              //SecureConversationToken
             String tokenId = null;
@@ -113,8 +119,6 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 encrTokenElement = RampartUtil.appendChildToSecHeader(rmd, tok.getToken());
                 attached = true;
             }
-            
-            Vector encrParts = RampartUtil.getEncryptedParts(rmd);
             
             Document doc = rmd.getDocument();
 

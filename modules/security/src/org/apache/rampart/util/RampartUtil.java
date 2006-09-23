@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.description.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
@@ -90,6 +91,11 @@ public class RampartUtil {
         } else {
             cbHandler = (CallbackHandler) rmd.getMsgContext().getProperty(
                     WSHandlerConstants.PW_CALLBACK_REF);
+            if(cbHandler == null) {
+                Parameter param = rmd.getMsgContext().getParameter(
+                        WSHandlerConstants.PW_CALLBACK_REF);
+                cbHandler = (CallbackHandler)param.getValue();
+            }
         }
         
         return cbHandler;
@@ -487,8 +493,10 @@ public class RampartUtil {
     public static Vector getEncryptedParts(RampartMessageData rmd) {
         RampartPolicyData rpd =  rmd.getPolicyData();
         Vector parts = rpd.getEncryptedParts();
-        parts.add(new WSEncryptionPart(addWsuIdToElement(rmd
-                    .getMsgContext().getEnvelope().getBody()), "Content"));
+        SOAPEnvelope envelope = rmd.getMsgContext().getEnvelope();
+        if(rpd.isEncryptBody()) {
+            parts.add(new WSEncryptionPart(addWsuIdToElement(envelope.getBody()), "Content"));
+        }
         
         return parts;
     }

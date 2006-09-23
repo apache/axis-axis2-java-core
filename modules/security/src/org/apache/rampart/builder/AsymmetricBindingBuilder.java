@@ -99,7 +99,11 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
         Token encryptionToken = rpd.getRecipientToken();
         Vector encrParts = RampartUtil.getEncryptedParts(rmd);
 
-        if (encryptionToken != null) {
+        if(encryptionToken == null && encrParts.size() > 0) {
+            throw new RampartException("encryptionTokenMissing");
+        }
+        
+        if (encryptionToken != null && encrParts.size() > 0) {
             if (encryptionToken.isDerivedKeys()) {
                 try {
                     // Set up the encrypted key to use
@@ -141,6 +145,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     encr.setWsConfig(rmd.getConfig());
                     encr.setDocument(doc);
                     encr.setUserInfo(config.getEncryptionUser());
+                    encr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
                     encr.prepare(doc, RampartUtil.getEncryptionCrypto(config));
 
                     Element bstElem = encr.getBinarySecurityTokenElement();
@@ -255,8 +260,6 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     }
                 }
             }
-        } else {
-            throw new RampartException("encryptionTokenMissing");
         }
 
     }
@@ -336,6 +339,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     }
                     
                     dkEncr.setExternalKey(encrKey.getEphemeralKey(), encrKey.getId());
+                    dkEncr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
                     dkEncr.prepare(doc);
                     Element encrDKTokenElem = null;
                     encrDKTokenElem = dkEncr.getdktElement();
@@ -365,6 +369,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     
                     encr.setDocument(doc);
                     encr.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
+                    encr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
                     encr.prepare(doc, RampartUtil.getEncryptionCrypto(rpd
                             .getRampartConfig()));
                     

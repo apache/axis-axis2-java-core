@@ -192,4 +192,57 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             fail(e.getMessage());
         }
     }
+    
+    public void testAsymmBindingTripleDesRSA15() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            
+            String policyXml = "test-resources/policy/rampart-asymm-binding-6-3des-r15.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+            
+            ArrayList list = new ArrayList();
+            
+            list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
+            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+            
+            this.verifySecHeader(list.iterator(), ctx.getEnvelope());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    public void testAsymmBindingTripleDesRSA15DK() {
+        try {
+            MessageContext ctx = getMsgCtx();
+            
+            String policyXml = "test-resources/policy/rampart-asymm-binding-7-3des-r15-DK.xml";
+            Policy policy = this.loadPolicy(policyXml);
+            
+            ctx.setProperty(RampartMessageData.KEY_RAMPART_POLICY, policy);
+            
+            MessageBuilder builder = new MessageBuilder();
+            builder.build(ctx);
+
+            System.out.println(ctx.getEnvelope());
+            
+//            ArrayList list = new ArrayList();
+//            
+//            list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
+//            list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+//            list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
+//            
+//            this.verifySecHeader(list.iterator(), ctx.getEnvelope());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+    
 }
