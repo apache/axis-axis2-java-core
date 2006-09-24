@@ -9,8 +9,6 @@
 <body lang="en-US" dir="ltr">
 <h1 align="center">Apache Axis2 Architecture Guide</h1>
 
-<p><i>-Axis2 Version 1.0</i></p>
-
 <p>This document will give an introduction to Axis2's modular architecture
 with explanations on every module.</p>
 
@@ -409,10 +407,10 @@ happen either in the server or in the Client.</p>
     message by looking at various transport headers, add data into message
     context etc.</li>
   <li><strong>Pre-Dispatch Phase</strong>- The main functionality of the
-    handlers in this phase is to populate message context in order to do
-    the dispatching. As an example, processing of addressing headers of the
-    SOAP message happen in this phase.Addressing handlers extract information
-    and put them in to the message context.</li>
+    handlers in this phase is to populate message context in order to do the
+    dispatching. As an example, processing of addressing headers of the SOAP
+    message happen in this phase.Addressing handlers extract information and
+    put them in to the message context.</li>
   <li><strong>Dispatch Phase</strong> - The Dispatchers run in this phase and
     tries to find the correct service and operation this particular message
     is destined to.<br>
@@ -719,7 +717,6 @@ inside the stub (or the message receiver) that can de-serialize from AXIOM to
 data bound object and serialize from data bound object to AXIOM. For example,
 if the WSDL has an operation called "echoString", once the code is generated
 the following methods will be generated inside the relevant classes.</p>
-
 <pre>public static
 org.apache.axiom.om.OMElementtoOM(org.soapinterop.xsd.EchoStringParamDocument
 param)// This method will handle the serialization.
@@ -727,6 +724,5 @@ param)// This method will handle the serialization.
 public static org.apache.xmlbeans.XmlObject
 fromOM(org.apache.axis2.om.OMElement param, java.lang.Class type) //This
 method will handle the de-serialization.</pre>
-
 </body>
 </html>

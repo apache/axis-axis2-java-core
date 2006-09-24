@@ -9,8 +9,6 @@
 <body lang="en">
 <h1 align="center">Apache Axis2 Installation Guide</h1>
 
-<p><i>-Axis2 Version 1.0</i></p>
-
 <p>This document will give you information on Axis2 distribution packages,
 system prerequisites &amp; setting up environment variables and tools
 followed by detailed instructions on installation methods.</p>
@@ -53,7 +51,7 @@ be installed either as a standalone server or as part of a J2EE compliant
 servlet container. Axis2 is distributed under the Apache License, version
 2.0. You can download Axis2 <a
 href="http://ws.apache.org/axis2/download.cgi">here</a>. Latest release of
-Axis2 is version 1.0.</p>
+Axis2 is version 1.1.</p>
 
 <table width="940" border="1" cellpadding="1">
   <tbody>
@@ -66,10 +64,10 @@ Axis2 is version 1.0.</p>
       <td>Minimal Distribution - Binary</td>
       <td>This distribution is aimed at advanced users who will be embedding
         Axis2. It will contain the minimal runtime required to act as a Web
-        service client and/or a server (axis2-kernel-1.0.jar will contain
+        service client and/or a server (axis2-kernel-1.1.jar will contain
         compiled versions of common and core modules.)</td>
       <td><ul>
-          <li>axis2-kernel-1.0.jar, axis2-adb-1.0.jar</li>
+          <li>axis2-kernel-1.1.jar, axis2-adb-1.1.jar</li>
           <li>third party distributable libraries</li>
           <li>README.TXT and release-notes.html</li>
         </ul>
@@ -102,7 +100,7 @@ Axis2 is version 1.0.</p>
           <li>all the content of minimal-binary distribution</li>
           <li>Contents of codegen and doom modules</li>
           <li>Samples</li>
-          <li>addressing-1.0.mar</li>
+          <li>addressing-1.1.mar</li>
         </ul>
       </td>
     </tr>
@@ -321,6 +319,7 @@ deployed.</p>
   For Axis2 this will be the &lt;webapps&gt;/axis2/WEB-INF/services
   directory. Once a service is uploaded it will be installed instantly.</p>
   <a name="hot_deployment"></a>
+
   <p>Since Axis2 supports <strong>hot deployment</strong> one can drop the
   service jar directly through the file system to the above mentioned
   services directory.It will also cause the service to be automatically
