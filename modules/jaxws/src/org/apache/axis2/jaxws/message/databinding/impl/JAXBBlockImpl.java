@@ -33,10 +33,16 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.XMLPart;
+import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
+import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentUnmarshaller;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * JAXBBlockImpl
@@ -45,6 +51,8 @@ import org.apache.axis2.jaxws.message.impl.BlockImpl;
  */
 public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
+    private static final Log log = LogFactory.getLog(JAXBBlockImpl.class);
+    
 	protected static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 	protected static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 	/**
@@ -60,8 +68,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 				(qName==null) ? getQName(busObject, (JAXBContext) busContext): qName , 
 				factory);
 	}
-	
-	
 
 	/**
 	 * Called by JAXBBlockFactory
@@ -78,9 +84,23 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	protected Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, MessageException {
 		try {
 			// Very easy, use the Context to get the Unmarshaller.
-			// Use the marshaller to get the jaxb object
+			// Use the Unmarshaller to get the jaxb object.
 			JAXBContext jc = (JAXBContext) busContext;
-			Unmarshaller u = jc.createUnmarshaller();
+            Unmarshaller u = jc.createUnmarshaller();
+            
+            // If MTOM is enabled, add in the AttachmentUnmarshaller
+            if (isMTOMEnabled()) {
+                if (log.isDebugEnabled()) 
+                    log.debug("Adding JAXBAttachmentUnmarshaller to Unmarshaller");
+                
+                XMLPart xp = getParent();
+                Message msg = xp.getParent();
+                
+                JAXBAttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller();
+                aum.setMessage(msg);
+                u.setAttachmentUnmarshaller(aum);
+            }
+			
 			Object jaxb = u.unmarshal(reader);
 			setQName(getQName(jaxb, jc));
 			return jaxb;
@@ -119,7 +139,21 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 			// Use the marshaller to write the object.  
 			JAXBContext jc = (JAXBContext) busContext;
 			Marshaller m = jc.createMarshaller();
-			m.marshal(busObject, writer);
+            
+			// If MTOM is enabled, add in the AttachmentMarshaller.
+            if (isMTOMEnabled()) {
+                if (log.isDebugEnabled())
+                    log.debug("Adding JAXBAttachmentMarshaller to Marshaller");
+                
+                XMLPart xp = getParent();
+                Message msg = xp.getParent();
+                
+                JAXBAttachmentMarshaller am = new JAXBAttachmentMarshaller();
+                am.setMessage(msg);
+                m.setAttachmentMarshaller(am);
+            }
+                        
+            m.marshal(busObject, writer);
 		} catch(JAXBException je) {
 			// TODO NLS
 			throw ExceptionFactory.makeMessageException(je);
@@ -136,4 +170,15 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 		JAXBIntrospector jbi = jbc.createJAXBIntrospector();
 		return jbi.getElementName(jaxb);
 	}
+    
+    private boolean isMTOMEnabled() {
+        XMLPart xp = getParent();
+        if (xp != null) {
+            Message msg = xp.getParent();
+            if (msg != null && msg.isMTOMEnabled())
+                return true;
+        }
+        
+        return false;
+    }
 }

@@ -27,6 +27,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
@@ -57,6 +58,7 @@ public abstract class BlockImpl implements Block {
 	private QName qName;
 	private BlockFactory factory;
 	private boolean consumed = false;
+    private XMLPart parent;
 	
 	/**
 	 * A Block has the following components
@@ -99,7 +101,15 @@ public abstract class BlockImpl implements Block {
 	public Object getBusinessContext() {
 		return busContext;
 	}
-
+    
+    public XMLPart getParent() {
+        return parent;
+    }
+    
+    public void setParent(XMLPart p) {
+        parent = p;
+    }
+     
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.Block#getBusinessObject(boolean)
 	 */

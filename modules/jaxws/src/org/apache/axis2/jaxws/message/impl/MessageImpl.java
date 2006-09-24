@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message.impl;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.soap.MessageFactory;
@@ -53,6 +54,7 @@ public class MessageImpl implements Message {
 	Protocol protocol = Protocol.unknown; // the protocol, defaults to unknown
 	XMLPart xmlPart = null; // the representation of the xmlpart
 	List<Attachment> attachments = new ArrayList<Attachment>(); // non-xml parts
+    boolean mtomEnabled;
 	
 	/**
 	 * MessageImpl should be constructed via the MessageFactory.
@@ -70,6 +72,7 @@ public class MessageImpl implements Message {
 		}
 		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
 		xmlPart = factory.create(protocol);
+        xmlPart.setParent(this);
 	}
 	
 	/**
@@ -81,6 +84,7 @@ public class MessageImpl implements Message {
 		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
 		xmlPart = factory.createFrom(root);
 		protocol = xmlPart.getProtocol();
+        xmlPart.setParent(this);
 	}
 	
 	/**
@@ -92,6 +96,7 @@ public class MessageImpl implements Message {
 		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
 		xmlPart = factory.createFrom(root);
 		protocol = xmlPart.getProtocol();
+        xmlPart.setParent(this);
 	}
 
 	/* (non-Javadoc)
@@ -149,6 +154,23 @@ public class MessageImpl implements Message {
 	public List<Attachment> getAttachments() {
 		return attachments;
 	}
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.Message#getAttachment(java.lang.String)
+     */
+    public Attachment getAttachment(String cid) {
+        if (attachments != null) {
+           Iterator<Attachment> itr = attachments.iterator();
+           while (itr.hasNext()) {
+               Attachment a = itr.next();
+               if (a.getContentID().equals(cid))
+                   return a;
+           }
+       }
+        
+       return null;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getProtocol()
@@ -202,7 +224,7 @@ public class MessageImpl implements Message {
 	}
 
 	public void setBodyBlock(int index, Block block) throws MessageException {
-		xmlPart.setBodyBlock(index, block);
+        xmlPart.setBodyBlock(index, block);
 	}
 
 	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
@@ -212,4 +234,28 @@ public class MessageImpl implements Message {
 	public String traceString(String indent) {
 		return xmlPart.traceString(indent);
 	}
+    
+    public void addAttachment(Attachment data) {
+        attachments.add(data);
+    }
+    
+    //FIXME: This doesn't make much sense, but has to be here because Message extends
+    //XMLPart.  
+    public Message getParent() {
+        throw new UnsupportedOperationException();
+    }
+    
+    //FIXME: This doesn't make much sense, but has to be here because Message extends
+    //XMLPart.  
+    public void setParent(Message msg) { 
+        throw new UnsupportedOperationException();
+    }
+    
+    public boolean isMTOMEnabled() {
+        return mtomEnabled;
+    }
+    
+    public void setMTOMEnabled(boolean b) {
+        mtomEnabled = b;
+    }
 }

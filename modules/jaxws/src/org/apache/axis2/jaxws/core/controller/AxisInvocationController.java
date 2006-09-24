@@ -16,19 +16,24 @@
  */
 package org.apache.axis2.jaxws.core.controller;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
@@ -46,9 +51,12 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
+import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.impl.AttachmentImpl;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.CallbackReceiver;
@@ -114,7 +122,7 @@ public class AxisInvocationController implements InvocationController {
         ServiceClient svcClient = ic.getServiceClient();
         OperationClient opClient = createOperationClient(svcClient, operationName);
         
-        setupProperties(requestMsgCtx.getProperties(), opClient.getOptions());
+        setupProperties(requestMsgCtx, opClient.getOptions());
         
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
@@ -145,7 +153,10 @@ public class AxisInvocationController implements InvocationController {
                 // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
                 axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
                     Boolean.TRUE);
-                axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
+                Map props = axisRequestMsgCtx.getOptions().getProperties();
+                props.putAll(requestMsgCtx.getProperties());
+                
+                axisRequestMsgCtx.getOptions().setProperties(props);
                 if (log.isDebugEnabled()) {
                     log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
                 }
@@ -179,6 +190,32 @@ public class AxisInvocationController implements InvocationController {
                 // Setup the response MessageContext
                 responseMsgCtx = new MessageContext(axisResponseMsgCtx);
                 responseMsgCtx.setMessage(responseMsg);
+                
+                //FIXME: This should be revisited when we re-work the MTOM support.
+                //This destroys performance by forcing a double pass through the message.
+                //If attachments are found, we must find all of the OMText nodes and 
+                //replace them with <xop:include> elements so they can be processed
+                //correctly by JAXB.
+                if (axisResponseMsgCtx.getProperty(MTOMConstants.ATTACHMENTS) != null) { 
+                    Message response = responseMsgCtx.getMessage();
+                    response.setMTOMEnabled(true);
+                    
+                    ArrayList<OMText> binaryNodes = AttachmentUtils.findBinaryNodes(
+                            axisResponseMsgCtx.getEnvelope());
+                    if (binaryNodes != null) {
+                        Iterator<OMText> itr = binaryNodes.iterator();
+                        while (itr.hasNext()) {
+                            OMText node = itr.next();
+                            OMElement xop = AttachmentUtils.makeXopElement(node);
+                            node.getParent().addChild(xop);
+                            node.detach();
+                            
+                            Attachment a = new AttachmentImpl((DataHandler) node.getDataHandler(), 
+                                    node.getContentID());
+                            response.addAttachment(a);
+                        }
+                    }
+                }
             } catch (AxisFault e) {
                 throw ExceptionFactory.makeWebServiceException(e);
             } catch (MessageException e) { 
@@ -240,7 +277,7 @@ public class AxisInvocationController implements InvocationController {
 
         OperationClient opClient = createOperationClient(svcClient, operationName);
         
-        setupProperties(requestMsgCtx.getProperties(), opClient.getOptions());
+        setupProperties(requestMsgCtx, opClient.getOptions());
         
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
@@ -269,7 +306,9 @@ public class AxisInvocationController implements InvocationController {
                 // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
                 axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
                     Boolean.TRUE);
-                axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
+                Map props = axisRequestMsgCtx.getOptions().getProperties();
+                props.putAll(requestMsgCtx.getProperties());
+                axisRequestMsgCtx.getOptions().setProperties(props);
                 if (log.isDebugEnabled()) {
                     log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
                 }
@@ -336,7 +375,7 @@ public class AxisInvocationController implements InvocationController {
 
         OperationClient opClient = createOperationClient(svcClient, operationName);
         
-        setupProperties(requestMsgCtx.getProperties(), opClient.getOptions());
+        setupProperties(requestMsgCtx, opClient.getOptions());
         
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
@@ -407,7 +446,9 @@ public class AxisInvocationController implements InvocationController {
                 // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
                 axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
                     Boolean.TRUE);
-                axisRequestMsgCtx.setProperties(requestMsgCtx.getProperties());
+                Map props = axisRequestMsgCtx.getOptions().getProperties();
+                props.putAll(requestMsgCtx.getProperties());
+                axisRequestMsgCtx.getOptions().setProperties(props);
                 if (log.isDebugEnabled()) {
                     log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
                 }
@@ -537,7 +578,8 @@ public class AxisInvocationController implements InvocationController {
      * moved over to when the property is set.  This should not be in the path
      * of performance.
      */
-    private void setupProperties(Map<String, Object> properties, Options ops) {
+    private void setupProperties(MessageContext mc, Options ops) {
+        Map<String, Object> properties = mc.getProperties();
         for (Iterator<String> it = properties.keySet().iterator(); it.hasNext(); ) {
             String key = it.next();
             Object value = properties.get(key);
@@ -553,6 +595,12 @@ public class AxisInvocationController implements InvocationController {
             }
             
             ops.setProperty(key, value);
+        }
+        
+        // Enable MTOM
+        Message msg = mc.getMessage();
+        if (msg.isMTOMEnabled()) {
+            ops.setProperty(Configuration.ENABLE_MTOM, "true");
         }
     }
     

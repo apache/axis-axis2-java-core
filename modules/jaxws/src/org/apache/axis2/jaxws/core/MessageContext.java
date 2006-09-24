@@ -76,6 +76,7 @@ public class MessageContext {
             
             message = newMessage;
         }
+
     }
     
     public Map<String, Object> getProperties() {   

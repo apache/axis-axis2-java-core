@@ -60,7 +60,7 @@
      </schema>
    </wsdl:types>
  
- <wsdl:message name="addEntryRequest">
+  <wsdl:message name="addEntryRequest">
     <wsdl:part element="impl:addEntry" name="parameters"/>
   </wsdl:message>
  

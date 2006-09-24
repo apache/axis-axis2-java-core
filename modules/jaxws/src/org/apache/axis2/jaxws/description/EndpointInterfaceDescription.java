@@ -85,7 +85,7 @@ public class EndpointInterfaceDescription {
     
     EndpointInterfaceDescription(Class sei, EndpointDescription parent) {
         seiClass = sei;
-
+        
         // Per JSR-181 all methods on the SEI are mapped to operations regardless
         // of whether they include an @WebMethod annotation.  That annotation may
         // be present to customize the mapping, but is not required (p14)
@@ -94,6 +94,8 @@ public class EndpointInterfaceDescription {
             OperationDescription operation = new OperationDescription(method, this);
             addOperation(operation);
         }
+        
+        parentEndpointDescription = parent;
     }
     
     private static Method[] getSEIMethods(Class sei) {
@@ -233,6 +235,10 @@ public class EndpointInterfaceDescription {
     
     public OperationDescription[] getOperations() {
         return operationDescriptions.toArray(new OperationDescription[0]);
+    }
+    
+    public EndpointDescription getEndpointDescription() {
+        return parentEndpointDescription;
     }
     
     /**

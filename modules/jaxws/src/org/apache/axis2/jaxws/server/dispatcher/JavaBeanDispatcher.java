@@ -17,37 +17,19 @@
 package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.namespace.QName;
-import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.soap.SOAPBinding;
 
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
-import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.factory.BlockFactory;
-import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
-import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -105,10 +87,22 @@ public class JavaBeanDispatcher extends JavaDispatcher {
                 MessageFactory.class);
         Message message = factory.create(mc.getMessage().getProtocol());
         message.setBodyBlock(0, responseBlock);
-
+        
         MessageContext responseMsgCtx = MessageContextUtils.createMessageMessageContext(mc);
         responseMsgCtx.setMessage(message);
         
+        //Enable MTOM if necessary
+        EndpointInterfaceDescription epInterfaceDesc = opDesc.getEndpointInterfaceDescription();
+        EndpointDescription epDesc = epInterfaceDesc.getEndpointDescription();
+        
+        String bindingType = epDesc.getBindingTypeValue();
+        if (bindingType != null) {
+            if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+                bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                message.setMTOMEnabled(true);
+            }
+        }
+         
         return responseMsgCtx;
     }
     

@@ -19,11 +19,11 @@ package org.apache.axis2.jaxws.client;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.AxisController;
@@ -114,6 +114,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         invocationContext.setRequestMessageContext(requestMsgCtx);
         
         Message requestMsg = createMessageFromValue(obj);
+        setupMessageProperties(requestMsg);
         requestMsgCtx.setMessage(requestMsg);
         
         // Copy the properties from the request context into the MessageContext
@@ -150,6 +151,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         invocationContext.setRequestMessageContext(requestMsgCtx);
        
         Message requestMsg = createMessageFromValue(obj);
+        setupMessageProperties(requestMsg);
         requestMsgCtx.setMessage(requestMsg);
        
         // Copy the properties from the request context into the MessageContext
@@ -180,6 +182,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         invocationContext.setRequestMessageContext(requestMsgCtx);
         
         Message requestMsg = createMessageFromValue(obj);
+        setupMessageProperties(requestMsg);
         requestMsgCtx.setMessage(requestMsg);
         
         // Copy the properties from the request context into the MessageContext
@@ -258,6 +261,19 @@ public abstract class BaseDispatch<T> extends BindingProvider
 
     public PortData getPort() {
         return port;
+    }
+    
+    /*
+     * Configure any properties that will be needed on the Message
+     */
+    private void setupMessageProperties(Message msg) {
+        // If the user has enabled MTOM on the SOAPBinding, we need
+        // to make sure that gets pushed to the Message object.
+        if (binding != null && binding instanceof SOAPBinding) {
+            SOAPBinding soapBinding = (SOAPBinding) binding;
+            if (soapBinding.isMTOMEnabled())
+                msg.setMTOMEnabled(true);
+        }
     }
 
 }

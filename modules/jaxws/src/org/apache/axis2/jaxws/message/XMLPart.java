@@ -77,7 +77,22 @@ public interface XMLPart {
 	 * @return true if the block is consumed (a method was called with consume=true)
 	 */
 	public boolean isConsumed();
-	
+    
+    /**
+     * getParent
+     * Get the Message object that this XMLPart is attached to, if it is 
+     * attached to one at all.
+     * @return
+     */
+    public Message getParent();
+    
+    /**
+     * setParent
+     * Set the Message object that will hold this XMLPart
+     * @param m
+     */
+    public void setParent(Message m);
+    
 	/**
 	 * getAsEnvelope
 	 * Get the xml part as a read/write SOAPEnvelope
@@ -206,5 +221,5 @@ public interface XMLPart {
 	 * @return String containing trace information
 	 */
 	public String traceString(String indent);
-	
+    
 }

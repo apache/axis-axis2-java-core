@@ -16,13 +16,24 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.jaxws.message.Attachment;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -82,6 +93,33 @@ public class XMLPartImpl extends  XMLPartBase {
 		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);  
 		// Create and return the OM Envelope
 		org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
+        
+        // If we have MTOM attachments, we need to replace the <xop:include>
+        // elements with OMText binary nodes.
+        Message msg = getParent();
+        if (msg.isMTOMEnabled()) {
+            // First find all of the <xop:include> elements
+            ArrayList<OMElement> xops = AttachmentUtils.findXopElements(omEnvelope);
+            
+            if (xops != null) {
+                QName href = new QName("","href");
+                Iterator<OMElement> itr = xops.iterator();
+                while (itr.hasNext()) {
+                    OMElement xop = itr.next();
+                    String cid = xop.getAttributeValue(href);
+                    
+                    // Then find their corresponding Attachment object
+                    Attachment a = msg.getAttachment(cid);
+                    
+                    // Convert the <xop:include> OMElement into an OMText
+                    // binary node and replace it in the tree.                    
+                    OMText binaryNode = AttachmentUtils.makeBinaryOMNode(xop, a);
+                    xop.insertSiblingAfter(binaryNode);
+                    xop.detach();
+                }
+            }
+        }
+        
 		return omEnvelope;
 	}
 

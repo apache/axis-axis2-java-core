@@ -44,6 +44,5 @@ public class BindingImpl implements Binding {
 			handlers = new ArrayList<Handler>();
 		this.handlers = list;
 	}
-
 	
 }

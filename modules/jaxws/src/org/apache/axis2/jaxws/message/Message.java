@@ -47,10 +47,27 @@ public interface Message extends XMLPart {
 	 */
 	public SOAPMessage getAsSOAPMessage() throws MessageException;
 	
-	/**
+    /**
+     * Adds an attachment part to the message
+     * @param Attachment - the content to add
+     */
+	public void addAttachment(Attachment a);
+    
+    /**
 	 * Get the list of attachments for the message
 	 * @return List<Attachments>
 	 */
 	public List<Attachment> getAttachments();
+    
+    /**
+     * Get the attachment identified by the contentID 
+     * @param cid
+     * @return
+     */
+    public Attachment getAttachment(String cid);
+    
+    public boolean isMTOMEnabled();
+    
+    public void setMTOMEnabled(boolean b);
 	
 }

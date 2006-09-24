@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.apache.axis2.jaxws.DispatchTestSuite;
+import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationProviderImplDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests;
@@ -40,6 +41,7 @@ import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.provider.*;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
+import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.proxy.ProxyNonWrappedTests;
@@ -62,6 +64,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SAAJConverterTests.class);
         suite.addTestSuite(XMLStreamReaderSplitterTests.class);
         suite.addTestSuite(SOAP12Tests.class);
+        suite.addTestSuite(MTOMSerializationTests.class);
         
         suite.addTestSuite(WSDLTests.class);
         suite.addTestSuite(ServiceDescriptionTests.class);
@@ -84,6 +87,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ExceptionFactoryTests.class);
 
         suite.addTestSuite(AddressBookTests.class);
+        suite.addTestSuite(MtomSampleTests.class);
         suite.addTestSuite(NonWrapTests.class);
         suite.addTestSuite(WrapTests.class);
         suite.addTestSuite(AddNumbersTests.class);

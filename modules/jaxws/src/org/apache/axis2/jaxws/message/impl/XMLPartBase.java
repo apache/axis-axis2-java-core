@@ -29,6 +29,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -88,6 +89,8 @@ public abstract class XMLPartBase implements XMLPart {
 	static final int SOAPENVELOPE = 2;
 	static final int SPINE = 3;
 	boolean consumed = false;
+    
+    Message parent;
 	
 	
 	/**
@@ -204,7 +207,8 @@ public abstract class XMLPartBase implements XMLPart {
 		default:
 			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("XMLPartImplErr2"), null);
 		}
-		setContent(spine, SPINE);
+		spine.setParent(parent);
+        setContent(spine, SPINE);
 		return spine;
 	}
 	
@@ -317,7 +321,22 @@ public abstract class XMLPartBase implements XMLPart {
 	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
 		getContentAsXMLSpine().setHeaderBlock(namespace, localPart, block);
 	}
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.XMLPart#getParent()
+     */
+    public Message getParent() {
+        return parent;
+    }
 
+    /*
+     * Set the backpointer to this XMLPart's parent Message
+     */
+    public void setParent(Message p) {
+        parent = p;
+    }
+    
 	/**
 	 * Convert SOAPEnvelope into an OM tree
 	 * @param se SOAPEnvelope

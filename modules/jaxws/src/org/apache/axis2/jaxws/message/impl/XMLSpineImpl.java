@@ -38,6 +38,7 @@ import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -70,6 +71,7 @@ class XMLSpineImpl implements XMLSpine {
 	private List<Block> detailBlocks = new ArrayList<Block>();
 	private boolean consumed = false;
 	private Iterator bodyIterator = null;
+    private Message parent;
 
 	/**
 	 * Create a lightweight representation of this protocol
@@ -163,8 +165,9 @@ class XMLSpineImpl implements XMLSpine {
 					throw ExceptionFactory.makeMessageException(xse);
 				}
 				blocks.add(block);
+                block.setParent(this);
 			} else {
-				// Non-elements are ignored
+				System.out.println("NON-ELEMENT FOUND: " +  node.getClass().getName());
 			}
 		}
 	}
@@ -196,6 +199,21 @@ class XMLSpineImpl implements XMLSpine {
 	public Protocol getProtocol() {
 		return protocol;
 	}
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.XMLPart#getParent()
+     */
+    public Message getParent() {
+        return parent;
+    }
+    
+    /*
+     * Set the backpointer to this XMLPart's parent Message
+     */
+    public void setParent(Message p) {
+        parent = p;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#outputTo(javax.xml.stream.XMLStreamWriter, boolean)
@@ -261,6 +279,7 @@ class XMLSpineImpl implements XMLSpine {
 			advanceIterator(bodyIterator, bodyBlocks, true);
 		}
 		bodyBlocks.add(index, block);
+        block.setParent(this);
 	}
 
 	public void removeBodyBlock(int index) throws MessageException {
@@ -293,6 +312,7 @@ class XMLSpineImpl implements XMLSpine {
 	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
 		int index = getHeaderBlockIndex(namespace, localPart);
 		headerBlocks.set(index, block);
+        block.setParent(this);
 	}
 
 	/**

@@ -30,5 +30,22 @@
           </xs:sequence>
        </xs:complexType>
     </xs:element>
+    
+    <xs:element name="sendText">
+       <xs:complexType>
+          <xs:sequence>
+             <xs:element nillable="false" name="input" 
+                type="xs:base64Binary" xmime:expectedContentType="text/xml"/>
+          </xs:sequence>
+       </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="sendTextResponse">
+       <xs:complexType>
+          <xs:sequence>
+             <xs:element minOccurs="0" maxOccurs="1" name="output" type="tns:ImageDepot"/>
+          </xs:sequence>
+       </xs:complexType>
+    </xs:element>
 
 </xs:schema>

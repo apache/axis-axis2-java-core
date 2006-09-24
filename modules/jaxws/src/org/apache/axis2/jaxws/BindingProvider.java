@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  * Copyright 2006 International Business Machines Corp.
@@ -23,11 +22,13 @@ import java.util.Map;
 
 import javax.xml.ws.Binding;
 
+import org.apache.axis2.jaxws.binding.SOAPBinding;
 
 public class BindingProvider implements javax.xml.ws.BindingProvider {
 
 	protected Map<String, Object> requestContext;
     protected Map<String, Object> responseContext;
+    protected Binding binding;
     
     public BindingProvider() {
         requestContext = new Hashtable<String,Object>();
@@ -37,11 +38,13 @@ public class BindingProvider implements javax.xml.ws.BindingProvider {
         requestContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, new Boolean(false));
         requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, new Boolean(false));
         requestContext.put(BindingProvider.SOAPACTION_URI_PROPERTY, "");
+        
+        //The default Binding is the SOAPBinding
+        binding = new SOAPBinding();
     }
     
     public Binding getBinding() {
-        // TODO 
-        return null;
+        return binding;
     }
 
     public Map<String, Object> getRequestContext() {
