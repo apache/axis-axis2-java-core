@@ -29,67 +29,78 @@ import javax.xml.stream.XMLStreamWriter;
  * Rampart policy model bean to capture Rampart configuration assertion info.
  * 
  * Example:
-<pre>
-    <ramp:RampartConfig xmlns:ramp="http://ws.apache.org/rampart/policy"> 
-        <ramp:user>alice</ramp:user>
-        <ramp:encryptionUser>bob</ramp:encryptionUser>
-        <ramp:passwordCallbackClass>org.apache.axis2.security.PWCallback</ramp:passwordCallbackClass>
-        <ramp:timestampTTL>300</ramp:timestampTTL>
-        <ramp:tokenStoreClass>org.apache.rahas.StorageImpl</ramp:tokenStoreClass>
-        
-        <ramp:signatureCrypto>
-            <ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
-                <ramp:property name="keystoreType">JKS</ramp:property>
-                <ramp:property name="keystoreFile">/path/to/file.jks</ramp:property>
-                <ramp:property name="keystorePassword">password</ramp:property>
-            </ramp:crypto>
-        </ramp:signatureCrypto>
-        
-        <ramp:tokenIssuerPolicy>
-            <wsp:Policy>
-            ....
-            ....
-            </wsp:Policy>
-        </ramp:tokenIssuerPolicy>
-    </ramp:RampartConfig>
-
-</pre>
+ * 
+ * <pre>
+ *  &lt;ramp:RampartConfig xmlns:ramp=&quot;http://ws.apache.org/rampart/policy&quot;&gt; 
+ *  &lt;ramp:user&gt;alice&lt;/ramp:user&gt;
+ *  &lt;ramp:encryptionUser&gt;bob&lt;/ramp:encryptionUser&gt;
+ *  &lt;ramp:passwordCallbackClass&gt;org.apache.axis2.security.PWCallback&lt;/ramp:passwordCallbackClass&gt;
+ *  &lt;ramp:timestampTTL&gt;300&lt;/ramp:timestampTTL&gt;
+ *  &lt;ramp:tokenStoreClass&gt;org.apache.rahas.StorageImpl&lt;/ramp:tokenStoreClass&gt;
+ *  
+ *  &lt;ramp:signatureCrypto&gt;
+ *  &lt;ramp:crypto provider=&quot;org.apache.ws.security.components.crypto.Merlin&quot;&gt;
+ *  &lt;ramp:property name=&quot;keystoreType&quot;&gt;JKS&lt;/ramp:property&gt;
+ *  &lt;ramp:property name=&quot;keystoreFile&quot;&gt;/path/to/file.jks&lt;/ramp:property&gt;
+ *  &lt;ramp:property name=&quot;keystorePassword&quot;&gt;password&lt;/ramp:property&gt;
+ *  &lt;/ramp:crypto&gt;
+ *  &lt;/ramp:signatureCrypto&gt;
+ *  
+ *  &lt;ramp:tokenIssuerPolicy&gt;
+ *  &lt;wsp:Policy&gt;
+ *  ....
+ *  ....
+ *  &lt;/wsp:Policy&gt;
+ *  &lt;/ramp:tokenIssuerPolicy&gt;
+ *  &lt;/ramp:RampartConfig&gt;
+ * 
+ * </pre>
  * 
  */
 public class RampartConfig implements Assertion {
 
     public final static String NS = "http://ws.apache.org/rampart/policy";
-    
+
+    public final static String PREFIX = "rampart";
+
     public final static String RAMPART_CONFIG_LN = "RampartConfig";
-    
+
     public final static String USER_LN = "user";
-    
+
     public final static String ENCRYPTION_USER_LN = "encryptionUser";
-    
+
     public final static String PW_CB_CLASS_LN = "passwordCallbackClass";
-    
+
     public final static String SIG_CRYPTO_LN = "signatureCrypto";
-    
+
     public final static String ENCR_CRYPTO_LN = "encryptionCypto";
-    
+
     public final static String DEC_CRYPTO_LN = "decryptionCrypto";
-    
+
     public final static String TS_TTL_LN = "timestampTTL";
-    
+
     public final static String TOKEN_STORE_CLASS_LN = "tokenStoreClass";
-    
+
     public final static String TOKEN_ISSUER_POLICY_LN = "tokenIssuerPolicy";
-    
+
     private String user;
+
     private String encryptionUser;
+
     private String pwCbClass;
+
     private CryptoConfig sigCryptoConfig;
+
     private CryptoConfig encrCryptoConfig;
+
     private CryptoConfig decCryptoConfig;
+
     private String timestampTTL;
+
     private String tokenStoreClass;
+
     private Policy tokenIssuerPolicy;
-    
+
     /**
      * @return Returns the tokenStoreClass.
      */
@@ -98,7 +109,8 @@ public class RampartConfig implements Assertion {
     }
 
     /**
-     * @param tokenStoreClass The tokenStoreClass to set.
+     * @param tokenStoreClass
+     *            The tokenStoreClass to set.
      */
     public void setTokenStoreClass(String tokenStoreClass) {
         this.tokenStoreClass = tokenStoreClass;
@@ -140,8 +152,6 @@ public class RampartConfig implements Assertion {
         return sigCryptoConfig;
     }
 
-
-    
     public void setSigCryptoConfig(CryptoConfig sigCryptoConfig) {
         this.sigCryptoConfig = sigCryptoConfig;
     }
@@ -155,7 +165,7 @@ public class RampartConfig implements Assertion {
     }
 
     public QName getName() {
-        return new QName(NS,RAMPART_CONFIG_LN);
+        return new QName(NS, RAMPART_CONFIG_LN);
     }
 
     public boolean isOptional() {
@@ -169,10 +179,54 @@ public class RampartConfig implements Assertion {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        String prefix = writer.getPrefix(NS);
+
+        if (prefix == null) {
+            prefix = PREFIX;
+            writer.setPrefix(PREFIX, NS);
+        }
+
+        writer.writeStartElement(PREFIX, RAMPART_CONFIG_LN, NS);
+        writer.writeNamespace(prefix, NS);
+
+        if (getUser() != null) {
+            writer.writeStartElement(NS, USER_LN);
+            writer.writeCharacters(getUser());
+            writer.writeEndElement();
+        }
+        
+        if (getEncryptionUser() != null) {
+            writer.writeStartElement(NS, ENCRYPTION_USER_LN);
+            writer.writeCharacters(getEncryptionUser());
+            writer.writeEndElement();
+        }
+        
+        if (getPwCbClass() != null) {
+            writer.writeStartElement(NS, PW_CB_CLASS_LN);
+            writer.writeCharacters(getPwCbClass());
+            writer.writeEndElement();
+        }
+        
+        if (getTimestampTTL() != null) {
+            writer.writeStartElement(NS, TS_TTL_LN);
+            writer.writeCharacters(getTimestampTTL());
+            writer.writeEndElement();
+        }
+        
+        if (getTokenStoreClass() != null) {
+            writer.writeStartElement(NS, TOKEN_STORE_CLASS_LN);
+            writer.writeCharacters(getTokenStoreClass());
+            writer.writeEndElement();
+        }
+        
+        if (sigCryptoConfig != null) {
+            sigCryptoConfig.serialize(writer);
+        }
+
+        writer.writeEndElement();
+
     }
-    
+
     public boolean equal(PolicyComponent policyComponent) {
         throw new UnsupportedOperationException("TODO");
     }
@@ -189,7 +243,8 @@ public class RampartConfig implements Assertion {
     }
 
     /**
-     * @param timestampTTL The timestampTTL to set.
+     * @param timestampTTL
+     *            The timestampTTL to set.
      */
     public void setTimestampTTL(String timestampTTL) {
         this.timestampTTL = timestampTTL;
@@ -203,11 +258,11 @@ public class RampartConfig implements Assertion {
     }
 
     /**
-     * @param tokenIssuerPolicy The tokenIssuerPolicy to set.
+     * @param tokenIssuerPolicy
+     *            The tokenIssuerPolicy to set.
      */
     public void setTokenIssuerPolicy(Policy tokenIssuerPolicy) {
         this.tokenIssuerPolicy = tokenIssuerPolicy;
     }
-
 
 }

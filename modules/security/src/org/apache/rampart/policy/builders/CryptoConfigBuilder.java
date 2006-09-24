@@ -32,8 +32,9 @@ public class CryptoConfigBuilder implements AssertionBuilder {
 
     public Assertion build(OMElement element, AssertionBuilderFactory factory)
             throws IllegalArgumentException {
+        
         CryptoConfig cryptoCofig = new CryptoConfig();
-
+        
         OMAttribute attribute = element.getAttribute(new QName(CryptoConfig.PROVIDER_ATTR));
         cryptoCofig.setProvider(attribute.getAttributeValue().trim());
         

@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import java.util.Iterator;
 import java.util.Properties;
 
 /**
@@ -76,8 +77,32 @@ public class CryptoConfig implements Assertion {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        String prefix = writer.getPrefix(RampartConfig.NS);
+        
+        if (prefix == null) {
+            prefix = RampartConfig.NS;
+            writer.setPrefix(prefix, RampartConfig.NS);
+        }
+        
+        writer.writeStartElement(prefix, CRYPTO_LN, RampartConfig.NS);
+        
+        if (getProvider() != null) {
+            writer.writeAttribute(PROVIDER_ATTR, getProvider());
+        }
+        
+        String key;
+        String value;
+        
+        for (Iterator iterator = prop.keySet().iterator(); iterator.hasNext();) {
+            key = (String) iterator.next();
+            value = prop.getProperty(key);
+            writer.writeStartElement(RampartConfig.NS, PROPERTY_LN);
+            writer.writeAttribute("Name", key);
+            writer.writeCharacters(value);
+            writer.writeEndElement();
+        }
+        
+        writer.writeEndElement();
     }
     
     public boolean equal(PolicyComponent policyComponent) {
@@ -87,4 +112,5 @@ public class CryptoConfig implements Assertion {
     public short getType() {
         return Constants.TYPE_ASSERTION;
     }
+    
 }
