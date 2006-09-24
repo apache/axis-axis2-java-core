@@ -42,7 +42,8 @@ public class SimpleTypeMapper {
     private static final String W_BOOLEAN = "java.lang.Boolean";
     private static final String W_CHAR = "java.lang.Character";
     private static final String W_FLOAT = "java.lang.Float";
-    private static final String W_CALANDER = "java.util.Calendar";
+    private static final String W_CALENDAR = "java.util.Calendar";
+    private static final String W_DATE = "java.util.Date"; 
     private static final String ARRAY_LIST = "java.util.ArrayList";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
@@ -88,8 +89,10 @@ public class SimpleTypeMapper {
             return new Float(value.getText());
         } else if (parameter.getName().equals(W_CHAR)) {
             return new Character(value.getText().toCharArray()[0]);
-        } else if (parameter.getName().equals(W_CALANDER)) {
+        } else if (parameter.getName().equals(W_CALENDAR)) {
             return makeCalendar(value.getText(), false);
+        } else if (parameter.getName().equals(W_DATE)) {
+            return makeCalendar(value.getText(), true); 
         } else {
             return null;
         }
@@ -167,8 +170,10 @@ public class SimpleTypeMapper {
             return true;
         } else if (objClassName.equals(W_FLOAT)) {
             return true;
-        } else if (objClassName.equals(W_CALANDER)) {
+        } else if (objClassName.equals(W_CALENDAR)) {
             return true;
+        } else if (objClassName.equals(W_DATE)) {
+            return true; 
         } else return objClassName.equals(W_CHAR);
     }
 
