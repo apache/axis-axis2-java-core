@@ -761,6 +761,9 @@ public class ConverterUtil {
     public static String getStringFromDatahandler(DataHandler dataHandler) {
         try {
             InputStream inStream;
+            if(dataHandler == null) {
+                return "";
+            }
             inStream = dataHandler.getDataSource().getInputStream();
             byte[] data = IOUtils.getStreamAsByteArray(inStream);
             return Base64.encode(data);
