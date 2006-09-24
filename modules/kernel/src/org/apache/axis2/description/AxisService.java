@@ -32,7 +32,6 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
-import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -1077,7 +1076,7 @@ public class AxisService extends AxisDescription {
                 while (operations.hasNext()) {
                     AxisOperation axisOperation = (AxisOperation) operations.next();
                     phaseResolver.disEngageModulefromOperationChian(module, axisOperation);
-                    axisOperation.removeFromEngageModueList(module);
+                    axisOperation.removeFromEngagedModuleList(module);
                 }
             } else {
                 if (isEngaged(module.getName())) {
@@ -1087,7 +1086,7 @@ public class AxisService extends AxisDescription {
                     while (operations.hasNext()) {
                         AxisOperation axisOperation = (AxisOperation) operations.next();
                         phaseResolver.disEngageModulefromOperationChian(module, axisOperation);
-                        axisOperation.removeFromEngageModueList(module);
+                        axisOperation.removeFromEngagedModuleList(module);
                     }
                 }
             }

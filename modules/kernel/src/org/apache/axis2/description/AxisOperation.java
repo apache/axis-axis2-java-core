@@ -198,7 +198,7 @@ public abstract class AxisOperation extends AxisDescription
      *
      * @param module
      */
-    public void removeFromEngageModueList(AxisModule module) {
+    public void removeFromEngagedModuleList(AxisModule module) {
         engagedModules.remove(module);
         log.debug("removed module from engaged modules list " + module.getName().getLocalPart());
     }

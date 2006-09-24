@@ -371,8 +371,8 @@ public class Utils {
      * 4. All the class is module can be access via a the module services.
      */
 
-    public static void deployModuelServics(AxisModule module,
-                                           AxisConfiguration axisConfig) throws AxisFault {
+    public static void deployModuleServices(AxisModule module,
+                                            AxisConfiguration axisConfig) throws AxisFault {
         try {
             ArchiveReader archiveReader = new ArchiveReader();
             PhasesInfo phasesInfo = axisConfig.getPhasesInfo();

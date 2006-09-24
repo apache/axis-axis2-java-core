@@ -51,7 +51,7 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     private final ParameterInclude parameters = new ParameterIncludeImpl();
     private Module module;
     private ClassLoader moduleClassLoader;
-    // To keep the File that moduel came from
+    // To keep the File that module came from
     private URL fileName;
 
     /**

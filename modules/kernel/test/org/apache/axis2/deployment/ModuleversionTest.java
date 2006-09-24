@@ -68,26 +68,26 @@ public class ModuleversionTest extends TestCase {
         axiConfiguration.engageModule(new QName("Module1"));
         axiConfiguration.engageModule("testModule", "1.93");
 
-        Iterator engaeModuels = axiConfiguration.getEngagedModules().iterator();
+        Iterator engageModules = axiConfiguration.getEngagedModules().iterator();
         boolean found1 = false;
         boolean found2 = false;
         boolean found3 = false;
-        while (engaeModuels.hasNext()) {
-            QName qName = (QName) engaeModuels.next();
+        while (engageModules.hasNext()) {
+            QName qName = (QName) engageModules.next();
             if (qName.getLocalPart().equals("Module2-0.95")) {
                 found1 = true;
             }
         }
-        engaeModuels = axiConfiguration.getEngagedModules().iterator();
-        while (engaeModuels.hasNext()) {
-            QName qName = (QName) engaeModuels.next();
+        engageModules = axiConfiguration.getEngagedModules().iterator();
+        while (engageModules.hasNext()) {
+            QName qName = (QName) engageModules.next();
             if (qName.getLocalPart().equals("Module1")) {
                 found2 = true;
             }
         }
-        engaeModuels = axiConfiguration.getEngagedModules().iterator();
-        while (engaeModuels.hasNext()) {
-            QName qName = (QName) engaeModuels.next();
+        engageModules = axiConfiguration.getEngagedModules().iterator();
+        while (engageModules.hasNext()) {
+            QName qName = (QName) engageModules.next();
             if (qName.getLocalPart().equals("testModule-1.93")) {
                 found3 = true;
             }

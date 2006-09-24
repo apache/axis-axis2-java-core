@@ -95,7 +95,7 @@ public class ConfigurationContextFactory {
             Iterator mpduleItr = modules.values().iterator();
             while (mpduleItr.hasNext()) {
                 AxisModule axisModule = (AxisModule) mpduleItr.next();
-                Utils.deployModuelServics(axisModule, axisConfig);
+                Utils.deployModuleServices(axisModule, axisConfig);
             }
         }
     }
