@@ -1541,19 +1541,16 @@
                                         object.set<xsl:value-of select="$javaName"/>(
                                                 (javax.activation.DataHandler) reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
                                     } else {
-                                        if (reader.hasText()) {
-                                            //Do the usual conversion
-                                            java.lang.String content = reader.getText();
-                                            object.set<xsl:value-of select="$javaName"/>(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
-                                        } else
                                         if (reader.getName().equals(new javax.xml.namespace.QName(org.apache.axiom.om.impl.MTOMConstants.XOP_NAMESPACE_URI, org.apache.axiom.om.impl.MTOMConstants.XOP_INCLUDE)))
                                         {
                                             java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
                                             object.set<xsl:value-of select="$javaName"/>(((org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
-                                        } else {
-                                            throw new org.apache.axiom.om.OMException("Can't find datahandler");
-                                        }
+                                        } else if(reader.hasText()) {
+                                            //Do the usual conversion
+                                            java.lang.String content = reader.getText();
+                                            object.set<xsl:value-of select="$javaName"/>(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
+                                        } 
                                     }
 
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
@@ -2537,18 +2534,15 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         object.set<xsl:value-of select="$javaName"/>(
                                                 (javax.activation.DataHandler) reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
                                     } else {
-                                        if (reader.hasText()) {
-                                            //Do the usual conversion
-                                            java.lang.String content = reader.getText();
-                                            object.set<xsl:value-of select="$javaName"/>(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
-                                        } else
                                         if (reader.getName().equals(new javax.xml.namespace.QName(org.apache.axiom.om.impl.MTOMConstants.XOP_NAMESPACE_URI, org.apache.axiom.om.impl.MTOMConstants.XOP_INCLUDE)))
                                         {
                                             java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
                                             object.set<xsl:value-of select="$javaName"/>(((org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
-                                        } else {
-                                            throw new org.apache.axiom.om.OMException("Can't find datahandler");
+                                        } else if(reader.hasText()) {
+                                            //Do the usual conversion
+                                            java.lang.String content = reader.getText();
+                                            object.set<xsl:value-of select="$javaName"/>(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
                                         }
                                     }
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
