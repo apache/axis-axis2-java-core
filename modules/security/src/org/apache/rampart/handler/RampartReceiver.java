@@ -33,6 +33,8 @@ import org.apache.ws.security.handler.WSHandlerResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
+
 import java.util.Vector;
 
 
@@ -58,6 +60,10 @@ public class RampartReceiver implements Handler {
     }
 
     public void invoke(MessageContext msgContext) throws AxisFault {
+        
+        if (!msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
+            return;
+        }
         
         RampartEngine engine = new RampartEngine();
         Vector wsResult;

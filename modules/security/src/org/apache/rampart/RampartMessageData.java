@@ -46,7 +46,6 @@ import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 
-import java.util.Hashtable;
 import java.util.List;
 
 public class RampartMessageData {
