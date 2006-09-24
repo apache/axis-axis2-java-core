@@ -143,9 +143,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected Map instantiatableMessageClassNames = new HashMap();
 
-    protected static final String SRC_DIR_NAME = "src";
     protected static final String TEST_SRC_DIR_NAME = "test";
-    protected static final String RESOURCE_SRC_DIR_NAME = "resources";
 
 
     /**
@@ -187,7 +185,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     /**
      * Returns the fully qualified Stub name
      * reused in many methods
-     * @return
+     * @return classname
      */
     protected String getFullyQualifiedStubName() {
         String packageName = codeGenConfiguration.getPackageName();
@@ -246,7 +244,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     /**
      * Emits the stubcode with bindings.
      * @see org.apache.axis2.wsdl.codegen.emitter.Emitter#emitStub()
-     * @throws Exception
+     * @throws CodeGenerationException
      */
     public void emitStub() throws CodeGenerationException {
         try{
@@ -329,6 +327,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "package", dotSeparatedValues[0], rootElement);
         addAttribute(doc, "name", serviceName, rootElement);
         addAttribute(doc, "servicename", serviceName, rootElement);
+        addAttribute(doc, "src", codeGenConfiguration.getSourceLocation(), rootElement);
+        addAttribute(doc, "resource", codeGenConfiguration.getResourceLocation(), rootElement);
         if (codeGenConfiguration.isServerSide()) {
             addAttribute(doc,
                     "isserverside",
@@ -361,7 +361,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Creates the XML Model for the test case
-     * @return
+     * @return DOM document
      */
     protected Document createDOMDocumentForTestCase() {
         String coreClassName = makeJavaClassName(axisService.getName());
@@ -401,7 +401,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 new InterfaceImplementationWriter(
                         codeGenConfiguration.isFlattenFiles() ?
                                 getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), codeGenConfiguration.getSourceLocation()),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writer);
@@ -487,7 +487,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * A util method that returns a unique list of faults
      *
      * @param doc
-     * @return
+     * @return DOM element
      */
     protected Element getUniqueListofFaults(Document doc) {
         Element rootElement = doc.createElement("fault-list");
@@ -595,7 +595,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     new CallbackHandlerWriter(
                             codeGenConfiguration.isFlattenFiles() ?
                                     getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                            codeGenConfiguration.getSourceLocation()),
                             codeGenConfiguration.getOutputLanguage());
 
             writeClass(interfaceModel, callbackWriter);
@@ -631,7 +632,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 new InterfaceWriter(
                         codeGenConfiguration.isFlattenFiles() ?
                                 getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                        codeGenConfiguration.getSourceLocation()),
                         this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceModel, interfaceWriter);
@@ -711,7 +713,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
     /**
      * Emits the skeleton
-     * @throws Exception
+     * @throws CodeGenerationException
      */
     public void emitSkeleton() throws CodeGenerationException {
 
@@ -791,7 +793,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         SchemaWriter schemaWriter = new SchemaWriter(
                 codeGenConfiguration.isFlattenFiles() ?
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME));
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                codeGenConfiguration.getResourceLocation()));
 
 
         Map schemaMappings = axisService.getSchemaMappingTable();
@@ -811,7 +814,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             WSDL20Writer wsdl20Writer = new WSDL20Writer(
                     codeGenConfiguration.isFlattenFiles() ?
                             getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME)
+                            getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                    codeGenConfiguration.getResourceLocation())
             );
             wsdl20Writer.writeWSDL(axisService);
         } else {
@@ -819,7 +823,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             WSDL11Writer wsdl11Writer = new WSDL11Writer(
                     codeGenConfiguration.isFlattenFiles() ?
                             getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME));
+                            getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                    codeGenConfiguration.getResourceLocation()));
             wsdl11Writer.writeWSDL(axisService);
 
         }
@@ -903,7 +908,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                             new MessageReceiverWriter(
                                     codeGenConfiguration.isFlattenFiles() ?
                                             getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
+                                            getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                                    codeGenConfiguration.getSourceLocation()),
                                     codeGenConfiguration.getOutputLanguage());
 
                     writeClass(classModel, writer);
@@ -916,7 +922,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * Creates the XML model for the message receiver
      * @param mep
      * @param isServerSideInterface
-     * @return
+     * @return DOM Document
      */
     protected Document createDocumentForMessageReceiver(String mep, boolean isServerSideInterface) {
 
@@ -1238,7 +1244,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     new ServiceXMLWriter(
                             codeGenConfiguration.isFlattenFiles() ?
                                     getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), RESOURCE_SRC_DIR_NAME),
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                            codeGenConfiguration.getResourceLocation()),
                             this.codeGenConfiguration.getOutputLanguage());
 
             writeClass(serviceXMLModel, serviceXmlWriter);
@@ -1262,9 +1269,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param serviceName
      * @param className
      * @param doc
-     * @return
+     * @return DOM Element
      */
-    protected Node getServiceElement(String serviceName, String className, Document doc) {
+    protected Element getServiceElement(String serviceName, String className, Document doc) {
         Element rootElement = doc.createElement("interface");
 
         addAttribute(doc, "package", "", rootElement);
@@ -1297,7 +1304,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         ClassWriter skeletonWriter = new SkeletonWriter(
                 codeGenConfiguration.isFlattenFiles() ?
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME)
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                codeGenConfiguration.getSourceLocation())
                 , this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriter);
@@ -1313,7 +1321,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         ClassWriter skeletonInterfaceWriter = new SkeletonInterfaceWriter(
                 codeGenConfiguration.isFlattenFiles() ?
                         getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                        getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME)
+                        getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                codeGenConfiguration.getSourceLocation())
                 , this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonInterfaceWriter);
@@ -1322,7 +1331,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     /**
      * Creates the XMLModel for the skeleton
      * @param isSkeletonInterface
-     * @return
+     * @return DOM Document
      */
     protected Document createDOMDocumentForSkeleton(boolean isSkeletonInterface) {
         Document doc = getEmptyDocument();
@@ -1350,7 +1359,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Creates the XML model for the skeleton interface
-     * @return
+     * @return DOM Document
      */
     protected Document createDOMDocumentForSkeletonInterface() {
         Document doc = getEmptyDocument();
@@ -1378,7 +1387,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param doc
      * @param rootElement
      * @param mep
-     * @return
+     * @return boolean
      */
     protected boolean loadOperations(Document doc, Element rootElement, String mep) {
         Element methodElement;
@@ -1677,7 +1686,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param doc
      * @param operation
      * @param headerParameterQNameList
-     * @return
+     * @return DOM element
      */
     protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
         Element inputElt = doc.createElement("input");
@@ -1886,8 +1895,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param doc
      * @param paramName
      * @param paramType
-     * @param
-     * @return
+     * @return DOM Element
      */
     protected Element generateParamComponent(Document doc,
                                              String paramName,
@@ -1903,7 +1911,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param doc
      * @param paramName
      * @param paramType
-     * @return
+     * @return DOM Element
      */
     protected Element generateParamComponent(Document doc,
                                              String paramName,
@@ -1916,7 +1924,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * element
      *
      * @param doc
-     * @param paramElement
      * @param paramName
      * @param paramType
      * @param opName

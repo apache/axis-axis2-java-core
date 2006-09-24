@@ -337,13 +337,15 @@ public class CodeGenerationUtility {
 
         private File location;
         private boolean flatten = false;
-        private static final String RESOURCE_DIR_NAME = "resources";
-        private static final String SOURCE_DIR_NAME = "src";
-        private static final String JAVA_FILE_EXTENSION = ".java";
+        private  String resourceDirName;
+        private  String srcDirName;
+        private  static final String JAVA_FILE_EXTENSION = ".java";
 
         private Axis2Filer(CodeGenConfiguration config) {
             location = config.getOutputLocation();
             flatten = config.isFlattenFiles();
+            resourceDirName = config.getResourceLocation();
+            srcDirName = config.getSourceLocation();
         }
 
         public OutputStream createBinaryFile(String typename)
@@ -351,7 +353,7 @@ public class CodeGenerationUtility {
             File resourcesDirectory =
                     flatten?
                             location:
-                            new File(location, RESOURCE_DIR_NAME);
+                            new File(location, resourceDirName);
 
             if (!resourcesDirectory.exists()) {
                 resourcesDirectory.mkdirs();
@@ -370,7 +372,7 @@ public class CodeGenerationUtility {
             File outputDir =
                     flatten?
                             location:
-                            new File(location, SOURCE_DIR_NAME);
+                            new File(location, srcDirName);
 
             if (!outputDir.exists()) {
                 outputDir.mkdirs();
@@ -478,6 +480,9 @@ public class CodeGenerationUtility {
         }
     }
 
+    /**
+     * Axis2 specific entity resolver
+     */
     private static class Axis2EntityResolver implements EntityResolver {
         private XmlSchema[] schemas;
         private String baseUri;

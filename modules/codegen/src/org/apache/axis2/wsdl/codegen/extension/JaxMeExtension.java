@@ -103,7 +103,7 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
 //                xmlObjectsVector.add(new InputSource(new StringReader(s)));
 //            }
 
-            File outputDir = new File(configuration.getOutputLocation(), "src");
+            File outputDir = new File(configuration.getOutputLocation(),configuration.getSourceLocation());
 
             JAXBSchemaReader reader = new JAXBSchemaReader();
             reader.setSupportingExtensions(true);

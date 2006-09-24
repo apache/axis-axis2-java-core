@@ -43,8 +43,10 @@ public interface CommandLineOptionConstants {
         String FLATTEN_FILES_OPTION = "f";
         String UNWRAP_PARAMETERS = "uw";
         String BACKWORD_COMPATIBILITY_OPTION = "b";
+        String SOURCE_FOLDER_NAME_OPTION = "S";
+        String RESOURCE_FOLDER_OPTION = "R";
 
-        
+
         //long option constants
         String OUTPUT_LOCATION_OPTION_LONG = "output";
         String SERVER_SIDE_CODE_OPTION_LONG = "server-side";
@@ -69,6 +71,8 @@ public interface CommandLineOptionConstants {
         String FLATTEN_FILES_OPTION_LONG = "flatten-filess";
         String UNWRAP_PARAMETERS_LONG = "unwrap-params";
         String BACKWORD_COMPATIBILITY_OPTION_LONG = "backword-compatible";
+        String SOURCE_FOLDER_NAME_OPTION_LONG = "source-folder";
+        String RESOURCE_FOLDER_OPTION_LONG = "resource-folder";
 
         String WSDL_VERSION_2 = "2.0";
         String WSDL_VERSION_2_OPTIONAL = "2";

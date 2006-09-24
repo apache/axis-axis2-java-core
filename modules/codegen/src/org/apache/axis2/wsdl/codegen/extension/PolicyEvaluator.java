@@ -50,7 +50,7 @@ import java.util.Map;
 public class PolicyEvaluator implements CodeGenExtension {
 
     /**
-     * Inot method to initialization
+     * Init method to initialization
      * @param configuration
      * @param namespace2ExtsMap
      */

@@ -351,11 +351,12 @@ public class ExtensionUtility {
      *
      * @param options
      */
-    private static void populateDefaultOptions(CompilerOptions options, CodeGenConfiguration configuration) {
+    private static void populateDefaultOptions(CompilerOptions options,
+                                               CodeGenConfiguration configuration) {
         //create the output directory
         File outputDir = configuration.isFlattenFiles() ?
                 configuration.getOutputLocation() :
-                new File(configuration.getOutputLocation(), "src");
+                new File(configuration.getOutputLocation(), configuration.getSourceLocation());
 
         if (!outputDir.exists()) {
             outputDir.mkdirs();

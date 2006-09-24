@@ -40,6 +40,8 @@ public class ConfigPropertyFileLoader {
 
     private static Map dbSupporterTemplateNameMap;
     private static String testObjectTemplateName;
+    private static String srcFolderName;
+    private static String resourceFolderName;
     private static String[] extensionClassNames;
     private static String[] postExtensionClassNames;
     private static String[] thirdPartySchemaNames;
@@ -70,6 +72,8 @@ public class ConfigPropertyFileLoader {
     private static final String DATA_BINDING_TEMPLATE_NAME_KEY_PREFIX = "codegen.databinding.";
     private static final String DATA_BINDING_TEMPLATE_NAME_KEY_SUFFIX = "template";
     private static final String DATA_BINDING_TEST_OBJECT_TEMPLATE_NAME_KEY = "codegen.databinding.testobject.template";
+    private static final String SOURCE_FOLDER_NAME_KEY = "codegen.general.src.name";
+    private static final String RESOURCE_FOLDER_NAME_KEY = "codegen.general.resource.name";
 
 
     public static final String DEFAULT_CODEGEN_CONFIG_PROPERTIES =
@@ -114,6 +118,8 @@ public class ConfigPropertyFileLoader {
         databindingFrameworkNameToExtensionMap = null;
         defaultLanguage = null;
         defaultDBFrameworkName = null;
+        srcFolderName = null;
+        resourceFolderName = null;
 
     }
     private static void loadAllProperties() {
@@ -166,11 +172,23 @@ public class ConfigPropertyFileLoader {
             if (tempString != null) {
                 unwrapSuppoerteddatabindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
             }
-
+            
             //load the unwrap supported data binding framework names
             tempString = props.getProperty(DATA_BINDING_UNWRAP_DIRECT_FRAMEWORK_NAME_KEY);
             if (tempString != null) {
                 unwrapDirectdatabindingFrameworkNames = tempString.split(SEPARATOR_CHAR);
+            }
+
+            //load the source folder
+            tempString = props.getProperty(SOURCE_FOLDER_NAME_KEY);
+            if (tempString != null) {
+                srcFolderName = tempString;
+            }
+
+            //load the resource folder name
+            tempString = props.getProperty(RESOURCE_FOLDER_NAME_KEY);
+            if (tempString != null) {
+                resourceFolderName = tempString;
             }
 
             //populate the data binding framework name to extension name map
@@ -276,6 +294,23 @@ public class ConfigPropertyFileLoader {
     }
 
     /**
+     *
+     * @return the source folder name
+     */
+    public static String getResourceFolderName() {
+        return resourceFolderName;
+    }
+
+
+    /**
+     *
+     * @return the resource folder name
+     */
+    public static String getSrcFolderName() {
+        return srcFolderName;
+    }
+
+    /**
      * Gets the test object support template. This is used in the
      * generated test class.
      * @return Returns String.
@@ -336,7 +371,7 @@ public class ConfigPropertyFileLoader {
 
     /**
      * Get the list of unwrap supported data binding frameworks
-     * @return
+     * @return list
      */
     public static List getUnwrapSupportedFrameworkNames(){
         return Arrays.asList(unwrapSuppoerteddatabindingFrameworkNames);

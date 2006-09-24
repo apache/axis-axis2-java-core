@@ -102,7 +102,7 @@ public class XSLTIncludeResolver implements URIResolver,Constants {
 
     /**
      * returns an empty source
-     * @return
+     * @return stream source
      */
     private Source getEmptySource(){
         return new StreamSource(new ByteArrayInputStream("<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"/>".getBytes()));

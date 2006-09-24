@@ -37,11 +37,8 @@ public class CommandLineOption implements CommandLineOptionConstants {
         if (type.startsWith("--")) type = type.replaceFirst("--", "");
         if (type.startsWith("-")) type = type.replaceFirst("-", "");
 
-        //for options that start with the extra prefix, don't do any change for the
-        //case
-        if (!type.startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)){
-            type = type.toLowerCase();
-        }
+        //we do not change the case of the option!
+
         this.type = type;
     }
 

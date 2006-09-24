@@ -99,14 +99,16 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         Document interfaceImplModel = createDOMDocumentForInterfaceImplementation();
 
         CStubHeaderWriter writerHStub =
-                new CStubHeaderWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
+                new CStubHeaderWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                        codeGenConfiguration.getSourceLocation()),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerHStub);
 
 
         CStubSourceWriter writerCStub =
-                new CStubSourceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
+                new CStubSourceWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                        codeGenConfiguration.getSourceLocation()),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writerCStub);
@@ -125,12 +127,12 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
 
         CSkelHeaderWriter skeletonWriter = new CSkelHeaderWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                SRC_DIR_NAME), this.codeGenConfiguration.getOutputLanguage());
+                codeGenConfiguration.getSourceLocation()), this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriter);
 
         CSkelSourceWriter skeletonWriterStub = new CSkelSourceWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
-                SRC_DIR_NAME), this.codeGenConfiguration.getOutputLanguage());
+                codeGenConfiguration.getSourceLocation()), this.codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, skeletonWriterStub);
     }
@@ -141,7 +143,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected void writeCServiceSkeleton() throws Exception {
 
         Document skeletonModel = createDOMDocumentForServiceSkeletonXML();
-        CSvcSkeletonWriter writer = new CSvcSkeletonWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
+        CSvcSkeletonWriter writer = new CSvcSkeletonWriter(getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                codeGenConfiguration.getSourceLocation()),
                                     codeGenConfiguration.getOutputLanguage());
 
         writeClass(skeletonModel, writer);
@@ -159,7 +162,8 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             // Write the service xml in a folder with the
             Document serviceXMLModel = createDOMDocumentForServiceXML();
             ClassWriter serviceXmlWriter =
-                    new CServiceXMLWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(), SRC_DIR_NAME),
+                    new CServiceXMLWriter(getOutputDirectory(this.codeGenConfiguration.getOutputLocation(),
+                            codeGenConfiguration.getResourceLocation()),
                             this.codeGenConfiguration.getOutputLanguage());
 
             writeClass(serviceXMLModel, serviceXmlWriter);

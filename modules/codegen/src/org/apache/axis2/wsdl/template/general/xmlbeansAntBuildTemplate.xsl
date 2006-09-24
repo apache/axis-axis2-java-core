@@ -1,7 +1,10 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
     <xsl:template match="/ant">
-        <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
+
+        <xsl:variable name="package" select="@package"/>
+        <xsl:variable name="src" select="@src"/>
+        <xsl:variable name="resource" select="@resource"/>
 
         <project basedir=".">
              <xsl:choose>
@@ -27,8 +30,8 @@
             <property name="name">
                 <xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>
             </property>
-            <property name="src">
-                <xsl:attribute name="value">${project.base.dir}/src</xsl:attribute>
+          <property name="src">
+                <xsl:attribute name="value">${project.base.dir}/<xsl:value-of select="$src"/></xsl:attribute>
             </property>
             <property name="test">
                 <xsl:attribute name="value">${project.base.dir}/test</xsl:attribute>
@@ -42,8 +45,8 @@
             <property name="lib">
                 <xsl:attribute name="value">${build}/lib</xsl:attribute>
             </property>
-            <property name="resources">
-                <xsl:attribute name="value">${project.base.dir}/resources</xsl:attribute>
+         <property name="resources">
+                <xsl:attribute name="value">${project.base.dir}/<xsl:value-of select="$resource"/></xsl:attribute>
             </property>
 
             <property name="xbeans.packaged.jar.name" value="XBeans-packaged.jar"></property>

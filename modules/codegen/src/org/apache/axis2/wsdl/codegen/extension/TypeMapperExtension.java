@@ -145,7 +145,7 @@ public class TypeMapperExtension implements CodeGenExtension {
      * Gets the string content from an element. returns null if there are
      * no test nodes found
      * @param elt
-     * @return
+     * @return text cotent of the element
      */
     private String getTextFromElement(Element elt){
         NodeList children = elt.getChildNodes();

@@ -87,6 +87,31 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.flattenFiles = flattenFiles;
     }
 
+    /**
+     * Folder name for the resource files
+     */
+    private  String resourceLocation = ConfigPropertyFileLoader.getResourceFolderName();
+
+    public String getResourceLocation() {
+        return resourceLocation;
+    }
+
+    public void setResourceLocation(String resourceLocation) {
+        this.resourceLocation = resourceLocation;
+    }
+
+    /**
+     * Folder name for the source files
+     */
+    private String sourceLocation  = ConfigPropertyFileLoader.getSrcFolderName();
+
+    public String getSourceLocation() {
+        return sourceLocation;
+    }
+
+    public void setSourceLocation(String sourceLocation) {
+        this.sourceLocation = sourceLocation;
+    }
 
     /**
      * Determines whether the parameters are wrapped or unwrapped

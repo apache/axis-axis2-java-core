@@ -74,7 +74,6 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         }
 
         commandLineOption = loadOption(WSDL2JavaConstants.STUB_LANGUAGE_OPTION, WSDL2JavaConstants.STUB_LANGUAGE_OPTION_LONG, optionMap);
-        //The language here
         if (commandLineOption != null) {
             config.setOutputLanguage(commandLineOption.getOptionValue());
         }
@@ -84,9 +83,24 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setDatabindingType(commandLineOption.getOptionValue());
         }
 
+
         commandLineOption = loadOption(WSDL2JavaConstants.UNPACK_CLASSES_OPTION, WSDL2JavaConstants.UNPACK_CLASSES_OPTION_LONG, optionMap);
         if (commandLineOption != null) {
             config.setPackClasses(false);
+        }
+
+        // source folder
+        commandLineOption = loadOption(WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION_LONG, optionMap);
+        if (commandLineOption != null) {
+            config.setSourceLocation(commandLineOption.getOptionValue());
+        }
+
+         // resource folder
+        commandLineOption = loadOption(WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
+                WSDL2JavaConstants.RESOURCE_FOLDER_OPTION_LONG, optionMap);
+        if (commandLineOption != null) {
+            config.setResourceLocation(commandLineOption.getOptionValue());
         }
 
         commandLineOption = loadOption(WSDL2JavaConstants.PORT_NAME_OPTION, WSDL2JavaConstants.PORT_NAME_OPTION_LONG, optionMap);
