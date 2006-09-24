@@ -112,6 +112,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private Map schemaMap = null;
 
+    
+    private static final String JAVAX_WSDL_VERBOSE_MODE_KEY = "javax.wsdl.verbose";
+    private static final String JAVAX_WSDL_IMPORT_DOCUMENTS_MODE_KEY = "javax.wsdl.importDocuments";
+
     /**
      * constructor taking in the service name and the port name
      *
@@ -262,7 +266,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         processPoliciesInDefintion(wsdl4jDefinition);
 
         // process the imports
-        processImports(wsdl4jDefinition);
+        //send an empty list as the processed namespace list since this
+        //is the first call
+        processImports(wsdl4jDefinition,new ArrayList());
 
         // setup the schemaMap
         schemaMap = populateSchemaMap(wsdl4jDefinition.getTypes());
@@ -1378,7 +1384,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *
      * @param wsdl4JDefinition
      */
-    private void processImports(Definition wsdl4JDefinition) {
+    private void processImports(Definition wsdl4JDefinition,List processedSchemaNamespaces) {
         Map wsdlImports = wsdl4JDefinition.getImports();
 
         if (null != wsdlImports && !wsdlImports.isEmpty()) {
@@ -1391,8 +1397,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                     if (wsdlImport.getDefinition() != null) {
                         Definition importedDef = wsdlImport.getDefinition();
+
                         if (importedDef != null) {
-                            processImports(importedDef);
+                            // stop recursive imports!
+                            if (processedSchemaNamespaces.contains(importedDef.getTargetNamespace())) {
+                                return;
+                            }else{
+                                processedSchemaNamespaces.add(importedDef.getTargetNamespace());
+                            }
+                            processImports(importedDef,processedSchemaNamespaces);
 
                             //copy ns
                             Map namespaces = importedDef.getNamespaces();
@@ -1460,13 +1473,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
 
         //switch off the verbose mode for all usecases
-        reader.setFeature("javax.wsdl.verbose", false);
+        reader.setFeature(JAVAX_WSDL_VERBOSE_MODE_KEY, false);
 
         //if the custem resolver is present then use it
         if (customWSLD4JResolver != null) {
             return reader.readWSDL(customWSLD4JResolver);
         } else {
-            reader.setFeature("javax.wsdl.importDocuments", false);
+            reader.setFeature(JAVAX_WSDL_IMPORT_DOCUMENTS_MODE_KEY, false);
             Document doc;
             try {
                 doc = XMLUtils.newDocument(in);
