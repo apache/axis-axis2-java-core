@@ -687,6 +687,10 @@ public class ConverterUtil {
             for (int i = 0; i < listSize; i++) {
                 Array.setDouble(returnArray, i, Double.parseDouble(objectList.get(i).toString()));
             }
+        } else if (Calendar.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                Array.set(returnArray, i, convertToDateTime(objectList.get(i).toString()));
+            }
         } else {
             ConvertToArbitraryObjectArray(returnArray, baseArrayClass, objectList);
         }
