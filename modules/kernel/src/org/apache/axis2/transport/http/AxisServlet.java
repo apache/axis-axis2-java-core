@@ -437,10 +437,19 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 throw new AxisFault(e);
             }
         }
+
+
         EndpointReference soapEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
                 configContext.getServiceContextPath() + "/" + serviceName);
 
-        return new EndpointReference[]{soapEndpoint};
+        if (!disableREST && !disableSeperateEndpointForREST) {
+            EndpointReference restEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
+                configContext.getRESTContextPath() + "/" + serviceName);
+            return new EndpointReference[]{soapEndpoint, restEndpoint};
+        } else {
+            return new EndpointReference[]{soapEndpoint};
+        }
+
     }
 
     protected MessageContext createMessageContext(HttpServletRequest req,

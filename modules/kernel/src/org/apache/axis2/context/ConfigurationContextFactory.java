@@ -125,6 +125,14 @@ public class ConfigurationContextFactory {
                 configContext.setServicePath(spath);
             }
         }
+
+        Parameter restPathParam = axisConfig.getParameter(Constants.PARAM_REST_PATH);
+        if (restPathParam != null) {
+            String restPath = ((String) restPathParam.getValue()).trim();
+            if (restPath.length() > 0) {
+                configContext.setServicePath(restPath);
+            }
+        }
     }
 
     /**

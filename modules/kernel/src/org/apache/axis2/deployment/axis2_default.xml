@@ -20,8 +20,14 @@
     <parameter name="userName" locked="false">admin</parameter>
     <parameter name="password" locked="false">axis2</parameter>
 
+    <!--Following params will set the proper context paths for invocations. All the endpoints will have a commons context-->
+    <!--root which can configured using the following contextRoot parameter-->
     <!--<parameter name="contextRoot" locked="false">axis2</parameter>-->
+
+    <!--Our HTTP endpoints can handle both REST and SOAP. Following parameters can be used to distingiush those endpoints-->
     <!--<parameter name="servicePath" locked="false">services</parameter>-->
+    <!--<parameter name="restPath" locked="false">rest</parameter>-->
+
     <!--Set the flag to true if you want to enable transport level session mangment-->
     <parameter name="manageTransportSession" locked="false">false</parameter>
 
@@ -53,7 +59,7 @@
         <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
                          class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
     </messageReceivers>
-    
+
     <!-- ================================================= -->
     <!-- Target Resolvers -->
     <!-- ================================================= -->
@@ -63,8 +69,8 @@
     <!--<targetResolvers>-->
     <!--<targetResolver class="" />-->
     <!--</targetResolvers>-->
-    
-    
+
+
     <!-- ================================================= -->
     <!-- Transport Ins -->
     <!-- ================================================= -->

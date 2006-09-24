@@ -19,7 +19,6 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
@@ -27,6 +26,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
@@ -62,6 +62,7 @@ public class ConfigurationContext extends AbstractContext {
     //To specify url mapping for services
     private String contextRoot = "axis2";
     private String servicePath = "services";
+    private String restPath = "rest";
     //To have your own context path
 
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
@@ -121,13 +122,13 @@ public class ConfigurationContext extends AbstractContext {
                         axisServiceGroup = (AxisServiceGroup) messageContext.getAxisService().getParent();
                     }
                     serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
-                                                                  axisServiceGroup);
+                            axisServiceGroup);
                     applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
                 }
                 serviceContext = serviceGroupContext.getServiceContext(axisService);
 
             } else if (!isNull(serviceGroupContextId)
-                       && (getServiceGroupContext(serviceGroupContextId, messageContext) != null)) {
+                    && (getServiceGroupContext(serviceGroupContextId, messageContext) != null)) {
 
                 // SGC is already there
                 serviceGroupContext =
@@ -256,8 +257,8 @@ public class ConfigurationContext extends AbstractContext {
             }
         }
         if (serviceGroupContext == null
-            && msgContext != null
-            && msgContext.getSessionContext() != null) {
+                && msgContext != null
+                && msgContext.getSessionContext() != null) {
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
                     serviceGroupContextId);
         }
@@ -331,7 +332,7 @@ public class ConfigurationContext extends AbstractContext {
                 ServiceGroupContext serviceGroupContext =
                         (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
                 if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
-                    getServiceGroupContextTimoutInterval()) {
+                        getServiceGroupContextTimoutInterval()) {
                     sgCtxtMapKeyIter.remove();
                     cleanupServiceContexts(serviceGroupContext);
                 }
@@ -382,10 +383,10 @@ public class ConfigurationContext extends AbstractContext {
     public String getServiceContextPath() {
         String ctxRoot = getContextRoot().trim();
         String path = "/";
-        if(!ctxRoot.equals("/")){
-           path = ctxRoot + "/";
+        if (!ctxRoot.equals("/")) {
+            path = ctxRoot + "/";
         }
-        if(servicePath == null || servicePath.trim().length() == 0){
+        if (servicePath == null || servicePath.trim().length() == 0) {
             throw new IllegalArgumentException("service path cannot be null or empty");
         } else {
             path += servicePath.trim();
@@ -393,11 +394,32 @@ public class ConfigurationContext extends AbstractContext {
         return path;
     }
 
+    public String getRESTContextPath() {
+        String ctxRoot = getContextRoot().trim();
+        String path = "/";
+        if (!ctxRoot.equals("/")) {
+            path = ctxRoot + "/";
+        }
+        if (restPath == null || restPath.trim().length() == 0) {
+            throw new IllegalArgumentException("service path cannot be null or empty");
+        } else {
+            path += restPath.trim();
+        }
+        return path;
+    }
+
     public String getServicePath() {
-        if(servicePath == null || servicePath.trim().length() == 0){
+        if (servicePath == null || servicePath.trim().length() == 0) {
             throw new IllegalArgumentException("service path cannot be null or empty");
         }
         return servicePath.trim();
+    }
+
+    public String getRESTPath() {
+        if (restPath == null || restPath.trim().length() == 0) {
+            throw new IllegalArgumentException("REST path cannot be null or empty");
+        }
+        return restPath.trim();
     }
 
     public String getContextRoot() {
@@ -409,6 +431,10 @@ public class ConfigurationContext extends AbstractContext {
 
     public void setServicePath(String servicePath) {
         this.servicePath = servicePath;
+    }
+
+    public void setRESTPath(String restPath) {
+        this.restPath = restPath;
     }
 
     public void setContextRoot(String contextRoot) {
