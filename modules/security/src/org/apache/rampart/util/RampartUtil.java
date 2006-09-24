@@ -65,6 +65,7 @@ import java.util.Vector;
 
 public class RampartUtil {
 
+    private static final String CRYPTO_PROVIDER = "org.apache.ws.security.crypto.provider";
     private static Log log = LogFactory.getLog(RampartUtil.class);
     
 
@@ -165,7 +166,7 @@ public class RampartUtil {
      * @return
      * @throws RampartException
      */
-    public static Crypto getEncryptionCrypto(RampartConfig config)
+    public static Crypto getEncryptionCrypto(RampartConfig config, ClassLoader loader)
             throws RampartException {
         log.debug("Loading encryption crypto");
         
@@ -174,7 +175,8 @@ public class RampartUtil {
             String provider = cryptoConfig.getProvider();
             log.debug("Usig provider: " + provider);
             Properties prop = cryptoConfig.getProp();
-            return CryptoFactory.getInstance(provider, prop);
+            prop.put(CRYPTO_PROVIDER, provider);
+            return CryptoFactory.getInstance(prop, loader);
         } else {
             log.debug("Trying the signature crypto info");
             //Try using signature crypto infomation
@@ -184,7 +186,8 @@ public class RampartUtil {
                 String provider = cryptoConfig.getProvider();
                 log.debug("Usig provider: " + provider);
                 Properties prop = cryptoConfig.getProp();
-                return CryptoFactory.getInstance(provider, prop);
+                prop.put(CRYPTO_PROVIDER, provider);
+                return CryptoFactory.getInstance(prop, loader);
             } else {
                 return null;
             }
@@ -199,7 +202,7 @@ public class RampartUtil {
      * @return
      * @throws RampartException
      */
-    public static Crypto getSignatureCrypto(RampartConfig config)
+    public static Crypto getSignatureCrypto(RampartConfig config, ClassLoader loader)
             throws RampartException {
         log.debug("Loading Signature crypto");
         
@@ -208,7 +211,8 @@ public class RampartUtil {
             String provider = cryptoConfig.getProvider();
             log.debug("Usig provider: " + provider);
             Properties prop = cryptoConfig.getProp();
-            return CryptoFactory.getInstance(provider, prop);
+            prop.put(CRYPTO_PROVIDER, provider);
+            return CryptoFactory.getInstance(prop, loader);
         } else {
             return null;
         }
@@ -412,8 +416,8 @@ public class RampartUtil {
             client.setRstTemplate(rstTemplate);
     
             // Set crypto information
-            Crypto crypto = RampartUtil.getSignatureCrypto(rmd
-                    .getPolicyData().getRampartConfig());
+            Crypto crypto = RampartUtil.getSignatureCrypto(rmd.getPolicyData().getRampartConfig(), 
+                    rmd.getMsgContext().getAxisService().getClassLoader());
             CallbackHandler cbh = RampartUtil.getPasswordCB(rmd);
             client.setCryptoInfo(crypto, cbh);
     

@@ -146,7 +146,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     encr.setDocument(doc);
                     encr.setUserInfo(config.getEncryptionUser());
                     encr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
-                    encr.prepare(doc, RampartUtil.getEncryptionCrypto(config));
+                    encr.prepare(doc, RampartUtil.getEncryptionCrypto(config, rmd.getCustomClassLoader()));
 
                     Element bstElem = encr.getBinarySecurityTokenElement();
                     if (bstElem != null) {
@@ -324,11 +324,11 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
             }
         }
         
+        Vector encrParts = RampartUtil.getEncryptedParts(rmd);
         //Do encryption
         Token encrToken = rpd.getRecipientToken();
-        if(encrToken != null) {
+        if(encrToken != null && encrParts.size() > 0) {
             Element refList = null;
-            Vector encrParts = RampartUtil.getEncryptedParts(rmd);
             if(encrToken.isDerivedKeys()) {
                 
                 try {
@@ -371,7 +371,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     encr.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
                     encr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
                     encr.prepare(doc, RampartUtil.getEncryptionCrypto(rpd
-                            .getRampartConfig()));
+                            .getRampartConfig(), rmd.getCustomClassLoader()));
                     
                     this.setInsertionLocation(this.timestampElement);
                     if(encr.getBSTTokenId() != null) {
@@ -462,12 +462,12 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
         } else {
             sig = this.getSignatureBuider(rmd, sigToken);
             Element bstElem = sig.getBinarySecurityTokenElement();
-            if (Constants.INCLUDE_ALWAYS.equals(sigToken.getInclusion())
-                    || Constants.INCLUDE_ONCE.equals(sigToken.getInclusion())) {
+            if(bstElem != null) {
                 bstElem = RampartUtil.insertSiblingAfter(rmd, this
-                        .getInsertionLocation(), bstElem);
+                                        .getInsertionLocation(), bstElem);
                 this.setInsertionLocation(bstElem);
             }
+            
             if (rmd.getPolicyData().isTokenProtection()
                     && sig.getBSTTokenId() != null) {
                 sigParts.add(new WSEncryptionPart(sig.getBSTTokenId()));

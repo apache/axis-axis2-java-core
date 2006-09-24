@@ -180,7 +180,7 @@ public abstract class BindingBuilder {
             encrKey.setKeySize(rpd.getAlgorithmSuite().getMaximumSymmetricKeyLength());
             encrKey.setKeyEncAlgo(rpd.getAlgorithmSuite().getAsymmetricKeyWrap());
             
-            encrKey.prepare(doc, RampartUtil.getEncryptionCrypto(rpd.getRampartConfig()));
+            encrKey.prepare(doc, RampartUtil.getEncryptionCrypto(rpd.getRampartConfig(), rmd.getCustomClassLoader()));
             
             return encrKey;
         } catch (WSSecurityException e) {
@@ -251,7 +251,8 @@ public abstract class BindingBuilder {
         
         try {
             sig.prepare(rmd.getDocument(), RampartUtil.getSignatureCrypto(rpd
-                    .getRampartConfig()), rmd.getSecHeader());
+                    .getRampartConfig(), rmd.getCustomClassLoader()), 
+                    rmd.getSecHeader());
         } catch (WSSecurityException e) {
             throw new RampartException("errorInSignatureWithX509Token", e);
         }

@@ -424,7 +424,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 
                 encr.setEphemeralKey(encrTok.getSecret());
                 encr.setDocument(doc);
-                encr.prepare(doc, RampartUtil.getEncryptionCrypto(rpd.getRampartConfig()));
+                encr.prepare(doc, RampartUtil.getEncryptionCrypto(rpd
+                        .getRampartConfig(), rmd.getCustomClassLoader()));
                 
                 //Encrypt, get hold of the ref list and add it
                 refList = encr.encryptForExternalRef(null, encrParts);

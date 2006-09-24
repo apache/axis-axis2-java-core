@@ -204,11 +204,12 @@ public class AsymmetricBindingBuilderTest extends MessageBuilderTestBase {
             
             MessageBuilder builder = new MessageBuilder();
             builder.build(ctx);
-            
+            System.out.println(ctx.getEnvelope());
             ArrayList list = new ArrayList();
             
             list.add(new QName(WSConstants.WSU_NS, WSConstants.TIMESTAMP_TOKEN_LN));
             list.add(new QName(WSConstants.ENC_NS, WSConstants.ENC_KEY_LN));
+            list.add(new QName(WSConstants.WSSE_NS, WSConstants.BINARY_TOKEN_LN));
             list.add(new QName(WSConstants.SIG_NS, WSConstants.SIG_LN));
             
             this.verifySecHeader(list.iterator(), ctx.getEnvelope());

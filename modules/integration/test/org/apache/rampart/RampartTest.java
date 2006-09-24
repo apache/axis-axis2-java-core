@@ -65,7 +65,7 @@ public class RampartTest extends TestCase {
             serviceClient.engageModule(new QName("addressing"));
             serviceClient.engageModule(new QName("rampart"));
 
-            for (int i = 1; i <= 1; i++) { //<-The number of tests we have
+            for (int i = 1; i <= 2; i++) { //<-The number of tests we have
                 options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureService" + i));
                 options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/" + i + ".xml"));
                 serviceClient.setOptions(options);

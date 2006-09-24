@@ -58,8 +58,10 @@ public class RampartEngine {
             results = engine.processSecurityHeader(rmd.getDocument(),
                       null, 
                       RampartUtil.getPasswordCB(rmd),
-                      RampartUtil.getSignatureCrypto(rpd.getRampartConfig()), 
-                      RampartUtil.getEncryptionCrypto(rpd.getRampartConfig()));
+                      RampartUtil.getSignatureCrypto(rpd.getRampartConfig(), 
+                              msgCtx.getAxisService().getClassLoader()), 
+                      RampartUtil.getEncryptionCrypto(rpd.getRampartConfig(), 
+                              msgCtx.getAxisService().getClassLoader()));
         }
         
         return results;

@@ -122,6 +122,8 @@ public class RampartMessageData {
     private boolean isClientSide;
     
     private boolean sender;
+    
+    private ClassLoader customClassLoader;
 
     public RampartMessageData(MessageContext msgCtx, boolean sender) throws RampartException {
         
@@ -179,11 +181,12 @@ public class RampartMessageData {
                         OMElement policyElem = param.getParameterElement().getFirstElement();
                         this.servicePolicy = PolicyEngine.getPolicy(policyElem);
                     }
+
+                    //Set the policy in the config ctx
+                    msgCtx.getConfigurationContext().setProperty(
+                            RampartMessageData.getOperationPolicyKey(msgCtx), this.servicePolicy);
                 }
                 
-                //Set the policy in the config ctx
-                msgCtx.getConfigurationContext().setProperty(
-                        RampartMessageData.getOperationPolicyKey(msgCtx), this.servicePolicy);
             }
             
             
@@ -211,6 +214,8 @@ public class RampartMessageData {
             
             this.config = WSSConfig.getDefaultWSConfig();
 
+            this.customClassLoader = msgCtx.getAxisService().getClassLoader();
+            
             this.secHeader = new WSSecHeader();
             secHeader.insertSecurityHeader(this.document);
             
@@ -476,7 +481,8 @@ public class RampartMessageData {
     public static String getOperationPolicyKey(MessageContext msgCtx) {
         if(msgCtx.getAxisOperation() != null) {
             return createPolicyKey(msgCtx.getAxisService().getName(), 
-                    msgCtx.getAxisOperation().getName());
+                                msgCtx.getAxisOperation().getName());
+            
         }
         return null;
     }
@@ -514,5 +520,9 @@ public class RampartMessageData {
      */
     public boolean isClientSide() {
         return isClientSide;
+    }
+
+    public ClassLoader getCustomClassLoader() {
+        return customClassLoader;
     }
 }
