@@ -34,6 +34,7 @@ import org.apache.rahas.TrustUtil;
 import org.apache.rampart.policy.RampartPolicyBuilder;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.rampart.util.Axis2Util;
+import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.WSSecurityException;
@@ -360,47 +361,21 @@ public class RampartMessageData {
      * @return Returns the secConvTokenId.
      */
     public String getSecConvTokenId() {
-        return (String)this.getContextMap().get(this.getContextIdentifierKey());
+        String contextIdentifierKey = RampartUtil.getContextIdentifierKey(this.msgContext);
+        return (String) RampartUtil.getContextMap(this.msgContext).get(contextIdentifierKey);
     }
 
     /**
      * @param secConvTokenId The secConvTokenId to set.
      */
     public void setSecConvTokenId(String secConvTokenId) {
-        this.getContextMap().put(this.getContextIdentifierKey(), secConvTokenId);
+        String contextIdentifierKey = RampartUtil.getContextIdentifierKey(this.msgContext);
+        RampartUtil.getContextMap(this.msgContext).put(
+                                                    contextIdentifierKey,
+                                                    secConvTokenId);
     }
 
-    /**
-     * Returns the map of security context token identifiers
-     * @return
-     */
-    private Hashtable getContextMap() {
-        //Fist check whether its there
-        Object map = this.msgContext.getConfigurationContext().getProperty(
-                KEY_CONTEXT_MAP);
-        
-        if(map == null) {
-            //If not create a new one
-            map = new Hashtable();
-            //Set the map globally
-            this.msgContext.getConfigurationContext().setProperty(
-                    KEY_CONTEXT_MAP, map);
-        }
-        
-        return (Hashtable)map;
-    }
-    
-    /**
-     * Creates the unique (reproducible) id for to hold the context identifier
-     * of the message exchange.
-     * @return
-     */
-    private String getContextIdentifierKey() {
-        String service = this.msgContext.getTo().getAddress();
-        String action = this.msgContext.getOptions().getAction();
-        
-        return service + ":" + action;
-    }
+
     
     /**
      * @return Returns the tokenStorage.

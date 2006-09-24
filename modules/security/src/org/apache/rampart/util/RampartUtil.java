@@ -22,6 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,6 +58,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
 import java.security.NoSuchAlgorithmException;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
@@ -68,8 +70,21 @@ public class RampartUtil {
 
     public static CallbackHandler getPasswordCB(RampartMessageData rmd) throws RampartException {
 
-        ClassLoader classLoader = rmd.getMsgContext().getAxisService().getClassLoader();
-        String cbHandlerClass = rmd.getPolicyData().getRampartConfig().getPwCbClass();
+        MessageContext msgContext = rmd.getMsgContext();
+        RampartPolicyData rpd = rmd.getPolicyData();
+        
+        return getPasswordCB(msgContext, rpd);
+    }
+
+    /**
+     * @param msgContext
+     * @param rpd
+     * @return
+     * @throws RampartException
+     */
+    public static CallbackHandler getPasswordCB(MessageContext msgContext, RampartPolicyData rpd) throws RampartException {
+        ClassLoader classLoader = msgContext.getAxisService().getClassLoader();
+        String cbHandlerClass = rpd.getRampartConfig().getPwCbClass();
         
         log.debug("loading class : " + cbHandlerClass);
         
@@ -89,10 +104,10 @@ public class RampartUtil {
                         new String[]{cbHandlerClass}, e);
             }
         } else {
-            cbHandler = (CallbackHandler) rmd.getMsgContext().getProperty(
+            cbHandler = (CallbackHandler) msgContext.getProperty(
                     WSHandlerConstants.PW_CALLBACK_REF);
             if(cbHandler == null) {
-                Parameter param = rmd.getMsgContext().getParameter(
+                Parameter param = msgContext.getParameter(
                         WSHandlerConstants.PW_CALLBACK_REF);
                 cbHandler = (CallbackHandler)param.getValue();
             }
@@ -548,4 +563,38 @@ public class RampartUtil {
         }
         return keyGen;
     }
+    
+    /**
+     * Creates the unique (reproducible) id for to hold the context identifier
+     * of the message exchange.
+     * @return
+     */
+    public static String getContextIdentifierKey(MessageContext msgContext) {
+        String service = msgContext.getTo().getAddress();
+        String action = msgContext.getOptions().getAction();
+        
+        return service + ":" + action;
+    }
+    
+    
+    /**
+     * Returns the map of security context token identifiers
+     * @return
+     */
+    public static Hashtable getContextMap(MessageContext msgContext) {
+        //Fist check whether its there
+        Object map = msgContext.getConfigurationContext().getProperty(
+                RampartMessageData.KEY_CONTEXT_MAP);
+        
+        if(map == null) {
+            //If not create a new one
+            map = new Hashtable();
+            //Set the map globally
+            msgContext.getConfigurationContext().setProperty(
+                    RampartMessageData.KEY_CONTEXT_MAP, map);
+        }
+        
+        return (Hashtable)map;
+    }
+    
 }

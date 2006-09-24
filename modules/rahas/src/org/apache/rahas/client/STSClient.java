@@ -103,7 +103,7 @@ public class STSClient {
 
     public Token requestSecurityToken(Policy servicePolicy,
                                       String issuerAddress,
-                                      Policy IssuerPolicy,
+                                      Policy issuerPolicy,
                                       String appliesTo) throws TrustException {
         try {
             QName rstQn = new QName("requestSecurityToken");
@@ -115,7 +115,7 @@ public class STSClient {
             //such as rampart
 
             //Process the STS and service policy policy
-            this.processPolicy(IssuerPolicy, servicePolicy);
+            this.processPolicy(issuerPolicy, servicePolicy);
             OMElement response = client.sendReceive(rstQn,
                                                     createIssueRequest(requestType, appliesTo));
 

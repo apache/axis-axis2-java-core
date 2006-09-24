@@ -137,6 +137,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                     dkEncr.setExternalKey(tok.getSecret(), (Element) doc
                             .importNode((Element) tok.getUnattachedReference(),
                                     true));
+                } else {
+                    dkEncr.setExternalKey(tok.getSecret(), tok.getId());
                 }
                 try {
                     dkEncr.prepare(doc);
@@ -391,6 +393,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                     dkEncr.setExternalKey(encrTok.getSecret(), (Element) doc
                             .importNode((Element) encrTok.getUnattachedReference(),
                                     true));
+                } else {
+                    dkEncr.setExternalKey(encrTok.getSecret(), encrTok.getId());
                 }
                 
                 Element encrDKTokenElem = null;
