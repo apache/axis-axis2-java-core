@@ -344,13 +344,9 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     Element encrDKTokenElem = null;
                     encrDKTokenElem = dkEncr.getdktElement();
                     RampartUtil.insertSiblingAfter(rmd, this.encrTokenElement, encrDKTokenElem);
-                    dkEncr.prepare(doc);
                     
-                
                     refList = dkEncr.encryptForExternalRef(null, encrParts);
                     
-                    refList = dkEncr.encryptForExternalRef(null, 
-                            encrParts);
                     RampartUtil.insertSiblingAfter(rmd, 
                                                     encrDKTokenElem, 
                                                     refList);
@@ -425,8 +421,6 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
 
             try {
                 dkSign.prepare(doc, rmd.getSecHeader());
-
-                sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));
 
                 if (rpd.isTokenProtection()) {
                     sigParts.add(new WSEncryptionPart(encrKey.getId()));

@@ -65,7 +65,14 @@ public class RampartTest extends TestCase {
             serviceClient.engageModule(new QName("addressing"));
             serviceClient.engageModule(new QName("rampart"));
 
-            for (int i = 1; i <= 2; i++) { //<-The number of tests we have
+            //TODO : figure this out !!
+            boolean basic256Supported = false;
+            
+            for (int i = 1; i <= 7; i++) { //<-The number of tests we have
+                if(!basic256Supported && (i == 3 || i == 4 || i ==5)) {
+                    //Skip the Basic256 tests
+                    continue;
+                }
                 options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureService" + i));
                 options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/" + i + ".xml"));
                 serviceClient.setOptions(options);
