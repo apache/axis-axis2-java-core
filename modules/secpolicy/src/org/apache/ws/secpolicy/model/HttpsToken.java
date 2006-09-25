@@ -29,20 +29,14 @@ import org.apache.ws.secpolicy.Constants;
  */
 public class HttpsToken extends Token {
 
-    private Token httpsToken;
-    
-    /**
-     * @return Returns the httpsToken.
-     */
-    public Token getHttpsToken() {
-        return httpsToken;
+    private boolean requireClientCertificate = false;
+
+    public boolean isRequireClientCertificate() {
+        return requireClientCertificate;
     }
 
-    /**
-     * @param httpsToken The httpsToken to set.
-     */
-    public void setHttpsToken(Token httpsToken) {
-        this.httpsToken = httpsToken;
+    public void setRequireClientCertificate(boolean requireClientCertificate) {
+        this.requireClientCertificate = requireClientCertificate;
     }
 
     public QName getName() {

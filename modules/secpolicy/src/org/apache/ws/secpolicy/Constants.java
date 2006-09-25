@@ -315,4 +315,6 @@ public class Constants {
     public static final QName BOOTSTRAP_POLICY = new QName(Constants.SP_NS, "BootstrapPolicy");
     
     public static final QName RST_TEMPLATE = new QName(Constants.SP_NS, "RequestSecurityTokenTemplate");
+    
+    public final static QName REQUIRE_CLIENT_CERTIFICATE = new QName("RequireClientCertificate");
 }
