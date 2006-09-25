@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -185,9 +186,12 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     throw new ServletException(e);
                 }
             }
+        } else {
+            PrintWriter writer = new PrintWriter(resp.getOutputStream());
+            writer.println("<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml and WEB-INF/web.xml</h2></body></html>");
+            writer.flush();
+            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
         }
-
-
     }
 
     /**
