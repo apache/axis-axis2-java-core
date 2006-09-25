@@ -586,7 +586,7 @@ public class AxisService extends AxisDescription {
                             EndpointReference[] eprsForService = listener.getEPRsForService(getName(), requestIP);
                             if (eprsForService != null) {
                                 for (int j = 0; j < eprsForService.length; j++) {
-                                    EndpointReference endpointReference = eprsForService[i];
+                                    EndpointReference endpointReference = eprsForService[j];  
                                     String address = endpointReference.getAddress();
                                     if (address != null) {
                                         eprList.add(address);
