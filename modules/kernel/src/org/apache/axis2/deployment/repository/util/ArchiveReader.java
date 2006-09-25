@@ -239,16 +239,33 @@ public class ArchiveReader implements DeploymentConstants {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
                             if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
                                 // we have a WSDL 2.0 document here.
-                                wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(new FileInputStream(file1), null, null);
-
+                                FileInputStream in2 = new FileInputStream(file1);
+                                wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(in2, null, null);
+                                try {
+                                    in2.close();
+                                } catch (IOException e) {
+                                    log.info(e);
+                                }
                             } else if (Constants.NS_URI_WSDL11.
                                     equals(documentElementNS.getNamespaceURI())) {
-                                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(new FileInputStream(file1), null, null);
+                                FileInputStream in2 = new FileInputStream(file1);
+                                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(in2, null, null);
+                                try {
+                                    in2.close();
+                                } catch (IOException e) {
+                                    log.info(e);
+                                }
                             } else {
                                 new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
 
-                            AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false, new FileInputStream(file1));
+                            FileInputStream in2 = new FileInputStream(file1);
+                            AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false, in2);
+                            try {
+                                in2.close();
+                            } catch (IOException e) {
+                                log.info(e);
+                            }
                             servicesMap.put(service.getName(), service);
                         }
 
