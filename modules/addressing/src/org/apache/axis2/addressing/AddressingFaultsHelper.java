@@ -19,13 +19,14 @@ import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class FinalFaultsHelper{
+public class AddressingFaultsHelper{
     
-    private static final Log log = LogFactory.getLog(FinalFaultsHelper.class);
+    private static final Log log = LogFactory.getLog(AddressingFaultsHelper.class);
     
     //    wsa:InvalidAddressingHeader [Reason] the string: "A header representing a Message Addressing Property is not valid and the message cannot be processed"
     //      wsa:InvalidAddress
@@ -35,7 +36,11 @@ public class FinalFaultsHelper{
         if(log.isDebugEnabled()){
             log.debug("triggerInvalidCardinalityFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
         }
-        triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "InvalidCardinality", Final.FAULT_INVALID_HEADER_REASON);
+        String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace))
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+        else
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "InvalidCardinality", Final.FAULT_INVALID_HEADER_REASON);
     }
 
     //      wsa:MissingAddressInEPR
@@ -43,7 +48,11 @@ public class FinalFaultsHelper{
         if(log.isDebugEnabled()){
             log.debug("triggerMissingAddressInEPRFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
         }
-        triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "MissingAddressInEPR", Final.FAULT_INVALID_HEADER_REASON);
+        String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace))
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+        else
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "MissingAddressInEPR", Final.FAULT_INVALID_HEADER_REASON);
     }
 
     //      wsa:DuplicateMessageID
@@ -52,7 +61,11 @@ public class FinalFaultsHelper{
         if(log.isDebugEnabled()){
             log.debug("triggerActionMismatchFault: messageContext: "+messageContext);
         }
-        triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":"+"Action", Final.FAULT_INVALID_HEADER, "ActionMismatch", Final.FAULT_INVALID_HEADER_REASON);
+        String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace))
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":Action", Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+        else
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":Action", Final.FAULT_INVALID_HEADER, "ActionMismatch", Final.FAULT_INVALID_HEADER_REASON);
     }
 
     //      wsa:OnlyAnonymousAddressSupported
@@ -60,7 +73,11 @@ public class FinalFaultsHelper{
         if(log.isDebugEnabled()){
             log.debug("triggerOnlyAnonymousAddressSupportedFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
         }
-        triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED, Final.FAULT_INVALID_HEADER_REASON);
+        String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace))
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+        else
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED, Final.FAULT_INVALID_HEADER_REASON);
     }
 
     //      wsa:OnlyNonAnonymousAddressSupported
@@ -68,7 +85,11 @@ public class FinalFaultsHelper{
         if(log.isDebugEnabled()){
             log.debug("triggerOnlyNonAnonymousAddressSupportedFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
         }
-        triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED, Final.FAULT_INVALID_HEADER_REASON);
+        String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace))
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+        else
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED, Final.FAULT_INVALID_HEADER_REASON);
     }
 
     //    wsa:MessageAddressingHeaderRequired [Reason] the string: "A required header representing a Message Addressing Property is not present"
@@ -76,7 +97,11 @@ public class FinalFaultsHelper{
         if(log.isDebugEnabled()){
             log.debug("triggerMessageAddressingRequiredFault: messageContext: "+messageContext+" missingHeaderName: "+missingHeaderName);
         }
-        triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null, Final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON);
+        String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace))
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Submission.FAULT_ADDRESSING_HEADER_REQUIRED, null, Submission.FAULT_ADDRESSING_HEADER_REQUIRED_REASON);
+        else
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null, Final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON);
     }
 
     //    wsa:ActionNotSupported [Reason] the string: "The [action] cannot be processed at the receiver"
@@ -84,8 +109,9 @@ public class FinalFaultsHelper{
         if(log.isDebugEnabled()){
             log.debug("triggerActionNotSupportedFault: messageContext: "+messageContext+" problemAction: "+problemAction);
         }
-        triggerAddressingFault(messageContext, AddressingConstants.Final.FAULT_PROBLEM_ACTION_NAME, problemAction, Final.FAULT_ACTION_NOT_SUPPORTED, null, Final.FAULT_ACTION_NOT_SUPPORTED_REASON);
+        triggerAddressingFault(messageContext, Final.FAULT_PROBLEM_ACTION_NAME, problemAction, AddressingConstants.FAULT_ACTION_NOT_SUPPORTED, null, AddressingConstants.FAULT_ACTION_NOT_SUPPORTED_REASON);
     }
+
     //    wsa:EndpointUnavailable [Reason] the string "The endpoint is unable to process the message at this time"
 
     private static void triggerAddressingFault(MessageContext messageContext, String faultInformationKey, Object faultInformationValue, String faultcode, String faultSubcode, String faultReason) throws AxisFault{
@@ -95,11 +121,6 @@ public class FinalFaultsHelper{
             messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
         }
 
-        if(messageContext.getMessageID() != null) {
-            faultInformation.put(AddressingConstants.WSA_RELATES_TO,messageContext.getMessageID());
-        }
-
-        faultInformation.put(Final.WSA_FAULT_ACTION, Final.WSA_FAULT_ACTION);
         faultInformation.put(faultInformationKey, faultInformationValue);
 
         if (!messageContext.isSOAP11()) {
@@ -107,7 +128,8 @@ public class FinalFaultsHelper{
         }
 
         messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
-        AxisFault fault = new AxisFault(faultReason, new QName(AddressingConstants.Final.WSA_NAMESPACE,faultcode));
+        String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        AxisFault fault = new AxisFault(faultReason, new QName(namespace, faultcode, AddressingConstants.WSA_DEFAULT_PREFIX));
         throw fault;
     }
 
@@ -129,21 +151,20 @@ public class FinalFaultsHelper{
     
     public static OMElement getDetailElementForAddressingFault(MessageContext messageContext, OMNamespace addressingNamespaceObject){
         Map faultInfo = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
-        OMElement probHeaderQName = null;
+        OMElement problemDetail = null;
         if (faultInfo != null) {
             String faultyHeaderQName = (String) faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
-            String faultyAction = (String) faultInfo.get(AddressingConstants.Final.FAULT_PROBLEM_ACTION_NAME);
+            String faultyAction = (String) faultInfo.get(Final.FAULT_PROBLEM_ACTION_NAME);
             if(faultyAction!=null && !"".equals(faultyAction)){
-                probHeaderQName = messageContext.getEnvelope().getOMFactory().createOMElement(AddressingConstants.Final.FAULT_PROBLEM_ACTION_NAME, addressingNamespaceObject);
-                OMElement probH2 = messageContext.getEnvelope().getOMFactory().createOMElement(AddressingConstants.WSA_ACTION, addressingNamespaceObject,probHeaderQName);
+                problemDetail = messageContext.getEnvelope().getOMFactory().createOMElement(Final.FAULT_PROBLEM_ACTION_NAME, addressingNamespaceObject);
+                OMElement probH2 = messageContext.getEnvelope().getOMFactory().createOMElement(AddressingConstants.WSA_ACTION, addressingNamespaceObject,problemDetail);
                 probH2.setText(faultyAction);
-                
             }
             if (faultyHeaderQName != null && !"".equals(faultyHeaderQName)) {
-                probHeaderQName = messageContext.getEnvelope().getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject);
-                probHeaderQName.setText(faultyHeaderQName);
+                problemDetail = messageContext.getEnvelope().getOMFactory().createOMElement(Final.FAULT_HEADER_PROB_HEADER_QNAME, addressingNamespaceObject);
+                problemDetail.setText(faultyHeaderQName);
             }
         }
-        return probHeaderQName;
+        return problemDetail;
     }
 }

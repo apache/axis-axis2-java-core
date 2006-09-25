@@ -26,15 +26,16 @@ import org.apache.axis2.context.MessageContext;
 
 import junit.framework.TestCase;
 
-public class FinalFaultsTest extends TestCase {
+public class AddressingFaultsTest extends TestCase {
 
     /**
-     * Test method for {@link org.apache.axis2.addressing.FinalFaultsHelper#triggerInvalidCardinalityFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
+     * Test method for {@link org.apache.axis2.addressing.AddressingFaultsHelper#triggerInvalidCardinalityFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
      */
     public void testTriggerInvalidCardinalityFault() {
         MessageContext messageContext = new MessageContext();
+        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Final.WSA_NAMESPACE);
         try{
-            FinalFaultsHelper.triggerInvalidCardinalityFault(messageContext, "Action");
+            AddressingFaultsHelper.triggerInvalidCardinalityFault(messageContext, "Action");
             fail("Should have thrown exception");
         }catch(AxisFault af){
             // Expected
@@ -46,12 +47,13 @@ public class FinalFaultsTest extends TestCase {
     }
 
     /**
-     * Test method for {@link org.apache.axis2.addressing.FinalFaultsHelper#triggerActionMismatchFault(org.apache.axis2.context.MessageContext)}.
+     * Test method for {@link org.apache.axis2.addressing.AddressingFaultsHelper#triggerActionMismatchFault(org.apache.axis2.context.MessageContext)}.
      */
     public void testTriggerActionMismatchFault() {
         MessageContext messageContext = new MessageContext();
+        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Final.WSA_NAMESPACE);
         try{
-            FinalFaultsHelper.triggerActionMismatchFault(messageContext);
+            AddressingFaultsHelper.triggerActionMismatchFault(messageContext);
             fail("Should have thrown exception");
         }catch(AxisFault af){
             // Expected
@@ -63,12 +65,13 @@ public class FinalFaultsTest extends TestCase {
     }
 
     /**
-     * Test method for {@link org.apache.axis2.addressing.FinalFaultsHelper#triggerOnlyAnonymousAddressSupportedFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
+     * Test method for {@link org.apache.axis2.addressing.AddressingFaultsHelper#triggerOnlyAnonymousAddressSupportedFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
      */
     public void testTriggerOnlyAnonymousAddressSupportedFault() {
         MessageContext messageContext = new MessageContext();
+        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Final.WSA_NAMESPACE);
         try{
-            FinalFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(messageContext, "ReplyTo");
+            AddressingFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(messageContext, "ReplyTo");
             fail("Should have thrown exception");
         }catch(AxisFault af){
             // Expected
@@ -80,12 +83,13 @@ public class FinalFaultsTest extends TestCase {
     }
 
     /**
-     * Test method for {@link org.apache.axis2.addressing.FinalFaultsHelper#triggerOnlyNonAnonymousAddressSupportedFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
+     * Test method for {@link org.apache.axis2.addressing.AddressingFaultsHelper#triggerOnlyNonAnonymousAddressSupportedFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
      */
     public void testTriggerOnlyNonAnonymousAddressSupportedFault() {
         MessageContext messageContext = new MessageContext();
+        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Final.WSA_NAMESPACE);
         try{
-            FinalFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(messageContext, "ReplyTo");
+            AddressingFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(messageContext, "ReplyTo");
             fail("Should have thrown exception");
         }catch(AxisFault af){
             // Expected
@@ -97,12 +101,13 @@ public class FinalFaultsTest extends TestCase {
     }
 
     /**
-     * Test method for {@link org.apache.axis2.addressing.FinalFaultsHelper#triggerMessageAddressingRequiredFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
+     * Test method for {@link org.apache.axis2.addressing.AddressingFaultsHelper#triggerMessageAddressingRequiredFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
      */
     public void testTriggerMessageAddressingRequiredFault() {
         MessageContext messageContext = new MessageContext();
+        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Final.WSA_NAMESPACE);
         try{
-            FinalFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, "Action");
+            AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, "Action");
             fail("Should have thrown exception");
         }catch(AxisFault af){
             // Expected
@@ -114,17 +119,18 @@ public class FinalFaultsTest extends TestCase {
     }
 
     /**
-     * Test method for {@link org.apache.axis2.addressing.FinalFaultsHelper#triggerActionNotSupportedFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
+     * Test method for {@link org.apache.axis2.addressing.AddressingFaultsHelper#triggerActionNotSupportedFault(org.apache.axis2.context.MessageContext, java.lang.String)}.
      */
     public void testTriggerActionNotSupportedFault() {
         MessageContext messageContext = new MessageContext();
+        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Final.WSA_NAMESPACE);
         try{
-            FinalFaultsHelper.triggerActionNotSupportedFault(messageContext, "http://incorrect/action");
+            AddressingFaultsHelper.triggerActionNotSupportedFault(messageContext, "http://incorrect/action");
             fail("Should have thrown exception");
         }catch(AxisFault af){
             // Expected
-            assertEquals(Final.FAULT_ACTION_NOT_SUPPORTED_REASON, af.getMessage());
-            assertEquals(new QName(Final.WSA_NAMESPACE,Final.FAULT_ACTION_NOT_SUPPORTED), af.getFaultCode());
+            assertEquals(AddressingConstants.FAULT_ACTION_NOT_SUPPORTED_REASON, af.getMessage());
+            assertEquals(new QName(Final.WSA_NAMESPACE,AddressingConstants.FAULT_ACTION_NOT_SUPPORTED), af.getFaultCode());
             assertEquals("http://incorrect/action", ((Map)messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS)).get(AddressingConstants.Final.FAULT_PROBLEM_ACTION_NAME));
             assertEquals(Boolean.FALSE, messageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES));
         }

@@ -71,6 +71,10 @@ public interface AddressingConstants {
 
     public static final String WSAW_ANONYMOUS_PARAMETER_NAME = "wsawAnonymous";
     
+    // ======================== Common Faults ==============================
+    public static final String FAULT_ACTION_NOT_SUPPORTED = "ActionNotSupported";
+    public static final String FAULT_ACTION_NOT_SUPPORTED_REASON = "The [action] cannot be processed at the receiver.";
+
     public interface Final {
 
         // ====================== Addressing 1.0 Final Version Constants ====================
@@ -85,7 +89,10 @@ public interface AddressingConstants {
                 "http://www.w3.org/2005/08/addressing/anonymous";
         public static final String WSA_NONE_URI =
                 "http://www.w3.org/2005/08/addressing/none";
-        public static final String WSA_FAULT_ACTION = "http://www.w3.org/2005/08/addressing/fault";
+        public static final String WSA_FAULT_ACTION =
+                "http://www.w3.org/2005/08/addressing/fault";
+        public static final String WSA_SOAP_FAULT_ACTION =
+                "http://www.w3.org/2005/08/addressing/soap/fault";
         public static final String WSA_TYPE_ATTRIBUTE_VALUE = "true";
         public static final String WSA_SERVICE_NAME_ENDPOINT_NAME = "EndpointName";
         public static final String WSA_POLICIES = "Policies";
@@ -106,8 +113,6 @@ public interface AddressingConstants {
         public static final String FAULT_INVALID_CARDINALITY = "InvalidCardinality";
         public static final String FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED = "OnlyAnonymousAddressSupported";
         public static final String FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED = "OnlyNonAnonymousAddressSupported";
-        public static final String FAULT_ACTION_NOT_SUPPORTED = "ActionNotSupported";
-        public static final String FAULT_ACTION_NOT_SUPPORTED_REASON = "The [action] cannot be processed at the receiver.";
         public static final String FAULT_PROBLEM_ACTION_NAME = "ProblemAction";
 
         public static final QName WSAW_USING_ADDRESSING = new QName(WSAW_NAMESPACE,USING_ADDRESSING);
@@ -125,7 +130,15 @@ public interface AddressingConstants {
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
 
         public static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
+        public static final String WSA_FAULT_ACTION =
+                "http://schemas.xmlsoap.org/ws/2004/08/addressing/fault";
         
+        // fault information
+        public static final String FAULT_INVALID_HEADER = "InvalidMessageInformationHeader";
+        public static final String FAULT_INVALID_HEADER_REASON = "A message information header is not valid and the message cannot be processed. The validity failure can be either structural or semantic, e.g. a [destination] that is not a URI or a [relationship] to a [message id] that was never issued.";
+        public static final String FAULT_ADDRESSING_HEADER_REQUIRED = "MessageInformationHeaderRequired";
+        public static final String FAULT_ADDRESSING_HEADER_REQUIRED_REASON = "A required message information header, To, MessageID, or Action, is not present.";
+
         public static final QName WSAW_USING_ADDRESSING = new QName(WSA_NAMESPACE,USING_ADDRESSING);
     }
 }

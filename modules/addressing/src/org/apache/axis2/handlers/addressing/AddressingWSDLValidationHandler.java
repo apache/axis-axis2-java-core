@@ -19,7 +19,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.FinalFaultsHelper;
+import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
@@ -58,7 +58,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
             if (log.isTraceEnabled())
                 log.trace("checkUsingAddressing: WS_ADDRESSING_VERSION=" + flag);
             if (JavaUtils.isFalseExplicitly(flag)) {
-                FinalFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
+                AddressingFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
             }
         }
     }
@@ -76,20 +76,20 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
                 EndpointReference anonEPR = new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
                 msgContext.setReplyTo(anonEPR);
                 msgContext.setFaultTo(anonEPR);
-                FinalFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_REPLY_TO);
+                AddressingFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_REPLY_TO);
             }
             if(AddressingHelper.isFaultRedirected(msgContext)){
                 EndpointReference anonEPR = new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
                 msgContext.setReplyTo(anonEPR);
                 msgContext.setFaultTo(anonEPR);
-                FinalFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_FAULT_TO);
+                AddressingFaultsHelper.triggerOnlyAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_FAULT_TO);
             }
         }else if("prohibited".equals(anonymous)){
             if(!AddressingHelper.isReplyRedirected(msgContext)){
-                FinalFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_REPLY_TO);
+                AddressingFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_REPLY_TO);
             }
             if(!AddressingHelper.isFaultRedirected(msgContext)){
-                FinalFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_FAULT_TO);
+                AddressingFaultsHelper.triggerOnlyNonAnonymousAddressSupportedFault(msgContext, AddressingConstants.WSA_FAULT_TO);
             }
         }
     }
@@ -102,7 +102,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
     private void checkAction(MessageContext msgContext) throws AxisFault{
         if(msgContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION)!=null){
             if((msgContext.getAxisService() == null) || (msgContext.getAxisOperation() == null)){
-                FinalFaultsHelper.triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
+                AddressingFaultsHelper.triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
             }
         }
     }

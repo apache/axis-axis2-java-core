@@ -28,10 +28,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -120,6 +121,11 @@ public class AddressingOutHandler extends AddressingHandler {
                 action = msgCtxt.getAxisOperation().getOutputAction();
             }
         }
+        if (Final.WSA_SOAP_FAULT_ACTION.equals(action) || Final.WSA_FAULT_ACTION.equals(action)) {
+            if (Submission.WSA_NAMESPACE.equals(addressingNamespaceObject.getNamespaceURI())) {
+                action = Submission.WSA_FAULT_ACTION;
+            }
+        }
         if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
                 addressingNamespaceObject, replaceHeaders)) {
             processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
@@ -127,13 +133,14 @@ public class AddressingOutHandler extends AddressingHandler {
     }
 
     private void processFaultsInfoIfPresent(SOAPEnvelope envelope, MessageContext msgContext, OMNamespace addressingNamespaceObject, boolean replaceHeaders) {
-        OMElement detailElement = FinalFaultsHelper.getDetailElementForAddressingFault(msgContext, addressingNamespaceObject);
+        OMElement detailElement = AddressingFaultsHelper.getDetailElementForAddressingFault(msgContext, addressingNamespaceObject);
         if(detailElement != null){
-            if(msgContext.isSOAP11()){ // This difference is explained in the WS-Addressing SOAP Binding Spec.
+            if(msgContext.isSOAP11() && Final.WSA_NAMESPACE.equals(addressingNamespaceObject.getNamespaceURI())){ // This difference is explained in the WS-Addressing SOAP Binding Spec.
                 // Add detail as a wsa:FaultDetail header
                 SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
                 faultDetail.addChild(detailElement);
-            }else{
+            }
+            else if (!msgContext.isSOAP11()) {
                 // Add detail to the Fault in the SOAP Body
                 SOAPFault fault = envelope.getBody().getFault();
                 if (fault != null && fault.getDetail() != null) {

@@ -166,13 +166,18 @@ public class AxisEngine {
             faultContext.setServiceContext(serviceContext);
         }
 
+        faultContext.setOperationContext(processingContext.getOperationContext());
         faultContext.setProcessingFault(true);
+        faultContext.setServerSide(true);
+        faultContext.setDoingREST(processingContext.isDoingREST());
+
         // Add correct Action
         AxisOperation op = processingContext.getAxisOperation();
         if(op != null && op.getFaultAction()!=null){
             faultContext.setWSAAction(processingContext.getAxisOperation().getFaultAction());
-        }else{ //If, for some reason there is no value set, should use a sensible action.
-            faultContext.setWSAAction(Final.WSA_FAULT_ACTION);
+        }
+        else{ //If, for some reason there is no value set, should use a sensible action.
+            faultContext.setWSAAction(Final.WSA_SOAP_FAULT_ACTION);
         }
                 
         // there are some information  that the fault thrower wants to pass to the fault path.
@@ -227,11 +232,6 @@ public class AxisEngine {
         } catch (URISyntaxException urise) {
             throw new AxisFault(urise);
         }
-
-        faultContext.setOperationContext(processingContext.getOperationContext());
-        faultContext.setProcessingFault(true);
-        faultContext.setServerSide(true);
-        faultContext.setDoingREST(processingContext.isDoingREST());
 
         SOAPEnvelope envelope;
 

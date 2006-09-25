@@ -2,8 +2,8 @@ package org.apache.axis2.handlers.addressing;
 
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.FinalFaultsHelper;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
@@ -50,18 +50,18 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
     protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
         if (!alreadyFoundAddrHeader.contains(WSA_TO)) {
             // Should write a new SubmissionFaults class but for the moment use the FinalFaults
-            FinalFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_TO);
+            AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_TO);
         }
         
         if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
-            FinalFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
+            AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
         }
         
         if (alreadyFoundAddrHeader.contains(WSA_REPLY_TO) ||
             alreadyFoundAddrHeader.contains(WSA_FAULT_TO)) {
             
             if (!alreadyFoundAddrHeader.contains(WSA_MESSAGE_ID)) {
-                FinalFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_MESSAGE_ID);
+                AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_MESSAGE_ID);
             }
         }
     }

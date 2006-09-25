@@ -24,7 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.addressing.FinalFaultsHelper;
+import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
@@ -165,7 +165,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         // This means that if for example there are multiple MessageIDs and a FaultTo, the FaultTo will be respected.
         if(!duplicateHeaderNames.isEmpty()){
         	// Simply choose the first problem header we came across as we can only fault for one of them.
-            FinalFaultsHelper.triggerInvalidCardinalityFault(messageContext, (String)duplicateHeaderNames.get(0));
+            AddressingFaultsHelper.triggerInvalidCardinalityFault(messageContext, (String)duplicateHeaderNames.get(0));
         }
         
         // check for the presence of madatory addressing headers
@@ -272,7 +272,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         
         if (soapAction != null && !"".equals(soapAction)) {
             if (!soapAction.equals(soapHeaderBlock.getText())) {
-                FinalFaultsHelper.triggerActionMismatchFault(messageContext);
+                AddressingFaultsHelper.triggerActionMismatchFault(messageContext);
             }
         }
         else {
@@ -294,7 +294,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             EndpointReferenceHelper.fromOM(epr, headerBlock, addressingNamespace);
         }
         catch (AxisFault af) {
-            FinalFaultsHelper.triggerMissingAddressInEPRFault(messageContext, headerBlock.getLocalName());
+            AddressingFaultsHelper.triggerMissingAddressInEPRFault(messageContext, headerBlock.getLocalName());
         }
     }
 }
