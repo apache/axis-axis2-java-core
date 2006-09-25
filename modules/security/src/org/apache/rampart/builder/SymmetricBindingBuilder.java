@@ -404,8 +404,6 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 
                 refList = dkEncr.encryptForExternalRef(null, encrParts);
                 
-                refList = dkEncr.encryptForExternalRef(null, 
-                        encrParts);
                 RampartUtil.insertSiblingAfter(rmd, 
                                                 encrDKTokenElem, 
                                                 refList);
@@ -430,8 +428,6 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 //Encrypt, get hold of the ref list and add it
                 refList = encr.encryptForExternalRef(null, encrParts);
 
-                //Encrypt, get hold of the ref list and add it
-                refList = encr.encryptForExternalRef(null, encrParts);
                 RampartUtil.insertSiblingAfter(rmd,
                                                 encrTokElem,
                                                 refList);
