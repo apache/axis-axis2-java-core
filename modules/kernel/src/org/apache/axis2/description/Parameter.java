@@ -60,18 +60,18 @@ public class Parameter {
     private Object value;
 
     /**
-     * Constructor ParameterImpl.
+     * Constructor.
      */
     public Parameter() {
     }
 
     /**
-     * Constructor ParameterImpl.
+     * Constructor from name and value.
      *
      * @param name
      * @param value
      */
-    public Parameter(String name, String value) {
+    public Parameter(String name, Object value) {
         this.name = name;
         this.value = value;
     }
