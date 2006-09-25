@@ -57,25 +57,29 @@
         <xsl:for-each select="method">
 
             if("<xsl:value-of select="@name"/>".equals(methodName)){
-                            
+
             <!-- If usedbmethod attribute present, gives name of method to call for implementation -->
             <xsl:variable name="usedbmethod"><xsl:value-of select="@usedbmethod"/></xsl:variable>
+
+
+
             <xsl:choose>
-                <xsl:when test="$usedbmethod=''">
+                <xsl:when test="string-length(normalize-space($usedbmethod))=0">
+
                     <xsl:variable name="namespace"><xsl:value-of select="@namespace"/></xsl:variable>
-        
+
                     <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
 
                     <xsl:variable name="returntype"><xsl:value-of select="output/param/@type"/></xsl:variable>
                     <xsl:variable name="returnvariable"><xsl:value-of select="output/param/@name"/></xsl:variable>
-                    
+
                     <xsl:if test="$returntype!=''">
                         <xsl:value-of select="$returntype"/>
                         <xsl:text> </xsl:text>
                         <xsl:value-of select="$returnvariable"/> = null;
                     </xsl:if>
-        
+
                     <xsl:choose>
                         <!-- We really don't need to make a difference between these-->
                         <xsl:when test="$style='document' or $style='rpc'">
@@ -123,7 +127,7 @@
                                      skel.<xsl:value-of select="@name"/>();
                                 </xsl:otherwise>
                             </xsl:choose>
-        
+
                             <xsl:choose>
                                 <xsl:when test="$returntype!=''">
                                     envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>, false);
@@ -133,20 +137,20 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
-        
+
                         <xsl:otherwise>
                             //Unknown style!! No code is generated
                             throw new UnsupportedOperationException("Unknown Style");
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
-                
+
                 <xsl:otherwise>
                     envelope = <xsl:value-of select="$usedbmethod"/>(msgContext.getEnvelope().getBody().getFirstElement(), getSOAPFactory(msgContext));
                 </xsl:otherwise>
-                
+
             </xsl:choose>
-    
+
             }
         </xsl:for-each>
 
@@ -242,24 +246,24 @@
         if(op.getName() != null &amp; (methodName = op.getName().getLocalPart()) != null){
 
         <xsl:for-each select="method">
-                            
+
             <!-- If usedbmethod attribute present, gives name of method to call for implementation -->
             <xsl:variable name="usedbmethod"><xsl:value-of select="@usedbmethod"/></xsl:variable>
             <xsl:choose>
-                <xsl:when test="$usedbmethod=''">
-        
+                <xsl:when test="string-length(normalize-space($usedbmethod))=0">
+
                     <xsl:variable name="namespace"><xsl:value-of select="@namespace"/></xsl:variable>
                     <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
-        
-        
+
+
                     if("<xsl:value-of select="@name"/>".equals(methodName)){
-        
+
                     <xsl:choose>
                         <xsl:when test="$style='rpc'">
-        
+
                             //rpc style  -- this needs to be filled
-        
+
                         </xsl:when>
                         <xsl:when test="$style='document'">
                             //doc style
@@ -277,20 +281,20 @@
                                 <xsl:otherwise>skel.<xsl:value-of select="@name"/>();</xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
-        
+
                         <xsl:otherwise>
                             //Unknown style!! No code is generated
                             throw new UnsupportedOperationException("Unknown Style");
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:when>
-                
+
                 <xsl:otherwise>
                     <xsl:value-of select="$usedbmethod"/>(msgContext.getEnvelope().getBody().getFirstElement(), null);
                 </xsl:otherwise>
-                
+
             </xsl:choose>
-        
+
             }
         </xsl:for-each>
 
