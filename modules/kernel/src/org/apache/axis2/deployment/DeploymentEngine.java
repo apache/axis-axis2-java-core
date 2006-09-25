@@ -417,7 +417,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * When user adds the “load-on-startup” parameter into services.xml ,
+     * When user adds the "load-on-startup" parameter into services.xml ,
      * Axis2 will call following method using java reflection.
      * If user has DB initialization , Thread creation then he can do that at this point.
      * Public void startUp(ConfigurationContext) {}
