@@ -1054,30 +1054,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //at this point we may need to capture the extra parameters passes to the
         //particular databinding framework
         //these parameters showup in the property map with String keys, and we
-        //can just copy these items over to the <extra> element.
-        //this code allows both simple values, which are written as name="value"
-        //attributes of the <extra> element, and Element values with property
-        //names starting with "databinders/extra", which are written as child
-        //elements of the <extra> element (with the property name unused, in
-        //this case)
+        //can just copy these items as attributes of the <extra> element.
         Element extraElement = addElement(doc, "extra", null, rootElement);
         Map propertiesMap = codeGenConfiguration.getProperties();
         for (Iterator it = propertiesMap.keySet().iterator(); it.hasNext();){
             Object key = it.next();
             if (key instanceof String) {
                 Object value = propertiesMap.get(key);
-                if (value instanceof Element) {
-                    if (((String)key).startsWith("databinders/extra")) {
-                        // append child element
-                        extraElement.appendChild(doc.importNode((Element)value, true));
-                    }
-                } else {
-                    //if the value is null set it to empty string
-                    if (value==null) value="";
-                    //add key="value" attribute to element iff value a string
-                    if (value instanceof String){
-                         addAttribute(doc,(String)key,(String)value, extraElement);
-                    }
+                //if the value is null set it to empty string
+                if (value==null) value="";
+                //add key="value" attribute to element iff value a string
+                if (value instanceof String){
+                     addAttribute(doc,(String)key,(String)value, extraElement);
                 }
             }
         }
@@ -1097,7 +1085,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
             rootElement.appendChild((Element) iterator.next());
         }
-
+        
+        // finish with any extra information from operations
+        for (Iterator operationsIterator = axisService.getOperations();operationsIterator.hasNext();) {
+            AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+            Parameter details = axisOperation.getParameter(Constants.DATABINDING_DETAILS);
+            if (details != null) {
+                rootElement.appendChild(doc.importNode((Element)details.getValue(), true));
+            }
+        }
 
         ///////////////////////////////////////////////
         //System.out.println(DOM2Writer.nodeToString(rootElement));

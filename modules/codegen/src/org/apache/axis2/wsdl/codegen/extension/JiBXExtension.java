@@ -16,6 +16,8 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -45,7 +47,7 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
         // check the JiBX binding definition file specified
         String path = (String)configuration.getProperties().get(BINDING_PATH_OPTION);
         if (path == null) {
-            throw new RuntimeException("jibx binding option currently requires -" +
+            throw new RuntimeException("jibx binding option currently requires -E" +
                     BINDING_PATH_OPTION + " {file-path} parameter");
         }
         try {
@@ -65,52 +67,25 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
                 throw new RuntimeException("JiBX binding extension not in classpath");
             }
             
+            // create an instance of the class
+            Object inst = null;
+            Constructor constructor = clazz.getConstructor(new Class[] { CodeGenConfiguration.class });
+            inst = constructor.newInstance(new Object[] { configuration });
+            
             // invoke utility class method for actual processing
             Method method = clazz.getMethod(JIBX_UTILITY_METHOD,
-                new Class[] { String.class, CodeGenConfiguration.class });
-            method.invoke(null, new Object[] { path, configuration });
-
-/*            // invoke utility class method for actual processing
-            Method method = clazz.getMethod(BINDING_MAP_METHOD,
-                    new Class[] { String.class });
-            HashMap jibxmap = (HashMap)method.invoke(null, new Object[] { path });
-
-            // Want to find all elements by working down from bindings (if any
-            // supplied) or interfaces (if no bindings). Not sure why this dual
-            // path is required, but based on the code in
-            // org.apache.axis2.wsdl.builder.SchemaUnwrapper
-            HashSet elements = new HashSet();
-            Iterator operations = configuration.getAxisService().getOperations();
-            while (operations.hasNext()) {
-                AxisOperation o =  (AxisOperation)operations.next();
-                accumulateElements(o, elements);
-            }
-
-
-            //create the type mapper
-            //First try to take the one that is already there
-            TypeMapper mapper = configuration.getTypeMapper();
-            if (mapper==null){
-                mapper =new JavaTypeMapper();
-            }
-
-            for (Iterator iter = elements.iterator(); iter.hasNext();) {
-                QName qname = (QName)iter.next();
-                if (qname != null) {
-                    String cname = (String)jibxmap.get(qname);
-                    if (cname == null) {
-                        throw new RuntimeException("No JiBX mapping defined for " + qname);
-                    }
-                    mapper.addTypeMappingName(qname, cname);
-                }
-            }
-
-            // set the type mapper to the config
-            configuration.setTypeMapper(mapper);	*/
+                new Class[] { String.class });
+            method.invoke(inst, new Object[] { path });
 
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException)e;
+            } else if (e instanceof InvocationTargetException) {
+                if (e.getCause() instanceof RuntimeException) {
+                    throw (RuntimeException)e.getCause();
+                } else {
+                    throw new RuntimeException(e);
+                }
             } else {
                 throw new RuntimeException(e);
             }
