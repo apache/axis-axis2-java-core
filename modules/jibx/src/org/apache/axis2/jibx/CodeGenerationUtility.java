@@ -19,20 +19,26 @@ package org.apache.axis2.jibx;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.util.Constants;
+import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
@@ -48,59 +54,52 @@ import org.jibx.binding.model.MappingElement;
 import org.jibx.binding.model.NamespaceElement;
 import org.jibx.binding.model.ValidationContext;
 import org.jibx.runtime.JiBXException;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Framework-linked code used by JiBX data binding support. This is accessed via
  * reflection from the JiBX code generation extension when JiBX data binding is
- * selected.
+ * selected. JiBX uses a different approach to unwrapping method parameters from
+ * that implemented by ADB, and since the ADB technique is assumed by all code
+ * generation templates this has to create the same data structures. These data
+ * structures are undocumented, and can only be determined by going through the
+ * {@link org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension} and
+ * {@link org.apache.axis2.wsdl.codegen.emitter.AxisServiceBasedMultiLanguageEmitter}
+ * code.
  */
 public class CodeGenerationUtility {
     private static final String SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
-    private static final String UNWRAP_OPTION = "unwrap";
+    
+    private final CodeGenConfiguration codeGenConfig;
+    
+    /**
+     * Constructor.
+     * 
+     * @param config code generation configuration
+     */
+    public CodeGenerationUtility(CodeGenConfiguration config) {
+        codeGenConfig = config;
+    }
     
     /**
      * Configure the code generation based on the supplied parameters and WSDL.
+     * This first gets type mappings from binding definition, then goes through
+     * the operations checking the input and output messages. If unwrapping is
+     * disabled the message element must be handled directly by a mapping. If
+     * unwrapping is enabled, this checks that the message element is of the
+     * proper form (a sequence of other elements, which all have maxOccurs="1").
+     * It then generates an unwrapping description and adds it to the code
+     * generation configuration, where it'll be picked up and included in the
+     * XML passed to code generation. This also constructs a type mapping, since
+     * that's required by the base Axis2 code generation. In the case of
+     * unwrapped elements, the type mapping includes a synthesized qname for
+     * each unwrapped parameter, and the detailed information is set on the
+     * message information. Sound confusing? Welcome to Axis2 code generation.
      * 
      * @param path binding path
-     * @param configuration 
      */
-    public static void engage(String path, CodeGenConfiguration configuration) {
-
-        // get all elements for operations, and matching type definitions
-        HashMap defsmap = new HashMap();
-        Iterator operations = configuration.getAxisService().getOperations();
-        while (operations.hasNext()) {
-            AxisOperation o =  (AxisOperation)operations.next();
-            accumulateElements(o, defsmap, configuration);
-        }
-        
-        // When unwrapping is enabled this needs to check each particular
-        //  operation to see if it can be unwrapped; if not, check if the
-        //  operation can be handled as wrapped; if not, fail.
-        
-        // store typemapping to configuration
-        boolean unwrap = configuration.getProperties().containsKey(UNWRAP_OPTION);
-        configuration.setTypeMapper(processBinding(path, defsmap, unwrap));
-    }
-
-    /**
-     * Get type mappings from binding definition. If unwrapping is enabled, this
-     * sets the type mapping for unwrappable elements (those which only contain
-     * a sequence of other elements, which all have maxOccurs="1") to a document
-     * giving a format or mapped class corresponding to each of the child
-     * child elements. Otherwise, the type mapping goes direct to a mapped class
-     * name for each element.
-     * 
-     * @param path binding definition file path
-     * @param defsmap map from element qname to schema definition
-     * @param unwrap flag for elements to be unwrapped where possible
-     * @return map from qname to class name
-     */
-    private static TypeMapper processBinding(String path, HashMap defsmap,
-        boolean unwrap) {
+    public void engage(String path) {
         
         // make sure the binding definition file is present
         File file = new File(path);
@@ -122,7 +121,7 @@ public class CodeGenerationUtility {
             }
             
             // create table with all built-in format definitions
-            HashMap simpleTypeMap = new HashMap();
+            Map simpleTypeMap = new HashMap();
             buildFormat("byte", "byte",
                 "org.jibx.runtime.Utility.serializeByte",
                 "org.jibx.runtime.Utility.parseByte", "0", simpleTypeMap);
@@ -168,56 +167,93 @@ public class CodeGenerationUtility {
                 simpleTypeMap);
             
             // collect all the top-level mapping and format definitions
-            HashMap elementMap = new HashMap();
-            HashMap complexTypeMap = new HashMap();
+            Map elementMap = new HashMap();
+            Map complexTypeMap = new HashMap();
             collectTopLevelComponents(binding, null, elementMap,
                 complexTypeMap, simpleTypeMap);
             
-            // check handling for each operation - first try unwrapping, if
-            //  enabled, storing results directly into codegen configuration for
-            //  passing to the template; if unwrapping fails, try straight
-            //  doc/lit
-            TypeMapper mapper = new JavaTypeMapper();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            for (Iterator iter = defsmap.keySet().iterator(); iter.hasNext();) {
-                QName qname = (QName)iter.next();
-                Object obj = elementMap.get(qname);
-                if (obj == null) {
-                    if (unwrap) {
-                        
-                        // element must be sequence with non-repeated child elements
-                        XmlSchemaElement element =
-                            (XmlSchemaElement)defsmap.get(qname);
-                        XmlSchemaType type = element.getSchemaType();
-                        Document detail = unwrapDefinition(qname, type,
-                            simpleTypeMap, complexTypeMap, factory);
-                        if (detail != null) {
-                            mapper.addTypeMappingObject(qname, detail);
-                        }
-                        
-                    } else {
-                        throw new RuntimeException
-                            ("No mapping definition found for element " + qname);
+            // force off inappropriate option (set by error in options handling)
+            codeGenConfig.setPackClasses(false);
+
+            // configure handling for all operations of service
+            codeGenConfig.setTypeMapper(new NamedParameterTypeMapper());
+            Iterator operations = codeGenConfig.getAxisService().getOperations();
+            boolean unwrap = !codeGenConfig.isParametersWrapped();
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            int index = 0;
+            while (operations.hasNext()) {
+                
+                // get the basic operation information
+                AxisOperation op = (AxisOperation)operations.next();
+                String mep = op.getMessageExchangePattern();
+                AxisMessage inmsg = null;
+                AxisMessage outmsg = null;
+                if (WSDLUtil.isInputPresentForMEP(mep)) {
+                    inmsg = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                    if (inmsg == null) {
+                        throw new RuntimeException("Expected input message not found for operation " + op.getName());
                     }
+                }
+                if (WSDLUtil.isOutputPresentForMEP(mep)) {
+                    outmsg = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                    if (outmsg == null) {
+                        throw new RuntimeException("Expected output message not found for operation " + op.getName());
+                    }
+                }
+                if (unwrap) {
+                    
+                    // use unwrapping for both input and output
+                    String receivername = "jibxReceiver" + index++;
+                    Element dbmethod = doc.createElement("dbmethod");
+                    dbmethod.setAttribute("receiver-name", receivername);
+                    if (inmsg != null) {
+                        dbmethod.appendChild(unwrapMessage(inmsg, false, simpleTypeMap, complexTypeMap, doc));
+                    }
+                    if (outmsg != null) {
+                        dbmethod.appendChild(unwrapMessage(outmsg, true, simpleTypeMap, complexTypeMap, doc));
+                    }
+                    
+                    // save unwrapping information for use in code generation
+                    op.addParameter(new Parameter(Constants.DATABINDING_GENERATED_RECEIVER, receivername));
+                    op.addParameter(new Parameter(Constants.DATABINDING_GENERATED_IMPLEMENTATION, Boolean.TRUE));
+                    op.addParameter(new Parameter(Constants.DATABINDING_DETAILS, dbmethod));
+                    
                 } else {
                     
-                    // concrete mapping, just save the mapped class name
-                    MappingElement mapping = (MappingElement)obj;
-                    mapper.addTypeMappingName(qname, mapping.getClassName());
+                    // concrete mappings, just save the mapped class name(s)
+                    if (inmsg != null) {
+                        mapMessage(inmsg, elementMap);
+                    }
+                    if (outmsg != null) {
+                        mapMessage(outmsg, elementMap);
+                    }
                     
                 }
             }
-            return mapper;
             
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (JiBXException e) {
             throw new RuntimeException(e);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        } catch (AxisFault e) {
+            throw new RuntimeException(e);
         }
     }
     
+    /**
+     * Add format definition for type with built-in JiBX handling to map.
+     * 
+     * @param stype schema type name
+     * @param jtype java type name
+     * @param sname serializer method name
+     * @param dname deserializer method name
+     * @param dflt default value
+     * @param map schema type qname to format definition map
+     */
     private static void buildFormat(String stype, String jtype, String sname,
-        String dname, String dflt, HashMap map) {
+        String dname, String dflt, Map map) {
         FormatElement format = new FormatElement();
         format.setTypeName(jtype);
         format.setSerializerName(sname);
@@ -225,135 +261,183 @@ public class CodeGenerationUtility {
         format.setDefaultText(dflt);
         map.put(new QName(SCHEMA_NAMESPACE, stype), format);
     }
-
+    
     /**
-     * Handle the unwrapping of an element definition. The element to be
-     * unwrapped must be defined as a complexType with no attributes wrapping a
-     * sequence, where each particle in the sequence is an element definition
-     * with maxOccurs='1'.
+     * Handles unwrapping a message. This generates and returns the detailed
+     * description of how the message is to be unwrapped. It also creates the
+     * data structures expected by the code generation in order to be somewhat
+     * compatible with ADB unwrapping.
      * 
-     * @param qname element qualified name
-     * @param type schema type definition
-     * @param simpleTypeMap 
-     * @param complexTypeMap 
-     * @param factory 
-     * @return document with data binding details
-     * @throws RuntimeException on error unwrapping document
+     * @param msg message to be unwrapped
+     * @param isout output message flag (wrapper inherits inner type, for XSLTs)
+     * @param simpleTypeMap binding formats
+     * @param complexTypeMap binding mappings
+     * @param doc document used for DOM components
+     * @return detailed description element for code generation
      */
-    private static Document unwrapDefinition(QName qname, XmlSchemaType type,
-        HashMap simpleTypeMap, HashMap complexTypeMap,
-        DocumentBuilderFactory factory) {
-        try {
-            
-            // dig down to the sequence
-            if (type instanceof XmlSchemaComplexType) {
-                XmlSchemaComplexType ctype = (XmlSchemaComplexType)type;
-                if (ctype.getAttributes().getCount() != 0) {
-                    throw new RuntimeException("Cannot unwrap element " +
-                        qname + ": attributes not allowed on type to be unwrapped");
-                }
-                XmlSchemaParticle particle = ctype.getParticle();
-                if (!(particle instanceof XmlSchemaSequence)) {
-                    throw new RuntimeException("Cannot unwrap element " +
-                        qname + ": type to be unwrapped must be a sequence");
-                }
-                if (particle.getMinOccurs() != 1 || particle.getMaxOccurs() != 1) {
-                    throw new RuntimeException("Cannot unwrap element " +
-                        qname + ": contained sequence must have minOccurs='1' and maxOccurs='1'");
-                }
-                XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
-                
-                // create document to hold data binding details for element
-                Document doc = factory.newDocumentBuilder().newDocument();
-                Element root = doc.createElement("wrapper");
-                root.setAttribute("ns", qname.getNamespaceURI());
-                root.setAttribute("name", qname.getLocalPart());
-                doc.appendChild(root);
-                
-                // add child param element matching each child of wrapper element
-                XmlSchemaObjectCollection items = sequence.getItems();
-                for (Iterator iter = items.getIterator(); iter.hasNext();) {
-                    
-                    // check that child item obeys the unwrapping rules
-                    XmlSchemaParticle item = (XmlSchemaParticle)iter.next();
-                    if (!(item instanceof XmlSchemaElement)) {
-                        throw new RuntimeException("Cannot unwrap element " +
-                            qname + ": only element items allowed in seqence");
-                    }
-                    XmlSchemaElement element = (XmlSchemaElement)item;
-                    QName typename = element.getSchemaTypeName();
-                    if (typename == null) {
-                        throw new RuntimeException("Cannot unwrap element " +
-                            qname + ": all elements in contained sequence must reference a named type");
-                    }
-                    
-                    // add element to output with details of this element handling
-                    Element param = doc.createElement("param");
-                    QName itemname = element.getQName();
-                    param.setAttribute("ns", itemname.getNamespaceURI());
-                    param.setAttribute("name", itemname.getLocalPart());
-                    if (element.getSchemaType() instanceof XmlSchemaSimpleType) {
-                        
-                        // simple type translates to format element in binding
-                        FormatElement format = (FormatElement)simpleTypeMap.get(typename);
-                        if (format == null) {
-                            throw new RuntimeException("Cannot unwrap element " +
-                                qname + ": no format definition found for child element " + itemname);
-                        }
-                        param.setAttribute("type", "simple");
-                        param.setAttribute("java-type", format.getTypeName());
-                        param.setAttribute("serializer", format.getSerializerName());
-                        param.setAttribute("deserializer", format.getDeserializerName());
-                        String dflt = element.getDefaultValue();
-                        if (dflt == null) {
-                            dflt = format.getDefaultText();
-                        }
-                        param.setAttribute("default", dflt);
-                        
-                    } else {
-                        
-                        // complex type translates to abstract mapping in binding
-                        MappingElement mapping = (MappingElement)complexTypeMap.get(typename);
-                        if (mapping == null) {
-                            throw new RuntimeException("Cannot unwrap element " +
-                                qname + ": no mapping definition found for child element " + itemname);
-                        }
-                        param.setAttribute("type", "complex");
-                        param.setAttribute("java-type", mapping.getClassName());
-                        param.setAttribute("type-ns", typename.getNamespaceURI());
-                        param.setAttribute("type-name", typename.getLocalPart());
-                        
-                    }
-                    
-                    // add shared information to binding details element
-                    if (element.getMinOccurs() == 0) {
-                        param.setAttribute("optional", "true");
-                    }
-                    if (element.getMaxOccurs() > 1) {
-                        param.setAttribute("repeated", "true");
-                    }
-                    Attr[] attrs = element.getUnhandledAttributes();
-                    if (attrs != null) {
-                        for (int i = 0; i < attrs.length; i++) {
-                            Attr attr = attrs[i];
-                            if ("nillable".equals(attr.getName()) &&
-                                SCHEMA_NAMESPACE.equals(attr.getNamespaceURI())) {
-                                param.setAttribute("nillable", "true");
-                                break;
-                            }
-                        }
-                    }
-                    root.appendChild(param);
-                }
-                return doc;
-                
+    private Element unwrapMessage(AxisMessage msg, boolean isout,
+        Map simpleTypeMap, Map complexTypeMap, Document doc) {
+        
+        // find the schema definition for this message element
+        QName qname = msg.getElementQName();
+        if (qname == null) {
+            throw new RuntimeException("No element reference in message " + msg.getName());
+        }
+        XmlSchemaElement wrapdef = codeGenConfig.getAxisService().getSchemaElement(qname);
+        if (wrapdef == null) {
+            throw new RuntimeException("Cannot unwrap - no definition found for element " + qname);
+        }
+        XmlSchemaType type = wrapdef.getSchemaType();
+        
+        // create document to hold data binding details for element
+        Element wrapdetail = doc.createElement(isout ? "out-wrapper" : "in-wrapper");
+        wrapdetail.setAttribute("ns", qname.getNamespaceURI());
+        wrapdetail.setAttribute("name", qname.getLocalPart());
+        
+        // dig down to the sequence
+        List partNameList = new ArrayList();
+        String wrappertype = "java.lang.Object";
+        if (type instanceof XmlSchemaComplexType) {
+            wrapdetail.setAttribute("empty", "false");
+            XmlSchemaComplexType ctype = (XmlSchemaComplexType)type;
+            if (ctype.getAttributes().getCount() != 0) {
+                throw new RuntimeException("Cannot unwrap element " +
+                    qname + ": attributes not allowed on type to be unwrapped");
             }
-            throw new RuntimeException("Cannot unwrap element " +
-                qname);
+            XmlSchemaParticle particle = ctype.getParticle();
+            if (!(particle instanceof XmlSchemaSequence)) {
+                throw new RuntimeException("Cannot unwrap element " +
+                    qname + ": type to be unwrapped must be a sequence");
+            }
+            if (particle.getMinOccurs() != 1 || particle.getMaxOccurs() != 1) {
+                throw new RuntimeException("Cannot unwrap element " +
+                    qname + ": contained sequence must have minOccurs='1' and maxOccurs='1'");
+            }
+            XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
             
-        } catch (ParserConfigurationException e) {
+            // add child param element matching each child of wrapper element
+            QName opName = ((AxisOperation)msg.getParent()).getName();
+            XmlSchemaObjectCollection items = sequence.getItems();
+            for (Iterator iter = items.getIterator(); iter.hasNext();) {
+                
+                // check that child item obeys the unwrapping rules
+                XmlSchemaParticle item = (XmlSchemaParticle)iter.next();
+                if (!(item instanceof XmlSchemaElement)) {
+                    throw new RuntimeException("Cannot unwrap element " +
+                        qname + ": only element items allowed in seqence");
+                }
+                XmlSchemaElement element = (XmlSchemaElement)item;
+                QName typename = element.getSchemaTypeName();
+                if (typename == null) {
+                    throw new RuntimeException("Cannot unwrap element " +
+                        qname + ": all elements in contained sequence must reference a named type");
+                }
+                
+                // add element to output with details of this element handling
+                Element param = doc.createElement(isout ? "return-element" : "parameter-element");
+                QName itemname = element.getQName();
+                param.setAttribute("ns", itemname.getNamespaceURI());
+                param.setAttribute("name", itemname.getLocalPart());
+                param.setAttribute("nillable", Boolean.toString(element.isNillable()));
+                param.setAttribute("optional", Boolean.toString(element.getMinOccurs() == 0));
+                boolean isarray = element.getMaxOccurs() > 1;
+                param.setAttribute("array", Boolean.toString(isarray));
+                String javatype;
+                if (element.getSchemaType() instanceof XmlSchemaSimpleType) {
+                    
+                    // simple type translates to format element in binding
+                    FormatElement format = (FormatElement)simpleTypeMap.get(typename);
+                    if (format == null) {
+                        throw new RuntimeException("Cannot unwrap element " +
+                            qname + ": no format definition found for child element " + itemname);
+                    }
+                    javatype = format.getTypeName();
+                    param.setAttribute("form", "simple");
+                    param.setAttribute("serializer", format.getSerializerName());
+                    param.setAttribute("deserializer", format.getDeserializerName());
+                    String dflt = element.getDefaultValue();
+                    if (dflt == null) {
+                        dflt = format.getDefaultText();
+                    }
+                    param.setAttribute("default", dflt);
+                    
+                } else {
+                    
+                    // complex type translates to abstract mapping in binding
+                    MappingElement mapping = (MappingElement)complexTypeMap.get(typename);
+                    if (mapping == null) {
+                        throw new RuntimeException("Cannot unwrap element " +
+                            qname + ": no abstract mapping definition found for child element " + itemname);
+                    }
+                    javatype = mapping.getClassName();
+                    param.setAttribute("form", "complex");
+                    param.setAttribute("type-ns", typename.getNamespaceURI());
+                    param.setAttribute("type-name", typename.getLocalPart());
+                    
+                }
+                if (isarray) {
+                    javatype = javatype + "[]";
+                }
+                param.setAttribute("javatype", javatype);
+                if (isout) {
+                    wrappertype = javatype;
+                }
+                wrapdetail.appendChild(param);
+                
+                // this magic code comes from org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension
+                //  it's used here to fit into the ADB-based code generation model
+                QName partqname = WSDLUtil.getPartQName(opName.getLocalPart(),
+                    WSDLConstants.INPUT_PART_QNAME_SUFFIX, itemname.getLocalPart());
+                partNameList.add(partqname);
+                
+                // add type mapping so we look like ADB
+                codeGenConfig.getTypeMapper().addTypeMappingName(partqname, javatype);
+            }
+            
+        } else if (type == null) {
+            wrapdetail.setAttribute("empty", "true");
+            wrappertype = "";
+        } else {
+            throw new RuntimeException("Cannot unwrap element " + qname +
+                ": not a complexType definition");
+        }
+
+        // this magic code comes from org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension
+        //  it's used here to fit into the ADB-based code generation model
+        MessagePartInformationHolder infoHolder = new MessagePartInformationHolder();
+        infoHolder.setOperationName(((AxisOperation)msg.getParent()).getName());
+        infoHolder.setPartsList(partNameList);
+        try {
+            msg.addParameter(new Parameter(Constants.UNWRAPPED_DETAILS, infoHolder));
+        } catch (AxisFault e) {
             throw new RuntimeException(e);
         }
+        
+        // set indication for unwrapped message
+        try {
+            msg.addParameter(new Parameter(Constants.UNWRAPPED_KEY, Boolean.TRUE));
+        } catch (AxisFault e) {
+            throw new RuntimeException(e);
+        }
+        
+        // add fake mapping for wrapper name (necessary for current XSLTs)
+        codeGenConfig.getTypeMapper().addTypeMappingName(qname, wrappertype);
+        
+        // return the unwrapping details
+        return wrapdetail;
+    }
+    
+    private void mapMessage(AxisMessage msg, Map complexTypeMap) {
+        QName qname = msg.getElementQName();
+        if (qname == null) {
+            throw new RuntimeException("No element reference in message " + msg.getName());
+        }
+        Object obj = complexTypeMap.get(qname);
+        if (obj == null) {
+            throw new RuntimeException("No mapping defined for element " + qname);
+        }
+        MappingElement mapping = (MappingElement)obj;
+        codeGenConfig.getTypeMapper().addTypeMappingName(qname, mapping.getClassName());
     }
 
     /**
@@ -371,8 +455,8 @@ public class CodeGenerationUtility {
      * of binding
      */
     private static void collectTopLevelComponents(BindingElement binding,
-        String dns, HashMap elementMap, HashMap complexTypeMap,
-        HashMap simpleTypeMap) {
+        String dns, Map elementMap, Map complexTypeMap,
+        Map simpleTypeMap) {
         
         // check default namespace set at top level of binding
         String defaultns = findDefaultNS(binding.topChildIterator(), dns);
@@ -424,7 +508,7 @@ public class CodeGenerationUtility {
      * @param map qualified name to element map
      */
     private static void registerElement(org.jibx.runtime.QName qname,
-        ElementBase element, HashMap map) {
+        ElementBase element, Map map) {
         if (qname != null) {
             map.put(new QName(qname.getUri(), qname.getName()), element);
         }
@@ -465,13 +549,12 @@ public class CodeGenerationUtility {
      * @param path binding definition file path
      * @return map from qname to class name
      */
-    public static HashMap getBindingMap(String path) {
+    public static Map getBindingMap(String path) {
         
         // make sure the binding definition file is present
         File file = new File(path);
         if (!file.exists()) {
             throw new RuntimeException("jibx binding definition file " + path + " not found");
-//                CodegenMessages.getMessage("extension.encodedNotSupported"));
         }
         
         // Read the JiBX binding definition into memory. The binding definition
@@ -502,13 +585,13 @@ public class CodeGenerationUtility {
      * @param binding
      * @return map from qname to class
      */
-    private static HashMap defineBoundClasses(BindingElement binding) {
+    private static Map defineBoundClasses(BindingElement binding) {
         
         // check default namespace set at top level of binding
         String defaultns = findDefaultNS(binding.topChildIterator());
         
         // add all top level mapping definitions to map from qname to class
-        HashMap mappings = new HashMap();
+        Map mappings = new HashMap();
         for (Iterator iter = binding.topChildIterator(); iter.hasNext();) {
             ElementBase child = (ElementBase)iter.next();
             if (child.type() == ElementBase.MAPPING_ELEMENT) {
@@ -536,6 +619,7 @@ public class CodeGenerationUtility {
      * definitions always come first in JiBX's binding format).
      * 
      * @param iter iterator for elements in list
+     * @return default namespace
      */
     private static String findDefaultNS(Iterator iter) {
         while (iter.hasNext()) {
@@ -552,44 +636,17 @@ public class CodeGenerationUtility {
         }
         return null;
     }
-
-    /**
-     * Accumulate the QNames of all message elements used by an interface. Based on
-     *
-     * @param op
-     * @param config 
-     * @param elements
-     */
-    private static void accumulateElements(AxisOperation op, HashMap defsmap, CodeGenConfiguration config) {
-        String MEP = op.getMessageExchangePattern();
-        if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
-            AxisMessage msg = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            if (msg != null) {
-                addElementType(msg, defsmap, config);
-            }
-        }
     
-        if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
-            AxisMessage msg = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            if (msg != null) {
-                addElementType(msg, defsmap, config);
-            }
-        }
-    }
-
-    /**
-     * Add message element information to schema definition mappings.
-     * 
-     * @param msg
-     * @param defsmap
-     * @param configuration 
-     */
-    private static void addElementType(AxisMessage msg, HashMap defsmap, CodeGenConfiguration config) {
-        QName qname = msg.getElementQName();
-        XmlSchemaElement element =
-            config.getAxisService().getSchemaElement(qname);
-        if (qname != null) {
-            defsmap.put(qname, element);
+    private static class NamedParameterTypeMapper extends JavaTypeMapper
+    {
+        /**
+         * Return the real parameter name, not a dummy.
+         * 
+         * @param qname
+         * @return local part of name
+         */
+        public String getParameterName(QName qname) {
+            return qname.getLocalPart();
         }
     }
 }

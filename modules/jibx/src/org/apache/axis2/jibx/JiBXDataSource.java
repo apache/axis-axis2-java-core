@@ -62,7 +62,7 @@ public class JiBXDataSource implements OMDataSource
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
         try {
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
-            ctx.setOutput(output, "UTF-8"); // TODO shouldn't the content type be taken from OMOutputFormat itself ? -- Chinthaka
+            ctx.setOutput(output, format.getCharSetEncoding());
             outObject.marshal(ctx);
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
