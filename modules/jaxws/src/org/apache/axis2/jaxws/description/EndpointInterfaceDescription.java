@@ -117,6 +117,12 @@ public class EndpointInterfaceDescription {
         return seiMethods;
     }
     
+    /**
+     * Update a previously created EndpointInterfaceDescription with information from an
+     * annotated SEI.  This should only be necessary when the this was created with WSDL.  
+     * In this case, the information from the WSDL is augmented based on the annotated SEI.
+     * @param sei
+     */
     public void updateWithSEI(Class sei) {
         if (seiClass != null && seiClass != sei)
             // TODO: It probably is invalid to try reset the SEI; but this isn't the right error processing
@@ -292,7 +298,7 @@ public class EndpointInterfaceDescription {
     EndpointInterfaceDescription(EndpointDescription parent) {
         parentEndpointDescription = parent;
         
-        AxisService axisService = parentEndpointDescription.getServiceDescription().getAxisService();
+        AxisService axisService = parentEndpointDescription.getAxisService();
         if (axisService != null) {
             ArrayList publishedOperations = axisService.getPublishedOperations();
             Iterator operationsIterator = publishedOperations.iterator();
@@ -301,7 +307,6 @@ public class EndpointInterfaceDescription {
                 addOperation(new OperationDescription(axisOperation, this));
             }
         }
-        
     }
     public Class getSEIClass() {
         return seiClass;

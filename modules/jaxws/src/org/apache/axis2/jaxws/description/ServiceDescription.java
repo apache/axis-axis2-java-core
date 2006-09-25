@@ -72,7 +72,7 @@ Corresponds to the generated Service class [client]; TBD [server]
 
 Java Name: Generated service class or null if dynamically configured service [client]; null [server]
 
-Axis2 Delegate: AxisService
+Axis2 Delegate: None (AxisService corresponds to a port which corresponds to the EndpointDescription)
 
 JSR-181 Annotations: 
 @HandlerChain(file, name) [per JAXWS p. 105] Affects all proxies and dispatches created using any port on this service
@@ -98,7 +98,6 @@ TBD
  * 
  */
 public class ServiceDescription {
-    private AxisService axisService;
     private ClientConfigurationFactory clientConfigFactory;
     private ConfigurationContext configContext;
 
@@ -116,14 +115,8 @@ public class ServiceDescription {
     
     private Hashtable<QName, EndpointDescription> endpointDescriptions = new Hashtable<QName, EndpointDescription>();
     
-    //On Client side, there should be One ServiceClient instance per ServiceDescription instance and One ServiceDescription 
-    //instance per new Web Service.
-    private ServiceClient serviceClient = null;
-    
-    private static final Log log = LogFactory.getLog(AbstractDispatcher.class);
+    private static final Log log = LogFactory.getLog(ServiceDescription.class);
 
-    public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.ServiceDescription";
-    
     /**
      * This is (currently) the client-side-only constructor
      * Construct a service description hierachy based on WSDL (may be null), the Service class, and 
@@ -152,27 +145,6 @@ public class ServiceDescription {
         this.serviceClass = serviceClass;
         
         setupWsdlDefinition();
-        // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
-        //       Possibly defer creation of AxisService to the getPort() call?
-        setupAxisService();
-        buildDescriptionHierachy();
-        addAnonymousAxisOperations();
-        // This will set the serviceClient field after adding the AxisService to the AxisConfig
-        getServiceClient();
-        // Give the configuration builder a chance to finalize configuration for this service
-        try {
-            getClientConfigurationFactory().completeAxis2Configuration(axisService);
-        } catch (DeploymentException e) {
-            // TODO RAS
-            // TODO NLS
-            e.printStackTrace();
-            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
-        } catch (Exception e) {
-            // TODO RAS
-            // TODO NLS
-            e.printStackTrace();
-            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
-        }
     }
 
     /**
@@ -186,32 +158,12 @@ public class ServiceDescription {
     // TODO: Remove axisService as paramater when the AxisService can be constructed from the annotations
     ServiceDescription(Class serviceImplClass, AxisService axisService) {
         this.serviceImplClass = serviceImplClass;
-        this.axisService = axisService;
-        // Add a reference to this ServiceDescription object to the AxisService
-        if (axisService != null) {
-            Parameter parameter = new Parameter();
-            parameter.setName(AXIS_SERVICE_PARAMETER);
-            parameter.setValue(this);
-            // TODO: What to do if AxisFault
-            try {
-                axisService.addParameter(parameter);
-            } catch (AxisFault e) {
-                // TODO: Throwing wrong exception
-                e.printStackTrace();
-                throw new UnsupportedOperationException("Can't add AxisService param: " + e);
-            }
-        }
-
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         // it will be set to the annotation value.
-        EndpointDescription endpointDescription = new EndpointDescription(serviceImplClass, null, this);
+        EndpointDescription endpointDescription = new EndpointDescription(serviceImplClass, null, axisService, this);
         addEndpointDescription(endpointDescription);
         
         // TODO: The ServiceQName instance variable should be set based on annotation or default
-
-        // The anonymous AxisOperations are currently NOT added here.  The reason 
-        // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
-        // are only needed on the client side.
     }
 
 
@@ -225,12 +177,45 @@ public class ServiceDescription {
      * @param sei
      * @param portQName
      */
-    public void updateEndpointInterfaceDescription(Class sei, QName portQName) {
+    public void updateEndpointDescription(Class sei, QName portQName) {
         
+        // TODO: Add support: portQName can be null when called from Service.getPort(Class)
+        if (portQName == null) {
+            throw new UnsupportedOperationException("ServiceDescription.updateEndpointDescription null PortQName not supported");
+        }
+        
+        // If a Dispatch client is created on a service for which WSDL was supplied, it is an error
+        // to attempt to add a port with the same name as a port that exists in the WSDL.
+        // REVIEW: Is this a correct check to be making?
+        // TODO: Add logic to check the portQN namespace against the WSDL Definition NS
+        if (sei == null && getWSDLWrapper() != null) {
+            Definition wsdlDefn = getWSDLWrapper().getDefinition();
+            Service wsdlService = wsdlDefn.getService(serviceQName);
+            Port wsdlPort = wsdlService.getPort(portQName.getLocalPart());
+            if (wsdlPort != null) {
+                // TODO: RAS & NLS
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do an addPort with a PortQN that exists in the WSDL.  PortQN: " + portQName.toString());
+            }
+        }
+        
+
         if (getEndpointDescription(portQName) != null) {
-            // TODO: Refine validating and suplementing WSDL versus annotations
-            EndpointDescription endpointDesc = getEndpointDescription(portQName);
-            endpointDesc.updateWithSEI(sei);
+            // The port has already been created, so the SEI settings must match.  Either
+            // this port was created as an SEI-based one via a getPort() call or
+            // a Dispatch-based one via an addPort() call.  Those two calls can not be
+            // done for the same portQName.  Additionally, if this is an SEI-based 
+            // endpoint, the SEIs for each subsequent getPort() must match.
+            // REVIEW: It is probably OK of the SEIs are functionally equivilent
+            //         they probably don't need to be the same class, so this check needs
+            //         to be expanded in that case.
+            Class endpointSEI = null;
+            EndpointInterfaceDescription endpointInterfaceDesc = getEndpointDescription(portQName).getEndpointInterfaceDescription();
+            if (endpointInterfaceDesc != null )
+                endpointSEI = endpointInterfaceDesc.getSEIClass();
+            
+            if (sei != endpointSEI)
+                // TODO: RAS & NLS
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: SEIs don't match");
         }
         else {
             // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
@@ -248,8 +233,7 @@ public class ServiceDescription {
     }
     /**
      * Return the EndpointDescriptions corresponding to the SEI class.  Note that
-     * this will return NULL unless the Descriptions were built by introspection on the SEI
-     * and its annotations.
+     * Dispatch endpoints will never be returned because they do not have an associated SEI.
      * @param seiClass
      * @return
      */
@@ -259,9 +243,13 @@ public class ServiceDescription {
         Enumeration<EndpointDescription> endpointEnumeration = endpointDescriptions.elements();
         while (endpointEnumeration.hasMoreElements()) {
             EndpointDescription endpointDescription = endpointEnumeration.nextElement();
-            Class endpointSEIClass = endpointDescription.getEndpointInterfaceDescription().getSEIClass(); 
-            if (endpointSEIClass != null && endpointSEIClass.equals(seiClass)) {
-                matchingEndpoints.add(endpointDescription);
+            EndpointInterfaceDescription endpointInterfaceDesc = endpointDescription.getEndpointInterfaceDescription();
+            // Note that Dispatch endpoints will not have an endpointInterface because the do not have an associated SEI
+            if (endpointInterfaceDesc != null) {
+                Class endpointSEIClass = endpointInterfaceDesc.getSEIClass(); 
+                if (endpointSEIClass != null && endpointSEIClass.equals(seiClass)) {
+                    matchingEndpoints.add(endpointDescription);
+                }
             }
         }
         if (matchingEndpoints.size() > 0) {
@@ -269,10 +257,6 @@ public class ServiceDescription {
         }
         return returnEndpointDesc;
     }
-    public AxisService getAxisService() {
-        return axisService;
-    }
-    
     // END of public accessor methods
     /*=======================================================================*/
     /*=======================================================================*/
@@ -292,93 +276,6 @@ public class ServiceDescription {
         }
     }
 
-    private void setupAxisService() {
-        // TODO: Need to use MetaDataQuery validator to merge WSDL (if any) and annotations (if any)
-        
-        if (wsdlWrapper != null) {
-            buildAxisServiceFromWSDL();
-        }
-        else {
-            buildAxisServiceFromNoWSDL();
-        }
-        
-        if (axisService == null)
-            // TODO: RAS & NLS
-            throw ExceptionFactory.makeWebServiceException("Unable to create AxisService for " + serviceQName);
-
-        // Save the Service QName as a parameter.
-        Parameter serviceNameParameter = new Parameter();
-        serviceNameParameter.setName(WSDL11ToAllAxisServicesBuilder.WSDL_SERVICE_QNAME);
-        serviceNameParameter.setValue(serviceQName);
-        try {
-            axisService.addParameter(serviceNameParameter);
-        } 
-        catch (AxisFault e) {
-            // TODO RAS
-            e.printStackTrace();
-        }
-    }
-
-    private void buildAxisServiceFromWSDL() {
-        // TODO: Change this to use WSDLToAxisServiceBuilder superclass
-        WSDL11ToAxisServiceBuilder serviceBuilder = new WSDL11ToAxisServiceBuilder(wsdlWrapper.getDefinition(), serviceQName, null);
-        // TODO: Currently this only builds the client-side AxisService; it needs to do client and server somehow.
-        // Patterned after AxisService.createClientSideAxisService
-        serviceBuilder.setServerSide(false);
-        try {
-            // TODO: This probably needs to use the target namespace like buildAxisServiceFromNoWSDL does
-            axisService = serviceBuilder.populateService();
-            axisService.setName(serviceQName.toString());
-        } catch (AxisFault e) {
-            // TODO We should not swallow a fault here.
-            log.warn(Messages.getMessage("warnAxisFault", e.toString()));
-        }
-    }
-    
-    private void buildAxisServiceFromNoWSDL() {
-        // TODO: Refactor this to create from annotations.
-        String serviceName = null;
-        if (serviceQName != null) {
-            // TODO: This uses TNS in the AxisService name, but using WSDL does not
-            serviceName = serviceQName.toString();
-//            serviceName = serviceQName.getLocalPart();
-        }
-        else {
-            // Make this service name unique.  The Axis2 engine assumes that a service it can not find is a client-side service.
-            serviceName = ServiceClient.ANON_SERVICE + this.hashCode();
-        }
-        axisService = new AxisService(serviceName);
-    }
-    
-    private void buildDescriptionHierachy() {
-        // Create the EndpointDescription corresponding to the WSDL <port> tags
-        if (wsdlWrapper != null) {
-            buildEndpointDescriptionsFromWSDL();
-        }
-        // TODO: Need to create from Annotations (if no WSDL) and modify created ones based on annotations (if WSDL)
-        
-    }
-    
-    private void buildEndpointDescriptionsFromWSDL() {
-        // TODO: Currently Axis2 only supports 1 service and 1 port; that fix will likely affect this code
-        //       Until then, build the EndpointDescriptions directly from the WSDL.
-        Definition definition = wsdlWrapper.getDefinition();
-        Service service = definition.getService(serviceQName);
-        if (service == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr2", serviceQName.toString()));
-        }
-        
-        Map ports = service.getPorts();
-        if (ports != null && ports.size() > 0) {
-            Iterator portIterator = ports.values().iterator();
-            while (portIterator.hasNext()) {
-                Port wsdlPort = (Port) portIterator.next();
-                EndpointDescription endpointDescription = new EndpointDescription(wsdlPort, definition, this);
-                addEndpointDescription(endpointDescription); 
-            }
-        }
-    }
-    
     // TODO: Remove these and replace with appropraite get* methods for WSDL information
     public WSDLWrapper getWSDLWrapper() {
         return wsdlWrapper;
@@ -387,52 +284,28 @@ public class ServiceDescription {
         return wsdlURL;
     }
     
-    /**
-     * Adds the anonymous axis operations to the AxisService.  Note that this is only needed on 
-     * the client side, and they are currently used in two cases
-     * (1) For Dispatch clients (which don't use SEIs and thus don't use operations)
-     * (2) TEMPORARLIY for Services created without WSDL (and thus which have no AxisOperations created)
-     *  See the AxisInvocationController invoke methods for more details.
-     *  
-     *   Based on ServiceClient.createAnonymouService
-     */
-    private void addAnonymousAxisOperations() {
-        if (axisService != null) {
-            OutOnlyAxisOperation outOnlyOperation = new OutOnlyAxisOperation(ServiceClient.ANON_OUT_ONLY_OP);
-            axisService.addOperation(outOnlyOperation);
-
-            OutInAxisOperation outInOperation = new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP);
-            axisService.addOperation(outInOperation);
-        }
-    }
-    
-    public ServiceClient getServiceClient(){
-    	try {
-            if(serviceClient == null) {
-                ConfigurationContext configCtx = getAxisConfigContext();
-                AxisService axisSvc = getAxisService();
-                serviceClient = new ServiceClient(configCtx, axisSvc);
-            }
-        } catch (AxisFault e) {
-            throw ExceptionFactory.makeWebServiceException(
-            		Messages.getMessage("serviceClientCreateError"), e);
-        }
-    	return serviceClient;
-    }
-    
     public ConfigurationContext getAxisConfigContext() {
         if (configContext == null) {
-            ClientConfigurationFactory factory = getClientConfigurationFactory(); 
-            configContext = factory.getClientConfigurationContext();
+            configContext = getClientConfigurationFactory().getClientConfigurationContext();
         }
     	return configContext;
     	
     }
     
-    private ClientConfigurationFactory getClientConfigurationFactory() {
-        if (clientConfigFactory == null) {
-            clientConfigFactory = ClientConfigurationFactory.newInstance(); 
+    ClientConfigurationFactory getClientConfigurationFactory() {
+        
+        if (clientConfigFactory == null ) {
+            clientConfigFactory = ClientConfigurationFactory.newInstance();
         }
         return clientConfigFactory;
+    }
+    
+    public ServiceClient getServiceClient(QName portQName) {
+        // TODO: RAS if no portQName found
+        return getEndpointDescription(portQName).getServiceClient();
+    }
+    
+    public QName getServiceQName() {
+        return serviceQName;
     }
 }

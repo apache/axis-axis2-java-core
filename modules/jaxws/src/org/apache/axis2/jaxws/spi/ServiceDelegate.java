@@ -46,8 +46,6 @@ import org.apache.axis2.jaxws.client.factory.ProxyHandlerFactory;
 import org.apache.axis2.jaxws.client.proxy.BaseProxyHandler;
 import org.apache.axis2.jaxws.client.proxy.ProxyDescriptor;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
-import org.apache.axis2.jaxws.description.DescriptionKey;
-import org.apache.axis2.jaxws.description.DescriptionRegistry;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.handler.PortInfoImpl;
@@ -78,7 +76,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         if(!isValidServiceName()){
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", ""));
     	}
-        serviceDescription = getServiceDescription(url, serviceQname, clazz);
+        serviceDescription = DescriptionFactory.createServiceDescription(url, serviceQname, clazz);
         if (isValidWSDLLocation()) {
             if(!isServiceDefined(serviceQname)){
             	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", serviceQname.toString(), url.toString()));
@@ -95,34 +93,47 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * (non-Javadoc)
      * @see javax.xml.ws.spi.ServiceDelegate#addPort(javax.xml.namespace.QName, java.lang.String, java.lang.String)
      */
+    // Creates a DISPATCH ONLY port.  Per JAXWS Sec 4.1 javax.xm..ws.Service, p. 49, ports added via addPort method
+    // are only suitibale for creating Distpach instances.
     public void addPort(QName portName, String bindingId, String endpointAddress)
         throws WebServiceException {
-    	if(portName == null ){
-    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr2"));
-    	}
-    	
-    	if(bindingId!=null && !(bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
+        
+        addPortData(portName, bindingId, endpointAddress);
+        DescriptionFactory.updateEndpoint(serviceDescription, null, portName);
+    }
+    /**
+     * Add a new port (either endpoint based or dispatch based) to the portData table.
+     * @param portName
+     * @param bindingId
+     * @param endpointAddress
+     */
+    private void addPortData(QName portName, String bindingId, String endpointAddress) {
+        if(portName == null ){
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr2"));
+        }
+        
+        if(bindingId!=null && !(bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING))){
-    		// TODO Is this the correct exception. Shouldn't this be a WebServiceException ?
-    		throw new UnsupportedOperationException(Messages.getMessage("addPortErr0", portName.toString()));
-    	}
+            // TODO Is this the correct exception. Shouldn't this be a WebServiceException ?
+            throw new UnsupportedOperationException(Messages.getMessage("addPortErr0", portName.toString()));
+        }
         
         if (bindingId == null) {
             bindingId = DEFAULT_BINDING_ID;
         }
-        
-    	if(!ports.containsKey(portName)){	
-    		PortData port = new PortInfoImpl(serviceQname, portName, bindingId, endpointAddress);
-    		ports.put(portName, port);
-    	}
-    	else{
-    		//TODO: Can same port have two different set of SOAPAddress
-    		/*PortInfoImpl port =(PortInfoImpl) ports.get(portName);
-    		port.setBindingID(bindingId);
-    		port.setEndPointAddress(endpointAddress);
-    		*/
-    		throw new WebServiceException(Messages.getMessage("addPortDup", portName.toString()));
-    	}
+
+        if(!ports.containsKey(portName)){   
+            PortData port = new PortInfoImpl(serviceQname, portName, bindingId, endpointAddress);
+            ports.put(portName, port);
+        }
+        else{
+            //TODO: Can same port have two different set of SOAPAddress
+            /*PortInfoImpl port =(PortInfoImpl) ports.get(portName);
+            port.setBindingID(bindingId);
+            port.setEndPointAddress(endpointAddress);
+            */
+            throw new WebServiceException(Messages.getMessage("addPortDup", portName.toString()));
+        }
     }
 
     /*
@@ -155,7 +166,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
         
         if (serviceClient == null)
-            serviceClient = getServiceClient();
+            serviceClient = getServiceClient(qname);
         
         dispatch.setServiceClient(serviceClient);
         dispatch.setServiceDelegate(this);
@@ -193,7 +204,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
         
         if (serviceClient == null)
-            serviceClient = getServiceClient();
+            serviceClient = getServiceClient(qname);
         
         dispatch.setJAXBContext(context);
         dispatch.setServiceClient(serviceClient);
@@ -233,7 +244,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	 * if portQname is provided then add that to the ports table.
     	 */
         // TODO: Move the annotation processing to the DescriptionFactory
-        DescriptionFactory.updateEndpointInterface(serviceDescription, sei, portName);
+        DescriptionFactory.updateEndpoint(serviceDescription, sei, portName);
 
         
     	if(portName!=null){
@@ -242,7 +253,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     			address = getWSDLWrapper().getSOAPAddress(serviceQname, portName);
     		}
     		if(ports.get(portName)==null){
-    			addPort(portName, null, address);
+                addPortData(portName, null, address);
     		}
     	}
     	DescriptorFactory df = (DescriptorFactory)FactoryRegistry.getFactory(DescriptorFactory.class);
@@ -336,8 +347,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     /**
      * 
      */
-    public ServiceClient getServiceClient() throws WebServiceException {
-    	return serviceDescription.getServiceClient();      
+    public ServiceClient getServiceClient(QName portQName) throws WebServiceException {
+    	return serviceDescription.getServiceClient(portQName);      
     }
 
     //================================================
@@ -410,11 +421,4 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 	        }
         }
     }
-
-    private ServiceDescription getServiceDescription(URL url, QName serviceName, Class clazz ){
-    	DescriptionKey key = new DescriptionKey(serviceName, url, clazz);
-    	return DescriptionRegistry.getRegistry().getServiceDescription(key);
-    }
-    	
-
 }

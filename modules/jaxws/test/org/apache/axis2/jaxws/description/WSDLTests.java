@@ -55,8 +55,8 @@ public class WSDLTests extends TestCase {
         ServiceDescription serviceDescription = serviceDelegate.getServiceDescription();
         assertNotNull("ServiceDescription not created", serviceDescription);
         
-        AxisService axisService = serviceDescription.getAxisService();
-        assertNotNull("AxisService not created", axisService);
+//        AxisService axisService = serviceDescription.getAxisService();
+//        assertNotNull("AxisService not created", axisService);
     }
     
     public void testInvalidServiceLocalName() {

@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.sample;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
@@ -91,8 +92,9 @@ public class AddressBookTests extends TestCase {
         
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
         AddressBook ab = service.getPort(QNAME_PORT, AddressBook.class);
+        BindingProvider p1 = (BindingProvider) ab;
+        p1.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, URL_ENDPOINT);
         
         ObjectFactory factory = new ObjectFactory();
         AddressBookEntry content = factory.createAddressBookEntry();
@@ -117,8 +119,9 @@ public class AddressBookTests extends TestCase {
         
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
         AddressBook ab = service.getPort(QNAME_PORT, AddressBook.class);
+        BindingProvider p1 = (BindingProvider) ab;
+        p1.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, URL_ENDPOINT);
         
         String fname = "Joe";
         String lname = "Test";

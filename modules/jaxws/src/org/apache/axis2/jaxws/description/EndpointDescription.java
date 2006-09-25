@@ -19,7 +19,9 @@
 package org.apache.axis2.jaxws.description;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jws.WebService;
 import javax.wsdl.Definition;
@@ -30,7 +32,20 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /*
@@ -38,7 +53,7 @@ Working-design information.
 
 Java Name: none [client]; Endpoint implementation class [server]
 
-Axis2 Delegate: none; Axis2 put this information into AxisService
+Axis2 Delegate: AxisService
 
 JSR-181 Annotations: TBD
 
@@ -60,13 +75,10 @@ Properties available to JAXWS runtime: TBD
  * fixed, that will probably have an impact on this class.  In particular, I think this should be created 
  * somehow from an AxisService/AxisPort combination, and not directly from the WSDL.
  */
-// TODO: (JLB) With Lori's change to name WSDL11 services as the port, this might mean that the EndpointDescription corresponds to 
-//       the AxisService rather than the ServiceDescription.
-/**
- * 
- */
 public class EndpointDescription {
     private ServiceDescription parentServiceDescription;
+    private AxisService axisService;
+
     private QName portQName;
     // Note that an EndpointInterfaceDescription will ONLY be set for an Endpoint-based implementation;
     // it will NOT be set for a Provider-based implementation
@@ -97,22 +109,56 @@ public class EndpointDescription {
     
     // TODO: This needs to be a collection of handler descriptions; use JAX-WS Appendix B Handler Chain Configuration File Schema as a starting point
     private ArrayList<String> handlerList = new ArrayList<String>();
+
+    //On Client side, there should be One ServiceClient instance per ServiceDescription instance and One ServiceDescription 
+    //instance per new Web Service.
+    private ServiceClient serviceClient = null;
     
+    public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.EndpointDescription";
+    private static final Log log = LogFactory.getLog(EndpointDescription.class);
+
     /**
      * Create an EndpointDescription based on the WSDL port.  Note that per the JAX-WS Spec (Final Release, 4/19/2006
      * Section 4.2.3 Proxies, page 55)the "namespace component of the port is the target namespace of the WSDL 
      * definition document".
      * Note this is currently only used on the client-side (this may change).
      * 
-     * @param wsdlPort The WSDL Port tag for this EndpointDescription.
-     * @param definition The WSDL Definition target namespace used to create the port QName
+     * @param theClass The SEI or Impl class.  This will be NULL for Dispatch clients
+     *                 since they don't use an SEI
      */
-    EndpointDescription(Port wsdlPort, Definition definition, ServiceDescription parent) {
-        parentServiceDescription = parent;
-        String localPart = wsdlPort.getName();
-        String namespace = definition.getTargetNamespace();
-        portQName = new QName(namespace, localPart);
-        endpointInterfaceDescription = new EndpointInterfaceDescription(this);
+    public EndpointDescription(Class theClass, QName portName, ServiceDescription parent) {
+        // TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
+        // TODO: If there is WSDL, could compare the namespace of the defn against the portQName.namespace
+        this.parentServiceDescription = parent;
+        this.portQName = portName;
+        this.implOrSEIClass = theClass;
+        
+        // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
+        setupAxisService();
+        addToAxisService();
+
+        buildDescriptionHierachy();
+        addAnonymousAxisOperations();
+        // This will set the serviceClient field after adding the AxisService to the AxisConfig
+        getServiceClient();
+        // Give the configuration builder a chance to finalize configuration for this service
+        try {
+            getServiceDescription().getClientConfigurationFactory().completeAxis2Configuration(axisService);
+        } catch (DeploymentException e) {
+            // TODO RAS
+            // TODO NLS
+            // TODO: Remove this println
+            System.out.println("Caught exception in ServiceDescription.ServiceDescription: " + e);
+            e.printStackTrace();
+//            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
+        } catch (Exception e) {
+            // TODO RAS
+            // TODO NLS
+            // TODO: Remove this println
+            System.out.println("Caught exception in ServiceDescription.ServiceDescription: " + e);
+            e.printStackTrace();
+//            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
+        }
     }
     
     /**
@@ -123,10 +169,44 @@ public class EndpointDescription {
      * @param portName May be null; if so the annotation is used
      * @param parent
      */
-    EndpointDescription(Class theClass, QName portName, ServiceDescription parent) {
-        parentServiceDescription = parent;
-        implOrSEIClass = theClass;
+    // TODO: Remove axisService as paramater when the AxisService can be constructed from the annotations
+    EndpointDescription(Class theClass, QName portName, AxisService axisService, ServiceDescription parent) {
+        this.parentServiceDescription = parent;
+        this.portQName = portName;
+        this.implOrSEIClass = theClass;
+        this.axisService = axisService;
+        
+        addToAxisService();
 
+        buildEndpointDescriptionFromNoWSDL();
+        
+        // The anonymous AxisOperations are currently NOT added here.  The reason 
+        // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
+        // are only needed on the client side.
+    }
+
+    private void addToAxisService() {
+        // Add a reference to this EndpointDescription object to the AxisService
+        if (axisService != null) {
+            Parameter parameter = new Parameter();
+            parameter.setName(AXIS_SERVICE_PARAMETER);
+            parameter.setValue(this);
+            // TODO: What to do if AxisFault
+            try {
+                axisService.addParameter(parameter);
+            } catch (AxisFault e) {
+                // TODO: Throwing wrong exception
+                e.printStackTrace();
+                throw new UnsupportedOperationException("Can't add AxisService param: " + e);
+            }
+        }
+    }
+
+    private void buildEndpointDescriptionFromNoWSDL() {
+        // TODO: The comments below are not quite correct; this method is used on BOTH the 
+        //       client and server.  On the client the class is always an SEI.  On the server it is always a service impl
+        //       which may be a provider or endpoint based; endpoint based may reference an SEI class
+        
         // The Service Implementation class could be either Provider-based or Endpoint-based.  The 
         // annotations that are present are similar but different.  Conformance requirements 
         // per JAX-WS
@@ -155,8 +235,7 @@ public class EndpointDescription {
         // annotation when the getter is called.
         // TODO: If the portName is specified, should we verify it against the annotation?
         // TODO: Add tests: null portName, !null portName, portName != annotation value
-        if (portName != null)
-            portQName = portName;
+        // TODO: Get portName from annotation if it is null.
 
         // If this is an Endpoint-based service implementation (i.e. not a 
         // Provider-based one), then create the EndpointInterfaceDescription to contain
@@ -170,7 +249,7 @@ public class EndpointDescription {
             if (DescriptionUtils.isEmpty(seiClassName)) {
                 // For now, just build the EndpointInterfaceDesc based on the class itself.
                 // TODO: The EID ctor doesn't correctly handle anything but an SEI at this point; e.g. it doesn't publish the correct methods of just an impl.
-                seiClass = theClass;
+                seiClass = implOrSEIClass;
             }
             else { 
                 try {
@@ -186,18 +265,6 @@ public class EndpointDescription {
         }
     }
     
-    public void updateWithSEI(Class sei) {
-        // Updating with an SEI is only valid for Endpoint-based implementations;
-        // it is not valid for a Provider-based implementation.
-        if (endpointInterfaceDescription == null)
-            // TODO: Correct error processing
-            throw new UnsupportedOperationException("Can not update an SEI on a Provider implementation.  Rejected SEI = " + sei);
-        if (sei != null) {
-            endpointInterfaceDescription.updateWithSEI(sei);
-        }
-        return;
-    }
-
     public QName getPortQName() {
         if (portQName == null) {
             // The name was not set by the constructors, so get it from the
@@ -217,7 +284,11 @@ public class EndpointDescription {
     public EndpointInterfaceDescription getEndpointInterfaceDescription() {
         return endpointInterfaceDescription;
     }
-    
+
+    public AxisService getAxisService() {
+        return axisService;
+    }
+
     // ==========================================
     // Annotation-related methods
     // ==========================================
@@ -364,4 +435,169 @@ public class EndpointDescription {
     public List<String> getHandlerList() {
         return handlerList;
     }
+    
+    private void setupAxisService() {
+        // TODO: Need to use MetaDataQuery validator to merge WSDL (if any) and annotations (if any)
+        // Build up the AxisService.  Note that if this is a dispatch client, then we don't use the
+        // WSDL to build up the AxisService since the port added to the Service by the client is not
+        // one that will be present in the WSDL.  A null class passed in as the SEI indicates this 
+        // is a dispatch client.
+        if (implOrSEIClass != null && getServiceDescription().getWSDLWrapper() != null) {
+            buildAxisServiceFromWSDL();
+        }
+        else {
+            buildAxisServiceFromNoWSDL();
+        }
+        
+        if (axisService == null) {
+            // TODO: RAS & NLS
+            throw ExceptionFactory.makeWebServiceException("Unable to create AxisService for "
+                    + createFQServicePlusPortName());
+        }
+
+        // Save the Service QName as a parameter.
+        Parameter serviceNameParameter = new Parameter();
+        serviceNameParameter.setName(WSDL11ToAllAxisServicesBuilder.WSDL_SERVICE_QNAME);
+        serviceNameParameter.setValue(getServiceDescription().getServiceQName());
+        
+        // Save the Port name.  Note: Axis does not expect a QName since the namespace for the port is the ns from the WSDL definition 
+        Parameter portParameter = new Parameter();
+        portParameter.setName(WSDL11ToAllAxisServicesBuilder.WSDL_PORT);
+        portParameter.setValue(portQName.getLocalPart());
+
+        try {
+            axisService.addParameter(serviceNameParameter);
+            axisService.addParameter(portParameter);                        
+        } 
+        catch (AxisFault e) {
+            // TODO RAS
+            e.printStackTrace();
+        }
+    }
+
+    private void buildAxisServiceFromWSDL() {
+        // TODO: Change this to use WSDLToAxisServiceBuilder superclass
+        // Note that the axis service builder takes only the localpart of the port qname.
+        // TODO:: This should check that the namespace of the definition matches the namespace of the portQName per JAXRPC spec
+        WSDL11ToAxisServiceBuilder serviceBuilder = new WSDL11ToAxisServiceBuilder(getServiceDescription().getWSDLWrapper().getDefinition(), 
+                getServiceDescription().getServiceQName(), portQName.getLocalPart());
+        // TODO: Currently this only builds the client-side AxisService; it needs to do client and server somehow.
+        // Patterned after AxisService.createClientSideAxisService
+        serviceBuilder.setServerSide(false);
+        try {
+            axisService = serviceBuilder.populateService();
+            axisService.setName(createFQServicePlusPortName());
+        } catch (AxisFault e) {
+            // TODO We should not swallow a fault here.
+            log.warn(Messages.getMessage("warnAxisFault", e.toString()));
+        }
+    }
+    
+    private void buildAxisServiceFromNoWSDL() {
+        // TODO: Refactor this to create from annotations.
+        String serviceName = null;
+        if (portQName != null) {
+            serviceName = createFQServicePlusPortName();
+        }
+        else {
+            // REVIEW: Can the portQName ever be null?
+            // Make this service name unique.  The Axis2 engine assumes that a service it can not find is a client-side service.
+            serviceName = ServiceClient.ANON_SERVICE + this.hashCode();
+        }
+        axisService = new AxisService(serviceName);
+    }
+    
+    private void buildDescriptionHierachy() {
+        // Build up the Description Hierachy.  Note that if this is a dispatch client, then we don't use the
+        // WSDL to build up the hierachy since the port added to the Service by the client is not
+        // one that will be present in the WSDL.  A null class passed in as the SEI indicates this 
+        // is a dispatch client.
+        if (implOrSEIClass != null && getServiceDescription().getWSDLWrapper() != null) {
+            buildEndpointDescriptionFromWSDL();
+        }
+        else if (implOrSEIClass != null){
+            // Create the rest of the description hierachy from annotations on the class.
+            // If there is no SEI class, then this is a Distpach case, and we currently 
+            // don't create the rest of the description hierachy (since it is not an SEI and thus
+            // not operation-based client.
+            buildEndpointDescriptionFromNoWSDL();
+        }
+    }
+    
+    private void buildEndpointDescriptionFromWSDL() {
+        Definition wsdlDefinition = getServiceDescription().getWSDLWrapper().getDefinition();
+        javax.wsdl.Service wsdlService = wsdlDefinition.getService(getServiceDescription().getServiceQName());
+        if (wsdlService == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr2", createFQServicePlusPortName()));
+        }
+        
+        Map wsdlPorts = wsdlService.getPorts();
+        boolean wsdlPortFound = false;
+        if (wsdlPorts != null && wsdlPorts.size() > 0) {
+            Iterator wsdlPortIterator = wsdlPorts.values().iterator();
+            while (wsdlPortIterator.hasNext() && !wsdlPortFound) {
+                Port wsdlPort = (Port) wsdlPortIterator.next();
+                // Note the namespace is not included on the WSDL Port.
+                if (wsdlPort.getName().equals(portQName.getLocalPart())) {
+                    // Create the Endpoint Interface Description based on the WSDL.
+                    endpointInterfaceDescription = new EndpointInterfaceDescription(this);
+                    // Update the EndpointInterfaceDescription created with WSDL with information from the
+                    // annotations in the SEI
+                    endpointInterfaceDescription.updateWithSEI(implOrSEIClass);
+                    wsdlPortFound = true;
+                }
+            }
+        }
+        
+        if (!wsdlPortFound) {
+            // TODO: NLS and RAS
+            throw ExceptionFactory.makeWebServiceException("WSDL Port not found for port " + portQName.getLocalPart());  
+        }
+    }
+    
+    /**
+     * Adds the anonymous axis operations to the AxisService.  Note that this is only needed on 
+     * the client side, and they are currently used in two cases
+     * (1) For Dispatch clients (which don't use SEIs and thus don't use operations)
+     * (2) TEMPORARLIY for Services created without WSDL (and thus which have no AxisOperations created)
+     *  See the AxisInvocationController invoke methods for more details.
+     *  
+     *   Based on ServiceClient.createAnonymouService
+     */
+    private void addAnonymousAxisOperations() {
+        if (axisService != null) {
+            OutOnlyAxisOperation outOnlyOperation = new OutOnlyAxisOperation(ServiceClient.ANON_OUT_ONLY_OP);
+            axisService.addOperation(outOnlyOperation);
+
+            OutInAxisOperation outInOperation = new OutInAxisOperation(ServiceClient.ANON_OUT_IN_OP);
+            axisService.addOperation(outInOperation);
+        }
+    }
+    
+    public ServiceClient getServiceClient(){
+        try {
+            if(serviceClient == null) {
+                ConfigurationContext configCtx = getServiceDescription().getAxisConfigContext();
+                AxisService axisSvc = getAxisService();
+                serviceClient = new ServiceClient(configCtx, axisSvc);
+            }
+        } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(
+                    Messages.getMessage("serviceClientCreateError"), e);
+        }
+        return serviceClient;
+    }
+ 
+    private String createFQServicePlusPortName() {
+        String portName = null;
+        if (portQName != null) {
+            portName = portQName.toString();
+        }
+        else {
+            portName = "NoPortNameSpecified";
+
+        }
+        return getServiceDescription().getServiceQName().toString() + "#" + portName;
+    }
+
 }

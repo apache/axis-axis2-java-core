@@ -87,21 +87,22 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     }
     
     public void testAxisServiceBackpointer() {
-        // Test that the AxisService points back to the ServiceDesc
+        // Test that the AxisService points back to the EndpointDesc
         // TODO: Temporary: Create an AxisService to pass in using WSDL
         // TODO: Eventually remove AxisService paramater from the factory; AxisService should be created (using annotations/wsdl/wsm etc)
         
-        // Creating the AxisService this way is temporary; it should be created as part of creating the ServiceDescription from the
+        // Creating the AxisService this way is temporary; it should be created as part of creating the EndpointDescription from the
         // Service Impl.  For now, though, create a service-request-based ServiceDesc using WSDL.  Then specificy that AxisService
         // on the creation of the ServiceDesc from the service impl.  Verify that the AxisService points to the ServiceDesc.
         
         AxisService axisService = new AxisService();
         ServiceDescription serviceDesc = 
             DescriptionFactory.createServiceDescriptionFromServiceImpl(EchoServiceImplWithSEI.class, axisService);
+        EndpointDescription endpointDesc = serviceDesc.getEndpointDescriptions()[0];
         assertNotNull(serviceDesc);
-        Parameter serviceDescParam = axisService.getParameter(ServiceDescription.AXIS_SERVICE_PARAMETER);
-        assertNotNull(serviceDescParam);
-        assertEquals(serviceDesc, serviceDescParam.getValue());
+        Parameter endpointDescParam = axisService.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
+        assertNotNull(endpointDescParam);
+        assertEquals(endpointDesc, endpointDescParam.getValue());
         
     }
     

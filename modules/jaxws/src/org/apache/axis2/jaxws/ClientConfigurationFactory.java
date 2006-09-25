@@ -29,7 +29,7 @@ import org.apache.axis2.jaxws.util.Constants;
  */
 public class ClientConfigurationFactory {
     
-    private ConfigurationContext configContext = null;
+    private static ClientConfigurationFactory instance = new ClientConfigurationFactory();
     
     protected ClientConfigurationFactory(){
     }
@@ -38,7 +38,7 @@ public class ClientConfigurationFactory {
      * Returns a ClientConfigurationFactory object.
      */
     public static ClientConfigurationFactory newInstance() {
-        return new ClientConfigurationFactory();
+        return instance;
     }
 
     /**
@@ -46,19 +46,17 @@ public class ClientConfigurationFactory {
      * @return a ConfigurationContext object that is suitable for the client environment
      */
     public synchronized ConfigurationContext getClientConfigurationContext() {
-        if (configContext == null) {
-            //TODO: Add logging 
-            String repoPath = System.getProperty(Constants.AXIS2_REPO_PATH);
-            String axisConfigPath = System.getProperty(Constants.AXIS2_CONFIG_PATH);
-            try {
-                configContext = ConfigurationContextFactory
-                        .createConfigurationContextFromFileSystem(repoPath, axisConfigPath);
-            } catch (AxisFault e) {
-                // TODO: Add RAS logging and processing
-                e.printStackTrace();
-            }
+        ConfigurationContext configContext = null;
+        //TODO: Add logging 
+        String repoPath = System.getProperty(Constants.AXIS2_REPO_PATH);
+        String axisConfigPath = System.getProperty(Constants.AXIS2_CONFIG_PATH);
+        try {
+            configContext = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(repoPath, axisConfigPath);
+        } catch (AxisFault e) {
+            // TODO: Add RAS logging and processing
+            e.printStackTrace();
         }
-        
         return configContext;
     }
     

@@ -55,8 +55,8 @@ public class DescriptionFactory {
      * @param portName Can be null
      * @return
      */
-    public static ServiceDescription updateEndpointInterface(ServiceDescription serviceDescription, Class sei, QName portQName) {
-        serviceDescription.updateEndpointInterfaceDescription(sei, portQName);
+    public static ServiceDescription updateEndpoint(ServiceDescription serviceDescription, Class sei, QName portQName) {
+        serviceDescription.updateEndpointDescription(sei, portQName);
         return serviceDescription;
     }
 }

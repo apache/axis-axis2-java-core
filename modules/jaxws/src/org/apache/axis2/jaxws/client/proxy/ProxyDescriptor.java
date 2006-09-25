@@ -103,7 +103,7 @@ public class ProxyDescriptor {
     public String getWebResultName(boolean isAsync){
         return operationDescription.getWebResultName();
 	}
-    // TODO: (JLB) Move to OperationDescription?
+    // TODO: Move to OperationDescription?
 	public ArrayList<String> getParamNames(){ 
         return new ArrayList<String>(Arrays.asList(operationDescription.getWebParamNames()));
 	}

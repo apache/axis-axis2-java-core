@@ -144,7 +144,7 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 		requestIC.setRequestMessageContext(requestContext);
 		InvocationController controller = new AxisInvocationController();
 		//FIXME: Fix based on how InvocationContext changes to get ServiceClient.
-		requestIC.setServiceClient(delegate.getServiceClient());
+		requestIC.setServiceClient(proxyDescriptor.getEndpointDescription().getServiceClient());
 		
 		//check if the call is OneWay, Async or Sync
 		if(proxyDescriptor.isOneWay() || method.getReturnType().getName().equals("void")){
