@@ -396,18 +396,18 @@ Web Service Clients using Code Generation with Data Binding Support</a></h3>
 <p>Axis2 provides the data binding support for Web Service client as well.
 The user can generate the required stubs from a given WSDL with the other
 supporting classes. Let's generate stubs for the WSDL used earlier to
-generate the skeleton for the "Axis2SampleDocLitPortType". Simply run the
+generate the skeleton for the "Axis2SampleDocLitService". Simply run the
 WSDL2Java tool that can be found in the bin directory of the Axis2
 distribution using the following command:</p>
-<pre style="margin-bottom: 0.2in">WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -o ..\samples\src -p org.apache.axis2.userguide</pre>
+<pre style="margin-bottom: 0.2in">WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -d xmlbeans -o ..\samples\src -p org.apache.axis2.userguide</pre>
 
-<p>This will generate the required stub "Axis2SampleDocLitPortTypeStub.java"
-that can be used to invoke the Web Service Axis2SampleDocLitPortType. Let's
+<p>This will generate the required stub "Axis2SampleDocLitServiceStub.java"
+that can be used to invoke the Web Service Axis2SampleDocLitService. Let's
 see how we can use this stub to write Web Service clients to utilize the Web
-Service Axis2SampleDocLitPortType (the service that we have already
+Service Axis2SampleDocLitService (the service that we have already
 deployed).</p>
 
-<h4><a name="Client_for_echoVoid_Operation">Client for echoVoid
+<!--<h4><a name="Client_for_echoVoid_Operation">Client for echoVoid
 Operation</a></h4>
 
 <p>Following code fragment shows the necessary code for utilizing the
@@ -417,26 +417,27 @@ Service and the same SOAP envelope is echoed back.</p>
 <pre> try {
    //Create the stub by passing the AXIS_HOME and target EPR.
    //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
-   Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null, 
+   Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null,
                                 "http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
    stub.echoVoid();
 
 } catch (Exception e) {
     e.printStackTrace();
-}</pre>
+}</pre>-->
+
 
 <h4><a name="Client_for_echoString_Operation">Client for echoString
 Operation</a></h4>
 
 <p>Following code fragment shows the necessary code for utilizing the
-echoString operation of the Axis2SampleDocLitPortType that we have already
+echoString operation of the Axis2SampleDocLitService that we have already
 deployed. The code is very simple to understand and the explanations are in
 the form of comments.</p>
 <pre>try {
      //Create the stub by passing the AXIS_HOME and target EPR.
      //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME 
      Axis2SampleDocLitPortTypeStub stub= new Axis2SampleDocLitPortTypeStub(null,
-                                "http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
+                                "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
      //Create the request document to be sent.
      EchoStringParamDocument  reqDoc= EchoStringParamDocument.Factory.newInstance();
      reqDoc.setEchoStringParam("Axis2 Echo");
@@ -457,7 +458,7 @@ Operation</a></h4>
      //Create the stub by passing the AXIS_HOME and target EPR.
      //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
      Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null,
-                                "http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
+                                "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
 
      //Create the request document to be sent.
      EchoStringArrayParamDocument reqDoc = EchoStringArrayParamDocument.Factory.newInstance();
@@ -485,7 +486,7 @@ Operation</a></h4>
     //Create the stub by passing the AXIS_HOME and target EPR.
     //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
     Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null, 
-                                "http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
+                                "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
     //Create the request Document
     EchoStructParamDocument reqDoc = EchoStructParamDocument.Factory.newInstance();
 
