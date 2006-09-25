@@ -18,11 +18,11 @@ package org.apache.axis2.jaxws.message;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
-import java.util.HashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
@@ -33,8 +33,10 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 import test.EchoStringResponse;
@@ -48,8 +50,14 @@ import test.ObjectFactory;
 public class MessageTests extends TestCase {
 
 	// String test variables
-    private static final String sampleEnvelopeHead =
-        "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+	private static final String soap11env = "http://schemas.xmlsoap.org/soap/envelope/";
+	private static final String soap12env = "http://www.w3.org/2003/05/soap-envelope";
+    private static final String sampleEnvelopeHead11 =
+        "<soapenv:Envelope xmlns:soapenv=\"" + soap11env + "\">" +
+        "<soapenv:Header /><soapenv:Body>";
+    
+    private static final String sampleEnvelopeHead12 =
+        "<soapenv:Envelope xmlns:soapenv=\"" + soap12env + "\">" +
         "<soapenv:Header /><soapenv:Body>";
     
     private static final String sampleEnvelopeTail = 
@@ -61,8 +69,13 @@ public class MessageTests extends TestCase {
 		"<c>World</c>" +
 		"</pre:a>";
 	
-    private static final String sampleEnvelope = 
-        sampleEnvelopeHead +
+    private static final String sampleEnvelope11 = 
+        sampleEnvelopeHead11 +
+        sampleText +
+        sampleEnvelopeTail;
+    
+    private static final String sampleEnvelope12 = 
+        sampleEnvelopeHead12 +
         sampleText +
         sampleEnvelopeTail;
         
@@ -71,16 +84,29 @@ public class MessageTests extends TestCase {
         "<echoStringReturn>sample return value</echoStringReturn>" + 
         "</echoStringResponse>";
     
-    private static final String sampleJAXBEnvelope = 
-        sampleEnvelopeHead + 
+    private static final String sampleJAXBEnvelope11 = 
+        sampleEnvelopeHead11 + 
+        sampleJAXBText + 
+        sampleEnvelopeTail;
+    
+    private static final String sampleJAXBEnvelope12 = 
+        sampleEnvelopeHead12 + 
         sampleJAXBText + 
         sampleEnvelopeTail;
 
-    private static final String sampleEnvelopeNoHeader =
-        "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+    private static final String sampleEnvelopeNoHeader11 =
+        "<soapenv:Envelope xmlns:soapenv=\""+ soap11env +"\">" +
         "<soapenv:Body>" + 
         sampleText + 
         "</soapenv:Body></soapenv:Envelope>";
+    
+    private static final String sampleEnvelopeNoHeader12 =
+        "<soapenv:Envelope xmlns:soapenv=\""+ soap12env +"\">" +
+        "<soapenv:Body>" + 
+        sampleText + 
+        "</soapenv:Body></soapenv:Envelope>";
+    
+    
     
 	private static final QName sampleQName = new QName("urn://sample", "a");
 	
@@ -194,8 +220,13 @@ public class MessageTests extends TestCase {
 	 * normal Dispatch<String> input flow
 	 * @throws Exception
 	 */
-
-	public void testStringInflow() throws Exception {
+	public void testStringInflow_soap11() throws Exception {
+		_testStringInflow(sampleEnvelope11);
+	}
+	public void testStringInflow_soap12() throws Exception {
+		_testStringInflow(sampleEnvelope12);
+	}
+	public void _testStringInflow(String sampleEnvelope) throws Exception {
 		
 		// On inbound, there will already be an OM
 		// which represents the message.  The following code simulates the input
@@ -231,7 +262,20 @@ public class MessageTests extends TestCase {
 	 * normal Dispatch<String> input flow with a JAX-WS Handler
 	 * @throws Exception
 	 */
-	public void testStringInflow2() throws Exception {
+	public void testStringInflow2_soap11() throws Exception {
+		_testStringInflow2(sampleEnvelope11);
+	}
+	public void testStringInflow2_soap12() throws Exception {
+		// Only run test if an SAAJ 1.3 MessageFactory is available
+		javax.xml.soap.MessageFactory mf = null;
+		try {
+			mf = getSAAJConverter().createMessageFactory(soap12env);
+		} catch (Exception e) {}
+		if (mf != null) {
+			_testStringInflow2(sampleEnvelope12);
+		}
+	}
+	public void _testStringInflow2(String sampleEnvelope) throws Exception {
 		
 		// On inbound, there will already be an OM
 		// which represents the message.  The following code simulates the input
@@ -268,14 +312,75 @@ public class MessageTests extends TestCase {
 		assertTrue(sampleText.equals(bo.toString()));
 		
 	}
+	
+	/**
+	 * Create a Block representing an XMLString and simulate a 
+	 * normal Dispatch<String> input flow with a JAX-WS Handler that needs the whole Message
+	 * @throws Exception
+	 */
+	public void testStringInflow3_soap11() throws Exception {
+		_testStringInflow3(sampleEnvelope11);
+	}
+	public void testStringInflow3_soap12() throws Exception {
+		//Only run test if an SAAJ 1.3 MessageFactory is available
+		javax.xml.soap.MessageFactory mf = null;
+		try {
+			mf = getSAAJConverter().createMessageFactory(soap12env);
+		} catch (Exception e) {}
+		if (mf != null) {
+			_testStringInflow3(sampleEnvelope12);
+		}
+	}
+	public void _testStringInflow3(String sampleEnvelope) throws Exception {
+		
+		// On inbound, there will already be an OM
+		// which represents the message.  The following code simulates the input
+		// OM
+		StringReader sr = new StringReader(sampleEnvelope);
+		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
+		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+		OMElement omElement = builder.getSOAPEnvelope();
+		
+		// The JAX-WS layer creates a Message from the OM
+		MessageFactory mf = (MessageFactory)
+			FactoryRegistry.getFactory(MessageFactory.class);
+		Message m = mf.createFrom(omElement);
+		
+		// If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
+		SOAPMessage sm = m.getAsSOAPMessage();
+		
+		// Normally the handler would not touch the body...but for our scenario, assume that it does.
+		String name = sm.getSOAPBody().getFirstChild().getLocalName();
+		assertTrue("a".equals(name));
+		
+		// The next thing that will happen
+		// is the proxy code will ask for the business object (String).
+		XMLStringBlockFactory blockFactory = 
+			(XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+		Block block = m.getBodyBlock(0, null, blockFactory);
+		Object bo = block.getBusinessObject(true);
+		assertTrue(bo instanceof String);
+		
+		// The block should be consumed
+		assertTrue(block.isConsumed());
+		
+		// Check the String for accuracy
+		assertTrue(sampleText.equals(bo.toString()));
+		
+	}
     
     /**
      * Create a Block representing an XMLString, but this time use one that
      * doesn't have a &lt;soap:Header&gt; element in it.
      * @throws Exception
      */
-    public void testStringInflow3() throws Exception {
-        
+	public void testStringInflow4_soap11() throws Exception {
+		_testStringInflow4(sampleEnvelopeNoHeader11);
+	}
+	public void testStringInflow4_soap12() throws Exception {
+		_testStringInflow4(sampleEnvelopeNoHeader12);
+	}
+	public void _testStringInflow4(String sampleEnvelopeNoHeader) throws Exception {
         // On inbound, there will already be an OM
         // which represents the message.  The following code simulates the input
         // OM
@@ -357,7 +462,13 @@ public class MessageTests extends TestCase {
         assertTrue(newText.contains("Body"));
     }
     
-    public void testJAXBInflow() throws Exception {
+    public void testJAXBInflow_soap11() throws Exception {
+		_testJAXBInflow(sampleJAXBEnvelope11);
+	}
+	public void testJAXBInflow_soap12() throws Exception {
+		_testJAXBInflow(sampleJAXBEnvelope12);
+	}
+	public void _testJAXBInflow(String sampleJAXBEnvelope) throws Exception {
         // Create a SOAP OM out of the sample incoming XML.  This
         // simulates what Axis2 will be doing with the inbound message. 
         StringReader sr = new StringReader(sampleJAXBEnvelope);
@@ -394,4 +505,13 @@ public class MessageTests extends TestCase {
         assertNotNull(esr.getEchoStringReturn());
         assertTrue(esr.getEchoStringReturn().equals("sample return value"));
     }
+	SAAJConverter converter = null;
+	private SAAJConverter getSAAJConverter() {
+		if (converter == null) {
+			SAAJConverterFactory factory = (
+						SAAJConverterFactory)FactoryRegistry.getFactory(SAAJConverterFactory.class);
+			converter = factory.getSAAJConverter();
+		}
+		return converter;
+	}
 }

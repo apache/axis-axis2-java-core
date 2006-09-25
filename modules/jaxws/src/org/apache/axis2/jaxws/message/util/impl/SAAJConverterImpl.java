@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.message.util.impl;
 
+import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
@@ -35,6 +36,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -49,6 +51,13 @@ import org.apache.axis2.jaxws.message.util.SOAPElementReader;
  */
 public class SAAJConverterImpl implements SAAJConverter {
 
+	private static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
+	private static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
+	
+	public static final String SOAP_1_1_PROTOCOL = "SOAP 1.1 Protocol"; 
+	public static final String SOAP_1_2_PROTOCOL = "SOAP 1.2 Protocol";
+	public static final String DYNAMIC_PROTOCOL  = "Dynamic Protocol"; 
+	
 	/**
 	 * Constructed via SAAJConverterFactory
 	 */
@@ -64,7 +73,8 @@ public class SAAJConverterImpl implements SAAJConverter {
 		SOAPEnvelope soapEnvelope = null;
 		try {
 			// Build the default envelope
-			MessageFactory mf = MessageFactory.newInstance();
+			OMNamespace ns = omEnvelope.getNamespace();
+			MessageFactory mf = createMessageFactory(ns.getNamespaceURI());
 			SOAPMessage sm = mf.createMessage();
 			SOAPPart sp = sm.getSOAPPart();
 			soapEnvelope = sp.getEnvelope();
@@ -75,16 +85,11 @@ public class SAAJConverterImpl implements SAAJConverter {
 			SOAPBody soapBody = soapEnvelope.getBody();
 			if (soapBody != null) {
 				soapBody.detachNode();
-				//soapEnvelope.removeChild(soapBody);
 			}
 			SOAPHeader soapHeader = soapEnvelope.getHeader();
 			if (soapHeader != null) {
 				soapHeader.detachNode();
-				//soapEnvelope.removeChild(soapHeader);
 			}
-			
-			// Adjust tag data on the SOAPEnvelope.  (i.e. set the prefix, set the attributes)
-			//adjustTagData(soapEnvelope, omEnvelope);
 			
 			// We don't know if there is a real OM tree or just a backing XMLStreamReader.
 			// The best way to walk the data is to get the XMLStreamReader and use this 
@@ -176,6 +181,50 @@ public class SAAJConverterImpl implements SAAJConverter {
 		return buildSOAPTree(nc, null, parent, reader, false);
 	}
 
+	/**
+	 * Create MessageFactory using information from the envelope namespace 
+	 * @param namespace
+	 * @return
+	 */
+	public MessageFactory createMessageFactory(String namespace) throws MessageException, SOAPException {
+		Method m = getNewInstanceProtocolMethod();
+		MessageFactory mf = null;
+		if (m == null) {
+			if (namespace.equals(SOAP11_ENV_NS)) {
+				mf = MessageFactory.newInstance();
+			} else {
+				throw ExceptionFactory.makeMessageException(Messages.getMessage("SOAP12WithSAAJ12Err"));
+			}
+		} else {
+			String protocol = DYNAMIC_PROTOCOL;
+			if (namespace.equals(SOAP11_ENV_NS)) {
+				protocol = SOAP_1_1_PROTOCOL;
+			} else if (namespace.equals(SOAP12_ENV_NS)) {
+				protocol = SOAP_1_2_PROTOCOL;
+			} 
+			try {
+				mf = (MessageFactory) m.invoke(null, new Object[] {protocol});
+			} catch (Exception e) {
+				throw ExceptionFactory.makeMessageException(e);
+			}
+		}
+		return mf;
+	}
+	
+	private Method newInstanceProtocolMethod = null;
+	private Method getNewInstanceProtocolMethod() {
+		if (newInstanceProtocolMethod == null) {
+			try {
+				newInstanceProtocolMethod = MessageFactory.class.getMethod("newInstance", new Class[] {String.class});
+			} catch (Exception e) {
+				// TODO Might want to log this.
+				// Flow to here indicates that the installed SAAJ model does not support version 1.3
+				newInstanceProtocolMethod = null;
+			}
+		}
+		return newInstanceProtocolMethod;
+	}
+	
 	/**
 	 * Build SOAPTree
 	 * Either the root or the parent is null.

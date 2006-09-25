@@ -16,8 +16,10 @@
  */
 package org.apache.axis2.jaxws.message.util;
 
+import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 
 import org.apache.axiom.om.OMElement;
@@ -83,4 +85,13 @@ public interface SAAJConverter {
 	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent, SOAPFactory sf)
 		throws MessageException;
 	
+	/**
+	 * Creates a MessageFactory that can support the SOAP version identified
+	 * by the specified envelope namespace. 
+	 * @param namespace
+	 * @return
+	 * @throws MessageException if the namespace is SOAP 1.2 and the SAAJ does not support
+	 * SOAP 1.2 or the namespace is unknown.
+	 */
+	public MessageFactory createMessageFactory(String namespace) throws SOAPException, MessageException;
 }

@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
@@ -30,6 +31,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Attachment;
@@ -39,7 +41,9 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
+import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 import java.io.ByteArrayOutputStream;
@@ -55,6 +59,12 @@ public class MessageImpl implements Message {
 	XMLPart xmlPart = null; // the representation of the xmlpart
 	List<Attachment> attachments = new ArrayList<Attachment>(); // non-xml parts
     boolean mtomEnabled;
+	
+	// Constants
+	private static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
+	private static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
+	private static final String SOAP11_CONTENT_TYPE ="text/xml";
+	private static final String SOAP12_CONTENT_TYPE = "application/soap+xml";
 	
 	/**
 	 * MessageImpl should be constructed via the MessageFactory.
@@ -113,13 +123,19 @@ public class MessageImpl implements Message {
 		try {
 			// Get OMElement from XMLPart.
 			OMElement element = xmlPart.getAsOMElement();
+			
+			// Get the namespace so that we can determine SOAP11 or SOAP12
+			OMNamespace ns = element.getNamespace();
+			
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			element.serialize(outStream);
 
 			// Create InputStream
 			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream
 					.toByteArray());
-			MessageFactory mf = MessageFactory.newInstance();
+			
+			// Create MessageFactory that supports the version of SOAP in the om element
+			MessageFactory mf = getSAAJConverter().createMessageFactory(ns.getNamespaceURI());
 
 			// Create soapMessage object from Message Factory using the input
 			// stream created from OM.
@@ -128,9 +144,16 @@ public class MessageImpl implements Message {
 			// For now I will create a default header
 			MimeHeaders defaultHeader = new MimeHeaders();
 
-			// FIXME: Need to toggle based on SOAP 1.1 or SOAP 1.2
-			defaultHeader.addHeader("Content-type", "text/xml; charset=UTF-8");
+			// Toggle based on SOAP 1.1 or SOAP 1.2
+			String contentType = null;
+			if (ns.getNamespaceURI().equals(SOAP11_ENV_NS)) {
+				contentType = SOAP11_CONTENT_TYPE;
+			} else {
+				contentType = SOAP12_CONTENT_TYPE;
+			}
+			defaultHeader.addHeader("Content-type", contentType +"; charset=UTF-8");
 			SOAPMessage soapMessage = mf.createMessage(defaultHeader, inStream);
+			
 			return soapMessage;
 		} catch (Exception e) {
 			throw ExceptionFactory.makeMessageException(e);
@@ -233,6 +256,20 @@ public class MessageImpl implements Message {
 
 	public String traceString(String indent) {
 		return xmlPart.traceString(indent);
+	}
+	
+	/**
+	 * Load the SAAJConverter
+	 * @return SAAJConverter
+	 */
+	SAAJConverter converter = null;
+	private SAAJConverter getSAAJConverter() {
+		if (converter == null) {
+			SAAJConverterFactory factory = (
+						SAAJConverterFactory)FactoryRegistry.getFactory(SAAJConverterFactory.class);
+			converter = factory.getSAAJConverter();
+		}
+		return converter;
 	}
     
     public void addAttachment(Attachment data) {
