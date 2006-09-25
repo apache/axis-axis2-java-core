@@ -204,6 +204,11 @@
 
 
         <xsl:for-each select="method">
+                        
+          <!-- If usedbmethod attribute present, gives name of method to call for implementation -->
+          <xsl:variable name="usedbimpl"><xsl:value-of select="@usdbimpl"/></xsl:variable>
+          <xsl:if test="$usedbimpl!='true'">
+          
             <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
             <xsl:variable name="style"><xsl:value-of select="@style"></xsl:value-of></xsl:variable>
             <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
@@ -699,6 +704,7 @@
              return;
            }
             </xsl:if>
+          </xsl:if>
         </xsl:for-each>
 
        /**
