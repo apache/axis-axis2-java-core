@@ -28,6 +28,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.AxisController;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -104,6 +105,9 @@ public abstract class BaseDispatch<T> extends BindingProvider
             log.debug("Entered synchronous invocation: BaseDispatch.invoke()");
         }
         
+        //Check for valid invocation parameter
+        obj = validateInvocationParam(obj);
+        
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
         invocationContext.setServiceClient(serviceClient);
@@ -140,6 +144,9 @@ public abstract class BaseDispatch<T> extends BindingProvider
         if (log.isDebugEnabled()) { 
             log.debug("Entered one-way invocation: BaseDispatch.invokeOneWay()");
         }
+        
+        //Check for valid invocation parameter
+        obj = validateInvocationParam(obj);
        
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
@@ -171,6 +178,9 @@ public abstract class BaseDispatch<T> extends BindingProvider
         if (log.isDebugEnabled()) { 
             log.debug("Entered asynchronous (callback) invocation: BaseDispatch.invokeAsync()");
         }
+        
+        //Check for valid invocation parameter
+        obj = validateInvocationParam(obj);
         
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
@@ -275,5 +285,37 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 msg.setMTOMEnabled(true);
         }
     }
-
+    
+    /**
+     * Validate invocation parameter value.
+     * @param object
+     * @return object
+     */
+    private Object validateInvocationParam(Object object){
+    	Object obj = object;
+    	String bindingId = port.getBindingID();
+    	
+    	try {
+    		if(bindingId.equalsIgnoreCase(SOAPBinding.SOAP11HTTP_BINDING) ||
+    		   bindingId.equalsIgnoreCase(SOAPBinding.SOAP11HTTP_MTOM_BINDING)){
+    			if(mode.toString().equalsIgnoreCase(Mode.PAYLOAD.toString()) && object == null){
+    				//TODO Per JAXWS 2.0 Specification in Section 4.3.2, may need to send a soap
+    				//     message with empty body. For now, implementation will through a
+    				//     NullPointerException wrapped in WebServiceException
+    				throw new NullPointerException("Error: Dispatch invocation value is NULL");
+    			}
+    		}
+    		else if(object == null){
+    			throw new NullPointerException("Error: Dispatch invocation value is NULL");
+    		}
+    	}
+    	catch(NullPointerException npe){
+    		throw ExceptionFactory.makeWebServiceException(npe);
+    	}
+    	catch(Exception e){
+    		throw ExceptionFactory.makeWebServiceException(e);
+    	}
+    	
+    	return obj;
+    }
 }
