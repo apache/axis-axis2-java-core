@@ -16,6 +16,11 @@
  */
 package org.apache.axis2.jaxws.server.dispatcher;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,12 +32,20 @@ import java.util.concurrent.Future;
 
 import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBIntrospector;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.JAXBElement.GlobalScope;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -53,6 +66,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class MapperImpl implements Mapper {
 	private static int SIZE = 1;
+	private static String DEFAULT_NAME="arg";
 	private static final Log log = LogFactory.getLog(MapperImpl.class);
 	public MapperImpl() {
 		super();
@@ -67,6 +81,8 @@ public class MapperImpl implements Mapper {
 		Message msg = mc.getMessage();
 		EndpointDescription ed = getEndpointDescription(mc);
 		Class[] paramTypes = javaMethod.getParameterTypes();
+		OperationDescription opDesc = mc.getOperationDescription();
+		String paramName[] = opDesc.getWebParamNames();
 		if(paramTypes == null){
 			//Method has no input parameters.
 			return null;
@@ -83,18 +99,40 @@ public class MapperImpl implements Mapper {
 				throw ExceptionFactory.makeWebServiceException("As per WS-I compliance, Multi part WSDL not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
 			}
 			if(paramTypes !=null){
-				JAXBContext ctx = JAXBContext.newInstance(new Class[]{paramTypes[0]});
+				Class paramType = paramTypes[0];
+				
+				JAXBContext ctx = JAXBContext.newInstance(new Class[]{paramType});
+				
 				BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-				Block block = msg.getBodyBlock(0, ctx, factory);
-				Object obj = block.getBusinessObject(true);
-				return new Object[]{obj};
+				try{
+				
+					Block block = msg.getBodyBlock(0, ctx,factory);
+					return new Object[]{block.getBusinessObject(true)};
+					
+				}catch(Exception e){
+					//FIXME: this is the bare case where child of body is not a method but a primitive data type. Reader from Block is throwing exception.
+					Block block = msg.getBodyBlock(0, ctx,factory);
+					OMElement om = block.getOMElement();
+					
+					XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
+					
+					Unmarshaller u = ctx.createUnmarshaller();
+					Reader inputReader = new InputStreamReader(new ByteArrayInputStream(om.toString().getBytes()));
+					XMLStreamReader sr = xmlFactory.createXMLStreamReader(inputReader);
+					JAXBElement o =u.unmarshal(sr, paramTypes[0]);
+					return new Object[]{o.getValue()};
+				}
+				
+				
+				//Object obj = block.getBusinessObject(true);
+				//return new Object[]{obj};
 			}
 		}
 		
 		if(isSEIDocLitWrapped(ed)){
-			OperationDescription opDesc = mc.getOperationDescription();
-            
-            JAXBContext jbc = createJAXBContext(opDesc);
+			
+            String requestWrapperClassName = opDesc.getRequestWrapperClassName();
+            JAXBContext jbc = createJAXBContext(requestWrapperClassName);
             BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
         
             Block wrapper = msg.getBodyBlock(0, jbc, factory);
@@ -124,8 +162,14 @@ public class MapperImpl implements Mapper {
 				BlockFactory bfactory = (BlockFactory) FactoryRegistry.getFactory(
 						JAXBBlockFactory.class);
 				JAXBContext ctx = JAXBContext.newInstance(new Class[]{returnType});
-				Block block = bfactory.createFrom(response, ctx, null);
-				return block;
+				if(!isXmlRootElementDefined(returnType)){
+					String returnTypeName = opDesc.getWebResultName();
+					return createJAXBBlock(returnTypeName,response,ctx);
+				}
+				else{
+					return createJAXBBlock(response, ctx);
+					
+				}
 			}
 			else{
 				String webResult = opDesc.getWebResultName();
@@ -149,7 +193,8 @@ public class MapperImpl implements Mapper {
 		if(isSEIDocLitWrapped(ed)){
 			
 	            //We'll need a JAXBContext to marshall the response object(s).
-	            JAXBContext jbc = createJAXBContext(opDesc);
+				String responseWrapperClazzName = opDesc.getResponseWrapperClassName();
+	            JAXBContext jbc = createJAXBContext(responseWrapperClazzName);
 	            BlockFactory bfactory = (BlockFactory) FactoryRegistry.getFactory(
 	                    JAXBBlockFactory.class);
 	            
@@ -242,13 +287,13 @@ public class MapperImpl implements Mapper {
 		return style == SOAPBinding.ParameterStyle.WRAPPED;
 	} 
 	
-	private JAXBContext createJAXBContext(OperationDescription opDesc) {
+	private JAXBContext createJAXBContext(String wrapperClassName) {
         // This will only support Doc/Lit Wrapped params for now.
         try {
-            String wrapperClass = opDesc.getRequestWrapperClassName();
-            if (wrapperClass != null) {
-                String wrapperPkg = wrapperClass.substring(0, wrapperClass.lastIndexOf("."));
-                JAXBContext jbc = JAXBContext.newInstance(wrapperPkg);
+            
+            if (wrapperClassName != null) {
+            	Class WrapperClazz = Class.forName(wrapperClassName, true, Thread.currentThread().getContextClassLoader());
+                JAXBContext jbc = JAXBContext.newInstance(new Class[]{WrapperClazz});
                 return jbc;
             }
             else {
@@ -256,6 +301,8 @@ public class MapperImpl implements Mapper {
             }
         } catch (JAXBException e) {
             throw ExceptionFactory.makeWebServiceException(e);
+        }catch(ClassNotFoundException e){
+        	throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 	
@@ -301,5 +348,30 @@ public class MapperImpl implements Mapper {
 		
 		
 		return returnType;	
+	}
+	private Block createJAXBBlock(String name, Object jaxbObject, JAXBContext context) throws MessageException{
+		
+		JAXBIntrospector introspector = context.createJAXBIntrospector();
+		if(introspector.isElement(jaxbObject)){
+			return createJAXBBlock(jaxbObject, context);
+		}
+		else{
+			//Create JAXBElement then use that to create JAXBBlock.
+			Class clazz = jaxbObject.getClass();
+			JAXBElement<Object> element = new JAXBElement<Object>(new QName(name), clazz, jaxbObject);
+			JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+			return factory.createFrom(element,context ,null);
+		}
+		
+	}
+	
+	protected Block createJAXBBlock(Object jaxbObject, JAXBContext context) throws MessageException{
+		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+		return factory.createFrom(jaxbObject,context,null);
+		
+	}
+	private boolean isXmlRootElementDefined(Class jaxbClass){
+		XmlRootElement root = (XmlRootElement) jaxbClass.getAnnotation(XmlRootElement.class);
+		return root !=null;
 	}
 }

@@ -17,6 +17,9 @@
 package org.apache.axis2.jaxws.client.proxy;
 
 import java.beans.IntrospectionException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,8 +28,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBIntrospector;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.AsyncHandler;
 
 import org.apache.axiom.om.OMElement;
@@ -39,6 +49,7 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
@@ -52,6 +63,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	private static Log log = LogFactory.getLog(DocLitProxyHandler.class);
 	private static int SIZE = 1;
 	private static String DEFAULT_ARG="arg";
+	private static QName SOAPENV_QNAME= new QName("http://schemas.xmlsoap.org/soap/envelop/", "Envelope");
 	private ArrayList<Object> argList = null;
 	/**
 	 * @param pd
@@ -114,7 +126,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		
 		Class wrapperClazz = proxyDescriptor.getRequestWrapperClass(isAsync());
 		ArrayList<String> names = getParamNames(objects);
-		String localName = proxyDescriptor.getResponseWrapperLocalName();
+		String localName = proxyDescriptor.getRequestWrapperLocalName();
 		Map<String, Object> values = getParamValues(objects, names);
 		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
 		if (log.isDebugEnabled()) {
@@ -131,10 +143,22 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		if (log.isDebugEnabled()) {
             log.debug("Attempting to create Block");
         }
-		Block reqBlock = createJAXBBlock(jaxbObject, ctx);
-		if (log.isDebugEnabled()) {
-            log.debug("JAXBBlock Created");
-        }
+		XmlRootElement root = null;
+		Block reqBlock = null;
+		root =(XmlRootElement) wrapperClazz.getAnnotation(XmlRootElement.class);
+		if(root != null){
+		 reqBlock = createJAXBBlock(jaxbObject, ctx);
+		 if (log.isDebugEnabled()) {
+	            log.debug("JAXBBlock Created");
+	        }
+		}
+		else{
+			reqBlock = createJAXBBlock(localName, jaxbObject, ctx);
+			if (log.isDebugEnabled()) {
+	            log.debug("JAXBBlock Created");
+	        }
+		}
+		
 		MessageContext requestCtx = initializeRequest(reqBlock);
 		return requestCtx;
 		
@@ -150,8 +174,8 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	 * @return
 	 */
 	private MessageContext createDocLitNONWrappedRequest(Method method, Object[] objects) throws JAXBException, MessageException, XMLStreamException{
-		JAXBContext ctx = null;
-		Object requestObject = null;
+		MessageContext requestCtx = null;
+		
 		ArrayList<String> names = getParamNames(objects);
 		Map<String, Object> values = getParamValues(objects, names);
 		if(names.size()> SIZE || values.size() > SIZE){
@@ -160,25 +184,35 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 	        }
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr1"));
 		}
-		for(String name:names){
-			requestObject = values.get(name);
-			if(requestObject == null){
-				if (log.isDebugEnabled()) {
-		            log.debug("Method Input parameter for NON Wrapped Request cannot be null");
-		        }
-				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr2"));
+		if(names.size() !=0){
+			JAXBContext ctx = null;
+			Object requestObject = null;
+			String requestObjectName = null;
+			for(String name:names){
+				requestObject = values.get(name);
+				requestObjectName = name;
+				if(requestObject == null){
+					if (log.isDebugEnabled()) {
+			            log.debug("Method Input parameter for NON Wrapped Request cannot be null");
+			        }
+					throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr2"));
+				}
 			}
+				
+			ctx = JAXBContext.newInstance(new Class[]{requestObject.getClass()});
+			if (log.isDebugEnabled()) {
+	            log.debug("Attempting to create Block");
+	        }
+			Block reqBlock = createJAXBBlock(requestObjectName, requestObject, ctx);
+			if (log.isDebugEnabled()) {
+	            log.debug("Block Created");
+	        }
+			requestCtx = initializeRequest(reqBlock);
 		}
-			
-		ctx = JAXBContext.newInstance(new Class[]{requestObject.getClass()});
-		if (log.isDebugEnabled()) {
-            log.debug("Attempting to create Block");
-        }
-		Block reqBlock = createJAXBBlock(requestObject, ctx);
-		if (log.isDebugEnabled()) {
-            log.debug("Block Created");
-        }
-		MessageContext requestCtx = initializeRequest(reqBlock);
+		if(names.size() == 0){
+			Block emptyBodyBlock = createEmptyBodyBlock();
+			requestCtx = initializeRequest(emptyBodyBlock);
+		}
 		return requestCtx;
 	}
 	
@@ -237,7 +271,21 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		JAXBContext ctx = JAXBContext.newInstance(returnType);
 		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 		Block resBlock = responseMsg.getBodyBlock(0, ctx, factory);
-		Object bo = resBlock.getBusinessObject(true);
+		Object bo = null;
+		try{
+			 bo = resBlock.getBusinessObject(true);
+		}catch(Exception e){
+			//FIXME: this is the bare case where child of body is not a method but a primitive data type. Reader from Block is throwing exception.
+			OMElement om = resBlock.getOMElement();
+			
+			XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
+			
+			Unmarshaller u = ctx.createUnmarshaller();
+			Reader inputReader = new InputStreamReader(new ByteArrayInputStream(om.toString().getBytes()));
+			XMLStreamReader sr = xmlFactory.createXMLStreamReader(inputReader);
+			JAXBElement o =u.unmarshal(sr, returnType);
+			bo = o.getValue();
+		}
 		if(returnType.isAssignableFrom(bo.getClass())){
 			return bo;
 		}
@@ -250,6 +298,26 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 		return factory.createFrom(jaxbObject,context,null);
 		
+	}
+	
+	private Block createJAXBBlock(String name, Object jaxbObject, JAXBContext context) throws MessageException{
+		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+		JAXBIntrospector introspector = context.createJAXBIntrospector();
+		if(introspector.isElement(jaxbObject)){
+			return factory.createFrom(jaxbObject, context, null);
+		}
+		else{
+			Class clazz = jaxbObject.getClass();
+			JAXBElement<Object> element = new JAXBElement<Object>(new QName(name), clazz, jaxbObject);
+			return factory.createFrom(element,context,null);
+		}
+		
+	}
+	
+	private Block createEmptyBodyBlock() throws MessageException{
+		String emptyBody = "";
+		XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+		return stringFactory.createFrom(emptyBody, null, SOAPENV_QNAME);
 	}
 	
 	private Block createJAXBBlock(OMElement om, JAXBContext context)throws javax.xml.stream.XMLStreamException{

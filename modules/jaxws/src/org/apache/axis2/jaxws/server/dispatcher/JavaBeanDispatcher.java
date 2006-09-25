@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.Method;
 
+import javax.xml.ws.Holder;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -65,7 +66,13 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         Mapper mapper = new MapperImpl();
         Method target = mapper.getJavaMethod(mc, serviceImplClass);
         Object[] params = mapper.getInputParameterData(mc, target);
-
+        if(params!=null){
+        	for(Object param:params){
+        		if(param!=null && param instanceof Holder){
+        			throw new UnsupportedOperationException("Holders not supported yet");
+        		}
+        	}
+        }
         //At this point, we have the method that is going to be invoked and
         //the parameter data to invoke it with, so create an instance and 
         //do the invoke.
@@ -74,11 +81,12 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         if(opDesc.isOneWay()){
         	//Dont return response message context if its a one way operation.
-        	return null;
         }
+        
+        //TODO:Support Holders 
         if(!opDesc.isOneWay() && target.getReturnType().getName().equals("void")){
-        	//look for holders
-        	throw new UnsupportedOperationException("Holders not supported yet");
+        	//process everything that does not have holders two way with void is empty responsewrapper in soap body
+        	
         }
         Block responseBlock = mapper.getOutputParameterBlock(mc, response, target);
        

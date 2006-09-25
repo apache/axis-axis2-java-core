@@ -41,6 +41,7 @@ import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.provider.*;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
+import org.apache.axis2.jaxws.sample.BareTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
@@ -91,6 +92,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(NonWrapTests.class);
         suite.addTestSuite(WrapTests.class);
         suite.addTestSuite(AddNumbersTests.class);
+        suite.addTestSuite(BareTests.class);
         
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
