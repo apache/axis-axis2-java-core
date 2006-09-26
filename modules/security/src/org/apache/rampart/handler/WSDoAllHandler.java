@@ -75,6 +75,10 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
         }
     }
 
+    public void flowComplete(MessageContext msgContext)
+    {
+    }
+    
     /**
      * Method getName.
      *

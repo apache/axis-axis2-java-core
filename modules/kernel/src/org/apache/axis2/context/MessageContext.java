@@ -29,13 +29,15 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.Handler;
 import org.apache.neethi.Policy;
-
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -127,6 +129,9 @@ public class MessageContext extends AbstractContext {
      */
     private ArrayList executionChain = new ArrayList();
 
+    private LinkedList inboundExecutedPhases = new LinkedList();
+    private LinkedList outboundExecutedPhases = new LinkedList();
+    
     // Are we doing REST now?
     private boolean doingREST;
 
@@ -245,6 +250,66 @@ public class MessageContext extends AbstractContext {
 
     public ArrayList getExecutionChain() {
         return executionChain;
+    }
+
+    /**
+     * Add a Phase to the collection of executed phases for the inbound path.
+     * Phases will be inserted in a LIFO data structure.
+     * @param phase The phase to add to the list.
+     */
+    public void addInboundExecutedPhase(Handler phase)
+    {
+      inboundExecutedPhases.addFirst(phase); 
+    }
+    
+    /**
+     * Get an iterator over the inbound executed phase list.
+     * @return An Iterator over the LIFO data structure.
+     */
+    public Iterator getInboundExecutedPhases()
+    {
+      return inboundExecutedPhases.iterator();
+    }
+
+    /**
+     * Reset the list of executed inbound phases.
+     * This is needed because the OutInAxisOperation currently invokes
+     * receive() even when a fault occurs, and we will have already executed
+     * the flowComplete on those before receiveFault() is called.
+     */
+    public void resetInboundExecutedPhases()
+    {
+      inboundExecutedPhases = new LinkedList();
+    }
+    
+    /**
+     * Add a Phase to the collection of executed phases for the outbound path.
+     * Phases will be inserted in a LIFO data structure.
+     * @param phase The phase to add to the list.
+     */
+    public void addOutboundExecutedPhase(Handler phase)
+    {
+      outboundExecutedPhases.addFirst(phase); 
+    }
+    
+    /**
+     * Get an iterator over the outbound executed phase list.
+     * @return An Iterator over the LIFO data structure.
+     */
+    public Iterator getOutboundExecutedPhases()
+    {
+      return outboundExecutedPhases.iterator();
+    }
+    
+    /**
+     * Reset the list of executed outbound phases.
+     * This is needed because the OutInAxisOperation currently invokes
+     * receive() even when a fault occurs, and we will have already executed
+     * the flowComplete on those before receiveFault() is called.
+     */
+    public void resetOutboundExecutedPhases()
+    {
+      outboundExecutedPhases = new LinkedList();
     }
 
     /**

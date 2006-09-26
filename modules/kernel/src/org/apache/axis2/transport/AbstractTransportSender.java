@@ -121,6 +121,10 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         }
     }
 
+    public void flowComplete(MessageContext msgContext)
+    {
+    }
+    
     protected abstract OutputStream openTheConnection(EndpointReference epr, MessageContext msgctx)
             throws AxisFault;
 

@@ -113,4 +113,8 @@ public class RampartReceiver implements Handler {
         return this.handlerDesc.getParameter(name);
     }
 
+    public void flowComplete(MessageContext msgContext)
+    {
+    }
+
 }
