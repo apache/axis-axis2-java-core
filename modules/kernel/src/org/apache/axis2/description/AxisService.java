@@ -663,8 +663,11 @@ public class AxisService extends AxisDescription {
         try {
             String wsdlntfound = "<error>" +
                     "<description>Unable to generate WSDL for this service</description>" +
-                    "<reason>Either user has not dropped the wsdl into META-INF or" +
-                    " operations use message receivers other than RPC.</reason>" +
+                    "<reason>If you wish Axis2 to automatically generate the WSDL, then please use one of the RPC message " +
+                    "receivers for the service(s)/operation(s) in services.xml. If you have added a custom WSDL in the " +
+                    "META-INF directory, then please make sure that make sure that the name of the service in services.xml " +
+                    "(/serviceGroup/service/@name) is the same as in the " +
+                    "custom wsdl's service name (/wsdl:definitions/wsdl:service/@name). </reason>"  +
                     "</error>";
             out.write(wsdlntfound.getBytes());
             out.flush();
