@@ -27,8 +27,10 @@ public interface Constants {
     String UNWRAPPED_KEY = "UnWrapped";
     String UNWRAPPED_DETAILS = "UnWrapped_details";
 
+    String COMPLEX_TYPE = "complexType";
+
     public static final String ANY_ELEMENT_FIELD_NAME = "extraElement";
-    
+
     /** Property for message receiver operation method handled by databinding
      code generation. This is an optional parameter for an {@link
      org.apache.axis2.description.AxisOperation}. If present, the value is the

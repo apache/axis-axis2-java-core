@@ -39,6 +39,8 @@
                 <xsl:when test="$paramcount &gt; 0">
                     <xsl:variable name="inputElement" select="../../param[@type!='' and @direction='in' and @opname=$opname]"></xsl:variable>
                     <xsl:variable name="inputElementType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"></xsl:variable>
+                    <xsl:variable name="inputElementShortType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@shorttype"></xsl:variable>
+                    <xsl:variable name="inputElementComplexType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@complextype"></xsl:variable>
                     <xsl:variable name="wrappedParameterCount" select="count(../../param[@type!='' and @direction='in' and @opname=$opname]/param)"></xsl:variable>
                      <xsl:choose>
                         <xsl:when test="$wrappedParameterCount &gt; 0">
@@ -50,10 +52,22 @@
                          boolean optimizeContent){
 
                         <xsl:value-of select="$inputElementType"/> wrappedType = new <xsl:value-of select="$inputElementType"/>();
-                             <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
-                              wrappedType.set<xsl:value-of select="@partname"/>(param<xsl:value-of select="position()"/>);
-                         </xsl:for-each>
 
+                         <xsl:choose>
+                             <!--<xsl:when test="$inputElementComplexType != ''">-->
+                             <xsl:when test="string-length(normalize-space($inputElementComplexType)) > 0">
+                                  <xsl:value-of select="$inputElementComplexType"/> wrappedComplexType = new <xsl:value-of select="$inputElementComplexType"/>();
+                                  <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
+                                      wrappedComplexType.set<xsl:value-of select="@partname"/>(param<xsl:value-of select="position()"/>);
+                                 </xsl:for-each>
+                                 wrappedType.set<xsl:value-of select="$inputElementShortType"/>(wrappedComplexType);
+                             </xsl:when>
+                             <xsl:otherwise>
+                                 <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
+                                      wrappedType.set<xsl:value-of select="@partname"/>(param<xsl:value-of select="position()"/>);
+                                 </xsl:for-each>
+                             </xsl:otherwise>
+                         </xsl:choose>
 
                        org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
                           <xsl:choose>
@@ -128,10 +142,21 @@
        </xsl:choose>
             <xsl:if test="count(../../param[@type!='' and @direction='in' and @opname=$opname])=1">
                 <!-- generate the get methods -->
+                <xsl:variable name="inputElementShortType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@shorttype"></xsl:variable>
+                <xsl:variable name="inputElementComplexType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@complextype"></xsl:variable>
+
                 <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
                     private <xsl:value-of select="@type"/> get<xsl:value-of select="@partname"/>(
                     <xsl:value-of select="../@type"/> wrappedType){
-                    return wrappedType.get<xsl:value-of select="@partname"/>();
+                    <xsl:choose>
+                        <!--<xsl:when test="$inputElementComplexType != ''">-->
+                        <xsl:when test="string-length(normalize-space($inputElementComplexType)) > 0">
+                            return wrappedType.get<xsl:value-of select="$inputElementShortType"/>().get<xsl:value-of select="@partname"/>();
+                        </xsl:when>
+                        <xsl:otherwise>
+                            return wrappedType.get<xsl:value-of select="@partname"/>();
+                        </xsl:otherwise>
+                    </xsl:choose>
                     }
                 </xsl:for-each>
             </xsl:if>

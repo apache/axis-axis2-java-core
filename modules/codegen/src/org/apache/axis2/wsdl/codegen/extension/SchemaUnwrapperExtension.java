@@ -5,6 +5,7 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -117,7 +118,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         XmlSchemaElement schemaElement = message.getSchemaElement();
         XmlSchemaType schemaType = schemaElement.getSchemaType();
 
-        handleAllCasesOfComplexTypes(schemaType, message, partNameList);
+        String complexType = handleAllCasesOfComplexTypes(schemaType, message, partNameList);
 
         try {
             //set in the axis message that the unwrapping was success
@@ -135,6 +136,8 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             message.addParameter(
                     getParameter(Constants.UNWRAPPED_DETAILS,
                             infoHolder));
+            // store the complex type name for this message
+            message.addParameter(getParameter(Constants.COMPLEX_TYPE, complexType));
 
         } catch (AxisFault axisFault) {
             throw new CodeGenerationException(axisFault);
@@ -142,9 +145,20 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
     }
 
-    private void handleAllCasesOfComplexTypes(XmlSchemaType schemaType, AxisMessage message, List partNameList) throws CodeGenerationException {
+    private String handleAllCasesOfComplexTypes(XmlSchemaType schemaType, AxisMessage message, List partNameList) throws CodeGenerationException {
+
+        // if a complex type name exits for a element then
+        // we keep that complex type to support unwrapping
+        String complexType = "";
         if (schemaType instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
+            if ((cmplxType.getName() != null) && (!cmplxType.getName().equals(""))) {
+                if ((cmplxType.getQName() != null) && (cmplxType.getQName().getNamespaceURI() != null) && (!cmplxType.getQName().getNamespaceURI().equals("")))
+                {
+                    complexType = URLProcessor.makePackageName(cmplxType.getQName().getNamespaceURI()) + ".";
+                }
+                complexType += cmplxType.getName();
+            }
             if (cmplxType.getContentModel() == null) {
                 processXMLSchemaSequence(cmplxType.getParticle(), message, partNameList);
             } else {
@@ -158,6 +172,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
                     "unknown", "complexType"));
         }
+        return complexType;
     }
 
     private void processComplexContentModel(XmlSchemaComplexType cmplxType, AxisMessage message, List partNameList) throws CodeGenerationException {
@@ -240,10 +255,14 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                     // if this is an instance of xs:any, then there is no part name for it. Using ANY_ELEMENT_FIELD_NAME
                     // for it for now
-                     partNameList.add(
-                            WSDLUtil.getPartQName(opName.getLocalPart(),
-                                    WSDLConstants.INPUT_PART_QNAME_SUFFIX,
-                                    Constants.ANY_ELEMENT_FIELD_NAME));
+
+                    //we have to handle both maxoccurs 1 and maxoccurs > 1 situation
+                    XmlSchemaAny xmlSchemaAny = (XmlSchemaAny) item;
+
+                        partNameList.add(
+                                WSDLUtil.getPartQName(opName.getLocalPart(),
+                                        WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                        Constants.ANY_ELEMENT_FIELD_NAME));
                 } else {
                     throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
                             "unknown type", "Element"));

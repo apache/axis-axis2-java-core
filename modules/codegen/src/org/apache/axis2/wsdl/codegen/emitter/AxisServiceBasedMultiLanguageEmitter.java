@@ -18,11 +18,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
-
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 import javax.xml.namespace.QName;
@@ -39,7 +37,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
-//import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -1085,7 +1082,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
             rootElement.appendChild((Element) iterator.next());
         }
-        
+
         // finish with any extra information from operations
         for (Iterator operationsIterator = axisService.getOperations();operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
@@ -1407,7 +1404,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 opsFound = true;
                 methodElement = generateMethodElement(doc, portTypeName, axisOperation);
                 rootElement.appendChild(methodElement);
-                
+
             } else {
                 //mep is present - we move ahead only if the given mep matches the mep of this operation
 
@@ -1428,7 +1425,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     /**
      * Common code to generate a <method> element from an operation.
-     * 
+     *
      * @param doc
      * @param portTypeName
      * @param axisOperation
@@ -1449,8 +1446,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 methodElement);
         addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
         addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
-        
-        // check for this operation to be handled directly by databinding code generation 
+
+        // check for this operation to be handled directly by databinding code generation
         Parameter dbmethname = axisOperation.getParameter(Constants.DATABINDING_GENERATED_RECEIVER);
         if (dbmethname != null) {
             addAttribute(doc, "usedbmethod", (String)dbmethname.getValue(), methodElement);
@@ -1850,6 +1847,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // the message by looking at the unwrapped details object and attach the
             // needed parameters inside main parameter element
             if (inputMessage.getParameter(Constants.UNWRAPPED_KEY) != null) {
+
+                // we put the complex type only if unWrapped key present
+                if (inputMessage.getParameter(Constants.COMPLEX_TYPE) != null){
+                    Parameter parameter = inputMessage.getParameter(Constants.COMPLEX_TYPE);
+                    addAttribute(doc,"complextype",(String)parameter.getValue(),mainParameter);
+                }
+
                 //we have this unwrapped earlier. get the info holder
                 //and then look at the parameters
                 Parameter detailsParameter =
@@ -1937,9 +1941,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "name",
                 paramName, paramElement);
 
-        addAttribute(doc, "type", (paramType == null)
-                ? ""
-                : paramType, paramElement);
+        addAttribute(doc, "type",
+                (paramType == null)? "" : paramType,
+                paramElement);
 
         //adds the short type
         addShortType(paramElement,paramType);
