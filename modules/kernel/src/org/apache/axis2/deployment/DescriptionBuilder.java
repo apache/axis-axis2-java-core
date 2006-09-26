@@ -174,15 +174,15 @@ public class DescriptionBuilder implements DeploymentConstants {
         } catch (ClassNotFoundException e) {
             throw new DeploymentException(Messages.getMessage(
                     DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER,
-                    "ClassNotFoundException", className));
+                    "ClassNotFoundException", className), e);
         } catch (IllegalAccessException e) {
             throw new DeploymentException(Messages.getMessage(
                     DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER,
-                    "IllegalAccessException", className));
+                    "IllegalAccessException", className), e);
         } catch (InstantiationException e) {
             throw new DeploymentException(Messages.getMessage(
                     DeploymentErrorMsgs.ERROR_IN_LOADING_MESSAGE_RECEIVER,
-                    "InstantiationException", className));
+                    "InstantiationException", className), e);
         }
 
         return receiver;
@@ -340,7 +340,7 @@ public class DescriptionBuilder implements DeploymentConstants {
         } catch (AxisFault axisFault) {
             throw new DeploymentException(Messages.getMessage(
                     DeploymentErrorMsgs.MODULE_NOT_FOUND, axisFault
-                            .getMessage()));
+                            .getMessage()), axisFault);
         }
     }
 
