@@ -32,6 +32,7 @@
 
         <xsl:variable name="name" select="@name"/>
         <xsl:variable name="choice" select="@choice"/>
+        <xsl:variable name="simple" select="@simple"/>
         <xsl:variable name="ordered" select="@ordered"/>
         <xsl:variable name="unordered" select="not($ordered)"/>  <!-- for convenience -->
         <xsl:variable name="isType" select="@type"/>
@@ -767,6 +768,7 @@
                         </xsl:when>
                         <!-- handle all other cases -->
                          <xsl:otherwise>
+                            <xsl:if test="not($simple)">
                      namespace = "<xsl:value-of select="$namespace"/>";
 
                     if (! namespace.equals("")) {
@@ -786,7 +788,7 @@
                     } else {
                         xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
                     }
-
+                            </xsl:if>
                              <xsl:choose>
                                  <!-- handle the binary case -->
                                  <xsl:when test="@binary">
@@ -822,7 +824,9 @@
                                   </xsl:if>
                                  </xsl:otherwise>
                              </xsl:choose>
+                             <xsl:if test="not($simple)">
                     xmlWriter.writeEndElement();
+                             </xsl:if>
                         </xsl:otherwise>
                     </xsl:choose>
                     <xsl:if test="$min=0 or $choice">}</xsl:if>
@@ -1352,7 +1356,7 @@
                 <xsl:if test="property[not(@attribute)]">
                 <xsl:if test="$unordered">   <!-- Properties can be in any order -->
                 while(!reader.isEndElement()) {
-                    if (reader.isStartElement()){
+                    if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if>){
                 </xsl:if>
                 </xsl:if>
 
@@ -1388,7 +1392,7 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                             <xsl:if test="not(enumFacet)">
-                            if (reader.isStartElement() <xsl:if test="not(@simple)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
+                            if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
                             </xsl:if>
                             <xsl:choose>
                                 <xsl:when test="@array">
@@ -1560,7 +1564,6 @@
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
-                                    reader.next();
                                     if (isReaderMTOMAware
                                             &amp;&amp;
                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))

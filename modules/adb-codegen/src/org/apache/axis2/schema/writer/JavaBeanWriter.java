@@ -244,7 +244,7 @@ public class JavaBeanWriter implements BeanWriter {
             if (qName == null) {
                 qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
             }
-            metainf.addtStatus(qName, SchemaConstants.SIMPLE_TYPE);
+            metainf.addtStatus(qName, SchemaConstants.SIMPLE_TYPE_OR_CONTENT);
             return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
             throw new SchemaCompilationException(e);
@@ -474,6 +474,10 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "choice", "yes", rootElt);
         }
 
+        if (metainf.isSimple()) {
+            XSLTUtils.addAttribute(model, "simple", "yes", rootElt);
+        }
+
         if (metainf.isOrdered()) {
             XSLTUtils.addAttribute(model, "ordered", "yes", rootElt);
         }
@@ -626,7 +630,7 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "binary", "yes", property);
             }
 
-            if (metainf.getSimpleTypeStatusForQName(name)) {
+            if (metainf.isSimple() || metainf.getSimpleStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "simple", "yes", property);
             }
 

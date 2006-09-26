@@ -36,6 +36,7 @@ public class BeanWriterMetaInfoHolder {
     protected boolean ordered = false;
     protected boolean anonymous = false;
     protected boolean choice = false;
+    protected boolean simple = false;
 
     protected boolean extension = false;
     protected boolean restriction = false;
@@ -74,6 +75,14 @@ public class BeanWriterMetaInfoHolder {
 
     public void setChoice(boolean choice) {
         this.choice = choice;
+    }
+
+    public boolean isSimple() {
+        return simple;
+    }
+
+    public void setSimple(boolean simple) {
+        this.simple = simple;
     }
 
     public String getOwnClassName() {
@@ -364,10 +373,10 @@ public class BeanWriterMetaInfoHolder {
      * @param qName
      * @return Returns boolean.
      */
-    public boolean getSimpleTypeStatusForQName(QName qName) {
+    public boolean getSimpleStatusForQName(QName qName) {
         Integer state = (Integer) specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
-                SchemaConstants.SIMPLE_TYPE);
+                SchemaConstants.SIMPLE_TYPE_OR_CONTENT);
     }
 
     /**

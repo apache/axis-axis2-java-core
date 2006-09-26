@@ -477,7 +477,7 @@ public class CStructWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "binary", "yes", property);
             }
 
-            if (metainf.getSimpleTypeStatusForQName(name)) {
+            if (metainf.getSimpleStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "simple", "yes", property);
             }
 

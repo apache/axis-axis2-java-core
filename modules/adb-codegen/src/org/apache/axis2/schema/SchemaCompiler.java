@@ -960,6 +960,7 @@ public class SchemaCompiler {
             processComplexContent((XmlSchemaComplexContent)content,metaInfHolder,parentSchema);
         }else if (content instanceof XmlSchemaSimpleContent){
             processSimpleContent((XmlSchemaSimpleContent)content,metaInfHolder,parentSchema);
+            metaInfHolder.setSimple(true);
         }
     }
 
