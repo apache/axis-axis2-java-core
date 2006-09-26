@@ -25,7 +25,7 @@ guidelines for the migration.</p>
 
 <p><i>Send your feedback or questions to: <a
 href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix
-subject with [Axis2]. To subscribe to mailing list see <a
+subject with [Axis2]. To subscribe to the mailing list see <a
 href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>Content</h2>
@@ -135,7 +135,7 @@ requests and responses, which is far from what Axis1.x was capable of.</p>
 was highly cumbersome. Service deployment in Axis2 is straight forward and
 dynamic. Dynamic behavior is from the "Administrator" facility given by the
 development in the server side. It's just a matter of creating the .aar file,
-and deploying it. More detail regarding this is given in the Axis2 user
+and deploying it. More details regarding this is given in the Axis2 user
 guide.</p>
 
 <p>Axis2 is far from the "Handler concept" and is more into the "Module
@@ -259,7 +259,7 @@ adding a global module:</b></p>
 <p><b>Then define your phase orders for 'soapmonitorPhase' referenced in the
 module.xml :</b></p>
 <pre>    &lt;phaseOrder type="inflow"&gt;
-        &lt;!--  System pre defined phases       --&gt;
+        &lt;!--  Global Phases       --&gt;
         &lt;phase name="TransportIn"/&gt;
         &lt;phase name="PreDispatch"/&gt;
         &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
@@ -284,34 +284,37 @@ module.xml :</b></p>
             &lt;/handler&gt;
             &lt;handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher"&gt;
-                &lt;order phase="PostDispatch"/&gt;
+                &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
         &lt;/phase&gt;
-        &lt;!--  System pre defined phases       --&gt;
-        &lt;!--   After Postdispatch phase module author or or service author can add any phase he want      --&gt;
+        &lt;!--    Global Phases     --&gt;
+        &lt;!--   After Dispatch phase module author or service author can add any phase he wants      --&gt;
         &lt;phase name="userphase1"/&gt;
         &lt;phase name="soapmonitorPhase"/&gt;
     &lt;/phaseOrder&gt;
     &lt;phaseOrder type="outflow"&gt;
-        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;!--   user can add his own phases to this area  --&gt;
+        &lt;!--   Global phases   --&gt;
+        &lt;!--   these phases will run irrespective of the service   --&gt;
+        &lt;phase name="MessageOut"/&gt;
         &lt;phase name="userphase1"/&gt;
         &lt;phase name="soapmonitorPhase"/&gt;
-        &lt;!--system predefined phase--&gt;
-        &lt;!--these phase will run irrespective of the service--&gt;
         &lt;phase name="PolicyDetermination"/&gt;
-        &lt;phase name="MessageOut"/&gt;
+        &lt;!--   Global phases   --&gt;
     &lt;/phaseOrder&gt;
     &lt;phaseOrder type="INfaultflow"&gt;
-        &lt;!--      user can add his own phases to this area  --&gt;
         &lt;phase name="userphase1"/&gt;
         &lt;phase name="soapmonitorPhase"/&gt;
+        &lt;!--   user can add his own phases to this area  --&gt;
     &lt;/phaseOrder&gt;
     &lt;phaseOrder type="Outfaultflow"&gt;
-        &lt;!--      user can add his own phases to this area  --&gt;
+        &lt;!--   user can add his own phases to this area  --&gt;
+        &lt;!--   Global phases   --&gt;
+        &lt;phase name="MessageOut"/&gt;
         &lt;phase name="userphase1"/&gt;
         &lt;phase name="soapmonitorPhase"/&gt;
         &lt;phase name="PolicyDetermination"/&gt;
-        &lt;phase name="MessageOut"/&gt;
+        &lt;!--   Global phases   --&gt;
     &lt;/phaseOrder&gt;</pre>
 
 <p>See the user guide for more info on axis2 modules.</p>
@@ -343,7 +346,7 @@ xml-data binding framework.</p>
 Axis2.</p>
 
 <p>First, lets take a look at a simple document / literal style WSDL used in
-an Axis 1.x Web Service. This example assumes the name of simple.wsdl for the
+an Axis 1.x Web Service. This example assumes the name simple.wsdl for the
 wsdl below:</p>
 <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
@@ -401,7 +404,7 @@ xmlns="http://www.w3.org/2001/XMLSchema"&gt;
     &lt;port name="SimpleEndpointPort" binding="tns:SimpleEndpointBinding"&gt;
       &lt;soap:address location="http://localhost:8080/axis/services/SimpleEndpointPort"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;</pre>
 
-<p>The next step is run WSDL2Java on the wsdl. For axis 1.x, this example
+<p>The next step is to run WSDL2Java on the wsdl. For axis 1.x, this example
 uses the following ant task:</p>
 <pre>&lt;target name="wsdl2java" description="axis 1.x"&gt;
        &lt;delete dir="output" /&gt;
@@ -469,16 +472,17 @@ following ant task:</p>
   &lt;/target&gt;</pre>
 
 <p>For an explanation of the Axis2 WSDL2Java ant task and its options, see
-the CodegenToolReference guide.</p>
+the <a href="../tools/1_1/CodegenToolReference.html">CodegenToolReference
+Guide.</a></p>
 
 <p>A feature of xmlbeans is that there is one class file created with
 WSDL2java, and a series of xsb files. These must be referenced when
 compiling, and as the example shows these files are moved to a build
-directory</p>
+directory.</p>
 
-<p>The Axis2 WSDL2Java example also takes the simple.wsdl under the directory
-'wsdl' , and from that creates files under the directory 'output'. The
-relevant non-xmlbean files created are shown below:</p>
+<p>The Axis2 WSDL2Java example also takes the simple.wsdl which is under the
+directory 'wsdl' and from that creates files under the directory 'output'.
+The relevant non-xmlbean files created are shown below:</p>
 <pre>output/resources/services.xml
 output/src/org/simple
 output/src/org/simple/endpoint
@@ -497,7 +501,7 @@ output/src/simplens/types/SimpleLoginResponseDocument.java</pre>
 <p>The first important distinction is that while the Axis 1.x example
 generated deploy.wsdd and undeploy.wsdd, the Axis2 example created a
 services.xml. The files deploy.wsdd and services.xml are a breed apart,
-comming from different architectures. There is no direct parallel between
+coming from different architectures. There is no direct parallel between
 them. See the Axis2 user guide for an explanation about services.xml</p>
 
 <p>Now we're ready to code. We'll start with Axis 1.x on the service side. To
@@ -666,7 +670,7 @@ alternatively 'Fire and forget'. See the user guide for more details.</p>
 <h2>Best Usage</h2>
 
 <p>Axis1.x and Axis2 have different ways of seeing the SOAP stack. So the
-best way to migrate is to follow the User guide and the Architecture guide of
+best way to migrate is to follow the <a href="userguide.html">User's Guide</a> and the <a href="Axis2ArchitectureGuide.html">Architecture Guide</a> of
 Axis2 properly. Axis2 is very much straight forward and friendly to use than
 it's predecessor.</p>
 </body>
