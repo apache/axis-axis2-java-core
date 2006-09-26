@@ -25,17 +25,14 @@ import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -57,8 +54,6 @@ public class AddressingOutHandler extends AddressingHandler {
         
         SOAPFactory factory = (SOAPFactory) msgContext.getEnvelope().getOMFactory();
         OMNamespace addressingNamespaceObject = factory.createOMNamespace(namespace, WSA_DEFAULT_PREFIX);
-        String anonymousURI = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
-        String relationshipType = namespace.equals(Final.WSA_NAMESPACE) ? Final.WSA_DEFAULT_RELATIONSHIP_TYPE : Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE;
 
         Options messageContextOptions = msgContext.getOptions();
         SOAPEnvelope envelope = msgContext.getEnvelope();
@@ -89,7 +84,7 @@ public class AddressingOutHandler extends AddressingHandler {
         processToEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders);
 
         // processing WSA replyTo
-        processReplyTo(envelope, messageContextOptions, msgContext, addressingNamespaceObject, anonymousURI, replaceHeaders);
+        processReplyTo(envelope, messageContextOptions, msgContext, addressingNamespaceObject, replaceHeaders);
         
         // processing WSA From
         processFromEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders);
@@ -107,7 +102,7 @@ public class AddressingOutHandler extends AddressingHandler {
         processWSAAction(messageContextOptions, envelope, msgContext, addressingNamespaceObject, replaceHeaders);
 
         // processing WSA RelatesTo
-        processRelatesTo(envelope, messageContextOptions, addressingNamespaceObject, relationshipType, replaceHeaders);
+        processRelatesTo(envelope, messageContextOptions, addressingNamespaceObject, replaceHeaders);
 
         // process fault headers, if present
         processFaultsInfoIfPresent(envelope, msgContext, addressingNamespaceObject, replaceHeaders);
@@ -121,11 +116,17 @@ public class AddressingOutHandler extends AddressingHandler {
                 action = msgCtxt.getAxisOperation().getOutputAction();
             }
         }
-        if (Final.WSA_SOAP_FAULT_ACTION.equals(action) || Final.WSA_FAULT_ACTION.equals(action)) {
-            if (Submission.WSA_NAMESPACE.equals(addressingNamespaceObject.getNamespaceURI())) {
-                action = Submission.WSA_FAULT_ACTION;
-            }
+        
+        String namespace = addressingNamespaceObject.getNamespaceURI();
+        if (Final.WSA_FAULT_ACTION.equals(action) || Submission.WSA_FAULT_ACTION.equals(action)) {
+            action = Final.WSA_NAMESPACE.equals(namespace) ?
+                    Final.WSA_FAULT_ACTION : Submission.WSA_FAULT_ACTION;
         }
+        else if (Final.WSA_SOAP_FAULT_ACTION.equals(action) &&
+                Submission.WSA_NAMESPACE.equals(namespace)) {
+            action = Submission.WSA_FAULT_ACTION;
+        }
+        
         if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
                 addressingNamespaceObject, replaceHeaders)) {
             processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
@@ -150,7 +151,7 @@ public class AddressingOutHandler extends AddressingHandler {
         }
     }
 
-    private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions, OMNamespace addressingNamespaceObject, String replyRelationshipType, boolean replaceHeaders) {
+    private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions, OMNamespace addressingNamespaceObject, boolean replaceHeaders) {
         if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject,replaceHeaders))
         {
             RelatesTo[] relatesTo = messageContextOptions.getRelationships();
@@ -165,9 +166,14 @@ public class AddressingOutHandler extends AddressingHandler {
                     String relationshipType = relatesTo[i].getRelationshipType();
 
                     if (relatesToHeader != null) {
-                        if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) || "".equals(relationshipType)) {
+                        if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) ||
+                            Submission.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) ||
+                            "".equals(relationshipType)) {
+                            String defaultRelationshipType = Final.WSA_NAMESPACE.equals(addressingNamespaceObject.getNamespaceURI()) ?
+                                    Final.WSA_DEFAULT_RELATIONSHIP_TYPE : Submission.WSA_DEFAULT_RELATIONSHIP_TYPE;
+
                             relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
-                                    replyRelationshipType,
+                                    defaultRelationshipType,
                                     addressingNamespaceObject);
                         } else {
                             relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
@@ -181,52 +187,31 @@ public class AddressingOutHandler extends AddressingHandler {
     }
 
     private void processFaultToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders) throws AxisFault {
-        EndpointReference epr;
-        epr = messageContextOptions.getFaultTo();
-        if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_FAULT_TO, envelope, addressingNamespaceObject, replaceHeaders);
+        EndpointReference epr = messageContextOptions.getFaultTo();
+        String headerName = AddressingConstants.WSA_FAULT_TO;
+        
+        if (epr != null && !isAddressingHeaderAlreadyAvailable(headerName, envelope, addressingNamespaceObject,replaceHeaders)) {
+            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders);
         }
     }
 
     private void processFromEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders) throws AxisFault {
-        EndpointReference epr;
-        epr = messageContextOptions.getFrom();
-        if (epr != null) {//optional
-            addToSOAPHeader(epr, AddressingConstants.WSA_FROM, envelope, addressingNamespaceObject, replaceHeaders);
+        EndpointReference epr = messageContextOptions.getFrom();
+        String headerName = AddressingConstants.WSA_FROM;
+        
+        if (epr != null && !isAddressingHeaderAlreadyAvailable(headerName, envelope, addressingNamespaceObject,replaceHeaders)) {
+            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders);
         }
     }
 
-    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, String anonymousURI, boolean replaceHeaders) throws AxisFault {
-        EndpointReference epr = null;
-        if (!isAddressingHeaderAlreadyAvailable(WSA_REPLY_TO, envelope, addressingNamespaceObject, replaceHeaders))
-        {
-        	epr = messageContextOptions.getReplyTo();
-	        if(msgContext.isServerSide() && (msgContext.getAxisService()!=null) && Constants.SCOPE_SOAP_SESSION.equals(msgContext.getAxisService().getScope())){	        	
-	            if (epr == null) {//optional
-	                ServiceContext serviceContext = msgContext.getServiceContext();
-	                if (serviceContext != null &&
-	                        serviceContext.getMyEPR() != null) {
-	                    epr = serviceContext.getMyEPR();
-	                } else {
-	                    // setting anonymous URI. Defaulting to Final.
-	                    epr = new EndpointReference(anonymousURI);
-	                }
-	            } else if ("".equals(epr.getAddress())) {
-	                ServiceContext serviceContext = msgContext.getServiceContext();
-	                if (serviceContext != null &&
-	                        serviceContext.getMyEPR() != null) {
-	                    epr.setAddress(serviceContext.getMyEPR().getAddress());
-	                } else {
-	                    // setting anonymous URI. Defaulting to Final.
-	                    epr.setAddress(anonymousURI);
-	                }
-	            }
-        	}else{
-        		if(epr == null){
-        			epr = new EndpointReference(anonymousURI);
-        		}
-        	}
-            addToSOAPHeader(epr, AddressingConstants.WSA_REPLY_TO, envelope, addressingNamespaceObject, replaceHeaders);
+    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, boolean replaceHeaders) throws AxisFault {
+        EndpointReference epr = messageContextOptions.getReplyTo();
+        String headerName = AddressingConstants.WSA_REPLY_TO;
+        
+        //Don't check epr for null here as addToSOAPHeader() will provide an appropriate default.
+        //This behaviour is needed by the service client.
+        if (!isAddressingHeaderAlreadyAvailable(headerName, envelope, addressingNamespaceObject,replaceHeaders)) {
+            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders);            
         }
     }
 
@@ -234,10 +219,8 @@ public class AddressingOutHandler extends AddressingHandler {
         EndpointReference epr = messageContextOptions.getTo();
         if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject, replaceHeaders))
         {
-            Map referenceParameters = null;
-            String address = "";
-            address = epr.getAddress();
-            referenceParameters = epr.getAllReferenceParameters();
+            Map referenceParameters = epr.getAllReferenceParameters();
+            String address = epr.getAddress();
 
             if (!"".equals(address) && address != null) {
                 SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
@@ -249,11 +232,11 @@ public class AddressingOutHandler extends AddressingHandler {
 
 
     private OMElement processStringInfo(String value,
-                                        String type,
+                                        String headerName,
                                         SOAPEnvelope soapEnvelope, OMNamespace addressingNamespaceObject) {
         if (!"".equals(value) && value != null) {
             SOAPHeaderBlock soapHeaderBlock =
-                    soapEnvelope.getHeader().addHeaderBlock(type, addressingNamespaceObject);
+                    soapEnvelope.getHeader().addHeaderBlock(headerName, addressingNamespaceObject);
             soapHeaderBlock.addChild(
                     soapEnvelope.getOMFactory().createOMText(value));
             return soapHeaderBlock;
@@ -262,17 +245,26 @@ public class AddressingOutHandler extends AddressingHandler {
     }
 
     private void addToSOAPHeader(EndpointReference epr,
-                                 String type,
+                                 String headerName,
                                  SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders) throws AxisFault {
-        if (epr == null || isAddressingHeaderAlreadyAvailable(type, envelope, addressingNamespaceObject,replaceHeaders))
-        {
-            return;
-        }
-
         String namespace = addressingNamespaceObject.getNamespaceURI();
         String prefix = addressingNamespaceObject.getPrefix();
+        String anonymous = Final.WSA_NAMESPACE.equals(namespace) ?
+                Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
 
-        OMElement soapHeaderBlock = EndpointReferenceHelper.toOM(epr, new QName(namespace, type, prefix), namespace);
+        if (epr == null) {
+            epr = new EndpointReference(anonymous);
+        }
+        else if (Final.WSA_NONE_URI.equals(epr.getAddress()) &&
+                 Submission.WSA_NAMESPACE.equals(namespace)) {
+            return; //Omit the header.
+        }
+        else if (Final.WSA_ANONYMOUS_URL.equals(epr.getAddress()) ||
+                 Submission.WSA_ANONYMOUS_URL.equals(epr.getAddress())) {
+            epr.setAddress(anonymous);
+        }
+
+        OMElement soapHeaderBlock = EndpointReferenceHelper.toOM(epr, new QName(namespace, headerName, prefix), namespace);
         envelope.getHeader().addChild(soapHeaderBlock);
     }
 

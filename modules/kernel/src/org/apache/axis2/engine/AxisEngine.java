@@ -176,6 +176,8 @@ public class AxisEngine {
         faultContext.setServerSide(true);
         faultContext.setDoingREST(processingContext.isDoingREST());
 
+        faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+
         // Add correct Action
         AxisOperation op = processingContext.getAxisOperation();
         if(op != null && op.getFaultAction()!=null){
@@ -203,7 +205,7 @@ public class AxisEngine {
 
         EndpointReference faultTo = processingContext.getFaultTo();
         if (faultTo != null && !doNotSendFaultUsingFaultTo) {
-            faultContext.setTo(processingContext.getFaultTo());
+            faultContext.setTo(faultTo);
         }
         else {
             faultContext.setTo(processingContext.getReplyTo());

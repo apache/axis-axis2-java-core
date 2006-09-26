@@ -82,6 +82,9 @@ public interface AddressingConstants {
                 "http://www.w3.org/2005/08/addressing";
         public static final String WSAW_NAMESPACE =
                 "http://www.w3.org/2006/05/addressing/wsdl";
+        /**
+         * @deprecated use {@link #WSA_DEFAULT_RELATIONSHIP_TYPE} instead.
+         */
         public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE =
                 "http://www.w3.org/2005/08/addressing/reply";
         public static final String WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE = "IsReferenceParameter";
@@ -100,7 +103,8 @@ public interface AddressingConstants {
 
         public static final String WSA_INTERFACE_NAME = "InterfaceName";
 
-        public static final String WSA_DEFAULT_RELATIONSHIP_TYPE = "http://www.w3.org/2005/08/addressing/reply";
+        public static final String WSA_DEFAULT_RELATIONSHIP_TYPE =
+                "http://www.w3.org/2005/08/addressing/reply";
 
         // fault information
         public static final String FAULT_HEADER_PROB_HEADER_QNAME = "ProblemHeaderQName";
@@ -125,7 +129,11 @@ public interface AddressingConstants {
         // ====================== Addressing Submission Version Constants ===================
         public static final String WSA_NAMESPACE =
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing";
+        /**
+         * @deprecated use {@link #WSA_DEFAULT_RELATIONSHIP_TYPE} instead.
+         */
         public static final String WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE = "wsa:Reply";
+        public static final String WSA_DEFAULT_RELATIONSHIP_TYPE = "wsa:Reply";
         public static final String WSA_ANONYMOUS_URL =
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous";
 

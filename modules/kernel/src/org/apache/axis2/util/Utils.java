@@ -17,8 +17,6 @@
 
 package org.apache.axis2.util;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -74,26 +72,30 @@ public class Utils {
         // do Target Resolution
         newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(newmsgCtx);
 
+        newmsgCtx.addRelatesTo(new RelatesTo(oldOptions.getMessageId()));
 
-        newmsgCtx.getOptions().setAction(oldOptions.getAction());
-
-        // add the service group id as a reference parameter
-        String serviceGroupContextId = inMessageContext.getServiceGroupContextId();
-        if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
-            EndpointReference replyToEPR = new EndpointReference("");
-            replyToEPR.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
-                    Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
-            newmsgCtx.setReplyTo(replyToEPR);
+        AxisService axisService = inMessageContext.getAxisService();
+        if (axisService != null && Constants.SCOPE_SOAP_SESSION.equals(axisService.getScope())) {
+            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+            // add the service group id as a reference parameter
+            String serviceGroupContextId = inMessageContext.getServiceGroupContextId();
+            if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
+                EndpointReference replyToEPR = newmsgCtx.getReplyTo();
+                replyToEPR.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
+                        Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
+            }
         }
-
-        newmsgCtx.addRelatesTo(new RelatesTo(oldOptions.getMessageId())); //Uses the default relationship type
-
+        else {
+            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));            
+        }
+        
         AxisOperation ao = inMessageContext.getAxisOperation();
         if (ao.getOutputAction() != null) {
             newmsgCtx.setWSAAction(ao.getOutputAction());
         } else {
             newmsgCtx.setWSAAction(oldOptions.getAction());
         }
+        
         newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
         newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
