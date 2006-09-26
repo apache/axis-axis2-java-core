@@ -29,7 +29,7 @@ href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about modules in Axis2). Let's create a custom module and deploy
 it to the MyService which we created earlier. Following steps show the
 actions that need to be performed to deploy a custom module for a given Web
-Service:</p>
+service:</p>
 <ol>
   <li><p style="margin-bottom: 0in">Create the Module Implementation</p>
   </li>
@@ -256,16 +256,16 @@ the module now will be executed in this phase.</p>
 descriptions for the logging module and by changing the "axis2.xml" we have
 created the required phases for the logging module. Next step is to
 "<b>engage</b>" (use) this module in one of our services. For this, let's use
-the same Web Service that we have used throughout the user's guide,
+the same Web service that we have used throughout the user's guide,
 MyService. However, since we need to modify the "services.xml" of MyService
-in order to engage this module, we use a separate Web Service, but with the
+in order to engage this module, we use a separate Web service, but with the
 similar operations. The code for this service can be found in the
 "Axis2Home/samples/userguide/src/userguide/example2" directory. The simple
 changes that we have done to "services.xml' are shown in green in the
 following lines of xml.</p>
 <pre>&lt;service name="<font color="#33cc00">MyServiceWithModule</font>"&gt;
     &lt;description&gt;
-    This is a sample Web Service with a logging module engaged.
+    This is a sample Web service with a logging module engaged.
     &lt;/description&gt;
     <font color="#33cc00">&lt;module ref="logging"/&gt;</font>
     &lt;parameter name="ServiceClass" locked="xsd:false"&gt;userguide.example2.MyService&lt;/parameter&gt;

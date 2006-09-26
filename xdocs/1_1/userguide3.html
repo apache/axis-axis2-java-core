@@ -19,7 +19,7 @@ href="userguide1.html">1</a>, <a href="userguide2.html">2</a>, <b>3</b>, <a
 href="userguide4.html">4</a>, <a href="userguide5.html">5</a></p>
 
 <p><b><font size="4">Note (on samples):</font></b> In this page of the user's
-guide we will look at how to write Web Service Clients using Axis2. All
+guide we will look at how to write Web service Clients using Axis2. All
 samples mentioned in this guide are located at the <b><font
 color="#000000">"samples\userguide\src"</font></b> directory of the binary
 distribution. So... let's explore the samples.</p>
@@ -27,16 +27,16 @@ distribution. So... let's explore the samples.</p>
 <h2><a name="Web_Service_Clients_Using_Axis2">Web Service Clients Using
 Axis2</a></h2>
 
-<p>Now let's see how we can write a Web Service Client to use this Web
-Service.</p>
+<p>Now let's see how we can write a Web service Client to use this Web
+service.</p>
 
 <p>Web services can be used to provide wide range of functionality to the
 users ranging from simple, less time consuming  operations such as
 "getStockQuote"  to time consuming business services. When we utilize (invoke
-using client applications) these Web Service we cannot use some simple
+using client applications) these Web service we cannot use some simple
 generic invocation paradigm that suites all the timing complexities involved
 in the service operations. For example, if we use a single transport channel
-(such as HTTP) to invoke a Web Service with an IN-OUT operation that takes
+(such as HTTP) to invoke a Web service with an IN-OUT operation that takes
 long time to complete, then most of the time we may end up with "connection
 time outs". On the other hand, if there are simultaneous service invocations
 that  we need to perform from a single client application, then the use of a
@@ -51,14 +51,14 @@ Non-Blocking client APIs.</p>
   <li><p style="margin-bottom: 0in"><b>Blocking API</b> -Once the service
     invocation is called, the client application hangs and only gets control
     back when the operation completes, after which client receives a response
-    or a fault. This is the simplest way of invoking Web Services and it also
+    or a fault. This is the simplest way of invoking Web services and it also
     suites many business situations.</p>
   </li>
   <li><p><b>Non-Blocking API </b>- This is a callback or polling based API,
     hence once a service invocation is called, the client application
     immediately gets the control back and the response is retrieved using the
     callback object provided. This approach provides the flexibility to the
-    client application to invoke several Web Services simultaneously without
+    client application to invoke several Web services simultaneously without
     blocking the operation already invoked.</p>
   </li>
 </ul>
@@ -132,9 +132,9 @@ following table.</p>
 </table>
 
 <p>Axis2 provides the user with all these possibilities to invoke Web
-Services.</p>
+services.</p>
 
-<p>Below we describe how to write Web Services Clients using Axis2. This can
+<p>Below we describe how to write Web services Clients using Axis2. This can
 be done in two methods:</p>
 <ol>
   <li><a href="#Writing_Web_Service_Clients_using_Axis2's_Primary_APIs">Using
@@ -142,7 +142,7 @@ be done in two methods:</p>
   <li><p><a
     href="#Writing_Web_Service_Clients_using_Code_Generation_with_Data_Binding_Support">Using
     stubs generated with data binding support</a>, making the life easy for
-    developers writing Web Service client applications</p>
+    developers writing Web service client applications</p>
   </li>
 </ol>
 
@@ -151,7 +151,7 @@ Web Service Clients Using Axis2's Primary APIs</a></h3>
 
 <h4><a name="EchoBlockingClient">EchoBlockingClient</a></h4>
 
-<p>Axis2 provides the user with several invocation patterns for Web Services,
+<p>Axis2 provides the user with several invocation patterns for Web services,
 ranging from pure blocking single channel invocations to a non-blocking dual
 channel invocations. Let's first see how we can write a client to invoke
 "echo" operation of "MyService" using the simplest blocking invocation. The
@@ -184,7 +184,7 @@ then you have successfully tested the client. </p>
 
 <h4><a name="PingClient">PingClient</a></h4>
 
-<p>In the Web Service "MyService" we had an IN-ONLY operation with the name
+<p>In the Web service "MyService" we had an IN-ONLY operation with the name
 "ping" (see <a href="userguide2.html#Web_Services_Using_Axis2">Web Services
 Using Axis2</a>). Let's write a client to invoke this operation. The client
 code is as follows:</p>
@@ -240,10 +240,10 @@ public boolean isComplete() {}</pre>
 
 <p>The user is expected to implement the "onComplete " and "onError " methods
 of their extended call back class. Axis2 engine calls the onComplete method
-once the Web Service response is received by the Axis2 Client API
-(ServiceClient). This will eliminate the blocking nature of the Web Service
+once the Web service response is received by the Axis2 Client API
+(ServiceClient). This will eliminate the blocking nature of the Web service
 invocations and provides the user with the flexibility to use Non Blocking
-API for Web Service Clients.</p>
+API for Web service Clients.</p>
 
 <p>To run the sample client ( EchoNonBlockingClient) you can simply use the
 "testEchoNonBlockingClient" target of the ant file found at the
@@ -252,12 +252,12 @@ API for Web Service Clients.</p>
 <h4><a name="EchoNonBlockingDualClient">EchoNonBlockingDualClient</a></h4>
 
 <p>The solution provided by the Non-Blocking API has one limitation when it
-comes to  Web Service invocations which takes long time to complete. The
+comes to  Web service invocations which takes long time to complete. The
 limitation is due to the use of single transport connection to invoke the Web
-Service and to retrieve the response. In other words, client API provides a
+service and to retrieve the response. In other words, client API provides a
 non blocking invocation mechanism for the users, but the request and the
 response comes in a single transport (Two-Way transport) connection (like
-HTTP). Long running Web Service invocations or Web Service invocations using
+HTTP). Long running Web service invocations or Web service invocations using
 One-Way transports (like SMTP) cannot be utilized by simply using a non
 blocking invocation. </p>
 
@@ -267,14 +267,14 @@ to be solved is the correlation (correlating the request and the response).
 <a href="http://www.w3.org/2002/ws/addr/" target="_blank">WS-Addressing</a>
 provides a neat solution to this using &lt;wsa:MessageID&gt; and
 &lt;wsa:RelatesTo&gt; headers. Axis2 provides support for addressing  based
-correlation mechanism and a complying Client API to invoke Web Services with
+correlation mechanism and a complying Client API to invoke Web services with
 two transport connections. (Core of Axis2 does not depend on WS-Addressing,
 but contains a set of parameters like in addressing that can be populated in
 any means. WS-Addressing is one of the users that may populate them. Even the
 transports can populate these. Hence Axis2 has the flexibility to use
 different versions of addressing)</p>
 
-<p>Users can select between Blocking or Non-Blocking APIs for the Web Service
+<p>Users can select between Blocking or Non-Blocking APIs for the Web service
 clients with two transport connections. By simply using a boolean flag, the
 same API can be used to invoke Web services (IN-OUT operations) using two
 separate transport connections. Let's see how it's done using an example.
@@ -393,20 +393,24 @@ Transports</a> for use different transports.</p>
 name="Writing_Web_Service_Clients_using_Code_Generation_with_Data_Binding_Support">Writing
 Web Service Clients using Code Generation with Data Binding Support</a></h3>
 
-<p>Axis2 provides the data binding support for Web Service client as well.
+<p>Axis2 provides the data binding support for Web service client as well.
 The user can generate the required stubs from a given WSDL with the other
 supporting classes. Let's generate stubs for the WSDL used earlier to
 generate the skeleton for the "Axis2SampleDocLitService". Simply run the
 WSDL2Java tool that can be found in the bin directory of the Axis2
 distribution using the following command:</p>
-<pre style="margin-bottom: 0.2in">WSDL2Java -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -d xmlbeans -o ..\samples\src -p org.apache.axis2.userguide</pre>
+
+<p>Windows users can use the following command in the console:</p>
+<pre style="margin-bottom: 0.2in">WSDL2Java.bat -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -d xmlbeans -o ..\samples\src -p org.apache.axis2.userguide</pre>
+
+<p>Linux users should switch the file separator to:</p>
+<pre style="margin-bottom: 0.2in">WSDL2Java.sh -uri ..\samples\wsdl\Axis2SampleDocLit.wsdl -d xmlbeans -o ..\samples\src -p org.apache.axis2.userguide</pre>
 
 <p>This will generate the required stub "Axis2SampleDocLitServiceStub.java"
-that can be used to invoke the Web Service Axis2SampleDocLitService. Let's
-see how we can use this stub to write Web Service clients to utilize the Web
-Service Axis2SampleDocLitService (the service that we have already
+that can be used to invoke the Web service Axis2SampleDocLitService. Let's
+see how we can use this stub to write Web service clients to utilize the Web
+service Axis2SampleDocLitService (the service that we have already
 deployed).</p>
-
 <!--<h4><a name="Client_for_echoVoid_Operation">Client for echoVoid
 Operation</a></h4>
 
@@ -415,16 +419,15 @@ echoVoid operation of the Axis2SampleDocLitPortType that we have already
 deployed. In this operation, a blank SOAP body element is sent to the Web
 Service and the same SOAP envelope is echoed back.</p>
 <pre> try {
-   //Create the stub by passing the AXIS_HOME and target EPR.
-   //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
-   Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null,
-                                "http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
-   stub.echoVoid();
+//Create the stub by passing the AXIS_HOME and target EPR.
+//We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
+Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null,
+"http://localhost:8080/axis2/services/Axis2SampleDocLitPortType");
+stub.echoVoid();
 
 } catch (Exception e) {
-    e.printStackTrace();
+e.printStackTrace();
 }</pre>-->
-
 
 <h4><a name="Client_for_echoString_Operation">Client for echoString
 Operation</a></h4>
