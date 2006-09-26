@@ -28,6 +28,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,6 +40,7 @@ import java.util.Iterator;
  * the DependencyManager calls the init method with appropriate parameters.
  */
 public class DependencyManager {
+    private static final Log log = LogFactory.getLog(DependencyManager.class);
     public final static String MESSAGE_CONTEXT_INJECTION_METHOD = "setOperationContext";
     public final static String SERVICE_INIT_METHOD = "init";
     public final static String SERVICE_START_METHOD = "startUp";
@@ -70,12 +73,16 @@ public class DependencyManager {
                 }
             }
         } catch (SecurityException e) {
+            log.info("Exception trying to call " + MESSAGE_CONTEXT_INJECTION_METHOD, e);
             throw new AxisFault(e);
         } catch (IllegalArgumentException e) {
+            log.info("Exception trying to call " + MESSAGE_CONTEXT_INJECTION_METHOD, e);
             throw new AxisFault(e);
         } catch (IllegalAccessException e) {
+            log.info("Exception trying to call " + MESSAGE_CONTEXT_INJECTION_METHOD, e);
             throw new AxisFault(e);
         } catch (InvocationTargetException e) {
+            log.info("Exception trying to call " + MESSAGE_CONTEXT_INJECTION_METHOD, e);
             throw new AxisFault(e);
         }
     }
@@ -103,12 +110,16 @@ public class DependencyManager {
                 }
             }
         } catch (SecurityException e) {
+            log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
             throw new AxisFault(e);
         } catch (IllegalArgumentException e) {
+            log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
             throw new AxisFault(e);
         } catch (IllegalAccessException e) {
+            log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
             throw new AxisFault(e);
         } catch (InvocationTargetException e) {
+            log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
             throw new AxisFault(e);
         }
     }
@@ -174,6 +185,7 @@ public class DependencyManager {
                     }
                 }
             } catch (Exception e) {
+                log.info("Exception trying to call " + SERVICE_START_METHOD, e);
                 new AxisFault(e);
             }
         }
@@ -204,12 +216,16 @@ public class DependencyManager {
                 }
             }
         } catch (SecurityException e) {
+            log.info("Exception trying to call " + SERVICE_DESTROY_METHOD, e);
             throw new AxisFault(e);
         } catch (IllegalArgumentException e) {
+            log.info("Exception trying to call " + SERVICE_DESTROY_METHOD, e);
             throw new AxisFault(e);
         } catch (IllegalAccessException e) {
+            log.info("Exception trying to call " + SERVICE_DESTROY_METHOD, e);
             throw new AxisFault(e);
         } catch (InvocationTargetException e) {
+            log.info("Exception trying to call " + SERVICE_DESTROY_METHOD, e);
             throw new AxisFault(e);
         }
     }
