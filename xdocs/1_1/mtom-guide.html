@@ -1,15 +1,14 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>MTOM Guide-Sending Binary data with SOAP</title>
+  <title>Handling Binary data with Axis2 (MTOM/SwA)</title>
 </head>
 
 <body>
-<h1>MTOM Guide -Sending Binary Data with SOAP</h1>
+<h1>Handling Binary data with Axis2 (MTOM/SwA)</h1>
 
-<p>This document will describe the problems occuring in sending binary data
-with SOAP and how Axis2 has overcome those problems using MTOM or SOAP
-Message Transmission Optimization Mechanism.</p>
+<p>This document will describe how to use Axis2 functionality to send/receive binary data
+with SOAP.</p>
 
 <h2>Content</h2>
 <ul>
@@ -33,6 +32,11 @@ Message Transmission Optimization Mechanism.</p>
     </ul>
   </li>
   <li><a href="#3">SOAP with Attachments with Axis2</a></li>
+  	<ul>
+       <li><a href="#31">Sending SwA type attachments</a></li>
+       <li><a href="#32">Receiving SwA type attachments</a></li>
+	    <li><a href="#33">MTOM Backward Compatibility with SwA</a></li>
+   </ul>
   <li><a href="#4">Advanced Topics </a>
     <ul>
       <li><a href="#41">File Caching for Attachments</a></li>
@@ -173,7 +177,7 @@ content.</p>
         DataHandler dataHandler = new DataHandler(dataSource);
 
         //create an OMText node with the above DataHandler and set optimized to true
-        OMText textData = fac.createOMText(dataHandler, true);
+        OMText textData = <strong>fac.createOMText(dataHandler, true);</strong>
         imageElement.addChild(textData);
 
         //User can set optimized to false by using the following
@@ -182,8 +186,8 @@ content.</p>
 <p>Also a user can create an optimizable binary content node  using a base64
 encoded string, which contains encoded binary content, given with the mime
 type of the actual binary representation.</p>
-<source><pre>        String base64String = "some_string";
-        OMText binaryNode =  fac.createOMText(base64String,"image/jpg",true);</pre>
+<source><pre>        String base64String = "some_base64_encoded_string";
+        OMText binaryNode =<strong>fac.createOMText(base64String,"image/jpg",true);</strong></pre>
 </source>
 <p>Axis2 uses javax.activation.DataHandler to handle the binary data. All
 optimized binary content nodes will be serialized as Base64 Strings if "MTOM
@@ -192,7 +196,7 @@ optimized at any case. They will be serialized and send as Base64 Strings.</p>
 <source><pre>        //create an OMText node with the above DataHandler and set "optimized" to false
         //This data will be send as Base64 encoded string regardless of MTOM is enabled or not
         javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("someLocation"));
-        OMText textData = fac.createOMText(dataHandler, false); 
+        OMText textData = fac.createOMText(dataHandler, <strong>false</strong>); 
         image.addChild(textData);</pre>
 </source><a name="22"></a>
 
@@ -203,23 +207,12 @@ messages.</p>
 <source><pre>        ServiceClient serviceClient = new ServiceClient ();
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+        <strong>options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</strong>
         serviceClient .setOptions(options);</pre>
 </source>
-<p>When this property is set to true any SOAP envelope which contains
-optimizable content (OMText nodes containing binary content with optimizable
-flag "true") will be serialized as a MTOM optimized message. Messages will
-not be packaged as MTOM if they did not contain any optimizable content even
-though MTOM is enabled. But due considering the policy assertions, there may
-be a policy saying, all the request should be optimized eventhough there are
-any optimized contents. To support this phenomenon there is an entry called
-"forced mime" which has to be set as</p>
-<source><pre>        ServiceClient serviceClient = new ServiceClient ();
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setProperty(Constants.Configuration.FORCE_MIME, Constants.VALUE_TRUE);
-        serviceClient.setOptions(options);</pre>
-</source>
+<p>When this property is set to true any SOAP envelope, regardless whether it contains optimisable content or not,
+ will be serialized as a MTOM optimized MIME message. 
+
 <p>Axis2 serializes all binary content nodes as Base64 encoded strings
 regardless of they are qualified to be optimize or not, if,</p>
 <ul>
@@ -230,9 +223,8 @@ regardless of they are qualified to be optimize or not, if,</p>
     Infosets Constructs </a>).</li>
 </ul>
 
-<p>MTOM is *always enabled* in Axis2 when it comes to receiving messages.
-Axis2 will automatically identify and de-serialize any MTOM message it
-receives.</p>
+<p>User do <strong>not</strong> have to specifiy anything inoder for Axis2 to receive MTOM optimised messages.
+Axis2 will automatically identify and de-serialize accordingly as and when a MTOM message arrives.</p>
 
 <p><a name="23"></a></p>
 
@@ -241,26 +233,19 @@ receives.</p>
 <p>Axis 2 server automatically identifies incoming MTOM optimized messages
 based on the content-type and de-serializes accordingly. User can enableMTOM
 in the server side for outgoing messages,</p>
-<ul>
-  <li>Globally for all services
-
     <blockquote>
-      <p>add and set the "enableMTOM" parameter to true in the Axis2.xml.
-      When it is set, *outgoing* messages *which contains optimizable
-      content* will be serialized and send as MTOM optimized messages. If it
-      is not set all the binary data in binary content nodes will be
-      serialized as Base64 encoded strings.</p>
+      <p>To enableMTOM globally for all services users can set the "enableMTOM" parameter to true in the Axis2.xml.
+      When it is set, all outgoing messages will be serialized and send as MTOM optimized MIME messages. 
+      If it is not set all the binary data in binary content nodes will be
+      serialized as Base64 encoded strings. This configuration can be overriden in services.xml for per service and per operation
+      basis.</p>
     </blockquote>
-  </li>
-</ul>
 
 <p><source></p>
 <pre>&lt;parameter name="enableMTOM" locked="false"&gt;true&lt;/parameter&gt;</pre>
-</source><ul>
-  <ul>
+</source>
     <p>User must restart the server after setting this parameter.</p>
-  </ul>
-</ul>
+  
 <a name="24"></a>
 
 <h3>Accessing Received Binary Data (Sample Code)</h3>
@@ -268,43 +253,30 @@ in the server side for outgoing messages,</p>
   <li><strong><a name="241"></a>Service</strong></li>
 </ul>
 <source><pre>public class MTOMService {
-    public OMElement mtomSample(OMElement element) throws Exception {
-        OMElement _fileNameEle = null;
-        OMElement _imageElement = null;
+    public void uploadFileUsingMTOM(OMElement element) throws Exception {
 
-        for (Iterator _iterator = element.getChildElements(); _iterator.hasNext();) {
-             OMElement _ele = (OMElement) _iterator.next();
-            if (_ele.getLocalName().equalsIgnoreCase("fileName")) {
-                  _fileNameEle = _ele;
-            }
-            if (_ele.getLocalName().equalsIgnoreCase("image")) {
-                  _imageElement = _ele;
-            }
+        Iterator itr = element.getChildElements();
+        folder = (OMElement) itr.next();
+  			....
+
+        images = (OMElement) itr.next();
+        itr = images.getChildElements();
+
+        int i = 1;
+        String picName;
+        while (itr.hasNext()) {
+            picture = (OMElement) itr.next();
+            if (picture == null) throw new AxisFault("Picture " + i + " is null");
+            
+            <strong>OMText binaryNode = (OMText) picture.getFirstOMChild();
+            DataHandler actualDH;
+            actualDH = (DataHandler) binaryNode.getDataHandler();</strong>
+            
+            ... <em>Do whatever you need with the DataHandler</em> ...
         }
-
-        if (_fileNameEle == null || _imageElement == null ) {
-            throw new AxisFault("Either Image or FileName is null");
-        }
-
-        OMText binaryNode = (OMText) _imageElement.getFirstOMChild();
-
-        String fileName = _fileNameEle.getText();
-
-        //Extracting the data and saving
-        DataHandler actualDH;
-        actualDH = (DataHandler) binaryNode.getDataHandler();
-        Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
-                .getInputStream());
-        FileOutputStream imageOutStream = new FileOutputStream(fileName);
-        new ImageIO().saveImage("image/jpeg", actualObject, imageOutStream);
-        //setting response
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMNamespace ns = fac.createOMNamespace("urn://fakenamespace", "ns");
-        OMElement ele = fac.createOMElement("response", ns);
-        ele.setText("Image Saved");
-        return ele;
     }
-}</pre>
+  }
+</pre>
 </source><ul>
   <ul>
     <li><a name="242"><strong>Client</strong></a></li>
@@ -315,10 +287,8 @@ in the server side for outgoing messages,</p>
         Options options = new Options();
         options.setTo(targetEPR); 
         // enabling MTOM
-        options.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
-        options.setTransportInfo(Constants.TRANSPORT_HTTP,
-                Constants.TRANSPORT_HTTP, false);
-        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        <strong>options.set(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</strong>
+        ............
 
         OMElement result = sender.sendReceive(payload);
         OMElement ele = result.getFirstElement();
@@ -327,9 +297,8 @@ in the server side for outgoing messages,</p>
         // Retrieving the DataHandler &amp; then do whatever the processing to the data
         DataHandler actualDH;
         actualDH = binaryNode.getDataHandler();
-        Image actualObject = new ImageIO().loadImage(actualDH.getDataSource()
-                .getInputStream());</pre>
-</source><a name="3"></a>
+        .............</pre>
+</source>
 
 <p><a name="25"></a></p>
 
@@ -620,63 +589,109 @@ public class MTOMXMLBeansClient {
 
 <p>The last step is to create an AAR with our Skeleton and the generated interface and services.xml, and then deploy the service. See the user guide for more info. </p>
 
+<a name="3"></a>
 <h2>SOAP with Attachments (SwA) with Axis2</h2>
+<a name="31"></a>
+<h3>Receiving SwA type attachments</h3>
+<p>Axis2 automatically identifies SwA messages based on the content type. Axis2 stores the references 
+to the received attachment parts (MIME parts) in the Message Context. Axis2 preserves the order of the received attachments
+ when storing them in the MessageContext. Users can access binary 
+attachments using the attachement API given in the Message Context using content-id of the mime part as the key. 
+Care needs be taken to rip off the "cid" prefix when content-id
+is taken from the "Href" attributes. Users can access the the message context from whithin a service 
+implementation class using the "setOperationContext()" method as shown in the following example.</p>
 
-<p>Axis2 Handles SwA messages at the inflow only. When Axis2 receives a SwA
-message it extracts the binary attachment parts and puts a reference to those
-parts in the Message Context. Users can access binary attachments using the
-content-id. Care should be taken to rip off the "cid" prefix when content-id
-is taken from the "Href" attributes. When accessing the message context from
-a service users need to get hold of the message context from "setOperationContext()"
-method from the service class.(see the following service
-example)</p>
-
-<p>Note: Axis2 supports content-id referencing only. Axis2 does not support
-Content Location referencing of MIME parts.</p>
+<p>Note: Axis2 supports content-id based referencing only. Axis2 does not support
+Content Location based referencing of MIME parts.</p>
 <ul>
-  <li><strong>Sample service which accepts a SwA message</strong></li>
+  <li><strong>Sample service which accesses a received SwA type attachment</strong></li>
 </ul>
 <source><pre>
-public class EchoSwA {
-    private MessageContext msgcts;
+public class SwA {
+    private OperationContext operationContext;
 
-    public EchoSwA() {
+    public SwA() {
     }
 
     public void setOperationContext(OperationContext oc) throws AxisFault {
-        msgcts = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        operationContext = oc;
     }
 
-    public OMElement echoAttachment(OMElement omEle) {
+    public void uploadAttachment(OMElement omEle) throws AxisFault {
         OMElement child = (OMElement) omEle.getFirstOMChild();
         OMAttribute attr = child.getAttribute(new QName("href"));
+        
+        //Content ID processing
         String contentID = attr.getAttributeValue();
-        Attachments attachment = (Attachments) msgcts.getProperty(MTOMConstants.ATTACHMENTS);
         contentID = contentID.trim();
-
         if (contentID.substring(0, 3).equalsIgnoreCase("cid")) {
             contentID = contentID.substring(4);
         }
+        
+        Attachments attachment = (Attachments) (operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)).getAttachmentMap();
         DataHandler dataHandler = attachment.getDataHandler(contentID);
-        OMText textNode = new OMTextImpl(dataHandler, omEle.getOMFactory());
-        omEle.build();
-        child.detach();
-        omEle.addChild(textNode);
-        return omEle;
+        ...........
     }
 }
 </pre>
 </source>
+<a name="32"></a>
+<h3>Sending SwA type attachments</h3>
+<p>User need to set the "enableSwA" property to true in order to be able to send SwA
+messages. Axis2 user is <strong>not</strong> expected to enable MTOM & SwA together. 
+In such a situation MTOM will get priority over SwA. </p>
+<p>This can be set using the axis2.xml as follows.</p>
+<source><pre>  
+        &lt;parameter name="enableSwA" locked="false"&gt;true&lt;/parameter&gt;
+</pre></source>
+
+<p>"enableSwA" can also be set using the client side Options as follows</p>
+<source><pre>  
+        options.setProperty(Constants.Configuration.ENABLE_SwA, Constants.VALUE_TRUE);
+</pre></source>
+
+<p> Users are expected to use the attachment API provided in the MessageContext to specify the 
+binary attachments needed to be attached to the outgoing message as SwA type attachments. Client side SwA capability 
+can be used only with the OperationClient api, since the user needs the ability to access the MessageContext.</p>
+<ul>
+  <li><strong>Sample client which sends a message with SwA type attachments</strong></li>
+</ul>
+<source><pre>
+   public void uploadFileUsingSwA(String fileName) throws Exception {
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setTo(targetEPR);
+  
+        ServiceClient sender = new ServiceClient(null,null);
+        sender.setOptions(options);
+        OperationClient mepClient = sender.createClient(ServiceClient.ANON_OUT_IN_OP);
+        
+        MessageContext mc = new MessageContext();   
+        mc.setEnvelope(createEnvelope());
+        FileDataSource fileDataSource = new FileDataSource("test-resources/mtom/test.jpg");
+        DataHandler dataHandler = new DataHandler(fileDataSource);
+        mc.addAttachment("FirstAttachment",dataHandler);
+       
+        mepClient.addMessageContext(mc);
+        mepClient.execute(true);
+    }
+</pre>
+</source>
+
+<a name="33"></a>
+<h3>MTOM Backward Compatibility with SwA</h3>
 <p>MTOM specification is designed to be backward compatible with the SOAP
 with Attachments specification. Even though the representation is different,
 both technologies have the same wire format. We can safely assume that any
 SOAP with Attachments endpoint can accept a MTOM optimized messages and treat
 them as SOAP with Attachment messages - Any MTOM optimized message is a valid
-SwA message. Because of that Axis2 does not define a separate programming
-model or serialization for SwA. Users can use the MTOM programming model and
-serialization to send messages to SwA endpoints.</p>
+SwA message.</p>
 
-<p>Note : Above is tested with Axis 1.x</p>
+<p>Note : Above backword compatibility was succesfully tested against Axis 1.x</p>
 <ul>
   <li><strong>A sample SwA message from Axis 1.x</strong></li>
 </ul>
@@ -741,26 +756,35 @@ which gives Axis2 the ability to handle very large attachments without
 buffering them in memory at any time. Axis2 file caching streams the incoming
 MIME parts directly in to files, after reading the MIME part headers.</p>
 
-<p>Also a user can specify a size threshold for the File caching. When this
+<p>Also a user can specify a size threshold for the File caching (in bytes). When this
 threshold value is specified, only the attachments whose size is bigger than
 the threshold value will get cached in files. Smaller attachments will remain
 in Memory.</p>
 
-<p>NOTE : It is a must to specify a directory to temporary store the
-attachments. Also care should be taken to *clean that directory* from time to
+<p><em>NOTE</em> : It is a must to specify a directory to temporary store the
+attachments. Also care should be taken to <strong>clean that directory</strong> from time to
 time.</p>
 
 <p>The following parameters need to be set in Axis2.xml in order to enable
 file caching.</p>
-<source><pre><em>&lt;axisconfig name="AxisJava2.0"&gt;
+<source><pre>&lt;axisconfig name="AxisJava2.0"&gt;
     &lt;!-- ================================================= --&gt;
     &lt;!-- Parameters --&gt;
-    &lt;!-- ================================================= --&gt;</em>
+    &lt;!-- ================================================= --&gt;
     &lt;parameter name="cacheAttachments" locked="false"&gt;true&lt;/parameter&gt;
     &lt;parameter name="attachmentDIR" locked="false"&gt;<em>temp directory</em>&lt;/parameter&gt;
-    &lt;parameter name="sizeThreshold" locked="false"&gt;4000&lt;/parameter&gt;
+    &lt;parameter name="sizeThreshold" locked="false"&gt;<em>4000</em>&lt;/parameter&gt;
     .........
     .........
 &lt;/axisconfig&gt;</pre>
-</source></body>
+</source>
+<p>Enabling file caching for client side receiving can be done for the by setting the Options as follows.</p>
+<source><pre>
+	options.setProperty(Constants.Configuration.CACHE_ATTACHMENTS,Constants.VALUE_TRUE);
+	options.setProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR,<em>TempDir</em>);
+	options.setProperty(Constants.Configuration.FILE_SIZE_THRESHOLD, <em>"4000"</em>);
+		
+</pre>
+</source>
+</body>
 </html>
