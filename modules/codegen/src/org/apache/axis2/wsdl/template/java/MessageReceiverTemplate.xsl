@@ -188,7 +188,7 @@
         return returnMap;
         }
 
-        private org.apache.axis2.AxisFault createAxisFault(java.rmi.RemoteException e) {
+        private org.apache.axis2.AxisFault createAxisFault(java.lang.Exception e) {
         org.apache.axis2.AxisFault f;
         Throwable cause = e.getCause();
         if (cause != null) {

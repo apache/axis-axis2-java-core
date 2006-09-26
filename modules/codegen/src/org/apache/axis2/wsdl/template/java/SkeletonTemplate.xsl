@@ -61,7 +61,7 @@
         <xsl:if test="not(@skeletonInterfaceName)">
             <!-- write the classes for the exceptions if there are any present -->
             <xsl:for-each select="fault-list/fault">
-                public static class <xsl:value-of select="@shortName"/> extends java.rmi.RemoteException{
+                public static class <xsl:value-of select="@shortName"/> extends java.lang.Exception{
 
                 private <xsl:value-of select="@type"/> faultMessage;
 

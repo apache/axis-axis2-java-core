@@ -22,7 +22,6 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.util.CommandLineOption;
 import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.CommandLineOptionParser;
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Javac;
@@ -37,7 +36,6 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
     public static final String OUTPUT_LOCATION_BASE = "./out_put_classes";
     public static final String OUTPUT_LOCATION_PREFIX = "/test";
     protected static int folderCount = 0;
-    // public static final String OUTPUT_LOCATION_BASE = "C:\\GeneratedCode\\test4\\src";
     public static final String WSDL_BASE_DIR = "test-resources/";
     public static final String CLASSES_DIR = "/target/classes/";
     private String[] moduleNames={"xml","common","core"};

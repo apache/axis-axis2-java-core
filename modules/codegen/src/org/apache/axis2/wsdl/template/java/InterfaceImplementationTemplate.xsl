@@ -125,7 +125,7 @@
     */
    public <xsl:value-of select="@name"/>(org.apache.axis2.context.ConfigurationContext configurationContext,
         java.lang.String targetEndpoint)
-        throws java.lang.Exception {
+        throws org.apache.axis2.AxisFault {
          //To populate AxisService
          populateAxisService();
          populateFaults();
@@ -181,7 +181,7 @@
     /**
      * Default Constructor
      */
-    public <xsl:value-of select="@name"/>() throws java.lang.Exception {
+    public <xsl:value-of select="@name"/>() throws org.apache.axis2.AxisFault {
         <xsl:for-each select="endpoint">
             <xsl:choose>
                 <xsl:when test="position()=1">
@@ -197,7 +197,7 @@
     /**
      * Constructor taking the target endpoint
      */
-    public <xsl:value-of select="@name"/>(java.lang.String targetEndpoint) throws java.lang.Exception {
+    public <xsl:value-of select="@name"/>(java.lang.String targetEndpoint) throws org.apache.axis2.AxisFault {
         this(null,targetEndpoint);
     }
 
@@ -382,8 +382,8 @@
                     try{
                         java.lang.String exceptionClassName = (java.lang.String)faultExeptionClassNameMap.get(faultElt.getQName());
                         java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
-                        java.rmi.RemoteException ex=
-                                (java.rmi.RemoteException)exceptionClass.newInstance();
+                        java.lang.Exception ex=
+                                (java.lang.Exception) exceptionClass.newInstance();
                         //message class
                         java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(faultElt.getQName());
                         java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
@@ -397,7 +397,7 @@
                         }
                         </xsl:for-each>
 
-                        throw ex;
+                        throw new java.rmi.RemoteException(ex.getMessage(), ex);
                     }catch(java.lang.ClassCastException e){
                        // we cannot intantiate the class - throw the original Axis fault
                         throw f;
@@ -829,7 +829,7 @@
 
      <!-- write the classes for the exceptions if there are any present -->
    <xsl:for-each select="fault-list/fault">
-         public static class <xsl:value-of select="@shortName"/> extends java.rmi.RemoteException{
+         public static class <xsl:value-of select="@shortName"/> extends java.lang.Exception{
 
             private <xsl:value-of select="@type"/> faultMessage;
 

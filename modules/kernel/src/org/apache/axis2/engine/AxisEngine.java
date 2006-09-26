@@ -565,7 +565,7 @@ public class AxisEngine {
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
 
-    	log.info(Messages.getMessage("receivederrormessage",
+    	log.debug(Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
