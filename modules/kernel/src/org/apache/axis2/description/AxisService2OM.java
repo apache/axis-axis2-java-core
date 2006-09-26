@@ -957,7 +957,7 @@ public class AxisService2OM implements Java2WSDLConstants {
 
             OMNamespace ns = factory.createOMNamespace(
                     org.apache.neethi.Constants.URI_POLICY_NS,
-                    org.apache.neethi.Constants.POLICY_PREFIX);
+                    org.apache.neethi.Constants.ATTR_WSP);
             OMAttribute URIs = factory.createOMAttribute("PolicyURIs", ns,
                     value);
             element.addAttribute(URIs);

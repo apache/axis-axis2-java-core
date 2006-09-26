@@ -18,7 +18,6 @@ package org.apache.axis2.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -29,7 +28,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.apache.axis2.description.PolicyInclude;
 import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
@@ -71,6 +69,31 @@ public class PolicyUtil {
         }
 
         return sbuf.toString();
+    }
+
+    public static OMElement getPolicyComponentAsOMElement(
+            PolicyComponent policyComponent,
+            ExternalPolicySerializer externalPolicySerializer)
+            throws XMLStreamException, FactoryConfigurationError {
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        if (policyComponent instanceof Policy) {
+            externalPolicySerializer.serialize((Policy) policyComponent, baos);
+
+        } else {
+            XMLStreamWriter writer = XMLOutputFactory.newInstance()
+                    .createXMLStreamWriter(baos);
+            policyComponent.serialize(writer);
+            writer.flush();
+        }
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        return OMXMLBuilderFactory.createStAXOMBuilder(
+                OMAbstractFactory.getOMFactory(),
+                XMLInputFactory.newInstance().createXMLStreamReader(bais))
+                .getDocumentElement();
+
     }
 
     public static OMElement getPolicyComponentAsOMElement(
@@ -118,9 +141,8 @@ public class PolicyUtil {
                 bais = new ByteArrayInputStream(xmlString.getBytes());
 
                 return PolicyEngine.getPolicy(bais);
-                
-            } else if (Constants.ELEM_POLICYREF.equals(element
-                    .getLocalName())) {
+
+            } else if (Constants.ELEM_POLICYREF.equals(element.getLocalName())) {
                 xmlString = DOM2Writer.nodeToString(element);
                 bais = new ByteArrayInputStream(xmlString.getBytes());
 
@@ -138,7 +160,7 @@ public class PolicyUtil {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMLStreamWriter writer = XMLOutputFactory.newInstance()
                 .createXMLStreamWriter(baos);
-        
+
         policyComponent.serialize(writer);
         writer.flush();
 
