@@ -229,7 +229,8 @@ public class ArchiveReader implements DeploymentConstants {
                     File file1 = files[i];
                     if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
                         InputStream in = new FileInputStream(file1);
-
+                        FileInputStream in2 = null;
+                        
                         // now the question is which version of WSDL file this archive contains.
                         // lets check the namespace of the root element and decide. But since we are
                         // using axiom (dude, you are becoming handy here :)), we will not build the
@@ -239,30 +240,23 @@ public class ArchiveReader implements DeploymentConstants {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
                             if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
                                 // we have a WSDL 2.0 document here.
-                                FileInputStream in2 = new FileInputStream(file1);
+                                in2 = new FileInputStream(file1);
                                 wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(in2, null, null);
-                                try {
-                                    in2.close();
-                                } catch (IOException e) {
-                                    log.info(e);
-                                }
                             } else if (Constants.NS_URI_WSDL11.
                                     equals(documentElementNS.getNamespaceURI())) {
-                                FileInputStream in2 = new FileInputStream(file1);
+                                in2 = new FileInputStream(file1);
                                 wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(in2, null, null);
-                                try {
-                                    in2.close();
-                                } catch (IOException e) {
-                                    log.info(e);
-                                }
                             } else {
                                 new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
 
-                            FileInputStream in2 = new FileInputStream(file1);
+                            FileInputStream in3 = new FileInputStream(file1);
                             AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false, in2);
                             try {
-                                in2.close();
+                                if(in2 != null) {
+                                    in2.close();
+                                }
+                                in3.close();
                             } catch (IOException e) {
                                 log.info(e);
                             }
