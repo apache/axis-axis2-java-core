@@ -41,9 +41,6 @@ public class InitiatorToken extends AbstractSecurityAssertion implements TokenWr
         this.initiatorToken = initiatorToken;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.ws.security.policy.TokenWrapper#setToken(org.apache.ws.security.policy.Token)
-     */
     public void setToken(Token tok) {
         this.setInitiatorToken(tok);
     }
@@ -57,6 +54,38 @@ public class InitiatorToken extends AbstractSecurityAssertion implements TokenWr
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        String localName = Constants.INITIATOR_TOKEN.getLocalPart();
+        String namespaceURI = Constants.INITIATOR_TOKEN.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+
+        if (prefix == null) {
+            prefix = Constants.INITIATOR_TOKEN.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+        
+        // <sp:InitiatorToken>
+        writer.writeStartElement(prefix, localName, namespaceURI);
+        
+        String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (pPrefix == null) {
+            pPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(pPrefix, Constants.POLICY.getNamespaceURI());
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(pPrefix, Constants.POLICY.getLocalPart(), Constants.POLICY.getNamespaceURI());
+
+        Token token = getInitiatorToken();
+        if (token == null) {
+            throw new RuntimeException("InitiatorToken doesn't contain any token assertions");
+        }
+        token.serialize(writer);
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:InitiatorToken>
+        writer.writeEndElement();
     }
 }

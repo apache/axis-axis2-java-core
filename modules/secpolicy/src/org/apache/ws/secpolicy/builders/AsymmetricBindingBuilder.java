@@ -77,12 +77,18 @@ public class AsymmetricBindingBuilder implements AssertionBuilder {
                 
             } else if (Constants.INCLUDE_TIMESTAMP.equals(name)) {
                 asymmetricBinding.setIncludeTimestamp(true);
-                
+
             } else if (Constants.ENCRYPT_BEFORE_SIGNING.equals(name.getLocalPart())) {
                 asymmetricBinding.setProtectionOrder(Constants.ENCRYPT_BEFORE_SIGNING);
                 
             } else if (Constants.SIGN_BEFORE_ENCRYPTING.equals(name.getLocalPart())) {
                 asymmetricBinding.setProtectionOrder(Constants.SIGN_BEFORE_ENCRYPTING);
+                
+            } else if (Constants.ENCRYPT_SIGNATURE.equals(name)) {
+                asymmetricBinding.setSignatureProtection(true);
+                
+            } else if (Constants.PROTECT_TOKENS.equals(name)) {
+                asymmetricBinding.setTokenProtection(true);
                 
             } else if (Constants.ONLY_SIGN_ENTIRE_HEADERS_AND_BODY.equals(name.getLocalPart())) {
                 asymmetricBinding.setEntireHeadersAndBodySignatures(true);

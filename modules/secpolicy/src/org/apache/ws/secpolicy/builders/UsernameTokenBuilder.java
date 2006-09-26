@@ -78,7 +78,7 @@ public class UsernameTokenBuilder implements AssertionBuilder {
             QName qname = assertion.getName();
             
             if (Constants.WSS_USERNAME_TOKEN10.equals(qname)) {
-                parent.setUseUTProfile11(false);
+                parent.setUseUTProfile10(true);
                 
             } else if (Constants.WSS_USERNAME_TOKEN11.equals(qname)) {
                 parent.setUseUTProfile11(true);

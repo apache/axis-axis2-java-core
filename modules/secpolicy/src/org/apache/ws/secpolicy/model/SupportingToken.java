@@ -17,6 +17,7 @@
 package org.apache.ws.secpolicy.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -26,8 +27,8 @@ import org.apache.neethi.Assertion;
 import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
-public class SupportingToken extends AbstractSecurityAssertion
-        implements AlgorithmWrapper, TokenWrapper {
+public class SupportingToken extends AbstractSecurityAssertion implements
+        AlgorithmWrapper, TokenWrapper {
 
     /**
      * Type of SupportingToken
@@ -171,6 +172,8 @@ public class SupportingToken extends AbstractSecurityAssertion
 
     public QName getName() {
         switch (type) {
+        case Constants.SUPPORTING_TOKEN_SUPPORTING:
+            return Constants.SUPPORIING_TOKENS;
         case Constants.SUPPORTING_TOKEN_SIGNED:
             return Constants.SIGNED_SUPPORTING_TOKENS;
         case Constants.SUPPORTING_TOKEN_ENDORSING:
@@ -191,6 +194,70 @@ public class SupportingToken extends AbstractSecurityAssertion
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException("not yet implemented");
+        String namespaceURI = Constants.SUPPORIING_TOKENS.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+        if (prefix == null) {
+            prefix = Constants.SUPPORIING_TOKENS.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+
+        String localname = null;
+
+        switch (getTokenType()) {
+        case Constants.SUPPORTING_TOKEN_SUPPORTING:
+            localname = Constants.SUPPORIING_TOKENS.getLocalPart();
+            break;
+        case Constants.SUPPORTING_TOKEN_SIGNED:
+            localname = Constants.SIGNED_SUPPORTING_TOKENS.getLocalPart();
+            break;
+        case Constants.SUPPORTING_TOKEN_ENDORSING:
+            localname = Constants.ENDORSING_SUPPORTING_TOKENS.getLocalPart();
+            break;
+        case Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING:
+            localname = Constants.SIGNED_ENDORSING_SUPPORTING_TOKENS
+                    .getLocalPart();
+            break;
+        default:
+            throw new RuntimeException("Invalid SupportingTokenType");
+        }
+
+        // <sp:SupportingToken>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+
+        String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (pPrefix == null) {
+            pPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(pPrefix, Constants.POLICY.getNamespaceURI());
+        }
+        // <wsp:Policy>
+        writer.writeStartElement(pPrefix, Constants.POLICY.getLocalPart(),
+                Constants.POLICY.getNamespaceURI());
+
+        Token token;
+        for (Iterator iterator = getTokens().iterator(); iterator.hasNext();) {
+            // [Token Assertion] +
+            token = (Token) iterator.next();
+            token.serialize(writer);
+        }
+
+        
+        if (signedParts != null) {
+            signedElements.serialize(writer);
+            
+        } else if (signedElements != null) {
+            signedElements.serialize(writer);
+            
+        } else if (encryptedParts != null) {
+            encryptedParts.serialize(writer);
+            
+        } else if (encryptedElements != null) {
+            encryptedElements.serialize(writer);
+        }
+        // </wsp:Policy>
+        writer.writeEndElement();
+
+        writer.writeEndElement();
+        // </sp:SupportingToken>
     }
 }

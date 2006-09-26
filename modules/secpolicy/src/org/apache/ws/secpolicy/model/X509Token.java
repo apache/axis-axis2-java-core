@@ -116,7 +116,71 @@ public class X509Token extends Token {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        String localName = Constants.X509_TOKEN.getLocalPart();
+        String namespaceURI = Constants.X509_TOKEN.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+
+        if (prefix == null) {
+            prefix = Constants.X509_TOKEN.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+            
+        // <sp:X509Token> 
+        writer.writeStartElement(prefix, localName, namespaceURI);
+        
+        String inclusion = getInclusion();
+        
+        if (inclusion != null) {
+            writer.writeAttribute(prefix, namespaceURI, Constants.INCLUDE_TOKEN
+                    .getLocalPart(), inclusion);
+        }
+        
+        
+        String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (pPrefix == null) {
+            pPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(pPrefix, Constants.POLICY.getNamespaceURI());
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(pPrefix, Constants.POLICY.getLocalPart(), Constants.POLICY.getNamespaceURI());
+        
+        if (isRequireKeyIdentifierReference()) {
+            // <sp:RequireKeyIdentifierReference />
+            writer.writeStartElement(prefix, Constants.REQUIRE_KEY_IDENTIFIRE_REFERENCE.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isRequireIssuerSerialReference()) {
+            // <sp:RequireIssuerSerialReference />
+            writer.writeStartElement(prefix, Constants.REQUIRE_ISSUER_SERIAL_REFERENCE.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isRequireEmbeddedTokenReference()) {
+            // <sp:RequireEmbeddedTokenReference />
+            writer.writeStartElement(prefix, Constants.REQUIRE_EMBEDDED_TOKEN_REFERENCE.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isRequireThumbprintReference()) {
+            // <sp:RequireThumbprintReference />
+            writer.writeStartElement(prefix, Constants.REQUIRE_THUMBPRINT_REFERENCE.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (tokenVersionAndType != null) {
+            // <sp:WssX509V1Token10 /> | ..
+            writer.writeStartElement(prefix, tokenVersionAndType, namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:X509Token>
+        writer.writeEndElement();
     }
        
 }

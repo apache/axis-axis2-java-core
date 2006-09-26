@@ -30,80 +30,185 @@ import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
 public class AsymmetricBinding extends SymmetricAsymmetricBindingBase {
-    
+
     private InitiatorToken initiatorToken;
-    
+
     private RecipientToken recipientToken;
-    
+
     /**
      * @return Returns the initiatorToken.
      */
     public InitiatorToken getInitiatorToken() {
         return initiatorToken;
     }
+
     /**
-     * @param initiatorToken The initiatorToken to set.
+     * @param initiatorToken
+     *            The initiatorToken to set.
      */
     public void setInitiatorToken(InitiatorToken initiatorToken) {
         this.initiatorToken = initiatorToken;
     }
+
     /**
      * @return Returns the recipientToken.
      */
     public RecipientToken getRecipientToken() {
         return recipientToken;
     }
+
     /**
-     * @param recipientToken The recipientToken to set.
+     * @param recipientToken
+     *            The recipientToken to set.
      */
     public void setRecipientToken(RecipientToken recipientToken) {
         this.recipientToken = recipientToken;
     }
-    
+
     public QName getName() {
         return Constants.ASYMMETRIC_BINDING;
     }
+
     public PolicyComponent normalize() {
-        
+
         if (isNormalized()) {
             return this;
         }
-        
+
         AlgorithmSuite algorithmSuite = getAlgorithmSuite();
         List configs = algorithmSuite.getConfigurations();
-        
+
         Policy policy = new Policy();
         ExactlyOne exactlyOne = new ExactlyOne();
-        
+
         policy.addPolicyComponent(exactlyOne);
-        
+
         All wrapper;
         AsymmetricBinding asymmetricBinding;
-        
+
         for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
             wrapper = new All();
             asymmetricBinding = new AsymmetricBinding();
-            
-            asymmetricBinding.setAlgorithmSuite((AlgorithmSuite) iterator.next());
-            asymmetricBinding.setEntireHeadersAndBodySignatures(isEntireHeadersAndBodySignatures());
+
+            asymmetricBinding.setAlgorithmSuite((AlgorithmSuite) iterator
+                    .next());
+            asymmetricBinding
+                    .setEntireHeadersAndBodySignatures(isEntireHeadersAndBodySignatures());
             asymmetricBinding.setIncludeTimestamp(isIncludeTimestamp());
             asymmetricBinding.setInitiatorToken(getInitiatorToken());
             asymmetricBinding.setLayout(getLayout());
             asymmetricBinding.setProtectionOrder(getProtectionOrder());
             asymmetricBinding.setRecipientToken(getRecipientToken());
             asymmetricBinding.setSignatureProtection(isSignatureProtection());
-            asymmetricBinding.setSignedEndorsingSupportingTokens(getSignedEndorsingSupportingTokens());
+            asymmetricBinding
+                    .setSignedEndorsingSupportingTokens(getSignedEndorsingSupportingTokens());
             asymmetricBinding.setTokenProtection(isTokenProtection());
-            
+
             asymmetricBinding.setNormalized(true);
             wrapper.addPolicyComponent(wrapper);
         }
-        
-        return policy; 
-        
+
+        return policy;
+
     }
-    
+
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        String localname = Constants.ASYMMETRIC_BINDING.getLocalPart();
+        String namespaceURI = Constants.ASYMMETRIC_BINDING.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+        if (namespaceURI == null) {
+            prefix = Constants.ASYMMETRIC_BINDING.getPrefix();
+        }
+
+        // <sp:AsymmetricBinding>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+        writer.writeNamespace(prefix, namespaceURI);
+
+        String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (pPrefix == null) {
+            pPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(pPrefix, Constants.POLICY.getNamespaceURI());
+        }
+
+        // <wsp:Policy>
+        writer.writeStartElement(pPrefix, Constants.POLICY.getLocalPart(),
+                Constants.POLICY.getNamespaceURI());
+
+        if (initiatorToken == null) {
+            throw new RuntimeException("InitiatorToken is not set");
+        }
+
+        // <sp:InitiatorToken>
+        initiatorToken.serialize(writer);
+        // </sp:InitiatorToken>
+
+        if (recipientToken == null) {
+            throw new RuntimeException("RecipientToken is not set");
+        }
+
+        // <sp:RecipientToken>
+        recipientToken.serialize(writer);
+        // </sp:RecipientToken>
+
+        AlgorithmSuite algorithmSuite = getAlgorithmSuite();
+        if (algorithmSuite == null) {
+            throw new RuntimeException("AlgorithmSuite is not set");
+        }
+
+        // <sp:AlgorithmSuite>
+        algorithmSuite.serialize(writer);
+        // </sp:AlgorithmSuite>
+
+        Layout layout = getLayout();
+        if (layout != null) {
+            // <sp:Layout>
+            layout.serialize(writer);
+            // </sp:Layout>
+        }
+
+        if (isIncludeTimestamp()) {
+            // <sp:IncludeTimestamp>
+            writer.writeStartElement(Constants.INCLUDE_TIMESTAMP.getPrefix(),
+                    Constants.INCLUDE_TIMESTAMP.getLocalPart(),
+                    Constants.INCLUDE_TIMESTAMP.getNamespaceURI());
+            writer.writeEndElement();
+            // </sp:IncludeTimestamp>
+        }
+
+        if (Constants.ENCRYPT_BEFORE_SIGNING.equals(getProtectionOrder())) {
+            // <sp:EncryptBeforeSign />
+            writer.writeStartElement(prefix, Constants.ENCRYPT_BEFORE_SIGNING,
+                    namespaceURI);
+            writer.writeEndElement();
+        }
+
+        if (isSignatureProtection()) {
+            // <sp:EncryptSignature />
+            // FIXME move the String constants to a QName
+            writer.writeStartElement(prefix, Constants.ENCRYPT_SIGNATURE
+                    .getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+
+        if (isTokenProtection()) {
+            // <sp:ProtectTokens />
+            writer.writeStartElement(prefix, Constants.PROTECT_TOKENS
+                    .getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+
+        if (isEntireHeadersAndBodySignatures()) {
+            // <sp:OnlySignEntireHeaderAndBody />
+            writer.writeStartElement(prefix,
+                    Constants.ONLY_SIGN_ENTIRE_HEADERS_AND_BODY, namespaceURI);
+            writer.writeEndElement();
+        }
+
+        // </wsp:Policy>
+        writer.writeEndElement();
+
+        // </sp:AsymmetircBinding>
+        writer.writeEndElement();
     }
 }

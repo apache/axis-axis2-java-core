@@ -17,6 +17,7 @@
 package org.apache.ws.secpolicy.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -84,6 +85,44 @@ public class SignedEncryptedParts extends AbstractSecurityAssertion {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        String localName = getName().getLocalPart();
+        String namespaceURI = getName().getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+
+        if (prefix == null) {
+            prefix = getName().getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+            
+        // <sp:SignedParts> | <sp:EncryptedParts> 
+        writer.writeStartElement(prefix, localName, namespaceURI);
+        
+        writer.writeNamespace(prefix, namespaceURI);
+        
+        if (isBody()) {
+            // <sp:Body />
+            // FIXME : move 'Body' to Constants
+            writer.writeStartElement(prefix, "Body", namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        Header header;        
+        for (Iterator iterator = headers.iterator(); iterator.hasNext();) {
+            header = (Header) iterator.next();
+            // <sp:Header Name=".." Namespace=".." />
+            // FIXME move 'Header' to Constants
+            writer.writeStartElement(prefix, "Header", namespaceURI);
+            
+            writer.writeAttribute("Name", header.getName());
+            writer.writeAttribute("Namespace", header.getNamespace());
+            
+            writer.writeEndElement();
+        }
+        
+        // </sp:SignedParts> | </sp:EncryptedParts>
+        writer.writeEndElement();
     }    
+    
+    
 }

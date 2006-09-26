@@ -31,11 +31,11 @@ import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
 public class TransportBinding extends Binding {
-    
+
     private TransportToken transportToken;
-    
+
     private List transportBindings;
-    
+
     /**
      * @return Returns the transportToken.
      */
@@ -44,23 +44,24 @@ public class TransportBinding extends Binding {
     }
 
     /**
-     * @param transportToken The transportToken to set.
+     * @param transportToken
+     *            The transportToken to set.
      */
     public void setTransportToken(TransportToken transportToken) {
         this.transportToken = transportToken;
     }
-    
+
     public List getConfigurations() {
         return transportBindings;
     }
-    
+
     public TransportBinding getDefaultConfiguration() {
         if (transportBindings != null) {
             return (TransportBinding) transportBindings.get(0);
         }
         return null;
     }
-    
+
     public void addConfiguration(TransportBinding transportBinding) {
         if (transportBindings == null) {
             transportBindings = new ArrayList();
@@ -76,43 +77,108 @@ public class TransportBinding extends Binding {
         if (isNormalized()) {
             return this;
         }
-        
+
         AlgorithmSuite algorithmSuite = getAlgorithmSuite();
         List configurations = algorithmSuite.getConfigurations();
-        
+
         if (configurations != null && configurations.size() == 1) {
             setNormalized(true);
             return this;
         }
-        
+
         Policy policy = new Policy();
         ExactlyOne exactlyOne = new ExactlyOne();
-        
+
         All wrapper;
         TransportBinding transportBinding;
-        
+
         for (Iterator iterator = configurations.iterator(); iterator.hasNext();) {
             wrapper = new All();
             transportBinding = new TransportBinding();
-            
+
             algorithmSuite = (AlgorithmSuite) iterator.next();
             transportBinding.setAlgorithmSuite(algorithmSuite);
             transportBinding.setIncludeTimestamp(isIncludeTimestamp());
             transportBinding.setLayout(getLayout());
-            transportBinding.setSignedEndorsingSupportingTokens(getSignedEndorsingSupportingTokens());
-            transportBinding.setSignedSupportingToken(getSignedSupportingToken());
+            transportBinding
+                    .setSignedEndorsingSupportingTokens(getSignedEndorsingSupportingTokens());
+            transportBinding
+                    .setSignedSupportingToken(getSignedSupportingToken());
             transportBinding.setTransportToken(getTransportToken());
-            
+
             wrapper.addPolicyComponent(transportBinding);
             exactlyOne.addPolicyComponent(wrapper);
         }
-        
+
         policy.addPolicyComponent(exactlyOne);
         return policy;
     }
-    
+
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        String localName = Constants.TRANSPORT_BINDING.getLocalPart();
+        String namespaceURI = Constants.TRANSPORT_BINDING.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+
+        if (prefix == null) {
+            prefix = Constants.TRANSPORT_BINDING.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+
+        // <sp:TransportBinding>
+        writer.writeStartElement(prefix, localName, namespaceURI);
+        writer.writeNamespace(prefix, namespaceURI);
+        
+        String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (pPrefix == null) {
+            pPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(pPrefix, Constants.POLICY.getNamespaceURI());
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(pPrefix, Constants.POLICY.getLocalPart(), Constants.POLICY.getNamespaceURI());
+        
+
+        if (transportToken == null) {
+            // TODO more meaningful exception
+            throw new RuntimeException("no TransportToken found");
+        }
+
+        // <sp:TransportToken>
+        transportToken.serialize(writer);
+        // </sp:TransportToken>
+
+        AlgorithmSuite algorithmSuite = getAlgorithmSuite();
+        if (algorithmSuite == null) {
+            throw new RuntimeException("no AlgorithmSuite found");
+        }
+
+        // <sp:AlgorithmSuite>
+        algorithmSuite.serialize(writer);
+        // </sp:AlgorithmSuite>
+
+        Layout layout = getLayout();
+        if (layout != null) {
+            // <sp:Layout>
+            layout.serialize(writer);
+            // </sp:Layout>
+        }
+
+        if (isIncludeTimestamp()) {
+            // <sp:IncludeTimestamp>
+            writer.writeStartElement(Constants.INCLUDE_TIMESTAMP.getPrefix(),
+                    Constants.INCLUDE_TIMESTAMP.getLocalPart(),
+                    Constants.INCLUDE_TIMESTAMP.getNamespaceURI());
+            writer.writeEndElement();
+            // </sp:IncludeTimestamp>
+        }
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+
+        // </sp:TransportBinding>
+        writer.writeEndElement();
+
     }
 
 }

@@ -24,7 +24,7 @@ import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
 /**
- *
+ * 
  * @author Ruchith Fernando (ruchith.fernando@gmail.com)
  */
 public class HttpsToken extends Token {
@@ -48,6 +48,26 @@ public class HttpsToken extends Token {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+
+        String localname = Constants.HTTPS_TOKEN.getLocalPart();
+        String namespaceURI = Constants.HTTPS_TOKEN.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+        if (prefix == null) {
+            prefix = Constants.HTTPS_TOKEN.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+
+        // <sp:HttpsToken
+        writer.writeStartElement(prefix, localname, namespaceURI);
+
+        // RequireClientCertificate=".."
+        writer
+                .writeAttribute(Constants.REQUIRE_CLIENT_CERTIFICATE
+                        .getLocalPart(), Boolean
+                        .toString(isRequireClientCertificate()));
+
+        writer.writeEndElement();
+        // </sp:HttpsToken>
     }
 }

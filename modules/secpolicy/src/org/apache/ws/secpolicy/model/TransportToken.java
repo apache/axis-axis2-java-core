@@ -79,8 +79,24 @@ public class TransportToken extends AbstractSecurityAssertion {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
         
+        String localName = Constants.TRANSPORT_TOKEN.getLocalPart();
+        String namespaceURI = Constants.TRANSPORT_TOKEN.getNamespaceURI();
+        
+        String prefix = writer.getPrefix(namespaceURI);
+        if (prefix == null) {
+            writer.setPrefix(prefix, namespaceURI);
+        }
+        
+        // <sp:TransportToken>
+        
+        writer.writeStartElement(prefix, localName, namespaceURI);
+        
+        // serialization of the token ..
+        transportToken.serialize(writer);
+        
+        writer.writeEndElement();
+        // </sp:TransportToken>
     }
     
     

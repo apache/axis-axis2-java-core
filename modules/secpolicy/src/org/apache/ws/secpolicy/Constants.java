@@ -5,15 +5,15 @@ import javax.xml.namespace.QName;
 public class Constants {
 
     public static final String P_NS = "http://schemas.xmlsoap.org/ws/2004/09/policy";
-    
+
     public static final String P_PREFIX = "wsp";
-    
-    public static final QName POLICY = new QName(P_NS, "Policy", P_PREFIX);    
-    
+
+    public static final QName POLICY = new QName(P_NS, "Policy", P_PREFIX);
+
     public final static String SP_NS = "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy";
-    
+
     public final static String SP_PREFIX = "sp";
-    
+
     public final static String ATTR_INCLUDE_TOKEN = "IncludeToken";
 
     public final static String INCLUDE_NEVER = Constants.SP_NS
@@ -27,12 +27,15 @@ public class Constants {
 
     public final static String INCLUDE_ALWAYS = Constants.SP_NS
             + "/IncludeToken/Always";
-    
+
     public final static int SUPPORTING_TOKEN_SUPPORTING = 1;
+
     public final static int SUPPORTING_TOKEN_ENDORSING = 2;
+
     public final static int SUPPORTING_TOKEN_SIGNED = 3;
+
     public final static int SUPPORTING_TOKEN_SIGNED_ENDORSING = 4;
-    
+
     /**
      * Security Header Layout : Strict
      */
@@ -52,7 +55,7 @@ public class Constants {
      * Security Header Layout : LaxTimestampLast
      */
     public final static String LAYOUT_LAX_TIMESTAMP_LAST = "LaxTimestampLast";
-    
+
     /**
      * Protection Order : EncryptBeforeSigning
      */
@@ -62,55 +65,63 @@ public class Constants {
      * Protection Order : SignBeforeEncrypting
      */
     public final static String SIGN_BEFORE_ENCRYPTING = "SignBeforeEncrypting";
-    
+
     public final static String ONLY_SIGN_ENTIRE_HEADERS_AND_BODY = "OnlySignEntireHeadersAndBody";
-    
-    
+
     public final static String WSS_X509_V1_TOKEN10 = "WssX509V1Token10";
-    
+
     public final static String WSS_X509_V3_TOKEN10 = "WssX509V3Token10";
-    
+
     public final static String WSS_X509_PKCS7_TOKEN10 = "WssX509Pkcs7Token10";
-    
-    public final static String WSS_X509_PKI_PATH_V1_TOKEN10 = 
-                                                    "WssX509PkiPathV1Token10";
-    
+
+    public final static String WSS_X509_PKI_PATH_V1_TOKEN10 = "WssX509PkiPathV1Token10";
+
     public final static String WSS_X509_V1_TOKEN11 = "WssX509V1Token11";
-    
+
     public final static String WSS_X509_V3_TOKEN11 = "WssX509V3Token11";
-    
+
     public final static String WSS_X509_PKCS7_TOKEN11 = "WssX509Pkcs7Token11";
-    
-    public final static String WSS_X509_PKI_PATH_V1_TOKEN11 = 
-                                                    "WssX509PkiPathV1Token11";
-    
-    ///
-    ///Algorithm Suites
-    ///
+
+    public final static String WSS_X509_PKI_PATH_V1_TOKEN11 = "WssX509PkiPathV1Token11";
+
+    // /
+    // /Algorithm Suites
+    // /
     public final static String ALGO_SUITE_BASIC256 = "Basic256";
+
     public final static String ALGO_SUITE_BASIC192 = "Basic192";
+
     public final static String ALGO_SUITE_BASIC128 = "Basic128";
+
     public final static String ALGO_SUITE_TRIPLE_DES = "TripleDes";
+
     public final static String ALGO_SUITE_BASIC256_RSA15 = "Basic256Rsa15";
+
     public final static String ALGO_SUITE_BASIC192_RSA15 = "Basic192Rsa15";
+
     public final static String ALGO_SUITE_BASIC128_RSA15 = "Basic128Rsa15";
+
     public final static String ALGO_SUITE_TRIPLE_DES_RSA15 = "TripleDesRsa15";
+
     public final static String ALGO_SUITE_BASIC256_SHA256 = "Basic256Sha256";
+
     public final static String ALGO_SUITE_BASIC192_SHA256 = "Basic192Sha256";
+
     public final static String ALGO_SUITE_BASIC128_SHA256 = "Basic128Sha256";
+
     public final static String ALGO_SUITE_TRIPLE_DES_SHA256 = "TripleDesSha256";
-    public final static String ALGO_SUITE_BASIC256_SHA256_RSA15 = 
-                                                        "Basic256Sha256Rsa15";
-    public final static String ALGO_SUITE_BASIC192_SHA256_RSA15 = 
-                                                        "Basic192Sha256Rsa15";
-    public final static String ALGO_SUITE_BASIC128_SHA256_RSA15 = 
-                                                        "Basic128Sha256Rsa15";
-    public final static String ALGO_SUITE_TRIPLE_DES_SHA256_RSA15 = 
-                                                        "TripleDesSha256Rsa15";
-    
-    ///
-    ///Algorithms
-    ///
+
+    public final static String ALGO_SUITE_BASIC256_SHA256_RSA15 = "Basic256Sha256Rsa15";
+
+    public final static String ALGO_SUITE_BASIC192_SHA256_RSA15 = "Basic192Sha256Rsa15";
+
+    public final static String ALGO_SUITE_BASIC128_SHA256_RSA15 = "Basic128Sha256Rsa15";
+
+    public final static String ALGO_SUITE_TRIPLE_DES_SHA256_RSA15 = "TripleDesSha256Rsa15";
+
+    // /
+    // /Algorithms
+    // /
     public final static String HMAC_SHA1 = "http://www.w3.org/2000/09/xmldsig#hmac-sha1";
 
     public final static String RSA_SHA1 = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
@@ -160,161 +171,243 @@ public class Constants {
     public final static String SNT = "http://www.w3.org/TR/soap12-n11n";
 
     public final static String STRT10 = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#STR-Transform";
-    
-    ////////////////////////////////////////////////////////////////////////
-    
+
+    // //////////////////////////////////////////////////////////////////////
+
     public static final String INCLUSIVE_C14N = "InclusiveC14N";
-    
+
     public static final String SOAP_NORMALIZATION_10 = "SoapNormalization10";
-    
+
     public static final String STR_TRANSFORM_10 = "STRTransform10";
-    
+
     public static final String XPATH10 = "XPath10";
-    
-    public static final String XPATH_FILTER20 = "XPathFilter20"; 
-    
-    ///////////////////////////////////////////////////////////////////////
-    
-    
-    
-    public static final QName INCLUDE_TOKEN = new QName(SP_NS, "IncludeToken");
-    
-    public static final QName TRANSPORT_BINDING = new QName(SP_NS, "TransportBinding");
-    
-    public static final QName ALGORITHM_SUITE = new QName(SP_NS, "AlgorithmSuite", Constants.SP_PREFIX);
-        
+
+    public static final String XPATH_FILTER20 = "XPathFilter20";
+
+    // /////////////////////////////////////////////////////////////////////
+
+    public static final QName INCLUDE_TOKEN = new QName(SP_NS, "IncludeToken",
+            Constants.SP_PREFIX);
+
+    public static final QName TRANSPORT_BINDING = new QName(SP_NS,
+            "TransportBinding", Constants.SP_PREFIX);
+
+    public static final QName ALGORITHM_SUITE = new QName(SP_NS,
+            "AlgorithmSuite", Constants.SP_PREFIX);
+
     public static final QName LAYOUT = new QName(SP_NS, "Layout", SP_PREFIX);
-    
-    /////////////////////
-    
-    public static final QName STRICT = new QName(Constants.SP_NS, "Strict");
-    public static final QName LAX = new QName(Constants.SP_NS, "Lax");
-    public static final QName LAXTSFIRST = new QName(Constants.SP_NS, "LaxTsFirst");
-    public static final QName LAXTSLAST = new QName(Constants.SP_NS,"LaxTsLast");
-    
-    //////////////////
-    
-    public static final QName INCLUDE_TIMESTAMP = new QName(SP_NS, "IncludeTimestamp");
-    
-    public static final QName TRANSPORT_TOKEN = new QName(SP_NS, "TransportToken");
-        
-    public static final QName HTTPS_TOKEN = new QName(Constants.SP_NS, "HttpsToken");
-    
-    public static final QName SECURITY_CONTEXT_TOKEN = new QName(Constants.SP_NS, "SecurityContextToken");
-    
-    public static final QName SECURE_CONVERSATION_TOKEN = new QName(Constants.SP_NS, "SecureConversationToken");
-    
-    public static final QName SIGNATURE_TOKEN = new QName(Constants.SP_NS, "SignatureToken");
-        
-    public static final QName SIGNED_PARTS = new QName(Constants.SP_NS, "SignedParts");
-    
-    public static final QName USERNAME_TOKEN = new QName(Constants.SP_NS, "UsernameToken");
-    
-    public static final QName WSS_USERNAME_TOKEN10 = new QName(Constants.SP_NS, "WssUsernameToken10");
-    
-    public static final QName WSS_USERNAME_TOKEN11 = new QName(Constants.SP_NS, "WssUsernameToken11");
-    
-    public static final QName ENCRYPTED_PARTS = new QName(Constants.SP_NS, "EncryptedParts");
-    
-    public static final QName SIGNED_ELEMENTS = new QName(Constants.SP_NS, "SignedElements");
-    
-    public static final QName ENCRYPTED_ELEMENTS = new QName(Constants.SP_NS, "EncryptedElements");
-    
-    public static final QName ENCRYPTION_TOKEN = new QName(Constants.SP_NS, "EncryptionToken");
-        
-    public static final QName X509_TOKEN = new QName(Constants.SP_NS, "X509Token");
-    
-    public static final QName ISSUED_TOKEN = new QName(Constants.SP_NS, "IssuedToken");
-    
-    public static final QName SUPPORIING_TOKENS = new QName(Constants.SP_NS, "SupportingTokens");
-    
-    public static final QName SIGNED_SUPPORTING_TOKENS = new QName(Constants.SP_NS, "SignedSupportingTokens");
-    
-    public static final QName ENDORSING_SUPPORTING_TOKENS = new QName(Constants.SP_NS, "EndorsingSupportingTokens");
-    
-    public static final QName SIGNED_ENDORSING_SUPPORTING_TOKENS = new QName(Constants.SP_NS, "SignedEndorsingSupportingTokens");
-    
-    public static final QName PROTECTION_TOKEN = new QName(Constants.SP_NS, "ProtectionToken");
-    
-    public static final QName ASYMMETRIC_BINDING = new QName(Constants.SP_NS, "AsymmetricBinding");
-    
-    public static final QName SYMMETRIC_BINDING = new QName(Constants.SP_NS, "SymmetricBinding");
-    
-    public static final QName INITIATOR_TOKEN = new QName(Constants.SP_NS, "InitiatorToken");
-    
-    public static final QName RECIPIENT_TOKEN = new QName(Constants.SP_NS, "RecipientToken");
-    
-    public static final QName REQUIRE_KEY_IDENTIFIRE_REFERENCE = new QName(Constants.SP_NS, "RequireKeyIdentifireReference");
-    
-    public static final QName REQUIRE_ISSUER_SERIAL_REFERENCE = new QName(Constants.SP_NS, "RequireIssuerSerializerReference");
-    
-    public static final QName REQUIRE_EMBEDDED_TOKEN_REFERENCE = new QName(Constants.SP_NS, "RequireEmbeddedTokenReference");
-    
-    public static final QName REQUIRE_THUMBPRINT_REFERENCE = new QName(Constants.SP_NS, "RequireThumbprintReference");
-    
-    public static final QName WSS_X509_V1_TOKEN_10 = new QName(Constants.SP_NS, "WssX509V1Token10");
-    
-    public static final QName WSS_X509_V3_TOKEN_10 = new QName(Constants.SP_NS, "WssX509V3Token10");
-    
-    public static final QName WSS_X509_PKCS7_TOKEN_10 = new QName(Constants.SP_NS, "WssX509Pkcs7Token10");
-    
-    public static final QName WSS_X509_PKI_PATH_V1_TOKEN_10 = new QName(Constants.SP_NS, "WssX509PkiPathV1Token10");
-    
-    public static final QName WSS_X509_V1_TOKEN_11 = new QName(Constants.SP_NS, "WssX509V1Token11");
-    
-    public static final QName WSS_X509_V3_TOKEN_11 = new QName(Constants.SP_NS, "WssX509V3Token11");
-    
-    public static final QName WSS_X509_PKCS7_TOKEN_11 = new QName(Constants.SP_NS, "WssX509Pkcs7Token11");
-    
-    public static final QName WSS_X509_PKI_PATH_V1_TOKEN_11 = new QName(Constants.SP_NS, "WssX509PkiPathV1Token11");
-    
-    public static final QName MUST_SUPPORT_REF_KEY_IDENTIFIER = new QName(Constants.SP_NS, "MustSupportRefKeyIdentifier");
-    
-    public static final QName MUST_SUPPORT_REF_ISSUER_SERIAL = new QName(Constants.SP_NS, "MustSupportRefIssuerSerail");
-    
-    public static final QName MUST_SUPPORT_REF_EXTERNAL_URI = new QName(Constants.SP_NS, "MustSupportRefExternalURI");
-    
-    public static final QName MUST_SUPPORT_REF_EMBEDDED_TOKEN = new QName(Constants.SP_NS, "MustSupportRefEmbeddedToken");
-    
-    public static final QName WSS10 = new QName(Constants.SP_NS, "Wss10");
-    
-    public static final QName WSS11 = new QName(Constants.SP_NS, "Wss11");
-    
-    public static final QName TRUST_10 = new QName(Constants.SP_NS, "Trust10");
-    
-    public static final QName MUST_SUPPORT_REF_THUMBPRINT = new QName(Constants.SP_NS, "MustSupportRefThumbprint");
-    
-    public static final QName MUST_SUPPORT_REF_ENCRYPTED_KEY = new QName(Constants.SP_NS, "MustSupportRefEncryptedkey");
-    
-    public static final QName REQUIRE_SIGNATURE_CONFIRMATION = new QName(Constants.SP_NS, "RequireSignatureConfirmation");
- 
-    public static final QName MUST_SUPPORT_CLIENT_CHALLENGE = new QName(Constants.SP_NS, "MustSupportClientChanllenge");
-    
-    public static final QName MUST_SUPPORT_SERVER_CHALLENGE = new QName(Constants.SP_NS, "MustSupportServerChanllenge");
-    
-    public static final QName REQUIRE_CLIENT_ENTROPY = new QName(Constants.SP_NS, "RequireClientEntropy");
-    
-    public static final QName REQUIRE_SERVER_ENTROPY = new QName(Constants.SP_NS, "RequireServerEntropy");
-    
-    public static final QName MUST_SUPPORT_ISSUED_TOKENS = new QName(Constants.SP_NS, "MustSupportIssuedTokens");
-    
-    public static final QName ISSUER = new QName(Constants.SP_NS, "Issuer");
-    
-    public static final QName REQUIRE_DERIVED_KEYS = new QName(Constants.SP_NS, "RequireDerivedKeys");
-    
-    public static final QName REQUIRE_EXTERNAL_URI_REFERNCE = new QName(Constants.SP_NS, "RequireExternalUriReference");
-    
-    public static final QName REQUIRE_EXTERNAL_REFERNCE = new QName(Constants.SP_NS, "RequireExternalReference");
-    
-    public static final QName REQUIRE_INTERNAL_REFERNCE = new QName(Constants.SP_NS, "RequireInternalReference");
-    
-    public static final QName REQUEST_SECURITY_TOKEN_TEMPLATE = new QName(Constants.SP_NS, "RequestSecurityTokenTemplate");
-    
-    public static final QName SC10_SECURITY_CONTEXT_TOKEN = new QName(Constants.SP_NS, "SC10SecurityContextToken");
-    
-    public static final QName BOOTSTRAP_POLICY = new QName(Constants.SP_NS, "BootstrapPolicy");
-    
-    public static final QName RST_TEMPLATE = new QName(Constants.SP_NS, "RequestSecurityTokenTemplate");
-    
-    public final static QName REQUIRE_CLIENT_CERTIFICATE = new QName("RequireClientCertificate");
+
+    // ///////////////////
+
+    public static final QName STRICT = new QName(Constants.SP_NS, "Strict",
+            Constants.SP_PREFIX);
+
+    public static final QName LAX = new QName(Constants.SP_NS, "Lax",
+            Constants.SP_PREFIX);
+
+    public static final QName LAXTSFIRST = new QName(Constants.SP_NS,
+            "LaxTsFirst", Constants.SP_PREFIX);
+
+    public static final QName LAXTSLAST = new QName(Constants.SP_NS,
+            "LaxTsLast", Constants.SP_PREFIX);
+
+    // ////////////////
+
+    public static final QName INCLUDE_TIMESTAMP = new QName(SP_NS,
+            "IncludeTimestamp", Constants.SP_PREFIX);
+
+    public static final QName TRANSPORT_TOKEN = new QName(SP_NS,
+            "TransportToken", Constants.SP_PREFIX);
+
+    public static final QName HTTPS_TOKEN = new QName(Constants.SP_NS,
+            "HttpsToken", Constants.SP_PREFIX);
+
+    public static final QName SECURITY_CONTEXT_TOKEN = new QName(
+            Constants.SP_NS, "SecurityContextToken", Constants.SP_PREFIX);
+
+    public static final QName SECURE_CONVERSATION_TOKEN = new QName(
+            Constants.SP_NS, "SecureConversationToken", Constants.SP_PREFIX);
+
+    public static final QName SIGNATURE_TOKEN = new QName(Constants.SP_NS,
+            "SignatureToken", Constants.SP_PREFIX);
+
+    public static final QName SIGNED_PARTS = new QName(Constants.SP_NS,
+            "SignedParts", Constants.SP_PREFIX);
+
+    public static final QName USERNAME_TOKEN = new QName(Constants.SP_NS,
+            "UsernameToken", Constants.SP_PREFIX);
+
+    public static final QName WSS_USERNAME_TOKEN10 = new QName(Constants.SP_NS,
+            "WssUsernameToken10", Constants.SP_PREFIX);
+
+    public static final QName WSS_USERNAME_TOKEN11 = new QName(Constants.SP_NS,
+            "WssUsernameToken11", Constants.SP_PREFIX);
+
+    public static final QName ENCRYPTED_PARTS = new QName(Constants.SP_NS,
+            "EncryptedParts", Constants.SP_PREFIX);
+
+    public static final QName SIGNED_ELEMENTS = new QName(Constants.SP_NS,
+            "SignedElements", Constants.SP_PREFIX);
+
+    public static final QName ENCRYPTED_ELEMENTS = new QName(Constants.SP_NS,
+            "EncryptedElements", Constants.SP_PREFIX);
+
+    public static final QName ENCRYPTION_TOKEN = new QName(Constants.SP_NS,
+            "EncryptionToken", Constants.SP_PREFIX);
+
+    public static final QName X509_TOKEN = new QName(Constants.SP_NS,
+            "X509Token", Constants.SP_PREFIX);
+
+    public static final QName ISSUED_TOKEN = new QName(Constants.SP_NS,
+            "IssuedToken", Constants.SP_PREFIX);
+
+    public static final QName SUPPORIING_TOKENS = new QName(Constants.SP_NS,
+            "SupportingTokens", Constants.SP_PREFIX);
+
+    public static final QName SIGNED_SUPPORTING_TOKENS = new QName(
+            Constants.SP_NS, "SignedSupportingTokens", Constants.SP_PREFIX);
+
+    public static final QName ENDORSING_SUPPORTING_TOKENS = new QName(
+            Constants.SP_NS, "EndorsingSupportingTokens", Constants.SP_PREFIX);
+
+    public static final QName SIGNED_ENDORSING_SUPPORTING_TOKENS = new QName(
+            Constants.SP_NS, "SignedEndorsingSupportingTokens",
+            Constants.SP_PREFIX);
+
+    public static final QName PROTECTION_TOKEN = new QName(Constants.SP_NS,
+            "ProtectionToken", Constants.SP_PREFIX);
+
+    public static final QName ASYMMETRIC_BINDING = new QName(Constants.SP_NS,
+            "AsymmetricBinding", Constants.SP_PREFIX);
+
+    public static final QName SYMMETRIC_BINDING = new QName(Constants.SP_NS,
+            "SymmetricBinding", Constants.SP_PREFIX);
+
+    public static final QName INITIATOR_TOKEN = new QName(Constants.SP_NS,
+            "InitiatorToken", Constants.SP_PREFIX);
+
+    public static final QName RECIPIENT_TOKEN = new QName(Constants.SP_NS,
+            "RecipientToken", Constants.SP_PREFIX);
+
+    public static final QName ENCRYPT_SIGNATURE = new QName(Constants.SP_NS,
+            "EncryptSignature", Constants.SP_PREFIX);
+
+    public static final QName PROTECT_TOKENS = new QName(Constants.SP_NS,
+            "ProtectTokens", Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_KEY_IDENTIFIRE_REFERENCE = new QName(
+            Constants.SP_NS, "RequireKeyIdentifireReference",
+            Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_ISSUER_SERIAL_REFERENCE = new QName(
+            Constants.SP_NS, "RequireIssuerSerializerReference",
+            Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_EMBEDDED_TOKEN_REFERENCE = new QName(
+            Constants.SP_NS, "RequireEmbeddedTokenReference",
+            Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_THUMBPRINT_REFERENCE = new QName(
+            Constants.SP_NS, "RequireThumbprintReference", Constants.SP_PREFIX);
+
+    public static final QName WSS_X509_V1_TOKEN_10 = new QName(Constants.SP_NS,
+            "WssX509V1Token10", Constants.SP_PREFIX);
+
+    public static final QName WSS_X509_V3_TOKEN_10 = new QName(Constants.SP_NS,
+            "WssX509V3Token10", Constants.SP_PREFIX);
+
+    public static final QName WSS_X509_PKCS7_TOKEN_10 = new QName(
+            Constants.SP_NS, "WssX509Pkcs7Token10", Constants.SP_PREFIX);
+
+    public static final QName WSS_X509_PKI_PATH_V1_TOKEN_10 = new QName(
+            Constants.SP_NS, "WssX509PkiPathV1Token10", Constants.SP_PREFIX);
+
+    public static final QName WSS_X509_V1_TOKEN_11 = new QName(Constants.SP_NS,
+            "WssX509V1Token11", Constants.SP_PREFIX);
+
+    public static final QName WSS_X509_V3_TOKEN_11 = new QName(Constants.SP_NS,
+            "WssX509V3Token11", Constants.SP_PREFIX);
+
+    public static final QName WSS_X509_PKCS7_TOKEN_11 = new QName(
+            Constants.SP_NS, "WssX509Pkcs7Token11", Constants.SP_PREFIX);
+
+    public static final QName WSS_X509_PKI_PATH_V1_TOKEN_11 = new QName(
+            Constants.SP_NS, "WssX509PkiPathV1Token11", Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_REF_KEY_IDENTIFIER = new QName(
+            Constants.SP_NS, "MustSupportRefKeyIdentifier", Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_REF_ISSUER_SERIAL = new QName(
+            Constants.SP_NS, "MustSupportRefIssuerSerial", Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_REF_EXTERNAL_URI = new QName(
+            Constants.SP_NS, "MustSupportRefExternalURI", Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_REF_EMBEDDED_TOKEN = new QName(
+            Constants.SP_NS, "MustSupportRefEmbeddedToken", Constants.SP_PREFIX);
+
+    public static final QName WSS10 = new QName(Constants.SP_NS, "Wss10",
+            Constants.SP_PREFIX);
+
+    public static final QName WSS11 = new QName(Constants.SP_NS, "Wss11",
+            Constants.SP_PREFIX);
+
+    public static final QName TRUST_10 = new QName(Constants.SP_NS, "Trust10",
+            Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_REF_THUMBPRINT = new QName(
+            Constants.SP_NS, "MustSupportRefThumbprint", Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_REF_ENCRYPTED_KEY = new QName(
+            Constants.SP_NS, "MustSupportRefEncryptedkey", Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_SIGNATURE_CONFIRMATION = new QName(
+            Constants.SP_NS, "RequireSignatureConfirmation",
+            Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_CLIENT_CHALLENGE = new QName(
+            Constants.SP_NS, "MustSupportClientChanllenge", Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_SERVER_CHALLENGE = new QName(
+            Constants.SP_NS, "MustSupportServerChanllenge", Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_CLIENT_ENTROPY = new QName(
+            Constants.SP_NS, "RequireClientEntropy", Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_SERVER_ENTROPY = new QName(
+            Constants.SP_NS, "RequireServerEntropy", Constants.SP_PREFIX);
+
+    public static final QName MUST_SUPPORT_ISSUED_TOKENS = new QName(
+            Constants.SP_NS, "MustSupportIssuedTokens", Constants.SP_PREFIX);
+
+    public static final QName ISSUER = new QName(Constants.SP_NS, "Issuer",
+            Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_DERIVED_KEYS = new QName(Constants.SP_NS,
+            "RequireDerivedKeys", Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_EXTERNAL_URI_REFERNCE = new QName(
+            Constants.SP_NS, "RequireExternalUriReference", Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_EXTERNAL_REFERNCE = new QName(
+            Constants.SP_NS, "RequireExternalReference", Constants.SP_PREFIX);
+
+    public static final QName REQUIRE_INTERNAL_REFERNCE = new QName(
+            Constants.SP_NS, "RequireInternalReference", Constants.SP_PREFIX);
+
+    public static final QName REQUEST_SECURITY_TOKEN_TEMPLATE = new QName(
+            Constants.SP_NS, "RequestSecurityTokenTemplate",
+            Constants.SP_PREFIX);
+
+    public static final QName SC10_SECURITY_CONTEXT_TOKEN = new QName(
+            Constants.SP_NS, "SC10SecurityContextToken", Constants.SP_PREFIX);
+
+    public static final QName BOOTSTRAP_POLICY = new QName(Constants.SP_NS,
+            "BootstrapPolicy", Constants.SP_PREFIX);
+
+    public static final QName RST_TEMPLATE = new QName(Constants.SP_NS,
+            "RequestSecurityTokenTemplate", Constants.SP_PREFIX);
+
+    public final static QName REQUIRE_CLIENT_CERTIFICATE = new QName(
+            "RequireClientCertificate");
 }

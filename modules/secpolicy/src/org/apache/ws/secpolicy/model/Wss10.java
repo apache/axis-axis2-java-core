@@ -88,6 +88,57 @@ public class Wss10 extends AbstractSecurityAssertion {
     }
     
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException("not yet implemented");
+        String localname = Constants.WSS10.getLocalPart();
+        String namespaceURI = Constants.WSS10.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+        if (prefix == null) {
+            prefix = Constants.WSS10.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+
+        // <sp:Wss10>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+        
+        String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (pPrefix == null) {
+            writer.setPrefix(Constants.POLICY.getPrefix(), Constants.POLICY.getNamespaceURI());
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(prefix, Constants.POLICY.getLocalPart(), Constants.POLICY.getNamespaceURI());
+        
+        if (isMustSupportRefKeyIdentifier()) {
+            // <sp:MustSupportRefKeyIdentifier />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_KEY_IDENTIFIER.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportRefIssuerSerial()) {
+            // <sp:MustSupportRefIssuerSerial />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_ISSUER_SERIAL.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportRefExternalURI()) {
+            // <sp:MustSupportRefExternalURI />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_EXTERNAL_URI.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportRefEmbeddedToken()) {
+            // <sp:MustSupportRefEmbeddedToken />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_EMBEDDED_TOKEN.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+
+            
+        }
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:Wss10>
+        writer.writeEndElement();
+
     }
 }

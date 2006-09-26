@@ -57,6 +57,38 @@ public class RecipientToken extends AbstractSecurityAssertion implements TokenWr
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        String localName = Constants.RECIPIENT_TOKEN.getLocalPart();
+        String namespaceURI = Constants.RECIPIENT_TOKEN.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+
+        if (prefix == null) {
+            prefix = Constants.RECIPIENT_TOKEN.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+        
+        // <sp:RecipientToken>
+        writer.writeStartElement(prefix, localName, namespaceURI);
+        
+        String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (pPrefix == null) {
+            pPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(pPrefix, Constants.POLICY.getNamespaceURI());
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(pPrefix, Constants.POLICY.getLocalPart(), Constants.POLICY.getNamespaceURI());
+
+        Token token = getReceipientToken();
+        if (token == null) {
+            throw new RuntimeException("RecipientToken doesn't contain any token assertions");
+        }
+        token.serialize(writer);
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:RecipientToken>
+        writer.writeEndElement();
     }    
 }
