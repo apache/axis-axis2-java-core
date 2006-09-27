@@ -25,11 +25,11 @@ samples mentioned in this guide are located in the
 
 <h2><a name="Web_Services_Using_Axis2">Web Services Using Axis2</a></h2>
 
-<p>Before starting, please check whether you have deployed the "axis2.war" in
-your servlet container and it is working properly. (See <a
-href="installationguide.html" target="_blank">Installation Guide</a>). User
-can select any of the  following two ways of writing Web services using
-Axis2. </p>
+<p>Before starting, please check if you have deployed the "axis2.war" in your
+servlet container and it is working properly. (See <a
+href="installationguide.html" target="_blank">Installation Guide</a>). Users
+can select any of the  following two ways to write Web services using Axis2.
+</p>
 <ol>
   <li><a href="#Writing_Web_Services_Using Axis2's_Primary_APIs">Use Axis2's
     primary interfaces (APIs) and implement the business logic.</a></li>
@@ -60,7 +60,7 @@ descriptors for the service and deploy it.</p>
 
 <h4><a name="How_to_write_the_Web_Service_">How to write the Web
 Service?</a></h4>
-Writing a new Web service with Axis2 involve four steps:
+Writing a new Web service with Axis2 involves four steps:
 <ol>
   <li><p style="margin-bottom: 0in">Write the Implementation Class</p>
   </li>
@@ -77,10 +77,10 @@ Writing a new Web service with Axis2 involve four steps:
 <h4><a name="Step1_:Write_the_Implementation_Class">Step1 :Write the
 Implementation Class</a></h4>
 
-<p>Provides an implementation class that provides the business logic for the
-Web service, it should have methods that match the operations in the Web
-service. Unless you have data binding, the signature of the methods can have
-only one parameter of type OMElement.</p>
+<p>Provide an implementation class that has the business logic for the Web
+service. It should have methods that match the operations in the Web service.
+Unless you have data binding, the signature of the methods can have only one
+parameter of type OMElement.</p>
 <pre>public class MyService{
     public void ping(OMElement element){
      ......
@@ -145,8 +145,8 @@ This will be used later in this user guide.</p>
 of a single service. This makes management and deployment of a set of related
 services very easy. At runtime you can share information between these
 services within a single interaction using the ServiceGroupContext. If you
-hope to use this functionality, the services.xml file should have following
-format.</p>
+hope to use this functionality, the services.xml file should have the
+following format.</p>
 <pre>&lt;serviceGroup&gt;
   &lt;service name="Service1"&gt;
     &lt;!-- details for Service1 --&gt;
@@ -164,7 +164,7 @@ format.</p>
 Service Archive</a></h4>
 
 <p>Axis2 uses ".aar" (Axis Archive) file as the deployment package for Web
-services. Therefore, for MyService we will use "MyService.aar" with the
+services. Therefor, for MyService we will use "MyService.aar" with the
 "services.xml" packaged in the META-INF as shown in the following picture.
 (Name of the service will be the name of the archive file , if and only if
 the services.xml contains only one service element).</p>
@@ -211,7 +211,7 @@ in the <b>wsdl</b> directory under samples.</p>
 <p>To generate the skeleton and the required classes you can use the
 WSDL2Java tool provided in Axis2. This tool is located in the bin directory
 of the distribution and can be executed using the provided scripts (.bat or
-.sh). The tool's parameter list is as follows and user can specify these
+.sh). The tool's parameter list is as follows and users can specify these
 values depending on their requirements.</p>
 <pre>Usage WSDL2Code -uri &lt;Location of WSDL&gt; : WSDL file location
 -o &lt;output Location&gt; : output file location
@@ -240,7 +240,7 @@ skeleton and the other required classes.</p>
 
 <p>This will generate the required classes in the <b>src</b> directory inside
 samples, and the schema classes in <strong>schemaorg_apache_xmlbeans</strong>
-directory which is inside resources directory also inside samples
+directory which is inside resources directory and also inside samples
 dir<strong></strong>. Note that these are not source files and should be
 available in the class path in order to compile the generated classes.</p>
 
@@ -257,14 +257,12 @@ perform some task </p>
 </li>-->
 </p>
 <ul>
-  <li><p style="margin-bottom: 0in">echoString  - Operation that echoes a
-    String value </p>
+  <li><p style="margin-bottom: 0in">echoString  - echoes a String value </p>
   </li>
-  <li><p style="margin-bottom: 0in">echoStringArray - Operation that accept
-    string array as the input and echoes them back</p>
+  <li><p style="margin-bottom: 0in">echoStringArray - accept string array as
+    the input and echoes them back</p>
   </li>
-  <li><p>echoStruct - Operation that accept a Struct as the input and echoes
-    them back.</p>
+  <li><p>echoStruct - accept a Struct as the input and echoes them back.</p>
   </li>
 </ul>
 <!--<h4>echoVoid   </h4>
@@ -299,8 +297,8 @@ simple and the explanations are given as comments.</p>
    return retDoc;
  }</pre>
 
-<p>Similarly following code fragments shows how you can fill the business
-logic for our first Web service.</p>
+<p>Similarly, the following code fragments shows how you can fill the
+business logic for our first Web service.</p>
 
 <h4><a name="echoStringArray">echoStringArray</a></h4>
 <pre>public org.apache.axis2.userguide.xsd.EchoStringArrayReturnDocument echoStringArray
@@ -370,15 +368,16 @@ generated services.xml is as follows.</p>
   &lt;/service&gt;
 &lt;/serviceGroup&gt;</pre>
 
-<p>First line of the "services.xml" gives the name of the Web Service. This
+<p>First line of the "services.xml" gives the name of the Web service. This
 is used in the URL to the service as the service name. Next comes the
-description and the service class. The next xml tags describe the operations
-that are available in this service with respective message receivers.</p>
+description and the service class. The following xml tags describe the
+operations that are available in this service with respective message
+receivers.</p>
 
 <h4><a name="Packaging">Packaging</a></h4>
 
-<p>Next step in the process is to package the classes in a .aar (axis2
-archive) and deploy it in Axis2. When the WSDL2Java tool generate the
+<p>The next step in this process is to package the classes in an .aar (axis2
+archive) and deploy it in Axis2. When the WSDL2Java tool generates the
 skeleton it will also generate the required data binding classes. These
 schema related classes are located in the
 <strong>schemaorg_apache_xmlbeans</strong> directory inside resources
