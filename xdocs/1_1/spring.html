@@ -456,7 +456,7 @@ public class SpringInit implements Service {
     to the axis users list - Datasources via Spring inside the AAR have been tested. Basically it works as 
     typically done with Spring, though if you are passing Hibernate XML files you need to put them in a 
     place where Spring will find them. The most flexible way is as follows, using logging in DEBUG mode
-    to see were Spring will look in your jar / class locations: </p>
+    to see where Spring will look in your jar / class locations: </p>
     <source><pre>
     &lt;bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
                 &lt;property name="mappingLocations"&gt;
