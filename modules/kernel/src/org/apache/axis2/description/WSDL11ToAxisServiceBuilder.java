@@ -414,7 +414,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     axisService, BINDING);
 
             PortType portType = binding.getPortType();
-            processPortType(portType, dif);
+            processPortType(dif.getPortType(portType.getQName()), dif);
 
 //            String portTypeNs = portType.getQName().getNamespaceURI();
             List list = binding.getBindingOperations();
