@@ -29,11 +29,11 @@ detail the above configurations.</p>
   <li>Writing axis2.xml</li>
 </ul>
 
-<p>All the configurations that require starting axis2 is obtained from the
+<p>All the configurations that require starting Axis2 is obtained from the
 axis2.xml. The way of specifying them is very simple and easy. The document
 is all about the proper way of specifying the configurations in axis2.xml.
 There are six top level elements that can be seen in the configuration file
-and those can be listed as follows;</p>
+and those can be listed as follows:</p>
 <ul>
   <li>Parameter</li>
   <li>Transport Receiver</li>
@@ -43,20 +43,22 @@ and those can be listed as follows;</p>
   <li>Listeners (Observers)</li>
 </ul>
 
-<p><b>Parameter </b> <br>
-In axis2 a parameter is nothing but name value pair, each and every top level
-parameter available in the axis2.xml (direct sub elements of root element)
-will be transformed into properties in AxisConfiguration. Therefore the top
-level parameters in the configuration document can be accessed via
+<h3>Parameter</h3>
+
+<p>In Axis2 a parameter is nothing but name value pair. Each and every top
+level parameter available in the axis2.xml (direct sub elements of root
+element) will be transformed into properties in AxisConfiguration. Therefore,
+the top level parameters in the configuration document can be accessed via
 AxisConfiguration in the running system. The correct way of defining a
-parameter looks like what is shown below;</p>
+parameter looks like what is shown below:</p>
 <source><pre> 
   &lt;parameter name="name of the parameter" &gt;parameter value &lt;/parameter&gt;</pre>
 </source>
-<p><b>Transport Receiver</b><br>
-Depending on the underline transport that axis is going to be run on, you need to have
-different transport receivers so the way of adding them to the system can be
-done as follows;</p>
+<h3>Transport Receiver</h3>
+
+<p>Depending on the underlying transport that Axis2 is going to run on, you
+need to have different transport receivers. The way of adding them to the
+system is as follows:</p>
 <pre> 
 &lt;transportReceiver name="http" class="org.apache.axis2.transport.http.SimpleHTTPServer"&gt;
         &lt;parameter name="port" &gt;6060&lt;/parameter&gt;
@@ -64,50 +66,51 @@ done as follows;</p>
  </pre>
 </source>The above elements shows the way of defining transport receivers in
 axis2.xml. Here the name attribute of the 'transportReceiver' element is the
-name of transport receiver. It can be http, tcp, smtp, commonshttp stc and when the
-system starts up or when setting transport at the client side, one can use
-these transport names to load the appropriate transport. Class attribute is
-to specify actual java classes which implements required interfaces for the
-transport. Any transport can have zero or more parameters, and if there are
-any, then those parameters can be accessed via the corresponding transport
-receiver.
+name of transport receiver. It can be http, tcp, smtp, commonshttp etc, and
+when the system starts up or when you set the transport at the client side,
+one can use these transport names to load the appropriate transport. Class
+attribute is to specify actual java classes which implements required
+interfaces for the transport. Any transport can have zero or more parameters,
+and if there are any, then those parameters can be accessed via the
+corresponding transport receiver.
 
-<p><b>Transport Senders</b><br>
-As same as transport receivers, it is possible to register transport senders
-in the system, and latter at the run time those senders can be used to send
-the messages. As an example, consider Axis2 running under tomcat. Then axis
-can use TCP transport senders to send messages rather than HTTP. The way of
-specifying transport senders is as follows:</p>
+<h3>Transport Senders</h3>
 
-<p><source></p>
+<p>As same as transport receivers, it is possible to register transport
+senders in the system, and later at the run time, those senders can be used
+to send the messages. As an example, consider Axis2 running under Apache
+Tomcat. Then Axis2 can use TCP transport senders to send messages rather than
+HTTP. The way of specifying transport senders is as follows:</p>
 <pre> 
 &lt;transportSender name="http" class="org.apache.axis2.transport.http.CommonsHTTPTransportSender"&gt;
         &lt;parameter name="PROTOCOL" locked="xsd:false"&gt;HTTP/1.0&lt;/parameter&gt;
  &lt;/transportSender&gt; 
  </pre>
-</source><strong>name:</strong> Name of the transport (it is possible to have http and http1
-as transport name) 
+</source><strong>name:</strong> Name of the transport (it is possible to have
+http and http1 as transport name)
 
 <p><strong>class:</strong> Implementation class of the corresponding
 transport. As same as transport receivers, transport senders can have zero or
 more parameters, and if there is any then it can be accessed via
 corresponding transport sender.</p>
 
-<p><b>Phase Order</b><br>
-The specifying order of phases in execution chain has to be done using phase
-order element and it will look like below;</p>
+<h3><b>Phase Order</b><br>
+</h3>
 
-<p><source></p>
+<p>The specifying order of phases in execution chain has to be done using
+phase order element and it will look like below:</p>
 <pre>&lt;phaseOrder type="inflow"&gt;
          &lt;phase name="TransportIn"/&gt;
          .
          .
 &lt;/phaseOrder&gt;   </pre>
-</source>The most interesting thing is that you can add handlers here as well. If you want to add a handler which should go in to that phase you can
-directly do that by adding a handler element into it. In addition to that
-there is no hard coding stuff for the handler chain anywhere in Axis2
-(at any Axis*). So all those configurations are also done in the phase order
-element. The complete configurations will look as follows; <source>
+</source>
+<p>The most interesting thing is that you can add handlers here as well. If
+you want to add a handler which should go in to that phase you can directly
+do that by adding a handler element into it. In addition to that there is no
+hard coding work for the handler chain anywhere in Axis2 (at any Axis*). So
+all those configurations are also done in the phase order element. The
+complete configurations will look as follows: <source></p>
 <pre>&lt;phaseOrder type="inflow"&gt;
         &lt;!--   Global phases    --&gt;
          &lt;phase name="Transport"&gt;
@@ -188,8 +191,8 @@ element. The complete configurations will look as follows; <source>
         &lt;phase name="MessageOut"/&gt;
     &lt;/phaseOrder&gt;</pre>
 </source>
-<p><strong>type:</strong> the attribute represent type of the flow and which can only be one
-of the following</p>
+<p><strong>type:</strong> the attribute represents the type of the flow and
+which can only be one of the following:</p>
 <ul>
   <li>inflow</li>
   <li>outflow</li>
@@ -197,44 +200,55 @@ of the following</p>
   <li>Outfaultflow</li>
 </ul>
 
-<p>In addition to that the only child element allowed inside "phaseOrder" is "phase" element, which represents available phases in the execution chain. The way of
-specifying phases inside "phaseOrder" has to be done as follows;</p>
-
-<p><source></p>
+<p>In addition to that, the only child element is allowed inside "phaseOrder"
+is "phase" element which represents available phases in the execution chain.
+The way of specifying phases inside "phaseOrder" is as follows:</p>
 <pre> &lt;phase name="Transport"/&gt;</pre>
-</source><strong>name:</strong> Name of the phase. <br>
-There are a number of things that one has to keep in mind when changing a
-phaseOrder,
+</source>
+<p><strong>name:</strong> Name of the phase. <br>
+</p>
+
+<p>There are a number of things that one has to keep in mind when changing a
+phaseOrder:</p>
+
+<p>For the phaseOrder types <strong>"inflow"</strong> and
+<strong>"INfaultflow"</strong></p>
 <ul>
-</ul>
-<p>For the phaseOrder types <strong>"inflow"</strong> and <strong>"INfaultflow"</strong></p>
-<ul>
-<li> All the phases which are above the "Dispatch" phase, including the "Dispatch" phase are known as "Global phases" and one can <em></em>
-add any number of new phases here and these will be concidered global.</li>
-<li> In these two phaseOrder types, the phases added after the "Dispatch" phase are known as "Operation phases".</li>
-</ul>
-<p>For the phaseOrder types <strong>"outflow"</strong> and <strong>"Outfaultflow"</strong></p>
-<ul>
-<li> All the phases which are below the "MessageOut" phase, including the "MessageOut" phase are known as "Global phases" and you can <em></em>
-add new phases according to your requirement.</li>
-<li> The phases added before the "MessageOut" phase are known as "Operation phases".</li>
-<p><strong>Note :</strong> If you closely look at the default axis2.xml you will be able to clearly identify that.</li></p>
+  <li>All the phases which are above the "Dispatch" phase including the
+    "Dispatch" phase are known as "Global phases" and one can add any number
+    of new phases here and these will be concidered global.</li>
+  <li>In these two phaseOrder types the phases added after the "Dispatch"
+    phase are known as "Operation phases".</li>
 </ul>
 
-<p><b>Module References</b><br>
-If you want to engage a module system wide you can do it by adding top level
-module element in axis2.xml.  It should look like following:</p>
+<p>For the phaseOrder types <strong>"outflow"</strong> and
+<strong>"Outfaultflow"</strong></p>
+<ul>
+  <li>All the phases which are below the "MessageOut" phase, including the
+    "MessageOut" phase are known as "Global phases", and you can add new
+    phases according to your requirement.</li>
+  <li>The phases added before the "MessageOut" phase are known as "Operation
+    phases".</li>
 
-<p><source></p>
+  <p><strong>Note :</strong> If you closely look at the default axis2.xml you
+  will be able to clearly identify that.</p>
+</ul>
+
+<h3>Module References</h3>
+
+<p>If you want to engage a module, system wide, you can do it by adding top
+level module element in axis2.xml. It should look like following:</p>
 <pre>&lt;module ref="addressing"/&gt;  </pre>
-</source><strong>ref:</strong> the module name which is going to be engage, system wide.
+</source>
+<p><strong>ref:</strong> the module name which is going to be engage, system
+wide.</p>
 
-<p><strong>Listeners (Observers)</strong></p>
+<h3><strong>Listeners (Observers)</strong></h3>
 
 <p>In Axis2, AxisConfiguration is observable so that one can register
 observers into that, and they will be automatically informed whenever a
 change occurs in AxisConfiguration. In the current implementation, the
-observers are informed of the following events</p>
+observers are informed of the following events:</p>
 <ul>
   <li>Deploying a Service</li>
   <li>Removing a service</li>
@@ -244,14 +258,16 @@ observers are informed of the following events</p>
 </ul>
 Registering Observers is very useful for additional features such as RSS feed
 generation which will provide service information to subscribers. The correct
-way of registering observers should be like below; <source>
-<pre>&lt;listener class="org.apache.axis2.ObserverIMPL"&gt;
+way of registering observers should be like below:
+<pre>
+&lt;listener class="org.apache.axis2.ObserverIMPL"&gt;
     &lt;parameter name="RSS_URL" &gt;http://127.0.0.1/rss&lt;/parameter&gt;
   &lt;/listener&gt;</pre>
-</source><strong>class:</strong> Represent an Implementation class of observer, and it should
-be note that the implementation class should implement AxisObserver
-interface, and the class has to be available in the classpath. <a
-name="Service_Configuration"></a>
+</source>
+<p><strong>class:</strong> Represents an Implementation class of observer,
+and it should be noted that the implementation class should implement
+AxisObserver interface, and the class has to be available in the classpath.
+<a name="Service_Configuration"></a></p>
 
 <h2><font>Service Configuration</font></h2>
 <ul>
@@ -261,8 +277,7 @@ name="Service_Configuration"></a>
 <p><font>The description of services are specified using services.xml. Each
 service archive file needs to have a services.xml in order to be a valid
 service and it should be available in the META-INF directory of the archive
-file. <br>
-A very simple services.xml is shown below:</font></p>
+file. A very simple services.xml is shown below:</font></p>
 <source><pre><font>&lt;service name="name of the service" scope="name of the scope" targetNamespace="target namespase for the service"&gt;
     &lt;description&gt; The description of the service  &lt;/description&gt;  
 
@@ -277,7 +292,7 @@ A very simple services.xml is shown below:</font></p>
                              class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/&gt;
     &lt;/messageReceivers&gt;
      
-     &lt;parameter name="ServiceClass"     locked="xsd:false"&gt;org.apache.axis2.sample.echo.EchoImpl&lt;/parameter&gt;
+     &lt;parameter name="ServiceClass" locked="xsd:false"&gt;org.apache.axis2.sample.echo.EchoImpl&lt;/parameter&gt;
     
     &lt;operation name="echoString" mep="operation MEP"&gt; 
         &lt;actionMapping&gt;Mapping to action&lt;/actionMapping&gt;
@@ -285,66 +300,65 @@ A very simple services.xml is shown below:</font></p>
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
   &lt;/service&gt;</font></pre>
-</source><font><strong>name</strong>: the service name will be the
-name of the archive file if the .aar file contains only one service else name
-of the service will be the name given by the name attribute</font>
+</source>
+<p><font><strong>name</strong>: The service name will be the name of the
+archive file, if the .aar file contains only one service, or else the name of
+the service will be the name given by the name attribute.</font></p>
 
-<p><strong>scope</strong>: Scope that the service need to be
-deployed and it can be one of the following:
-"Application","SOAPSession","TransportSession","Request";</p>
+<p><strong>scope</strong>: (runtime infor of the service will be
+available)Scope that the service need to be deployed and it can be one of the
+following- "Application", "SOAPSession", "TransportSession", "Request"</p>
 
-<p><strong>targetNamespace</strong>: Target name space of the
-service , and this value will be used when generating the wsdl</p>
-
-<p></p>
+<p><strong>targetNamespace</strong>: Target name space of the service, and
+this value will be used when generating the wsdl</p>
 
 <p><font><strong>description</strong>: This is an optional element if you
-want to display any description about the service via Axis2 web-admin module
+want to display any description about the service via Axis2 web-admin module,
 then the description can be specified here.</font></p>
 
 <p><strong>transports</strong> : The transports that the service is going to
-be exposed. This is an optional element. If the transport element is not
-present then the service will be exposed in all the transports available in the
-system. The transport child element is there to specify the transport prefix (the
-name of the transport specified in axis2.xml)</p>
+be exposed to. This is an optional element. If the transport element is not
+present then the service will be exposed in all the transports available in
+the system. The transport child element is there to specify the transport
+prefix (the name of the transport specified in axis2.xml)</p>
 
-<p><b>parameters:</b>
-A services.xml can have any number of top level parameters and all the
-specified parameters will be transformed into service properties in
-corresponding AxisService. There is a compulsory parameter in a services.xml
-called ServiceClass which specifies the java class which really does the job
-and the class will be loaded by the MessageReceiver.</p>
+<p><b>parameters:</b> A services.xml can have any number of top level
+parameters and all the specified parameters will be transformed into service
+properties in the corresponding AxisService. There is a compulsory parameter
+in a services.xml called ServiceClass which specifies the java class which
+really does the job and the class will be loaded by the MessageReceiver.</p>
 
-<p><b>operations :</b>
-If the service impl class is java, then all the public methods in that service
-will be exposed and if the user wants to override it then he has to add the "operation"
-tag and override that. In the case of Non-Java or if you do not have a
-service class then all the operations the user wants to expose by the service has
-to be indicated in the services.xml and the correct way of specifying that
-should be as follows:</p>
+<p><b>operations :</b> If the service impl class is java, then all the public
+methods in that service will be exposed and if the user wants to override it
+then he has to add the "operation" tag and override it. In the case of
+Non-Java or if you do not have a service class, then all the operations the
+user wants to expose by the service has to be indicated in the services.xml
+and the correct way of specifying is as follows:</p>
 <pre>    &lt;operation name="echoString"&gt;
         &lt;module ref=" a module name "/&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;</pre>
-</source>The only compulsory attribute here is "name", which represents the
+</source>
+<p>The only compulsory attribute here is "name", which represents the
 operation name that is going to be exposed. Any operation can contain module
-references as well as any number of parameters. The most interesting thing is that one can
-register custom message receivers per operation, then the registered message
-receiver will be the message receiver for the corresponding operation. If one
-does not specify the message receiver, then the default message receiver will
-do the job. <br>
-<a name="Module_Configuration"></a>
+references as well as any number of parameters. The most interesting thing is
+that one can register custom message receivers per operation, then the
+registered message receiver will be the message receiver for the
+corresponding operation. If one does not specify the message receiver, then
+the default message receiver will do the job. <br>
+<a name="Module_Configuration"></a></p>
 
 <h2>Module Configuration</h2>
 <ul>
   <li>Writing module.xml</li>
 </ul>
 
-<p>The description of the module is specified using the module.xml. Each module
-archive file need to have a module.xml in order to be a valid module and it should be available in the META-INF directory of the archive file. <br>
-A very simple module.xml is shown below:</p>
+<p>The description of the module is specified using the module.xml. Each
+module archive file needs to have a module.xml in order to be a valid module,
+and it should be available in the META-INF directory of the archive file. <br>
+</p>
 
-<p><source></p>
+<p>A very simple module.xml is shown below:</p>
 <pre>&lt;module class="org.apache.module.Module1Impl"&gt;
     &lt;inflow&gt;
         .
@@ -370,23 +384,24 @@ A very simple module.xml is shown below:</p>
         &lt;parameter name="para1" locked="xsd:true"&gt;10&lt;/parameter&gt;
     &lt;/operation&gt;
 &lt;/module&gt;</pre>
-</source><strong>class:</strong> This is an optional attribute which indicates the module
-implementation class. A module may or may not contain a module implementation
-class since the module can also be a collection of handlers. If a module
-contains an implementation class which implements the
+</source>
+<p><strong>class:</strong> This is an optional attribute which indicates the
+module implementation class. A module may or may not contain a module
+implementation class since the module can also be a collection of handlers.
+If a module contains an implementation class which implements the
 org.apache.axis2.modules.Module interface where at the deployment time its
-init(); method will be called.
+init(); method will be called.</p>
 
-<p><b>parameter:</b> A module can contain any number of parameters and all the
-listed parameters in the module.xml will be transformed into corresponding
-AxisModule of the module.</p>
+<p><b>parameter:</b> A module can contain any number of parameters and all
+the listed parameters in the module.xml will be transformed into
+corresponding AxisModule of the module.</p>
 
-<p><b>flow: </b>Defining of handlers in a module has to be done inside Flows, and there are
-four types of flows as listed below.</p>
+<p><b>flow: </b>Defining of handlers in a module has to be done inside Flows,
+and there are four types of flows as listed below.</p>
 
 <p>It is possible to add any number of handlers into a flow and those
-handlers will be available in corresponding chains at the runtime when they are
-engaged .</p>
+handlers will be available in corresponding chains at the runtime when they
+are engaged .</p>
 <ul>
   <li>inflow</li>
   <li>outflow</li>
@@ -394,12 +409,13 @@ engaged .</p>
   <li>Outfaultflow</li>
 </ul>
 
-<p><b>operations: </b> If a module wants to add an operation when it is engaged
-into a service it can be done by adding operation tag in module.xml and the
-way of specifying the operation is same as operation in services.xml.</p>
+<p><b>operations: </b> If a module wants to add an operation when it is
+engaged into a service it can be done by adding operation tag in module.xml
+and the way of specifying the operation is same as operation in
+services.xml.</p>
 
-<p><b>handler:</b> The Handler element consists of compulsory and optional attributes and the way of
-defining a handler will look as follows;</p>
+<p><b>handler:</b> The Handler element consists of compulsory and optional
+attributes and the way of defining a handler will look as follows;</p>
 
 <p><source></p>
 <pre>&lt;handler name="handler1" class="handlerClass "&gt;
@@ -409,16 +425,16 @@ defining a handler will look as follows;</p>
 <p><b><i>Compulsory attributes</i></b> <br>
 <b>name:</b> name of the handler<br>
 <b>class:</b> handler implementation class<br>
-<b>phase:</b> name of the phase that the handler should stay in the execution chain
-<br>
+<b>phase:</b> name of the phase that the handler should stay in the execution
+chain <br>
 <br>
 <i><b>Optional attributes :</b></i><br>
 <b>phaseLast:</b> to indicate the handler is last handler of the phase<br>
 <b>phaseFirst:</b> to indicate the handler is first handler of the phase.<br>
-<b>before :</b> the handler should be invoked before the handler specified by before
-handler<br>
-<b>after:</b>  the handler should be invoked after the handler specified by after
-handler<br>
+<b>before :</b> the handler should be invoked before the handler specified by
+before handler<br>
+<b>after:</b>  the handler should be invoked after the handler specified by
+after handler<br>
 </p>
 
 <p><br>
