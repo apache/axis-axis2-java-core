@@ -21,6 +21,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -125,6 +126,11 @@ public class AddressingFaultsHelper{
 
         if (!messageContext.isSOAP11()) {
             setFaultCode(messageContext, faultcode, faultSubcode);
+        }
+        
+        OperationContext oc = messageContext.getOperationContext();
+        if(oc!=null){
+        	oc.setProperty(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS, "false");
         }
 
         messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
