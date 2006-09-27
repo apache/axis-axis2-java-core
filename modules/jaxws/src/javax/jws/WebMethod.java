@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 public @interface WebMethod {
 	String operationName() default "";
 	String action() default "";
-	String exclude() default "";
+	boolean exclude() default false;
 }

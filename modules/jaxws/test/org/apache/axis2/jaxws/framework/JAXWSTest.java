@@ -29,6 +29,7 @@ import org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests;
 import org.apache.axis2.jaxws.description.ServiceDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderTests;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
@@ -68,6 +69,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(MTOMSerializationTests.class);
         
         suite.addTestSuite(WSDLTests.class);
+        suite.addTestSuite(DescriptionBuilderTests.class);
         suite.addTestSuite(ServiceDescriptionTests.class);
         suite.addTestSuite(WSDLDescriptionTests.class);
         suite.addTestSuite(AnnotationDescriptionTests.class);
