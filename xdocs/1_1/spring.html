@@ -24,6 +24,7 @@
         <ul>
           <li><a href="#261">The Spring inside an AAR layout</a></li>
           <li><a href="#262">The Spring inside an AAR init class</a></li>
+          <li><a href="#263">Known issues running Spring inside the AAR</a></li>
         </ul>
       </li>
     </ul>
@@ -320,7 +321,8 @@ spring-web. Running the client, you should see this output:</p>
 <p>Frequently Axis2 users wish to run Spring inside the AAR. Here we show you
 how. There are four points to be aware of here:</p>
 
-<p>(A) You need to configure Spring to use the Axis2 Service Classloader.</p>
+<p>(A) You need to configure Spring to use the Axis2 Service Classloader. See the 
+  <a href="#263">Known issues running Spring inside the AAR</a> area </p>
 
 <p>(B) Its up to you to load Spring, though we give an example below.</p>
 
@@ -331,9 +333,9 @@ SpringAppContextAwareObjectSupplier is the best choice.</p>
 the AAR under the lib directory.</p>
 <ul>
   <li><strong><a name="261"></a>The Spring inside an AAR layout</strong>
+</ul>
     <source>
-    <pre>
-./springExample.aar
+    <pre>./springExample.aar
 ./META-INF
 ./META-INF/MANIFEST.MF
 ./META-INF/services.xml
@@ -345,10 +347,10 @@ the AAR under the lib directory.</p>
 ./spring/MyBean.class
 ./spring/MyBeanImpl.class
 ./spring/SpringAwareService.class
-./spring/SpringInit.class
-    </pre>
-    </source></li>
-  <li><strong><a name="262"></a>The Spring inside an AAR init class</strong>
+./spring/SpringInit.class </pre> </source>
+<ul>
+  <li><strong><a name="262"></a>The Spring inside an AAR init class</strong></li>
+</ul>
     <p>One way to initialize Spring is to use the
     org.apache.axis2.engine.Service. </p>
     <p>IMPORTANT: this interface at the time of this writing is being
@@ -409,14 +411,18 @@ public class SpringInit implements Service {
         }
     }
 }</pre>
-    </source><p>Here's the services.xml that now includes SpringInit and the
-    needed load-on-startup parameter.</p>
+    </source>
+    <p>Here's the services.xml that now includes SpringInit and the
+    needed load-on-startup parameter. There is also the forceTCCL parameter which is needed
+    when loading Spring in the AAR - see the <a href="#263">Known issues running Spring inside the AAR</a>
+    area</p>
     <source><pre>&lt;serviceGroup&gt;
   &lt;service name="SpringInit"&gt;
     &lt;description&gt;
         This is a spring sample Web Service with two operations.
     &lt;/description&gt;
     &lt;parameter name="ServiceClass" locked="false"&gt;spring.SpringInit&lt;/parameter&gt;
+    &lt;parameter name="forceTCCL" locked="false"&gt;true&lt;/parameter&gt;
     &lt;parameter name="load-on-startup" locked="false"&gt;true&lt;/parameter&gt;
     &lt;operation name="springInit"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
@@ -433,7 +439,31 @@ public class SpringInit implements Service {
      &lt;/operation&gt;
   &lt;/service&gt;
 &lt;/serviceGroup&gt;</pre>
+</source>
+<ul>
+  <li>
+    <strong><a name="263"></a>Known issues running Spring inside the AAR</strong>
   </li>
 </ul>
-</source></body>
+    <p>The Axis2 classloader strategy by default does not permit Spring to run inside the AAR. To allow
+    Spring to run inside the AAR, the forceTCCL parameter is used in the services.xml as shown in the example
+    above. The behavior of forceTCCL was the default in the developement cycle in between 1.0 and 1.1, but 
+    it resulted in the JIRA issue AXIS2-1214 - essentially problems with getting an initContext.lookup() 
+    handle inside the AAR. Spring users typically have little desire to use initContext.lookup() however, 
+    as they get their Datasources via org.springframework.jdbc.datasource.DriverManagerDataSource in an
+    xml file or with annotations. For ejb home references and the like, Spring provides JndiObjectFactoryBean.
+    While fully testing JndiObjectFactoryBean with ejb has not been done yet - if you do, please send a message 
+    to the axis users list - Datasources via Spring inside the AAR have been tested. Basically it works as 
+    typically done with Spring, though if you are passing Hibernate XML files you need to put them in a 
+    place where Spring will find them. The most flexible way is as follows, using logging in DEBUG mode
+    to see were Spring will look in your jar / class locations: </p>
+    <source><pre>
+    &lt;bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
+                &lt;property name="mappingLocations"&gt;
+                   &lt;value&gt;classpath*:**/Asset.hbm.xml&lt;/value&gt;
+                &lt;/property&gt;
+                ...
+    &lt;/bean&gt; 
+</pre> </source>
+</body>
 </html>
