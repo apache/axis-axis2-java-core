@@ -1590,9 +1590,12 @@
                                 </xsl:when>
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
+                                    <xsl:if test="@nillable">
+                                       if (!"true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                    </xsl:if>
                                     java.lang.String content = reader.getElementText();
                                     <xsl:if test="not(enumFacet)">
-                                        <xsl:if test="$propertyTypeName=$propertyType">
+                                    <xsl:if test="$propertyTypeName=$propertyType">
                                             int index = content.indexOf(":");
                                             java.lang.String prefix ="";
                                             java.lang.String namespaceuri ="";
@@ -1602,14 +1605,19 @@
                                              }
                                              object.set<xsl:value-of select="$javaName"/>(
                                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(content,namespaceuri));
-                                         </xsl:if>
-                                         <xsl:if test="not($propertyTypeName=$propertyType)">
+                                    </xsl:if>
+                                    <xsl:if test="not($propertyTypeName=$propertyType)">
                                               object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
-                                         </xsl:if>
+                                    </xsl:if>
                                     </xsl:if>
                                     <xsl:if test="(enumFacet)">
                                     object = <xsl:value-of select="$name"/>.fromString(content);
+                                    </xsl:if>
+                                    <xsl:if test="@nillable">
+                                       } else {
+                                           reader.getElementText(); // throw away text nodes if any.
+                                       }
                                     </xsl:if>
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
@@ -2582,6 +2590,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 </xsl:when>
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
+                                    <xsl:if test="@nillable">
+                                       if (!"true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                    </xsl:if>
                                     java.lang.String content = reader.getElementText();
                                     <xsl:if test="$propertyTypeName=$propertyType">
                                             int index = content.indexOf(":");
@@ -2594,10 +2605,16 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                              object.set<xsl:value-of select="$javaName"/>(
                                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(content,namespaceuri));
                                          </xsl:if>
-                                         <xsl:if test="not($propertyTypeName=$propertyType)">
+                                    <xsl:if test="not($propertyTypeName=$propertyType)">
                                               object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                                           </xsl:if>
+                                    <xsl:if test="@nillable">
+                                        } else {
+                                            reader.getElementText(); // throw away text nodes if any.
+                                        }
+                                    </xsl:if>
+
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
