@@ -119,32 +119,20 @@ public class SCTIssuer implements TokenIssuer {
 
             String tokenType = data.getTokenType();
 
+            OMElement reqAttachedRef = null;
+            OMElement reqUnattachedRef = null;
             if (config.addRequestedAttachedRef) {
-                if (wstVersion == RahasConstants.VERSION_05_02) {
-                    TrustUtil.createRequestedAttachedRef(wstVersion,
+                reqAttachedRef = TrustUtil.createRequestedAttachedRef(wstVersion,
                                                          rstrElem,
                                                          "#" + sct.getID(),
                                                          tokenType);
-                } else {
-                    TrustUtil.createRequestedAttachedRef(wstVersion,
-                                                         rstrElem,
-                                                         "#" + sct.getID(),
-                                                         tokenType);
-                }
             }
 
             if (config.addRequestedUnattachedRef) {
-                if (wstVersion == RahasConstants.VERSION_05_02) {
-                    TrustUtil.createRequestedUnattachedRef(wstVersion,
+                reqUnattachedRef = TrustUtil.createRequestedUnattachedRef(wstVersion,
                                                            rstrElem,
                                                            sct.getIdentifier(),
                                                            tokenType);
-                } else {
-                    TrustUtil.createRequestedUnattachedRef(wstVersion,
-                                                           rstrElem,
-                                                           sct.getIdentifier(),
-                                                           tokenType);
-                }
             }
 
             //Creation and expiration times
@@ -167,6 +155,9 @@ public class SCTIssuer implements TokenIssuer {
                                        (OMElement) sct.getElement(),
                                        creationTime,
                                        expirationTime);
+            
+            sctToken.setUnattachedReference(reqAttachedRef.getFirstElement());
+            sctToken.setAttachedReference(reqAttachedRef.getFirstElement());
 
             //Add the RequestedProofToken
             TokenIssuerUtil.handleRequestedProofToken(data,

@@ -57,7 +57,7 @@ public class Axis2Util {
     
     public static void useDOOM(boolean isDOOMRequired) {
         if(isDOOMRequired) {
-            if(isUseDOOM()) {
+            if(!isUseDOOM()) {
                 System.setProperty(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY, SOAP11Factory.class.getName());
                 System.setProperty(OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY, SOAP12Factory.class.getName());
                 System.setProperty(OMAbstractFactory.OM_FACTORY_NAME_PROPERTY, OMDOMFactory.class.getName());

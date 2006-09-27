@@ -53,24 +53,7 @@ public class TokenCallbackHandler implements CallbackHandler {
                     if(tok != null) {
                         //Get the secret and set it in the callback object
                         pc.setKey(tok.getSecret());
-                    } else {
-                        //Try the unattached refs
-                        Token[] tokens = store.getValidTokens();
-                        for (int j = 0; j < tokens.length; j++) {
-                            OMElement elem = tokens[j].getAttachedReference();
-                            if(elem != null && id.equals(this.getIdFromSTR(elem))) {
-                                pc.setKey(tokens[j].getSecret());
-                                return;
-                            }
-                            elem = tokens[j].getUnattachedReference();
-                            if(elem != null && id.equals(this.getIdFromSTR(elem))) {
-                                pc.setKey(tokens[j].getSecret());
-                                return;
-                            }
-                            
-                        }
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw new IOException(e.getMessage());
@@ -83,20 +66,6 @@ public class TokenCallbackHandler implements CallbackHandler {
         }
     }
     
-    private String getIdFromSTR(OMElement str) {
-//      ASSUMPTION:SecurityTokenReference/KeyIdentifier
-        OMElement child = str.getFirstElement();
-        if(child == null) {
-            return null;
-        }
-        
-        if (child.getQName().equals(new QName(WSConstants.SIG_NS, "KeyInfo"))) {
-            return child.getText();
-        } else if(child.getQName().equals(Reference.TOKEN)) {
-            return child.getAttributeValue(new QName("URI"));
-        } else {
-            return null;
-        }
-    }
+
 
 }

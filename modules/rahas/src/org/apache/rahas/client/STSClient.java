@@ -51,8 +51,8 @@ import org.apache.ws.security.conversation.dkalgo.P_SHA1;
 import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.processor.EncryptedKeyProcessor;
 import org.apache.ws.security.util.WSSecurityUtil;
-import org.apache.xml.security.signature.XMLSignature;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -139,21 +139,25 @@ public class STSClient {
      * @throws TrustException
      */
     public boolean cancelToken(String issuerAddress,
-                               String tokenId) throws TrustException {
+                               String tokenId,
+                               String action) throws TrustException {
         try {
             QName rstQn = new QName("cancelSecurityToken");
             String requestType =
                     TrustUtil.getWSTNamespace(version) + RahasConstants.REQ_TYPE_CANCEL;
             ServiceClient client = getServiceClient(rstQn, issuerAddress);
+            if(action != null) {
+                client.getOptions().setAction(action);
+            }
+            
             return processCancelResponse(client.sendReceive(rstQn,
-                                                            createCancelRequest(requestType,
-                                                                                tokenId)));
+                                                            createCancelRequest(tokenId)));
         } catch (AxisFault e) {
             log.error("errorInCancelingToken", e);
             throw new TrustException("errorInCancelingToken", e);
         }
     }
-
+    
     private ServiceClient getServiceClient(QName rstQn,
                                            String issuerAddress) throws AxisFault {
         AxisService axisService =
@@ -443,7 +447,6 @@ public class STSClient {
             while (templateChildren.hasNext()) {
                 OMNode child = (OMNode) templateChildren.next();
                 rst.addChild(child);
-
                 //Look for the key size element
                 if (child instanceof OMElement
                     && ((OMElement) child).getQName().equals(
@@ -494,13 +497,14 @@ public class STSClient {
             throw new TrustException("errorSettingUpRequestorEntropy", e);
         }
 
+        
         return rst;
+        
     }
 
-    private OMElement createCancelRequest(String requestType,
-                                          String tokenId) throws TrustException {
+    private OMElement createCancelRequest(String tokenId) throws TrustException {
 
-        return TrustUtil.createCancelRequest(requestType, tokenId, version);
+        return TrustUtil.createCancelRequest(tokenId, version);
     }
 
     /**

@@ -130,7 +130,9 @@ public class WSDoAllSender extends WSDoAllHandler {
                 String sts = config.getStsEPRAddress();
                 if(sts != null) {
                   //Use a security token service
-                  STSRequester.issueRequest(config);
+                    Axis2Util.useDOOM(false);
+                    STSRequester.issueRequest(config);
+                    Axis2Util.useDOOM(true);
                 } else {
                     //Create an an SCT, include it in an RSTR 
                     // and add the RSTR to the header

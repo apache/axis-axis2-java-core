@@ -442,8 +442,7 @@ public class TrustUtil {
 
     }
 
-    public static OMElement createCancelRequest(String requestType,
-                                                String tokenId,
+    public static OMElement createCancelRequest(String tokenId,
                                                 int version) throws TrustException {
         /*
        <wst:RequestSecurityToken>
@@ -460,9 +459,9 @@ public class TrustUtil {
         </wst:RequestSecurityToken>
         */
         OMElement rst = TrustUtil.createRequestSecurityTokenElement(version);
-        TrustUtil.createRequestTypeElement(version, rst, requestType);
+        TrustUtil.createRequestTypeElement(version, rst, RahasConstants.REQ_TYPE_CANCEL);
         OMElement cancelTargetEle = TrustUtil.createCancelTargetElement(version, rst);
-        OMFactory factory = DOOMAbstractFactory.getOMFactory();
+        OMFactory factory = rst.getOMFactory();
         OMElement secTokenRefEle =
                 factory.createOMElement(RahasConstants.CancelBindingLocalNames.SECURITY_TOKEN_REF,
                                         WSSE_NAMESPACE_URI,

@@ -264,7 +264,9 @@ public class AddressingOutHandler extends AddressingHandler {
             epr.setAddress(anonymous);
         }
 
-        OMElement soapHeaderBlock = EndpointReferenceHelper.toOM(epr, new QName(namespace, headerName, prefix), namespace);
+        OMElement soapHeaderBlock = EndpointReferenceHelper.toOM(envelope.getOMFactory(), 
+                                        epr, 
+                                        new QName(namespace, headerName, prefix), namespace);
         envelope.getHeader().addChild(soapHeaderBlock);
     }
 

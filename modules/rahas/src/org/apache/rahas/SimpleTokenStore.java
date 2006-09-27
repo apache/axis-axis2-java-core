@@ -16,6 +16,12 @@
 
 package org.apache.rahas;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.message.token.Reference;
+
+import javax.xml.namespace.QName;
+
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -107,7 +113,27 @@ public class SimpleTokenStore implements TokenStorage {
     }
 
     public Token getToken(String id) throws TrustException {
-        return (Token) this.tokens.get(id);
+        processTokenExpiry();
+        Token token = (Token) this.tokens.get(id);
+        
+        if(token == null) {
+            //Try the unattached refs
+            for (Iterator iterator = this.tokens.values().iterator(); iterator.hasNext();) {
+                Token tempToken = (Token) iterator.next();
+                OMElement elem = tempToken.getAttachedReference();
+                if(elem != null && id.equals(this.getIdFromSTR(elem))) {
+                    token = tempToken;
+                }
+                elem = tempToken.getUnattachedReference();
+                if(elem != null && id.equals(this.getIdFromSTR(elem))) {
+                    token = tempToken;
+                }
+                
+            }
+        }
+
+        
+        return token;
     }
 
     protected void processTokenExpiry() throws TrustException {
@@ -118,6 +144,22 @@ public class SimpleTokenStore implements TokenStorage {
                 token.setState(Token.EXPIRED);
                 update(token);
             }
+        }
+    }
+    
+    private String getIdFromSTR(OMElement str) {
+//      ASSUMPTION:SecurityTokenReference/KeyIdentifier
+        OMElement child = str.getFirstElement();
+        if(child == null) {
+            return null;
+        }
+        
+        if (child.getQName().equals(new QName(WSConstants.SIG_NS, "KeyInfo"))) {
+            return child.getText();
+        } else if(child.getQName().equals(Reference.TOKEN)) {
+            return child.getAttributeValue(new QName("URI")).substring(1);
+        } else {
+            return null;
         }
     }
 }

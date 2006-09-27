@@ -16,16 +16,24 @@
 
 package org.apache.rampart;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.rahas.RahasConstants;
+import org.apache.rahas.TrustException;
+import org.apache.rahas.TrustUtil;
 import org.apache.rampart.builder.AsymmetricBindingBuilder;
 import org.apache.rampart.builder.SymmetricBindingBuilder;
 import org.apache.rampart.builder.TransportBindingBuilder;
 import org.apache.rampart.policy.RampartPolicyData;
+import org.apache.rampart.util.Axis2Util;
+import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSSecurityException;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class MessageBuilder {
     
@@ -34,11 +42,38 @@ public class MessageBuilder {
     public void build(MessageContext msgCtx) throws WSSPolicyException,
             RampartException, WSSecurityException, AxisFault {
 
+        Axis2Util.useDOOM(true);
+        
         RampartMessageData rmd = new RampartMessageData(msgCtx, true);
+        
         
         RampartPolicyData rpd = rmd.getPolicyData();
         if(rpd == null) {
             return;
+        }
+        
+        String action = msgCtx.getOptions().getAction();
+        System.out.println("MessageBuilder: 52: " + action);
+        if(action !=null && (action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT) ||
+                action.equals(RahasConstants.WST_NS_05_12 + RahasConstants.RSTR_ACTION_CANCEL_SCT))) {
+            
+            //set payload to a cancel request
+            String ctxIdKey = RampartUtil.getContextIdentifierKey(msgCtx);
+            String tokenId = (String)RampartUtil.getContextMap(msgCtx).get(ctxIdKey);
+            try {
+                if(RampartUtil.isTokenValid(rmd, tokenId)) {
+                    OMElement bodyElem = msgCtx.getEnvelope().getBody();
+                    OMElement child = bodyElem.getFirstElement();
+                    OMElement newChild = TrustUtil.createCancelRequest(tokenId, rmd.getWstVersion());
+                    Node importedNode = rmd.getDocument().importNode((Element) newChild, true);
+                    ((Element) bodyElem).replaceChild(importedNode, (Element) child);
+                } else {
+                    throw new RampartException("tokenToBeCancelledInvalid");
+                }
+                
+            } catch (TrustException e) {
+                throw new RampartException("errorInTokenCancellation");
+            }
         }
         
         if(rpd.isTransportBinding()) {

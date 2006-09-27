@@ -77,16 +77,7 @@ public class TokenRequestDispatcherConfig {
             if (cancelerClass == null) {
                 throw new TrustException("missingClassName");
             }
-            String isDefault = cancelerEle.getAttributeValue(DEFAULT_ATTR);
-            if (isDefault != null && "true".equalsIgnoreCase(isDefault)) {
-
-                //Use the first default issuer as the default isser
-                if (conf.defaultCancelerClassName == null) {
-                    conf.defaultCancelerClassName = cancelerClass;
-                } else {
-                    throw new TrustException("badDispatcherConfigMultipleDefaultCancelers");
-                }
-            }
+            conf.defaultCancelerClassName = cancelerClass;
             processConfiguration(cancelerEle, conf, cancelerClass);
         }
 

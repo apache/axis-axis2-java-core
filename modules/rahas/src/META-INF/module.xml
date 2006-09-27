@@ -13,6 +13,7 @@
 		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Issue</actionMapping>
 		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Renew</actionMapping>
 		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Cancel</actionMapping>
+		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/SCT/Cancel</actionMapping>
 		<actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Validate</actionMapping>
 
 		<parameter name="token-dispatcher-configuration">

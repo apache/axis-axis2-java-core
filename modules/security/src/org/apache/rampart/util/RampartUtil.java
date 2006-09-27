@@ -407,13 +407,15 @@ public class RampartUtil {
             String issuerEpr, String action, Policy issuerPolicy) throws RampartException {
 
         try {
+            Axis2Util.useDOOM(false);
             
             STSClient client = new STSClient(rmd.getMsgContext()
                     .getConfigurationContext());
             // Set request action
             client.setAction(action);
             
-            client.setRstTemplate(rstTemplate);
+            OMElement tmpl = Axis2Util.toOM((Element)rstTemplate);            
+            client.setRstTemplate(tmpl);
     
             // Set crypto information
             Crypto crypto = RampartUtil.getSignatureCrypto(rmd.getPolicyData().getRampartConfig(), 
@@ -438,9 +440,9 @@ public class RampartUtil {
             //Add the token to token storage
             rst.setState(Token.ISSUED);
             rmd.getTokenStorage().add(rst);
-            
+            Axis2Util.useDOOM(true);
             return rst.getId();
-        } catch (TrustException e) {
+        } catch (Exception e) {
             throw new RampartException(e.getMessage(), e);
         }
     }
@@ -599,4 +601,12 @@ public class RampartUtil {
         return (Hashtable)map;
     }
     
+    public static boolean isTokenValid(RampartMessageData rmd, String id) throws RampartException {
+        try {
+            org.apache.rahas.Token token = rmd.getTokenStorage().getToken(id);
+            return token!= null && token.getState() == org.apache.rahas.Token.ISSUED;
+        } catch (TrustException e) {
+            throw new RampartException("errorExtractingToken");
+        } 
+    }
 }

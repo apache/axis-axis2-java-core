@@ -70,9 +70,6 @@ public class RampartReceiver implements Handler {
         try {
             wsResult = engine.process(msgContext);
             
-            //Convert back to LLOM
-            Document doc = ((Element)msgContext.getEnvelope()).getOwnerDocument();
-            msgContext.setEnvelope(Axis2Util.getSOAPEnvelopeFromDOOMDocument(doc));
         } catch (WSSecurityException e) {
             e.printStackTrace();
             throw new AxisFault(e);
@@ -85,7 +82,7 @@ public class RampartReceiver implements Handler {
         } finally {
             // Reset the document builder factory
             DocumentBuilderFactoryImpl.setDOOMRequired(false);
-
+            Axis2Util.useDOOM(false);
         }
         
         if(wsResult == null) {

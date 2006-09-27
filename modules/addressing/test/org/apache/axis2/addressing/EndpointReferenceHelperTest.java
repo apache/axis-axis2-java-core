@@ -55,7 +55,7 @@ public class EndpointReferenceHelperTest extends TestCase {
         epr.addReferenceParameter(rp1Qname,"rp1");
         epr.addReferenceParameter(rp2Qname,"rp2");
         
-        OMElement om = EndpointReferenceHelper.toOM(epr, new QName("http://nsurl","localName","prefix"), AddressingConstants.Final.WSA_NAMESPACE);
+        OMElement om = EndpointReferenceHelper.toOM(omf, epr, new QName("http://nsurl","localName","prefix"), AddressingConstants.Final.WSA_NAMESPACE);
         
         //Test deserialize using fromOM(OMElement)
         EndpointReference deser = EndpointReferenceHelper.fromOM(om);
@@ -133,7 +133,7 @@ public class EndpointReferenceHelperTest extends TestCase {
         epr.addReferenceParameter(rp1Qname,"rp1");
         epr.addReferenceParameter(rp2Qname,"rp2");
         
-        OMElement om = EndpointReferenceHelper.toOM(epr, new QName("http://nsurl","localName","prefix"), AddressingConstants.Submission.WSA_NAMESPACE);
+        OMElement om = EndpointReferenceHelper.toOM(omf, epr, new QName("http://nsurl","localName","prefix"), AddressingConstants.Submission.WSA_NAMESPACE);
         
         //Add some reference properties.
         QName p1Qname = new QName("http://p1uri","refProp1","p1prefix");

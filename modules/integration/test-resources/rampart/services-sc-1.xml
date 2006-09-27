@@ -1,5 +1,6 @@
 <service name="SecureService">
 
+	<module ref="addressing"/>
 	<module ref="rampart"/>
 	<module ref="rahas"/>
 
@@ -191,7 +192,13 @@
 	
     <parameter name="sct-issuer-config">
 		<sct-issuer-config>
-			<cryptoProperties>sctIssuer.properties</cryptoProperties>
+			<cryptoProperties>
+               <crypto provider="org.apache.ws.security.components.crypto.Merlin">
+                    <property name="org.apache.ws.security.crypto.merlin.keystore.type">JKS</property>
+                    <property name="org.apache.ws.security.crypto.merlin.file">sts.jks</property>
+                    <property name="org.apache.ws.security.crypto.merlin.keystore.password">password</property>
+                </crypto>
+			</cryptoProperties>
 			<addRequestedAttachedRef />
 			<addRequestedUnattachedRef />
 
@@ -211,6 +218,14 @@
             -->
             <proofKeyType>BinarySecret</proofKeyType>
         </sct-issuer-config>
+    </parameter>
+	
+	<parameter name="token-canceler-config">
+		<token-canceler-config>
+			<!--<proofToken>EncryptedKey</proofToken>-->
+			<!--<cryptoProperties>sctIssuer.properties</cryptoProperties>-->
+			<!--<addRequestedAttachedRef />-->
+		</token-canceler-config>
     </parameter>
 	
 	

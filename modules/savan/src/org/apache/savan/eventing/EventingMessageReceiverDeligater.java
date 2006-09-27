@@ -83,7 +83,7 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 		OMElement subscribeResponseElement = factory.createOMElement(EventingConstants.ElementNames.SubscribeResponse,ens);
 		OMElement subscriptionManagerElement = null;
 		try {
-			subscriptionManagerElement = EndpointReferenceHelper.toOM(subscriptionManagerEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.SubscriptionManager,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
+			subscriptionManagerElement = EndpointReferenceHelper.toOM(subscribeResponseElement.getOMFactory(), subscriptionManagerEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.SubscriptionManager,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
 		} catch (AxisFault e) {
 			throw new SavanException (e);
 		}

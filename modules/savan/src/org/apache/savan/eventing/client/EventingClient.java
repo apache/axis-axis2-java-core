@@ -244,7 +244,7 @@ public class EventingClient {
 		
 		EndpointReference endToEPR = bean.getEndToEPR();
 		if (bean.getEndToEPR()!=null) {
-			OMElement endToElement = EndpointReferenceHelper.toOM(endToEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.EndTo,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
+			OMElement endToElement = EndpointReferenceHelper.toOM(subscriptionElement.getOMFactory(), endToEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.EndTo,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
 			subscriptionElement.addChild(endToElement);
 		}
 		
@@ -253,7 +253,7 @@ public class EventingClient {
 			throw new Exception ("Delivery EPR is not set");
 		
 		OMElement deliveryElement = factory.createOMElement(EventingConstants.ElementNames.Delivery,ens);
-		OMElement notifyToElement = EndpointReferenceHelper.toOM(deliveryEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.NotifyTo,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
+		OMElement notifyToElement = EndpointReferenceHelper.toOM(subscriptionElement.getOMFactory(), deliveryEPR, new QName(EventingConstants.EVENTING_NAMESPACE,EventingConstants.ElementNames.NotifyTo,EventingConstants.EVENTING_PREFIX), AddressingConstants.Submission.WSA_NAMESPACE);
 
 		deliveryElement.addChild(notifyToElement);
 		subscriptionElement.addChild(deliveryElement);

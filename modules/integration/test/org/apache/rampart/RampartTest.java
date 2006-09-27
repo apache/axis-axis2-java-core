@@ -30,6 +30,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
+import org.apache.rahas.RahasConstants;
 
 import javax.xml.namespace.QName;
 
@@ -73,6 +74,7 @@ public class RampartTest extends TestCase {
                     //Skip the Basic256 tests
                     continue;
                 }
+                options.setAction("urn:echo");
                 options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureService" + i));
                 options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/" + i + ".xml"));
                 serviceClient.setOptions(options);
@@ -87,12 +89,19 @@ public class RampartTest extends TestCase {
                     //Skip the Basic256 tests
                     continue;
                 }
+                options.setAction("urn:echo");
                 options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureServiceSC" + i));
                 options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/sc-" + i + ".xml"));
                 serviceClient.setOptions(options);
 
                 //Blocking invocation
                 serviceClient.sendReceive(getEchoElement());
+                serviceClient.sendReceive(getEchoElement());
+                
+                //Cancel the token
+                options.setAction(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT);
+                serviceClient.sendReceive(getEchoElement());
+                
             }
 
         } catch (Exception e) {

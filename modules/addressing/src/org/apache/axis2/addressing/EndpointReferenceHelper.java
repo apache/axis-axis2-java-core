@@ -157,8 +157,7 @@ public class EndpointReferenceHelper {
      * @return
      * @throws AxisFault
      */
-    public static OMElement toOM(EndpointReference epr, QName qname, String addressingNamespace) throws AxisFault {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
+    public static OMElement toOM(OMFactory fac, EndpointReference epr, QName qname, String addressingNamespace) throws AxisFault {
         OMElement eprElement = null;
         
         if (log.isDebugEnabled()) {

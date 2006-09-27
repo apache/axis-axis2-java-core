@@ -106,7 +106,7 @@ public class TokenCancelerImpl implements TokenCanceler {
             if (referenceEle != null) {
                 OMAttribute uri = referenceEle.getAttribute(QNAME_URI);
                 if (uri != null) {
-                    tokenId = uri.getAttributeValue();
+                    tokenId = uri.getAttributeValue().substring(1);
                 } else {
                     throw new TrustException("cannotDetermineTokenId");
                 }
@@ -147,7 +147,6 @@ public class TokenCancelerImpl implements TokenCanceler {
         }
         OMElement reqTokenCanceledEle =
                 TrustUtil.createRequestedTokenCanceledElement(version, rstrElem);
-        responseEnv.getBody().addChild(reqTokenCanceledEle);
         return responseEnv;
     }
 

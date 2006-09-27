@@ -484,8 +484,6 @@ public abstract class BindingBuilder {
                 
                 dkSign.prepare(doc, rmd.getSecHeader());
                 
-                sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));                          
-                
                 if(rpd.isTokenProtection()) {
                     sigParts.add(new WSEncryptionPart(tok.getId()));
                 }

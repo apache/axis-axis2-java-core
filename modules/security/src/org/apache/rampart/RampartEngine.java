@@ -39,6 +39,11 @@ public class RampartEngine {
         RampartMessageData rmd = new RampartMessageData(msgCtx, false);
         RampartPolicyData rpd = rmd.getPolicyData();
         if(rpd == null) {
+            SOAPEnvelope env = Axis2Util.getSOAPEnvelopeFromDOOMDocument(rmd.getDocument());
+
+            //Convert back to llom since the inflow cannot use llom
+            msgCtx.setEnvelope(env);
+            Axis2Util.useDOOM(false);
             return null;
         }
         Vector results = null;
@@ -53,10 +58,6 @@ public class RampartEngine {
                                 null, 
                                 new TokenCallbackHandler(rmd.getTokenStorage()),
                                 null);
-            
-            //Convert back to llom since the inflow cannot use llom
-            rmd.getMsgContext().setEnvelope(Axis2Util
-                    .getSOAPEnvelopeFromDOOMDocument(rmd.getDocument()));
         } else {
             results = engine.processSecurityHeader(rmd.getDocument(),
                       null, 
@@ -67,7 +68,13 @@ public class RampartEngine {
                               msgCtx.getAxisService().getClassLoader()));
         }
         
-        msgCtx.setEnvelope((SOAPEnvelope)rmd.getDocument().getDocumentElement());
+
+        SOAPEnvelope env = Axis2Util.getSOAPEnvelopeFromDOOMDocument(rmd.getDocument());
+
+        //Convert back to llom since the inflow cannot use llom
+        msgCtx.setEnvelope(env);
+        Axis2Util.useDOOM(false);
+
         return results;
     }
     

@@ -120,6 +120,7 @@ public class WSDoAllReceiver extends WSDoAllHandler {
             // Reset the document builder factory
             DocumentBuilderFactoryImpl.setDOOMRequired(false);
 
+            Axis2Util.useDOOM(false);
             if (doDebug) {
                 log.debug("WSDoAllReceiver: exit invoke()");
             }

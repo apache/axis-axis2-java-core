@@ -1,5 +1,6 @@
 <service name="SecureService">
 
+	<module ref="addressing"/>
 	<module ref="rampart"/>
 
 	<parameter locked="false" name="ServiceClass">org.apache.rampart.Service</parameter>

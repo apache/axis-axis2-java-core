@@ -21,6 +21,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -39,9 +40,6 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-/**
- * @author Ruchith Fernando (ruchith.fernando@gmail.com)
- */
 public class MessageBuilderTestBase extends TestCase {
 
     public MessageBuilderTestBase() {
@@ -61,6 +59,9 @@ public class MessageBuilderTestBase extends TestCase {
         MessageContext ctx = new MessageContext();
         ctx.setAxisService(new AxisService("TestService"));
         ctx.setAxisOperation(new OutInAxisOperation(new QName("http://rampart.org", "test")));
+        Options options = new Options();
+        options.setAction("urn:testOperation");
+        ctx.setOptions(options);
 
         XMLStreamReader reader =
                 XMLInputFactory.newInstance().

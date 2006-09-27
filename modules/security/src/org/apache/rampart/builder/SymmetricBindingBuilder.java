@@ -19,6 +19,7 @@ package org.apache.rampart.builder;
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.rahas.RahasConstants;
 import org.apache.rahas.TrustException;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.RampartMessageData;
@@ -483,7 +484,27 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 
                 //TODO check for an existing token and use it 
                 
-                if(rmd.getSecConvTokenId() == null) {
+                String secConvTokenId = rmd.getSecConvTokenId();
+                
+                //The RSTR has to be secured with the cancelled token
+                String action = rmd.getMsgContext().getOptions().getAction();
+                boolean cancelReqResp = action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RSTR_ACTION_CANCEL_SCT) || 
+                                           action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RSTR_ACTION_CANCEL_SCT) ||
+                                           action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT) || 
+                                           action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT);
+                
+                //In the case of the cancel req or resp we should mark the token as cancelled
+                if(secConvTokenId != null && cancelReqResp) {
+                    try {
+                        rmd.getTokenStorage().getToken(secConvTokenId).setState(org.apache.rahas.Token.CANCELLED);
+                    } catch (TrustException e) {
+                        throw new RampartException("errorExtractingToken");
+                    }
+                }
+                
+                if (secConvTokenId == null
+                        || (secConvTokenId != null && 
+                                (!RampartUtil.isTokenValid(rmd, secConvTokenId) && !cancelReqResp))) {
                 
                     log.debug("No SecureConversationToken found, " +
                             "requesting a new token");
@@ -492,9 +513,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                                         (SecureConversationToken) sigTok;
                     
                     try {
-                        
-                        String id = RampartUtil.getSecConvToken(rmd, 
-                                secConvTok);
+
+                        String id = RampartUtil.getSecConvToken(rmd, secConvTok);
                         rmd.setSecConvTokenId(id);
                         
                     } catch (TrustException e) {

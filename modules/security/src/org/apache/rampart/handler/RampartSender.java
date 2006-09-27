@@ -21,8 +21,11 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
+import org.apache.rahas.RahasConstants;
+import org.apache.rahas.TrustUtil;
 import org.apache.rampart.MessageBuilder;
 import org.apache.rampart.RampartException;
+import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSSecurityException;
 

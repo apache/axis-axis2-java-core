@@ -92,6 +92,7 @@ public class RahasConstants {
     public static final String RST_ACTOIN_RENEW = "/RST" + REQ_TYPE_RENEW;
     public static final String RST_ACTION_CANCEL = "/RST" + REQ_TYPE_CANCEL;
     public static final String RST_ACTION_SCT = "/RST/SCT";
+    public static final String RST_ACTION_CANCEL_SCT = "/RST/SCT" + REQ_TYPE_CANCEL;
 
     //RSTR actions
     public static final String RSTR_ACTON_ISSUE = "/RSTR" + REQ_TYPE_ISSUE;
@@ -99,7 +100,7 @@ public class RahasConstants {
     public static final String RSTR_ACTON_RENEW = "/RSTR" + REQ_TYPE_RENEW;
     public static final String RSTR_ACTION_CANCEL = "/RSTR" + REQ_TYPE_CANCEL;
     public static final String RSTR_ACTION_SCT = "/RSTR/SCT";
-
+    public static final String RSTR_ACTION_CANCEL_SCT = "/RSTR/SCT" + REQ_TYPE_CANCEL;
 
     //Token types
     public static final String TOK_TYPE_SAML_10 = "http://docs.oasis-open.org/wss/" +
