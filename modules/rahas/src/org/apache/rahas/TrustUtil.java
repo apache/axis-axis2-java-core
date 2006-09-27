@@ -159,14 +159,6 @@ public class TrustUtil {
                                RahasConstants.WST_PREFIX);
     }
 
-    public static OMElement createtTokenTypeElement(int version,
-                                                    OMElement parent) throws TrustException {
-        return createOMElement(parent,
-                               getWSTNamespace(version),
-                               RahasConstants.LocalNames.TOKEN_TYPE,
-                               RahasConstants.WST_PREFIX);
-    }
-
     public static OMElement createBinarySecretElement(
             int version,
             OMElement parent,

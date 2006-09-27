@@ -170,7 +170,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
             rstrElem = TrustUtil.createRequestSecurityTokenResponseElement(wstVersion, rstrcElem);
         }
 
-        TrustUtil.createtTokenTypeElement(wstVersion,
+        TrustUtil.createTokenTypeElement(wstVersion,
                                           rstrElem).setText(RahasConstants.TOK_TYPE_SAML_10);
 
         if (keyType.endsWith(RahasConstants.KEY_TYPE_SYMM_KEY)) {
