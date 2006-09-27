@@ -319,7 +319,7 @@
             axis2_svc_client_t *svc_client = NULL;
             axis2_options_t *options = NULL;
 
-            axis2_char_t *soap_action = NULL;
+            const axis2_char_t *soap_action = NULL;
             axis2_qname_t *op_qname =  NULL;
             axiom_node_t *payload = NULL;
 
@@ -328,10 +328,10 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = <xsl:value-of select="@name"/>;
+                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(<xsl:value-of select="@name"/>, env, NULL);
                         </xsl:when>
                         <xsl:otherwise>
-                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(<xsl:value-of select="@name"/>, env, NULL);
+                            payload = <xsl:value-of select="@name"/>;
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:if>
