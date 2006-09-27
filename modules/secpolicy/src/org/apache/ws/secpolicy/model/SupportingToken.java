@@ -224,6 +224,9 @@ public class SupportingToken extends AbstractSecurityAssertion implements
 
         // <sp:SupportingToken>
         writer.writeStartElement(prefix, localname, namespaceURI);
+        
+        // xmlns:sp=".."
+        writer.writeNamespace(prefix, namespaceURI);
 
         String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
         if (pPrefix == null) {
