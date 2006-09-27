@@ -1373,18 +1373,26 @@ public class SchemaCompiler {
                 		QName attrTypeName = attribute.getSchemaTypeName();
                 		
                 		Object type = baseSchemaTypeMap.get(attrTypeName);
-                		if (type != null) {
-                		metainf.registerMapping(attrQname,attrQname,
-                        			type.toString(), SchemaConstants.ATTRIBUTE_TYPE);                			
+                		if (type == null) {
+                			XmlSchemaSimpleType simpleType = attribute.getSchemaType();
+                            if(simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
+                                XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction) simpleType.getContent();
+                                QName baseTypeName = restriction.getBaseTypeName();
+                                type = baseSchemaTypeMap.get(baseTypeName);
+                                attrQname = att.getRefName();
+                            }
+                            //TODO: Handle XmlSchemaSimpleTypeUnion and XmlSchemaSimpleTypeList
+                        }
 
-                    		// add optional attribute status if set
-                    		String use = att.getUse().getValue();
-                    		if (use.indexOf("optional") != -1) {
-                    			metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
-                    		}        			
-                		} else {
-                			// TODO: This is no standard type - handle custom types here!
-                		}
+                        if (type != null) {
+                            metainf.registerMapping(attrQname,attrQname,
+                                        type.toString(), SchemaConstants.ATTRIBUTE_TYPE);
+                            // add optional attribute status if set
+                            String use = att.getUse().getValue();
+                            if (use.indexOf("optional") != -1) {
+                                metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                            }        			
+                        }
                 	}
                 }
             }
