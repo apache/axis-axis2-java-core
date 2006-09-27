@@ -49,17 +49,22 @@ public class SCTIssuerConfig extends AbstractIssuerConfig{
                 elem.getFirstChildWithName(ADD_REQUESTED_ATTACHED_REF) != null;
         this.addRequestedUnattachedRef =
                 elem.getFirstChildWithName(ADD_REQUESTED_UNATTACHED_REF) != null;
-        this.cryptoPropertiesFile = cryptoPropertiesElem.getText().trim();
+        if ((cryptoPropertiesElement =
+                cryptoPropertiesElem.getFirstChildWithName(CRYPTO)) == null) { // no children. Hence, prop file shud have been defined
+            this.cryptoPropertiesFile = cryptoPropertiesElem.getText().trim();
+        }
+        // else Props should be defined as children of a crypto element
+        
         OMElement keyCompElem = elem.getFirstChildWithName(KeyComputation.KEY_COMPUTATION);
         if (keyCompElem != null && keyCompElem.getText() != null && !"".equals(keyCompElem)) {
             this.keyComputation = Integer.parseInt(keyCompElem.getText());
         }
     }
-    
+
     public static SCTIssuerConfig load(OMElement elem) throws TrustException {
         return new SCTIssuerConfig(elem);
     }
-    
+
     public static SCTIssuerConfig load(String configFilePath)
             throws TrustException {
         FileInputStream fis;
@@ -71,7 +76,7 @@ public class SCTIssuerConfig extends AbstractIssuerConfig{
             throw new TrustException("errorLoadingConfigFile",
                     new String[] { configFilePath });
         }
-        
+
         return load(builder.getDocumentElement());
     }
 }

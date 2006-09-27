@@ -22,7 +22,13 @@
         <sct-issuer-config>
             <addRequestedAttachedRef/>
             <addRequestedUnattachedRef/>
-            <cryptoProperties>sctIssuer.properties</cryptoProperties>
+            <cryptoProperties>
+               <crypto provider="org.apache.ws.security.components.crypto.Merlin">
+                    <property name="org.apache.ws.security.crypto.merlin.keystore.type">JKS</property>
+                    <property name="org.apache.ws.security.crypto.merlin.file">sts.jks</property>
+                    <property name="org.apache.ws.security.crypto.merlin.keystore.password">password</property>
+                </crypto>
+            </cryptoProperties>
 
             <!--
                Key computation mechanism

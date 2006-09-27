@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @see SAMLTokenIssuer
  */
-public class SAMLTokenIssuerConfig extends AbstractIssuerConfig{
+public class SAMLTokenIssuerConfig extends AbstractIssuerConfig {
 
     /**
      * The QName of the configuration element of the SAMLTokenIssuer
@@ -51,12 +51,6 @@ public class SAMLTokenIssuerConfig extends AbstractIssuerConfig{
      * response or the issued token
      */
     private final static QName ISSUER_KEY_PASSWD = new QName("issuerKeyPassword");
-
-    /**
-     * Element name to include the crypto properties used to load the
-     * information used securing the response
-     */
-    private final static QName CRYPTO_PROPERTIES = new QName("cryptoProperties");
 
     /**
      * Element to specify the lifetime of the SAMLToken
@@ -90,7 +84,7 @@ public class SAMLTokenIssuerConfig extends AbstractIssuerConfig{
             this.proofKeyType = proofKeyElem.getText().trim();
         }
 
-        //The alias of the private key 
+        //The alias of the private key
         OMElement userElem = elem.getFirstChildWithName(ISSUER_KEY_ALIAS);
         if (userElem != null) {
             this.issuerKeyAlias = userElem.getText().trim();
@@ -120,11 +114,12 @@ public class SAMLTokenIssuerConfig extends AbstractIssuerConfig{
 
         OMElement cryptoPropElem = elem.getFirstChildWithName(CRYPTO_PROPERTIES);
         if (cryptoPropElem != null) {
-            this.cryptoPropertiesFile = cryptoPropElem.getText().trim();
-        }
-
-        if (this.cryptoPropertiesFile == null || "".equals(this.cryptoPropertiesFile)) {
-            throw new TrustException("samlPropFileMissing");
+            if ((cryptoPropertiesElement =
+                    cryptoPropElem.getFirstChildWithName(CRYPTO)) == null){
+                // no children. Hence, prop file shud have been defined
+                this.cryptoPropertiesFile = cryptoPropElem.getText().trim();
+            }
+            // else Props should be defined as children of a crypto element
         }
 
         OMElement keyCompElem = elem.getFirstChildWithName(KeyComputation.KEY_COMPUTATION);

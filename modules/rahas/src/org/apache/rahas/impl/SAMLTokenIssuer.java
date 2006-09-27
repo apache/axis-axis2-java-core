@@ -107,8 +107,15 @@ public class SAMLTokenIssuer implements TokenIssuer {
         SOAPEnvelope env =
                 TrustUtil.
                         createSOAPEnvelope(inMsgCtx.getEnvelope().getNamespace().getNamespaceURI());
-        Crypto crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile,
-                                                  inMsgCtx.getAxisService().getClassLoader());
+
+        Crypto crypto;
+        if (config.cryptoPropertiesElement != null) { // crypto props defined as elements
+            crypto = CryptoFactory.getInstance(TrustUtil.toProperties(config.cryptoPropertiesElement),
+                                               inMsgCtx.getAxisService().getClassLoader());
+        } else { // crypto props defined in a properties file
+            crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile,
+                                               inMsgCtx.getAxisService().getClassLoader());
+        }
 
         //Creation and expiration times
         Date creationTime = new Date();
@@ -313,7 +320,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
 
                 data.setEphmeralKey(tempKey);
 
-                //Extract the Encryptedkey DOM element 
+                //Extract the Encryptedkey DOM element
                 encryptedKeyElem = encrKeyBuilder.getEncryptedKeyElement();
             } catch (WSSecurityException e) {
                 throw new TrustException("errorInBuildingTheEncryptedKeyForPrincipal",

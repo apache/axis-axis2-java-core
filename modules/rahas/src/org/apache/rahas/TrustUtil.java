@@ -37,11 +37,15 @@ import javax.xml.namespace.QName;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Properties;
+import java.util.Iterator;
 
 public class TrustUtil {
     private static final String WSSE_NAMESPACE_URI =
             "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
     private static final String WSSE_PREFIX = "wsse";
+    private static final QName PROVIDER = new QName("provider");
+    private static final QName NAME = new QName("name");
 
     /**
      * Create a wsse:Reference element with the given uri and the value type
@@ -481,5 +485,28 @@ public class TrustUtil {
         cancelTargetEle.addChild(secTokenRefEle);
 
         return rst;
+    }
+
+    public static Properties toProperties(OMElement cryptoElem) {
+        Properties properties = new Properties();
+
+        /*
+           Process an element similar to this;
+
+                <crypto provider="org.apache.ws.security.components.crypto.Merlin">
+                    <property name="org.apache.ws.security.crypto.merlin.keystore.type">jks</property>
+                    <property name="org.apache.ws.security.crypto.merlin.file">sts.jks</property>
+                    <property name="org.apache.ws.security.crypto.merlin.keystore.password">password</property>
+                </crypto>
+        */
+        for (Iterator propIter = cryptoElem.getChildElements(); propIter.hasNext();) {
+            OMElement propElem = (OMElement) propIter.next();
+            String name = propElem.getAttribute(NAME).getAttributeValue().trim();
+            String value = propElem.getText().trim();
+            properties.setProperty(name, value);
+        }
+        properties.setProperty("org.apache.ws.security.crypto.provider",
+                               cryptoElem.getAttribute(PROVIDER).getAttributeValue().trim());
+        return properties;
     }
 }

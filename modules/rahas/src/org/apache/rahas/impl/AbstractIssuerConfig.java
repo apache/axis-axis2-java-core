@@ -15,10 +15,12 @@
  */
 package org.apache.rahas.impl;
 
+import org.apache.axiom.om.OMElement;
+
 import javax.xml.namespace.QName;
 
 /**
- * 
+ *
  */
 public abstract class AbstractIssuerConfig {
 
@@ -36,12 +38,20 @@ public abstract class AbstractIssuerConfig {
     public final static QName ADD_REQUESTED_UNATTACHED_REF = new QName("addRequestedUnattachedRef");
     public static final QName PROOF_KEY_TYPE = new QName("proofKeyType");
 
+    /**
+     * Element name to include the crypto properties used to load the
+     * information used securing the response
+     */
+    public final static QName CRYPTO_PROPERTIES = new QName("cryptoProperties");
+    public static final QName CRYPTO = new QName("crypto");
+
     protected int keyComputation = KeyComputation.KEY_COMP_PROVIDE_ENT;
     protected String proofKeyType = TokenIssuerUtil.ENCRYPTED_KEY;
     protected boolean addRequestedAttachedRef;
     protected boolean addRequestedUnattachedRef;
     protected long ttl = 300000;
     protected String cryptoPropertiesFile;
+    protected OMElement cryptoPropertiesElement;
     protected int keySize = 128;
 
 }

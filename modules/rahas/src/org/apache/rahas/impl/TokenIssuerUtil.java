@@ -105,10 +105,16 @@ public class TokenIssuerUtil {
         } else {
             if (TokenIssuerUtil.ENCRYPTED_KEY.equals(config.proofKeyType)) {
                 WSSecEncryptedKey encrKeyBuilder = new WSSecEncryptedKey();
-                Crypto crypto =
-                        CryptoFactory.getInstance(config.cryptoPropertiesFile,
-                                                  data.getInMessageContext().
-                                                          getAxisService().getClassLoader());
+                Crypto crypto;
+                if (config.cryptoPropertiesElement != null) { // crypto props defined as elements
+                    crypto = CryptoFactory.getInstance(TrustUtil.toProperties(config.cryptoPropertiesElement),
+                                                       data.getInMessageContext().
+                                                               getAxisService().getClassLoader());
+                } else { // crypto props defined in a properties file
+                    crypto = CryptoFactory.getInstance(config.cryptoPropertiesFile,
+                                                       data.getInMessageContext().
+                                                               getAxisService().getClassLoader());
+                }
 
                 encrKeyBuilder.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
                 try {
