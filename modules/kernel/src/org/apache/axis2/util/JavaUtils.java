@@ -377,4 +377,26 @@ public class JavaUtils {
         }
         return (String[]) list.toArray(new String[list.size()]);
     }
+
+    public static Class getWrapperClass(Class primitive)
+    {
+        if (primitive == int.class)
+            return java.lang.Integer.class;
+        else if (primitive == short.class)
+            return java.lang.Short.class;
+        else if (primitive == boolean.class)
+            return java.lang.Boolean.class;
+        else if (primitive == byte.class)
+            return java.lang.Byte.class;
+        else if (primitive == long.class)
+            return java.lang.Long.class;
+        else if (primitive == double.class)
+            return java.lang.Double.class;
+        else if (primitive == float.class)
+            return java.lang.Float.class;
+        else if (primitive == char.class)
+            return java.lang.Character.class;
+        
+        return null;
+    }
 }

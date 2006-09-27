@@ -28,6 +28,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.util.StreamWrapper;
+import org.apache.axis2.util.JavaUtils;
 import org.codehaus.jam.*;
 
 import javax.xml.namespace.QName;
@@ -37,6 +38,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -378,6 +380,14 @@ public class BeanUtil {
                 omElement = ProcessElement((Class) javaTypes[count], omElement, helper, parts, omElement.getLocalName(), retObjs, count);
             }
             count ++;
+        }
+
+        // Ensure that we have at least a zero element array
+        for (int i = 0; i < length; i++) {
+            Class clazz = (Class) javaTypes[i];
+            if (retObjs[i] == null && clazz.isArray()) {
+                retObjs[i] = Array.newInstance(clazz.getComponentType(), 0);
+            }
         }
 
         helper.clean();
