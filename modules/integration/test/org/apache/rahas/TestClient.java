@@ -28,7 +28,6 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
-import org.apache.rahas.client.STSClient;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
@@ -135,50 +134,40 @@ public abstract class TestClient extends TestCase {
 
     public abstract void validateRsponse(OMElement resp);
 
-
-    /**
-     * This test will use WS-SecPolicy
-     */
-    public void testWithStsClient() {
-
-        // Get the repository location from the args
-        String repo = Constants.TESTING_PATH + "rahas_client_repo";
-
-        try {
-            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
-                                                                                                                      null);
-
-            STSClient client = new STSClient(configContext);
-
-            Options options = new Options();
-            OutflowConfiguration clientOutflowConfiguration = getClientOutflowConfiguration();
-            if (clientOutflowConfiguration != null) {
-                options.setProperty(WSSHandlerConstants.OUTFLOW_SECURITY, clientOutflowConfiguration.getProperty());
-            }
-            InflowConfiguration clientInflowConfiguration = getClientInflowConfiguration();
-            if (clientInflowConfiguration != null) {
-                options.setProperty(WSSHandlerConstants.INFLOW_SECURITY, clientInflowConfiguration.getProperty());
-            }
-
-            client.setAction(this.getRequestAction());
-            client.setOptions(options);
-            client.setRstTemplate(this.getRSTTemplate());
-            client.setVersion(this.getTrstVersion());
-
-            Token tok =
-                    client.requestSecurityToken(this.getServicePolicy(),
-                                                "http://127.0.0.1:" + port + "/axis2/services/SecureService",
-                                                this.getSTSPolicy(),
-                                                "http://localhost:5555/axis2/services/SecureService");
-
-            assertNotNull("Response token missing", tok);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-
-    }
+//
+//    /**
+//     * This test will use WS-SecPolicy
+//     */
+//    public void testWithStsClient() {
+//
+//        // Get the repository location from the args
+//        String repo = Constants.TESTING_PATH + "rahas_client_repo";
+//
+//        try {
+//            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo,
+//                                                                                                                      null);
+//
+//            STSClient client = new STSClient(configContext);
+//
+//            client.setAction(this.getRequestAction());
+//
+//            client.setRstTemplate(this.getRSTTemplate());
+//            client.setVersion(this.getTrstVersion());
+//
+//            Token tok =
+//                    client.requestSecurityToken(this.getServicePolicy(),
+//                                                "http://127.0.0.1:" + port + "/axis2/services/SecureService",
+//                                                this.getSTSPolicy(),
+//                                                "http://localhost:5555/axis2/services/SecureService");
+//
+//            assertNotNull("Response token missing", tok);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail(e.getMessage());
+//        }
+//
+//    }
 
     public abstract int getTrstVersion();
 

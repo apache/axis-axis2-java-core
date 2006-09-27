@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.rahas.RahasConstants;
+import org.apache.rahas.Token;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
 import org.apache.rahas.client.STSClient;
@@ -320,9 +321,12 @@ public class RampartUtil {
                 RahasConstants.RST_ACTION_SCT);
         
         // Get sts epr
-        String issuerEprAddress = RampartUtil
-                .processIssuerAddress(secConvTok.getIssuerEpr());
-
+        OMElement issuerEpr = secConvTok.getIssuerEpr();
+        String issuerEprAddress = rmd.getMsgContext().getTo().getAddress();
+        if(issuerEpr != null) {
+            issuerEprAddress = RampartUtil.processIssuerAddress(issuerEpr);
+        }
+        
         //Find SC version
         int conversationVersion = rmd.getSecConvVersion();
         
@@ -330,25 +334,21 @@ public class RampartUtil {
                 conversationVersion, 
                 rmd.getWstVersion());
         
-        //Check to see whether there's a specific issuer
         Policy stsPolicy = null;
-        if (issuerEprAddress.equals(rmd.getMsgContext().getOptions().getTo().getAddress())) {
-            log.debug("Issuer address is the same as service " +
-                    "address");
-            stsPolicy = rmd.getServicePolicy();
+
+        //Try boot strap policy
+        Policy bsPol = secConvTok.getBootstrapPolicy();
+        
+        if(bsPol != null) {
+            log.debug("BootstrapPolicy found");
+            bsPol.addAssertion(rmd.getPolicyData().getRampartConfig());
+            stsPolicy = bsPol;
         } else {
-            //Try boot strap policy
-            Policy bsPol = secConvTok.getBootstrapPolicy();
-            if(bsPol != null) {
-                log.debug("BootstrapPolicy found");
-                stsPolicy = bsPol;
-            } else {
-                //No bootstrap policy
-                //Use issuer policy specified in rampart config
-                log.debug("No bootstrap policy, using issuer" +
-                        " policy specified in rampart config");
-                rmd.getPolicyData().getRampartConfig().getTokenIssuerPolicy();
-            }
+            //No bootstrap policy
+            //Use issuer policy specified in rampart config
+            log.debug("No bootstrap policy, using issuer" +
+                    " policy specified in rampart config");
+            stsPolicy = rmd.getPolicyData().getRampartConfig().getTokenIssuerPolicy();
         }
         
         String id = getToken(rmd, rstTemplate,
@@ -436,6 +436,7 @@ public class RampartUtil {
                                             servceEprAddress);
             
             //Add the token to token storage
+            rst.setState(Token.ISSUED);
             rmd.getTokenStorage().add(rst);
             
             return rst.getId();
@@ -574,10 +575,7 @@ public class RampartUtil {
      * @return
      */
     public static String getContextIdentifierKey(MessageContext msgContext) {
-        String service = msgContext.getTo().getAddress();
-        String action = msgContext.getOptions().getAction();
-        
-        return service + ":" + action;
+        return msgContext.getAxisService().getName();
     }
     
     
@@ -588,14 +586,14 @@ public class RampartUtil {
     public static Hashtable getContextMap(MessageContext msgContext) {
         //Fist check whether its there
         Object map = msgContext.getConfigurationContext().getProperty(
-                RampartMessageData.KEY_CONTEXT_MAP);
+                ConversationConstants.KEY_CONTEXT_MAP);
         
         if(map == null) {
             //If not create a new one
             map = new Hashtable();
             //Set the map globally
             msgContext.getConfigurationContext().setProperty(
-                    RampartMessageData.KEY_CONTEXT_MAP, map);
+                    ConversationConstants.KEY_CONTEXT_MAP, map);
         }
         
         return (Hashtable)map;

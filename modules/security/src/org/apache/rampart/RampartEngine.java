@@ -16,6 +16,7 @@
 
 package org.apache.rampart;
 
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.rampart.policy.RampartPolicyData;
@@ -29,6 +30,8 @@ import java.util.Vector;
 
 
 public class RampartEngine {
+
+    
 
     public Vector process(MessageContext msgCtx) throws WSSPolicyException,
     RampartException, WSSecurityException, AxisFault {
@@ -64,6 +67,7 @@ public class RampartEngine {
                               msgCtx.getAxisService().getClassLoader()));
         }
         
+        msgCtx.setEnvelope((SOAPEnvelope)rmd.getDocument().getDocumentElement());
         return results;
     }
     

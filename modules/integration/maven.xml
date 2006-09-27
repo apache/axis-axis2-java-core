@@ -262,6 +262,16 @@
 		    <jar jarfile="target/test-resources/rampart_service_repo/services/SecureService7.aar"
                  basedir="target/temp-ramp"/>
 
+			<!-- Service SC-1 -->
+			<copy overwrite="yes" file="test-resources/rampart/issuer.properties"
+                  tofile="target/temp-ramp/issuer.properties"/>
+				  
+			<copy overwrite="yes" file="test-resources/rampart/services-sc-1.xml"
+                  tofile="target/temp-ramp/META-INF/services.xml"/>
+
+		    <jar jarfile="target/test-resources/rampart_service_repo/services/SecureServiceSC1.aar"
+                 basedir="target/temp-ramp"/>
+				 
 			<!-- Service classes for the SecConv tests -->
 			<mkdir dir="target/temp-sc"/>
 			<mkdir dir="target/temp-sc/META-INF"/>
@@ -272,7 +282,7 @@
                   tofile="target/temp-sc/org/apache/axis2/security/sc/PWCallback.class"/>
 				  
 			<copy overwrite="yes" todir="target/temp-sc">
-            	<fileset dir="test-resources/security">
+            	<fileset dir="test-resources/security/sc">
 					<include name="sctIssuer.properties"/>
 					<include name="sts.jks"/>
 				</fileset>

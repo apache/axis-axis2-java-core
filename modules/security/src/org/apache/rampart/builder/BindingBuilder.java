@@ -482,7 +482,7 @@ public abstract class BindingBuilder {
                 dkSign.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
                 
                 
-                dkSign.prepare(doc);
+                dkSign.prepare(doc, rmd.getSecHeader());
                 
                 sigParts.add(new WSEncryptionPart(rmd.getTimestampId()));                          
                 

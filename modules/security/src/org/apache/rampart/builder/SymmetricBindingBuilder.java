@@ -115,7 +115,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             Element encrDKTokenElem = null;
             
             if(Constants.INCLUDE_ALWAYS.equals(encryptionToken.getInclusion()) ||
-                    Constants.INCLUDE_ONCE.equals(encryptionToken.getInclusion())) {
+                    Constants.INCLUDE_ONCE.equals(encryptionToken.getInclusion()) ||
+                    (rmd.isClientSide() && Constants.INCLUDE_ALWAYS_TO_RECIPIENT.equals(encryptionToken.getInclusion()))) {
                 encrTokenElement = RampartUtil.appendChildToSecHeader(rmd, tok.getToken());
                 attached = true;
             }
@@ -284,9 +285,9 @@ public class SymmetricBindingBuilder extends BindingBuilder {
         
         if(sigToken != null) {
             if(sigToken instanceof SecureConversationToken) {
-                sigTokId = rmd.getIssuedSignatureTokenId();
-            } else if(sigToken instanceof IssuedToken) {
                 sigTokId = rmd.getSecConvTokenId();
+            } else if(sigToken instanceof IssuedToken) {
+                sigTokId = rmd.getIssuedSignatureTokenId();
             }
         } else {
             throw new RampartException("signatureTokenMissing");
@@ -295,7 +296,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
         sigTok = this.getToken(rmd, sigTokId);
 
         if(Constants.INCLUDE_ALWAYS.equals(sigToken.getInclusion()) ||
-                Constants.INCLUDE_ONCE.equals(sigToken.getInclusion())) {
+                Constants.INCLUDE_ONCE.equals(sigToken.getInclusion()) ||
+                (rmd.isClientSide() && Constants.INCLUDE_ALWAYS_TO_RECIPIENT.equals(sigToken.getInclusion()))) {
             sigTokElem = RampartUtil.appendChildToSecHeader(rmd, sigTok.getToken());
         }
 
@@ -350,7 +352,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
         //Encryption
         Token encrToken = rpd.getEncryptionToken();
         Element encrTokElem = null;
-        if(sigToken.equal(encrToken)) {
+        if(sigToken.equals(encrToken)) {
             //Use the same token
             encrTokId = sigTokId;
             encrTok = sigTok;
@@ -360,7 +362,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             encrTok = this.getToken(rmd, encrTokId);
             
             if(Constants.INCLUDE_ALWAYS.equals(encrToken.getInclusion()) ||
-                    Constants.INCLUDE_ONCE.equals(encrToken.getInclusion())) {
+                    Constants.INCLUDE_ONCE.equals(encrToken.getInclusion()) ||
+                    (rmd.isClientSide() && Constants.INCLUDE_ALWAYS_TO_RECIPIENT.equals(encrToken.getInclusion()))) {
                 encrTokElem = (Element)encrTok.getToken();
                 
                 //Add the encrToken element before the sigToken element
@@ -397,17 +400,21 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                     dkEncr.setExternalKey(encrTok.getSecret(), encrTok.getId());
                 }
                 
+                dkEncr.prepare(doc);
                 Element encrDKTokenElem = null;
                 encrDKTokenElem = dkEncr.getdktElement();
-                RampartUtil.insertSiblingAfter(rmd, encrTokElem, encrDKTokenElem);
-                dkEncr.prepare(doc);
+                if(encrTokElem != null) {
+                    RampartUtil.insertSiblingAfter(rmd, encrTokElem, encrDKTokenElem);
+                } else {
+                    RampartUtil.insertSiblingAfter(rmd, this.timestampElement, encrDKTokenElem);
+                }
                 
                 refList = dkEncr.encryptForExternalRef(null, encrParts);
                 
                 RampartUtil.insertSiblingAfter(rmd, 
                                                 encrDKTokenElem, 
                                                 refList);
-                                                
+
             } catch (WSSecurityException e) {
                 throw new RampartException("errorInDKEncr");
             } catch (ConversationException e) {

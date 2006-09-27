@@ -31,8 +31,10 @@ import org.apache.rahas.SimpleTokenStore;
 import org.apache.rahas.TokenStorage;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
+import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.rampart.policy.RampartPolicyBuilder;
 import org.apache.rampart.policy.RampartPolicyData;
+import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
@@ -69,14 +71,9 @@ public class RampartMessageData {
      * Key to hold the WS-SecConv version
      */
     public final static String KEY_WSSC_VERSION = "wscVersion";
-    
-    /**
-     * Key to hod the map of security context identifiers against the 
-     * service epr addresses (service scope) or wsa:Action values (operation 
-     * scope).
-     */
-    public final static String KEY_CONTEXT_MAP = "contextMap";
 
+    public static final String KEY_SCT_ISSUER_POLICY = "sct-issuer-policy";
+    
     private MessageContext msgContext = null;
 
     private RampartPolicyData policyData = null;
@@ -189,12 +186,40 @@ public class RampartMessageData {
                 
             }
             
-            
             if(this.servicePolicy != null){
                 List it = (List)this.servicePolicy.getAlternatives().next();
 
                 //Process policy and build policy data
                 this.policyData = RampartPolicyBuilder.build(it);
+            }
+            
+            if(this.policyData != null) {
+                //Check for RST and RSTR for an SCT
+                RampartConfig rampartConfig = this.policyData.getRampartConfig();
+                if((WSSHandlerConstants.RST_ACTON_SCT.equals(msgContext.getWSAAction())
+                        || WSSHandlerConstants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) &&
+                        rampartConfig.getTokenIssuerPolicy() != null) {
+                    
+                    this.servicePolicy = rampartConfig.getTokenIssuerPolicy();
+                    
+                    /*
+                     * Copy crypto info from the into the new issuer policy 
+                     */
+                    RampartConfig rc = new RampartConfig();
+                    rc.setEncrCryptoConfig(rampartConfig.getEncrCryptoConfig());
+                    rc.setSigCryptoConfig(rampartConfig.getSigCryptoConfig());
+                    rc.setDecCryptoConfig(rampartConfig.getDecCryptoConfig());
+                    rc.setUser(rampartConfig.getUser());
+                    rc.setEncryptionUser(rampartConfig.getEncryptionUser());
+                    rc.setPwCbClass(rampartConfig.getPwCbClass());
+                    
+                    this.servicePolicy.addAssertion(rc);
+                    
+                    List it = (List)this.servicePolicy.getAlternatives().next();
+    
+                    //Process policy and build policy data
+                    this.policyData = RampartPolicyBuilder.build(it);
+                }
             }
             
             this.isClientSide = !msgCtx.isServerSide();

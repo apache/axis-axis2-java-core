@@ -59,6 +59,8 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class RampartConfig implements Assertion {
 
+    private static final String DEFAULT_TIMESTAMP_TTL = "300000";
+
     public final static String NS = "http://ws.apache.org/rampart/policy";
 
     public final static String PREFIX = "rampart";
@@ -95,7 +97,7 @@ public class RampartConfig implements Assertion {
 
     private CryptoConfig decCryptoConfig;
 
-    private String timestampTTL;
+    private String timestampTTL = DEFAULT_TIMESTAMP_TTL;
 
     private String tokenStoreClass;
 

@@ -48,8 +48,10 @@ import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.conversation.dkalgo.P_SHA1;
+import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.processor.EncryptedKeyProcessor;
 import org.apache.ws.security.util.WSSecurityUtil;
+import org.apache.xml.security.signature.XMLSignature;
 import org.w3c.dom.Element;
 
 import javax.security.auth.callback.Callback;
@@ -63,6 +65,8 @@ import java.util.List;
 import java.util.Vector;
 
 public class STSClient {
+
+    private static final String RAMPART_POLICY = "rampartPolicy";
 
     private static Log log = LogFactory.getLog(STSClient.class);
 
@@ -109,10 +113,10 @@ public class STSClient {
             QName rstQn = new QName("requestSecurityToken");
             String requestType =
                     TrustUtil.getWSTNamespace(version) + RahasConstants.REQ_TYPE_ISSUE;
+            
             ServiceClient client = getServiceClient(rstQn, issuerAddress);
-
-            //TODO Set policy in the options to be picked up by the modules
-            //such as rampart
+            
+            client.getOptions().setProperty(RAMPART_POLICY, issuerPolicy);
 
             //Process the STS and service policy policy
             this.processPolicy(issuerPolicy, servicePolicy);
@@ -239,7 +243,7 @@ public class STSClient {
                                                           BINARY_SECRET))) {
                 //First check for the binary secret
                 String b64Secret = child.getText();
-                token.setSecret(Base64.decode(b64Secret));
+                secret = Base64.decode(b64Secret);
             } else if (child.getQName().equals(new QName(ns, WSConstants.ENC_KEY_LN))) {
                 try {
                     Element domChild = (Element) new StAXOMBuilder(
@@ -346,9 +350,15 @@ public class STSClient {
      */
     private String getIdFromSTR(OMElement refElem) {
         //ASSUMPTION:SecurityTokenReference/KeyIdentifier
-        OMElement ki = refElem.getFirstElement();
-        if (ki != null) {
-            return ki.getText();
+        OMElement child = refElem.getFirstElement();
+        if(child == null) {
+            return null;
+        }
+        
+        if (child.getQName().equals(new QName(WSConstants.SIG_NS, "KeyInfo"))) {
+            return child.getText();
+        } else if(child.getQName().equals(Reference.TOKEN)) {
+            return child.getAttributeValue(new QName("URI"));
         } else {
             return null;
         }

@@ -45,7 +45,26 @@
 		<sp:RequireServerEntropy/>
 	  </wsp:Policy>
 	</sp:Trust10>
-	<wspe:Utf816FFFECharacterEncoding xmlns:wspe="http://schemas.xmlsoap.org/ws/2004/09/policy/encoding"/>
+	<ramp:RampartConfig xmlns:ramp="http://ws.apache.org/rampart/policy"> 
+		<ramp:user>alice</ramp:user>
+		<ramp:encryptionUser>bob</ramp:encryptionUser>
+		<ramp:passwordCallbackClass>org.apache.rahas.PWCallback</ramp:passwordCallbackClass>
+		
+		<ramp:signatureCrypto>
+			<ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
+				<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.type">JKS</ramp:property>
+				<ramp:property name="org.apache.ws.security.crypto.merlin.file">test-resources/rahas/policy/store.jks</ramp:property>
+				<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.password">password</ramp:property>
+			</ramp:crypto>
+		</ramp:signatureCrypto>
+		<ramp:encryptionCypto>
+			<ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
+				<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.type">JKS</ramp:property>
+				<ramp:property name="org.apache.ws.security.crypto.merlin.file">test-resources/rahas/policy/store.jks</ramp:property>
+				<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.password">password</ramp:property>
+			</ramp:crypto>
+		</ramp:encryptionCypto>
+	</ramp:RampartConfig>
   </wsp:All>
 </wsp:ExactlyOne>
 </wsp:Policy>

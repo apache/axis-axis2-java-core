@@ -18,6 +18,7 @@ package org.apache.rahas.impl;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.rahas.RahasConstants;
 import org.apache.rahas.RahasData;
@@ -34,6 +35,7 @@ import org.w3c.dom.Element;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 
 public class SCTIssuer implements TokenIssuer {
 
@@ -173,7 +175,13 @@ public class SCTIssuer implements TokenIssuer {
                                                       rstrElem,
                                                       sctToken,
                                                       doc);
+            
+            sctToken.setState(Token.ISSUED);
             TrustUtil.getTokenStore(data.getInMessageContext()).add(sctToken);
+            this.getContextMap(data.getInMessageContext()).put(
+                    this.getContextIdentifierKey(data.getInMessageContext()),
+                    sctToken.getId());
+            
             return env;
         } catch (ConversationException e) {
             throw new TrustException(e.getMessage(), e);
@@ -215,5 +223,35 @@ public class SCTIssuer implements TokenIssuer {
         } else {
             throw new ConversationException("unsupportedSecConvVersion");
         }
+    }
+    
+    /**
+     * Creates the unique (reproducible) id for to hold the context identifier
+     * of the message exchange.
+     * @return
+     */
+    private String getContextIdentifierKey(MessageContext msgContext) {
+        return msgContext.getAxisService().getName();
+    }
+    
+    
+    /**
+     * Returns the map of security context token identifiers
+     * @return
+     */
+    private Hashtable getContextMap(MessageContext msgContext) {
+        //Fist check whether its there
+        Object map = msgContext.getConfigurationContext().getProperty(
+                ConversationConstants.KEY_CONTEXT_MAP);
+        
+        if(map == null) {
+            //If not create a new one
+            map = new Hashtable();
+            //Set the map globally
+            msgContext.getConfigurationContext().setProperty(
+                    ConversationConstants.KEY_CONTEXT_MAP, map);
+        }
+        
+        return (Hashtable)map;
     }
 }

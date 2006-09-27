@@ -151,7 +151,7 @@ public class Token {
             
             OMElement expiresElem =
                     lifetimeElem.getFirstChildWithName(new QName(WSConstants.WSU_NS,
-                                                                 WSConstants.CREATED_LN));
+                                                                 WSConstants.EXPIRES_LN));
             this.expires = zulu.parse(expiresElem.getText());
         } catch (OMException e) {
             throw new TrustException("lifeTimeProcessingError",

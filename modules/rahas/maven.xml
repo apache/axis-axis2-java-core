@@ -19,7 +19,7 @@
         <!-- Copy classes -->
         <copy todir="target/sts">
             <fileset dir="target/classes">
-                <include name="*.class"/>
+                <include name="**/*.class"/>
             </fileset>
         </copy>
         <!-- copy jars -->

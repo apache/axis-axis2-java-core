@@ -16,7 +16,6 @@
 
 package org.apache.rahas;
 
-import java.util.List;
 
 /**
  * The storage interface to store security tokens and
