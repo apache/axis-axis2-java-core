@@ -209,7 +209,7 @@
     </goal>
 
     <!-- ================================================================ -->
-    <!--- Google MTOM Sample -->
+    <!--- MTOM Sample -->
     <!-- ================================================================ -->
 
     <goal name="mtomSample">
@@ -224,16 +224,16 @@
             <ant:fileset dir="script/mtomSample"/>
         </ant:copy>
         <jar destfile="${samples.dir}/mtom/mtomSample.aar">
-            <fileset dir="src/sample/mtom/imagetransfer/service/">
+            <fileset dir="src/sample/mtom/filetransfer/service/">
                 <include name="META-INF/**"/>
             </fileset>
             <fileset dir="target/classes">
-                <include name="sample/mtom/imagetransfer/service/**/*.class"/>
+                <include name="sample/mtom/filetransfer/service/**/*.class"/>
             </fileset>
         </jar>
         <jar destfile="${samples.dir}/mtom/mtomClient.jar">
             <fileset dir="target/classes">
-                <include name="sample/mtom/imagetransfer/client/**/*.class"/>
+                <include name="sample/mtom/filetransfer/client/**/*.class"/>
             </fileset>
         </jar>
     </goal>
