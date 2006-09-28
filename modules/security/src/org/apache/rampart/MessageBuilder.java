@@ -19,6 +19,8 @@ package org.apache.rampart;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rahas.RahasConstants;
@@ -32,6 +34,7 @@ import org.apache.rampart.util.Axis2Util;
 import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSSecurityException;
+import org.apache.ws.security.handler.WSHandlerConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -50,6 +53,17 @@ public class MessageBuilder {
         RampartPolicyData rpd = rmd.getPolicyData();
         if(rpd == null) {
             return;
+        }
+        
+        //Copy the RECV_RESULTS if available
+        if(!rmd.isClientSide()) {
+            OperationContext opCtx = msgCtx.getOperationContext();
+            MessageContext inMsgCtx;
+            if(opCtx != null && 
+                    (inMsgCtx = opCtx.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
+                msgCtx.setProperty(WSHandlerConstants.RECV_RESULTS, 
+                        inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
+            }
         }
         
         String action = msgCtx.getOptions().getAction();

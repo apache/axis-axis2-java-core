@@ -69,11 +69,12 @@ public class RampartTest extends TestCase {
             //TODO : figure this out !!
             boolean basic256Supported = false;
             
-            for (int i = 1; i <= 7; i++) { //<-The number of tests we have
+            for (int i = 1; i <= 8; i++) { //<-The number of tests we have
                 if(!basic256Supported && (i == 3 || i == 4 || i ==5)) {
                     //Skip the Basic256 tests
                     continue;
                 }
+                System.out.println("Testing WS-Sec: custom scenario " + i);
                 options.setAction("urn:echo");
                 options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureService" + i));
                 options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/" + i + ".xml"));
@@ -89,6 +90,7 @@ public class RampartTest extends TestCase {
                     //Skip the Basic256 tests
                     continue;
                 }
+                System.out.println("Testing WS-SecConv: custom scenario " + i);
                 options.setAction("urn:echo");
                 options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureServiceSC" + i));
                 options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/sc-" + i + ".xml"));

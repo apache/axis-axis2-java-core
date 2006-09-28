@@ -27,6 +27,7 @@ import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
@@ -144,7 +145,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     encr.setParts(encrParts);
                     encr.setWsConfig(rmd.getConfig());
                     encr.setDocument(doc);
-                    encr.setUserInfo(config.getEncryptionUser());
+                    RampartUtil.setEncryptionUser(rmd, encr);
                     encr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
                     encr.prepare(doc, RampartUtil.getEncryptionCrypto(config, rmd.getCustomClassLoader()));
 
@@ -361,10 +362,21 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     
                     WSSecEncrypt encr = new WSSecEncrypt();
                     
+                    
+                    if(encrToken.getInclusion().equals(Constants.INCLUDE_NEVER)) {
+                        if(rpd.getWss10() != null && rpd.getWss10().isMustSupportRefKeyIdentifier()) {
+                            encr.setKeyIdentifierType(WSConstants.SKI_KEY_IDENTIFIER);
+                        } else if(rpd.getWss11() != null && rpd.getWss11().isMustSupportRefThumbprint()) {
+                            encr.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+                        }
+                    } else {
+                        encr.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
+                    }
+                    
                     encr.setWsConfig(rmd.getConfig());
                     
                     encr.setDocument(doc);
-                    encr.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
+                    RampartUtil.setEncryptionUser(rmd, encr);
                     encr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
                     encr.prepare(doc, RampartUtil.getEncryptionCrypto(rpd
                             .getRampartConfig(), rmd.getCustomClassLoader()));

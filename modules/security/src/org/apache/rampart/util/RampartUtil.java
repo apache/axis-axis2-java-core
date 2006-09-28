@@ -44,12 +44,15 @@ import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSPasswordCallback;
+import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
 import org.apache.ws.security.components.crypto.CryptoFactory;
 import org.apache.ws.security.conversation.ConversationConstants;
 import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.ws.security.handler.WSHandlerResult;
+import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.util.Loader;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -58,7 +61,9 @@ import javax.crypto.KeyGenerator;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.xml.namespace.QName;
+
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
@@ -609,4 +614,48 @@ public class RampartUtil {
             throw new RampartException("errorExtractingToken");
         } 
     }
+    
+    public static void setEncryptionUser(RampartMessageData rmd, WSSecEncryptedKey encrKeyBuilder) throws RampartException {
+        RampartPolicyData rpd = rmd.getPolicyData();
+        String encrUser = rpd.getRampartConfig().getEncryptionUser();
+        if(encrUser == null || "".equals(encrUser)) {
+            throw new RampartException("missingEncryptionUser");
+        }
+        if(encrUser.equals(WSHandlerConstants.USE_REQ_SIG_CERT)) {
+            Object resultsObj = rmd.getMsgContext().getProperty(WSHandlerConstants.RECV_RESULTS);
+            if(resultsObj != null) {
+                encrKeyBuilder.setUseThisCert(getReqSigCert((Vector)resultsObj));
+            }
+        } else {
+            encrKeyBuilder.setUserInfo(encrUser);
+        }
+    }
+    
+    private static X509Certificate getReqSigCert(Vector results) {
+        /*
+        * Scan the results for a matching actor. Use results only if the
+        * receiving Actor and the sending Actor match.
+        */
+        for (int i = 0; i < results.size(); i++) {
+            WSHandlerResult rResult =
+                    (WSHandlerResult) results.get(i);
+
+            Vector wsSecEngineResults = rResult.getResults();
+            /*
+            * Scan the results for the first Signature action. Use the
+            * certificate of this Signature to set the certificate for the
+            * encryption action :-).
+            */
+            for (int j = 0; j < wsSecEngineResults.size(); j++) {
+                WSSecurityEngineResult wser =
+                        (WSSecurityEngineResult) wsSecEngineResults.get(j);
+                if (wser.getAction() == WSConstants.SIGN) {
+                    return wser.getCertificate();
+                }
+            }
+        }
+        
+        return null;
+    }
+    
 }

@@ -176,7 +176,7 @@ public abstract class BindingBuilder {
             encrKey.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
         }
         try {
-            encrKey.setUserInfo(rpd.getRampartConfig().getEncryptionUser());
+            RampartUtil.setEncryptionUser(rmd, encrKey);
             encrKey.setKeySize(rpd.getAlgorithmSuite().getMaximumSymmetricKeyLength());
             encrKey.setKeyEncAlgo(rpd.getAlgorithmSuite().getAsymmetricKeyWrap());
             

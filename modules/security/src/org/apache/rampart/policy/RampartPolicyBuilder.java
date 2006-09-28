@@ -151,10 +151,7 @@ public class RampartPolicyBuilder {
     }
 
     private static void processWSS10(Wss10 wss10, RampartPolicyData rpd) {
-        System.out
-                .println("Top level PED found: " + wss10.getClass().getName());
-        // TODO
-        // throw new UnsupportedOperationException("TODO");
+        rpd.setWss10(wss10);
     }
 
     /**
@@ -177,6 +174,7 @@ public class RampartPolicyBuilder {
 
     private static void processWSS11(Wss11 wss11, RampartPolicyData rpd) {
         rpd.setSignatureConfirmation(wss11.isRequireSignatureConfirmation());
+        rpd.setWss11(wss11);
     }
 
     /**

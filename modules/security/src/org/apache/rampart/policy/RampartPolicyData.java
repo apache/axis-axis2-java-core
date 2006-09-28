@@ -24,6 +24,8 @@ import org.apache.ws.secpolicy.model.AlgorithmSuite;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.Trust10;
+import org.apache.ws.secpolicy.model.Wss10;
+import org.apache.ws.secpolicy.model.Wss11;
 import org.apache.ws.security.WSEncryptionPart;
 
 import java.util.HashMap;
@@ -108,6 +110,9 @@ public class RampartPolicyData {
     private HashMap signedSupportingTokensIdMap;
     private HashMap endorsingSupportingTokensIdMap;
     private HashMap signedEndorsingSupportingTokensIdMap;
+    
+    private Wss10 wss10;
+    private Wss11 wss11;
     
     /**
      * @return Returns the symmetricBinding.
@@ -592,6 +597,22 @@ public class RampartPolicyData {
             throw new RampartException("invalidSupportingVersionType",
                     new String[] { Integer.toString(type) });
         }
+    }
+
+    public Wss10 getWss10() {
+        return wss10;
+    }
+
+    public void setWss10(Wss10 wss10) {
+        this.wss10 = wss10;
+    }
+
+    public Wss11 getWss11() {
+        return wss11;
+    }
+
+    public void setWss11(Wss11 wss11) {
+        this.wss11 = wss11;
     }
     
 }
