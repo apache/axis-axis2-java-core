@@ -60,7 +60,7 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                         saveTCCL(messageCtx);
                         invokeBusinessLogic(messageCtx, newmsgCtx);
                     } finally {
-                        restoreTCCL();
+                        restoreTCCL(messageCtx);
                     }
                     callback.handleResult(newmsgCtx);
                 } catch (AxisFault e) {

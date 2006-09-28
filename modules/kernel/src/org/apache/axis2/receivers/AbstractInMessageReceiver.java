@@ -35,7 +35,7 @@ public abstract class AbstractInMessageReceiver extends AbstractMessageReceiver 
             saveTCCL(messageCtx);
             invokeBusinessLogic(messageCtx);
         } finally {
-            restoreTCCL();
+            restoreTCCL(messageCtx);
         }
     }
 }

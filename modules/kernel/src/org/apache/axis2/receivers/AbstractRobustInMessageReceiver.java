@@ -35,7 +35,7 @@ public abstract class AbstractRobustInMessageReceiver extends AbstractMessageRec
             saveTCCL(messageCtx);
             invokeBusinessLogic(messageCtx);
         } finally {
-            restoreTCCL();
+            restoreTCCL(messageCtx);
         }
     }
 }

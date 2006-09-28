@@ -130,7 +130,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(Constants.SERVICE_OBJECT_SUPPLIER, supplierName));
-        service.addParameter(new Parameter(Constants.SERVICE_FORCE_TCCL, "true"));
+        service.addParameter(new Parameter(Constants.SERVICE_TCCL, Constants.TCCL_COMPOSITE));
         service.addParameter(new Parameter(SpringAppContextAwareObjectSupplier.SERVICE_SPRING_BEANNAME, beanName));
 
         AxisOperation axisOp = new InOutAxisOperation(opName);
@@ -153,7 +153,7 @@ public class SpringServiceTest extends UtilServerBasedTestCase {
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         service.addParameter(new Parameter(Constants.SERVICE_OBJECT_SUPPLIER, supplierName));
-        service.addParameter(new Parameter(Constants.SERVICE_FORCE_TCCL, "true"));
+        service.addParameter(new Parameter(Constants.SERVICE_TCCL, Constants.TCCL_COMPOSITE));
         service.addParameter(new Parameter(SpringAppContextAwareObjectSupplier.SERVICE_SPRING_BEANNAME, beanName));
 
         AxisOperation axisOp = new OutInAxisOperation(opName);

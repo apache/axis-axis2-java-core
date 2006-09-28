@@ -38,7 +38,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
             saveTCCL(msgContext);
             invokeBusinessLogic(msgContext, outMsgContext);
         } finally {
-            restoreTCCL();
+            restoreTCCL(msgContext);
         }
 
         AxisEngine engine =

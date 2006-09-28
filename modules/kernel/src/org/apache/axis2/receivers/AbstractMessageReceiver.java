@@ -38,26 +38,38 @@ import java.lang.reflect.Method;
 import java.net.URL;
 
 public abstract class AbstractMessageReceiver implements MessageReceiver {
-//    public static final String SERVICE_CLASS = "ServiceClass";
-//    public static final String SERVICE_OBJECT_SUPPLIER = "ServiceObjectSupplier";
     public static final String SCOPE = "scope";
-    protected boolean forceTCCL = false;
+    protected String serviceTCCL = null;
+    public static final String SAVED_TCCL = "_SAVED_TCCL_";
 
     protected void saveTCCL(MessageContext msgContext) {
-        if (forceTCCL && msgContext.getAxisService() != null &&
+        if (serviceTCCL != null && msgContext.getAxisService() != null &&
                 msgContext.getAxisService().getClassLoader() != null) {
-            Thread.currentThread().setContextClassLoader(new MultiParentClassLoader(new URL[]{}, new ClassLoader[]{
-                    msgContext.getAxisService().getClassLoader(),
-                    Thread.currentThread().getContextClassLoader(),
-            }));
+            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
+                msgContext.setProperty(SAVED_TCCL, contextClassLoader);
+                Thread.currentThread().setContextClassLoader(new MultiParentClassLoader(new URL[]{}, new ClassLoader[]{
+                        msgContext.getAxisService().getClassLoader(),
+                        contextClassLoader,
+                }));
+            } else if (serviceTCCL.equals(Constants.TCCL_SERVICE)) {
+                msgContext.setProperty(SAVED_TCCL, contextClassLoader);
+                Thread.currentThread().setContextClassLoader(
+                        msgContext.getAxisService().getClassLoader()
+                );
+            }
         }
     }
 
-    protected void restoreTCCL() {
-        if(forceTCCL) {
-            ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            if (tccl != null && tccl instanceof MultiParentClassLoader) {
-                Thread.currentThread().setContextClassLoader(((MultiParentClassLoader) tccl).getParents()[1]);
+    protected void restoreTCCL(MessageContext msgContext) {
+        if(serviceTCCL != null) {
+            ClassLoader oldTCCL = (ClassLoader) msgContext.getProperty(SAVED_TCCL);
+            if(oldTCCL != null) {
+                if(serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
+                    Thread.currentThread().setContextClassLoader(oldTCCL);
+                } else if (serviceTCCL.equals(Constants.TCCL_SERVICE)) {
+                    Thread.currentThread().setContextClassLoader(oldTCCL);
+                }
             }
         }
     }
@@ -70,18 +82,16 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault
      */
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
-        saveTCCL(msgContext);
         try {
             AxisService service =
                     msgContext.getOperationContext().getServiceContext().getAxisService();
             ClassLoader classLoader = service.getClassLoader();
 
-            if(service.getParameter(Constants.SERVICE_FORCE_TCCL) != null) {
+            if(service.getParameter(Constants.SERVICE_TCCL) != null) {
                 Parameter serviceObjectParam =
-                        service.getParameter(Constants.SERVICE_FORCE_TCCL);
-                String value = ((String)
-                        serviceObjectParam.getValue()).trim();
-                forceTCCL = JavaUtils.isTrue(value);
+                        service.getParameter(Constants.SERVICE_TCCL);
+                serviceTCCL = ((String)
+                        serviceObjectParam.getValue()).trim().toLowerCase();
             }
             // allow alternative definition of makeNewServiceObject
             if (service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER) != null) {
@@ -110,8 +120,6 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
-        } finally {
-            restoreTCCL();
         }
     }
 
