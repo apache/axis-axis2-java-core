@@ -100,6 +100,9 @@ public class Wss10 extends AbstractSecurityAssertion {
         // <sp:Wss10>
         writer.writeStartElement(prefix, localname, namespaceURI);
         
+        // xmlns:sp=".."
+        writer.writeNamespace(prefix, namespaceURI);
+        
         String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
         if (pPrefix == null) {
             writer.setPrefix(Constants.POLICY.getPrefix(), Constants.POLICY.getNamespaceURI());
