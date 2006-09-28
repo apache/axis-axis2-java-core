@@ -52,6 +52,9 @@ public class WSDL2Code {
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg15"));
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg16"));
         System.out.println(CodegenMessages.getMessage("wsdl2code.arg17"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg18"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg19"));
+        System.out.println(CodegenMessages.getMessage("wsdl2code.arg20"));
 
         System.exit(0);
     }
