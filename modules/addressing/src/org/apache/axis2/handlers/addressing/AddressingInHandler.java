@@ -204,8 +204,8 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                         new QName(AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
         String relationshipTypeDefaultValue =
                 Submission.WSA_NAMESPACE.equals(addressingNamespace)
-                        ? Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE
-                        : Final.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE;
+                        ? Submission.WSA_DEFAULT_RELATIONSHIP_TYPE
+                        : Final.WSA_DEFAULT_RELATIONSHIP_TYPE;
         RelatesTo relatesTo =
                 new RelatesTo(
                         address,

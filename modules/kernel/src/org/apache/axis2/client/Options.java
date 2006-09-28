@@ -263,10 +263,11 @@ public class Options {
     }
 
     /**
-     * Get WS-Addressing RelatesTo item which has the specific type
-     * "http://www.w3.org/2005/08/addressing/reply"
+     * Return a single instance of WS-Addressing RelatesTo that has a relationship
+     * type of either "http://www.w3.org/2005/08/addressing/reply" or "wsa:Reply".
+     * If no such instance of RelatesTo can be found then return <code>null</code>.
      *
-     * @return item
+     * @return an instance of {@link RelatesTo}
      */
     public RelatesTo getRelatesTo() {
         if (relationships == null && parent != null) {
@@ -276,7 +277,7 @@ public class Options {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
             if (relationshipType.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)
-                    || relationshipType.equals(AddressingConstants.Submission.WSA_RELATES_TO_RELATIONSHIP_TYPE_DEFAULT_VALUE))
+                    || relationshipType.equals(AddressingConstants.Submission.WSA_DEFAULT_RELATIONSHIP_TYPE))
             {
                 return relatesTo;
             }
