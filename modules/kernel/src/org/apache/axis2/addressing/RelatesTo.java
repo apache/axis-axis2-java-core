@@ -39,10 +39,10 @@ public class RelatesTo implements Serializable {
     /**
      * Constructor RelatesTo
      *
-     * @param address
+     * @param value
      */
-    public RelatesTo(String address) {
-        this.value = address;
+    public RelatesTo(String value) {
+        this.value = value;
     }
 
     /**
@@ -89,5 +89,14 @@ public class RelatesTo implements Serializable {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return "Identifier: " + value
+             + ", Relationship type: " + relationshipType;
     }
 }

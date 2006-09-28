@@ -134,6 +134,19 @@ public class EndpointReference implements Serializable {
     }
     
     /**
+     * hasNoneAddress
+     * 
+     * @return true if the address is the 'None URI' from the final addressing spec.
+     */
+    public boolean hasNoneAddress() {
+        boolean result = AddressingConstants.Final.WSA_NONE_URI.equals(address);
+        if(log.isTraceEnabled()){
+            log.trace("hasNoneAddress: "+address+" is None: "+result);
+        }
+        return result;
+    }
+    
+    /**
      * @param localName
      * @param ns
      * @param value
@@ -222,6 +235,28 @@ public class EndpointReference implements Serializable {
      */
     public void setReferenceParameters(Map referenceParameters) {
         this.referenceParameters = referenceParameters;
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        StringBuffer buffer = new StringBuffer("Address: " + address);
+        
+        if (metaData != null)
+            buffer.append(", Metadata: " + metaData);
+        
+        if (referenceParameters != null)
+            buffer.append(", Reference Parameters: " + referenceParameters);
+        
+        if (extensibleElements != null)
+            buffer.append(", Extensibility elements: " + extensibleElements);
+        
+        if (attributes != null)
+            buffer.append(", Attributes: " + attributes);
+        
+        return buffer.toString();
     }
 
     /**
