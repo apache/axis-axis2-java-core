@@ -227,11 +227,21 @@ public class RampartConfig implements Assertion {
             writer.writeEndElement();
             
         }
+        
+        if (decCryptoConfig != null) {
+            writer.writeStartElement(NS, DEC_CRYPTO_LN);
+            decCryptoConfig.serialize(writer);
+            writer.writeEndElement();
+        }
+        
         if (sigCryptoConfig != null) {
             writer.writeStartElement(NS, SIG_CRYPTO_LN);
             sigCryptoConfig.serialize(writer);
             writer.writeEndElement();
         }
+        
+        
+        
 
         writer.writeEndElement();
 
