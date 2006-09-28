@@ -105,7 +105,7 @@ public class RampartReceiver implements Handler {
             header = msgContext.getEnvelope().getHeader();
         } catch (OMException ex) {
             throw new AxisFault(
-                    "WSDoAllReceiver: cannot get SOAP header after security processing",
+                    "RampartReceiver: cannot get SOAP header after security processing",
                     ex);
         }
 
