@@ -354,7 +354,7 @@ ready for deployment:</p>
   
   &lt;property name="build" value="build"/&gt;
   &lt;property name="src" value="src"/&gt;
-  &lt;property name="build.classes"      value="build/classes" /&gt;
+  &lt;property name="build.classes" value="build/classes" /&gt;
 
   &lt;path id="axis.classpath"&gt;
      &lt;pathelement location="build/classes" /&gt;
@@ -383,22 +383,22 @@ ready for deployment:</p>
     &lt;echo message="Available Targets:" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" Compiling:" /&gt;
-    &lt;echo message="  compile           - Compiles the WSDL2Java source code" /&gt;
+    &lt;echo message="  compile - Compiles the WSDL2Java source code" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" Compiling client:" /&gt;
-    &lt;echo message="  compile_client           - Compiles the client source code" /&gt;
+    &lt;echo message="  compile_client - Compiles the client source code" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" Cleaning up:" /&gt;
-    &lt;echo message="  clean             - Delete class files" /&gt;
+    &lt;echo message="  clean - Delete class files" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" WSDL:" /&gt;
-    &lt;echo message="  wsdl2java               - Generate source from WSDL" /&gt;
+    &lt;echo message="  wsdl2java - Generate source from WSDL" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" AAR:" /&gt;
-    &lt;echo message="  aar               - Generate an .aar for deployment into WEB-INF/services" /&gt;
+    &lt;echo message="  aar - Generate an .aar for deployment into WEB-INF/services" /&gt;
     &lt;echo message=" " /&gt;
     &lt;echo message=" Executing:" /&gt;
-    &lt;echo message="  runLogin               - Execute the runLogin client" /&gt;
+    &lt;echo message="  runLogin - Execute the runLogin client" /&gt;
   &lt;/target&gt;
 
   &lt;target name="prepare" &gt;
@@ -417,8 +417,7 @@ ready for deployment:</p>
      srcdir="output"
      destdir="${build.classes}"
      deprecation="true"
-     failonerror="true" debug="true"
-    &gt;
+     failonerror="true" debug="true"&gt;
 
      &lt;classpath refid="axis.classpath"/&gt; 
     &lt;/javac&gt;
@@ -510,7 +509,7 @@ specify the axis.home path pointing to the axis2 binary distribution</p>
 
 <p>Below is a validated WSDL Document following the Document/Literal Style.
 The name of this file matches the name used in the WSDL2Java ant task above,
-LoginEndpoint.wsdl</p>
+LoginEndpoint.wsdl.</p>
 <pre class="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
 &lt;definitions name="LoginService" targetNamespace="http://login" xmlns:tns="http://login" 
