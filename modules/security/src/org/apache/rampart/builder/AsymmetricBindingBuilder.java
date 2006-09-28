@@ -147,6 +147,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     encr.setDocument(doc);
                     RampartUtil.setEncryptionUser(rmd, encr);
                     encr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
+                    encr.setKeyEncAlgo(rpd.getAlgorithmSuite().getAsymmetricKeyWrap());
                     encr.prepare(doc, RampartUtil.getEncryptionCrypto(config, rmd.getCustomClassLoader()));
 
                     Element bstElem = encr.getBinarySecurityTokenElement();
@@ -378,6 +379,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     encr.setDocument(doc);
                     RampartUtil.setEncryptionUser(rmd, encr);
                     encr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
+                    encr.setKeyEncAlgo(rpd.getAlgorithmSuite().getAsymmetricKeyWrap());
                     encr.prepare(doc, RampartUtil.getEncryptionCrypto(rpd
                             .getRampartConfig(), rmd.getCustomClassLoader()));
                     

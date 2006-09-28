@@ -419,8 +419,7 @@ public class RampartUtil {
             // Set request action
             client.setAction(action);
             
-            OMElement tmpl = Axis2Util.toOM((Element)rstTemplate);            
-            client.setRstTemplate(tmpl);
+            client.setRstTemplate(rstTemplate);
     
             // Set crypto information
             Crypto crypto = RampartUtil.getSignatureCrypto(rmd.getPolicyData().getRampartConfig(), 

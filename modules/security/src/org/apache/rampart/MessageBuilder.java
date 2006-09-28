@@ -24,7 +24,6 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rahas.RahasConstants;
-import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
 import org.apache.rampart.builder.AsymmetricBindingBuilder;
 import org.apache.rampart.builder.SymmetricBindingBuilder;
@@ -79,13 +78,14 @@ public class MessageBuilder {
                     OMElement bodyElem = msgCtx.getEnvelope().getBody();
                     OMElement child = bodyElem.getFirstElement();
                     OMElement newChild = TrustUtil.createCancelRequest(tokenId, rmd.getWstVersion());
-                    Node importedNode = rmd.getDocument().importNode((Element) newChild, true);
+                    Element newDomChild = Axis2Util.toDOM(newChild);
+                    Node importedNode = rmd.getDocument().importNode((Element) newDomChild, true);
                     ((Element) bodyElem).replaceChild(importedNode, (Element) child);
                 } else {
                     throw new RampartException("tokenToBeCancelledInvalid");
                 }
                 
-            } catch (TrustException e) {
+            } catch (Exception e) {
                 throw new RampartException("errorInTokenCancellation");
             }
         }

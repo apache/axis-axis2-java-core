@@ -16,21 +16,17 @@
 
 package org.apache.rampart.util;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.xml.security.utils.XMLUtils;
@@ -40,6 +36,7 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamReader;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -56,19 +53,20 @@ public class Axis2Util {
     }
     
     public static void useDOOM(boolean isDOOMRequired) {
-        if(isDOOMRequired) {
-            if(!isUseDOOM()) {
-                System.setProperty(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY, SOAP11Factory.class.getName());
-                System.setProperty(OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY, SOAP12Factory.class.getName());
-                System.setProperty(OMAbstractFactory.OM_FACTORY_NAME_PROPERTY, OMDOMFactory.class.getName());
-                doomTacker.set(new Object());
-            }
-        } else {
-            System.getProperties().remove(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY);
-            System.getProperties().remove(OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY);
-            System.getProperties().remove(OMAbstractFactory.OM_FACTORY_NAME_PROPERTY);
-            doomTacker.set(null);
-        }
+//TODO Enable this when we have DOOM fixed to be able to flow in and out of Axis2
+//        if(isDOOMRequired) {
+//            if(!isUseDOOM()) {
+//                System.setProperty(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY, SOAP11Factory.class.getName());
+//                System.setProperty(OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY, SOAP12Factory.class.getName());
+//                System.setProperty(OMAbstractFactory.OM_FACTORY_NAME_PROPERTY, OMDOMFactory.class.getName());
+//                doomTacker.set(new Object());
+//            }
+//        } else {
+//            System.getProperties().remove(OMAbstractFactory.SOAP11_FACTORY_NAME_PROPERTY);
+//            System.getProperties().remove(OMAbstractFactory.SOAP12_FACTORY_NAME_PROPERTY);
+//            System.getProperties().remove(OMAbstractFactory.OM_FACTORY_NAME_PROPERTY);
+//            doomTacker.set(null);
+//        }
     }
     
     
