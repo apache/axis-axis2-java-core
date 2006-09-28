@@ -98,6 +98,7 @@ public class SignedEncryptedParts extends AbstractSecurityAssertion {
         // <sp:SignedParts> | <sp:EncryptedParts> 
         writer.writeStartElement(prefix, localName, namespaceURI);
         
+        // xmlns:sp=".."
         writer.writeNamespace(prefix, namespaceURI);
         
         if (isBody()) {
