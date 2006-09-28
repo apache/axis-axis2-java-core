@@ -56,7 +56,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
         if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
             Object flag = msgContext.getProperty(AddressingConstants.IS_ADDR_INFO_ALREADY_PROCESSED);
             if (log.isTraceEnabled())
-                log.trace("checkUsingAddressing: WS_ADDRESSING_VERSION=" + flag);
+                log.trace("checkUsingAddressing: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
             if (JavaUtils.isFalseExplicitly(flag)) {
                 AddressingFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
             }
@@ -100,7 +100,10 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
      * is moved into the addressing module
      */
     private void checkAction(MessageContext msgContext) throws AxisFault{
-        if(msgContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION)!=null){
+        Object flag = msgContext.getProperty(AddressingConstants.IS_ADDR_INFO_ALREADY_PROCESSED);
+        if (log.isTraceEnabled())
+            log.trace("checkAction: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
+        if(JavaUtils.isTrueExplicitly(flag)){
             if((msgContext.getAxisService() == null) || (msgContext.getAxisOperation() == null)){
                 AddressingFaultsHelper.triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
             }
