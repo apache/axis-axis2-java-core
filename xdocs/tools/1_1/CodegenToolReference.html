@@ -1,7 +1,7 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>Code Generator-Command Line Tool</title>
+  <title>Code Generator Tool- Command Line and Ant Task</title>
 </head>
 
 <body lang="en">
@@ -52,6 +52,10 @@ section will be of value.</p>
 
 <h3>Option Reference</h3>
 
+<p>Usage WSDL2Code &lt;option_reference&gt;</p>
+
+<p><b>E.g. :- WSDL2Code -uri &lt;Location of WSDL&gt;</b></p>
+
 <table border="1" cellpadding="0" cellspacing="0"
 style="border-collapse: collapse" width="100%" id="AutoNumber1">
   <tbody>
@@ -65,28 +69,28 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
       <td width="20%">-uri &lt;Location of WSDL&gt;</td>
       <td width="20%">None</td>
       <td width="60%">WSDL file location. This should point to a WSDL file in
-        the local file system</td>
+        the local file system.</td>
       <td></td>
     </tr>
     <tr>
-      <td width="20%">-o &lt;output Location&gt; :</td>
-      <td width="20%">--output</td>
-      <td width="60%">output file location. This is where the files would be
+      <td width="20%">-o &lt;output Location&gt;</td>
+      <td width="20%">--output &lt;output Location&gt;</td>
+      <td width="60%">Output file location. This is where the files would be
         copied once the code generation is done. If this option is omitted
         the generated files would be copied to the working directory.</td>
       <td></td>
     </tr>
     <tr>
       <td width="20%">-l &lt;language&gt;</td>
-      <td width="20%">--language</td>
+      <td width="20%">--language &lt;language&gt;</td>
       <td width="60%">Output language. Currently the code generator can
         generate code in Java but it has the ability to be extended to
-        support other languages</td>
+        support other languages.</td>
       <td></td>
     </tr>
     <tr>
       <td width="20%">-p &lt;package name&gt;</td>
-      <td width="20%">--package</td>
+      <td width="20%">--package &lt;package name&gt;</td>
       <td width="60%">The target package name. If omitted, a default package
         (formed using the target namespace of the WSDL) will be used.</td>
       <td></td>
@@ -94,9 +98,9 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
     <tr>
       <td width="20%">-a</td>
       <td width="20%">--async</td>
-      <td width="60%">Generate code only for async style . when this option
-        is used the generated stubs will have only the asynchronous
-        invocation methods. Switched off by default.</td>
+      <td width="60%">Generate code only for async style. When this option is
+        used the generated stubs will have only the asynchronous invocation
+        methods. Switched off by default.</td>
       <td></td>
     </tr>
     <tr>
@@ -112,28 +116,28 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
       <td width="20%">-t</td>
       <td width="20%">--test-case</td>
       <td width="60%">Generates a test case. In the case of Java it would be
-        a junit test case.</td>
+        a JUnit test case.</td>
       <td></td>
     </tr>
     <tr>
       <td width="20%">-ss</td>
       <td width="20%">--server-side</td>
       <td width="60%">Generates server side code (i.e. skeletons). Default is
-        off</td>
+        off.</td>
       <td></td>
     </tr>
     <tr>
       <td width="20%">-sd</td>
       <td width="20%">--service-description</td>
       <td width="60%">Generates the service descriptor (i.e. server.xml).
-        Default is off. only valid with -ss, the server side code generation
-        option</td>
+        Default is off. Only valid with -ss, the server side code generation
+        option.</td>
       <td></td>
     </tr>
     <tr>
-      <td width="20%">-d</td>
-      <td width="20%">--databinding-method</td>
-      <td width="60%">Specifies the Databinding framework. valid values are
+      <td width="20%">-d &lt;databinding&amp;gt</td>
+      <td width="20%">--databinding-method &lt;databinding&amp;gt</td>
+      <td width="60%">Specifies the Databinding framework. Valid values are
         xmlbeans, adb, jibx, and none. Default is adb.</td>
       <td></td>
     </tr>
@@ -154,19 +158,19 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
       <td></td>
     </tr>
     <tr>
-      <td width="20%">-sn</td>
-      <td width="20%">--service-name</td>
+      <td width="20%">-sn &lt;service name&gt;</td>
+      <td width="20%">--service-name &lt;service name&gt;</td>
       <td width="60%">Specifies the service name to be code generated. If the
-        service name is is not specified, then the first service will be
-        picked</td>
+        service name is not specified, then the first service will be
+      picked.</td>
       <td></td>
     </tr>
     <tr>
-      <td width="20%">-pn</td>
-      <td width="20%">--port-name</td>
+      <td width="20%">-pn &lt;port name&gt;</td>
+      <td width="20%">--port-name &lt;port name&gt;</td>
       <td width="60%">Specifies the port name to be code generated. If the
-        port name is is not specified, then the first port (of the selected
-        service) will be picked</td>
+        port name is not specified, then the first port (of the selected
+        service) will be picked.</td>
       <td></td>
     </tr>
     <tr>
@@ -181,17 +185,16 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
     <tr>
       <td width="20%">-ssi</td>
       <td width="20%">--serverside-interface</td>
-      <td width="60%">Generate an interface for the service skeleton 
-</td>
+      <td width="60%">Generate an interface for the service skeleton.</td>
       <td></td>
     </tr>
   </tbody>
 </table>
 
-<p>Apart from these mentioned options one can pass extra option by prefixing
+<p>Apart from these mentioned options one can pass extra options by prefixing
 them with -E (uppercase). These extra options will be processed by the
 extensions. The extra options that can be passed are documented separately
-with the extensions documentation (For example with ADB)</p>
+with the extensions documentation (For example with ADB).</p>
 <a name="ant"></a>
 
 <h2>Ant Task</h2>
@@ -208,20 +211,20 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
   <tbody>
     <tr>
       <td>wsdlfilename</td>
-      <td>WSDL file location. Maps to the uri option of the command line
-      tool</td>
+      <td>WSDL file location. Maps to the -uri option of the command line
+        tool.</td>
     </tr>
     <tr>
       <td>output</td>
-      <td>output file location. This is where the files would be copied once
+      <td>Output file location. This is where the files would be copied once
         the code generation is done. If this option is omitted the generated
-        files would be copied to the working directory. . Maps to the -o
-        option of the command line tool</td>
+        files would be copied to the working directory. Maps to the -o option
+        of the command line tool.</td>
     </tr>
     <tr>
       <td>language</td>
       <td>Output language. Currently the code generator can generate code in
-        Java. Maps to the -l option of the command line tool</td>
+        Java. Maps to the -l option of the command line tool.</td>
     </tr>
     <tr>
       <td>packagename</td>
@@ -231,18 +234,18 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
     </tr>
     <tr>
       <td>asynconly</td>
-      <td>Generate code only for async style . when this option is used the
+      <td>Generate code only for async style. When this option is used the
         generated stubs will have only the asynchronous invocation methods.
         Defaults to false if omitted Only true and false are applicable as
         values. Maps to the -a option of the command line tool.</td>
     </tr>
     <tr>
       <td>testcase</td>
-      <td>Generates a test case</td>
+      <td>Generates a test case.</td>
     </tr>
     <tr>
       <td>synconly</td>
-      <td>Generate code only for sync style . when this option is used the
+      <td>Generate code only for sync style. When this option is used the
         generated stubs will have only the synchronous invocation methods.
         Defaults to false if omitted. Only true and false are applicable as
         values. Maps to the -s option of the command line tool.</td>
@@ -251,7 +254,7 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
       <td>serverside</td>
       <td>Generates server side code (i.e. skeletons). Only true and false
         are applicable as values. Default is false. Maps to the -ss option of
-        the command line tool</td>
+        the command line tool.</td>
     </tr>
     <tr>
       <td>generateservicexml</td>
@@ -267,19 +270,20 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
     </tr>
     <tr>
       <td>serviceName</td>
-      <td>The name of the service in the case of multiple services</td>
+      <td>The name of the service in the case of multiple services.</td>
     </tr>
     <tr>
       <td>portName</td>
-      <td>The name of the port in the presence of multiple ports</td>
+      <td>The name of the port in the presence of multiple ports.</td>
     </tr>
     <tr>
       <td>namespaceToPackages</td>
-      <td>A list of namespace to package mappings</td>
+      <td>A list of namespace to package mappings.</td>
     </tr>
-<tr>
+    <tr>
       <td>serverSideInterface</td>
-      <td>flag stating whether to generate an interface for the server side skeleton</td>
+      <td>Flag stating whether to generate an interface for the server side
+        skeleton.</td>
     </tr>
   </tbody>
 </table>
@@ -309,23 +313,26 @@ org.apache.axis2.tool.ant.AntCodegenTask class and run the code generation
 tool internally while passing the relevant arguments and do the proper
 generation. If a user types</p>
 
-<p>&gt;ant or &gt;ant main</p>
+<p><code>&gt;ant</code> or <code>&gt;ant main</code></p>
 
 <p>it will generate the server side code and services.xml for the given WSDL
-file(C:\test\wsdl\CombinedService.wsdl) and the generated code will be
-written to C:\ directory.</p>
+file (C:\test\wsdl\CombinedService.wsdl -in the above instance) and the
+generated code will be written to the specified output path (C:\ - in the
+above instance).</p>
 
 <p>For this Ant task to work the following jars need to be in the class
 path.</p>
 <ul>
   <li>axis-*.jar (from the Axis2 distribution)</li>
-  <li>axis-wsdl4j-1.2.jar or higher (The WSDL4J implementation jar. Bundled
-    with the Axis2 distribution)</li>
-  <li>stax-api-1.0.jar (The StAX API's that contain the
+  <li>wsdl4j-1.5.1.jar or higher (The WSDL4J implementation jar. Bundled with
+    the Axis2 distribution)</li>
+  <li>stax-api-1.0.1jar (The StAX API's that contain the
     javax.xml.namespace.QName class. This jar may be replaced by any other
     jar that contains the javax.xml.namespace.QName implementation. However
-    Axis2 uses this class from the stax-api-1.0.jar which comes bundled with
-    the Axis2 distribution)</li>
+    Axis2 uses this class from the stax-api-1.0.1.jar which comes bundled
+    with the Axis2 distribution)</li>
+  <li>commons-logging-1.1.jar, neethi-1.1.jar, XmlSchema-1.1.jar (from the
+    Axis2 distribution)</li>
 </ul>
 <a name="invoking"></a>
 
@@ -492,10 +499,11 @@ ready for deployment:</p>
 
 &lt;/project&gt;</pre>
 
-<p>The above build.xml depends on a build.properties file which defines
-'axis.home', such as:</p>
+<p>Place the above build.xml file in the bin directory of the axis2 binary
+distribution. Then create a build.properties file in the same directory and
+specify the axis.home path pointing to the axis2 binary distribution</p>
 
-<p>axis.home=/home/username/axis2-1.0-bin/</p>
+<p>E.g. :- axis.home=C:/Axis2/axis2-1.1-bin</p>
 
 <p>The above build.xml example also assumes three empty directories exist,
 'dist', 'lib', and 'src'.</p>
@@ -577,16 +585,17 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://login/types
 <p>Place the above file, named LoginEndpoint.wsdl, in the directory 'wsdl'
 below the build.xml file. Run the WSDL2Java command via the ant task defined
 above, and there will be a directory called 'output' created. This directory
-contains the WSDL2Java generated source. An important detail is that an
-XMLBean class file is also generated by WSDL2Java, TypeSystemHolder.class.
-That file is placed into build/classes by the above ant task and will be
-needed to compile the generated sources. A frequent problem is users get an
-error such as:</p>
+contains the WSDL2Java generated source.</p>
 
-<p>ClassNotFoundException : Cannot load SchemaTypeSystem. Unable to load
-class with name
+<p>An important detail is that an XMLBean class file is also generated by
+WSDL2Java, TypeSystemHolder.class. That file is placed into build/classes by
+the above ant task and will be needed to compile the generated sources. A
+frequent problem is users get an error such as:</p>
+
+<p><em><b>ClassNotFoundException : Cannot load SchemaTypeSystem. Unable to
+load class with name
 schemaorg_apache_xmlbeans.system.s68C41DB812F52C975439BA10FE4FEE54.TypeSystemHolder.
-Make sure the generated binary files are on the classpath.</p>
+Make sure the generated binary files are on the classpath.</b></em></p>
 
 <p>The TypeSystemHolder.class generated by WSDL2Java must be placed in your
 classpath in order to avoid this error.</p>
@@ -598,7 +607,7 @@ contain the business logic.</p>
 <p>After the WSDL2Java command runs the file LoginEndpoint.wsdl, edit the
 following file:</p>
 
-<p>output/org/example/types/LoginServiceSkeleton.java. You should see the
+<p>output/src/org/example/types/LoginServiceSkeleton.java. You should see the
 following code:</p>
 <pre class="code">/**
      * LoginServiceSkeleton.java
@@ -695,12 +704,14 @@ a servlet container.</p>
 <p>Run the 'jar_wsdl' ant task from the example build.xml, which generates a
 jar file lib/axis2_example_wsdl.jar in the 'lib' directory under the
 build.xml . This jar will be used to compile the client, and also will be
-placed in the servlet container. Next, run the 'aar' ant task from the
-example build.xml, which generates the deployable axis2 Web service. Place
-dist/LoginEndpoint.aar into axis2/WEB-INF/services . Place
-lib/axis2_example_wsdl.jar into axis2/WEB-INF/lib . Verify the happy axis
-page loaded the services correctly - there should be the service
-'LoginEndpoint' with the available operation 'webLogin' displayed.</p>
+placed in the servlet container.</p>
+
+<p>Next, run the 'aar' ant task from the example build.xml, which generates
+the deployable axis2 Web service. Place dist/LoginEndpoint.aar into
+axis2/WEB-INF/services . Place lib/axis2_example_wsdl.jar into
+axis2/WEB-INF/lib . Verify the happy axis page loaded the services correctly
+- there should be the service 'LoginEndpoint' with the available operation
+'webLogin' displayed.</p>
 
 <p>The last step is to create and run the client. In the src directory create
 the file org.client.LoginClient.java, with the contents below:</p>
