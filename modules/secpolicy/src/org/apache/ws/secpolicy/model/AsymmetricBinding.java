@@ -117,7 +117,8 @@ public class AsymmetricBinding extends SymmetricAsymmetricBindingBase {
         String namespaceURI = Constants.ASYMMETRIC_BINDING.getNamespaceURI();
 
         String prefix = writer.getPrefix(namespaceURI);
-        if (namespaceURI == null) {
+        
+        if (prefix == null) {
             prefix = Constants.ASYMMETRIC_BINDING.getPrefix();
             writer.setPrefix(prefix, namespaceURI);
         }
