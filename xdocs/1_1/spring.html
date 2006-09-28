@@ -44,11 +44,10 @@ ServiceObjectSupplier that will supply the Object.</p>
 <p>This guide will show how to use two separate ServiceObjectSupplier classes
 that are part of the Axis2 standard distribution: One for use with a servlet
 container, and one without. Once configured, the web service itself acts like
-any other Spring wired bean. No further spring configuration is necessary.
-These Spring beans can be loaded any way desired, as Axis2 has no
-configuration file dependencies from Spring. Spring versions 1.2.6 and 1.2.8
-have been tested, but probably any version would work as only core
-functionality is required.</p>
+any other Spring wired bean. These Spring beans can be loaded any way desired, 
+as Axis2 has no configuration file dependencies from Spring. Spring 
+versions 1.2.6 and 1.2.8 have been tested, but probably any version would 
+work as only core functionality is required.</p>
 
 <p>This guide assumes some basic knowledge of Axis2. See the <a
 href="userguide.html">User's Guide</a> for more information.</p>
@@ -322,7 +321,7 @@ spring-web. Running the client, you should see this output:</p>
 how. There are four points to be aware of here:</p>
 
 <p>(A) You need to configure Spring to use the Axis2 Service Classloader. See the 
-  <a href="#263">Known issues running Spring inside the AAR</a> area </p>
+  <a href="#263">Known issues running Spring inside the AAR</a> area. </p>
 
 <p>(B) Its up to you to load Spring, though we give an example below.</p>
 
@@ -415,7 +414,7 @@ public class SpringInit implements Service {
     <p>Here's the services.xml that now includes SpringInit and the
     needed load-on-startup parameter. There is also the forceTCCL parameter which is needed
     when loading Spring in the AAR - see the <a href="#263">Known issues running Spring inside the AAR</a>
-    area</p>
+    area. </p>
     <source><pre>&lt;serviceGroup&gt;
   &lt;service name="SpringInit"&gt;
     &lt;description&gt;
