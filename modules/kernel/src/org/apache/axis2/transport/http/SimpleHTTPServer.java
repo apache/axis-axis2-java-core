@@ -37,6 +37,7 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Iterator;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -125,13 +126,14 @@ public class SimpleHTTPServer implements TransportListener {
         args = optionsParser.getRemainingArgs();
         // first check if we should print usage
         if ((optionsParser.isFlagSet('?') > 0) || (optionsParser.isFlagSet('h') > 0) ||
-                args == null || args.length == 0 || args.length > 2) {
+                args == null || args.length == 0 || args.length > 3) {
             printUsage();
         }
         String paramPort = optionsParser.isValueSet('p');
         if (paramPort != null) {
             port = Integer.parseInt(paramPort);
         }
+        boolean startAllTransports = "all".equals(optionsParser.isValueSet('t'));
         args = optionsParser.getRemainingArgs();
 
         System.out.println("[SimpleHTTPServer] Starting");
@@ -152,6 +154,21 @@ public class SimpleHTTPServer implements TransportListener {
                 listenerManager.init(configctx);
             }
             listenerManager.addListener(trsIn, true);
+
+            // should all transports be started? specified as "-t all"
+            if (startAllTransports) {
+                Iterator iter = configctx.getAxisConfiguration().
+                    getTransportsIn().keySet().iterator();
+                while (iter.hasNext()) {
+                    QName trp = (QName) iter.next();
+                    if (!new QName(Constants.TRANSPORT_HTTP).equals(trp)) {
+                        trsIn = (TransportInDescription)
+                            configctx.getAxisConfiguration().getTransportsIn().get(trp);
+                        listenerManager.addListener(trsIn, false);
+                    }
+                }
+            }
+
             System.out.println("[SimpleHTTPServer] Started");
         } catch (Throwable t) {
             log.fatal("Error starting SimpleHTTPServer", t);
@@ -164,6 +181,7 @@ public class SimpleHTTPServer implements TransportListener {
         System.out.println(" Opts: -? this message");
         System.out.println();
         System.out.println("       -p port to listen on (default is 8080)");
+        System.out.println("       -t all  to start all transports defined in the axis2 configuration");
         System.exit(1);
     }
 

@@ -125,7 +125,7 @@ messages over a JMS Queue named "Echo" (which is the name of the service).
 This service will be exposed over all defined Axis2 transports, and the
 resulting URL for the service over JMS would be:</p>
 
-<p><span style="color: #FF0000">&lt;URL&gt;</span></p>
+<p>jms:/echo?transport.jms.ConnectionFactoryJNDIName=QueueConnectionFactory&amp;java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory&amp;java.naming.provider.url=tcp://localhost:61616</p>
 <pre><strong>Echo.java</strong></pre>
 <pre>  public class Echo {</pre>
 <pre>    public String echoString(String in) {</pre>
@@ -161,7 +161,7 @@ exposed over the JMS transport, and that the custom connection factory named
 destination named "dynamicTopics/something.TestTopic". The JMS URL to access
 this service is:</p>
 
-<p><span style="color: #FF0000">&lt;URL&gt;</span></p>
+<p>jms:/dynamicTopics/something.TestTopic?transport.jms.ConnectionFactoryJNDIName=TopicConnectionFactory&amp;java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory&amp;java.naming.provider.url=tcp://localhost:61616&amp;java.naming.security.principal=system&amp;java.naming.security.credentials=manager</p>
 <pre><strong>Echo2.java</strong></pre>
 <pre>  public class Echo2 {</pre>
 <pre>    public String echoString(String in) {</pre>
@@ -186,5 +186,10 @@ this service is:</p>
 <pre>    &lt;parameter name="transport.jms.Destination" locked="true"&gt;dynamicTopics/something.TestTopic&lt;/parameter&gt;</pre>
 <pre>  &lt;/service&gt;</pre>
 <pre> </pre>
+
+<h2>Starting up the Axis2 JMS transport</h2>
+<pre>The Axis2 standalone binary distribution ships with the Axis2 SimpleHTTPServer, which only starts up the http transport by default. Hence to start the JMS transport with it, you need to pass in the parameter '-t all' as shown below.
+
+e.g. http-server -p &lt;port&gt; <strong>-t all</strong> &lt;repository&gt;</pre>
 </body>
 </html>

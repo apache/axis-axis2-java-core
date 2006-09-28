@@ -3,7 +3,7 @@ This is a new JMS (Java Messaging Service) Transport implementation for Apache A
 Sample axis2.xml
 ================
 
-    <transportReceiver name="jms" class="org.apache.axis2.transport.njms.JMSListener">
+    <transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener">
         <parameter name="myTopicConnectionFactory" locked="false">        	        	
         	<parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
         	<parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>        	
