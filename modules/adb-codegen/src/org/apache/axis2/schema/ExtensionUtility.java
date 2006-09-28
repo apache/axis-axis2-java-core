@@ -218,7 +218,7 @@ public class ExtensionUtility {
                     XmlSchemaType eltSchemaType = xmlSchemaElement.getSchemaType();
                     if (eltSchemaType != null) {
                         //there is a schema type object.We can utilize that
-                        populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement.getName());
+                        populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement);
                     } else if (xmlSchemaElement.getSchemaTypeName() != null) {
                         //there is no schema type object but there is a
                         //schema type QName.  Use that Qname to look up the
@@ -226,7 +226,7 @@ public class ExtensionUtility {
                         eltSchemaType = findSchemaType(schemaMap,
                                 xmlSchemaElement.getSchemaTypeName());
                         if (eltSchemaType != null) {
-                            populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement.getName());
+                            populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement);
                         }
                     }
                 } else if (item instanceof XmlSchemaAny) {
@@ -236,7 +236,12 @@ public class ExtensionUtility {
                     QName partQName = WSDLUtil.getPartQName(opName,
                             WSDLConstants.INPUT_PART_QNAME_SUFFIX,
                             Constants.ANY_ELEMENT_FIELD_NAME);
-                    mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement");
+
+                    if (((XmlSchemaAny) item).getMaxOccurs() > 1) {
+                        mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement[]");
+                    } else {
+                        mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement");
+                    }
                 }
 
             }
@@ -252,7 +257,9 @@ public class ExtensionUtility {
     private static void populateClassName(XmlSchemaType eltSchemaType,
                                           TypeMapper typeMap,
                                           String opName,
-                                          String partName) {
+                                          XmlSchemaElement xmlSchemaElement) {
+
+        boolean isArray = xmlSchemaElement.getMaxOccurs() > 1;
 
         Map metaInfoMap = eltSchemaType.getMetaInfoMap();
 
@@ -260,9 +267,13 @@ public class ExtensionUtility {
             String className = (String) metaInfoMap.
                     get(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY);
 
+            if (isArray && !className.endsWith("[]")) {
+                className += "[]";
+            }
+
             QName partQName = WSDLUtil.getPartQName(opName,
                     WSDLConstants.INPUT_PART_QNAME_SUFFIX,
-                    partName);
+                    xmlSchemaElement.getName());
             typeMap.addTypeMappingName(partQName, className);
             if (Boolean.TRUE.equals(
                     metaInfoMap.get(SchemaConstants.
@@ -386,7 +397,7 @@ public class ExtensionUtility {
         if (configuration.isGenerateAll()) {
             options.setGenerateAll(true);
         }
-        
+
         if (configuration.isBackwordCompatibilityMode()) {
             options.setBackwordCompatibilityMode(true);
         }

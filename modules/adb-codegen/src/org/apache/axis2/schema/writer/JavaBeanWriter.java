@@ -489,6 +489,9 @@ public class JavaBeanWriter implements BeanWriter {
         // populate all the information
         populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
 
+        //////////////////////////////////////////////////////////
+//        System.out.println(DOM2Writer.nodeToString(rootElt));
+        ////////////////////////////////////////////////////////////
 
         return rootElt;
     }
