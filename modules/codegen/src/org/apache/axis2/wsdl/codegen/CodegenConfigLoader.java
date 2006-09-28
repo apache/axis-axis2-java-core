@@ -53,7 +53,7 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         config.setGenerateDeployementDescriptor(loadOption(WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
                 WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION_LONG, optionMap) !=
                 null);
-        config.setWriteTestCase(loadOption(WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION, WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION, optionMap) != null);
+        config.setWriteTestCase(loadOption(WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION, WSDL2JavaConstants.GENERATE_TEST_CASE_OPTION_LONG, optionMap) != null);
 
         boolean asyncFlagPresent =
                 (loadOption(WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION, WSDL2JavaConstants.CODEGEN_ASYNC_ONLY_OPTION_LONG, optionMap) != null);
