@@ -44,7 +44,12 @@
         <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
          <xsl:for-each select="input/param[@type!='']">
             <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-          </xsl:for-each>) throws java.rmi.RemoteException;
+          </xsl:for-each>) throws java.rmi.RemoteException
+          <!--add the faults-->
+          <xsl:for-each select="fault/param[@type!='']">
+          ,<xsl:value-of select="@name"/>
+          </xsl:for-each>             
+             ;
         <!-- end of the sync block -->
         </xsl:if>
 
