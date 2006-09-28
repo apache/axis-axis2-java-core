@@ -16,7 +16,10 @@
 
 package org.apache.rampart.handler;
 
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
@@ -26,6 +29,7 @@ import org.apache.rampart.RampartEngine;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.secpolicy.WSSPolicyException;
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.WSHandlerConstants;
@@ -33,6 +37,7 @@ import org.apache.ws.security.handler.WSHandlerResult;
 
 import javax.xml.namespace.QName;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 
@@ -94,6 +99,31 @@ public class RampartReceiver implements Handler {
         }
         WSHandlerResult rResult = new WSHandlerResult("", wsResult);
         results.add(0, rResult);
+        
+        SOAPHeader header = null;
+        try {
+            header = msgContext.getEnvelope().getHeader();
+        } catch (OMException ex) {
+            throw new AxisFault(
+                    "WSDoAllReceiver: cannot get SOAP header after security processing",
+                    ex);
+        }
+
+        Iterator headers = header.getChildElements();
+
+        SOAPHeaderBlock headerBlock = null;
+
+        while (headers.hasNext()) { // Find the wsse header
+            SOAPHeaderBlock hb = (SOAPHeaderBlock) headers.next();
+            if (hb.getLocalName().equals(WSConstants.WSSE_LN)
+                    && hb.getNamespace().getNamespaceURI().equals(WSConstants.WSSE_NS)) {
+                headerBlock = hb;
+                break;
+            }
+        }
+
+        headerBlock.setProcessed();
+
     }
 
     public HandlerDescription getHandlerDesc() {
