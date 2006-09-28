@@ -35,13 +35,14 @@ is all about the proper way of specifying the configurations in axis2.xml.
 There are six top level elements that can be seen in the configuration file
 and those can be listed as follows:</p>
 <ul>
-  <li>Parameter</li>
-  <li>Transport Receiver</li>
-  <li>Transport Sender</li>
-  <li>Phase Order</li>
-  <li>Module References</li>
-  <li>Listeners (Observers)</li>
+  <li><a href="#Parameter">Parameter</a></li>
+  <li><a href="#Receiver">Transport Receiver</a></li>
+  <li><a href="#Sender">Transport Sender</a></li>
+  <li><a href="#Phase_Order">Phase Order</a></li>
+  <li><a href="#References">Module References</a></li>
+  <li><a href="#Listeners">Listeners (Observers)</a></li>
 </ul>
+<a name="Parameter"></a>
 
 <h3>Parameter</h3>
 
@@ -53,7 +54,8 @@ AxisConfiguration in the running system. The correct way of defining a
 parameter looks like what is shown below:</p>
 <source><pre> 
   &lt;parameter name="name of the parameter" &gt;parameter value &lt;/parameter&gt;</pre>
-</source>
+</source><a name="Receiver"></a>
+
 <h3>Transport Receiver</h3>
 
 <p>Depending on the underlying transport that Axis2 is going to run on, you
@@ -72,9 +74,9 @@ one can use these transport names to load the appropriate transport. Class
 attribute is to specify actual java classes which implements required
 interfaces for the transport. Any transport can have zero or more parameters,
 and if there are any, then those parameters can be accessed via the
-corresponding transport receiver.
+corresponding transport receiver. <a name="Sender"></a>
 
-<h3>Transport Senders</h3>
+<h3>Transport Sender</h3>
 
 <p>As same as transport receivers, it is possible to register transport
 senders in the system, and later at the run time, those senders can be used
@@ -93,9 +95,9 @@ http and http1 as transport name)
 transport. As same as transport receivers, transport senders can have zero or
 more parameters, and if there is any then it can be accessed via
 corresponding transport sender.</p>
+<a name="Phase_Order"></a>
 
-<h3><b>Phase Order</b><br>
-</h3>
+<h3>Phase Order</h3>
 
 <p>The specifying order of phases in execution chain has to be done using
 phase order element and it will look like below:</p>
@@ -233,6 +235,7 @@ phaseOrder:</p>
   <p><strong>Note :</strong> If you closely look at the default axis2.xml you
   will be able to clearly identify that.</p>
 </ul>
+<a name="References"></a>
 
 <h3>Module References</h3>
 
@@ -242,6 +245,7 @@ level module element in axis2.xml. It should look like following:</p>
 </source>
 <p><strong>ref:</strong> the module name which is going to be engage, system
 wide.</p>
+<a name="Listeners"></a>
 
 <h3><strong>Listeners (Observers)</strong></h3>
 
@@ -259,8 +263,7 @@ observers are informed of the following events:</p>
 Registering Observers is very useful for additional features such as RSS feed
 generation which will provide service information to subscribers. The correct
 way of registering observers should be like below:
-<pre>
-&lt;listener class="org.apache.axis2.ObserverIMPL"&gt;
+<pre>&lt;listener class="org.apache.axis2.ObserverIMPL"&gt;
     &lt;parameter name="RSS_URL" &gt;http://127.0.0.1/rss&lt;/parameter&gt;
   &lt;/listener&gt;</pre>
 </source>
@@ -305,9 +308,9 @@ file. A very simple services.xml is shown below:</font></p>
 archive file, if the .aar file contains only one service, or else the name of
 the service will be the name given by the name attribute.</font></p>
 
-<p><strong>scope</strong>: (runtime infor of the service will be
-available)Scope that the service need to be deployed and it can be one of the
-following- "Application", "SOAPSession", "TransportSession", "Request"</p>
+<p><strong>scope</strong>: The time period in which runtime information of
+deployed services will be available. Scope is of several types-
+"Application", "SOAPSession", "TransportSession", "Request"</p>
 
 <p><strong>targetNamespace</strong>: Target name space of the service, and
 this value will be used when generating the wsdl</p>
@@ -396,7 +399,7 @@ init(); method will be called.</p>
 the listed parameters in the module.xml will be transformed into
 corresponding AxisModule of the module.</p>
 
-<p><b>flow: </b>Defining of handlers in a module has to be done inside Flows,
+<p><b>flow: </b>Defining of handlers in a module has to be done inside flows,
 and there are four types of flows as listed below.</p>
 
 <p>It is possible to add any number of handlers into a flow and those
@@ -410,31 +413,29 @@ are engaged .</p>
 </ul>
 
 <p><b>operations: </b> If a module wants to add an operation when it is
-engaged into a service it can be done by adding operation tag in module.xml
-and the way of specifying the operation is same as operation in
-services.xml.</p>
+engaged into a service it can be done by adding an operation tag in
+module.xml and the way of specifying the operation is the same as operation
+in services.xml.</p>
 
 <p><b>handler:</b> The Handler element consists of compulsory and optional
-attributes and the way of defining a handler will look as follows;</p>
-
-<p><source></p>
+attributes and the way of defining a handler will look as follows:</p>
 <pre>&lt;handler name="handler1" class="handlerClass "&gt;
             &lt;order phase="userphase1" /&gt;
  &lt;/handler&gt;</pre>
 </source>
-<p><b><i>Compulsory attributes</i></b> <br>
+<p><b><i>Compulsory Attributes</i></b> <br>
 <b>name:</b> name of the handler<br>
 <b>class:</b> handler implementation class<br>
 <b>phase:</b> name of the phase that the handler should stay in the execution
 chain <br>
 <br>
-<i><b>Optional attributes :</b></i><br>
+<i><b>Optional Attributes :</b></i><br>
 <b>phaseLast:</b> to indicate the handler is last handler of the phase<br>
 <b>phaseFirst:</b> to indicate the handler is first handler of the phase.<br>
 <b>before :</b> the handler should be invoked before the handler specified by
-before handler<br>
-<b>after:</b>  the handler should be invoked after the handler specified by
-after handler<br>
+the before handler<br>
+<b>after:</b> the handler should be invoked after the handler specified by
+the after handler<br>
 </p>
 
 <p><br>
