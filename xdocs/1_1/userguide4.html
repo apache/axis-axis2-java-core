@@ -24,11 +24,11 @@ the binary distribution.</p>
 
 <h2><a name="Modules"></a>Modules</h2>
 
-<p>Axis2 provides an extended support for modules (See <a
+<p>Axis2 provides extended support for modules (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about modules in Axis2). Let's create a custom module and deploy
-it to the MyService which we created earlier. Following steps show the
-actions that need to be performed to deploy a custom module for a given Web
+it to MyService which we created earlier. Following steps show the actions
+that need to be performed to deploy a custom module for a given Web
 service:</p>
 <ol>
   <li><p style="margin-bottom: 0in">Create the Module Implementation</p>
@@ -55,8 +55,8 @@ Module</a></h3>
 <p>Let's write a simple logging module for our sample. This module contains
 one handler that just logs the message that is passed through it. Axis2 uses
 ".mar" (Module Archive) to deploy modules in Axis2. Following diagram shows
-the file structure inside that needs to be there in the ".mar" archive. Let's
-create all these and see how it works.</p>
+the file structure inside which needs to be there in the ".mar" archive.
+Let's create all these and see how it works.</p>
 
 <p><img src="images/userguide/ModuleView.jpg" name="Graphic5" align="bottom"
 border="0"></p>
@@ -72,7 +72,7 @@ public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of mod
 public void engageNotify(AxisDescription axisDescription) throws AxisFault;</pre>
 
 <p>These methods can be used to control the module initialization and the
-termination. With the input parameter AxisConfiguration, user is provided
+termination. With the input parameter AxisConfiguration, the user is provided
 with the complete configuration hierarchy. This can be used to fine-tune the
 module behavior by the module writers. For the simple logging service we can
 keep these methods blank in our implementation class.</p>
@@ -142,7 +142,7 @@ follows:</p>
    &lt;/INfaultflow&gt;
 &lt;/module&gt;</pre>
 
-<p>As it can be seen there are four flows defined in this "module.xml"</p>
+<p>As you can see there are four flows defined in this "module.xml"</p>
 <ol>
   <li>inflow - Represents the handler chain that will run when a message is
     coming in. </li>
@@ -169,20 +169,20 @@ runs.</p>
 &lt;order phase="loggingPhase" /&gt;
 &lt;/handler&gt;</pre>
 
-<p>To learn more on Phase rules, click on <a
+<p>To learn more about Phase rules, see <a
 href="http://www.developer.com/java/web/article.php/3529321"
 target="_blank">here</a></p>
 
 <h4><a name="Step_4:_Modify_the_&#34;axis2_xml&#34;">Step 4: Modify the
 "axis2.xml"</a></h4>
 
-<p>In this handler the phase "loggingPhase" is defined by the module writer.
-It is not a pre-defined handler phase, hence the module writer should
-introduce it to the "axis2.xml" (NOT the services.xml) so that Axis2 engine
-knows where to place the handler in different "flows" ( inFlow, outFlow,
-etc.). Following xml lines show the respective changes made to the
-"axis2.xml" in order to deploy this logging module in Axis2 engine. This is
-an extract of the phase section of the "axis2.xml".</p>
+<p>In this handler, the phase "loggingPhase", is defined by the module
+writer. It is not a pre-defined handler phase, hence the module writer should
+introduce it to the "axis2.xml" (NOT the services.xml) so that the Axis2
+engine knows where to place the handler in different "flows" ( inFlow,
+outFlow, etc.). Following xml lines show the respective changes made to the
+"axis2.xml" in order to deploy this logging module in the Axis2 engine. This
+is an extract of the phase section of "axis2.xml".</p>
 <pre>&lt;!-- ================================================= --&gt;
 &lt;!-- Phases --&gt;
 &lt;!-- ================================================= --&gt;
@@ -247,7 +247,7 @@ an extract of the phase section of the "axis2.xml".</p>
 <p>Shown in green, the custom phase "loggingPhase" is placed in all the
 flows, hence that phase will be called in all the message flows in the
 engine. Since our module is associated with this phase, the LogHandler inside
-the module now will be executed in this phase.</p>
+the module will now be executed in this phase.</p>
 
 <h4><a name="Step5_:_Modify_the_&#34;services_xml&#34;">Step5 : Modify the
 "services.xml"</a></h4>
@@ -256,7 +256,7 @@ the module now will be executed in this phase.</p>
 descriptions for the logging module and by changing the "axis2.xml" we have
 created the required phases for the logging module. Next step is to
 "<b>engage</b>" (use) this module in one of our services. For this, let's use
-the same Web service that we have used throughout the user's guide,
+the same Web service that we have used throughout the user's guide-
 MyService. However, since we need to modify the "services.xml" of MyService
 in order to engage this module, we use a separate Web service, but with the
 similar operations. The code for this service can be found in the
@@ -310,10 +310,10 @@ directory. Then run using the "TestWebServiceWithModuleClient.bat" or
 "TestWebServiceWithModuleClient.sh" in the
 "Axis2Home/samples/userguide/src/userguide/clients/bin" directory.</p>
 
-<p>Note: To see the logs, the user needs to modify the "log4j.properties" to
-log INFO. The property file is located in "webapps\axis2\WEB-INF\classes" of
-your servlet container. Change the line "log4j.rootCategory= ERROR, LOGFILE"
-to "log4j.rootCategory=INFO, ERROR, LOGFILE".</p>
+<p>Note: To see logs, the user needs to modify the "log4j.properties" to log
+INFO. The property file is located in "webapps\axis2\WEB-INF\classes" of your
+servlet container. Change the line "log4j.rootCategory= ERROR, LOGFILE" to
+"log4j.rootCategory=INFO, ERROR, LOGFILE".</p>
 
 <p align="right"><a href="userguide3.html"><img src="images/arrow_left.gif">
 Previous</a> | <a href="userguide5.html">Next <img
