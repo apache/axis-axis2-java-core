@@ -240,12 +240,15 @@
                                             <!-- Even when the parameters are 1 we have to see whether we have the
                                                 wrapped parameters -->
                                            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                                           <xsl:variable name="inputElementType" select="input/param[@location='body' and @type!='']/@type"></xsl:variable>
+
                                             <xsl:choose>
                                                 <xsl:when test="$inputWrappedCount &gt; 0">
+                                                    <xsl:value-of select="$inputElementType"/><xsl:text> </xsl:text>dummyWrappedType = null;
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
                                                     <xsl:for-each select="input/param[@location='body' and @type!='']/param">
                                                         <xsl:value-of select="@name"/>,
-                                                    </xsl:for-each>
+                                                    </xsl:for-each>dummyWrappedType,
                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
                                                     "<xsl:value-of select="$method-name"/>")));
                                                 </xsl:when>
@@ -442,12 +445,15 @@
                                             <!-- Even when the parameters are 1 we have to see whether we have the
                                                 wrapped parameters -->
                                            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                                            <xsl:variable name="inputElementType" select="input/param[@location='body' and @type!='']/@type"></xsl:variable>
+
                                             <xsl:choose>
                                                 <xsl:when test="$inputWrappedCount &gt; 0">
+                                                    <xsl:value-of select="$inputElementType"/><xsl:text> </xsl:text>dummyWrappedType = null;
                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
                                                     <xsl:for-each select="input/param[@location='body' and @type!='']/param">
                                                         <xsl:value-of select="@name"/>,
-                                                    </xsl:for-each>
+                                                    </xsl:for-each> dummyWrappedType,
                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
                                                     "<xsl:value-of select="$method-name"/>")));
                                                 </xsl:when>
@@ -595,12 +601,15 @@
                                                             <!-- Even when the parameters are 1 we have to see whether we have the
                                                                 wrapped parameters -->
                                                            <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                                                            <xsl:variable name="inputElementType" select="input/param[@location='body' and @type!='']/@type"></xsl:variable>
+
                                                             <xsl:choose>
                                                                 <xsl:when test="$inputWrappedCount &gt; 0">
+                                                                    <xsl:value-of select="$inputElementType"/><xsl:text> </xsl:text>dummyWrappedType = null;
                                                                     env = toEnvelope(getFactory(_operationClient.getOptions().getSoapVersionURI()),
                                                                     <xsl:for-each select="input/param[@location='body' and @type!='']/param">
                                                                         <xsl:value-of select="@name"/>,
-                                                                    </xsl:for-each>
+                                                                    </xsl:for-each>dummyWrappedType,
                                                                     optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>",
                                                                     "<xsl:value-of select="$method-name"/>")));
                                                                 </xsl:when>

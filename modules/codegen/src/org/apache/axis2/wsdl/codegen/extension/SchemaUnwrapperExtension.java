@@ -1,6 +1,7 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -184,7 +185,9 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 XmlSchemaComplexContentExtension schemaExtension = (XmlSchemaComplexContentExtension) content;
 
                 // process particles inside this extension, if any
-                processXMLSchemaSequence(schemaExtension.getParticle(), message, partNameList);
+                if (schemaExtension.getParticle() != null){
+                    processXMLSchemaSequence(schemaExtension.getParticle(), message, partNameList);
+                }
 
                 // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                 // the parent schema

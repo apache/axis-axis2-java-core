@@ -233,6 +233,10 @@ public class ExtensionUtility {
 
                     // if this is an instance of xs:any, then there is no part name for it. Using ANY_ELEMENT_FIELD_NAME
                     // for it for now
+
+                    //we have to handle both maxoccurs 1 and maxoccurs > 1 situation
+                    XmlSchemaAny xmlSchemaAny = (XmlSchemaAny) item;
+
                     QName partQName = WSDLUtil.getPartQName(opName,
                             WSDLConstants.INPUT_PART_QNAME_SUFFIX,
                             Constants.ANY_ELEMENT_FIELD_NAME);
@@ -242,6 +246,7 @@ public class ExtensionUtility {
                     } else {
                         mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement");
                     }
+
                 }
 
             }
@@ -267,8 +272,14 @@ public class ExtensionUtility {
             String className = (String) metaInfoMap.
                     get(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY);
 
+            // this is a temporary patch
+            // the acual problem is keeping the class name details on the schemaType in
+            // XmlSchema compiler.
+            // we have to store them in XmlElement
             if (isArray && !className.endsWith("[]")) {
                 className += "[]";
+            } else if (!isArray && className.endsWith("[]")){
+                className = className.substring(0,className.length() - 2);
             }
 
             QName partQName = WSDLUtil.getPartQName(opName,

@@ -52,7 +52,7 @@
                                 private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory,
                                 <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
                                     <xsl:value-of select="@type"/> param<xsl:value-of select="position()"/>,
-                                </xsl:for-each>
+                                </xsl:for-each><xsl:value-of select="$inputElementType"/> dummyWrappedType,
                                 boolean optimizeContent){
 
                                 <xsl:value-of select="$inputElementType"/> wrappedType = <xsl:value-of select="$inputElementType"/>.Factory.newInstance();
