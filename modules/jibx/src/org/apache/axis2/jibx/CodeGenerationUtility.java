@@ -19,6 +19,7 @@ package org.apache.axis2.jibx;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,6 +52,7 @@ import org.jibx.binding.model.ElementBase;
 import org.jibx.binding.model.FormatElement;
 import org.jibx.binding.model.IncludeElement;
 import org.jibx.binding.model.MappingElement;
+import org.jibx.binding.model.ModelVisitor;
 import org.jibx.binding.model.NamespaceElement;
 import org.jibx.binding.model.ValidationContext;
 import org.jibx.runtime.JiBXException;
@@ -109,13 +111,17 @@ public class CodeGenerationUtility {
         }
         
         // Read the JiBX binding definition into memory. The binding definition
-        // is not currently validated so as not to require the user to have all
+        // is only prevalidated so as not to require the user to have all
         // the referenced classes in the classpath, though this does make for
         // added work in finding the namespaces.
         try {
             ValidationContext vctx = BindingElement.newValidationContext();
             BindingElement binding =
                 BindingElement.readBinding(new FileInputStream(file), path, vctx);
+            binding.setBaseUrl(file.toURL());
+            vctx.setBindingRoot(binding);
+            IncludePrevalidationVisitor ipv = new IncludePrevalidationVisitor(vctx);
+            vctx.tourTree(binding, ipv);
             if (vctx.getErrorCount() != 0 || vctx.getFatalCount() != 0) {
                 throw new RuntimeException("invalid jibx binding definition file " + path);
             }
@@ -238,6 +244,8 @@ public class CodeGenerationUtility {
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
         } catch (AxisFault e) {
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -539,102 +547,34 @@ public class CodeGenerationUtility {
         }
         return dns;
     }
-
+    
     /**
-     * Get map from qname to corresponding class name from binding definition.
-     * Only the global &lt;mapping> elements in the binding definition are
-     * included, since these are the only ones accessible from the Axis2
-     * interface.
-     * 
-     * @param path binding definition file path
-     * @return map from qname to class name
+     * Inner class for handling prevalidation of include elements only. Unlike
+     * the normal JiBX binding definition prevalidation step, this visitor
+     * ignores everything except include elements.
      */
-    public static Map getBindingMap(String path) {
+    private class IncludePrevalidationVisitor extends ModelVisitor
+    {
+        private final ValidationContext m_context;
         
-        // make sure the binding definition file is present
-        File file = new File(path);
-        if (!file.exists()) {
-            throw new RuntimeException("jibx binding definition file " + path + " not found");
+        private IncludePrevalidationVisitor(ValidationContext vctx) {
+            m_context = vctx;
         }
         
-        // Read the JiBX binding definition into memory. The binding definition
-        // is not currently validated so as not to require the user to have all
-        // the referenced classes in the classpath, though this does make for
-        // added work in finding the namespaces.
-        try {
-            ValidationContext vctx = BindingElement.newValidationContext();
-            BindingElement binding =
-                BindingElement.readBinding(new FileInputStream(file), path, vctx);
-            if (vctx.getErrorCount() != 0 || vctx.getFatalCount() != 0) {
-                throw new RuntimeException("invalid jibx binding definition file " + path);
+        /* (non-Javadoc)
+         * @see org.jibx.binding.model.ModelVisitor#visit(org.jibx.binding.model.ElementBase)
+         */
+        public boolean visit(IncludeElement node) {
+            try {
+                node.prevalidate(m_context);
+            } catch (Throwable t) {
+                m_context.addFatal("Error during validation: " +
+                    t.getMessage());
+                t.printStackTrace();
+                return false;
             }
-            
-            // create map from qname to class for all top-level mappings
-            return defineBoundClasses(binding);
-            
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (JiBXException e) {
-            throw new RuntimeException(e);
+            return true;
         }
-    }
-
-    /**
-     * Create mapping from qnames to classes for top level mappings in JiBX binding.
-     * 
-     * @param binding
-     * @return map from qname to class
-     */
-    private static Map defineBoundClasses(BindingElement binding) {
-        
-        // check default namespace set at top level of binding
-        String defaultns = findDefaultNS(binding.topChildIterator());
-        
-        // add all top level mapping definitions to map from qname to class
-        Map mappings = new HashMap();
-        for (Iterator iter = binding.topChildIterator(); iter.hasNext();) {
-            ElementBase child = (ElementBase)iter.next();
-            if (child.type() == ElementBase.MAPPING_ELEMENT) {
-                MappingElement mapping = (MappingElement)child;
-                String name = mapping.getName();
-                if (name != null) {
-                    String uri = mapping.getUri();
-                    if (uri == null) {
-                        uri = findDefaultNS(mapping.topChildIterator());
-                        if (uri == null) {
-                            uri = defaultns;
-                        }
-                    }
-                    mappings.put(new QName(uri, name), mapping.getClassName());
-                }
-            }
-        }
-        return mappings;
-    }
-
-    /**
-     * Find the default namespace within a list of JiBX binding model elements
-     * possibly including namespace definitions. Once a non-namespace definition
-     * element is seen in the list, this just returns (since the namespace
-     * definitions always come first in JiBX's binding format).
-     * 
-     * @param iter iterator for elements in list
-     * @return default namespace
-     */
-    private static String findDefaultNS(Iterator iter) {
-        while (iter.hasNext()) {
-            ElementBase child = (ElementBase)iter.next();
-            if (child.type() == ElementBase.NAMESPACE_ELEMENT) {
-                NamespaceElement namespace = (NamespaceElement)child;
-                String defaultName = namespace.getDefaultName();
-                if ("elements".equals(defaultName) || "all".equals(defaultName)) {
-                    return namespace.getUri();
-                }
-            } else {
-               break;
-            }
-        }
-        return null;
     }
     
     private static class NamedParameterTypeMapper extends JavaTypeMapper
