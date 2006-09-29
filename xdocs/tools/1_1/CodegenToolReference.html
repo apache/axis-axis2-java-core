@@ -12,8 +12,9 @@ Task. This document will list the command line references and Ant task
 references. Also in detail, this document shows how to build file using
 custom Ant task and invoking the Code Generator from Ant.</p>
 
-<p>This tool is bundled with the Axis2 base distribution found <a
-href="http://ws.apache.org/axis2/download.cgi">here</a>.</p>
+<p>This tool is bundled with the <a
+href="http://ws.apache.org/axis2/download.cgi">Axis2 Binary
+Distribution</a>.</p>
 
 <h2>Content</h2>
 <ul>
@@ -176,7 +177,7 @@ style="border-collapse: collapse" width="100%" id="AutoNumber1">
     <tr>
       <td width="20%">-ns2p</td>
       <td width="20%">--namespace2package</td>
-      <td width="60%">Specifies a comma seperated list of namespaces and
+      <td width="60%">Specifies a comma separated list of namespaces and
         packages where the given package will be used in the place of the
         auto generated package for the relevant namespace. The list will be
         the format of ns1=pkg1,ns2=pkg2.</td>
@@ -291,22 +292,44 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
 
 <h3>Example Build File Using the Custom Ant Task</h3>
 
-<p>Following is an example ant build file that uses the custom Ant task.</p>
-<pre>&lt;?xml version="1.0"?&gt;
-&lt;project name="CodegenExample" default="main" basedir="."&gt;
-&lt;target name="declare" &gt;
-&lt;taskdef name="codegen"
- classname="org.apache.axis2.tool.ant.AntCodegenTask"
- classpath="classes"/&gt;
-&lt;/target&gt;
-&lt;target name="main" depends="declare"&gt;
-&lt;codegen 
- wsdlfilename="C:\test\wsdl\CombinedService.wsdl"
- output="C:\"
- serverside="true"
- generateservicexml="true"/&gt;
-&lt;/target&gt;
-&lt;/project&gt;</pre>
+<p>Following is an example ant build file that uses the custom Ant task. You
+can use any wsdl file to test the example. Replace the "CombinedService.wsdl"
+with the name of your wsdl file in the following script.</p>
+<pre>1 &lt;?xml version="1.0"?&gt;
+2 &lt;project name="CodegenExample" default="main" basedir="."&gt;
+3 
+4 &lt;path id="example.classpath"&gt;    
+5   &lt;fileset dir="classes"&gt;
+6     &lt;include name="**/*.jar" /&gt;
+7 &lt;/fileset&gt;
+8 &lt;/path&gt;
+9 
+10 &lt;target name="declare" &gt;
+11 &lt;taskdef name="codegen"
+12  classname="org.apache.axis2.tool.ant.AntCodegenTask"
+13  classpathref="example.classpath"/&gt;
+15 &lt;/target&gt;
+16
+17 &lt;target name="main" depends="declare"&gt;
+18 &lt;codegen 
+19  wsdlfilename="C:\test\wsdl\CombinedService.wsdl"
+20  output="C:\output"
+21  serverside="true"
+22  generateservicexml="true"/&gt;
+23 &lt;/target&gt;
+24
+25 &lt;/project&gt;</pre>
+
+<p>In the above build script, from line 4 to 8 it sets the classpath and
+includes all the .jar files (which are listed below) into the classpath. From
+line 10 to 15 it creates a target to declare a task called "codegen" and sets
+the appropriate class (org.apache.axis2.tool.ant.AntCodegenTask) within the
+classpath in line 12. From line 17 to 23 it creates the "main" target to
+generate the code from the given wsdl. There are some arguments set form line
+19 to 22. Here in line 19 it sets the location of the wsdl. In line 20 it
+sets the output directory in which the code is generated. Line 21 indicates
+that this build generates the server side code(skeleton) and line 22
+indicates that the services.xml is also generated.</p>
 
 <p>Notice the main target that uses the "codegen" task which will use the
 org.apache.axis2.tool.ant.AntCodegenTask class and run the code generation
@@ -317,8 +340,8 @@ generation. If a user types</p>
 
 <p>it will generate the server side code and services.xml for the given WSDL
 file (C:\test\wsdl\CombinedService.wsdl -in the above instance) and the
-generated code will be written to the specified output path (C:\ - in the
-above instance).</p>
+generated code will be written to the specified output path (C:\output - in
+the above instance).</p>
 
 <p>For this Ant task to work the following jars need to be in the class
 path.</p>
@@ -326,13 +349,17 @@ path.</p>
   <li>axis-*.jar (from the Axis2 distribution)</li>
   <li>wsdl4j-1.5.1.jar or higher (The WSDL4J implementation jar. Bundled with
     the Axis2 distribution)</li>
-  <li>stax-api-1.0.1jar (The StAX API's that contain the
+  <li>stax-api-1.0.1.jar (The StAX API's that contain the
     javax.xml.namespace.QName class. This jar may be replaced by any other
     jar that contains the javax.xml.namespace.QName implementation. However
     Axis2 uses this class from the stax-api-1.0.1.jar which comes bundled
     with the Axis2 distribution)</li>
-  <li>commons-logging-1.1.jar, neethi-1.1.jar, XmlSchema-1.1.jar (from the
+  <li>commons-logging-1.1.jar, neethi-1.1.jar and XmlSchema-1.1.jar (from the
     Axis2 distribution)</li>
+  <li>axiom-api-1.1.1.jar and axiom-impl-1.1.1.jar (from the Axis2
+    distribution)</li>
+  <li>activation-1.1.jar (from the Axis2 distribution)</li>
+  <li>astx-asl0-3.0.1.jar (from the Axis2 distribution)</li>
 </ul>
 <a name="invoking"></a>
 
@@ -344,7 +371,8 @@ invoked directly through the build file.</p>
 
 <p>Below is an example of a full build.xml needed to run WSDL2Java and
 generate the Java source files, compile the sources, and build an AAR file
-ready for deployment:</p>
+ready for deployment (These are done one by one, by calling the targets in
+the build file separately):</p>
 <pre class="code">&lt;!DOCTYPE project&gt;
 
 &lt;project name="wsdl2java-example" default="usage" basedir="."&gt;
@@ -482,8 +510,7 @@ ready for deployment:</p>
      srcdir="src"
      destdir="${build.classes}"
      deprecation="true"
-     failonerror="true" debug="true"
-    &gt;
+     failonerror="true" debug="true"&gt;
 
      &lt;classpath refid="axis.classpath"/&gt; 
     &lt;/javac&gt;
@@ -498,7 +525,7 @@ ready for deployment:</p>
 
 &lt;/project&gt;</pre>
 
-<p>Place the above build.xml file in the bin directory of the axis2 binary
+<p>Place the above build.xml file in the 'bin' directory of the axis2 binary
 distribution. Then create a build.properties file in the same directory and
 specify the axis.home path pointing to the axis2 binary distribution</p>
 
@@ -582,9 +609,10 @@ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://login/types
       &lt;/service&gt;&lt;/definitions&gt;</pre>
 
 <p>Place the above file, named LoginEndpoint.wsdl, in the directory 'wsdl'
-below the build.xml file. Run the WSDL2Java command via the ant task defined
-above, and there will be a directory called 'output' created. This directory
-contains the WSDL2Java generated source.</p>
+which is also inside the 'bin' directory. Run the wsdl2java command via the
+ant task defined above (&gt;ant wsdl2java), and there will be a directory
+called 'output' created. This directory contains the WSDL2Java generated
+source.</p>
 
 <p>An important detail is that an XMLBean class file is also generated by
 WSDL2Java, TypeSystemHolder.class. That file is placed into build/classes by
@@ -700,17 +728,17 @@ public class LoginServiceSkeleton {
 <p>The next steps assume the axis2.war has been deployed and has expanded in
 a servlet container.</p>
 
-<p>Run the 'jar_wsdl' ant task from the example build.xml, which generates a
-jar file lib/axis2_example_wsdl.jar in the 'lib' directory under the
-build.xml . This jar will be used to compile the client, and also will be
-placed in the servlet container.</p>
+<p>Run the 'jar_wsdl' ant task from the example build.xml (&gt;ant jar_wsdl),
+which generates a jar file lib/axis2_example_wsdl.jar in the 'lib' directory
+under the build.xml . This jar will be used to compile the client, and also
+will be placed in the servlet container.</p>
 
-<p>Next, run the 'aar' ant task from the example build.xml, which generates
-the deployable axis2 Web service. Place dist/LoginEndpoint.aar into
-axis2/WEB-INF/services . Place lib/axis2_example_wsdl.jar into
-axis2/WEB-INF/lib . Verify the happy axis page loaded the services correctly
-- there should be the service 'LoginEndpoint' with the available operation
-'webLogin' displayed.</p>
+<p>Next, run the 'aar' ant task from the example build.xml (&gt;ant aar),
+which generates the deployable axis2 Web service. Place
+dist/LoginEndpoint.aar into axis2/WEB-INF/services . Place
+lib/axis2_example_wsdl.jar into axis2/WEB-INF/lib . Verify the happy axis
+page loaded the services correctly - there should be the service
+'LoginEndpoint' with the available operation 'webLogin' displayed.</p>
 
 <p>The last step is to create and run the client. In the src directory create
 the file org.client.LoginClient.java, with the contents below:</p>
@@ -768,8 +796,8 @@ public class LoginClient {
     }
 }</pre>
 
-<p>Now run the ant task 'ant runLogin' . The following output should
-appear:</p>
+<p>Now run the ant task 'runLogin' (&gt;ant runLogin). The following output
+should appear:</p>
 <pre class="code">runLogin:
      [echo] running the webLogin client
      [java] webLogin, firing...
