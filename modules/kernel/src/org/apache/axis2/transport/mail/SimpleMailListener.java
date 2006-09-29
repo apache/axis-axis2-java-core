@@ -169,16 +169,17 @@ public class SimpleMailListener implements Runnable, TransportListener {
     public static void main(String args[]) throws AxisFault {
         if (args.length != 1) {
             log.info("java SimpleMailListener <repository>");
+            printUsage();
         } else {
-            String dir = args[0];
+            String path = args[0];
+            String axis2xml = args[1];
             ConfigurationContext configurationContext;
-            File repo = new File(dir);
+            File repo = new File(path);
             if (repo.exists()) {
-                File axis2xml = new File(repo, "axis2.xml");
                 configurationContext =
-                        ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                                dir, axis2xml.getName());
+                        ConfigurationContextFactory.createConfigurationContextFromFileSystem(path,axis2xml);
             } else {
+                printUsage();
                 throw new AxisFault("repository not found");
             }
             SimpleMailListener sas = new SimpleMailListener();
@@ -195,6 +196,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         "Startup failed, mail transport not configured, Configure the mail trnasport in the axis2.xml file");
             }
         }
+    }
+
+    private static void printUsage() {
+        System.out.println("Please provide the repository location and axis2.xml location ");
     }
 
     /**
