@@ -1564,6 +1564,7 @@
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
+                                	
                                     if (isReaderMTOMAware
                                             &amp;&amp;
                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
@@ -1576,6 +1577,7 @@
                                         {
                                             java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
                                             object.set<xsl:value-of select="$javaName"/>(((org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
+                                            reader.next();
                                         } else if(reader.hasText()) {
                                             //Do the usual conversion
                                             java.lang.String content = reader.getText();
@@ -2565,6 +2567,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
+                                	
                                     if (isReaderMTOMAware
                                             &amp;&amp;
                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
@@ -2577,6 +2580,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         {
                                             java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
                                             object.set<xsl:value-of select="$javaName"/>(((org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
+                                            reader.next();
                                         } else if(reader.hasText()) {
                                             //Do the usual conversion
                                             java.lang.String content = reader.getText();
