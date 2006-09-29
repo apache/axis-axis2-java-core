@@ -32,6 +32,13 @@ color: #FF0000;
 
 
 
+
+
+
+
+
+
+
   </style>
 </head>
 
@@ -42,7 +49,8 @@ color: #FF0000;
 
 <p>[<a href="http://ws.apache.org/axis2/download.cgi">Download 1.1</a>]</p>
 
-<p>Apache Axis2 is a complete re-design and re-write of the widely used <a
+<p>Apache Axis2 is the core engine for Web services. It is a complete
+re-design and re-write of the widely used <a
 href="http://ws.apache.org/axis/">Apache Axis</a> SOAP stack to build on the
 lessons learnt from Apache Axis.</p>
 
@@ -70,6 +78,13 @@ Library</a> for a list of technical resources that should prove useful on
 this project.</p>
 
 <h3><em>Why Apache Axis2:</em></h3>
+
+<p>A new architecture for Axis was introduced during the August 2004 Summit
+in Colombo, Sri Lanka. This new architecture Axis2 is based on is more
+flexible, efficient and configurable in comparison to <a
+href="http://ws.apache.org/axis/java/architecture-guide.html">Axis1.x
+architecture</a>. Some well established concepts from Axis 1.x, like handlers
+etc., have been preserved in this new architecture.</p>
 
 <p>Apache Axis2 not only supports SOAP 1.1 and SOAP 1.2, but it also has
 integrated support for the widely popular <a
@@ -105,9 +120,94 @@ available or under development include:</p>
 </ul>
 
 <p>Apache Axis2 is built on <a
-href="http://ws.apache.org/commons/axiom/index.html">Apache AXIOm</a>, a new
+href="http://ws.apache.org/commons/axiom/index.html">Apache AXIOM</a>, a new
 high performant, pull-based XML object model that was released two days
 ago.</p>
+
+<p>Axis2 comes with many new features, enhancements and industry
+specification implementations. The key features offered are as follows:</p>
+<ul>
+  <li><p style="margin-bottom: 0in"><strong>Speed</strong> - Axis2 uses its
+    own object model and StAX (Streaming API for XML) parsing to achieve
+    significantly greater speed than earlier versions of Apache Axis.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>Low memory foot print</strong>-
+    Axis2 was designed ground-up keeping low memory foot print in mind.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>AXIOM</strong> - Axis2 comes with
+    its own light-weight object model, AXIOM, for message processing which is
+    extensible, highly performant and is developer convenient.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong><a name="Hot_Deployment">Hot
+    Deployment</a></strong> - Axis2 is equipped with the capability of
+    deploying Web service &amp; handlers while the system is up and running.
+    In other words, new services can be added to the system without having to
+    shut down the server. Simply drop the required Web service archive into
+    the services directory in the repository and the deployment model will
+    automatically deploy the service and make it available for use.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>Asynchronous Web
+    services</strong> - Axis2 now supports asynchronous Web services &amp;
+    asynchronous Web services invocation using non-blocking clients and
+    transports .</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>MEP Support</strong> - Axis2 now
+    comes handy with the flexibility to support Message Exchange Patterns
+    (MEPs) with in-built support for basic MEPs defined in WSDL 2.0.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>Flexibility</strong> - The Axis2
+    architecture gives the developer complete freedom to insert extensions
+    into the engine for custom header processing, system management, and
+    <em>anything else you can imagine</em>.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>Stability</strong> - Axis2
+    defines a set of published interfaces which change relatively slowly
+    compared to the rest of Axis.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>Component-oriented
+    Deployment</strong> - You can easily define reusable networks of Handlers
+    to implement common patterns of processing for your applications, or to
+    distribute to partners.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>Transport Framework</strong> - We
+    have a clean and simple abstraction for integrating and using Transports
+    (i.e., senders and listeners for SOAP over various protocols such as
+    SMTP, FTP, message-oriented middleware, etc), and the core of the engine
+    is completely transport-independent.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>WSDL support</strong> - Axis2
+    supports the Web Service Description Language, version <a
+    href="http://www.w3.org/TR/wsdl">1.1</a> and <a
+    href="http://www.w3.org/TR/wsdl20/">2.0</a>, which allows you to easily
+    build stubs to access remote services, and also to automatically export
+    machine-readable descriptions of your deployed services from Axis2.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>Add-ons</strong> - Several Web
+    services specifications have been incorporated including <a
+    href="http://ws.apache.org/wss4j/" target="_blank">WSS4J</a> for security
+    (Apache Rampart), <a href="http://ws.apache.org/sandesha/"
+    target="_blank">Sandesha</a> for reliable messaging, <a
+    href="http://ws.apache.org/kandula/" target="_blank">Kandula</a> which is
+    an encapsulation of WS-Coordination, WS-AtomicTransaction and
+    WS-BusinessActivity.</p>
+  </li>
+  <li><p style="margin-bottom: 0in"><strong>Composition and
+    Extensibility</strong> - Modules and phases improve support for
+    composability and extensibility. Modules supports composability and is
+    able to add support for new WS-* specifications in a simple and clean
+    manner. They are however not <a href="#Hot_Deployment">hot deployable</a>
+    as they change the overall behavior of the system.</p>
+  </li>
+</ul>
+
+<p>We hope you enjoy using Axis2. Please note that this is an open-source
+effort. If you feel the code could use new features or fixes, or the
+documentation can be improved, please get involved and lend us a hand! The
+Axis developer community welcomes your participation.</p>
+
+<p>Let us know what you think! Send your feedback on Axis2 to "<a
+href="mailto:axis-user@ws.apache.org">axis-user@ws.apache.org</a>". Make sure
+to prefix the subject of the mail with [Axis2].</p>
 
 <h2>Features of Axis2 Latest Version</h2>
 
@@ -122,7 +222,7 @@ ago.</p>
     with versioning support</li>
   <li><a href="1_1/userguide1.html#Hot_Deployment">Hot deployment</a></li>
   <li>WS-Policy driven code generation extensions</li>
-  <li>Flexible service lifecyle model</li>
+  <li>Flexible service life cycle model</li>
   <li>Support for querying service's WSDL (using ?wsdl), schema (using ?xsd)
     and policies (using ?policy)</li>
 </ul>
