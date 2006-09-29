@@ -505,6 +505,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     Object faultMapKey = faultKeys.next();
                     BindingFault bindingFault = (BindingFault) bindingFaultsMap.get(faultMapKey);
                     Fault wsdl4jFault = wsdl4jOperation.getFault(bindingFault.getName());
+                    if(wsdl4jFault == null) {
+                        throw new AxisFault("fault \"" + bindingFault.getName() + "\" not found in the Operation " + wsdl4jOperation.getName());
+                    }
                     AxisMessage faultMessage = findFaultMessage(wsdl4jFault.getMessage().getQName().getLocalPart(), operation.getFaultMessages());
 
                     AddQNameReference(faultMessage, wsdl4jFault.getMessage());
