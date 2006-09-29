@@ -412,8 +412,11 @@ public class AxisService2OM implements Java2WSDLConstants {
             }
             OMElement port = fac.createOMElement(PORT, wsdl);
             service.addChild(port);
-            port.addAttribute(ATTRIBUTE_NAME, axisService.getName()
-                    + SOAP11PORT + ((protocol == null) ? "" : "_" + protocol), null);
+            String name = axisService.getName() + SOAP11PORT + ((protocol == null) ? "" : "_" + protocol);
+            if(i > 0) {
+                name += i;
+            }
+            port.addAttribute(ATTRIBUTE_NAME, name, null);
             port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                     + axisService.getName() + BINDING_NAME_SUFFIX, null);
             addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,
@@ -432,8 +435,11 @@ public class AxisService2OM implements Java2WSDLConstants {
             if (urlString != null && urlString.startsWith("http")) {
                 OMElement port = fac.createOMElement(PORT, wsdl);
                 service.addChild(port);
-                port.addAttribute(ATTRIBUTE_NAME, axisService.getName()
-                        + HTTP_PORT + i, null);
+                String name = axisService.getName() + HTTP_PORT;
+                if(i > 0) {
+                    name += i;
+                }
+                port.addAttribute(ATTRIBUTE_NAME, name, null);
                 port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                         + axisService.getName() + HTTP_BINDING, null);
                 OMElement extElement = fac.createOMElement("address", http);
@@ -454,8 +460,11 @@ public class AxisService2OM implements Java2WSDLConstants {
             }
             OMElement port = fac.createOMElement(PORT, wsdl);
             service.addChild(port);
-            port.addAttribute(ATTRIBUTE_NAME, axisService.getName()
-                    + SOAP12PORT + ((protocol == null) ? "" : "_" + protocol), null);
+            String name = axisService.getName() + SOAP12PORT + ((protocol == null) ? "" : "_" + protocol);
+            if(i > 0) {
+                name += i;
+            }
+            port.addAttribute(ATTRIBUTE_NAME, name, null);
             port.addAttribute(BINDING_LOCAL_NAME, tns.getPrefix() + ":"
                     + axisService.getName() + SOAP12BINDING_NAME_SUFFIX, null);
             addExtensionElement(fac, port, SOAP_ADDRESS, LOCATION, urlString,
