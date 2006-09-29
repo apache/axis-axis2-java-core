@@ -18,7 +18,10 @@
 
 package org.apache.axis2.jaxws.description;
 
+import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
 
 import junit.framework.TestCase;
 
@@ -258,4 +261,221 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals(true, operations[0].isWebResultAnnotationSpecified());
         assertEquals("return_str", operations[0].getWebResultName());
     }
+    
+    // ===========================================
+    // The following tests use implementation classes defined below
+    // in order to test various specific annotation settings
+    // ===========================================
+    
+    public void testSOAPBindingDefault() {
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(SOAPBindingDefaultTestImpl.class);
+        
+        assertNull(testEndpointInterfaceDesc.getSoapBinding());
+        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
+        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, testEndpointInterfaceDesc.getSoapBindingUse());
+        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
+    }
+
+    public void testSOAPBindingDocEncBare() {
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(SOAPBindingDocEncBareTestImpl.class);
+        
+        assertNotNull(testEndpointInterfaceDesc.getSoapBinding());
+        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
+        assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, testEndpointInterfaceDesc.getSoapBindingUse());
+        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
+    }
+    
+    public void testSOAPBindingMethodAnnotation() {
+        // Verify that an impl without the method annotation uses the settings from the type
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(SOAPBindingDocEncBareTestImpl.class);
+
+        assertNotNull(testEndpointInterfaceDesc.getSoapBinding());
+        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
+        assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, testEndpointInterfaceDesc.getSoapBindingUse());
+        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
+
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("echoString")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getSoapBinding());
+        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, operationDesc.getSoapBindingStyle());
+        assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, operationDesc.getSoapBindingUse());
+        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE, operationDesc.getSoapBindingParameterStyle());
+        
+        // Verify that the method annotation setting overrides the type annotatino setting
+        testEndpointInterfaceDesc = getEndpointInterfaceDesc(SOAPBindingDefaultMethodTestImpl.class);
+        
+        assertNull(testEndpointInterfaceDesc.getSoapBinding());
+        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
+        assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, testEndpointInterfaceDesc.getSoapBindingUse());
+        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("echoString")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getSoapBinding());
+        assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, operationDesc.getSoapBindingStyle());
+        assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, operationDesc.getSoapBindingUse());
+        assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE, operationDesc.getSoapBindingParameterStyle());
+    }
+    
+    public void testDefaultReqRspWrapper() {
+
+        // Test paramaterStyle = WRAPPED set a the type level with various combinations of method annotation setting
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(DefaultReqRspWrapperTestImpl.class);
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("wrappedParams")[0];
+        assertNotNull(operationDesc);
+        assertEquals("wrappedParams", operationDesc.getRequestWrapperLocalName());
+        assertEquals("wrappedParamsResponse", operationDesc.getResponseWrapperLocalName());
+        // TODO: Tests for request and response wrapper namespace; currently throws UnsupportedOperationException
+        assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getResponseWrapperClassName());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("bareParams")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getRequestWrapperLocalName());
+        assertNull(operationDesc.getResponseWrapperLocalName());
+        assertNull(operationDesc.getRequestWrapperTargetNamespace());
+        assertNull(operationDesc.getResponseWrapperTargetNamespace());
+        assertNull(operationDesc.getRequestWrapperClassName());
+        assertNull(operationDesc.getResponseWrapperClassName());
+
+        // Test paramaterStyle = BARE set a the type level with various combinations of method annotation setting
+        testEndpointInterfaceDesc = getEndpointInterfaceDesc(DefaultReqRspWrapperBareTestImpl.class);
+        operationDesc = testEndpointInterfaceDesc.getOperation("wrappedParams")[0];
+        assertNotNull(operationDesc);
+        assertEquals("wrappedParams", operationDesc.getRequestWrapperLocalName());
+        assertEquals("wrappedParamsResponse", operationDesc.getResponseWrapperLocalName());
+        // TODO: Tests for request and response wrapper namespace; currently throws UnsupportedOperationException
+        assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getResponseWrapperClassName());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("bareParams")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getRequestWrapperLocalName());
+        assertNull(operationDesc.getResponseWrapperLocalName());
+        assertNull(operationDesc.getRequestWrapperTargetNamespace());
+        assertNull(operationDesc.getResponseWrapperTargetNamespace());
+        assertNull(operationDesc.getRequestWrapperClassName());
+        assertNull(operationDesc.getResponseWrapperClassName());
+    }
+    
+    public void testReqRspWrapper() {
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(ReqRspWrapperTestImpl.class);
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("method1")[0];
+        assertNotNull(operationDesc);
+        assertEquals("method1ReqWrapper", operationDesc.getRequestWrapperLocalName());
+        assertEquals("method1RspWrapper", operationDesc.getResponseWrapperLocalName());
+        assertEquals("http://a.b.c.method1ReqTNS", operationDesc.getRequestWrapperTargetNamespace());
+        assertEquals("http://a.b.c.method1RspTNS", operationDesc.getResponseWrapperTargetNamespace());
+        assertEquals("org.apache.axis2.jaxws.description.method1ReqWrapper", operationDesc.getRequestWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.method1RspWrapper", operationDesc.getResponseWrapperClassName());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method2")[0];
+        assertEquals("method2", operationDesc.getRequestWrapperLocalName());
+        assertEquals("method2RspWrapper", operationDesc.getResponseWrapperLocalName());
+        assertEquals("http://a.b.c.method2ReqTNS", operationDesc.getRequestWrapperTargetNamespace());
+        assertEquals("http://a.b.c.method2RspTNS", operationDesc.getResponseWrapperTargetNamespace());
+        assertEquals("org.apache.axis2.jaxws.description.method2ReqWrapper", operationDesc.getRequestWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.Method2", operationDesc.getResponseWrapperClassName());
+    }
+
+    /*
+     * Method to return the endpoint interface description for a given implementation class.
+     */
+    private EndpointInterfaceDescription getEndpointInterfaceDesc(Class implementationClass) {
+        // Use the description factory directly; this will be done within the JAX-WS runtime
+        ServiceDescription serviceDesc = 
+            DescriptionFactory.createServiceDescriptionFromServiceImpl(implementationClass, null);
+        assertNotNull(serviceDesc);
+        
+        EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
+        assertNotNull(endpointDesc);
+        assertEquals(1, endpointDesc.length);
+        
+        // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
+        EndpointDescription testEndpointDesc = endpointDesc[0];
+        EndpointInterfaceDescription testEndpointInterfaceDesc = testEndpointDesc.getEndpointInterfaceDescription();
+        assertNotNull(testEndpointInterfaceDesc);
+
+        return testEndpointInterfaceDesc;
+    }
 }
+
+// ============================================================================
+// SOAPBindingDefaultTest service implementation class
+// ============================================================================
+@WebService()
+class SOAPBindingDefaultTestImpl {
+    public String echoString(String s) {
+        return s;
+    }
+}
+// ============================================================================
+// SOAPBindingDocEncBareTestImpl service implementation class
+// Note that Style should default
+// ============================================================================
+@WebService()
+@SOAPBinding(use=javax.jws.soap.SOAPBinding.Use.ENCODED, parameterStyle=javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+class SOAPBindingDocEncBareTestImpl {
+    public String echoString(String s) {
+        return s;
+    }
+}
+// ============================================================================
+// SOAPBindingDefaultMethodTest service implementation class
+// Note that style should default to DOCUMENT based on Type annotation
+// ============================================================================
+@WebService()
+class SOAPBindingDefaultMethodTestImpl {
+    @SOAPBinding(use=javax.jws.soap.SOAPBinding.Use.ENCODED, parameterStyle=javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+    public String echoString (String s) {
+        return s;
+    }
+}
+
+// =============================================================================
+// testDefaultReqRspWrapper service implementation classes
+// =============================================================================
+@WebService
+//Note the default parameterStyle is WRAPPED, so no type-level annotation is required.
+class DefaultReqRspWrapperTestImpl {
+    public String wrappedParams (String s) {
+        return s;
+    }
+    
+    @SOAPBinding(parameterStyle=javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+    public String bareParams (String s) {
+        return s;
+    }
+}
+
+@WebService
+@SOAPBinding(parameterStyle=javax.jws.soap.SOAPBinding.ParameterStyle.BARE)
+class DefaultReqRspWrapperBareTestImpl {
+    @SOAPBinding(parameterStyle=javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED)
+    public String wrappedParams (String s) {
+        return s;
+    }
+    
+    public String bareParams (String s) {
+        return s;
+    }
+}
+
+// =============================================================================
+// testReqRspWrapper service implementation class
+// =============================================================================
+@WebService
+//Note the default parameterStyle is WRAPPED, so no type-level annotation is required.
+class ReqRspWrapperTestImpl {
+    @RequestWrapper(localName="method1ReqWrapper", targetNamespace="http://a.b.c.method1ReqTNS", className="org.apache.axis2.jaxws.description.method1ReqWrapper")
+    @ResponseWrapper(localName="method1RspWrapper", targetNamespace="http://a.b.c.method1RspTNS", className="org.apache.axis2.jaxws.description.method1RspWrapper")
+    public String method1 (String s) {
+        return s;
+    }
+
+    @RequestWrapper(targetNamespace="http://a.b.c.method2ReqTNS", className="org.apache.axis2.jaxws.description.method2ReqWrapper")
+    @ResponseWrapper(localName="method2RspWrapper", targetNamespace="http://a.b.c.method2RspTNS")
+    public String method2 (String s) {
+        return s;
+    }
+}   

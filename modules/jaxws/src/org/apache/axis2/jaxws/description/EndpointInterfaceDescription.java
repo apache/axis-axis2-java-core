@@ -35,8 +35,16 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 
 /**
+ * An EndpointInterfaceDescription corresponds to a particular SEI-based Service
+ * Implementation. It can correspond to either either a client to that impl or
+ * the actual service impl.
  * 
+ * The EndpointInterfaceDescription contains information that is relevant only
+ * to an SEI-based (aka Endpoint-based or Java-based) enpdoint; Provider-based
+ * endpoint, which are not operation based and do not have an associated SEI,
+ * will not have an an EndpointInterfaceDescription class and sub-hierachy.
  */
+
 /*
 Java Name: SEI Class name
 
@@ -73,11 +81,23 @@ public class EndpointInterfaceDescription {
     // specify an @WebService.endpointInterface.
     private Class seiClass;
     
-    // Annotations and cached values
+    // ===========================================
+    // ANNOTATION related information
+    // ===========================================
+    
+    // ANNOTATION: @SOAPBinding
+    // Note this is the Type-level annotation.  See OperationDescription for the Method-level annotation
     private SOAPBinding         soapBindingAnnotation;
     // TODO: Should this be using the jaxws annotation values or should that be wrappered?
-    private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
-    private javax.jws.soap.SOAPBinding.ParameterStyle soapParameterStyle;
+    private javax.jws.soap.SOAPBinding.Style            soapBindingStyle;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
+    public static final javax.jws.soap.SOAPBinding.Style SOAPBinding_Style_DEFAULT = javax.jws.soap.SOAPBinding.Style.DOCUMENT;
+    private javax.jws.soap.SOAPBinding.Use              soapBindingUse;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
+    public static final javax.jws.soap.SOAPBinding.Use  SOAPBinding_Use_DEFAULT = javax.jws.soap.SOAPBinding.Use.LITERAL;
+    private javax.jws.soap.SOAPBinding.ParameterStyle   soapParameterStyle;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
+    public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
     
     void addOperation(OperationDescription operation) {
         operationDescriptions.add(operation);
@@ -330,10 +350,22 @@ public class EndpointInterfaceDescription {
                 soapBindingStyle = getSoapBinding().style();
             }
             else {
-                soapBindingStyle = javax.jws.soap.SOAPBinding.Style.DOCUMENT;
+                soapBindingStyle = SOAPBinding_Style_DEFAULT;
             }
         }
         return soapBindingStyle;
+    }
+    
+    public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
+        if (soapBindingUse == null) {
+            if (getSoapBinding() != null && getSoapBinding().use() != null) {
+                soapBindingUse = getSoapBinding().use();
+            }
+            else {
+                soapBindingUse = SOAPBinding_Use_DEFAULT;
+            }
+        }
+        return soapBindingUse;
     }
     
     public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle(){
@@ -342,11 +374,9 @@ public class EndpointInterfaceDescription {
             	soapParameterStyle = getSoapBinding().parameterStyle();
             }
             else {
-            	soapParameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+            	soapParameterStyle = SOAPBinding_ParameterStyle_DEFAULT;
             }
         }
         return soapParameterStyle;
     }
-
-
 }

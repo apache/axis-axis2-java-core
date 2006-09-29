@@ -47,6 +47,17 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * An EndpointDescription corresponds to a particular Service Implementation. It
+ * can correspond to either either a client to that impl or the actual service
+ * impl.
+ * 
+ * The EndpointDescription contains information that is relevant to both a
+ * Provider-based and SEI-based (aka Endpoint-based or Java-based) enpdoints.
+ * SEI-based endpoints (whether they have an explicit or implcit SEI) will have
+ * addtional metadata information in an EndpointInterfaceDescription class and
+ * sub-hierachy; Provider-based endpoitns to not have such a hierachy.
+ */
 
 /*
 Working-design information.
@@ -87,6 +98,19 @@ public class EndpointDescription {
     // This is only set on the service-side, not the client side.  It could
     // be either an SEI class or a service implementation class.
     private Class implOrSEIClass;
+
+    //On Client side, there should be One ServiceClient instance per AxisSerivce
+    private ServiceClient serviceClient = null;
+    
+    public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.EndpointDescription";
+    private static final Log log = LogFactory.getLog(EndpointDescription.class);
+
+    
+    // ===========================================
+    // ANNOTATION related information
+    // ===========================================
+    
+    // ANNOTATION: @WebService and @WebServiceProvider
     // Only one of these two annotations will be set; they are mutually exclusive
     private WebService          webServiceAnnotation;
     private WebServiceProvider  webServiceProviderAnnotation;
@@ -99,23 +123,24 @@ public class EndpointDescription {
     private String              webService_EndpointInterface;
     private String              webService_Name;
 
-    // ServiceMode annotation (only valid on a Provider-based endpoint)
+    // ANNOTATION: @ServiceMode
+    // Note this is only valid on a Provider-based endpoint
     private ServiceMode         serviceModeAnnotation;
     private Service.Mode        serviceModeValue;
+    // Default ServiceMode.value per JAXWS Spec 7.1 "javax.xml.ServiceMode" pg 79
+    public static final javax.xml.ws.Service.Mode  ServiceMode_DEFAULT = javax.xml.ws.Service.Mode.PAYLOAD;
     
-    // BindingType annotation
+    // ANNOTATION: @BindingType
     private BindingType         bindingTypeAnnotation;
     private String              bindingTypeValue;
+    // Default BindingType.value per JAXWS Spec Sec 7.8 "javax.xml.ws.BindingType" pg 83 
+    // and Sec 1.4 "SOAP Transport and Transfer Bindings" pg 119
+    public static final String  BindingType_DEFAULT = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
     
+    // ANNOTATION: @HandlerChain
+    // TODO: @HandlerChain support
     // TODO: This needs to be a collection of handler descriptions; use JAX-WS Appendix B Handler Chain Configuration File Schema as a starting point
     private ArrayList<String> handlerList = new ArrayList<String>();
-
-    //On Client side, there should be One ServiceClient instance per ServiceDescription instance and One ServiceDescription 
-    //instance per new Web Service.
-    private ServiceClient serviceClient = null;
-    
-    public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.EndpointDescription";
-    private static final Log log = LogFactory.getLog(EndpointDescription.class);
 
     /**
      * Create an EndpointDescription based on the WSDL port.  Note that per the JAX-WS Spec (Final Release, 4/19/2006
@@ -395,9 +420,14 @@ public class EndpointDescription {
     }
     
     public Service.Mode getServiceModeValue() {
-        // This 
-        if (serviceModeValue == null && isProviderBased() && getServiceMode() != null) {
-            serviceModeValue = getServiceMode().value();
+        // This annotation is only valid on Provider-based endpoints. 
+        if (isProviderBased() && serviceModeValue == null) {
+            if (getServiceMode() != null) {
+                serviceModeValue = getServiceMode().value();
+            }
+            else {
+                serviceModeValue = ServiceMode_DEFAULT; 
+            }
         }
         return serviceModeValue;
     }
@@ -414,8 +444,14 @@ public class EndpointDescription {
     }
     
     public String getBindingTypeValue() {
-        if (bindingTypeValue == null && getBindingType() != null) {
-            bindingTypeValue = getBindingType().value();
+        if (bindingTypeValue == null) {
+            if (getBindingType() != null) {
+                bindingTypeValue = getBindingType().value();
+            }
+            else {
+                // No BindingType annotation present; use default value
+                bindingTypeValue = BindingType_DEFAULT;
+            }
         }
         return bindingTypeValue;
     }

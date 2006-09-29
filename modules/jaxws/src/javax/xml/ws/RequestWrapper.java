@@ -24,9 +24,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestWrapper {
 
-    public String localName();
-
-    public String targetNamespace();
-
-    public String className();
+    public String localName() default "";
+    public String targetNamespace() default "";
+    public String className() default "";
 }

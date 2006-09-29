@@ -104,9 +104,8 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
         EndpointDescription testEndpointDesc = endpointDesc[0];
-        // TODO: In the abscence of the service mode annotation, should a reasonable default be returned?
-        assertNull(testEndpointDesc.getServiceModeValue());
-        assertNull(testEndpointDesc.getBindingTypeValue());
+        assertEquals(javax.xml.ws.Service.Mode.PAYLOAD, testEndpointDesc.getServiceModeValue());
+        assertEquals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, testEndpointDesc.getBindingTypeValue());
     }
     
     public void testNoWebServiceProvider() {
@@ -137,6 +136,22 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         catch (Exception e) {
             fail ("Wrong exception caught.  Expected WebServiceException but caught " + e);
         }
+    }
+    
+    public void testServiceModeOnNonProvider() {
+        // Use the description factory directly; this will be done within the JAX-WS runtime
+        ServiceDescription serviceDesc = 
+            DescriptionFactory.createServiceDescriptionFromServiceImpl(WebServiceSEITestImpl.class, null);
+        assertNotNull(serviceDesc);
+        
+        EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
+        assertNotNull(endpointDesc);
+        assertEquals(1, endpointDesc.length);
+        
+        // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
+        EndpointDescription testEndpointDesc = endpointDesc[0];
+        assertNull(testEndpointDesc.getServiceModeValue());
+        assertEquals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, testEndpointDesc.getBindingTypeValue());
     }
 }
 
@@ -212,5 +227,17 @@ class BothWebServiceAnnotationTestImpl implements Provider<SOAPMessage> {
     public SOAPMessage invoke(SOAPMessage obj) {
         return null;
     }  
+}
+
+// ===============================================
+// WebService service implementation class; not 
+// Provider-based
+// ===============================================
+
+@WebService()
+class WebServiceSEITestImpl {
+    public String echo (String s) {
+        return "From WebServiceSEITestImpl " + "s";
+    }
 }
 

@@ -34,7 +34,13 @@ import javax.xml.ws.ResponseWrapper;
 import org.apache.axis2.description.AxisOperation;
 
 /**
+ * An OperationDescripton corresponds to a method on an SEI.  That SEI could be explicit
+ * (i.e. @WebService.endpointInterface=sei.class) or implicit (i.e. public methods on the service implementation
+ * are the contract and thus the implicit SEI).  Note that while OperationDescriptions are created on both the client
+ * and service side, implicit SEIs will only occur on the service side.
  * 
+ * OperationDescriptons contain information that is only relevent for and SEI-based service, i.e. one that is invoked via specific
+ * methods.  This class does not exist for Provider-based services (i.e. those that specify @WebServiceProvider)
  */
 /*
 Java Name: Method name from SEI
@@ -87,31 +93,53 @@ public class OperationDescription {
     private QName operationName;
     private Method seiMethod;
 
-    // Annotations and related cached values
+    // ===========================================
+    // ANNOTATION related information
+    // ===========================================
+    
+    // ANNOTATION: @Oneway
     private Oneway              onewayAnnotation;
     private Boolean             onewayIsOneway;
     
+    // ANNOTATION: @RequestWrapper
     private RequestWrapper      requestWrapperAnnotation;
     private String              requestWrapperTargetNamespace;
     private String              requestWrapperLocalName;
     private String              requestWrapperClassName;
     
+    // ANNOTATION: @ResponseWrapper
     private ResponseWrapper     responseWrapperAnnotation;
     private String              responseWrapperLocalName;
     private String              responseWrapperTargetNamespace;
     private String              responseWrapperClassName;
     
+    // ANNOTATION: @SOAPBinding
+    // Note this is the Method-level annotation.  See EndpointInterfaceDescription for the Method-level annotation
+    // Also note this annotation is only allowed on methods if SOAPBinding.Style is DOCUMENT and if the method-level
+    // annotation is absent, the behavior defined on the Type is used.
+    // per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
     private SOAPBinding         soapBindingAnnotation;
     // REVIEW: Should this be using the jaxws annotation values or should that be wrappered?
-    private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
+    private javax.jws.soap.SOAPBinding.Style            soapBindingStyle;
+    public static final javax.jws.soap.SOAPBinding.Style SoapBinding_Style_VALID = javax.jws.soap.SOAPBinding.Style.DOCUMENT;
+    private javax.jws.soap.SOAPBinding.Use              soapBindingUse;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
+    public static final javax.jws.soap.SOAPBinding.Use  SOAPBinding_Use_DEFAULT = javax.jws.soap.SOAPBinding.Use.LITERAL;
+    private javax.jws.soap.SOAPBinding.ParameterStyle   soapBindingParameterStyle;
+    // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
+    public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+
     
+    // ANNOTATION: @WebMethod
     private WebMethod           webMethodAnnotation;
     private String              webMethodOperationName;
     
+    // ANNOTATION: @WebParam
     // TODO: Should WebParam annotation be moved to the ParameterDescription?
     private WebParam[]          webParamAnnotations;
     private String[]            webParamNames;
     
+    // ANNOTATION: @WebResult
     private WebResult           webResultAnnotation;
     private String              webResultName;
     
@@ -176,11 +204,14 @@ public class OperationDescription {
     public Method getSEIMethod() {
         return seiMethod;
     }
-
-    // Annotation-related getters
+    
+    private boolean isWrappedParameters() {
+        // TODO: WSDL may need to be considered in this check as well
+        return getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+    }
 
     // =====================================
-    // WebMethod annotation related methods
+    // ANNOTATION: WebMethod
     // =====================================
     WebMethod getWebMethod() {
         return webMethodAnnotation;
@@ -193,7 +224,8 @@ public class OperationDescription {
     private static String determineOperationName(Method javaMethod) {
         String operationName = null;
         WebMethod wmAnnotation = javaMethod.getAnnotation(WebMethod.class);
-        // Per JSR-181, if @WebMethod specifies and operation name, use that.  Otherwise
+        // Per JSR-181 MR Sec 4.2 "Annotation: javax.jws.WebMethod" pg 17,
+        // if @WebMethod specifies and operation name, use that.  Otherwise
         // default is the Java method name
         if (wmAnnotation != null && !DescriptionUtils.isEmpty(wmAnnotation.operationName())) {
             operationName = wmAnnotation.operationName();
@@ -213,7 +245,7 @@ public class OperationDescription {
     }
     
     // ==========================================
-    // RequestWrapper Annotation related methods
+    // ANNOTATION: RequestWrapper
     // ==========================================
     RequestWrapper getRequestWrapper() {
         if (requestWrapperAnnotation == null) {
@@ -222,13 +254,22 @@ public class OperationDescription {
         return requestWrapperAnnotation;
     }
     
+    /**
+     * For wrapped parameter style (based on the annotation and the WSDL), returns the 
+     * wrapper value.  For non-wrapped (i.e. bare) parameter style, returns null.
+     * @return
+     */
     public String getRequestWrapperLocalName() {
+        if (!isWrappedParameters()) {
+            // A wrapper is only meaningful for wrapped parameters
+            return null;
+        }
         if (requestWrapperLocalName == null) {
-            if (getRequestWrapper() != null && !DescriptionUtils.isEmpty(getRequestWrapper().localName())) {
+            if (getRequestWrapper() != null
+                    && !DescriptionUtils.isEmpty(getRequestWrapper().localName())) {
                 requestWrapperLocalName = getRequestWrapper().localName();
-            }
-            else { 
-                // The default value of localName is the value of operationName as 
+            } else {
+                // The default value of localName is the value of operationName as
                 // defined in the WebMethod annotation. [JAX-WS Sec. 7.3, p. 80]
                 requestWrapperLocalName = getWebMethodOperationName();
             }
@@ -236,7 +277,16 @@ public class OperationDescription {
         return requestWrapperLocalName;
     }
     
+    /**
+     * For wrapped parameter style (based on the annotation and the WSDL), returns the 
+     * wrapper value.  For non-wrapped (i.e. bare) parameter style, returns null.
+     * @return
+     */
     public String getRequestWrapperTargetNamespace() {
+        if (!isWrappedParameters()) {
+            // A wrapper is only meaningful for wrapped parameters
+            return null;
+        }
         if (requestWrapperTargetNamespace == null) {
             if (getRequestWrapper() != null && !DescriptionUtils.isEmpty(getRequestWrapper().targetNamespace())) {
                 requestWrapperTargetNamespace = getRequestWrapper().targetNamespace();
@@ -250,7 +300,16 @@ public class OperationDescription {
         return requestWrapperTargetNamespace;
     }
     
+    /**
+     * For wrapped parameter style (based on the annotation and the WSDL), returns the 
+     * wrapper value.  For non-wrapped (i.e. bare) parameter style, returns null.
+     * @return
+     */
     public String getRequestWrapperClassName() {
+        if (!isWrappedParameters()) {
+            // A wrapper is only meaningful for wrapped parameters
+            return null;
+        }
         if (requestWrapperClassName == null) {
             if (getRequestWrapper() != null && !DescriptionUtils.isEmpty(getRequestWrapper().className())) {
                 requestWrapperClassName = getRequestWrapper().className();
@@ -270,7 +329,7 @@ public class OperationDescription {
     }
     
     // ===========================================
-    // ResponseWrapper Annotation related methods
+    // ANNOTATION: ResponseWrapper
     // ===========================================
     ResponseWrapper getResponseWrapper() {
         if (responseWrapperAnnotation == null) {
@@ -279,7 +338,16 @@ public class OperationDescription {
         return responseWrapperAnnotation;
     }
     
+    /**
+     * For wrapped parameter style (based on the annotation and the WSDL), returns the 
+     * wrapper value.  For non-wrapped (i.e. bare) parameter style, returns null.
+     * @return
+     */
     public String getResponseWrapperLocalName() {
+        if (!isWrappedParameters()) {
+            // A wrapper is only meaningful for wrapped parameters
+            return null;
+        }
         if (responseWrapperLocalName == null) {
             if (getResponseWrapper() != null && !DescriptionUtils.isEmpty(getResponseWrapper().localName())) {
                 responseWrapperLocalName = getResponseWrapper().localName();
@@ -293,7 +361,16 @@ public class OperationDescription {
         return responseWrapperLocalName;
     }
     
+    /**
+     * For wrapped parameter style (based on the annotation and the WSDL), returns the 
+     * wrapper value.  For non-wrapped (i.e. bare) parameter style, returns null.
+     * @return
+     */
     public String getResponseWrapperTargetNamespace() {
+        if (!isWrappedParameters()) {
+            // A wrapper is only meaningful for wrapped parameters
+            return null;
+        }
         if (responseWrapperTargetNamespace == null) {
             if (getResponseWrapper() != null && !DescriptionUtils.isEmpty(getResponseWrapper().targetNamespace())) {
                 responseWrapperTargetNamespace = getResponseWrapper().targetNamespace();
@@ -307,7 +384,16 @@ public class OperationDescription {
         return responseWrapperTargetNamespace;
     }
     
+    /**
+     * For wrapped parameter style (based on the annotation and the WSDL), returns the 
+     * wrapper value.  For non-wrapped (i.e. bare) parameter style, returns null.
+     * @return
+     */
     public String getResponseWrapperClassName() {
+        if (!isWrappedParameters()) {
+            // A wrapper is only meaningful for wrapped parameters
+            return null;
+        }
         if (responseWrapperClassName == null) {
             if (getResponseWrapper() != null && !DescriptionUtils.isEmpty(getResponseWrapper().className())) {
                 responseWrapperClassName = getResponseWrapper().className();
@@ -327,7 +413,7 @@ public class OperationDescription {
     }
 
     // ===========================================
-    // WebParam Annotation related methods
+    // ANNOTATION: WebParam
     // ===========================================
     // TODO: Should this annotation be moved to ParameterDescription 
     WebParam[] getWebParam() {
@@ -367,7 +453,7 @@ public class OperationDescription {
     }
     
     // ===========================================
-    // WebResult Annotation related methods
+    // ANNOTATION: WebResult
     // ===========================================
     WebResult getWebResult() {
         if (webResultAnnotation == null) {
@@ -394,29 +480,58 @@ public class OperationDescription {
     }
 
     // ===========================================
-    // SOAPBinding Annotation related methods
+    // ANNOTATION: SOAPBinding
     // ===========================================
     SOAPBinding getSoapBinding() {
+        // TODO: VALIDATION: Only style of DOCUMENT allowed on Method annotation; remember to check the Type's style setting also
+        //       JSR-181 Sec 4.7 p. 28
         if (soapBindingAnnotation == null) {
             soapBindingAnnotation = seiMethod.getAnnotation(SOAPBinding.class);
         }
         return soapBindingAnnotation;
     }
-    
+
     public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
         if (soapBindingStyle == null) {
             if (getSoapBinding() != null && getSoapBinding().style() != null) {
                 soapBindingStyle = getSoapBinding().style();
             }
             else {
-                soapBindingStyle = javax.jws.soap.SOAPBinding.Style.DOCUMENT;
+                // Per JSR-181 MR Sec 4.7, pg 28: if not specified, use the Type value.
+                soapBindingStyle = getEndpointInterfaceDescription().getSoapBindingStyle(); 
             }
         }
         return soapBindingStyle;
     }
     
+    public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
+        if (soapBindingUse == null) {
+            if (getSoapBinding() != null && getSoapBinding().use() != null) {
+                soapBindingUse = getSoapBinding().use();
+            }
+            else {
+                // Per JSR-181 MR Sec 4.7, pg 28: if not specified, use the Type value.
+                soapBindingUse = getEndpointInterfaceDescription().getSoapBindingUse(); 
+            }
+        }
+        return soapBindingUse;
+    }
+
+    public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
+        if (soapBindingParameterStyle == null) {
+            if (getSoapBinding() != null && getSoapBinding().use() != null) {
+                soapBindingParameterStyle = getSoapBinding().parameterStyle();
+            }
+            else {
+                // Per JSR-181 MR Sec 4.7, pg 28: if not specified, use the Type value.
+                soapBindingParameterStyle = getEndpointInterfaceDescription().getSoapBindingParameterStyle(); 
+            }
+        }
+        return soapBindingParameterStyle;
+    }
+    
     // ===========================================
-    // OneWay Annotation related methods
+    // ANNOTATION: OneWay
     // ===========================================
     Oneway getOnewayAnnotation() {
         if (onewayAnnotation == null) {

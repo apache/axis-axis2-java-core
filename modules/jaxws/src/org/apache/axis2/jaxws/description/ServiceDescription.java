@@ -107,8 +107,6 @@ public class ServiceDescription {
     // Only ONE of the following will be set in a ServiceDescription, depending on whether this Description
     // was created from a service-requester or service-provider flow. 
     private Class serviceClass;         // A service-requester generated service or generic service class
-    private Class serviceImplClass;     // A service-provider service implementation class.  The impl
-                                        // could be a Provider (no SEI operations) or an Endpoint (SEI based operations) 
     
     // TODO: Possibly remove Definition and delegate to the Defn on the AxisSerivce set as a paramater by WSDLtoAxisServicBuilder?
     private WSDLWrapper wsdlWrapper; 
@@ -157,7 +155,6 @@ public class ServiceDescription {
     //       based on the annotations in the ServiceImpl class.
     // TODO: Remove axisService as paramater when the AxisService can be constructed from the annotations
     ServiceDescription(Class serviceImplClass, AxisService axisService) {
-        this.serviceImplClass = serviceImplClass;
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         // it will be set to the annotation value.
         EndpointDescription endpointDescription = new EndpointDescription(serviceImplClass, null, axisService, this);
