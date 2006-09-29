@@ -22,12 +22,12 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -151,33 +151,38 @@ public class EndpointReferenceHelper {
      * namespace is in effect, however, then no metadata element will be included
      * in the output, even if a metadata property element has been defined.
      * 
+     * @param factory
      * @param epr
      * @param qname
      * @param addressingNamespace
      * @return
      * @throws AxisFault
      */
-    public static OMElement toOM(OMFactory fac, EndpointReference epr, QName qname, String addressingNamespace) throws AxisFault {
+    public static OMElement toOM(OMFactory factory, EndpointReference epr, QName qname, String addressingNamespace) throws AxisFault {
         OMElement eprElement = null;
         
         if (log.isDebugEnabled()) {
+            log.debug("toOM: Factory, " + factory);
             log.debug("toOM: Endpoint reference, " + epr);
             log.debug("toOM: Element qname, " + qname);
             log.debug("toOM: Addressing namespace, " + addressingNamespace);
         }
         
         if (qname.getPrefix() != null) {
-            OMNamespace wrapNs = fac.createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
-            eprElement = fac.createOMElement(qname.getLocalPart(), wrapNs);
+            OMNamespace wrapNs = factory.createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
+            if (factory instanceof SOAPFactory)
+                eprElement = ((SOAPFactory) factory).createSOAPHeaderBlock(qname.getLocalPart(), wrapNs);
+            else
+                eprElement = factory.createOMElement(qname.getLocalPart(), wrapNs);
             
-            OMNamespace wsaNS = fac.createOMNamespace(addressingNamespace, AddressingConstants.WSA_DEFAULT_PREFIX);
-            OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS, wsaNS, eprElement);
+            OMNamespace wsaNS = factory.createOMNamespace(addressingNamespace, AddressingConstants.WSA_DEFAULT_PREFIX);
+            OMElement addressE = factory.createOMElement(AddressingConstants.EPR_ADDRESS, wsaNS, eprElement);
             String address = epr.getAddress();
             addressE.setText(address);
             
             List metaData = epr.getMetaData();
             if (metaData != null && AddressingConstants.Final.WSA_NAMESPACE.equals(addressingNamespace)) {
-                OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, eprElement);
+                OMElement metadataE = factory.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, eprElement);
                 for (int i = 0, size = metaData.size(); i < size; i++) {
                     OMNode omNode = (OMNode) metaData.get(i);
                     metadataE.addChild(omNode);
@@ -186,7 +191,7 @@ public class EndpointReferenceHelper {
 
             Map referenceParameters = epr.getAllReferenceParameters();
             if (referenceParameters != null) {
-                OMElement refParameterElement = fac.createOMElement(AddressingConstants.EPR_REFERENCE_PARAMETERS, wsaNS, eprElement);
+                OMElement refParameterElement = factory.createOMElement(AddressingConstants.EPR_REFERENCE_PARAMETERS, wsaNS, eprElement);
                 Iterator iterator = referenceParameters.values().iterator();
                 while (iterator.hasNext()) {
                     OMNode omNode = (OMNode) iterator.next();

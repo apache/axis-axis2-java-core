@@ -36,6 +36,7 @@ import org.apache.axis2.context.MessageContext;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class AddressingOutHandler extends AddressingHandler {
@@ -106,6 +107,9 @@ public class AddressingOutHandler extends AddressingHandler {
 
         // process fault headers, if present
         processFaultsInfoIfPresent(envelope, msgContext, addressingNamespaceObject, replaceHeaders);
+        
+        // process mustUnderstand attribute, if required.
+        processMustUnderstandProperty(envelope, msgContext, addressingNamespaceObject);
     }
 
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,
@@ -312,6 +316,26 @@ public class AddressingOutHandler extends AddressingHandler {
         }
 
         return addressingHeader != null;
+    }
+    
+    /**
+     * Sets a mustUnderstand="1" attribute on all headers that are found with the appropriate
+     * addressing namespace.
+     * 
+     * @param envelope
+     * @param msgContext
+     * @param addressingNamespaceObject
+     */
+    private void processMustUnderstandProperty(SOAPEnvelope envelope, MessageContext msgContext, OMNamespace addressingNamespaceObject) {
+        Object flag = msgContext.getProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS);
+        if (JavaUtils.isTrueExplicitly(flag)) {
+            List headers = envelope.getHeader().getHeaderBlocksWithNSURI(addressingNamespaceObject.getNamespaceURI());
+            Iterator iterator = headers.iterator();
+            while (iterator.hasNext()) {
+                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) iterator.next();
+                soapHeaderBlock.setMustUnderstand(true);
+            }
+        }
     }
 }
 
