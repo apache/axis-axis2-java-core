@@ -51,7 +51,10 @@ public class ProtectionTokenBuilder implements AssertionBuilder {
     }
 
     private void processAlternative(List assertions, ProtectionToken parent) {
-        Token token = (Token) assertions.get(0);
-        parent.setToken(token);
+        Object token = assertions.get(0);
+        
+        if (token instanceof Token) {
+            parent.setToken((Token) token);
+        }
     }
 }

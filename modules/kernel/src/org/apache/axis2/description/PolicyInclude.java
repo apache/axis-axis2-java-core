@@ -163,6 +163,7 @@ public class PolicyInclude {
 			Policy p;
 
 			if (policyElement instanceof PolicyReference) {
+                PolicyRegistry r = getPolicyRegistry();
 				p = (Policy) ((PolicyReference) policyElement)
 						.normalize(getPolicyRegistry(), false);
 

@@ -124,8 +124,7 @@ public class Trust10 extends AbstractSecurityAssertion {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO TODO Sanka
-        throw new UnsupportedOperationException("TODO Sanka");
+        
     }
 
     public short getType() {

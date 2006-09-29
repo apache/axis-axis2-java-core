@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 
 public class PolicyUtil {
 
-    private static String getSafeString(String unsafeString) {
+    public static String getSafeString(String unsafeString) {
         StringBuffer sbuf = new StringBuffer();
 
         char[] chars = unsafeString.toCharArray();

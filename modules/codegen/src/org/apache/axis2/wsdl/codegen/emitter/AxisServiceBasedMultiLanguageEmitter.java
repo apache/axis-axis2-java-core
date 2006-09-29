@@ -547,6 +547,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         if (servicePolicy != null) {
             String policyString = PolicyUtil.policyComponentToString(servicePolicy);
+            policyString = PolicyUtil.getSafeString(policyString);
             addAttribute(doc, "policy", policyString, rootElement);
         }
 
@@ -1471,7 +1472,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (policy != null) {
             try  {
             addAttribute(doc, "policy",
-                    PolicyUtil.policyComponentToString(policy),
+                    PolicyUtil.getSafeString(PolicyUtil.policyComponentToString(policy)),
                     methodElement);
             } catch (Exception ex) {
                 throw new RuntimeException("can't serialize the policy ..");

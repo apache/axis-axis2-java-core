@@ -185,6 +185,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (wsdl4jDefinition == null) {
                 return null;
             }
+            
             //setting target name space
             axisService.setTargetNamespace(wsdl4jDefinition
                     .getTargetNamespace());
@@ -262,13 +263,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (wsdl4jDefinition == null) {
             return; // can't continue without wsdl
         }
-        // adding ns in the original WSDL
-        processPoliciesInDefintion(wsdl4jDefinition);
-
+        
         // process the imports
         //send an empty list as the processed namespace list since this
         //is the first call
         processImports(wsdl4jDefinition,new ArrayList());
+        
+
+        // Adding the policies in the Definition to the the PolicyRegistry 
+        processPoliciesInDefintion(wsdl4jDefinition);
+
 
         // setup the schemaMap
         schemaMap = populateSchemaMap(wsdl4jDefinition.getTypes());
@@ -1452,6 +1456,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             //add services
                             Map serviceMap = importedDef.getServices();
                             wsdl4JDefinition.getServices().putAll(serviceMap);
+                            
+                            List extElementList = importedDef.getExtensibilityElements();
+                            wsdl4JDefinition.getExtensibilityElements().addAll(extElementList);
 
                         }
 

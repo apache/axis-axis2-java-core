@@ -155,7 +155,8 @@ public class PolicyEvaluator implements CodeGenExtension {
             List assertionList;
             
             for (Iterator assertions = ((List) iterator.next()).iterator(); assertions.hasNext();) {
-                assertion = (Assertion) iterator.next();
+              
+                assertion = (Assertion) assertions.next();
                 targetNamesapce = assertion.getName().getNamespaceURI();
                 
                 if ((assertionList = (List) map.get(targetNamesapce)) == null)  {

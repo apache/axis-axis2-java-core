@@ -240,9 +240,6 @@ public class RampartConfig implements Assertion {
             writer.writeEndElement();
         }
         
-        
-        
-
         writer.writeEndElement();
 
     }
