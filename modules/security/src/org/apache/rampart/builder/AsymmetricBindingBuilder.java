@@ -327,6 +327,12 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
         }
         
         Vector encrParts = RampartUtil.getEncryptedParts(rmd);
+        
+        //Check for signature protection
+        if(rpd.isSignatureProtection() && this.mainSigId != null) {
+            encrParts.add(new WSEncryptionPart(RampartUtil.addWsuIdToElement((OMElement)this.signatureElement), "Element"));
+        }
+        
         //Do encryption
         Token encrToken = rpd.getRecipientToken();
         if(encrToken != null && encrParts.size() > 0) {

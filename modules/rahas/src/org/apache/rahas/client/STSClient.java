@@ -52,7 +52,6 @@ import org.apache.ws.security.message.token.Reference;
 import org.apache.ws.security.processor.EncryptedKeyProcessor;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -117,6 +116,7 @@ public class STSClient {
             ServiceClient client = getServiceClient(rstQn, issuerAddress);
             
             client.getOptions().setProperty(RAMPART_POLICY, issuerPolicy);
+            //TODO : Get the soap version from config 
 
             //Process the STS and service policy policy
             this.processPolicy(issuerPolicy, servicePolicy);

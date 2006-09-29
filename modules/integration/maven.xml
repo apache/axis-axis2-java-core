@@ -269,6 +269,13 @@
 		    <jar jarfile="target/test-resources/rampart_service_repo/services/SecureService8.aar"
                  basedir="target/temp-ramp"/>
 
+			<!-- Service 9 -->
+			<copy overwrite="yes" file="test-resources/rampart/services-9.xml"
+                  tofile="target/temp-ramp/META-INF/services.xml"/>
+
+		    <jar jarfile="target/test-resources/rampart_service_repo/services/SecureService9.aar"
+                 basedir="target/temp-ramp"/>
+
 			<!-- Service SC-1 -->
 			<copy overwrite="yes" file="test-resources/rampart/issuer.properties"
                   tofile="target/temp-ramp/issuer.properties"/>
