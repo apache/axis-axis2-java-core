@@ -77,6 +77,10 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
             responseMessageContext.setTransportIn(msgctx.getTransportIn());
             responseMessageContext.setTransportOut(msgctx.getTransportOut());
 
+            // Options object reused above so soapAction needs to be removed so
+            // that soapAction+wsa:Action on response don't conflict
+            responseMessageContext.setSoapAction("");
+
             SOAPEnvelope envelope = responseMessageContext.getEnvelope();
             if (envelope == null) {
                 // If request is REST we assume the responseMessageContext is REST, so

@@ -276,9 +276,6 @@ class OutInAxisOperationClient implements OperationClient {
             AxisEngine engine = new AxisEngine(cc);
             mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
             engine.send(mc);
-
-            // Options object reused so soapAction needs to be removed so
-            // that soapAction+wsa:Action on response don't conflict
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
