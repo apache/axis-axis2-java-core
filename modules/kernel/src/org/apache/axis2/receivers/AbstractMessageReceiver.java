@@ -41,10 +41,22 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SCOPE = "scope";
     protected String serviceTCCL = null;
     public static final String SAVED_TCCL = "_SAVED_TCCL_";
+    protected boolean init = false;
 
     protected void saveTCCL(MessageContext msgContext) {
-        if (serviceTCCL != null && msgContext.getAxisService() != null &&
-                msgContext.getAxisService().getClassLoader() != null) {
+        AxisService service =
+                msgContext.getOperationContext().getServiceContext().getAxisService();
+        if(!init) {
+            init = true;
+            if(service.getParameter(Constants.SERVICE_TCCL) != null) {
+                Parameter serviceObjectParam =
+                        service.getParameter(Constants.SERVICE_TCCL);
+                serviceTCCL = ((String)
+                        serviceObjectParam.getValue()).trim().toLowerCase();
+            }
+        }
+        if (serviceTCCL != null && service != null &&
+                service.getClassLoader() != null) {
             ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
                 msgContext.setProperty(SAVED_TCCL, contextClassLoader);
@@ -87,12 +99,6 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                     msgContext.getOperationContext().getServiceContext().getAxisService();
             ClassLoader classLoader = service.getClassLoader();
 
-            if(service.getParameter(Constants.SERVICE_TCCL) != null) {
-                Parameter serviceObjectParam =
-                        service.getParameter(Constants.SERVICE_TCCL);
-                serviceTCCL = ((String)
-                        serviceObjectParam.getValue()).trim().toLowerCase();
-            }
             // allow alternative definition of makeNewServiceObject
             if (service.getParameter(Constants.SERVICE_OBJECT_SUPPLIER) != null) {
                 Parameter serviceObjectParam =
