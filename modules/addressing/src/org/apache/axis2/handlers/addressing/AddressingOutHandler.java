@@ -19,13 +19,13 @@ package org.apache.axis2.handlers.addressing;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.ElementHelper;
+import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.EndpointReference;
@@ -33,8 +33,10 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.util.JavaUtils;
 
 import javax.xml.namespace.QName;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -331,9 +333,21 @@ public class AddressingOutHandler extends AddressingHandler {
         if (JavaUtils.isTrueExplicitly(flag)) {
             List headers = envelope.getHeader().getHeaderBlocksWithNSURI(addressingNamespaceObject.getNamespaceURI());
             Iterator iterator = headers.iterator();
+
             while (iterator.hasNext()) {
-                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) iterator.next();
-                soapHeaderBlock.setMustUnderstand(true);
+                OMElement elem = (OMElement)iterator.next();
+                if(elem instanceof SOAPHeaderBlock) {
+                    SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) elem;
+                    soapHeaderBlock.setMustUnderstand(true);  
+                } else {
+//                  Temp workaround to aviod hitting -  https://issues.apache.org/jira/browse/WSCOMMONS-103 
+//                  since Axis2 next release (1.1) will be based on Axiom 1.1 
+//                  We can get rid of this fix with the Axiom SNAPSHOT
+                    elem.addAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND,
+                             "1",
+                            envelope.getNamespace());
+                }
+                
             }
         }
     }

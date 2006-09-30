@@ -170,9 +170,12 @@ public class EndpointReferenceHelper {
         
         if (qname.getPrefix() != null) {
             OMNamespace wrapNs = factory.createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
-            if (factory instanceof SOAPFactory)
-                eprElement = ((SOAPFactory) factory).createSOAPHeaderBlock(qname.getLocalPart(), wrapNs);
-            else
+//Temp workaround to aviod hitting -  https://issues.apache.org/jira/browse/WSCOMMONS-103 
+//since Axis2 next release (1.1) will be based on Axiom 1.1 
+//We can get rid of this fix with the Axiom SNAPSHOT
+//            if (factory instanceof SOAPFactory)
+//                eprElement = ((SOAPFactory) factory).createSOAPHeaderBlock(qname.getLocalPart(), wrapNs);
+//            else
                 eprElement = factory.createOMElement(qname.getLocalPart(), wrapNs);
             
             OMNamespace wsaNS = factory.createOMNamespace(addressingNamespace, AddressingConstants.WSA_DEFAULT_PREFIX);
