@@ -1294,15 +1294,30 @@
                     <xsl:variable name="javaName" select="@javaname"/>
                     <xsl:variable name="namespace" select="@nsuri"/>
                     <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
+                    <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
 
                     <xsl:if test="$propertyName != 'extraAttributes'">
                     // handle attribute "<xsl:value-of select="$propertyName"/>"
                     java.lang.String <xsl:value-of select="$attribName"/> =
                       reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                    if (<xsl:value-of select="$attribName"/>!=null){
+                         java.lang.String content = <xsl:value-of select="$attribName"/>;
+                        <xsl:if test="$propertyTypeName=$propertyType">
+                                int index = <xsl:value-of select="$attribName"/>.indexOf(":");
+                                java.lang.String prefix ="";
+                                java.lang.String namespaceuri ="";
+                                if(index >0){
+                                     prefix = <xsl:value-of select="$attribName"/>.substring(0,index);
+                                     namespaceuri = reader.getNamespaceURI(prefix);
+                                 }
+                                 object.set<xsl:value-of select="$javaName"/>(
+                                      org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(<xsl:value-of select="$attribName"/>,namespaceuri));
+                        </xsl:if>
+                        <xsl:if test="not($propertyTypeName=$propertyType)">
                          object.set<xsl:value-of select="$javaName"/>(
                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
                                 <xsl:value-of select="$attribName"/>));
+                        </xsl:if>
                     }
                     handledAttributes.add("<xsl:value-of select="$propertyName"/>");
                     </xsl:if>
@@ -2325,13 +2340,27 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                     <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
                     <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
+                    <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
 
                     java.lang.String <xsl:value-of select="$attribName"/> =
                       reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                    if (<xsl:value-of select="$attribName"/>!=null){
+                    <xsl:if test="$propertyTypeName=$propertyType">
+                            int index = <xsl:value-of select="$attribName"/>.indexOf(":");
+                            java.lang.String prefix ="";
+                            java.lang.String namespaceuri ="";
+                            if(index >0){
+                                 prefix = <xsl:value-of select="$attribName"/>.substring(0,index);
+                                 namespaceuri = reader.getNamespaceURI(prefix);
+                             }
+                             object.set<xsl:value-of select="$javaName"/>(
+                                  org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(<xsl:value-of select="$attribName"/>,namespaceuri));
+                    </xsl:if>
+                    <xsl:if test="not($propertyTypeName=$propertyType)">
                          object.set<xsl:value-of select="$javaName"/>(
                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
                                 <xsl:value-of select="$attribName"/>));
+                    </xsl:if>
                     }
 
                 </xsl:for-each>
