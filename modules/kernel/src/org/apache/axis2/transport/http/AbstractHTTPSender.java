@@ -28,18 +28,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HeaderElement;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NTCredentials;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthPolicy;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,7 +40,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
@@ -69,6 +57,12 @@ public abstract class AbstractHTTPSender {
     protected TransportOutDescription proxyOutSetting = null;
     protected OMOutputFormat format = new OMOutputFormat();
     int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
+
+    /**
+     * isAuthenticationEnabled will be used as a flag to check whether
+     * authentication is enabled or not.
+     */
+    protected boolean isAuthenticationEnabled = false;
 
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
@@ -303,7 +297,7 @@ public abstract class AbstractHTTPSender {
         boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
 
         
-        boolean authenticationEnabled = isAuthenticationEnabled(msgCtx);
+        isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
         int port = targetURL.getPort();
 
         if (port == -1) {
@@ -313,7 +307,7 @@ public abstract class AbstractHTTPSender {
         // to see the host is a proxy and in the proxy list - available in axis2.xml
         HostConfiguration config = new HostConfiguration();
 
-        if (authenticationEnabled) {
+        if (isAuthenticationEnabled) {
             // premtive authentication Basic or NTLM
             this.setAuthenticationInfo(client, msgCtx, config, targetURL);
         }
@@ -374,31 +368,6 @@ public abstract class AbstractHTTPSender {
                     /*Credentials only for Digest and Basic Authentication*/
                     creds = new UsernamePasswordCredentials(username, password);
                     agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
-                }
-
-                List schemes = authenticator.getAuthSchemes();
-                if (schemes != null && schemes.size() > 0) {
-                    List authPrefs = new ArrayList(3);
-                    for (int i = 0; i < schemes.size(); i++) {
-                        if (schemes.get(i) instanceof AuthPolicy) {
-                            authPrefs.add(schemes.get(i));
-                            continue;
-                        }
-                        String scheme = (String) schemes.get(i);
-                        if (HttpTransportProperties.Authenticator.BASIC.equals(scheme)) {
-                            authPrefs.add(AuthPolicy.BASIC);
-                        } else if (HttpTransportProperties.Authenticator.NTLM.equals(scheme)) {
-                            authPrefs.add(AuthPolicy.NTLM);
-                        } else if (HttpTransportProperties.Authenticator.DIGEST.equals(scheme)) {
-                            authPrefs.add(AuthPolicy.DIGEST);
-                        }
-                    }
-                    // If it is NTLM, then definitely switch on the RETRY flag.
-                    if (authPrefs.indexOf(AuthPolicy.NTLM) != -1) {
-                        msgCtx.setProperty(HTTPConstants.ALLOW_RETRY, Boolean.TRUE);
-                    }
-                    agent.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY,
-                            authPrefs);
                 }
 
             } else {

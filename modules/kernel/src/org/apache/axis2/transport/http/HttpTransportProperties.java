@@ -20,7 +20,6 @@ import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.auth.AuthScope;
 
 import java.util.Properties;
-import java.util.List;
 /**
  * Utility bean for setting transport properties in runtime.
  */
@@ -137,12 +136,9 @@ public class HttpTransportProperties {
         private String username;
         /*Password of the user for authenticate*/
         private String password;
-        private List authSchemes;
+        /* Switch to use preemptive authentication or not*/
         private boolean preempt = true;
-
-        public static final java.lang.String NTLM = "NTLM";
-        public static final java.lang.String DIGEST = "Digest";
-        public static final java.lang.String BASIC = "Basic";
+       /* Note: Registering a custom AuthPolicy yet to be given */
 
         public String getHost() {
             return host;
@@ -184,14 +180,6 @@ public class HttpTransportProperties {
             this.password = password;
         }
 
-        public void setAuthSchemes(List authSchemes) {
-            this.authSchemes = authSchemes;
-        }
-
-        public List getAuthSchemes() {
-            return this.authSchemes;
-        }
-        
         public void setPreemptiveAuthentication(boolean preempt) {
             this.preempt = preempt; 
         }
