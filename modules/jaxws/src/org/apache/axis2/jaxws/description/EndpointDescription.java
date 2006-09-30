@@ -488,7 +488,7 @@ public class EndpointDescription {
         if (axisService == null) {
             // TODO: RAS & NLS
             throw ExceptionFactory.makeWebServiceException("Unable to create AxisService for "
-                    + createFQServicePlusPortName());
+                    + createAxisServiceName());
         }
 
         // Save the Service QName as a parameter.
@@ -522,7 +522,7 @@ public class EndpointDescription {
         serviceBuilder.setServerSide(false);
         try {
             axisService = serviceBuilder.populateService();
-            axisService.setName(createFQServicePlusPortName());
+            axisService.setName(createAxisServiceName());
         } catch (AxisFault e) {
             // TODO We should not swallow a fault here.
             log.warn(Messages.getMessage("warnAxisFault", e.toString()));
@@ -533,7 +533,7 @@ public class EndpointDescription {
         // TODO: Refactor this to create from annotations.
         String serviceName = null;
         if (portQName != null) {
-            serviceName = createFQServicePlusPortName();
+            serviceName = createAxisServiceName();
         }
         else {
             // REVIEW: Can the portQName ever be null?
@@ -564,7 +564,7 @@ public class EndpointDescription {
         Definition wsdlDefinition = getServiceDescription().getWSDLWrapper().getDefinition();
         javax.wsdl.Service wsdlService = wsdlDefinition.getService(getServiceDescription().getServiceQName());
         if (wsdlService == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr2", createFQServicePlusPortName()));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr2", createAxisServiceName()));
         }
         
         Map wsdlPorts = wsdlService.getPorts();
@@ -624,16 +624,16 @@ public class EndpointDescription {
         return serviceClient;
     }
  
-    private String createFQServicePlusPortName() {
+    private String createAxisServiceName() {
         String portName = null;
         if (portQName != null) {
-            portName = portQName.toString();
+            portName = portQName.getLocalPart();
         }
         else {
             portName = "NoPortNameSpecified";
 
         }
-        return getServiceDescription().getServiceQName().toString() + "#" + portName;
+        return getServiceDescription().getServiceQName().getLocalPart() + "." + portName;
     }
 
 }
