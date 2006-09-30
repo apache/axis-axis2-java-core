@@ -447,7 +447,7 @@ public class RampartUtil {
             Axis2Util.useDOOM(true);
             return rst.getId();
         } catch (Exception e) {
-            throw new RampartException(e.getMessage(), e);
+            throw new RampartException("errorInObtainingToken", e);
         }
     }
 
