@@ -178,12 +178,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
             if (transportURL != null) {
                 epr = new EndpointReference(transportURL);
-            } else if ((msgContext.getTo() != null)
-                    && !AddressingConstants.Submission.WSA_ANONYMOUS_URL
-                    .equals(msgContext.getTo().getAddress()) &&
-                    !AddressingConstants.Final
-                            .WSA_ANONYMOUS_URL
-                            .equals(msgContext.getTo().getAddress())) {
+            }
+            else if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
                 epr = msgContext.getTo();
             }
 
@@ -206,7 +202,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
 
             if (epr != null) {
-                if (!epr.getAddress().equals(AddressingConstants.Final.WSA_NONE_URI)) {
+                if (!epr.hasNoneAddress()) {
                     writeMessageWithCommons(msgContext, epr, dataOut, format);
                 }
             } else {
@@ -282,12 +278,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     }
 
     public void writeMessageWithCommons(MessageContext msgContext,
-                                        EndpointReference toURL,
+                                        EndpointReference toEPR,
                                         OMElement dataout,
                                         OMOutputFormat format)
             throws AxisFault {
         try {
-            URL url = new URL(toURL.getAddress());
+            URL url = new URL(toEPR.getAddress());
             String soapActionString = msgContext.getSoapAction();
 
             if ((soapActionString == null) || (soapActionString.length() == 0)) {

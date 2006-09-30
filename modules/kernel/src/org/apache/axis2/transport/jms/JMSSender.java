@@ -59,18 +59,15 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             transportInfo = new JMSOutTransportInfo(targetAddress);            
         }
         else if (targetAddress == null && msgContext.getTo() != null &&
-            !AddressingConstants.Submission.WSA_ANONYMOUS_URL
-                .equals(msgContext.getTo().getAddress()) &&
-            !AddressingConstants.Final.WSA_ANONYMOUS_URL
-                .equals(msgContext.getTo().getAddress())) {
+            !msgContext.getTo().hasAnonymousAddress()) {
             targetAddress = msgContext.getTo().getAddress();
             
-            if (targetAddress.equals(AddressingConstants.Final.WSA_NONE_URI)) {
-                //Don't send the message.
-                return;
+            if (!msgContext.getTo().hasNoneAddress()) {
+                transportInfo = new JMSOutTransportInfo(targetAddress);
             }
             else {
-                transportInfo = new JMSOutTransportInfo(targetAddress);
+                //Don't send the message.
+                return;
             }
         }
         else if (msgContext.isServerSide()){

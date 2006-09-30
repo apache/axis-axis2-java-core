@@ -81,14 +81,12 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
         OutputStream out;
         EndpointReference epr = null;
 
-        if ((msgContext.getTo() != null) && !AddressingConstants.Submission.WSA_ANONYMOUS_URL
-                .equals(msgContext.getTo().getAddress()) && !AddressingConstants.Final
-                .WSA_ANONYMOUS_URL.equals(msgContext.getTo().getAddress())) {
+        if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
             epr = msgContext.getTo();
         }
 
         if (epr != null) {
-            if (!epr.getAddress().equals(AddressingConstants.Final.WSA_NONE_URI)) {
+            if (!epr.hasNoneAddress()) {
                 out = openTheConnection(epr, msgContext);
 
                 OutputStream newOut = startSendWithToAddress(msgContext, out);

@@ -119,12 +119,10 @@ public class Utils {
         //and this default behaviour should happen if somebody (e.g. a module) has not already provided
         //a Sender.
         try {
-            if (newmsgCtx.isServerSide() && newmsgCtx.getTo() != null) {
-                String replyToAddress = newmsgCtx.getTo().getAddress();
-                if (!(AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(replyToAddress)
-                        || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(replyToAddress)
-                        || AddressingConstants.Final.WSA_NONE_URI.equals(replyToAddress))) {
-                    URI uri = new URI(replyToAddress);
+            EndpointReference responseEPR = newmsgCtx.getTo();
+            if (newmsgCtx.isServerSide() && responseEPR != null) {
+                if (!responseEPR.hasAnonymousAddress() && !responseEPR.hasNoneAddress()) {
+                    URI uri = new URI(responseEPR.getAddress());
                     String scheme = uri.getScheme();
                     if (!transportOut.getName().getLocalPart().equals(scheme)) {
                         ConfigurationContext configurationContext = newmsgCtx.getConfigurationContext();

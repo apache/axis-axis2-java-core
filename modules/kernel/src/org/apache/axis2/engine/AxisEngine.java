@@ -213,12 +213,10 @@ public class AxisEngine {
         TransportOutDescription transportOut = faultContext.getTransportOut();
 
         try {
-            if (faultContext.isServerSide() && faultContext.getTo() != null) {
-                String replyToAddress = faultContext.getTo().getAddress();
-                if (!(AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(replyToAddress)
-                        || AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(replyToAddress)
-                        || AddressingConstants.Final.WSA_NONE_URI.equals(replyToAddress))) {
-                    URI uri = new URI(replyToAddress);
+            EndpointReference responseEPR = faultContext.getTo();
+            if (faultContext.isServerSide() && responseEPR != null) {
+                if (!responseEPR.hasAnonymousAddress() && !responseEPR.hasNoneAddress()) {
+                    URI uri = new URI(responseEPR.getAddress());
                     String scheme = uri.getScheme();
                     if (!transportOut.getName().getLocalPart().equals(scheme)) {
                         ConfigurationContext configurationContext = faultContext.getConfigurationContext();

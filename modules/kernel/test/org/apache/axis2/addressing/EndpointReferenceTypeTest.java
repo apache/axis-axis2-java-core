@@ -90,4 +90,13 @@ public class EndpointReferenceTypeTest extends TestCase {
         EndpointReference epr200408anon = new EndpointReference(AddressingConstants.Submission.WSA_ANONYMOUS_URL);
         assertTrue(epr200408anon.hasAnonymousAddress());
     }
+    
+    public void testHasNoneAddress(){
+        // Default EndpointReference does not has 'anonymous address'
+        assertFalse(endpointReference.hasNoneAddress());
+        
+        // EndpointReference with 2005/08 None address
+        EndpointReference epr200508none = new EndpointReference(AddressingConstants.Final.WSA_NONE_URI);
+        assertTrue(epr200508none.hasNoneAddress());
+    }
 }

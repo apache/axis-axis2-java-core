@@ -261,12 +261,10 @@ public class AddressingOutHandler extends AddressingHandler {
         if (epr == null) {
             epr = new EndpointReference(anonymous);
         }
-        else if (Final.WSA_NONE_URI.equals(epr.getAddress()) &&
-                 Submission.WSA_NAMESPACE.equals(namespace)) {
+        else if (epr.hasNoneAddress() && Submission.WSA_NAMESPACE.equals(namespace)) {
             return; //Omit the header.
         }
-        else if (Final.WSA_ANONYMOUS_URL.equals(epr.getAddress()) ||
-                 Submission.WSA_ANONYMOUS_URL.equals(epr.getAddress())) {
+        else if (epr.hasAnonymousAddress()) {
             epr.setAddress(anonymous);
         }
 

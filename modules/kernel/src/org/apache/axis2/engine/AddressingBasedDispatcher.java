@@ -62,17 +62,15 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
-
         AxisService service = null;
 
         if (toEPR != null) {
-            String address = toEPR.getAddress();
-            log.debug(Messages.getMessage("checkingserviceforepr", address));
-
-            if (Final.WSA_ANONYMOUS_URL.equals(address)
-                    || Submission.WSA_ANONYMOUS_URL.equals(address)) {
+            if (toEPR.hasAnonymousAddress()) {
                 return null;
             }
+            
+            String address = toEPR.getAddress();
+            log.debug(Messages.getMessage("checkingserviceforepr", address));
 
             QName serviceName;
             String[] values = Utils.parseRequestURLForServiceAndOperation(address,
