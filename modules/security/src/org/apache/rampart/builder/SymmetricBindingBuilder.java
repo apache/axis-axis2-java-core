@@ -518,7 +518,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                         rmd.setSecConvTokenId(id);
                         
                     } catch (TrustException e) {
-                        throw new RampartException(e.getMessage(), e);
+                        throw new RampartException("errorInObtainingSct", e);
                     }
                 }
             }

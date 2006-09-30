@@ -284,9 +284,9 @@ public class RampartUtil {
             
             return rstTempl;
         } catch (TrustException e) {
-            throw new RampartException(e.getMessage(), e);
+            throw new RampartException("errorCreatingRSTTemplateForSCT", e);
         } catch (ConversationException e) {
-            throw new RampartException(e.getMessage(), e);
+            throw new RampartException("errorCreatingRSTTemplateForSCT", e);
         }
     }
     
