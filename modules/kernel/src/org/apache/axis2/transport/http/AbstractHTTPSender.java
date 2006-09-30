@@ -30,6 +30,7 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,6 +41,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
@@ -59,10 +61,10 @@ public abstract class AbstractHTTPSender {
     int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
     /**
-     * isAuthenticationEnabled will be used as a flag to check whether
-     * authentication is enabled or not.
+     * isAllowedRetry will be using to check where the
+     * retry should be allowed or not.
      */
-    protected boolean isAuthenticationEnabled = false;
+    protected boolean isAllowedRetry = false;
 
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
@@ -297,7 +299,7 @@ public abstract class AbstractHTTPSender {
         boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
 
         
-        isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
+        boolean isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
         int port = targetURL.getPort();
 
         if (port == -1) {
@@ -328,7 +330,8 @@ public abstract class AbstractHTTPSender {
     }
 
     /*
-    This will handle server Authentication, It could be either NTLM, Digest or Basic Authentication
+    This will handle server Authentication, It could be either NTLM, Digest or Basic Authentication.
+    Apart from that user can change the priory or add a custom authentication scheme.
     */
     protected void setAuthenticationInfo(HttpClient agent,
                                                        MessageContext msgCtx,
@@ -351,6 +354,9 @@ public abstract class AbstractHTTPSender {
                 int port = authenticator.getPort();
                 String realm = authenticator.getRealm();
 
+                /* If retrying is available set it first */
+                isAllowedRetry = authenticator.isAllowedRetry();
+
                 Credentials creds;
 
                 agent.getParams().setAuthenticationPreemptive(authenticator.getPreemptiveAuthentication());
@@ -368,6 +374,28 @@ public abstract class AbstractHTTPSender {
                     /*Credentials only for Digest and Basic Authentication*/
                     creds = new UsernamePasswordCredentials(username, password);
                     agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
+                }
+
+                /* Customizing the priority Order */
+                List schemes = authenticator.getAuthSchemes();
+                if (schemes != null && schemes.size() > 0) {
+                    List authPrefs = new ArrayList(3);
+                    for (int i = 0; i < schemes.size(); i++) {
+                        if (schemes.get(i) instanceof AuthPolicy) {
+                            authPrefs.add(schemes.get(i));
+                            continue;
+                        }
+                        String scheme = (String) schemes.get(i);
+                        if (HttpTransportProperties.Authenticator.BASIC.equals(scheme)) {
+                            authPrefs.add(AuthPolicy.BASIC);
+                        } else if (HttpTransportProperties.Authenticator.NTLM.equals(scheme)) {
+                            authPrefs.add(AuthPolicy.NTLM);
+                        } else if (HttpTransportProperties.Authenticator.DIGEST.equals(scheme)) {
+                            authPrefs.add(AuthPolicy.DIGEST);
+                        }
+                    }
+                    agent.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY,
+                                                   authPrefs);
                 }
 
             } else {

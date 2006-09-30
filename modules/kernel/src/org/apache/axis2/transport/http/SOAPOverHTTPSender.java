@@ -174,14 +174,14 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
 			if (!doingMTOM & doingSWA) {
 				 StringWriter bufferedSOAPBody = new StringWriter();
-				if (isAuthenticationEnabled) {
+				if (isAllowedRetry) {
 					element.serialize(bufferedSOAPBody, format);
 				} else {
 					element.serializeAndConsume(bufferedSOAPBody, format);
 				}
 				MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,out,msgCtxt.getAttachmentMap(), format);
 			} else {
-				if (isAuthenticationEnabled) {
+				if (isAllowedRetry) {
 					element.serialize(out, format);
 				} else {
 					element.serializeAndConsume(out, format);

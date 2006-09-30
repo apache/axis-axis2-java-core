@@ -18,8 +18,11 @@ package org.apache.axis2.transport.http;
 
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.auth.AuthScope;
+import org.apache.commons.httpclient.auth.AuthPolicy;
 
+import java.util.List;
 import java.util.Properties;
+
 /**
  * Utility bean for setting transport properties in runtime.
  */
@@ -137,8 +140,16 @@ public class HttpTransportProperties {
         /*Password of the user for authenticate*/
         private String password;
         /* Switch to use preemptive authentication or not*/
-        private boolean preempt = true;
-       /* Note: Registering a custom AuthPolicy yet to be given */
+        private boolean preemptive = false;
+        /* if Authentication scheme needs retry just turn on the following flag */
+        private boolean allowedRetry = false;
+        /* Changing the priorty or adding a custom AuthPolicy*/
+        private List authSchemes;
+
+        /* Default Auth Schems*/
+        public static final String NTLM = AuthPolicy.NTLM;
+        public static final String DIGEST = AuthPolicy.DIGEST;
+        public static final String BASIC = AuthPolicy.BASIC;
 
         public String getHost() {
             return host;
@@ -180,12 +191,12 @@ public class HttpTransportProperties {
             this.password = password;
         }
 
-        public void setPreemptiveAuthentication(boolean preempt) {
-            this.preempt = preempt; 
+        public void setPreemptiveAuthentication(boolean preemptive) {
+            this.preemptive = preemptive;
         }
 
         public boolean getPreemptiveAuthentication() {
-            return this.preempt; 
+            return this.preemptive;
         }
 
         public String getDomain() {
@@ -194,6 +205,20 @@ public class HttpTransportProperties {
 
         public void setDomain(String domain) {
             this.domain = domain;
+        }
+
+        public void setAuthSchemes(List authSchemes) {
+            this.authSchemes = authSchemes;
+        }
+
+        public List getAuthSchemes() {
+            return this.authSchemes;
+        }
+        public void setAllowedRetry(boolean allowedRetry){
+            this.allowedRetry = allowedRetry;
+        }
+        public boolean isAllowedRetry() {
+            return  this.allowedRetry;
         }
     }
     public static class MailProperties{
