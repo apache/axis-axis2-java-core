@@ -1375,7 +1375,7 @@ public class SchemaCompiler {
                 		Object type = baseSchemaTypeMap.get(attrTypeName);
                 		if (type == null) {
                 			XmlSchemaSimpleType simpleType = attribute.getSchemaType();
-                            if(simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
+                            if(simpleType != null && simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
                                 XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction) simpleType.getContent();
                                 QName baseTypeName = restriction.getBaseTypeName();
                                 type = baseSchemaTypeMap.get(baseTypeName);
