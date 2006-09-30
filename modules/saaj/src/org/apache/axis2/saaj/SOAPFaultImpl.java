@@ -150,7 +150,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             SOAPFaultReason fReason = soapFactory.createSOAPFaultReason(fault);
             SOAPFaultText fText = soapFactory.createSOAPFaultText(fReason);
             fText.setText(faultString);
-            fReason.addSOAPText(fText);
         }
     }
 
