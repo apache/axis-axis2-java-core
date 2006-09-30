@@ -84,27 +84,27 @@ public class RampartTest extends TestCase {
                 serviceClient.sendReceive(getEchoElement());
             }
 
-            
-            for (int i = 1; i <= 1; i++) { //<-The number of tests we have
-                if(!basic256Supported && (i == 3 || i == 4 || i ==5)) {
-                    //Skip the Basic256 tests
-                    continue;
-                }
-                System.out.println("Testing WS-SecConv: custom scenario " + i);
-                options.setAction("urn:echo");
-                options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureServiceSC" + i));
-                options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/sc-" + i + ".xml"));
-                serviceClient.setOptions(options);
-
-                //Blocking invocation
-                serviceClient.sendReceive(getEchoElement());
-                serviceClient.sendReceive(getEchoElement());
-                
-                //Cancel the token
-                options.setAction(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT);
-                serviceClient.sendReceive(getEchoElement());
-                
-            }
+//            
+//            for (int i = 1; i <= 1; i++) { //<-The number of tests we have
+//                if(!basic256Supported && (i == 3 || i == 4 || i ==5)) {
+//                    //Skip the Basic256 tests
+//                    continue;
+//                }
+//                System.out.println("Testing WS-SecConv: custom scenario " + i);
+//                options.setAction("urn:echo");
+//                options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureServiceSC" + i));
+//                options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/sc-" + i + ".xml"));
+//                serviceClient.setOptions(options);
+//
+//                //Blocking invocation
+//                serviceClient.sendReceive(getEchoElement());
+//                serviceClient.sendReceive(getEchoElement());
+//                
+//                //Cancel the token
+//                options.setAction(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT);
+//                serviceClient.sendReceive(getEchoElement());
+//                
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();
