@@ -538,7 +538,7 @@ public class EndpointDescription {
         else {
             // REVIEW: Can the portQName ever be null?
             // Make this service name unique.  The Axis2 engine assumes that a service it can not find is a client-side service.
-            serviceName = ServiceClient.ANON_SERVICE + this.hashCode();
+            serviceName = ServiceClient.ANON_SERVICE + this.hashCode() + System.currentTimeMillis();
         }
         axisService = new AxisService(serviceName);
     }
