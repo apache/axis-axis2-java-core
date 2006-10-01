@@ -60,11 +60,11 @@
                 super("<xsl:value-of select="@shortName"/>");
             }
 
-            public <xsl:value-of select="@shortName"/>(String s) {
+            public <xsl:value-of select="@shortName"/>(java.lang.String s) {
                super(s);
             }
 
-            public <xsl:value-of select="@shortName"/>(String s, Throwable ex) {
+            public <xsl:value-of select="@shortName"/>(java.lang.String s, java.lang.Throwable ex) {
               super(s, ex);
             }
 

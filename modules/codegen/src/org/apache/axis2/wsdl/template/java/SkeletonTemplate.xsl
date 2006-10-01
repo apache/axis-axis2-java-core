@@ -69,12 +69,12 @@
                    super("<xsl:value-of select="@shortName"/>");
                 }
 
-                public <xsl:value-of select="@shortName"/>(String s, <xsl:value-of select="@type"/> msg) {
+                public <xsl:value-of select="@shortName"/>(java.lang.String s, <xsl:value-of select="@type"/> msg) {
                    super(s);
                    faultMessage = msg;
                 }
 
-                public <xsl:value-of select="@shortName"/>(String s, <xsl:value-of select="@type"/> msg, Throwable ex) {
+                public <xsl:value-of select="@shortName"/>(java.lang.String s, <xsl:value-of select="@type"/> msg, java.lang.Throwable ex) {
                   super(s, ex);
                   faultMessage = msg;
                 }
