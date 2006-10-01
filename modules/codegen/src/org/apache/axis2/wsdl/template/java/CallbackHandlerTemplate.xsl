@@ -19,15 +19,21 @@
 
     protected Object clientData;
 
-
     /**
     * User can pass in any object that needs to be accessed once the NonBlocking
-    * Web service call is finished and appropreate method of this CallBack is called.
+    * Web service call is finished and appropriate method of this CallBack is called.
     * @param clientData Object mechanism by which the user can pass in user data
     * that will be avilable at the time this callback is called.
     */
     public <xsl:value-of select="@name"/>(Object clientData){
         this.clientData = clientData;
+    }
+
+    /**
+    * Please use this constructor if you don't want to set any clientData
+    */
+    public <xsl:value-of select="@name"/>(){
+        this.clientData = null;
     }
 
     /**
