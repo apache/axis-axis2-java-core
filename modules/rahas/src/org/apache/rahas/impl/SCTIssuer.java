@@ -159,6 +159,9 @@ public class SCTIssuer implements TokenIssuer {
             sctToken.setUnattachedReference(reqAttachedRef.getFirstElement());
             sctToken.setAttachedReference(reqAttachedRef.getFirstElement());
 
+            byte[] secret = TokenIssuerUtil.getSharedSecret(data, config.keyComputation, config.keySize);
+            sctToken.setSecret(secret);
+            
             //Add the RequestedProofToken
             TokenIssuerUtil.handleRequestedProofToken(data,
                                                       wstVersion,

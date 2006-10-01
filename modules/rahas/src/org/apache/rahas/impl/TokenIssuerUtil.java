@@ -94,10 +94,11 @@ public class TokenIssuerUtil {
             //set the RPT to include a ComputedKey element
 
             OMElement respEntrElem = TrustUtil.createEntropyElement(wstVersion, rstrElem);
-            TrustUtil.createBinarySecretElement(wstVersion,
-                                                respEntrElem,
-                                                RahasConstants.BIN_SEC_TYPE_NONCE).
-                    setText(Base64.encode(data.getResponseEntropy()));
+            String entr = Base64.encode(data.getResponseEntropy());
+            OMElement binSecElem = TrustUtil.createBinarySecretElement(wstVersion,
+                                                            respEntrElem,
+                                                            RahasConstants.BIN_SEC_TYPE_NONCE);
+            binSecElem.setText(entr);
 
             OMElement compKeyElem =
                     TrustUtil.createComputedKeyElement(wstVersion, reqProofTokElem);

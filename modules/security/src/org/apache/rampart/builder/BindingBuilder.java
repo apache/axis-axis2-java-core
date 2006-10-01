@@ -26,6 +26,7 @@ import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.model.IssuedToken;
+import org.apache.ws.secpolicy.model.SecureConversationToken;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.UsernameToken;
@@ -463,7 +464,7 @@ public abstract class BindingBuilder {
         Document doc = rmd.getDocument();
         RampartPolicyData rpd = rmd.getPolicyData();
         
-        if(policyToken.isDerivedKeys()) {
+        if(policyToken.isDerivedKeys() || policyToken instanceof SecureConversationToken) {
             try {
                 WSSecDKSign dkSign = new WSSecDKSign();
 

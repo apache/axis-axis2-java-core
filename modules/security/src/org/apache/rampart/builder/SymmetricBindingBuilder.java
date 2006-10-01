@@ -382,7 +382,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
         }
         Element refList = null;
         
-        if(encrToken.isDerivedKeys()) {
+        if(encrToken.isDerivedKeys() || encrToken instanceof SecureConversationToken) {
             
             try {
                 WSSecDKEncrypt dkEncr = new WSSecDKEncrypt();
@@ -429,6 +429,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 encr.setWsConfig(rmd.getConfig());
                 
                 encr.setEphemeralKey(encrTok.getSecret());
+                RampartUtil.setEncryptionUser(rmd, encr);
                 encr.setDocument(doc);
                 encr.prepare(doc, RampartUtil.getEncryptionCrypto(rpd
                         .getRampartConfig(), rmd.getCustomClassLoader()));

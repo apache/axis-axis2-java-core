@@ -125,6 +125,7 @@ public class STSClient {
 
             return processIssueResponse(version, response);
         } catch (AxisFault e) {
+            e.printStackTrace();
             log.error("errorInObtainingToken", e);
             throw new TrustException("errorInObtainingToken", new String[]{issuerAddress});
         }
@@ -285,11 +286,11 @@ public class STSClient {
                     //Right now we only use PSHA1 as the computed key algo                    
                     P_SHA1 p_sha1 = new P_SHA1();
 
-                    int length = (this.keySize != -1) ? keySize
+                    int length = (this.keySize > 0) ? keySize
                                  : this.algorithmSuite
                             .getMaximumSymmetricKeyLength();
                     try {
-                        secret = p_sha1.createKey(this.requestorEntropy, serviceEntr, 0, length);
+                        secret = p_sha1.createKey(this.requestorEntropy, serviceEntr, 0, length/8);
                     } catch (ConversationException e) {
                         throw new TrustException("keyDerivationError", e);
                     }
