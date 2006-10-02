@@ -1,6 +1,10 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
 
+    <xsl:key name="paramsIn" match="//databinders/param[@direction='in']" use="@type"/>
+    <xsl:key name="paramsOut" match="//databinders/param[@direction='out']" use="@type"/>
+    <xsl:key name="innerParams" match="//databinders/param[@direction='in']/param" use="@partname"/>
+
     <!-- #################################################################################  -->
     <!-- ############################   xmlbeans template   ##############################  -->
     <xsl:template match="databinders[@dbtype='xmlbeans']">
@@ -44,9 +48,14 @@
             <xsl:if test="not($serverside)">
                 <xsl:choose>
                     <xsl:when test="$paramcount &gt; 0">
+                        <xsl:variable name="inputElement" select="../../param[@type!='' and @direction='in' and @opname=$opname]"></xsl:variable>
                         <xsl:variable name="inputElementType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"></xsl:variable>
+                        <xsl:variable name="inputElementShortType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@shorttype"></xsl:variable>
+                        <xsl:variable name="inputElementComplexType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@complextype"></xsl:variable>
                         <xsl:variable name="wrappedParameterCount" select="count(../../param[@type!='' and @direction='in' and @opname=$opname]/param)"></xsl:variable>
-                        <xsl:choose>
+
+                        <xsl:if test="generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1])">
+                            <xsl:choose>
                             <xsl:when test="$wrappedParameterCount &gt; 0">
                                 <!-- geneate the toEnvelope method-->
                                 private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory,
@@ -56,22 +65,32 @@
                                 boolean optimizeContent){
 
                                 <xsl:value-of select="$inputElementType"/> wrappedType = <xsl:value-of select="$inputElementType"/>.Factory.newInstance();
-                                <xsl:value-of select="$inputElementType"/>.<xsl:value-of select="$opnameCapitalized"/>  wrappedEltType = wrappedType.addNew<xsl:value-of select="$opnameCapitalized"/>();
+
+                                <xsl:choose>
+                                    <xsl:when test="string-length(normalize-space($inputElementComplexType)) > 0">
+                                        <xsl:value-of select="$inputElementComplexType"/> innerType = wrappedType.addNew<xsl:value-of select="substring-before($inputElementShortType,'Document')"/>();
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="$inputElementType"/>.<xsl:value-of select="substring-before($inputElementShortType,'Document')"/> innerType = wrappedType.addNew<xsl:value-of select="substring-before($inputElementShortType,'Document')"/>();
+                                    </xsl:otherwise>
+                                </xsl:choose>
+
                                 <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
                                     <xsl:choose>
-                                        <xsl:when test="@primitive">wrappedEltType.xset<xsl:value-of select="@partname"/>(param<xsl:value-of select="position()"/>);</xsl:when>
-                                        <xsl:otherwise>wrappedEltType.set<xsl:value-of select="@partname"/>(param<xsl:value-of select="position()"/>);</xsl:otherwise>
+                                        <xsl:when test="@array">
+                                            innerType.xset<xsl:value-of select="@partname"/>Array(param<xsl:value-of select="position()"/>);
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            innerType.xset<xsl:value-of select="@partname"/>(param<xsl:value-of select="position()"/>);
+                                        </xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:for-each>
-
 
                                 org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
                                 envelope.getBody().addChild(toOM(wrappedType, optimizeContent));
                                 return envelope;
 
                                 }
-
-
 
                             </xsl:when>
                             <xsl:otherwise>
@@ -85,6 +104,7 @@
                                 }
                             </xsl:otherwise>
                         </xsl:choose>
+                        </xsl:if>
                     </xsl:when>
 
                     <xsl:otherwise>
@@ -94,32 +114,55 @@
             </xsl:if>
             <!-- this piece of logic needs to be generated only for the server side-->
             <xsl:if test="$serverside">
+
+
                 <xsl:choose>
                     <xsl:when test="count(../../param[@type!='' and @direction='out' and @opname=$opname])=1">
+                        <xsl:variable name="outElement" select="../../param[@type!='' and @direction='out' and @opname=$opname]"></xsl:variable>
+                        <xsl:variable name="outElementType" select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"></xsl:variable>
+
                         <!-- Assumption - This is an XMLBeans element-->
-                        private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent){
-                        org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
-                        if (param != null){
-                        envelope.getBody().addChild(toOM(param, optimizeContent));
-                        }
-                        return envelope;
-                        }
+                        <xsl:if test="generate-id($outElement) = generate-id(key('paramsOut', $outElementType)[1])">
+                            private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="../../param[@type!='' and @direction='out' and @opname=$opname]/@type"/> param, boolean optimizeContent){
+                            org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+                            if (param != null){
+                            envelope.getBody().addChild(toOM(param, optimizeContent));
+                            }
+                            return envelope;
+                            }
+                        </xsl:if>
 
                     </xsl:when>
                 </xsl:choose>
                 <xsl:if test="count(../../param[@type!='' and @direction='in' and @opname=$opname])=1">
                     <!-- generate the get methods -->
-                    <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
-                        private <xsl:value-of select="@type"/> get<xsl:value-of select="@partname"/>(
-                        <xsl:value-of select="../@type"/> wrappedType){
-                        <xsl:value-of select="../@type"/>.<xsl:value-of select="$opnameCapitalized"/> innerType =
-                                    wrappedType.get<xsl:value-of select="$opnameCapitalized"/>();
-                        <xsl:choose>
-                            <xsl:when test="@primitive">return innerType.xget<xsl:value-of select="@partname"/>();</xsl:when>
-                            <xsl:otherwise>return innerType.get<xsl:value-of select="@partname"/>();</xsl:otherwise>
-                        </xsl:choose>
+                   <xsl:variable name="inputElement" select="../../param[@type!='' and @direction='in' and @opname=$opname]"></xsl:variable>
+                   <xsl:variable name="inputElementType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"></xsl:variable>
+                   <xsl:variable name="inputElementShortType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@shorttype"></xsl:variable>
+                   <xsl:variable name="inputElementComplexType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@complextype"></xsl:variable>
 
+                    <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
+                        <xsl:variable name="paramElement" select="."></xsl:variable>
+                        <xsl:variable name="partName" select="@partname"></xsl:variable>
+
+                        <xsl:if test="(generate-id($paramElement) = generate-id(key('innerParams', $partName)[1])) or
+                        (generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1]))">
+
+                            private <xsl:value-of select="@type"/> get<xsl:value-of select="@partname"/>(
+                            <xsl:value-of select="../@type"/> wrappedType){
+
+                            <!-- there is not difference betwee having a seperate complex type and the
+                                inline complex type implementation -->
+                            <xsl:choose>
+                                 <xsl:when test="@array">
+                                     return wrappedType.get<xsl:value-of select="substring-before($inputElementShortType,'Document')"/>().xget<xsl:value-of select="$partName"/>Array();
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                                     return wrappedType.get<xsl:value-of select="substring-before($inputElementShortType,'Document')"/>().xget<xsl:value-of select="$partName"/>();
+                                 </xsl:otherwise>
+                            </xsl:choose>
                         }
+                       </xsl:if>
                     </xsl:for-each>
                 </xsl:if>
             </xsl:if>

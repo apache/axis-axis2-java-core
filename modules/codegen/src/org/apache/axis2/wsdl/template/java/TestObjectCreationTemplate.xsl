@@ -1,5 +1,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
+    <xsl:key name="paramsIn" match="//databinders/param[@direction='in']" use="@type"/>
+    <xsl:key name="innerParams" match="//databinders/param[@direction='in']/param" use="@partname"/>
 
     <!-- #################################################################################  -->
     <!-- ############################   xmlbeans template   ##############################  -->
@@ -26,6 +28,42 @@
 
         }
 
+         <xsl:for-each select="opnames/name">
+
+            <xsl:variable name="opname" select="."/>
+
+              <xsl:if test="count(../../param[@type!='' and @direction='in' and @opname=$opname])=1">
+                    <!-- generate the get methods -->
+                   <xsl:variable name="inputElement" select="../../param[@type!='' and @direction='in' and @opname=$opname]"></xsl:variable>
+                   <xsl:variable name="inputElementType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"></xsl:variable>
+                   <xsl:variable name="inputElementShortType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@shorttype"></xsl:variable>
+
+                    <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
+                        <xsl:variable name="paramElement" select="."></xsl:variable>
+                        <xsl:variable name="partName" select="@partname"></xsl:variable>
+
+                        <xsl:if test="(generate-id($paramElement) = generate-id(key('innerParams', $partName)[1])) or
+                        (generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1]))">
+
+                            private <xsl:value-of select="@type"/> get<xsl:value-of select="@partname"/>(
+                            <xsl:value-of select="../@type"/> wrappedType){
+
+                            <!-- there is not difference betwee having a seperate complex type and the
+                                inline complex type implementation -->
+                            <xsl:choose>
+                                 <xsl:when test="@array">
+                                     return wrappedType.get<xsl:value-of select="substring-before($inputElementShortType,'Document')"/>().xget<xsl:value-of select="$partName"/>Array();
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                                     return wrappedType.get<xsl:value-of select="substring-before($inputElementShortType,'Document')"/>().xget<xsl:value-of select="$partName"/>();
+                                 </xsl:otherwise>
+                            </xsl:choose>
+                        }
+                       </xsl:if>
+                    </xsl:for-each>
+                </xsl:if>
+        </xsl:for-each>
+
     </xsl:template>
     <!-- #################################################################################  -->
     <!-- ############################   jaxme template   ##############################  -->
@@ -50,6 +88,42 @@
         public org.apache.axis2.databinding.ADBBean getTestObject(java.lang.Class type) throws Exception{
            return (org.apache.axis2.databinding.ADBBean) type.newInstance();
         }
+
+        <!-- generate the getter methods for each databinders if it is in uwwrapped mode -->
+        <xsl:for-each select="opnames/name">
+            <xsl:variable name="opname" select="."/>
+
+            <xsl:if test="count(../../param[@type!='' and @direction='in' and @opname=$opname])=1">
+                    <!-- generate the get methods -->
+                    <xsl:variable name="inputElement" select="../../param[@type!='' and @direction='in' and @opname=$opname]"></xsl:variable>
+                    <xsl:variable name="inputElementType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@type"></xsl:variable>
+                    <xsl:variable name="inputElementShortType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@shorttype"></xsl:variable>
+                    <xsl:variable name="inputElementComplexType" select="../../param[@type!='' and @direction='in' and @opname=$opname]/@complextype"></xsl:variable>
+
+                    <xsl:for-each select="../../param[@type!='' and @direction='in' and @opname=$opname]/param">
+
+                        <xsl:variable name="paramElement" select="."></xsl:variable>
+                        <xsl:variable name="partName" select="@partname"></xsl:variable>
+
+                        <xsl:if test="(generate-id($paramElement) = generate-id(key('innerParams', $partName)[1])) or
+                            (generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1]))">
+
+                            private <xsl:value-of select="@type"/> get<xsl:value-of select="@partname"/>(
+                            <xsl:value-of select="../@type"/> wrappedType){
+                            <xsl:choose>
+                                <!--<xsl:when test="$inputElementComplexType != ''">-->
+                                <xsl:when test="string-length(normalize-space($inputElementComplexType)) > 0">
+                                    return wrappedType.get<xsl:value-of select="$inputElementShortType"/>().get<xsl:value-of select="@partname"/>();
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    return wrappedType.get<xsl:value-of select="@partname"/>();
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            }
+                         </xsl:if>
+                    </xsl:for-each>
+                </xsl:if>
+        </xsl:for-each>
 
     </xsl:template>
     <!-- #################################################################################  -->

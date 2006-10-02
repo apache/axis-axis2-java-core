@@ -53,21 +53,11 @@
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>
-                             <xsl:variable name="shorttype" select="@shorttype"/>
-                             <xsl:variable name="complextype" select="@complextype"/>
 
                              <xsl:choose>
                                  <xsl:when test="$paramcount > 0">
                                       <xsl:for-each select="param[@type!='' and @opname=$opname]">
-                                           <xsl:choose>
-                                               <xsl:when test="string-length(normalize-space($complextype)) > 0">
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramname"/>.get<xsl:value-of select="$shorttype"/>().get<xsl:value-of
-                                                   select="@partname"/>()
-                                               </xsl:when>
-                                               <xsl:otherwise>
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramname"/>.get<xsl:value-of select="@partname"/>()
-                                               </xsl:otherwise>
-                                           </xsl:choose>
+                                            <xsl:if test="position()>1">,</xsl:if>get<xsl:value-of select="@partname"/>(<xsl:value-of select="$paramname"/>)
                                       </xsl:for-each>
                                  </xsl:when>
                                  <xsl:otherwise>
@@ -83,21 +73,11 @@
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>
-                             <xsl:variable name="shorttype" select="@shorttype"/>
-                             <xsl:variable name="complextype" select="@complextype"/>
 
                              <xsl:choose>
                                  <xsl:when test="$paramcount > 0">
                                       <xsl:for-each select="param[@type!='' and @opname=$opname]">
-                                           <xsl:choose>
-                                               <xsl:when test="string-length(normalize-space($complextype)) > 0">
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramname"/>.get<xsl:value-of select="$shorttype"/>().get<xsl:value-of
-                                                   select="@partname"/>()
-                                               </xsl:when>
-                                               <xsl:otherwise>
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramname"/>.get<xsl:value-of select="@partname"/>()
-                                               </xsl:otherwise>
-                                           </xsl:choose>
+                                            <xsl:if test="position()>1">,</xsl:if>get<xsl:value-of  select="@partname"/>(<xsl:value-of select="$paramname"/>)
                                       </xsl:for-each>
                                  </xsl:when>
                                  <xsl:otherwise>
@@ -147,21 +127,11 @@
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>
-                             <xsl:variable name="shorttype" select="@shorttype"/>
-                             <xsl:variable name="complextype" select="@complextype"/>
 
                              <xsl:choose>
                                  <xsl:when test="$paramcount > 0">
                                       <xsl:for-each select="param[@type!='' and @opname=$opname]">
-                                           <xsl:choose>
-                                               <xsl:when test="string-length(normalize-space($complextype)) > 0">
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramname"/>.get<xsl:value-of select="$shorttype"/>().get<xsl:value-of
-                                                   select="@partname"/>()
-                                               </xsl:when>
-                                               <xsl:otherwise>
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramname"/>.get<xsl:value-of select="@partname"/>()
-                                               </xsl:otherwise>
-                                           </xsl:choose>
+                                           <xsl:if test="position()>1">,</xsl:if>get<xsl:value-of select="@partname"/>(<xsl:value-of select="$paramname"/>)
                                       </xsl:for-each>
                                  </xsl:when>
                                  <xsl:otherwise>
@@ -221,20 +191,11 @@
                              <xsl:variable name="paramname" select="@name"/>
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>
                              <xsl:variable name="shorttype" select="@shorttype"/>
-                             <xsl:variable name="complextype" select="@complextype"/>
 
                              <xsl:choose>
                                  <xsl:when test="$paramcount > 0">
                                       <xsl:for-each select="param[@type!='' and @opname=$opname]">
-                                           <xsl:choose>
-                                               <xsl:when test="string-length(normalize-space($complextype)) > 0">
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramname"/>.get<xsl:value-of select="$shorttype"/>().get<xsl:value-of
-                                                   select="@partname"/>()
-                                               </xsl:when>
-                                               <xsl:otherwise>
-                                                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="$paramname"/>.get<xsl:value-of select="@partname"/>()
-                                               </xsl:otherwise>
-                                           </xsl:choose>
+                                            <xsl:if test="position()>1">,</xsl:if>get<xsl:value-of select="@partname"/>(<xsl:value-of select="$paramname"/>)
                                       </xsl:for-each>
                                  </xsl:when>
                                  <xsl:otherwise>

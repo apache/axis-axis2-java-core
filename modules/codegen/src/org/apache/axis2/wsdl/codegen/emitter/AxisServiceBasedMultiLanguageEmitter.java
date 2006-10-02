@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -475,7 +476,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         doc.appendChild(rootElement);
 
         //////////////////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////////////////////////////////
         return doc;
     }
@@ -969,7 +970,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         doc.appendChild(rootElement);
 
         //////////////////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////////////////////////////////
 
         return doc;
@@ -1094,7 +1095,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
         ///////////////////////////////////////////////
-        //System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println("databinding root element " + DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////////////////////
 
         return rootElement;
@@ -1874,7 +1875,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                     qName),
                             operation.getName(),
                             qName.getLocalPart(),
-                            (this.mapper.getTypeMappingStatus(qName)!=null))
+                            (this.mapper.getTypeMappingStatus(qName)!=null),
+                            Constants.ARRAY_TYPE.equals(this.mapper.getTypeMappingStatus(qName)))
                     );
                 }
 
@@ -1904,7 +1906,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                              String paramName,
                                              String paramType,
                                              QName operationName) {
-        return generateParamComponent(doc,paramName,paramType,operationName,null,false);
+        return generateParamComponent(doc,paramName,paramType,operationName,null,false,false);
 
     }
 
@@ -1919,7 +1921,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Element generateParamComponent(Document doc,
                                              String paramName,
                                              String paramType) {
-        return generateParamComponent(doc,paramName,paramType,null,null,false);
+        return generateParamComponent(doc,paramName,paramType,null,null,false,false);
 
     }
     /**
@@ -1937,7 +1939,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                              String paramType,
                                              QName opName,
                                              String partName,
-                                             boolean isPrimitive) {
+                                             boolean isPrimitive,
+                                             boolean isArray) {
         Element paramElement = doc.createElement("param");
         addAttribute(doc, "name",
                 paramName, paramElement);
@@ -1970,6 +1973,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         if (isPrimitive){
             addAttribute(doc,"primitive","yes",paramElement);
+        }
+
+        if (isArray){
+            addAttribute(doc,"array","yes",paramElement);
         }
 
         return paramElement;

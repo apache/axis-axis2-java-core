@@ -111,8 +111,8 @@ public class CodeGenerationUtility {
             //create the type mapper
             //First try to take the one that is already there
             TypeMapper mapper = cgconfig.getTypeMapper();
-            if (mapper==null){
-                mapper =new JavaTypeMapper();
+            if (mapper == null) {
+                mapper = new JavaTypeMapper();
             }
 
             //change the  default class name of the mapper to
@@ -189,7 +189,6 @@ public class CodeGenerationUtility {
 
             }
 
-
             //process the unwrapped parameters
             if (!cgconfig.isParametersWrapped()) {
                 //figure out the unwrapped operations
@@ -200,7 +199,7 @@ public class CodeGenerationUtility {
                     if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
                         AxisMessage message = op.getMessage(
                                 WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                        if (message!= null  && message.getParameter(Constants.UNWRAPPED_KEY) != null){
+                        if (message != null && message.getParameter(Constants.UNWRAPPED_KEY) != null) {
                             SchemaGlobalElement xmlbeansElement = sts.findElement(message.getElementQName());
                             SchemaType sType = xmlbeansElement.getType();
 
@@ -214,11 +213,19 @@ public class CodeGenerationUtility {
 
                                 //this type is based on a primitive type- use the
                                 //primitive type name in this case
-                                mapper.addTypeMappingName(partQName,elementProperty.getType().getFullJavaName());
+                                String fullJaveName = elementProperty.getType().getFullJavaName();
+                                if (elementProperty.extendsJavaArray()) {
+                                    fullJaveName = fullJaveName.concat("[]");
+                                }
+                                mapper.addTypeMappingName(partQName, fullJaveName);
                                 SchemaType primitiveType = elementProperty.getType().getPrimitiveType();
 
-                                if (primitiveType!=null){
-                                    mapper.addTypeMappingStatus(partQName,Boolean.TRUE);
+
+                                if (primitiveType != null) {
+                                    mapper.addTypeMappingStatus(partQName, Boolean.TRUE);
+                                }
+                                if (elementProperty.extendsJavaArray()){
+                                    mapper.addTypeMappingStatus(partQName,Constants.ARRAY_TYPE);
                                 }
                             }
                         }
@@ -255,15 +262,17 @@ public class CodeGenerationUtility {
             SchemaType sType = (SchemaType) allSeenTypes.get(i);
 
             if (sType.getContentType() == SchemaType.SIMPLE_CONTENT && sType.getPrimitiveType() != null) {
-                if (org.apache.axis2.namespace.Constants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName())) {
+                if (org.apache.axis2.namespace.Constants.BASE_64_CONTENT_QNAME.equals(sType.getPrimitiveType().getName()))
+                {
                     outerType = sType.getOuterType();
                     //check the outer type further to see whether it has the contenttype attribute from
                     //XMime namespace
                     SchemaProperty[] properties = sType.getProperties();
                     for (int j = 0; j < properties.length; j++) {
-                        if (org.apache.axis2.namespace.Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName())) {
+                        if (org.apache.axis2.namespace.Constants.XMIME_CONTENT_TYPE_QNAME.equals(properties[j].getName()))
+                        {
                             //add this only if it is a document type ??
-                            if (outerType.isDocumentType()){
+                            if (outerType.isDocumentType()) {
                                 base64ElementQNamesList.add(outerType.getDocumentElementName());
                             }
                             break;
@@ -337,9 +346,9 @@ public class CodeGenerationUtility {
 
         private File location;
         private boolean flatten = false;
-        private  String resourceDirName;
-        private  String srcDirName;
-        private  static final String JAVA_FILE_EXTENSION = ".java";
+        private String resourceDirName;
+        private String srcDirName;
+        private static final String JAVA_FILE_EXTENSION = ".java";
 
         private Axis2Filer(CodeGenConfiguration config) {
             location = config.getOutputLocation();
@@ -351,8 +360,8 @@ public class CodeGenerationUtility {
         public OutputStream createBinaryFile(String typename)
                 throws IOException {
             File resourcesDirectory =
-                    flatten?
-                            location:
+                    flatten ?
+                            location :
                             new File(location, resourceDirName);
 
             if (!resourcesDirectory.exists()) {
@@ -370,8 +379,8 @@ public class CodeGenerationUtility {
                     typename.replace('.', File.separatorChar);
 
             File outputDir =
-                    flatten?
-                            location:
+                    flatten ?
+                            location :
                             new File(location, srcDirName);
 
             if (!outputDir.exists()) {
@@ -456,9 +465,10 @@ public class CodeGenerationUtility {
         traverseSchemas(schema, map);
         return (XmlSchema[]) map.values().toArray(new XmlSchema[map.values().size()]);
     }
+
     private static void traverseSchemas(XmlSchema schema, HashMap map) {
         String key = schema.getTargetNamespace() + ":" + schema.getSourceURI();
-        if(map.containsKey(key)){
+        if (map.containsKey(key)) {
             return;
         }
         map.put(key, schema);
@@ -494,20 +504,21 @@ public class CodeGenerationUtility {
          * @see EntityResolver#resolveEntity(String, String)
          */
         public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-            if(systemId.startsWith("project://local/")) {
+            if (systemId.startsWith("project://local/")) {
                 systemId = systemId.substring("project://local/".length());
             }
             log.info("Resolving schema with publicId [" + publicId + "] and systemId [" + systemId + "]");
             try {
-                for (int i=0; i< schemas.length; i++) {
+                for (int i = 0; i < schemas.length; i++) {
                     XmlSchema schema = schemas[i];
                     boolean found = false;
-                    if(systemId.indexOf('/') == -1 && schema.getSourceURI() != null && schema.getSourceURI().endsWith(systemId)) {
+                    if (systemId.indexOf('/') == -1 && schema.getSourceURI() != null && schema.getSourceURI().endsWith(systemId))
+                    {
                         found = true;
-                    } else if(schema.getSourceURI() != null && schema.getSourceURI().equals(systemId)) {
-                        found = true;                        
+                    } else if (schema.getSourceURI() != null && schema.getSourceURI().equals(systemId)) {
+                        found = true;
                     }
-                    if(found) {
+                    if (found) {
                         try {
                             return new InputSource(getSchemaAsStream(schemas[i]));
                         } catch (IOException e) {
@@ -515,9 +526,9 @@ public class CodeGenerationUtility {
                         }
                     }
                 }
-                for (int i=0; i< schemas.length; i++) {
+                for (int i = 0; i < schemas.length; i++) {
                     XmlSchema schema = schemas[i];
-                    if(schema.getTargetNamespace() != null && schema.getTargetNamespace().equals(publicId)) {
+                    if (schema.getTargetNamespace() != null && schema.getTargetNamespace().equals(publicId)) {
                         try {
                             return new InputSource(getSchemaAsStream(schemas[i]));
                         } catch (IOException e) {
