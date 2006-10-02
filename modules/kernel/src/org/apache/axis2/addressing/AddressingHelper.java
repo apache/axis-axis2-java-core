@@ -68,7 +68,7 @@ public class AddressingHelper {
     }
 
     /**
-     * Extract the Parameter repreesnting the Anonymous flag from the AxisOperation
+     * Extract the parameter representing the Anonymous flag from the AxisOperation
      * and return the String value. Return the default of "optional" if not specified.
      *
      * @param axisOperation
