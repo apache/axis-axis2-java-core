@@ -45,7 +45,9 @@ public abstract class AbstractHandler implements Handler {
     }
 
     /**
-     * Method cleanup.
+     * Since this might change the whole behavior of Axis2 handlers, and since this is still under discussion
+     * (http://marc.theaimsgroup.com/?l=axis-dev&m=114504084929285&w=2) implementation of this method is deferred.
+     * Note : This method will not be automatically called, from Axis2 engine, until this is fully implemented.
      */
     public void cleanup() {
     }
