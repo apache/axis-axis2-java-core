@@ -247,8 +247,8 @@ target="_blank">here </a>.</p>
 
 <p>Once maven is properly installed you can start building Axis2.</p>
 
-<p><a href="../faq.html#d4">Maven commands that are frequently used</a> in Axis2 are listed on the <a href="../faq.html">FAQs</a>
-page.</p>
+<p><a href="../faq.html#d4">Maven commands that are frequently used</a> in
+Axis2 are listed on the <a href="../faq.html">FAQs</a> page.</p>
 
 <p><a name="_Toc96698085"></a></p>
 
@@ -272,11 +272,12 @@ found at a newly created "target" directory.</p>
 built first) it will take a while since required jars need to be downloaded.
 However this is a once only process and will not affect any successive
 builds.</strong></p>
+<a name="war"></a>
 
 <p><strong></strong>The default maven build will however build only the Axis2
-jar file. To obtain a WAR (Web Archive), <code>maven war</code> command
-should be issued. This will create a complete WAR with the name axis2.war
-inside the target directory.</p>
+jar file. To obtain a <strong>WAR (Web Archive)</strong>, <code>maven
+war</code> command should be issued. This will create a complete WAR with the
+name axis2.war inside the target directory.</p>
 
 <p>Once this build step is complete, the binaries are ready to be
 deployed.</p>
@@ -284,8 +285,9 @@ deployed.</p>
 
 <h2>Installing Axis2 in a Servlet Container</h2>
 <ol>
-  <li><a href="http://ws.apache.org/axis2/download.cgi"
-    target="_blank">Download</a> Axis2 war file</li>
+  <li>Either use the <a href="#war">axis2.war</a> file built using the above
+    intructions or <a href="../download/1_1/download.html#war"
+    target="_blank">Download</a> Axis2 WAR file.</li>
   <li>Drop the war in the webapps folder. Most servlet containers will
     automatically install war. (some servlet containers may require a restart
     in order to capture the new web application. Refer your servlet container
