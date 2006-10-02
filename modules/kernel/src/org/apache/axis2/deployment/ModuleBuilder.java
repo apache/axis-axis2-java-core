@@ -153,6 +153,18 @@ public class ModuleBuilder extends DescriptionBuilder {
             if (supportedPolicyNamespaces != null) {
                 module.setSupportedPolicyNamespaces(processSupportedPolicyNamespaces(supportedPolicyNamespaces));
             }
+            
+            
+            /*
+             * Module description should contain a list of QName of the assertions that are local to the system.
+             * These assertions are not exposed to the outside.
+             */
+            OMElement localPolicyAssertionElement = moduleElement.getFirstChildWithName(new QName("local-policy-assertions"));
+            
+            if (localPolicyAssertionElement != null) {
+                module.setLocalPolicyAssertions(getLocalPolicyAssertionNames(localPolicyAssertionElement));
+            }
+            
 
             // processing Operations
             Iterator op_itr = moduleElement.getChildrenWithName(new QName(TAG_OPERATION));

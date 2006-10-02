@@ -125,6 +125,69 @@ public class Trust10 extends AbstractSecurityAssertion {
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
         
+        String localname = Constants.TRUST_10.getLocalPart();
+        String namespaceURI = Constants.TRUST_10.getNamespaceURI();
+        
+        String prefix = writer.getPrefix(namespaceURI);
+        if (prefix == null) {
+            prefix = Constants.TRUST_10.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+        
+        // <sp:Trust10>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+        // xmlns:sp=".."
+        writer.writeNamespace(prefix, namespaceURI);
+        
+        String wspPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (wspPrefix == null) {
+            writer.setPrefix(wspPrefix, Constants.POLICY.getNamespaceURI());
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(Constants.POLICY.getPrefix(), Constants.POLICY.getLocalPart(), Constants.POLICY.getNamespaceURI());
+        
+        if (isMustSupportClientChallenge()) {
+            // <sp:MustSupportClientChallenge />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_CLIENT_CHALLENGE.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportServerChallenge()) {
+            // <sp:MustSupportServerChallenge />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_SERVER_CHALLENGE.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isRequireClientEntropy()) {
+            // <sp:RequireClientEntropy />
+            writer.writeStartElement(prefix, Constants.REQUIRE_CLIENT_ENTROPY.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        
+        if (isRequireServerEntropy()) {
+            // <sp:RequireServerEntropy />
+            writer.writeStartElement(prefix, Constants.REQUIRE_SERVER_ENTROPY.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportIssuedTokens()) {
+            // <sp:MustSupportIssuedTokens />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_ISSUED_TOKENS.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        
+        // </sp:Trust10>
+        writer.writeEndElement();
+        
+        
+        
+        
     }
 
     public short getType() {

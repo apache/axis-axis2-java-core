@@ -229,6 +229,27 @@ public class DescriptionBuilder implements DeploymentConstants {
         }
         return null;
     }
+    
+    protected QName[] getLocalPolicyAssertionNames(OMElement localPolicyAssertionsElement) {
+        
+        Iterator iterator = localPolicyAssertionsElement.getChildElements();
+        if (! iterator.hasNext()) {
+            return null;            
+        }
+                
+        ArrayList qnames = new ArrayList();
+        OMElement childElement;
+        
+        for (; iterator.hasNext();) {
+            childElement = (OMElement) iterator.next();
+            qnames.add(childElement.getQName());
+        }
+        
+        QName[] buffer = new QName[qnames.size()];
+        System.arraycopy(qnames.toArray(), 0, buffer, 0, qnames.size());
+        return buffer;
+         
+    }
 
     /**
      * Processes Handler element.

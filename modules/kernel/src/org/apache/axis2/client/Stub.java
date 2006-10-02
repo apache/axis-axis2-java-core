@@ -32,6 +32,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 
 /**
@@ -43,6 +44,7 @@ import org.apache.axis2.i18n.Messages;
  */
 public abstract class Stub {
 
+    protected AxisConfiguration _cofiguration;
     protected AxisService _service;
     protected ArrayList modules = new ArrayList();
 

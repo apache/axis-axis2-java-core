@@ -26,7 +26,6 @@ import org.apache.axis2.modules.Module;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.net.URI;
 import java.net.URL;
 
 /**
@@ -72,6 +71,8 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     private String moduleDescription;
 
     private String[] supportedPolicyNames;
+    
+    private QName[] localPolicyAssertions;
 
     /**
      * Constructor ModuleDescription.
@@ -274,6 +275,14 @@ public class AxisModule implements FlowInclude, ParameterInclude {
 
     public void setSupportedPolicyNamespaces(String[] supportedPolicyNamespaces) {
         this.supportedPolicyNames = supportedPolicyNamespaces;
+    }
+    
+    public QName[] getLocalPolicyAssertions() {
+        return localPolicyAssertions;
+    }
+    
+    public void setLocalPolicyAssertions(QName[] localPolicyAssertions) {
+        this.localPolicyAssertions = localPolicyAssertions;
     }
 
     public URL getFileName() {

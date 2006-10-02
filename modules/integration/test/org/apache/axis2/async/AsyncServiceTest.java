@@ -1,8 +1,10 @@
 package org.apache.axis2.async;
 
-import junit.framework.TestCase;
+import javax.xml.namespace.QName;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -27,8 +29,6 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *

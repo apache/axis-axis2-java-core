@@ -43,10 +43,10 @@ public abstract class AxisDescription implements ParameterInclude,
     private PolicyInclude policyInclude = null;
 
     private HashMap children;
-    
-    // creating a logger instance 
+
+    // creating a logger instance
     private Log log = LogFactory.getLog(this.getClass());
-    
+
     public AxisDescription() {
         parameterInclude = new ParameterIncludeImpl();
         children = new HashMap();
@@ -163,16 +163,21 @@ public abstract class AxisDescription implements ParameterInclude,
      */
     public void applyPolicy(Policy policy) throws AxisFault {
         AxisConfiguration configuration = getAxisConfiguration();
+        
+        if (configuration == null) {
+            // FIXME return or throw an Exception?
+            return;            
+        }
 
         // sets AxisDescription policy
-        this.policyInclude.setPolicy(policy);
+        getPolicyInclude().setPolicy(policy);
 
         /*
          * now we should take the effective one .. it is necessary since
          * AxisDescription.applyPolicy(..) doesn't override policies at the
          * Upper levels.
          */
-        Policy effPolicy = this.policyInclude.getEffectivePolicy();
+        Policy effPolicy = getPolicyInclude().getEffectivePolicy();
 
         /*
          * for the moment we consider policies with only one alternative. If the
@@ -180,71 +185,88 @@ public abstract class AxisDescription implements ParameterInclude,
          * be considered.
          */
         Iterator iterator = effPolicy.getAlternatives();
-        if (! iterator.hasNext()) {
-            throw new AxisFault("Policy doesn't contain any policy alternatives");            
+        if (!iterator.hasNext()) {
+            throw new AxisFault(
+                    "Policy doesn't contain any policy alternatives");
         }
-        
+
         List assertionList = (List) iterator.next();
-        
+
         Assertion assertion;
         String namespaceURI;
-        
+
         List moduleList;
-        
+
         List namespaceList = new ArrayList();
         List modulesToEngage = new ArrayList();
-        
-        for (Iterator assertions = assertionList.iterator(); assertions.hasNext();) {
+
+        for (Iterator assertions = assertionList.iterator(); assertions
+                .hasNext();) {
             assertion = (Assertion) assertions.next();
             namespaceURI = assertion.getName().getNamespaceURI();
-            
-            moduleList = configuration.getModulesForPolicyNamesapce(namespaceURI);
-            
+
+            moduleList = configuration
+                    .getModulesForPolicyNamesapce(namespaceURI);
+
             if (moduleList == null) {
-                log.debug("can't find any module to process " + assertion.getName() + " type assertions");
+                log.debug("can't find any module to process "
+                        + assertion.getName() + " type assertions");
                 continue;
             }
-            
-            if (canSupportAssertion(assertion, moduleList)) {
-                throw new AxisFault("atleast one module can't support " + assertion.getName());
+
+            if (!canSupportAssertion(assertion, moduleList)) {
+                throw new AxisFault("atleast one module can't support "
+                        + assertion.getName());
             }
-            
-            if (namespaceList.contains(namespaceURI)) {
+
+            if (!namespaceList.contains(namespaceURI)) {
                 namespaceList.add(namespaceURI);
                 modulesToEngage.addAll(moduleList);
             }
         }
-        
+
+        /*
+         * FIXME We need to disengage any modules that are already engaged *but*
+         * has nothing to do with the policy to apply
+         */
+
         engageModulesToAxisDescription(modulesToEngage, this);
     }
-    
+
     private boolean canSupportAssertion(Assertion assertion, List moduleList) {
-        
+
+        AxisModule axisModule;
         Module module;
-        
+
         for (Iterator iterator = moduleList.iterator(); iterator.hasNext();) {
-            module = (Module) iterator.next();
-             /*
-              * FIXME .. need to add this method to the Module Interface ..
-              */
-//            
-//            if (! module.canSupportAssertion(assertion)) {
-//                log.debug(((AxisModule) module).getName() + " says it can't support " + assertion.getName());              
-//                return false;
-//            }
+            axisModule = (AxisModule) iterator.next();
+            // FIXME is this step really needed ??
+            // Shouldn't axisMoudle.getModule always return not-null value ??
+            module = axisModule.getModule();
+
+            if (!(module == null || module.canSupportAssertion(assertion))) {
+                log.debug(((AxisModule) axisModule).getName()
+                        + " says it can't support " + assertion.getName());
+                return false;
+            }
         }
-        
+
         return true;
     }
-    
-    private void engageModulesToAxisDescription(List moduleList, AxisDescription description) throws AxisFault {
-        
+
+    private void engageModulesToAxisDescription(List moduleList,
+            AxisDescription description) throws AxisFault {
+
         AxisModule axisModule;
-        
-        for (Iterator iterator = moduleList.iterator(); iterator.hasNext(); ) {
+        Module module;
+
+        for (Iterator iterator = moduleList.iterator(); iterator.hasNext();) {
             axisModule = (AxisModule) iterator.next();
-            
-            if (! description.isEngaged(axisModule.getName())) {
+            // FIXME is this step really needed ??
+            // Shouldn't axisMoudle.getModule always return not-null value ??
+            module = axisModule.getModule();
+
+            if (!(module == null || description.isEngaged(axisModule.getName()))) {
                 // engages the module to AxisDescription
                 description.engageModule(axisModule, getAxisConfiguration());
                 // notifies the module about the engagement

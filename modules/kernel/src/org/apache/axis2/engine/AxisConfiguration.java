@@ -56,6 +56,9 @@ public class AxisConfiguration extends AxisDescription {
     private final HashMap transportsOut = new HashMap();
 
     private final HashMap policySupportedModules = new HashMap();
+    
+    /** Stores the QNames of local policy assertions */
+    private final ArrayList localPolicyAssertions = new ArrayList();
 
     // to store AxisObserver Objects
     private ArrayList observersList = null;
@@ -155,7 +158,12 @@ public class AxisConfiguration extends AxisDescription {
         } else {
             allModules.put(module.getName(), module);
         }
+        
+        // Registering the policy namespaces that the module understand        
         registerModulePolicySupport(module);
+        // Registering the policy assertions that are local to the system 
+        registerLocalPolicyAssertions(module);
+        
     }
 
     /**
@@ -810,6 +818,18 @@ public class AxisConfiguration extends AxisDescription {
             }
         }
     }
+    
+    public void registerLocalPolicyAssertions(AxisModule axisModule) {
+        QName[] localPolicyAssertions = axisModule.getLocalPolicyAssertions();
+        
+        if (localPolicyAssertions == null) {
+            return;
+        }
+        
+        for (int i = 0; i < localPolicyAssertions.length; i++) {
+            addLocalPolicyAssertion(localPolicyAssertions[i]);                        
+        }
+    }
 
     public ArrayList getObserversList() {
         return observersList;
@@ -843,5 +863,21 @@ public class AxisConfiguration extends AxisDescription {
     
     public void addTargetResolver(TargetResolver tr) {
         targetResolvers.add(tr);
+    }
+    
+    public void addLocalPolicyAssertion(QName name) {
+        this.localPolicyAssertions.add(name);        
+    }
+    
+    public List getLocalPolicyAssertions() {
+        return this.localPolicyAssertions;
+    }
+    
+    public void removeLocalPolicyAssertion(QName name) {
+        this.localPolicyAssertions.remove(name);        
+    }
+    
+    public boolean isAssertionLocal(QName name) {
+        return this.localPolicyAssertions.contains(name);
     }
 }

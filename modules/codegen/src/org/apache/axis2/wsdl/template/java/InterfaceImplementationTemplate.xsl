@@ -50,9 +50,9 @@
      _service = new org.apache.axis2.description.AxisService("<xsl:value-of select="@servicename"/>" + this.hashCode());
      
     <xsl:if test="@policy">     
-     java.lang.String _service_policy_string = "<xsl:value-of select="@policy"/>";
-     org.apache.neethi.Policy _endpoint_policy = getPolicy(_service_policy_string);
-     _service.applyPolicy(_endpoint_policy);
+     java.lang.String _endpoint_policy_string = "<xsl:value-of select="@policy"/>";
+     org.apache.neethi.Policy _endpoint_policy = getPolicy(_endpoint_policy_string);
+     ((org.apache.axis2.description.PolicyInclude) _service.getPolicyInclude()).setPolicy(_endpoint_policy);
     </xsl:if>
 
         //creating the operations
@@ -74,16 +74,33 @@
             </xsl:choose>
 
             __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
-
+	
+	<!--
         <xsl:if test="@policy">
-        __operation_policy_string = "<xsl:value-of select="@policy"/>";
-	org.apache.neethi.Policy __operation_policy =  getPolicyFromString(__operation_policy_string);
-	__operation.applyPolicy(__operation_policy);
-
+        __operation_policy_string = "<xsl:value-of select="@policy"/>";	
+        org.apache.neethi.Policy __operation_policy =  getPolicy(__operation_policy_string);
+        ((org.apache.axis2.description.PolicyInclude) __operation.getPolicyInclude()).setPolicy(__operation_policy);
         </xsl:if>
+	-->
 
             _operations[<xsl:value-of select="position()-1"/>]=__operation;
-            _service.addOperation(__operation);
+            
+        <xsl:choose>
+		<xsl:when test="@policy">
+	    __operation_policy_string = "<xsl:value-of select="@policy"/>";	
+	    org.apache.neethi.Policy __operation_policy =  getPolicyFromString(__operation_policy_string);
+		
+	    _service.addOperation(__operation);
+	    __operation.applyPolicy(__operation_policy);
+		</xsl:when>
+		<xsl:otherwise>
+	    _service.addOperation(__operation);
+	    __operation.applyPolicy(new org.apache.neethi.Policy());
+		</xsl:otherwise>
+	</xsl:choose>
+            
+            
+            
         </xsl:for-each>
         }
 

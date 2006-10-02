@@ -23,4 +23,7 @@
         </handler>
     </outflow>
     <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"/>
+    <local-policy-assertions>
+    	<rampart:RampartConfig xmlns:rampart="http://ws.apache.org/rampart/policy" />
+    </local-policy-assertions>
 </module>
