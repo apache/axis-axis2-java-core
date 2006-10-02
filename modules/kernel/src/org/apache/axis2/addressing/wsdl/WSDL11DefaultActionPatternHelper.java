@@ -50,12 +50,12 @@ public class WSDL11DefaultActionPatternHelper {
 	 * 
 	 * @param def is required to obtain the targetNamespace
 	 * @param wsdl4jPortType is required to obtain the portType name
-	 * @param op is required to generate the input name if not explicitly specifid
+	 * @param op is required to generate the input name if not explicitly specified
 	 * @param input is required for its name if specified
 	 * @return a wsa:Action value based on the Default Action Pattern and the provided objects
 	 */
 	public static String generateActionFromInputElement(Definition def, PortType wsdl4jPortType, Operation op, Input input){
-		// Get the targetNamespace of the wsdl:definition
+		// Get the targetNamespace of the wsdl:definitions
 		String targetNamespace = def.getTargetNamespace();
 		
 		// Determine the delimiter. Per the spec: 'is ":" when the [target namespace] is a URN, otherwise "/". 
@@ -128,7 +128,7 @@ public class WSDL11DefaultActionPatternHelper {
 	 * 
 	 * @param def is required to obtain the targetNamespace
 	 * @param wsdl4jPortType is required to obtain the portType name
-	 * @param op is required to generate the output name if not explicitly specifid
+	 * @param op is required to generate the output name if not explicitly specified
 	 * @param output is required for its name if specified
 	 * @return a wsa:Action value based on the Default Action Pattern and the provided objects
 	 */

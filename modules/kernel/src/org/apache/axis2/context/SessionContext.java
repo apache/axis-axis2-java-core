@@ -78,7 +78,7 @@ public class SessionContext extends AbstractContext {
     }
 
     /**
-     * ServiceContext and ServiceGroupContext are not getting automatically garbage collected. And there
+     * ServiceContext and ServiceGroupContext are not getting automatically garbage collectible. And there
      * is no specific way for some one to go and make it garbage collectable.
      * So the current solution is to make them time out. So the logic is that, there is a timer task
      * in each and every service group which will check for the last touched time. And if it has not

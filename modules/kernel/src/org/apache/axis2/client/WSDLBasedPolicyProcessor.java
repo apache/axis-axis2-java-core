@@ -69,7 +69,7 @@ public class WSDLBasedPolicyProcessor {
         Iterator operations = axisService.getOperations();
         while (operations.hasNext()) {
             AxisOperation axisOp = (AxisOperation) operations.next();
-            // TODO we support only Operation level Policy now
+            // TODO we support only operation level Policy now
             configureOperationPolices(axisOp);
         }
     }
@@ -89,7 +89,7 @@ public class WSDLBasedPolicyProcessor {
                 Assertion assertion;
 
                 /*
-                 * Fist we computes the set of distinct namesapces of assertions
+                 * Fist we compute the set of distinct namespaces of assertions
                  * of this particular policy alternative.
                  */
                 for (Iterator assertions = ((List) iterator.next()).iterator(); assertions
@@ -106,7 +106,7 @@ public class WSDLBasedPolicyProcessor {
 
                 /*
                  * Now we compute all the modules that are are involved in
-                 * process assertions that are belonged to any of the namespace
+                 * process assertions that belongs to any of the namespaces of
                  * list.
                  */
                 List modulesToEngage;
@@ -120,7 +120,7 @@ public class WSDLBasedPolicyProcessor {
                         /*
                          * If there isn't a single module that is not interested
                          * of assertions that belongs to a particular namespace,
-                         * we simply ignor it.
+                         * we simply ignore it.
                          */
                         System.err
                                 .println("cannot find any modules to process "

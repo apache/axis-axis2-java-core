@@ -47,7 +47,7 @@ public class ConfigurationContextFactory {
     protected static final Log log = LogFactory.getLog(ConfigurationContextFactory.class);
 
     /**
-     * Creates a AxisConfiguration depending on the user requirment.
+     * Creates a AxisConfiguration depending on the user requirement.
      * First creates an AxisConfigurator object with appropriate parameters.
      * Depending on the implementation getAxisConfiguration(), gets
      * the AxisConfiguration and uses it to create the ConfigurationContext.
@@ -65,7 +65,7 @@ public class ConfigurationContextFactory {
         }
         //To override context path
         setContextPaths(axisConfig, configContext);
-        //To check whether transport level session managment is require or not
+        //To check whether transport level session management is require or not
         configureTransportSessionManagement(axisConfig);
         init(configContext);
         axisConfigurator.engageGlobalModules();
@@ -141,29 +141,29 @@ public class ConfigurationContextFactory {
      * an AxisConfiguration.
      * <p/>
      * Here either or both parameter can be null. So that boil down to following
-     * scanarios and it should note that parameter value should be full path ,
+     * scenarios and it should note that parameter value should be full path ,
      * you are not allowed to give one relative to other. And these two can be located
      * in completely different locations.
      * <ul>
      * <li>If none of them are null , then AxisConfiguration will be based on the
-     * value of axis2xml , and the repositoy will be the value specified by the
-     * path paramter and there will not be any assumptions.</li>
+     * value of axis2xml , and the repository will be the value specified by the
+     * path parameter and there will not be any assumptions.</li>
      * <li>If axis2xml is null , then the repository will be the value specfied by
      * path parameter and AxisConfiguration will be created using default_axis2.xml</li>
      * <li>If path parameter is null , then AxisConfiguration will be created using
-     * that axis2.xml. And after creatig AxisConfiguration system will try to
+     * that axis2.xml. And after creating AxisConfiguration system will try to
      * find user has specified repository parameter in axis2.xml
-     * (&lt;parameter name="repository"&gt;locationo of the repo&lt;/parameter&gt;) , if it
+     * (&lt;parameter name="repository"&gt;location of the repo&lt;/parameter&gt;) , if it
      * find that then repository will be the value specified by that parameter.</li>
      * <li>If both are null , then it is simple , AixsConfiguration will be created
      * using default_axis2.xml and thats it.</li>
      * </ul>
      * <p/>
-     * Note : rather than passing any paremeters you can give them as System
+     * Note : rather than passing any parameters you can give them as System
      * properties. Simple you can add following system properties before
      * you call this.
      * <ul>
-     * <li>axis2.repo : same as path paramter</li>
+     * <li>axis2.repo : same as path parameter</li>
      * <li>axis2.xml  : same as axis2xml</li>
      * </ul>
      *

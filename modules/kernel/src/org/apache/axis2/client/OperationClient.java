@@ -110,18 +110,20 @@ public interface OperationClient {
     public void reset() throws AxisFault;
 
     /**
-     * To close the transport if necessary , can call this method. The most usage of thie method
-     * when clinet use two tarnport for sending and receiving , there we need to remove entry from
-     * waitings calls in the transport listener queue
-     * Note : DO NOT call this method if you are not using two transport send and receive
+     * To close the transport if necessary , can call this method. The main 
+     * usage of this method is when client uses two tarnsports for sending and 
+     * receiving , and we need to remove entries for waiting calls in the 
+     * transport listener queue.
+     * Note : DO NOT call this method if you are not using two transports to 
+     * send and receive
      *
-     * @param msgCtxt : MessageContext# which have all the trnport information
-     * @throws AxisFault : throws AxisFault if something goes worng
+     * @param msgCtxt : MessageContext# which has all the transport information
+     * @throws AxisFault : throws AxisFault if something goes wrong
      */
     public void complete(MessageContext msgCtxt) throws AxisFault;
 
     /**
-     * To get the operation context of the operation cleint
+     * To get the operation context of the operation client
      * @return OperationContext
      */
     public OperationContext getOperationContext();

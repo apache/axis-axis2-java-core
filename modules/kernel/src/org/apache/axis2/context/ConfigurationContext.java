@@ -157,7 +157,7 @@ public class ConfigurationContext extends AbstractContext {
             }
 
             /**
-             * 1. Check the max scope of the service gruop , if it is grater than TransportSession
+             * 1. Check the max scope of the service group , if it is grater than TransportSession
              *    then need to store in configurationContext
              * 2. Else need to store in SessionContext , and need to store both service context and
              *    service group context
@@ -206,7 +206,7 @@ public class ConfigurationContext extends AbstractContext {
             serviceGroupContext.setParent(this);
         }
 
-        // this is the best time to clean up the SGCtxts that are not being used anymore
+        // this is the best time to clean up the SGCtxts since are not being used anymore
         cleanupServiceGroupContexts();
     }
 

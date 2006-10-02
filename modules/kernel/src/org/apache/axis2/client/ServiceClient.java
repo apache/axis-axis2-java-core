@@ -70,10 +70,10 @@ public class ServiceClient {
      */
     public static final QName ANON_OUT_IN_OP = new QName("annonOutInOp");
 
-    // the metadata for the service that I'm clienting for
+    // the meta-data of the service that this client access
     private AxisService axisService;
 
-    // the configuration in which my metadata lives
+    // the configuration in which my meta-data lives
     private AxisConfiguration axisConfig;
 
     // the configuration context in which I live
@@ -91,7 +91,7 @@ public class ServiceClient {
     // list of headers to be sent with the simple APIs
     private ArrayList headers;
 
-    //whther we creat configctx or not
+    //whether we create configctx or not
     private boolean createConfigCtx;
 
     /**
@@ -390,16 +390,16 @@ public class ServiceClient {
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
         if (options.isUseSeparateListener()) {
 
-            // This mean doing a Fault may come through a differnt channel .
+            // This mean doing a Fault may come through a different channel .
             // If the
             // transport is two way transport (e.g. http) Only one channel is
             // used (e.g. in http cases
-            // 202 OK is sent to say no respsone avalible). Axis2 get blocked
-            // return when the response is avalible.
+            // 202 OK is sent to say no response available). Axis2 get blocked
+            // return when the response is available.
             SyncCallBack callback = new SyncCallBack();
 
             // this method call two channel non blocking method to do the work
-            // and wait on the callbck
+            // and wait on the callback
             sendReceiveNonBlocking(operation, elem, callback);
 
             long timeout = options.getTimeOutInMilliSeconds();
@@ -415,15 +415,15 @@ public class ServiceClient {
                         // or throw new AxisFault( "Callback was interrupted by someone?" );
                     }
                     // The wait finished, compute remaining time
-                    // - wait can end prematurly, see Object.wait( int timeout )
+                    // - wait can end prematurely, see Object.wait( int timeout )
                     waitTime = timeout - (System.currentTimeMillis() - startTime);
                 }
 
             }
             SOAPEnvelope envelope = callback.envelope;
-            // process the resule of the invocation
+            // process the result of the invocation
             if (envelope != null) {
-                // building soap enevlop
+                // building soap envelope
                 envelope.build();
                 // closing transport
                 if (envelope.getBody().hasFault()) {
@@ -437,7 +437,7 @@ public class ServiceClient {
                 } else if (callback.error != null) {
                     throw new AxisFault(callback.error);
                 } else if (! callback.isComplete()) {
-                    //no exception has occured
+                    //no exception has occurred
                 }
             }
         } else {
@@ -522,12 +522,12 @@ public class ServiceClient {
             // If the
             // transport is two way transport (e.g. http) Only one channel is
             // used (e.g. in http cases
-            // 202 OK is sent to say no respsone avalible). Axis2 get blocked
-            // return when the response is avalible.
+            // 202 OK is sent to say no response available). Axis2 get blocked
+            // return when the response is available.
             SyncCallBack callback = new SyncCallBack();
 
             // this method call two channel non blocking method to do the work
-            // and wait on the callbck
+            // and wait on the callback
             sendReceiveNonBlocking(operation, elem, callback);
 
             long timeout = options.getTimeOutInMilliSeconds();
@@ -543,7 +543,7 @@ public class ServiceClient {
                         // or throw new AxisFault( "Callback was interrupted by someone?" );
                     }
                     // The wait finished, compute remaining time
-                    // - wait can end prematurly, see Object.wait( int timeout )
+                    // - wait can end prematurely, see Object.wait( int timeout )
                     waitTime = timeout - (System.currentTimeMillis() - startTime);
                 }
 
@@ -551,7 +551,7 @@ public class ServiceClient {
             // process the result of the invocation
             if (callback.envelope != null) {
                 // transport was already returned by the call back receiver
-                //Buidling of the Envelope should happen at the setComplete()
+                //Building of the Envelope should happen at the setComplete()
                 // or onComplete() methods of the Callback class
                 return callback.envelope.getBody().getFirstElement();
             } else {

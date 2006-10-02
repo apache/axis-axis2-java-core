@@ -49,7 +49,7 @@ public class OperationContext extends AbstractContext {
     private HashMap messageContexts;
 
     // this is the global MessageID -> OperationContext map which is stored in
-    // the EngineContext. We're caching it here for faster acccess.
+    // the EngineContext. We're caching it here for faster access.
     private Map operationContextMap;
 
     public OperationContext(AxisOperation axisOperation) {

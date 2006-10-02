@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * This is the top most level of the Context hierachy and is a bag of properties.
+ * This is the top most level of the Context hierarchy and is a bag of properties.
  */
 public abstract class AbstractContext {
 
@@ -118,7 +118,7 @@ public abstract class AbstractContext {
 
     /**
      * ServiceContext and ServiceGroupContext are not getting automatically garbage collected. And there
-     * is no specific way for some one to go and make it garbage collectable.
+     * is no specific way for some one to go and make it garbage collectible.
      * So the current solution is to make them time out. So the logic is that, there is a timer task
      * in each and every service group which will check for the last touched time. And if it has not
      * been touched for some time, the timer task will remove it from the memory.

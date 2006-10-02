@@ -28,7 +28,7 @@ import org.apache.axis2.i18n.Messages;
 import javax.xml.namespace.QName;
 
 /**
- * Well this is never clearly defined, what it does or the lifecycle.
+ * Well this is never clearly defined, what it does or the life-cycle.
  * So do NOT use this as it might not live up to your expectation.
  */
 public class ServiceContext extends AbstractContext {
@@ -69,7 +69,7 @@ public class ServiceContext extends AbstractContext {
     /**
      * To get the ERP for a given service , if the transport is present and not
      * running then it will add as a listener to ListenerManager , there it will
-     * init that and start the listener , and finally ask the EPR from tarnsport
+     * init that and start the listener , and finally ask the EPR from transport
      * for a given service
      *
      * @param transport : Name of the transport

@@ -28,7 +28,7 @@ public abstract class Callback {
     private boolean complete;
 
     /**
-     * This method is invoked by Axis Engine once the asynchronous operation has completed sucessfully.
+     * This method is invoked by Axis Engine once the asynchronous operation has completed successfully.
      *
      * @param result
      */

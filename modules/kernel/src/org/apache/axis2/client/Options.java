@@ -95,8 +95,8 @@ public class Options {
 
     private EndpointReference to;
 
-    //To control , session managment , default is set to true , if user wants he can set that to true
-    // There operation clinet will manage session using ServiceGroupID if it is there in the response
+    //To control , session management , default is set to true , if user wants he can set that to true
+    // There operation client will manage session using ServiceGroupID if it is there in the response
     private boolean manageSession = false;
 
     /**
@@ -106,7 +106,7 @@ public class Options {
     }
 
     /**
-     * In normal mode operation, this options will try to fullfil the request
+     * In normal mode operation, this options will try to fulfil the request
      * from its values. If that is not possible, this options will request those
      * information from its parent.
      *
@@ -611,12 +611,12 @@ public class Options {
      * </li>
      * <p><a name="SO_TIMEOUT"></a></p>
      * <li><b>org.apache.axis2.transport.http.HTTPConstants.SO_TIMEOUT</b>
-     * <p>This enables the user to pass in socket timeout value as an Integer. If nothing is set, the default value is 60000 milli seconds.</p>
+     * <p>This enables the user to pass in socket timeout value as an Integer. If nothing is set, the default value is 60000 milliseconds.</p>
      * </li>
      * <p><a name="CON_TIMEOUT"></a></p>
      * <li><b>org.apache.axis2.transport.http.HTTPConstants.CONNECTION_TIMEOUT</b>
      * <p/>
-     * <p>This enables the user to pass in connection timeout value as an Integer. If nothing is set, the default value is 60000 milli seconds.</p>
+     * <p>This enables the user to pass in connection timeout value as an Integer. If nothing is set, the default value is 60000 milliseconds.</p>
      * </li>
      * <p><a name="USER_AGENT"></a></p>
      * <li><b>org.apache.axis2.transport.http.HTTPConstants.USER_AGENT</b>
@@ -792,7 +792,7 @@ public class Options {
     }
 
     /**
-     * Sets transport information to the call. The senarios supported are as
+     * Sets transport information to the call. The scenarios supported are as
      * follows: <blockquote>
      * <p/>
      * <pre>
@@ -824,7 +824,7 @@ public class Options {
             throws AxisFault {
 
         // here we check for a legal combination, for and example if the
-        // sendertransport is http and listner
+        // sendertransport is http and listener
         // transport is smtp the invocation must using separate transport
         if (!useSeparateListener) {
             boolean isTransportsEqual = senderTransport

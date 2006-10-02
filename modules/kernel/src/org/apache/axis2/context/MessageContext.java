@@ -100,7 +100,7 @@ public class MessageContext extends AbstractContext {
     public int FLOW = IN_FLOW;
 
     /**
-     * To invoke fireAndforget method we have to hand over transport sening logic to a thread
+     * To invoke fireAndforget method we have to hand over transport sending logic to a thread
      * other wise user has to wait till it get transport response (in the case of HTTP its HTTP
      * 202)
      */
@@ -196,7 +196,7 @@ public class MessageContext extends AbstractContext {
     private transient TransportOutDescription transportOut;
     private transient TransportInDescription transportIn;
 
-    //The value will be set by the tarnsport receiver and there will be validation for the transport
+    //The value will be set by the transport receiver and there will be validation for the transport
     //at the dispatch phase (its post condition)
     private String incomingTransportName;
 
@@ -273,7 +273,7 @@ public class MessageContext extends AbstractContext {
      * parameters. The order of search is as follows:
      * <ol>
      * <li> Search in module configurations inside corresponding operation
-     * descripton if its there </li>
+     * description if its there </li>
      * <li> Search in corresponding operation if its there </li>
      * <li> Search in module configurations inside corresponding service
      * description if its there </li>
@@ -284,7 +284,7 @@ public class MessageContext extends AbstractContext {
      * </li>
      * <li> Search in HandlerDescription for the parameter </li>
      * </ol>
-     * <p/> and the way of specifing module configuration is as follows
+     * <p/> and the way of specifying module configuration is as follows
      * <moduleConfig name="addressing"> <parameter name="addressingPara"
      * locked="false">N/A</parameter> </moduleConfig>
      *
