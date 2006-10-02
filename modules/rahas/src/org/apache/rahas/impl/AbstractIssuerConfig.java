@@ -52,6 +52,6 @@ public abstract class AbstractIssuerConfig {
     protected long ttl = 300000;
     protected String cryptoPropertiesFile;
     protected OMElement cryptoPropertiesElement;
-    protected int keySize = 128;
+    protected int keySize = 256;
 
 }

@@ -23,6 +23,8 @@ import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.neethi.Policy;
@@ -57,7 +59,9 @@ public class MessageBuilderTestBase extends TestCase {
      */
     protected MessageContext getMsgCtx() throws Exception {
         MessageContext ctx = new MessageContext();
-        ctx.setAxisService(new AxisService("TestService"));
+        AxisService axisService = new AxisService("TestService");
+        ctx.setServiceContext(new ServiceContext(axisService, new ServiceGroupContext(null, null)));
+        ctx.setAxisService(axisService);
         ctx.setAxisOperation(new OutInAxisOperation(new QName("http://rampart.org", "test")));
         Options options = new Options();
         options.setAction("urn:testOperation");

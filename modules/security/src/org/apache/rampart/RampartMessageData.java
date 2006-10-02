@@ -186,6 +186,10 @@ public class RampartMessageData {
                 
             }
             
+            if(!msgCtx.isServerSide() && this.servicePolicy != null) {
+                msgCtx.getServiceContext().setProperty(RampartMessageData.KEY_RAMPART_POLICY, this.servicePolicy);
+            }
+            
             if(this.servicePolicy != null){
                 List it = (List)this.servicePolicy.getAlternatives().next();
 
