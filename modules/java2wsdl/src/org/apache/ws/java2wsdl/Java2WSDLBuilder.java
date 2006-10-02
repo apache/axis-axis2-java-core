@@ -5,7 +5,6 @@ import org.apache.axiom.om.OMElement;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -137,22 +136,22 @@ public class Java2WSDLBuilder {
      * @throws Exception
      */
     public void generateWSDL() throws Exception {
-        SchemaGenerator sg = new SchemaGenerator(classLoader, 
+        SchemaGenerator schemaGenerator = new SchemaGenerator(classLoader, 
                                                     className,
                                                     schemaTargetNamespace, 
                                                     schemaTargetNamespacePrefix);
-        ArrayList excludeOpeartion = new ArrayList();
-        excludeOpeartion.add("init");
-        excludeOpeartion.add("setOperationContext");
-        excludeOpeartion.add("destroy");
-        sg.setExcludeMethods(excludeOpeartion);
-        sg.setAttrFormDefault(getAttrFormDefault());
-        sg.setElementFormDefault(getElementFormDefault());
-        sg.setExtraClasses(getExtraClasses());
-        Collection schemaCollection = sg.generateSchema();
-        Java2OMBuilder java2OMBuilder = new Java2OMBuilder(sg.getMethods(),
+        ArrayList excludedOperation = new ArrayList();
+        excludedOperation.add("init");
+        excludedOperation.add("setOperationContext");
+        excludedOperation.add("destroy");
+        schemaGenerator.setExcludeMethods(excludedOperation);
+        schemaGenerator.setAttrFormDefault(getAttrFormDefault());
+        schemaGenerator.setElementFormDefault(getElementFormDefault());
+        schemaGenerator.setExtraClasses(getExtraClasses());
+        Collection schemaCollection = schemaGenerator.generateSchema();
+        Java2OMBuilder java2OMBuilder = new Java2OMBuilder(schemaGenerator.getMethods(),
                 schemaCollection,
-                sg.getTypeTable(),
+                schemaGenerator.getTypeTable(),
                 serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
                 targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className,classLoader).toString() : targetNamespace,
                 targetNamespacePrefix,

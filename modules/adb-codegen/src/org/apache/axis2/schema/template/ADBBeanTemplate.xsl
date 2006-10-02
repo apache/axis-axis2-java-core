@@ -559,7 +559,7 @@
                              try {
                                 writeAttribute("<xsl:value-of select="$namespace"/>",
                                                "<xsl:value-of select="$propertyName"/>",
-                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);                            
+                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
                             } catch (NullPointerException e) {
                                 // If <xsl:value-of select="$varName"/> was null
                                 // it can not be serialized.
@@ -1406,8 +1406,17 @@
                                     while (!reader.isStartElement() &amp;&amp; !reader.isEndElement()) reader.next();
                                 </xsl:otherwise>
                             </xsl:choose>
+
                             <xsl:if test="not(enumFacet)">
-                            if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
+                            <xsl:choose>
+                                <xsl:when test="$shortTypeName='OMElement'">
+                                   if (reader.isStartElement()){
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    if (reader.isStartElement() <xsl:if test="$simple"> || reader.hasText()</xsl:if> <xsl:if test="not($simple)">&amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())</xsl:if>){
+                                </xsl:otherwise>
+                            </xsl:choose>
+
                             </xsl:if>
                             <xsl:choose>
                                 <xsl:when test="@array">
@@ -1579,7 +1588,7 @@
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
-                                	
+
                                     if (isReaderMTOMAware
                                             &amp;&amp;
                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
@@ -1598,7 +1607,7 @@
                                             java.lang.String content = reader.getText();
                                             object.set<xsl:value-of select="$javaName"/>(
                                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
-                                        } 
+                                        }
                                     }
 
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
@@ -2596,7 +2605,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
-                                	
+
                                     if (isReaderMTOMAware
                                             &amp;&amp;
                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
