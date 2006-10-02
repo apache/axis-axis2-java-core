@@ -176,13 +176,11 @@ public class HTTPTransportUtils {
                 }
             }
 
-            System.out.println("before ["+ soapActionHeader +"]");
             // remove the starting and trailing " from the SOAP Action
             if ((soapActionHeader != null) && soapActionHeader.startsWith("\"")
                 && soapActionHeader.endsWith("\"")) {
                 soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
             }
-            System.out.println("after ["+ soapActionHeader +"]");
 
             // fill up the Message Contexts
             msgContext.setSoapAction(soapActionHeader);

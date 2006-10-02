@@ -204,8 +204,15 @@
         </jar>
      </j:if>
     </postGoal>
+
+    <preGoal name="jar:jar">
+        <mkdir dir="target/classes/META-INF/services"/>
+        <copy toDir="target/classes/META-INF/services" overwrite="yes">
+            <fileset dir="src/META-INF/services" />
+        </copy>
+    </preGoal>
 	
-	<postGoal name="jar:jar">
+    <postGoal name="jar:jar">
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Rampart Source Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>

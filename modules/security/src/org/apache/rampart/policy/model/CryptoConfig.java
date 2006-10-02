@@ -97,7 +97,7 @@ public class CryptoConfig implements Assertion {
             key = (String) iterator.next();
             value = prop.getProperty(key);
             writer.writeStartElement(RampartConfig.NS, PROPERTY_LN);
-            writer.writeAttribute("Name", key);
+            writer.writeAttribute("nmaame", key);
             writer.writeCharacters(value);
             writer.writeEndElement();
         }
