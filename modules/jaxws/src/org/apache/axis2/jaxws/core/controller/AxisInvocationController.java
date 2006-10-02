@@ -481,6 +481,8 @@ public class AxisInvocationController implements InvocationController {
                 ExecutorService exec = (ExecutorService) ic.getExecutor();
                 Future<?> future = exec.submit(wrapper);
                 future.get();
+                //TODO temp fix to resolve async callback hang.
+                exec.shutdown();
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 throw ExceptionFactory.makeWebServiceException(e);

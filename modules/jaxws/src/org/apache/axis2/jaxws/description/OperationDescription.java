@@ -138,6 +138,8 @@ public class OperationDescription {
     // TODO: Should WebParam annotation be moved to the ParameterDescription?
     private WebParam[]          webParamAnnotations;
     private String[]            webParamNames;
+    private String[]            webParamTNS;
+
     
     // ANNOTATION: @WebResult
     private WebResult           webResultAnnotation;
@@ -451,6 +453,35 @@ public class OperationDescription {
         return webParamNames;
         
     }
+    
+    public String[] getWebParamTNS(){
+        if (webParamTNS == null) {
+            ArrayList<String> buildNames = new ArrayList<String>();
+            WebParam[] webParams = getWebParam();
+            for (WebParam currentParam:webParams) {
+                // TODO: Is skipping param names of "asyncHandler" correct?  This came from original ProxyDescription class and ProxyTest fails without this code
+                //       Due to code in DocLitProxyHandler.getParamValues() which does not add values for AsyncHandler objects.
+                //       It probably DOES need to be skipped, albeit more robustly (check that the type of the param is javax.xml.ws.AsyncHandler also)
+                //       The reason is that the handler is part of the JAX-WS async callback programming model; it is NOT part of the formal params
+                //       to the actual method and therefore is NOT part of the JAXB request wrapper
+                if(!currentParam.name().equals("asyncHandler")){
+                    buildNames.add(currentParam.targetNamespace());
+                }
+            }
+            webParamTNS = buildNames.toArray(new String[0]);
+        }
+        return webParamTNS;
+    }
+             
+    public String getWebParamTNS(String name){
+       WebParam[] webParams = getWebParam();
+       for (WebParam currentParam:webParams){
+           if(currentParam.name().equals(name)){
+                return currentParam.targetNamespace();
+            }
+        }
+        return null;    
+     }
     
     // ===========================================
     // ANNOTATION: WebResult

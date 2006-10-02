@@ -107,6 +107,12 @@ public class ProxyDescriptor {
 	public ArrayList<String> getParamNames(){ 
         return new ArrayList<String>(Arrays.asList(operationDescription.getWebParamNames()));
 	}
+	public ArrayList<String> getParamtns(){ 
+        return new ArrayList<String>(Arrays.asList(operationDescription.getWebParamTNS()));
+	}
+	public String getParamtns(String name){ 
+        return operationDescription.getWebParamTNS(name);
+	}
 	public PortData getPort() {
 		return port;
 	}

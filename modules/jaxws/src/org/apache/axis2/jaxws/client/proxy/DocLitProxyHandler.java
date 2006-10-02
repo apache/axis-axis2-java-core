@@ -177,6 +177,7 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		MessageContext requestCtx = null;
 		
 		ArrayList<String> names = getParamNames(objects);
+		ArrayList<String> tns = proxyDescriptor.getParamtns();
 		Map<String, Object> values = getParamValues(objects, names);
 		if(names.size()> SIZE || values.size() > SIZE){
 			if (log.isDebugEnabled()) {
@@ -308,7 +309,8 @@ public class DocLitProxyHandler extends BaseProxyHandler {
 		}
 		else{
 			Class clazz = jaxbObject.getClass();
-			JAXBElement<Object> element = new JAXBElement<Object>(new QName(name), clazz, jaxbObject);
+			String tns = proxyDescriptor.getParamtns(name);
+			JAXBElement<Object> element = new JAXBElement<Object>(new QName(tns, name), clazz, jaxbObject);
 			return factory.createFrom(element,context,null);
 		}
 		

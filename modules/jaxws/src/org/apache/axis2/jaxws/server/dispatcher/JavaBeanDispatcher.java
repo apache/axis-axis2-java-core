@@ -81,6 +81,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         if(opDesc.isOneWay()){
         	//Dont return response message context if its a one way operation.
+        	return null;
         }
         
         //TODO:Support Holders 
