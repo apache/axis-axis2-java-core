@@ -78,7 +78,10 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                //if the soap action is empty then we should add two ""
                postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, "\"\"");
             }else{
-              postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
+                if (soapActionString != null && !soapActionString.startsWith("\"")) {  // SOAPAction string must be a quoted string
+                    soapActionString = "\"" + soapActionString + "\"";
+                }
+                postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
             }
 
         } else {
