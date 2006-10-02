@@ -42,11 +42,11 @@ public class WSDL11ActionHelper {
 	
 	/**
 	 * getActionFromInputElement
-	 * @param def the wsdl:defintion which contains the wsdl:portType
+	 * @param def the wsdl:definitions which contains the wsdl:portType
 	 * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
 	 * @param op the wsdl:operation which contains the input element
 	 * @param input the input element to be examined to generate the wsa:Action
-	 * @return either the wsaw:Action from the input element or an action genernated using the DefaultActionPattern
+	 * @return either the wsaw:Action from the input element or an action generated using the DefaultActionPattern
 	 */
     public static String getActionFromInputElement(Definition def, PortType wsdl4jPortType, Operation op, Input input){
         String result = getWSAWActionExtensionAttribute(input);
@@ -59,11 +59,11 @@ public class WSDL11ActionHelper {
     
     /**
 	 * getActionFromOutputElement
-	 * @param def the wsdl:defintion which contains the wsdl:portType
+	 * @param def the wsdl:definitions which contains the wsdl:portType
 	 * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
 	 * @param op the wsdl:operation which contains the output element
 	 * @param output the input element to be examined to generate the wsa:Action
-	 * @return either the wsaw:Action from the output element or an action genernated using the DefaultActionPattern
+	 * @return either the wsaw:Action from the output element or an action generated using the DefaultActionPattern
 	 */
     public static String getActionFromOutputElement(Definition def, PortType wsdl4jPortType, Operation op, Output output){
     	String result = getWSAWActionExtensionAttribute(output);
@@ -76,11 +76,11 @@ public class WSDL11ActionHelper {
     
     /**
 	 * getActionFromFaultElement
-	 * @param def the wsdl:defintion which contains the wsdl:portType
+	 * @param def the wsdl:definitions which contains the wsdl:portType
 	 * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
 	 * @param op the wsdl:operation which contains the fault element
 	 * @param fault the fault element to be examined to generate the wsa:Action
-	 * @return either the wsaw:Action from the fault element or an action genernated using the DefaultActionPattern
+	 * @return either the wsaw:Action from the fault element or an action generated using the DefaultActionPattern
 	 */
     public static String getActionFromFaultElement(Definition def, PortType wsdl4jPortType, Operation op, Fault fault){
     	String result = getWSAWActionExtensionAttribute(fault);
