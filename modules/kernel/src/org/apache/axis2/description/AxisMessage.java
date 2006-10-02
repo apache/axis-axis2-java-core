@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * This class represents the messages in WSDL. There can be message element in services.xml
- * which are representd by this class.
+ * which are represented by this class.
  */
 public class AxisMessage extends AxisDescription {
 
@@ -39,7 +39,7 @@ public class AxisMessage extends AxisDescription {
     private String name;
     private ArrayList soapHeaders;
 
-    //to keep data in WSDL message refference and to keep the Java2WSDL data
+    //to keep data in WSDL message reference and to keep the Java2WSDL data
     // such as SchemaElementName , direction etc.
     private QName elementQname;
     private String direction;

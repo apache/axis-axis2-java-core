@@ -59,7 +59,7 @@ public abstract class AxisOperation extends AxisDescription
     private MessageReceiver messageReceiver;
     private HashMap moduleConfigmap;
 
-    // To store deploytime module refs
+    // To store deploy-time module refs
     private ArrayList modulerefs;
 
     private ArrayList faultMessages;
@@ -89,7 +89,7 @@ public abstract class AxisOperation extends AxisDescription
     /**
      * Adds a message context into an operation context. Depending on MEPs, this
      * method has to be overridden.
-     * Depending on the mep operation description know how to fill the message context map
+     * Depending on the MEP operation description know how to fill the message context map
      * in operationContext.
      * As an example, if the MEP is IN-OUT then depending on messagable operation description
      * should know how to keep them in correct locations.
@@ -215,14 +215,14 @@ public abstract class AxisOperation extends AxisDescription
         HashMap map = module.getOperations();
         Collection col = map.values();
         PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
-        //this arry list is retun , to avoid concurrent modifications , in the deployment engine
+        //this array list is return , to avoid concurrent modifications , in the deployment engine
         ArrayList ops = new ArrayList();
         for (Iterator iterator = col.iterator(); iterator.hasNext();) {
             AxisOperation axisOperation = copyOperation((AxisOperation) iterator.next());
             axisOperation.setParent(service);
             ArrayList wsamappings = axisOperation.getWsamappingList();
             if (service.getOperation(axisOperation.getName()) == null) {
-                // this opration is a control operation.
+                // this operation is a control operation.
                 axisOperation.setControlOperation(true);
                 Module moduleclazz = module.getModule();
                 if (moduleclazz != null) {
@@ -315,7 +315,7 @@ public abstract class AxisOperation extends AxisDescription
      * Finds a MEPContext for an incoming message. An incoming message can be
      * of two states.
      * <p/>
-     * 1)This is a new incomming message of a given MEP. 2)This message is a
+     * 1)This is a new incoming message of a given MEP. 2)This message is a
      * part of an MEP which has already begun.
      * <p/>
      * The method is special cased for the two MEPs
@@ -323,12 +323,12 @@ public abstract class AxisOperation extends AxisDescription
      * #IN_ONLY #IN_OUT
      * <p/>
      * for two reasons. First reason is the wide usage and the second being that
-     * the need for the MEPContext to be saved for further incomming messages.
+     * the need for the MEPContext to be saved for further incoming messages.
      * <p/>
      * In the event that MEP of this operation is different from the two MEPs
-     * deafulted above the decession of creating a new or this message relates
+     * defaulted above the decision of creating a new or this message relates
      * to a MEP which already in business is decided by looking at the WSA
-     * Relates TO of the incomming message.
+     * Relates TO of the incoming message.
      *
      * @param msgContext
      */

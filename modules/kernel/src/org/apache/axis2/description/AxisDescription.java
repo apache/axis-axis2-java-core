@@ -145,7 +145,7 @@ public abstract class AxisDescription implements ParameterInclude,
      * 
      * (1) Engage whatever modules necessary to execute new the effective policy
      * of this AxisDescription instance. (2) Disengage whatever modules that are
-     * not necessary to excute the new effective policy of this AxisDescription
+     * not necessary to execute the new effective policy of this AxisDescription
      * instance. (3) Check whether each module can execute the new effective
      * policy of this AxisDescription instance. (4) If not throw an AxisFault to
      * notify the user. (5) Else notify each module about the new effective
@@ -157,7 +157,7 @@ public abstract class AxisDescription implements ParameterInclude,
      *            parent of this AxisDescription.
      * @throws AxisFault
      *             if any module is unable to execute the effective policy of
-     *             this AxisDescription instance sucessfully or no module to
+     *             this AxisDescription instance successfully or no module to
      *             execute some portion (one or more PrimtiveAssertions ) of
      *             that effective policy.
      */
@@ -291,7 +291,7 @@ public abstract class AxisDescription implements ParameterInclude,
     public abstract Object getKey();
 
     /**
-     * Engagaging a module to diferrent level
+     * Engaging a module to different level
      * 
      * @param axisModule
      * @param axisConfig

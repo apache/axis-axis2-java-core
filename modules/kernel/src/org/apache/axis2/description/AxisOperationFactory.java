@@ -75,7 +75,7 @@ public class AxisOperationFactory implements WSDLConstants {
         return abOpdesc;
     }
 
-    //FIXME add in the latest MEP uris
+    //FIXME add in the latest MEP URIs
     public static AxisOperation getOperationDescription(String mepURI) throws AxisFault {
         AxisOperation abOpdesc;
         if (WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI)) {

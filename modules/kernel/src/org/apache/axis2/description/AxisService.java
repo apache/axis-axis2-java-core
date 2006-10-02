@@ -78,7 +78,7 @@ public class AxisService extends AxisDescription {
     // to store module ref at deploy time parsing
     private ArrayList moduleRefs = null;
 
-    // to store engaged mdodules
+    // to store engaged modules
     private ArrayList engagedModules = null;
     private String serviceDescription;
 
@@ -216,7 +216,7 @@ public class AxisService extends AxisDescription {
         super();
         this.operationsAliasesMap = new HashMap();
         moduleConfigmap = new HashMap();
-        //by dafault service scope is for the request
+        //by default service scope is for the request
         scope = Constants.SCOPE_REQUEST;
         messageReceivers = new HashMap();
         moduleRefs = new ArrayList();
@@ -291,7 +291,7 @@ public class AxisService extends AxisDescription {
                         this.mapActionToOperation(mapping, axisOperation);
                     }
                 }
-                // this opration is a control operation.
+                // this operation is a control operation.
                 axisOperation.setControlOperation(true);
                 this.addOperation(axisOperation);
             }
@@ -330,7 +330,7 @@ public class AxisService extends AxisDescription {
             try {
                 Module moduleImpl = module.getModule();
                 if (moduleImpl != null) {
-                    // notyfying module for service engagement
+                    // notifying module for service engagement
                     moduleImpl.engageNotify(axisOperation);
                 }
                 axisOperation.engageModule(module, axisConfig);
@@ -607,7 +607,7 @@ public class AxisService extends AxisDescription {
      * @param out
      * @param requestIP
      * @throws AxisFault
-     * @deprecated try to use the method whcih takes three aruments
+     * @deprecated try to use the method which takes three arguments
      */
     public void printWSDL(OutputStream out, String requestIP) throws AxisFault {
         printWSDL(out, requestIP, "services");
@@ -885,7 +885,7 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * Sets the description about the service whish is specified in services.xml
+     * Sets the description about the service which is specified in services.xml
      *
      * @param serviceDescription
      */
@@ -1132,8 +1132,8 @@ public class AxisService extends AxisDescription {
     //
 
     /**
-     * To create a AxisService for a given WSDL and the created client is most suitable for clinet side
-     * invocation not for server side invocation. Since all the soap acction and wsa action is added to
+     * To create a AxisService for a given WSDL and the created client is most suitable for client side
+     * invocation not for server side invocation. Since all the soap action and wsa action is added to
      * operations
      *
      * @param wsdlURL         location of the WSDL
@@ -1142,7 +1142,7 @@ public class AxisService extends AxisDescription {
      * @param portName        name of the port , if there are more than one , if it is null then the
      *                        first one in the  iterator will be selected
      * @param options         Service client options, to set the target EPR
-     * @return AxisService , the created servie will be return
+     * @return AxisService , the created service will be return
      */
     public static AxisService createClientSideAxisService(URL wsdlURL,
                                                           QName wsdlServiceName,
@@ -1184,7 +1184,7 @@ public class AxisService extends AxisDescription {
      * first generate schema corresponding to the given java class , next for each methods AxisOperation
      * will be created.
      * <p/>
-     * Note : Inorder to work this properly RPCMessageReceiver should be availble in the class path
+     * Note : Inorder to work this properly RPCMessageReceiver should be available in the class path
      * otherewise operation can not continue
      *
      * @param implClass
@@ -1198,14 +1198,14 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * To create a service for a given java class with user defined schema and target
+     * To create a service for a given Java class with user defined schema and target
      * namespaces
      *
      * @param implClass            : full name of the class
-     * @param axisConfig           : currcent AxisConfgiuration
-     * @param messageReceiverClass : Messge reciver that you want to use
+     * @param axisConfig           : current AxisConfgiuration
+     * @param messageReceiverClass : Message receiver that you want to use
      * @param targetNameSpace      : Service namespace
-     * @param schemaNameSpace      : Scheam Name space
+     * @param schemaNameSpace      : Schema namespace
      * @return
      * @throws AxisFault
      */
@@ -1290,10 +1290,10 @@ public class AxisService extends AxisDescription {
                 MessageReceiver messageReceiver = (MessageReceiver) messageReceiverClass.newInstance();
                 operation.setMessageReceiver(messageReceiver);
             } catch (IllegalAccessException e) {
-                throw new AxisFault("IllegalAccessException occured during message receiver loading"
+                throw new AxisFault("IllegalAccessException occurred during message receiver loading"
                         + e.getMessage());
             } catch (InstantiationException e) {
-                throw new AxisFault("InstantiationException occured during message receiver loading"
+                throw new AxisFault("InstantiationException occurred during message receiver loading"
                         + e.getMessage());
             }
             pinfo.setOperationPhases(operation);
@@ -1516,7 +1516,7 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * User can set a paramter in services.xml saying he want to show the original wsdl
+     * User can set a parameter in services.xml saying he want to show the original wsdl
      * that he put into META-INF once someone ask for ?wsdl
      * so if you want to use your own wsdl then add following parameter into
      * services.xml

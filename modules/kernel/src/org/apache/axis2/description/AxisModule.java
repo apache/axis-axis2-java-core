@@ -35,7 +35,7 @@ import java.net.URL;
  * <li>handlers<li>
  * <ol>
  * <p>Handler are registered once they are available. They are available to all services if axis2.xml
- * has a module ref="." or avalible to a single service if services.xml have module ref=".."</p>
+ * has a module ref="." or available to a single service if services.xml have module ref=".."</p>
  */
 public class AxisModule implements FlowInclude, ParameterInclude {
 
@@ -63,7 +63,7 @@ public class AxisModule implements FlowInclude, ParameterInclude {
     private AxisConfiguration parent;
 
     /*
-    * to store policies which are falid for any service for which the module is
+    * to store policies which are valid for any service for which the module is engaged
     */
     private PolicyInclude policyInclude = null;
 
