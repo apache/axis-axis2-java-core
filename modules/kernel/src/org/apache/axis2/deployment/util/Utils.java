@@ -285,7 +285,7 @@ public class Utils {
             }
             String opName = jmethod.getSimpleName();
             AxisOperation operation = axisService.getOperation(new QName(opName));
-            // if the opeartion there in services.xml then try to set it schema element name
+            // if the operation there in services.xml then try to set it schema element name
             if (operation != null) {
                 AxisMessage inMessage = operation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -364,7 +364,7 @@ public class Utils {
     /**
      * This method is to get the list of services there in a module
      * if module want to add services then the way of doing that is
-     * 1. Add a foldere called services inside the module (both in mar case and expanded case)
+     * 1. Add a directory called services inside the module (both in mar case and expanded case)
      * 2. Then add a services.list file into that directory adding all the modules
      * you want to add
      * 3. Then put all the services into services directory in the module

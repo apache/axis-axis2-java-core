@@ -264,7 +264,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             ParameterInclude parent) throws DeploymentException {
         HandlerDescription handler = new HandlerDescription();
 
-        // Setting Handler name
+        // Setting handler name
         OMAttribute name_attribute = handler_element.getAttribute(new QName(
                 ATTRIBUTE_NAME));
 
@@ -275,7 +275,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             handler.setName(name_attribute.getAttributeValue());
         }
 
-        // Setting Handler Class name
+        // Setting handler class name
         OMAttribute class_attribute = handler_element.getAttribute(new QName(
                 TAG_CLASS_NAME));
 
@@ -287,7 +287,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             handler.setClassName(class_attribute.getAttributeValue());
         }
 
-        // processing phase Rules (order)
+        // processing phase rules (order)
         OMElement order_element = handler_element
                 .getFirstChildWithName(new QName(TAG_ORDER));
 
@@ -379,7 +379,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             ParameterInclude parameterInclude, ParameterInclude parent)
             throws DeploymentException {
         while (parameters.hasNext()) {
-            // this is to check whether some one has locked the parmter at the
+            // this is to check whether some one has locked the parmeter at the
             // top level
             OMElement parameterElement = (OMElement) parameters.next();
             Parameter parameter = new Parameter();
@@ -394,7 +394,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                         parameterElement.toString()));
             }
             parameter.setName(paramName.getAttributeValue());
-            // setting parameter Value (the chiled elemnt of the parameter)
+            // setting parameter Value (the child element of the parameter)
             OMElement paramValue = parameterElement.getFirstElement();
             if (paramValue != null) {
                 parameter.setValue(parameterElement);

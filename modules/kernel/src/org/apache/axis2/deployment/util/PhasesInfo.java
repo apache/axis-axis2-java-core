@@ -47,7 +47,7 @@ public class PhasesInfo {
     }
 
     /**
-     * To copy phase informatoin from one to another
+     * To copy phase information from one to another
      *
      * @param phase
      */

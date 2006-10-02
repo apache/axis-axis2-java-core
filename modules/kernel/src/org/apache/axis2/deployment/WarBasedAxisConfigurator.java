@@ -45,7 +45,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
     /**
      * The name of the init parameter (axis2.xml.path) that can be used to override the default location for the axis2.xml file. When both this init parameter, and the axis2.xml.url init parameters are not specified in the axis servlet init-parameter, the default location of ${app}/WEB-INF/conf/axis2.xml is used.
      * The value of this path is interpreted as a file system absolute path.
-     * This parameter takes precidence over the axis2.xml.url init parameter.
+     * This parameter takes precedence over the axis2.xml.url init parameter.
      */
     public static final String PARAM_AXIS2_XML_PATH = "axis2.xml.path";
 
@@ -70,8 +70,8 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
 
     /**
      * Default constructor for configurator.
-     * This determines the axis2.xml file to be used from the init parametes for the AxisServlet in the web.xml.
-     * The order of initialization is according the the following precidence:
+     * This determines the axis2.xml file to be used from the init parameters for the AxisServlet in the web.xml.
+     * The order of initialization is according the the following precedence:
      * <ul>
      * <li>If the parameter axis2.xml.path is present, the value is webapp relative path to be used as the location to the axis2.xml file.
      * <li>Otherwise, if the parameter axis2.xml.url is present, the URL is used as the location to the axis2.xml file.
@@ -157,7 +157,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
 
     /**
      * Gets the axis configuration object by loading the repository.
-     * The order of initialization is according the the following precidence:
+     * The order of initialization is according the the following precedence:
      * <ul>
      * <li>If the parameter axis2.repository.path is present, this folder is used as the location to the repository.
      * <li>Otherwise, if the parameter axis2.repository.url is present, the URL is used as the location to the repository.
@@ -165,7 +165,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
      * </ul>
      *
      * @return the instance of the AxisConfiguration object that reflects the repository according to the rules above.
-     * @throws AxisFault when an error occured in the initialization of the AxisConfiguration.
+     * @throws AxisFault when an error occurred in the initialization of the AxisConfiguration.
      */
     public AxisConfiguration getAxisConfiguration() throws AxisFault {
         try {

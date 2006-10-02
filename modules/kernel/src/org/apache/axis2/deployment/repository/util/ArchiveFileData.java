@@ -24,8 +24,6 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.i18n.Messages;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -95,7 +93,7 @@ public class ArchiveFileData {
     }
 
     /**
-     * Checks whether a given file is a jar or aar file.
+     * Checks whether a given file is a jar or an aar file.
      *
      * @param filename
      * @return Returns boolean.

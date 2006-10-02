@@ -33,7 +33,7 @@ public class WSInfoList implements DeploymentConstants {
     private List jarList = new ArrayList();
 
     /**
-     * All the curently updated jars
+     * All the currently updated jars
      */
     public List currentJars = new ArrayList();
 
@@ -57,7 +57,7 @@ public class WSInfoList implements DeploymentConstants {
      * <p/>
      * If the files already exists, then checks whether it has been updated
      * then changes the last update date of the wsInfo and adds two entries to
-     * DeploymentEngine - one for New Deployment and other for undeployment.
+     * DeploymentEngine - one for new deployment and other for undeployment.
      *
      * @param file actual jar files for either Module or service
      * @param type indicate either Service or Module

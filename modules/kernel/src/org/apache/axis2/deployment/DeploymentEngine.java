@@ -112,7 +112,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public void loadFromClassPath() throws DeploymentException {
-        //loading modules from the class path
+        //loading modules from the classpath
         new RepositoryListener(this);
         org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
                 axisConfig.getModules(), axisConfig);
@@ -418,7 +418,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * When user adds the "load-on-startup" parameter into services.xml ,
-     * Axis2 will call following method using java reflection.
+     * Axis2 will call following method using Java reflection.
      * If user has DB initialization , Thread creation then he can do that at this point.
      * Public void startUp(ConfigurationContext) {}
      *
@@ -661,7 +661,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * First creat a AxisConfiguration using given inputSream , and then it will
      * try to find the repository location parameter from AxisConfiguration, so
      * if user has add a parameter with the name "repository" , then the value
-     * specified by that parameter will be the repositiry and system will try to
+     * specified by that parameter will be the repository and system will try to
      * load modules and services from that repository location if it a valid
      * location. hot deployment and hot update will work as usual in this case.
      * <p/>
@@ -687,7 +687,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * Starts the Deployment engine to perform Hot deployment and so on..
+     * Starts the Deployment engine to perform Hot deployment and so on.
      */
     private void startSearch(RepositoryListener listener) {
         Scheduler scheduler = new Scheduler();
@@ -772,7 +772,7 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * To set the all the classLoader hierarchy this method can be used , the top most parenet is
+     * To set the all the classLoader hierarchy this method can be used , the top most parent is
      * CCL then SCL(system Class Loader)
      * CCL
      * :
@@ -784,7 +784,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * <p/>
      * <p/>
      * MCCL :  module common class loader
-     * SCCL : Service commin class loader
+     * SCCL : Service common class loader
      * MCL : module class loader
      * SCL  : Service class loader
      *
@@ -912,12 +912,12 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * Builds ModuleDescription for a given module archive file. This does not
-     * called the init method since there is no refernce to configuration context
-     * so who ever create module usieng this has to called module.init if it is
+     * called the init method since there is no reference to configuration context
+     * so who ever create module using this has to called module.init if it is
      * required
      *
      * @param modulearchive : Actual module archive file
-     * @param config        : AxisConfiguration : for get classs loders etc..
+     * @param config        : AxisConfiguration : for get classloaders etc..
      * @return
      * @throws org.apache.axis2.deployment.DeploymentException
      *

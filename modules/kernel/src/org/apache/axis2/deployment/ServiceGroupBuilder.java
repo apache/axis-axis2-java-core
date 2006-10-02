@@ -59,7 +59,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
             processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(),
                     axisServiceGroup);
 
-            // processing servicewide modules which required to engage gloabally
+            // processing service-wide modules which required to engage globally
             Iterator moduleRefs = serviceElement.getChildrenWithName(new QName(TAG_MODULE));
 
             processModuleRefs(moduleRefs, axisServiceGroup);

@@ -16,52 +16,25 @@
 
 package org.apache.ws.secpolicy.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import org.apache.neethi.PolicyComponent;
+import org.apache.ws.secpolicy.Constants;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.neethi.PolicyComponent;
-import org.apache.ws.secpolicy.Constants;
 
-
-public class TransportToken extends AbstractSecurityAssertion {
+public class TransportToken extends AbstractSecurityAssertion implements TokenWrapper {
 
     private Token transportToken;
     
-    private ArrayList transportTokens = new ArrayList();
-
     /**
      * @return Returns the transportToken.
      */
     public Token getTransportToken() {
         return transportToken;
     }
-
-    /**
-     * @param transportToken The transportToken to set.
-     */
-    public void setTransportToken(Token transportToken) {
-        this.transportToken = transportToken;
-    }
     
-    public Iterator getConfigurations() {
-        return transportTokens.iterator();
-    }
-    
-    public TransportToken getDefaultConfiguration() {
-        if (transportTokens != null) {
-            return (TransportToken) transportTokens.get(0);
-        }
-        return null;
-    }
-    
-    public void addConfiguration(TransportToken transportToken) {
-        transportTokens.add(transportToken);
-    }
-
     public QName getName() {
         return new QName(Constants.SP_NS, "TransportToken");
     }
@@ -97,6 +70,13 @@ public class TransportToken extends AbstractSecurityAssertion {
         
         writer.writeEndElement();
         // </sp:TransportToken>
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.ws.secpolicy.model.TokenWrapper#setToken(org.apache.ws.secpolicy.model.Token)
+     */
+    public void setToken(Token tok) {
+        this.transportToken = tok;
     }
     
     

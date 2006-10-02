@@ -66,7 +66,7 @@ public class TransportTokenBuilder implements AssertionBuilder {
                 if(attr != null) {
                     httpsToken.setRequireClientCertificate("true".equals(attr.getAttributeValue()));
                 }
-                parent.setTransportToken(httpsToken);
+                parent.setToken(httpsToken);
             }
         }
     }

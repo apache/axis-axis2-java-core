@@ -55,7 +55,7 @@ public class RepositoryListener implements DeploymentConstants {
         loadClassPathModules();
     }
 
-    //The constructor , which loads moduls from class path
+    //The constructor , which loads modules from class path
     public RepositoryListener(DeploymentEngine deploymentEngine) {
         this.deploymentEngine = deploymentEngine;
         wsInfoList = new WSInfoList(deploymentEngine);
@@ -114,7 +114,7 @@ public class RepositoryListener implements DeploymentConstants {
                 File file = files[i];
                 if (!file.isDirectory()) {
                     if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
-                        //adding moduls in the class path
+                        //adding modules in the class path
                         wsInfoList.addWSInfoItem(file, TYPE_MODULE);
                     }
                 }

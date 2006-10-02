@@ -102,7 +102,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 service.setWSAddressingFlag(addressingRequiredString);
             }
 
-            //Setting service tratget namespace if any
+            //Setting service target namespace if any
             OMAttribute targetNameSpace = service_element.
                     getAttribute(new QName(TARGET_NAME_SPACE));
             if (targetNameSpace != null) {
@@ -187,13 +187,13 @@ public class ServiceBuilder extends DescriptionBuilder {
                         policyRefElements, service.getPolicyInclude());
             }
 
-            //processin Service Scop
+            //processing service scope
             String sessionScope = service_element.getAttributeValue(new QName(ATTRIBUTE_SCOPE));
             if (sessionScope != null) {
                 service.setScope(sessionScope);
             }
 
-            // processing servicewide modules which required to engage gloabally
+            // processing service-wide modules which required to engage globally
             Iterator moduleRefs = service_element.getChildrenWithName(new QName(TAG_MODULE));
 
             processModuleRefs(moduleRefs);
@@ -231,19 +231,19 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
             if (!service.isUseUserWSDL()) {
-                // Generating schema for the service if the imple class is JAVA
+                // Generating schema for the service if the impl class is Java
                 if (!service.isWsdlfound()) {
-                    //trying to generate WSDL for the service using JAM  and Java refelection
+                    //trying to generate WSDL for the service using JAM  and Java reflection
                     try {
                         if (generateWsdl(service)) {
                             Utils.fillAxisService(service, axisConfig, excludeops);
                         }
                     } catch (Exception e) {
                         /**
-                         * I have log here if some error occours , since service impl
-                         * class can alos be non-java class , so in that case
-                         * it is not posible to generate scheam, so no pint of throwing that
-                         * error ,  I know we have to handle this , untill that I have
+                         * I have log here if some error occurs , since service impl
+                         * class can alos be non-Java class , so in that case
+                         * it is not possible to generate schema, so no pint of throwing that
+                         * error ,  I know we have to handle this , until that I have
                          * to log this
                          */
                         log.error(Messages.getMessage("errorinschemagen", e.getMessage()), e);
@@ -409,7 +409,7 @@ public class ServiceBuilder extends DescriptionBuilder {
         ArrayList operations = new ArrayList();
         while (operationsIterator.hasNext()) {
             OMElement operation = (OMElement) operationsIterator.next();
-            // /getting operation name
+            //getting operation name
             OMAttribute op_name_att = operation.getAttribute(new QName(ATTRIBUTE_NAME));
             if (op_name_att == null) {
                 throw new DeploymentException(
@@ -418,7 +418,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                                         DeploymentErrorMsgs.INVALID_OP, "operation name missing")));
             }
 
-            // setting the mep of the operation
+            // setting the MEP of the operation
             OMAttribute op_mep_att = operation.getAttribute(new QName(TAG_MEP));
             String mepurl = null;
 

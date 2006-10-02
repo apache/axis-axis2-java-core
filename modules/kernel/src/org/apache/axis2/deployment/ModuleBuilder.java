@@ -186,7 +186,7 @@ public class ModuleBuilder extends DescriptionBuilder {
         while (operationsIterator.hasNext()) {
             OMElement operation = (OMElement) operationsIterator.next();
 
-            // /getting operation name
+            //getting operation name
             OMAttribute op_name_att = operation.getAttribute(new QName(ATTRIBUTE_NAME));
 
             if (op_name_att == null) {
@@ -206,7 +206,7 @@ public class ModuleBuilder extends DescriptionBuilder {
 
             if (mepURL == null) {
 
-                // assuming in-out mep
+                // assuming in-out MEP
                 op_descrip = new InOnlyAxisOperation();
             } else {
                 try {
@@ -231,7 +231,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             //To process wsamapping;
             processActionMappings(operation, op_descrip);
             
-            // setting the mep of the operation
+            // setting the MEP of the operation
             // loading the message receivers
             OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
 

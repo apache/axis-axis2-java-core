@@ -56,7 +56,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     String repoValue = (String) axis2repoPara.getValue();
                     if (repoValue != null && !"".equals(repoValue.trim())) {
                         if (repoValue.startsWith("file://")) {
-                            // we treat this case specialy , by assuming file is
+                            // we treat this case specially , by assuming file is
                             // locate in the local machine
                             loadRepository(repoValue);
                         } else {
@@ -64,7 +64,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                         }
                     }
                 } else {
-                    log.info("No repository found , module will be loded using class path");
+                    log.info("No repository found , module will be loaded from classpath");
                     loadFromClassPath();
                 }
             } else {
@@ -86,7 +86,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     String repoValue = (String) axis2repoPara.getValue();
                     if (repoValue != null && !"".equals(repoValue.trim())) {
                         if (repoValue.startsWith("file://")) {
-                            // we treat this case specialy , by assuming file is
+                            // we treat this case specially , by assuming file is
                             // locate in the local machine
                             super.loadServices();
                         } else {

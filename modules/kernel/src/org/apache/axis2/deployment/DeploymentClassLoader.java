@@ -26,9 +26,9 @@ public class DeploymentClassLoader extends URLClassLoader {
     /**
      * DeploymentClassLoader is extended from URLClassLoader. The constructor
      * does not override the super constructor, but does additional steps like find out
-     * jar fils inside /lib directory.
+     * jar files inside /lib directory.
      *
-     * @param urls   <code>URL</code>
+     * @param urls   <code>URL</code>s
      * @param parent parent classloader <code>ClassLoader</code>
      */
     public DeploymentClassLoader(URL[] urls, ClassLoader parent, boolean antiJARLocking) {

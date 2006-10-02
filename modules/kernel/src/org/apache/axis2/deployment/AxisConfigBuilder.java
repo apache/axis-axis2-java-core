@@ -82,12 +82,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             processModuleRefs(moduleitr, axisConfig);
 
-            // Proccessing Transport Senders
+            // Processing Transport Senders
             Iterator trs_senders = config_element.getChildrenWithName(new QName(TAG_TRANSPORT_SENDER));
 
             processTransportSenders(trs_senders);
 
-            // Proccessing Transport Receivers
+            // Processing Transport Receivers
             Iterator trs_Reivers = config_element.getChildrenWithName(new QName(TAG_TRANSPORT_RECEIVER));
 
             processTransportReceivers(trs_Reivers);
@@ -101,7 +101,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             processObservers(obs_ittr);
 
-            // processing Phase orders
+            // Processing Phase orders
             Iterator phaseorders = config_element.getChildrenWithName(new QName(TAG_PHASE_ORDER));
 
             processPhaseOrders(phaseorders);
@@ -223,7 +223,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 try {
                     observer.init(axisConfig);
                 } catch (Throwable e) {
-                    //Obserer init may throw runtime exception , but we can stil
+                    //Observer init may throw runtime exception , but we can stil
                     // start Axis2
                     log.info(e.getMessage());
                 }
