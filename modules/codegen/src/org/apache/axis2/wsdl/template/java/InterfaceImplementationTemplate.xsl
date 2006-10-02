@@ -88,7 +88,7 @@
         <xsl:choose>
 		<xsl:when test="@policy">
 	    __operation_policy_string = "<xsl:value-of select="@policy"/>";	
-	    org.apache.neethi.Policy __operation_policy =  getPolicyFromString(__operation_policy_string);
+	    org.apache.neethi.Policy __operation_policy =  getPolicy(__operation_policy_string);
 		
 	    _service.addOperation(__operation);
 	    __operation.applyPolicy(__operation_policy);
