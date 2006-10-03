@@ -96,20 +96,20 @@ public class PhasesInfo {
 
     public ArrayList getGlobalInflow() throws DeploymentException {
         ArrayList globalphase = new ArrayList();
-        boolean foundDispathcPase = false;
+        boolean foundDispatchPhase = false;
         for (int i = 0; i < INPhases.size(); i++) {
             Phase phase = (Phase) INPhases.get(i);
             String phaseName = phase.getPhaseName();
-            if (!foundDispathcPase) {
+            if (!foundDispatchPhase) {
                 if (PhaseMetadata.PHASE_DISPATCH.equals(phaseName)) {
-                    foundDispathcPase = true;
+                    foundDispatchPhase = true;
                 }
                 globalphase.add(phase);
             }
         }
-        if (!foundDispathcPase) {
+        if (!foundDispatchPhase) {
             throw new DeploymentException(
-                    Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE));
+                    Messages.getMessage("dispatchPhaseNotFoundOnInflow"));
         }
         return globalphase;
     }
