@@ -522,14 +522,14 @@ public class AdminAgent extends AbstractAgent {
             } else {
                 String opName = req.getParameter("operation");
                 AxisOperation op = service.getOperation(new QName(opName));
-                op.disEngageModule(module);
+                op.disengageModule(module);
                 req.getSession().setAttribute("status", "disenged from the operation");
             }
         } else {
             if (axisConfiguration.isEngaged(module.getName())) {
                 req.getSession().setAttribute("status", "can not disengage module has engage to top levle");
             } else {
-                service.disEngageModule(axisConfiguration.getModule(new QName(moduleName)));
+                service.disengageModule(axisConfiguration.getModule(new QName(moduleName)));
                 req.getSession().setAttribute("status", "disenged from the service");
             }
         }

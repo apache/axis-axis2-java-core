@@ -300,10 +300,10 @@ public class ServiceClient {
      *
      * @param moduleName
      */
-    public void disEngageModule(QName moduleName) {
+    public void disengageModule(QName moduleName) {
         AxisModule module = axisConfig.getModule(moduleName);
         if (module != null) {
-            axisService.disEngageModule(module);
+            axisService.disengageModule(module);
         }
     }
 

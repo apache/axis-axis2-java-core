@@ -202,7 +202,7 @@ public class PhaseResolver {
      *
      * @param module
      */
-    public void disEngageModulefromGlobalChains(AxisModule module) {
+    public void disengageModuleFromGlobalChains(AxisModule module) {
         //INFLOW
         Flow flow = module.getInFlow();
         if (flow != null) {
@@ -245,7 +245,7 @@ public class PhaseResolver {
      *
      * @param module
      */
-    public void disEngageModulefromOperationChian(AxisModule module, AxisOperation operation) {
+    public void disengageModuleFromOperationChain(AxisModule module, AxisOperation operation) {
         //INFLOW
         Flow flow = module.getInFlow();
         if (flow != null) {

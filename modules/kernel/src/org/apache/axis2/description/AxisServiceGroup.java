@@ -141,7 +141,7 @@ public class AxisServiceGroup extends AxisDescription {
     public void disengageModule(AxisModule module) throws AxisFault {
         for (Iterator serviceIter = getServices(); serviceIter.hasNext();) {
             AxisService axisService = (AxisService) serviceIter.next();
-            axisService.disEngageModule(module);
+            axisService.disengageModule(module);
         }
         removeFromEngageList(module.getName());
     }

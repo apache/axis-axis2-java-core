@@ -410,14 +410,14 @@ public class AxisConfiguration extends AxisDescription {
      *
      * @param module
      */
-    public void disEngageModule(AxisModule module) {
+    public void disengageModule(AxisModule module) {
         if (module != null && isEngaged(module.getName())) {
             PhaseResolver phaseResolver = new PhaseResolver(this);
-            phaseResolver.disEngageModulefromGlobalChains(module);
+            phaseResolver.disengageModuleFromGlobalChains(module);
             Iterator serviceItr = getServices().values().iterator();
             while (serviceItr.hasNext()) {
                 AxisService axisService = (AxisService) serviceItr.next();
-                axisService.disEngageModule(module);
+                axisService.disengageModule(module);
             }
             Iterator serviceGroups = getServiceGroups();
             while (serviceGroups.hasNext()) {

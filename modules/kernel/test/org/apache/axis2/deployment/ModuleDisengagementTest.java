@@ -30,7 +30,7 @@ import java.util.ArrayList;
 *
 */
 
-public class ModuleDisEngagementTest extends TestCase {
+public class ModuleDisengagementTest extends TestCase {
     AxisConfiguration er;
     String serviceName = "testService";
     QName opName = new QName("testOperation");
@@ -67,7 +67,7 @@ public class ModuleDisEngagementTest extends TestCase {
         er.engageModule(module.getName());
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
-        er.disEngageModule(module);
+        er.disengageModule(module);
         assertEquals(predisptah.getHandlerCount(), 0);
         assertEquals(0, userPhase.getHandlerCount());
     }
@@ -92,7 +92,7 @@ public class ModuleDisEngagementTest extends TestCase {
         er.engageModule(module.getName());
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
-        service.disEngageModule(module);
+        service.disengageModule(module);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(0, userPhase.getHandlerCount());
     }
@@ -102,7 +102,7 @@ public class ModuleDisEngagementTest extends TestCase {
         AxisModule module = er.getModule(new QName("testModule"));
         assertNotNull(module);
         er.engageModule(module.getName());
-        er.disEngageModule(module);
+        er.disengageModule(module);
         er.engageModule(module.getName());
     }
 
@@ -126,7 +126,7 @@ public class ModuleDisEngagementTest extends TestCase {
         er.engageModule(module.getName());
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
-        operation.disEngageModule(module);
+        operation.disengageModule(module);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(0, userPhase.getHandlerCount());
     }
@@ -151,7 +151,7 @@ public class ModuleDisEngagementTest extends TestCase {
         service.engageModule(module, er);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
-        service.disEngageModule(module);
+        service.disengageModule(module);
         assertEquals(predisptah.getHandlerCount(), 0);
         assertEquals(0, userPhase.getHandlerCount());
     }
@@ -176,7 +176,7 @@ public class ModuleDisEngagementTest extends TestCase {
         service.engageModule(module, er);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
-        operation.disEngageModule(module);
+        operation.disengageModule(module);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(0, userPhase.getHandlerCount());
     }
@@ -201,7 +201,7 @@ public class ModuleDisEngagementTest extends TestCase {
         operation.engageModule(module, er);
         assertEquals(predisptah.getHandlerCount(), 2);
         assertEquals(1, userPhase.getHandlerCount());
-        operation.disEngageModule(module);
+        operation.disengageModule(module);
         assertEquals(predisptah.getHandlerCount(), 0);
         assertEquals(0, userPhase.getHandlerCount());
     }

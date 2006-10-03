@@ -160,22 +160,22 @@ public abstract class AxisOperation extends AxisDescription
         return addModuleOperations(moduleref, axisConfig, (AxisService) getParent());
     }
 
-    public void disEngageModule(AxisModule module) {
+    public void disengageModule(AxisModule module) {
         if (module != null) {
             if (getParent() != null) {
                 AxisService service = (AxisService) getParent();
                 AxisConfiguration axiConfiguration = service.getAxisConfiguration();
                 PhaseResolver phaseResolver = new PhaseResolver(axiConfiguration);
                 if (service.isEngaged(module.getName())) {
-                    phaseResolver.disEngageModulefromOperationChian(module, this);
+                    phaseResolver.disengageModuleFromOperationChain(module, this);
                 } else if (axiConfiguration != null &&
                         axiConfiguration.isEngaged(module.getName())) {
-                    phaseResolver.disEngageModulefromOperationChian(module, this);
+                    phaseResolver.disengageModuleFromOperationChain(module, this);
                 } else {
                     if (axiConfiguration != null) {
-                        phaseResolver.disEngageModulefromGlobalChains(module);
+                        phaseResolver.disengageModuleFromGlobalChains(module);
                     }
-                    phaseResolver.disEngageModulefromOperationChian(module, this);
+                    phaseResolver.disengageModuleFromOperationChain(module, this);
                     //removing operations added at the time of module engagemnt
                     HashMap moduleOperations = module.getOperations();
                     if (moduleOperations != null) {

@@ -1069,7 +1069,7 @@ public class AxisService extends AxisDescription {
         return exposedTransports.contains(transport);
     }
 
-    public void disEngageModule(AxisModule module) {
+    public void disengageModule(AxisModule module) {
         AxisConfiguration axisConfig = getAxisConfiguration();
         if (axisConfig != null) {
             PhaseResolver phaseResolver = new PhaseResolver(axisConfig);
@@ -1078,17 +1078,17 @@ public class AxisService extends AxisDescription {
                 Iterator operations = getChildren();
                 while (operations.hasNext()) {
                     AxisOperation axisOperation = (AxisOperation) operations.next();
-                    phaseResolver.disEngageModulefromOperationChian(module, axisOperation);
+                    phaseResolver.disengageModuleFromOperationChain(module, axisOperation);
                     axisOperation.removeFromEngagedModuleList(module);
                 }
             } else {
                 if (isEngaged(module.getName())) {
-                    phaseResolver.disEngageModulefromGlobalChains(module);
+                    phaseResolver.disengageModuleFromGlobalChains(module);
                     removeModuleOperations(module);
                     Iterator operations = getChildren();
                     while (operations.hasNext()) {
                         AxisOperation axisOperation = (AxisOperation) operations.next();
-                        phaseResolver.disEngageModulefromOperationChian(module, axisOperation);
+                        phaseResolver.disengageModuleFromOperationChain(module, axisOperation);
                         axisOperation.removeFromEngagedModuleList(module);
                     }
                 }
