@@ -113,7 +113,7 @@ public class SignEncProtectTokenProcessor {
 					initializedSignatureToken = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -122,7 +122,7 @@ public class SignEncProtectTokenProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doEncryptionToken(SecurityProcessorContext spc) {
@@ -139,7 +139,7 @@ public class SignEncProtectTokenProcessor {
 					initializedEncryptionToken = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -148,7 +148,7 @@ public class SignEncProtectTokenProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doProtectionToken(SecurityProcessorContext spc) {
@@ -169,12 +169,12 @@ public class SignEncProtectTokenProcessor {
                                 .setProtectionToken(protectionToken);
                     } catch (WSSPolicyException e) {
                         log.error(e.getMessage(), e);
-                        return new Boolean(false);
+                        return Boolean.FALSE;
                     }
 					initializedProtectionToken = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -183,6 +183,6 @@ public class SignEncProtectTokenProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 }

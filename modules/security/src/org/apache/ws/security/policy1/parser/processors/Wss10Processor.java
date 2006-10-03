@@ -84,7 +84,7 @@ public class Wss10Processor {
 					initializedWss10 = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			PrimitiveAssertion pa = spc.getAssertion();
@@ -98,7 +98,7 @@ public class Wss10Processor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 	
 	public Object doMustSupportRefKeyIdentifier(SecurityProcessorContext spc) {
@@ -108,7 +108,7 @@ public class Wss10Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss10)spc.readCurrentPolicyEngineData()).setMustSupportRefKeyIdentifier(true);
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doMustSupportRefIssuerSerial(SecurityProcessorContext spc) {
@@ -118,7 +118,7 @@ public class Wss10Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss10)spc.readCurrentPolicyEngineData()).setMustSupportRefIssuerSerial(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 
 	public Object doMustSupportRefExternalURI(SecurityProcessorContext spc) {
@@ -128,7 +128,7 @@ public class Wss10Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss10)spc.readCurrentPolicyEngineData()).setMustSupportRefExternalURI(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 
 	public Object doMustSupportRefEmbeddedToken(SecurityProcessorContext spc) {
@@ -138,6 +138,6 @@ public class Wss10Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss10)spc.readCurrentPolicyEngineData()).setMustSupportRefEmbeddedToken(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 }

@@ -123,7 +123,7 @@ public class SymmetricBindingProcessor {
 					initializedSymmetricBinding = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -132,7 +132,7 @@ public class SymmetricBindingProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doIncludeTimestamp(SecurityProcessorContext spc) {
@@ -142,7 +142,7 @@ public class SymmetricBindingProcessor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Binding)spc.readCurrentPolicyEngineData()).setIncludeTimestamp(true);
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doEncryptBeforeSigning(SecurityProcessorContext spc) {
@@ -155,10 +155,10 @@ public class SymmetricBindingProcessor {
                         .getAssertion().getName().getLocalPart());
             } catch (WSSPolicyException e) {
                 log.error(e.getMessage(), e);
-                return new Boolean(false);
+                return Boolean.FALSE;
             }
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doEncryptSignature(SecurityProcessorContext spc) {
@@ -167,7 +167,7 @@ public class SymmetricBindingProcessor {
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         PolicyEngineData readCurrentPolicyEngineData = spc.readCurrentPolicyEngineData();
         ((SymmetricBinding) readCurrentPolicyEngineData).setSignatureProtection(true);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doProtectTokens(SecurityProcessorContext spc) {
@@ -175,7 +175,7 @@ public class SymmetricBindingProcessor {
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         ((SymmetricBinding) spc.readCurrentPolicyEngineData()).setTokenProtection(true);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doOnlySignEntireHeadersAndBody(SecurityProcessorContext spc) {
@@ -183,7 +183,7 @@ public class SymmetricBindingProcessor {
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         ((SymmetricBinding) spc.readCurrentPolicyEngineData()).setEntireHeaderAndBodySignatures(true);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 }

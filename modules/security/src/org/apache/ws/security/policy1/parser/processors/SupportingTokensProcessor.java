@@ -97,7 +97,7 @@ public class SupportingTokensProcessor {
 					initializedSupportingTokens = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -106,7 +106,7 @@ public class SupportingTokensProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 }

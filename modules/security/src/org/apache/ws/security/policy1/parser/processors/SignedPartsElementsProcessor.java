@@ -110,7 +110,7 @@ public class SignedPartsElementsProcessor {
 					initializedSignedParts = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			log.debug(spt.getTokenName());
@@ -125,7 +125,7 @@ public class SignedPartsElementsProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doSignedElements(SecurityProcessorContext spc) {
@@ -153,7 +153,7 @@ public class SignedPartsElementsProcessor {
 					initializedSignedElements = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			log.debug(spt.getTokenName());
@@ -168,7 +168,7 @@ public class SignedPartsElementsProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doBody(SecurityProcessorContext spc) {
@@ -178,7 +178,7 @@ public class SignedPartsElementsProcessor {
             if(spc.getAction() == SecurityProcessorContext.START) {
                 ((SignedEncryptedParts)spc.readCurrentPolicyEngineData()).setBody(true);
             }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doHeader(SecurityProcessorContext spc) {
@@ -193,7 +193,7 @@ public class SignedPartsElementsProcessor {
             header.setNamespace(spc.getAssertion().getAttribute(new QName("Namespace")));
             ((SignedEncryptedParts)spc.readCurrentPolicyEngineData()).addHeader(header);
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doXPath(SecurityProcessorContext spc) {
@@ -204,7 +204,7 @@ public class SignedPartsElementsProcessor {
             ((SignedEncryptedElements) spc.readCurrentPolicyEngineData())
                     .addXPathExpression(spc.getAssertion().getStrValue());
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 }

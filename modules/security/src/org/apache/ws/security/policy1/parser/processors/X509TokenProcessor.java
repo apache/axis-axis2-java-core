@@ -130,12 +130,12 @@ public class X509TokenProcessor {
                         ((TokenWrapper)spc.readPreviousPolicyEngineData()).setToken(token);
                     } catch (WSSPolicyException e) {
                         log.error(e.getMessage(), e);
-                        return new Boolean(false);
+                        return Boolean.FALSE;
                     }
 					initializedX509Token = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			PrimitiveAssertion pa = spc.getAssertion();
@@ -149,91 +149,91 @@ public class X509TokenProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doRequireKeyIdentifierReference(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doRequireIssuerSerialReference(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doRequireEmbeddedTokenReference(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doRequireThumbprintReference(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssX509V1Token10(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssX509V3Token10(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssX509Pkcs7Token10(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssX509PkiPathV1Token10(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssX509V1Token11(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssX509V3Token11(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssX509Pkcs7Token11(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssX509PkiPathV1Token11(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 }

@@ -86,7 +86,7 @@ public class Trust10Processor {
 					initializedTrust10 = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			PrimitiveAssertion pa = spc.getAssertion();
@@ -100,41 +100,41 @@ public class Trust10Processor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 	
 	public Object doMustSupportClientChallenge(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doMustSupportServerChallenge(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doRequireClientEntropy(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doRequireServerEntropy(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doMustSupportIssuedTokens(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 }

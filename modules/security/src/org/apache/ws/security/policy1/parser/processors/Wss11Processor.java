@@ -95,7 +95,7 @@ public class Wss11Processor {
 					initializedWss11 = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			PrimitiveAssertion pa = spc.getAssertion();
@@ -109,7 +109,7 @@ public class Wss11Processor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 	
 	public Object doMustSupportRefKeyIdentifier(SecurityProcessorContext spc) {
@@ -119,7 +119,7 @@ public class Wss11Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss11)spc.readCurrentPolicyEngineData()).setMustSupportRefKeyIdentifier(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 
 	public Object doMustSupportRefIssuerSerial(SecurityProcessorContext spc) {
@@ -129,7 +129,7 @@ public class Wss11Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss11)spc.readCurrentPolicyEngineData()).setMustSupportRefIssuerSerial(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 
 	public Object doMustSupportRefExternalURI(SecurityProcessorContext spc) {
@@ -139,7 +139,7 @@ public class Wss11Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss11)spc.readCurrentPolicyEngineData()).setMustSupportRefExternalURI(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 
 	public Object doMustSupportRefEmbeddedToken(SecurityProcessorContext spc) {
@@ -149,7 +149,7 @@ public class Wss11Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss11)spc.readCurrentPolicyEngineData()).setMustSupportRefEmbeddedToken(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 
 	public Object doMustSupportRefThumbprint(SecurityProcessorContext spc) {
@@ -159,7 +159,7 @@ public class Wss11Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss11)spc.readCurrentPolicyEngineData()).setMustSupportRefThumbprint(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 
 	public Object doMustSupportRefEncryptedKey(SecurityProcessorContext spc) {
@@ -169,7 +169,7 @@ public class Wss11Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss11)spc.readCurrentPolicyEngineData()).setMustSupportRefEncryptedKey(true);
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doRequireSignatureConfirmation(SecurityProcessorContext spc) {
@@ -179,6 +179,6 @@ public class Wss11Processor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Wss11)spc.readCurrentPolicyEngineData()).setRequireSignatureConfirmation(true);
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 }

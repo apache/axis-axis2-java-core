@@ -58,7 +58,7 @@ public class SavanOutHandler extends AbstractHandler {
 				
 				//this tell addressing to polulate the SOAP envelope with the new values set in the options object
 				//(i.e. by removing old headers) every time the message sent through it.
-				msgContext.setProperty(AddressingConstants.REPLACE_ADDRESSING_HEADERS, new Boolean (true));
+				msgContext.setProperty(AddressingConstants.REPLACE_ADDRESSING_HEADERS, Boolean.TRUE);
 				
 				PublicationReport report = new PublicationReport();
 				Iterator iterator = store.retrieveAll();

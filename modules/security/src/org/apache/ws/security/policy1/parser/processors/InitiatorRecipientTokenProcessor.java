@@ -93,7 +93,7 @@ public class InitiatorRecipientTokenProcessor {
 					initializedInitiatorToken = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -102,7 +102,7 @@ public class InitiatorRecipientTokenProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doRecipientToken(SecurityProcessorContext spc) {
@@ -121,7 +121,7 @@ public class InitiatorRecipientTokenProcessor {
 					initializedRecipientToken = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -130,6 +130,6 @@ public class InitiatorRecipientTokenProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 }

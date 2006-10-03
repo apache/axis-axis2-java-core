@@ -87,12 +87,12 @@ public class UsernameTokenProcessor {
                         ((TokenWrapper)spc.readPreviousPolicyEngineData()).setToken(unt);
                     } catch (WSSPolicyException e) {
                         log.error(e.getMessage(), e);
-                        return new Boolean(false);
+                        return Boolean.FALSE;
                     }
 					initializedUsernameToken = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			log.debug(spt.getTokenName());
@@ -107,7 +107,7 @@ public class UsernameTokenProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssUsernameToken10(SecurityProcessorContext spc) {
@@ -115,7 +115,7 @@ public class UsernameTokenProcessor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((UsernameToken)spc.readCurrentPolicyEngineData()).setUseUTProfile11(false);
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doWssUsernameToken11(SecurityProcessorContext spc) {
@@ -123,7 +123,7 @@ public class UsernameTokenProcessor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((UsernameToken)spc.readCurrentPolicyEngineData()).setUseUTProfile11(true);
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 }

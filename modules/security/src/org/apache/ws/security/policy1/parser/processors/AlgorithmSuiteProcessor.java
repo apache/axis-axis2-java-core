@@ -156,7 +156,7 @@ public class AlgorithmSuiteProcessor {
 					initializedAlgorithmSuite = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			log.debug(spt.getTokenName());
@@ -171,7 +171,7 @@ public class AlgorithmSuiteProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doBasic256(SecurityProcessorContext spc) {
@@ -297,10 +297,10 @@ public class AlgorithmSuiteProcessor {
                 algoSuite.setC14n(Constants.C14N);
             } catch (WSSPolicyException e) {
                 log.error(e.getMessage(), e);
-                return new Boolean(false);
+                return Boolean.FALSE;
             }
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
 	}
 
 	public Object doSoapNormalization10(SecurityProcessorContext spc) {
@@ -313,10 +313,10 @@ public class AlgorithmSuiteProcessor {
                 algoSuite.setSoapNormalization(Constants.SNT);
             } catch (WSSPolicyException e) {
                 log.error(e.getMessage(), e);
-                return new Boolean(false);
+                return Boolean.FALSE;
             }
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doStrTransform10(SecurityProcessorContext spc) {
@@ -329,10 +329,10 @@ public class AlgorithmSuiteProcessor {
                 algoSuite.setStrTransform(Constants.STRT10);
             } catch (WSSPolicyException e) {
                 log.error(e.getMessage(), e);
-                return new Boolean(false);
+                return Boolean.FALSE;
             }
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doXPath10(SecurityProcessorContext spc) {
@@ -345,10 +345,10 @@ public class AlgorithmSuiteProcessor {
                 algoSuite.setXPath(Constants.XPATH);
             } catch (WSSPolicyException e) {
                 log.error(e.getMessage(), e);
-                return new Boolean(false);
+                return Boolean.FALSE;
             }
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doXPathFilter20(SecurityProcessorContext spc) {
@@ -361,10 +361,10 @@ public class AlgorithmSuiteProcessor {
                 algoSuite.setXPath(Constants.XPATH20);
             } catch (WSSPolicyException e) {
                 log.error(e.getMessage(), e);
-                return new Boolean(false);
+                return Boolean.FALSE;
             }
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
     private Boolean setAlgoGroup(SecurityProcessorContext spc) {
@@ -375,10 +375,10 @@ public class AlgorithmSuiteProcessor {
                 ((AlgorithmWrapper)spc.readPreviousPolicyEngineData()).setAlgorithmSuite(algoSuite);
             } catch (WSSPolicyException e) {
                 log.error(e.getMessage(), e);
-                return new Boolean(false);
+                return Boolean.FALSE;
             }
         }    
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
     
 }

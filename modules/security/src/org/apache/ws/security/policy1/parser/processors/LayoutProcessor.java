@@ -84,7 +84,7 @@ public class LayoutProcessor {
 					initializedLayout = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-                    return new Boolean(false);
+                    return Boolean.FALSE;
 				}
 			}
 			log.debug(spt.getTokenName());
@@ -99,7 +99,7 @@ public class LayoutProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doStrict(SecurityProcessorContext spc) {
@@ -114,9 +114,9 @@ public class LayoutProcessor {
             }
         } catch (WSSPolicyException e) {
             log.error(e.getMessage(), e);
-            return new Boolean(false);
+            return Boolean.FALSE;
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doLax(SecurityProcessorContext spc) {
@@ -131,9 +131,9 @@ public class LayoutProcessor {
             }
         } catch (WSSPolicyException e) {
             log.error(e.getMessage(), e);
-            return new Boolean(false);
+            return Boolean.FALSE;
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doLaxTsFirst(SecurityProcessorContext spc) {
@@ -148,9 +148,9 @@ public class LayoutProcessor {
             }
         } catch (WSSPolicyException e) {
             log.error(e.getMessage(), e);
-            return new Boolean(false);
+            return Boolean.FALSE;
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doLaxTsLast(SecurityProcessorContext spc) {
@@ -165,8 +165,8 @@ public class LayoutProcessor {
             }
         } catch (WSSPolicyException e) {
             log.error(e.getMessage(), e);
-            return new Boolean(false);
+            return Boolean.FALSE;
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 }

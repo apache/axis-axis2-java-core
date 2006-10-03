@@ -115,7 +115,7 @@ public class AsymmetricBindingProcessor {
 					initializedAsymmetricBinding = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -124,7 +124,7 @@ public class AsymmetricBindingProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doIncludeTimestamp(SecurityProcessorContext spc) {
@@ -134,34 +134,34 @@ public class AsymmetricBindingProcessor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Binding)spc.readCurrentPolicyEngineData()).setIncludeTimestamp(true);
         }
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doEncryptBeforeSigning(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doEncryptSignature(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doProtectTokens(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 	public Object doOnlySignEntireHeadersAndBody(SecurityProcessorContext spc) {
 		log.debug("Processing "
 				+ spc.readCurrentSecurityToken().getTokenName() + ": "
 				+ SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 }

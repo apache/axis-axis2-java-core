@@ -72,7 +72,7 @@ public class TransportBindingProcessor {
                     initializedTransportBinding = true;
                 } catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-                    return new Boolean(false);
+                    return Boolean.FALSE;
                 }
             }
             break;
@@ -81,7 +81,7 @@ public class TransportBindingProcessor {
         case SecurityProcessorContext.ABORT:
             break;
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
     
     public Object doIncludeTimestamp(SecurityProcessorContext spc) {
@@ -91,7 +91,7 @@ public class TransportBindingProcessor {
         if(spc.getAction() == SecurityProcessorContext.START) {
             ((Binding)spc.readCurrentPolicyEngineData()).setIncludeTimestamp(true);
         }
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
     
     public Object doTransportToken(SecurityProcessorContext spc) {
@@ -99,7 +99,7 @@ public class TransportBindingProcessor {
                 + spc.readCurrentSecurityToken().getTokenName() + ": "
                 + SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         log.debug("TODO: doTransportToken");
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
 
     public Object doAlgorithmSuite(SecurityProcessorContext spc) {
@@ -107,7 +107,7 @@ public class TransportBindingProcessor {
                 + spc.readCurrentSecurityToken().getTokenName() + ": "
                 + SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         log.debug("TODO: doAlgorithmSuite");
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
 
     public Object doLayout(SecurityProcessorContext spc) {
@@ -115,7 +115,7 @@ public class TransportBindingProcessor {
                 + spc.readCurrentSecurityToken().getTokenName() + ": "
                 + SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         log.debug("TODO: doLayout");
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
 
     public Object doHttpsToken(SecurityProcessorContext spc) {
@@ -123,6 +123,6 @@ public class TransportBindingProcessor {
                 + spc.readCurrentSecurityToken().getTokenName() + ": "
                 + SecurityProcessorContext.ACTION_NAMES[spc.getAction()]);
         log.debug("TODO: doHttpsToken");
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
 }

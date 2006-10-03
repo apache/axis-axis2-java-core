@@ -96,7 +96,7 @@ public class EndorsingSupportingTokensProcessor {
 					initializedEndorsingSupportingTokens = true;
 				} catch (NoSuchMethodException e) {
                     log.error(e.getMessage(), e);
-					return new Boolean(false);
+					return Boolean.FALSE;
 				}
 			}
 			break;
@@ -105,7 +105,7 @@ public class EndorsingSupportingTokensProcessor {
 		case SecurityProcessorContext.ABORT:
 			break;
 		}
-		return new Boolean(true);
+		return Boolean.TRUE;
 	}
 
 }
