@@ -25,7 +25,7 @@
     <!-- ================================================= -->
     <!-- Phases  -->
     <!-- ================================================= -->
-   <phaseOrder type="inflow">
+   <phaseOrder type="InFlow">
         <!--  System pre defined phases       -->
          <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
@@ -58,7 +58,7 @@
         <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
         <phase name="OperationInPhase"/>
     </phaseOrder>
-    <phaseOrder type="outflow">
+    <phaseOrder type="OutFlow">
         <!--      user can add his own phases to this area  -->
         <phase name="OperationOutPhase"/>
         <!--system predefined phase-->
@@ -66,7 +66,7 @@
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
     </phaseOrder>
-    <phaseOrder type="INfaultflow">
+    <phaseOrder type="InFaultFlow">
         <phase name="PreDispatch"/>
         <phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase">
             <handler name="RequestURIBasedDispatcher"
@@ -96,7 +96,7 @@
         <!--      user can add his own phases to this area  -->
         <phase name="OperationInFaultPhase"/>
     </phaseOrder>
-    <phaseOrder type="Outfaultflow">
+    <phaseOrder type="OutFaultFlow">
         <!--      user can add his own phases to this area  -->
         <phase name="OperationOutFaultPhase"/>
         <phase name="PolicyDetermination"/>

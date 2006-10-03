@@ -1,16 +1,16 @@
 <module name="Savan" class="org.apache.savan.module.SavanModule">
 
-    <inflow>
+    <InFlow>
         <handler name="SavanInHandler" class="org.apache.savan.handlers.SavanInHandler">
             <order phase="OperationInPhase"/>
         </handler>
-    </inflow>
+    </InFlow>
     
-    <outflow>
+    <OutFlow>
         <handler name="SavanOutHandler" class="org.apache.savan.handlers.SavanOutHandler">
             <order phase="OperationOutPhase"/>
         </handler>
-    </outflow>
+    </OutFlow>
 
     <operation name="SavanInOutOperation" mep="http://www.w3.org/2004/08/wsdl/in-out">
         <messageReceiver class="org.apache.savan.messagereceiver.SavanInOutMessageReceiver"/>

@@ -5,23 +5,23 @@
     and Apache Rahas implementations.
 	</Description>
 	    
-    <inflow>
+    <InFlow>
         <handler name="PolicyBasedSecurityInHandler" class="org.apache.rampart.handler.RampartReceiver">
             <order phase="Security" phaseFirst="true"/>
         </handler>
         <handler name="SecurityInHandler" class="org.apache.rampart.handler.WSDoAllReceiver">
             <order phase="Security"/>
         </handler>
-    </inflow>
+    </InFlow>
 
-    <outflow>
+    <OutFlow>
         <handler name="SecurityOutHandler" class="org.apache.rampart.handler.WSDoAllSender">
             <order phase="Security"/>
         </handler>
         <handler name="PolicyBasedSecurityOutHandler" class="org.apache.rampart.handler.RampartSender">
             <order phase="Security" phaseLast="true"/>
         </handler>
-    </outflow>
+    </OutFlow>
     <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"/>
     <local-policy-assertions>
     	<rampart:RampartConfig xmlns:rampart="http://ws.apache.org/rampart/policy" />

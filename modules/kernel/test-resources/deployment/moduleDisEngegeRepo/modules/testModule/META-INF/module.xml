@@ -1,5 +1,5 @@
 <module>
-    <inflow>
+    <InFlow>
         <handler name="Hnadler1"
                  class="org.apache.axis2.deployment.SpeakingHandler">
             <order phase="PreDispatch"/>
@@ -12,12 +12,12 @@
                  class="org.apache.axis2.deployment.SpeakingHandler">
             <order phase="OperationInPhase"/>
         </handler>
-    </inflow>
+    </InFlow>
 
-    <outflow>
+    <OutFlow>
         <handler name="Handler4"
                  class="org.apache.axis2.deployment.SpeakingHandler">
             <order phase="MessageOut"/>
         </handler>
-    </outflow>
+    </OutFlow>
 </module>

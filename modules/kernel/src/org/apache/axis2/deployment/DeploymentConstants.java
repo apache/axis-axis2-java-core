@@ -64,10 +64,11 @@ public interface DeploymentConstants {
     String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
 
 
-    String TAG_FLOW_OUT_FAULT = "Outfaultflow";    // faultflow start tag
-    String TAG_FLOW_OUT = "outflow";         // outflow start tag
-    String TAG_FLOW_IN_FAULT = "INfaultflow";    // faultflow start tag
-    String TAG_FLOW_IN = "inflow";         // inflow start tag
+    String TAG_FLOW_IN = "InFlow";         // inflow start tag
+    String TAG_FLOW_OUT = "OutFlow";         // outflow start tag
+    String TAG_FLOW_OUT_FAULT = "OutFaultFlow";    // faultflow start tag
+    String TAG_FLOW_IN_FAULT = "InFaultFlow";    // faultflow start tag
+
     String TAG_HOT_UPDATE = "hotupdate";
     String TAG_ANTI_JAR_LOCKING = "antiJARLocking";
     String TAG_HOT_DEPLOYMENT = "hotdeployment";

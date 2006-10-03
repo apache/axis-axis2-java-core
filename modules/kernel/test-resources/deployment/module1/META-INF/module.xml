@@ -1,30 +1,30 @@
 <module name="module1">
-    <inflow>
+    <InFlow>
         <handler name="h1" class="org.apache.axis2.registry.Handler3">
             <order phase="OperationInPhase"/>
         </handler>
         <handler name="h2" class="org.apache.axis2.registry.Handler3">
             <order phase="OperationInPhase"/>
         </handler>
-    </inflow>
+    </InFlow>
 
-    <outflow>
+    <OutFlow>
         <handler name="h3" class="org.apache.axis2.registry.Handler3">
             <order phase="OperationOutPhase"/>
         </handler>
-    </outflow>
+    </OutFlow>
 
-    <Outfaultflow>
+    <OutFaultFlow>
         <handler name="h4" class="org.apache.axis2.registry.Handler3">
             <order phase="OperationOutFaultPhase"/>
         </handler>
-    </Outfaultflow>
+    </OutFaultFlow>
 
-    <INfaultflow>
+    <InFaultFlow>
         <handler name="h5" class="org.apache.axis2.registry.Handler3">
             <order phase="OperationInFaultPhase"/>
         </handler>
-    </INfaultflow>
+    </InFaultFlow>
 
     <operation name="creatSeq" mep="http://www.w3.org/2004/08/wsdl/in-out">
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
