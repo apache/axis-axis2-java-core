@@ -130,7 +130,7 @@ public abstract class AbstractHTTPSender {
                 }
             }
 
-            if (domain.equals("") || domain.equals(ANONYMOUS)) {
+            if (domain.length() == 0 || domain.equals(ANONYMOUS)) {
                 if (usrName.equals(ANONYMOUS) && passwd.equals(ANONYMOUS)) {
                     proxyCred = new UsernamePasswordCredentials("", "");
                 } else {

@@ -168,8 +168,8 @@ public class AdminAgent extends AbstractAgent {
         String username = req.getParameter("userName");
         String password = req.getParameter("password");
 
-        if ((username == null) || (password == null) || username.trim().equals("")
-                || password.trim().equals("")) {
+        if ((username == null) || (password == null) || username.trim().length() == 0
+                || password.trim().length() == 0) {
             req.setAttribute("errorMessage", "Invalid auth credentials!");
             renderView(LOGIN_JSP_NAME, req, res);
             return;

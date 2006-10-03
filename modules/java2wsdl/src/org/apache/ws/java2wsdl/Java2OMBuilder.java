@@ -94,14 +94,14 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         }
         this.serviceName = serviceName;
 
-        if (targetNamespace != null && !targetNamespace.trim().equals("")) {
+        if (targetNamespace != null && targetNamespace.trim().length() != 0) {
             this.targetNamespace = targetNamespace;
         } else {
             this.targetNamespace = DEFAULT_TARGET_NAMESPACE;
         }
 
         if (targetNamespacePrefix != null
-                && !targetNamespacePrefix.trim().equals("")) {
+                && targetNamespacePrefix.trim().length() != 0) {
             this.targetNamespacePrefix = targetNamespacePrefix;
         } else {
             this.targetNamespacePrefix = DEFAULT_TARGET_NAMESPACE_PREFIX;

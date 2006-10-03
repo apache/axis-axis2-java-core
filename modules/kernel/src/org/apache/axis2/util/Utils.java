@@ -305,7 +305,7 @@ public class Utils {
 
     public static QName getModuleName(String name, String versionID) {
         String moduleName;
-        if (versionID != null && !versionID.equals("")) {
+        if (versionID != null && versionID.length() != 0) {
             moduleName = name + "-" + versionID;
         } else {
             moduleName = name;

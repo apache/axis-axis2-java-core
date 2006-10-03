@@ -84,7 +84,7 @@ public class JavaUtils {
 
     public static String xmlNameToJava(String name) {
         // protect ourselves from garbage
-        if (name == null || name.equals(""))
+        if (name == null || name.length() == 0)
             return name;
 
         char[] nameArray = name.toCharArray();
@@ -166,7 +166,7 @@ public class JavaUtils {
      */
     public static String capitalizeFirstChar(String name) {
 
-        if ((name == null) || name.equals("")) {
+        if ((name == null) || name.length() == 0) {
             return name;
         }
 
@@ -310,7 +310,7 @@ public class JavaUtils {
     }
 
     public static boolean isJavaId(String id) {
-        if (id == null || id.equals("") || isJavaKeyword(id))
+        if (id == null || id.length() == 0 || isJavaKeyword(id))
             return false;
         if (!Character.isJavaIdentifierStart(id.charAt(0)))
             return false;

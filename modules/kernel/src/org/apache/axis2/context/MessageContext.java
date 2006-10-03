@@ -300,8 +300,9 @@ public class MessageContext extends AbstractContext {
         Parameter param;
         ModuleConfiguration moduleConfig;
 
-        if (getAxisOperation() != null) {
-            AxisOperation opDesc = getAxisOperation();
+        AxisOperation opDesc = getAxisOperation();
+
+        if (opDesc != null) {
 
             moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
 
@@ -320,8 +321,9 @@ public class MessageContext extends AbstractContext {
             }
         }
 
-        if (getAxisService() != null) {
-            AxisService axisService = getAxisService();
+        AxisService axisService = getAxisService();
+
+        if (axisService != null) {
 
             moduleConfig = axisService.getModuleConfig(new QName(moduleName));
 
@@ -340,8 +342,9 @@ public class MessageContext extends AbstractContext {
             }
         }
 
-        if (getAxisServiceGroup() != null) {
-            AxisServiceGroup axisServiceDesc = getAxisServiceGroup();
+        AxisServiceGroup axisServiceDesc = getAxisServiceGroup();
+
+        if (axisServiceDesc != null) {
 
             moduleConfig = axisServiceDesc
                     .getModuleConfig(new QName(moduleName));

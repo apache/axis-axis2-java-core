@@ -56,7 +56,7 @@ public class AxisConfiguration extends AxisDescription {
     private final HashMap transportsOut = new HashMap();
 
     private final HashMap policySupportedModules = new HashMap();
-    
+
     /** Stores the QNames of local policy assertions */
     private final ArrayList localPolicyAssertions = new ArrayList();
 
@@ -111,7 +111,7 @@ public class AxisConfiguration extends AxisDescription {
     private boolean start;
 
     private ArrayList targetResolvers;
-    
+
     /**
      * Constructor AxisConfigurationImpl.
      */
@@ -158,12 +158,12 @@ public class AxisConfiguration extends AxisDescription {
         } else {
             allModules.put(module.getName(), module);
         }
-        
-        // Registering the policy namespaces that the module understand        
+
+        // Registering the policy namespaces that the module understand
         registerModulePolicySupport(module);
-        // Registering the policy assertions that are local to the system 
+        // Registering the policy assertions that are local to the system
         registerLocalPolicyAssertions(module);
-        
+
     }
 
     /**
@@ -818,16 +818,16 @@ public class AxisConfiguration extends AxisDescription {
             }
         }
     }
-    
+
     public void registerLocalPolicyAssertions(AxisModule axisModule) {
         QName[] localPolicyAssertions = axisModule.getLocalPolicyAssertions();
-        
+
         if (localPolicyAssertions == null) {
             return;
         }
-        
+
         for (int i = 0; i < localPolicyAssertions.length; i++) {
-            addLocalPolicyAssertion(localPolicyAssertions[i]);                        
+            addLocalPolicyAssertion(localPolicyAssertions[i]);
         }
     }
 
@@ -842,7 +842,7 @@ public class AxisConfiguration extends AxisDescription {
     public void setStart(boolean start) {
         this.start = start;
     }
-    
+
     /**
      * getTargetResolverChain returns and instance of
      * TargetResolver which iterates over the registered
@@ -850,7 +850,7 @@ public class AxisConfiguration extends AxisDescription {
      * resolveTarget is called
      */
     public TargetResolver getTargetResolverChain(){
-        TargetResolver result = new TargetResolver(){
+        return new TargetResolver(){
             public void resolveTarget(MessageContext messageContext) {
                 Iterator iter = targetResolvers.iterator();
                 while(iter.hasNext()){
@@ -858,25 +858,24 @@ public class AxisConfiguration extends AxisDescription {
                     tr.resolveTarget(messageContext);
                 }
             }};
-        return result;
     }
-    
+
     public void addTargetResolver(TargetResolver tr) {
         targetResolvers.add(tr);
     }
-    
+
     public void addLocalPolicyAssertion(QName name) {
-        this.localPolicyAssertions.add(name);        
+        this.localPolicyAssertions.add(name);
     }
-    
+
     public List getLocalPolicyAssertions() {
         return this.localPolicyAssertions;
     }
-    
+
     public void removeLocalPolicyAssertion(QName name) {
-        this.localPolicyAssertions.remove(name);        
+        this.localPolicyAssertions.remove(name);
     }
-    
+
     public boolean isAssertionLocal(QName name) {
         return this.localPolicyAssertions.contains(name);
     }

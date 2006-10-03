@@ -535,7 +535,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             }
         }
 
-        if ( isOurs && !typeMappingStr.equals("") && !typeMappingStr.equals("void") &&
+        if ( isOurs && typeMappingStr.length() != 0 && !typeMappingStr.equals("void") &&
                 !typeMappingStr.equals(C_DEFAULT_TYPE) ){
             addAttribute(doc, "ours", "yes", paramElement);
         }
@@ -596,7 +596,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             }
         }
 
-        if ( isOurs && !typeMappingStr.equals("") && !typeMappingStr.equals("void") &&
+        if ( isOurs && typeMappingStr.length() != 0 && !typeMappingStr.equals("void") &&
                 !typeMappingStr.equals(C_DEFAULT_TYPE) ){
             addAttribute(doc, "ours", "yes", paramElement);
         }

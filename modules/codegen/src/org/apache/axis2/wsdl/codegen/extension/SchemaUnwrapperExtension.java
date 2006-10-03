@@ -153,8 +153,8 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         String complexType = "";
         if (schemaType instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
-            if ((cmplxType.getName() != null) && (!cmplxType.getName().equals(""))) {
-                if ((cmplxType.getQName() != null) && (cmplxType.getQName().getNamespaceURI() != null) && (!cmplxType.getQName().getNamespaceURI().equals("")))
+            if ((cmplxType.getName() != null) && (cmplxType.getName().length() != 0)) {
+                if ((cmplxType.getQName() != null) && (cmplxType.getQName().getNamespaceURI() != null) && (cmplxType.getQName().getNamespaceURI().length() != 0))
                 {
                     complexType = URLProcessor.makePackageName(cmplxType.getQName().getNamespaceURI()) + ".";
                 }

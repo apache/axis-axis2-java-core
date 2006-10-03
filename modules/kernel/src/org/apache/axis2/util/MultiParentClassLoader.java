@@ -156,7 +156,7 @@ public class MultiParentClassLoader extends URLClassLoader {
         for (int i = 0; i < parents.length; i++) {
             ClassLoader parent = parents[i];
             if (parent == null) {
-                throw new NullPointerException("parent[" + i + "] is null");
+                throw new RuntimeException("parent[" + i + "] is null");
             }
             newParentsArray[i] = parent;
         }

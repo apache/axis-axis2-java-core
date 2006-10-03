@@ -55,7 +55,7 @@ public class SessionManager {
     
     public synchronized SessionContext getSessionContext(String sessionKey) {
         SessionContext sessionContext = null;
-        if (sessionKey != null && !sessionKey.equals("")) {
+        if (sessionKey != null && sessionKey.length() != 0) {
             sessionContext = (SessionContext) this.sessionmap.get(sessionKey);
         }
         if (sessionContext == null) {

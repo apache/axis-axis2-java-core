@@ -217,7 +217,7 @@ public class WSDoAllSender extends WSDoAllHandler {
          * username defined in the deployment descriptor takes precedence.
          */
         reqData.setUsername((String) getOption(WSHandlerConstants.USER));
-        if (reqData.getUsername() == null || reqData.getUsername().equals("")) {
+        if (reqData.getUsername() == null || reqData.getUsername().length() == 0) {
             String username = (String) getProperty(reqData.getMsgContext(), WSHandlerConstants.USER);
             if (username != null) {
                 reqData.setUsername(username);
@@ -235,7 +235,7 @@ public class WSDoAllSender extends WSDoAllHandler {
              * encryption there is a specific parameter to get a username.
              */
             if (reqData.getUsername() == null
-                    || reqData.getUsername().equals("")) {
+                    || reqData.getUsername().length() == 0) {
                 throw new AxisFault(
                 "WSDoAllSender: Empty username for specified action");
             }

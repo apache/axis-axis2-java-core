@@ -163,7 +163,7 @@ public class AmazonSimpleQueueServiceOut extends JFrame {
         String key = JOptionPane.showInputDialog(this,
                 "Set the Amazon Key",
                 QueueManager.getKey());
-        if (key != null && !key.trim().equals("")) {
+        if (key != null && key.trim().length() != 0) {
             QueueManager.setKey(key);
         }
     }

@@ -146,11 +146,11 @@ public class SimpleMailListener implements Runnable, TransportListener {
             }
 
         }
-        if (password.equals("") || user.equals("") || host.equals("") || protocol.equals("")) {
-            throw new AxisFault("Password or User or Host or Protocol can not be null");
+        if (password.length() == 0 || user.length() == 0 || host.length() == 0 || protocol.length() == 0) {
+            throw new AxisFault("One or more of Password, User, Host and Protocol are null or empty");
         }
 
-        if (port.equals("")) {
+        if (port.length() == 0) {
             urlName = new URLName(protocol, host, -1, "", user, password);
         } else {
             urlName = new URLName(protocol, host, Integer.parseInt(port), "", user, password);

@@ -121,7 +121,7 @@ public class SMTPWorker extends Thread {
 
             String from = input.substring(start, end);
 
-            if ((from != null) && !from.trim().equals("")) {
+            if ((from != null) && from.trim().length() != 0) {
 
                 // TODO this is an ugly hack to get the from address in. There
                 // should be a better way to do this.
@@ -185,7 +185,7 @@ public class SMTPWorker extends Thread {
             dataWriting = false;
 
             return Constants.DATA_END_SUCCESS;
-        } else if (input.equals("") && !bodyData) {
+        } else if (input.length() == 0 && !bodyData) {
             bodyData = true;
 
             return null;

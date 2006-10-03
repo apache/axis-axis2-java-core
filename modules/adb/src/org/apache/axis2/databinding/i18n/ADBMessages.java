@@ -25,16 +25,16 @@ import java.util.MissingResourceException;
 public class ADBMessages {
      private static Class thisClass = ADBMessages.class;
 
-    private static final String projectName = MessagesConstants.projectName;
+    private static final String PROJECT_NAME = MessagesConstants.projectName;
 
-    private static final String resourceName = MessagesConstants.resourceName;
-    private static final Locale locale = MessagesConstants.locale;
+    private static final String RESOURCE_NAME = MessagesConstants.resourceName;
+    private static final Locale LOCAL = MessagesConstants.locale;
 
-    private static final String packageName = getPackage(thisClass.getName());
-    private static final ClassLoader classLoader = thisClass.getClassLoader();
+    private static final String PACKAGE_NAME = getPackage(thisClass.getName());
+    private static final ClassLoader CLASS_LOADER = thisClass.getClassLoader();
 
-    private static final ResourceBundle parent =
-            (MessagesConstants.rootPackageName.equals(packageName))
+    private static final ResourceBundle PARENT =
+            (MessagesConstants.rootPackageName.equals(PACKAGE_NAME))
             ? null
             : MessagesConstants.rootBundle;
 
@@ -44,8 +44,8 @@ public class ADBMessages {
      */
 
     private static final MessageBundle messageBundle =
-            new MessageBundle(projectName, packageName, resourceName,
-                    locale, classLoader, parent);
+            new MessageBundle(PROJECT_NAME, PACKAGE_NAME, RESOURCE_NAME,
+                    LOCAL, CLASS_LOADER, PARENT);
 
     /**
      * Gets a message from resource.properties from the package of the given object.

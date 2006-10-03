@@ -586,7 +586,7 @@ public class AxisService extends AxisDescription {
                             EndpointReference[] eprsForService = listener.getEPRsForService(getName(), requestIP);
                             if (eprsForService != null) {
                                 for (int j = 0; j < eprsForService.length; j++) {
-                                    EndpointReference endpointReference = eprsForService[j];  
+                                    EndpointReference endpointReference = eprsForService[j];
                                     String address = endpointReference.getAddress();
                                     if (address != null) {
                                         eprList.add(address);
@@ -835,7 +835,7 @@ public class AxisService extends AxisDescription {
      *         SOAP Action otherwise will return null.
      */
     public AxisOperation getOperationBySOAPAction(String soapAction) {
-        if ((soapAction == null) || soapAction.equals("")) {
+        if ((soapAction == null) || soapAction.length() == 0) {
             return null;
         }
 

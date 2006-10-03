@@ -223,7 +223,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                 .getAttribute(new QName(TAG_NAMESPACES));
         if (namespaces != null) {
             String value = namespaces.getAttributeValue();
-            if (!value.trim().equals("")) {
+            if (value.trim().length() != 0) {
                 return value.split(" ");
             }
         }

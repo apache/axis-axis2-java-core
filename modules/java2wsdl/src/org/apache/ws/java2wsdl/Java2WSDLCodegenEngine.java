@@ -37,7 +37,7 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         Java2WSDLCommandLineOption option = loadOption(Java2WSDLConstants.CLASSNAME_OPTION, Java2WSDLConstants.CLASSNAME_OPTION_LONG, optionsMap);
         String className = option == null ? null : option.getOptionValue();
 
-        if (className == null || className.equals("")) {
+        if (className == null || className.length() == 0) {
             throw new Exception("class name must be present!");
         }
 

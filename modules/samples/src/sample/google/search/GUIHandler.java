@@ -231,7 +231,7 @@ public class GUIHandler {
         String key = JOptionPane.showInputDialog(null,
                 "Set the Google Key",
                 PropertyLoader.getGoogleKey());
-        if (key != null && !key.trim().equals("")) {
+        if (key != null && key.trim().length() != 0) {
             PropertyLoader.setGoogleKey(key);
         }
     }

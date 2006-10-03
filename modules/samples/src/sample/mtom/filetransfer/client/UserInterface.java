@@ -89,7 +89,7 @@ public class UserInterface extends JPanel implements ActionListener {
             }
 
             public void keyReleased(KeyEvent e) {
-                if (fileField.getText().equals("")) {
+                if (fileField.getText().length() == 0) {
                     addFileButton.setEnabled(false);
                 }
             }
@@ -333,13 +333,13 @@ public class UserInterface extends JPanel implements ActionListener {
         destFolder = destFolderText.getText();
 
         if (!model.isEmpty()) {
-            if (!destFolder.equals("") && !EPR.equals("")) {
+            if (destFolder.length() != 0 && EPR.length() != 0) {
                 sendMethod = (MTOMRadio.isSelected() ? "MTOM" : "SOAP");
                 operation = (sendRadio.isSelected() ? "send" : "sendreceive");
                 if (cacheEnable) {
                     try {
                         String temp = cacheThresholdText.getText();
-                        if (!temp.equals("")) {
+                        if (temp.length() != 0) {
                             cacheThreshold = Integer.parseInt(temp);
                         } else {
                             throw new NumberFormatException();

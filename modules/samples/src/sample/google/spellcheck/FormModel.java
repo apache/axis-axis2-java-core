@@ -170,7 +170,7 @@ public class FormModel {
             }
 
             String sugession = val.getText();
-            if ((sugession == null) || (sugession.trim().equals(""))) {
+            if ((sugession == null) || (sugession.trim().length() == 0)) {
                 return null;
             } else {
                 return sugession;
