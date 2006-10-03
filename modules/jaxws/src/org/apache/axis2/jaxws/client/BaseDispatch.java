@@ -244,9 +244,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
         //    String soapAction = wsdl.getSOAPAction(serviceName, portName);
         //    getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, soapAction);
         //}
-        
-        getRequestContext().put(Constants.QOS_WSADDRESSING_ENABLE, Boolean.FALSE);
-        getRequestContext().put(Constants.QOS_WSRM_ENABLE, Boolean.FALSE);
     }
     
     public ServiceDelegate getServiceDelegate() {

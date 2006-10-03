@@ -34,15 +34,9 @@ public class Constants {
     
     public static final String SCHEMA = "http://www.w3.org/2001/XMLSchema";
     
-    public static final String AXIS2_REPO_PATH = "com.ibm.websphere.webservices.axis2.repo.path";
-    public static final String AXIS2_CONFIG_PATH = "com.ibm.websphere.webservices.axis2.config.path";
-    public static final String USE_ASYNC_MEP = "com.ibm.websphere.webservices.use.async.mep";
-    
-    public static final String QOS_WSADDRESSING_ENABLE = "com.ibm.websphere.webservices.qos.wsaddressing.enable";
-    public static final String QOS_WSRM_ENABLE = "com.ibm.websphere.webservices.qos.wsrm.enable";
-    
-    public static final QName QNAME_WSADDRESSING_MODULE = new QName("", "addressing");
-    public static final QName QNAME_WSRM_MODULE = new QName("", "sandesha2");
+    public static final String AXIS2_REPO_PATH = "org.apache.axis2.jaxws.repo.path";
+    public static final String AXIS2_CONFIG_PATH = "org.apache.axis2.jaxws.config.path";
+    public static final String USE_ASYNC_MEP = "org.apache.axis2.jaxws.use.async.mep";
     
     public static final String THREAD_CONTEXT_MIGRATOR_LIST_ID = "JAXWS-ThreadContextMigrator-List";
 }

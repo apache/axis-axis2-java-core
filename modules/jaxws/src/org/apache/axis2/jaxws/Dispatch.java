@@ -218,9 +218,6 @@ public class Dispatch<T> extends BindingProvider implements javax.xml.ws.Dispatc
             String soapAction = wsdl.getSOAPAction(serviceName, portName);
             getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, soapAction);
         }
-        
-        getRequestContext().put(Constants.QOS_WSADDRESSING_ENABLE, Boolean.FALSE);
-        getRequestContext().put(Constants.QOS_WSRM_ENABLE, Boolean.FALSE);
     }
     
     /* 

@@ -369,16 +369,6 @@ public class AxisController {
             String key = it.next();
             Object value = requestCtx.get(key);
             
-            if (key.equals(Constants.QOS_WSRM_ENABLE)) {
-                key = "Sandesha2AppProcessingDone";
-                value = !(Boolean) value;
-                value = value.toString();
-            }
-            else if (key.equals(Constants.QOS_WSADDRESSING_ENABLE)) {
-                key = AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES;
-                value = !(Boolean) value;
-            }
-            
             serviceClient.getOptions().setProperty(key, value);
         }
     }
