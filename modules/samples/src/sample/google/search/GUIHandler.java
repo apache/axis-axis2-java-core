@@ -50,12 +50,16 @@ public class GUIHandler {
     /**
      * Buttons clicked to view more results and backButton
      */
-    private JButton nextButton, backButton;
+    private JButton nextButton
+    ,
+    backButton;
 
     /**
      * Menu commands to set the key and maximum no of results per page
      */
-    private JMenuItem keyMenuItem, maxResultsMenuItem;
+    private JMenuItem keyMenuItem
+    ,
+    maxResultsMenuItem;
     private AsynchronousClient asyncClient;
 
     public GUIHandler(AsynchronousClient asyncClient) {
@@ -312,18 +316,14 @@ public class GUIHandler {
                 JOptionPane.showInputDialog(null,
                         "Enter the number of maximum results per page (Maximum allowed is 10)",
                         asyncClient.getMaxResults());
-        if (maxResults == null) {
-            return;
-        } else {
+        if (maxResults != null) {
             try {
-                asyncClient.setMaxResults(Integer.parseInt(maxResults) + "");
+                asyncClient.setMaxResults(Integer.toString(Integer.parseInt(maxResults)));
                 asyncClient.setPrevSearch("");
             } catch (NumberFormatException e) {
                 return;
             }
-
         }
-
     }
 
 

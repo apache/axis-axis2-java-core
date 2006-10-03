@@ -208,7 +208,6 @@ public class SuggestionForm extends javax.swing.JFrame implements HyperlinkListe
             } catch (Exception err) {
                 JOptionPane.showMessageDialog(this, "Help file not detected", err.getMessage(),
                         JOptionPane.ERROR_MESSAGE);
-                return;
             }
 
         }

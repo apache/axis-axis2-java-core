@@ -284,7 +284,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         setupComplete = true; // if any part of setup fails, don't mark
                                 // setupComplete
-        return;
     }
 
     /**
