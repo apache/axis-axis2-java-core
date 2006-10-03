@@ -163,7 +163,6 @@ public class YearMonth implements Serializable {
     public boolean equals(Object obj) {
         if (!(obj instanceof YearMonth)) return false;
         YearMonth other = (YearMonth) obj;
-        if (obj == null) return false;
         if (this == obj) return true;
 
         boolean equals = (this.year == other.year && this.month == other.month);

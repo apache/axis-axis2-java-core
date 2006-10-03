@@ -136,7 +136,6 @@ public class Month implements java.io.Serializable {
     public boolean equals(Object obj) {
         if (!(obj instanceof Month)) return false;
         Month other = (Month) obj;
-        if (obj == null) return false;
         if (this == obj) return true;
 
         boolean equals = (this.month == other.month);

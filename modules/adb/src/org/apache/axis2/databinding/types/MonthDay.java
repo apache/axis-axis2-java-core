@@ -165,7 +165,6 @@ public class MonthDay implements java.io.Serializable {
     public boolean equals(Object obj) {
         if (!(obj instanceof MonthDay)) return false;
         MonthDay other = (MonthDay) obj;
-        if (obj == null) return false;
         if (this == obj) return true;
 
         boolean equals = (this.month == other.month && this.day == other.day);

@@ -113,7 +113,6 @@ public class UnsignedLong extends java.lang.Number implements Comparable {
     public synchronized boolean equals(Object obj) {
         if (!(obj instanceof UnsignedLong)) return false;
         UnsignedLong other = (UnsignedLong) obj;
-        if (obj == null) return false;
         if (this == obj) return true;
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);

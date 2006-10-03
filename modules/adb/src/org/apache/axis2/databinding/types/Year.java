@@ -141,7 +141,6 @@ public class Year implements Serializable {
     public boolean equals(Object obj) {
         if (!(obj instanceof Year)) return false;
         Year other = (Year) obj;
-        if (obj == null) return false;
         if (this == obj) return true;
 
         boolean equals = (this.year == other.year);

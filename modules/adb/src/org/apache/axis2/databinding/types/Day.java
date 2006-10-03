@@ -25,10 +25,10 @@ import java.text.NumberFormat;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gDay">XML Schema 3.2.13</a>
  */
 public class Day implements Serializable {
-	
+
     private static final long serialVersionUID = -9024662553918598132L;
-    
-	int day;
+
+    int day;
     String timezone;
 
     /**
@@ -44,7 +44,7 @@ public class Day implements Serializable {
      * The timezone is validated but not used.
      */
     public Day(int day, String timezone)
-        throws NumberFormatException {
+            throws NumberFormatException {
         setValue(day, timezone);
     }
 
@@ -54,18 +54,18 @@ public class Day implements Serializable {
     public Day(String source) throws NumberFormatException {
         if (source.length() < 5) {
             throw new NumberFormatException();
-                    //Messages.getMessage("badDay00"));
+            //Messages.getMessage("badDay00"));
         }
 
         if (source.charAt(0) != '-' ||
-            source.charAt(1) != '-' ||
-            source.charAt(2) != '-' ) {
+                source.charAt(1) != '-' ||
+                source.charAt(2) != '-') {
             throw new NumberFormatException();
-                    //Messages.getMessage("badDay00"));
+            //Messages.getMessage("badDay00"));
         }
 
-        setValue(Integer.parseInt(source.substring(3,5)),
-                 source.substring(5));
+        setValue(Integer.parseInt(source.substring(3, 5)),
+                source.substring(5));
     }
 
     public int getDay() {
@@ -79,7 +79,7 @@ public class Day implements Serializable {
         // validate day
         if (day < 1 || day > 31) {
             throw new NumberFormatException();
-                    //Messages.getMessage("badDay00"));
+            //Messages.getMessage("badDay00"));
         }
         this.day = day;
     }
@@ -92,19 +92,19 @@ public class Day implements Serializable {
         // validate timezone
         if (timezone != null && timezone.length() > 0) {
             // Format [+/-]HH:MM
-            if (timezone.charAt(0)=='+' || (timezone.charAt(0)=='-')) {
-                    if (timezone.length() != 6 ||
+            if (timezone.charAt(0) == '+' || (timezone.charAt(0) == '-')) {
+                if (timezone.length() != 6 ||
                         !Character.isDigit(timezone.charAt(1)) ||
                         !Character.isDigit(timezone.charAt(2)) ||
-                        timezone.charAt(3) != ':'              ||
+                        timezone.charAt(3) != ':' ||
                         !Character.isDigit(timezone.charAt(4)) ||
                         !Character.isDigit(timezone.charAt(5)))
-                        throw new NumberFormatException();
-                               // Messages.getMessage("badTimezone00"));
+                    throw new NumberFormatException();
+                // Messages.getMessage("badTimezone00"));
 
             } else if (!timezone.equals("Z")) {
                 throw new NumberFormatException();
-                       // Messages.getMessage("badTimezone00"));
+                // Messages.getMessage("badTimezone00"));
             }
             // if we got this far, its good
             this.timezone = timezone;
@@ -112,7 +112,7 @@ public class Day implements Serializable {
     }
 
     public void setValue(int day, String timezone)
-        throws NumberFormatException {
+            throws NumberFormatException {
         setDay(day);
         setTimezone(timezone);
     }
@@ -128,7 +128,7 @@ public class Day implements Serializable {
 
         // Day
         nf.setMinimumIntegerDigits(2);
-        String s = "---"  + nf.format(day);
+        String s = "---" + nf.format(day);
 
         // timezone
         if (timezone != null) {
@@ -140,7 +140,6 @@ public class Day implements Serializable {
     public boolean equals(Object obj) {
         if (!(obj instanceof Day)) return false;
         Day other = (Day) obj;
-        if (obj == null) return false;
         if (this == obj) return true;
 
         boolean equals = (this.day == other.day);

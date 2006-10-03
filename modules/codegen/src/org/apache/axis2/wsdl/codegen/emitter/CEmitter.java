@@ -489,7 +489,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 : paramType;
 
 
-        if ( JAVA_DEFAULT_TYPE == typeMappingStr)
+        if (JAVA_DEFAULT_TYPE.equals(typeMappingStr))
         {
             typeMappingStr = C_DEFAULT_TYPE;
         }
@@ -576,7 +576,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
             typeMappingStr = "";
         }
 
-        if ( JAVA_DEFAULT_TYPE == typeMappingStr)
+        if (JAVA_DEFAULT_TYPE.equals(typeMappingStr))
         {
             typeMappingStr = C_DEFAULT_TYPE;
         }
