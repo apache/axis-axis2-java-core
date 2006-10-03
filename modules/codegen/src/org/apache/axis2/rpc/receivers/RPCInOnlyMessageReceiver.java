@@ -1,19 +1,3 @@
-package org.apache.axis2.rpc.receivers;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.receivers.AbstractInMessageReceiver;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.lang.reflect.Method;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -29,6 +13,23 @@ import java.lang.reflect.Method;
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+package org.apache.axis2.rpc.receivers;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.engine.DependencyManager;
+import org.apache.axis2.receivers.AbstractInMessageReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
@@ -42,7 +43,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj,
-                    inMessage.getOperationContext());
+                                                             inMessage.getOperationContext());
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 
@@ -51,7 +52,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
             AxisMessage inAxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace;
-            QName elementQName = null;
+            QName elementQName;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -69,14 +70,16 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                     messageNameSpace = elementQName.getNamespaceURI();
                     OMNamespace namespace = methodElement.getNamespace();
                     if (messageNameSpace != null) {
-                        if (namespace == null || !messageNameSpace.equals(namespace.getNamespaceURI())) {
+                        if (namespace == null ||
+                            !messageNameSpace.equals(namespace.getNamespaceURI())){
                             throw new AxisFault("namespace mismatch require " +
-                                    messageNameSpace +
-                                    " found " + methodElement.getNamespace().getNamespaceURI());
+                                                messageNameSpace +
+                                                " found " +
+                                                methodElement.getNamespace().getNamespaceURI());
                         }
                     } else if (namespace != null) {
                         throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
-                                "qualified element. But received a namespace qualified element");
+                                            "qualified element. But received a namespace qualified element");
                     }
 
                     Object[] objectArray = RPCUtil.processRequest(methodElement, method);
@@ -84,12 +87,22 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                 }
 
             }
+        } catch (InvocationTargetException e) {
+            String msg = null;
+            if (e.getCause() != null) {
+                msg = e.getCause().getMessage();
+            }
+            if (msg == null) {
+                msg = "Exception occurred while trying to invoke service method " +
+                      method.getName();
+            }
+            log.error(msg, e);
+            throw new AxisFault(msg);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                    method.getName();
+                         method.getName();
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }
     }
-
 }

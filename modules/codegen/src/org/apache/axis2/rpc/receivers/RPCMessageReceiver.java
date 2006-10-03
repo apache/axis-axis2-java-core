@@ -18,7 +18,6 @@
 * Reflection based RPCMessageReceiver , request will be processed by looking at the method signature
 * of the invocation method
 */
-
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
@@ -40,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
@@ -76,7 +76,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj,
-                    inMessage.getOperationContext());
+                                                             inMessage.getOperationContext());
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
             AxisService service = inMessage.getAxisService();
@@ -105,17 +105,17 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     if (messageNameSpace != null) {
                         if (namespace == null) {
                             throw new AxisFault("namespace mismatch require " +
-                                    messageNameSpace +
-                                    " found none");
+                                                messageNameSpace +
+                                                " found none");
                         }
                         if (!messageNameSpace.equals(namespace.getNamespaceURI())) {
                             throw new AxisFault("namespace mismatch require " +
-                                    messageNameSpace +
-                                    " found " + methodElement.getNamespace().getNamespaceURI());
+                                                messageNameSpace +
+                                                " found " + methodElement.getNamespace().getNamespaceURI());
                         }
                     } else if (namespace != null) {
                         throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
-                                "qualified element. But received a namespace qualified element");
+                                            "qualified element. But received a namespace qualified element");
                     }
 
                     Object[] objectArray = RPCUtil.processRequest(methodElement, method);
@@ -134,16 +134,16 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             }
 
             OMNamespace ns = fac.createOMNamespace(messageNameSpace,
-                    service.getSchematargetNamespacePrefix());
+                                                   service.getSchematargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
 
             if (resObject instanceof Object[]) {
                 QName resName = new QName(service.getSchematargetNamespace(),
-                        method.getName() + "Response",
-                        service.getSchematargetNamespacePrefix());
+                                          method.getName() + "Response",
+                                          service.getSchematargetNamespacePrefix());
                 OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                        (Object[]) resObject, service.isElementFormDefault());
+                                                                 (Object[]) resObject, service.isElementFormDefault());
                 envelope.getBody().addChild(bodyChild);
             } else {
                 if (resObject.getClass().isArray()) {
@@ -160,27 +160,33 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     }
 
                     QName resName = new QName(service.getSchematargetNamespace(),
-                            method.getName() + "Response",
-                            service.getSchematargetNamespacePrefix());
+                                              method.getName() + "Response",
+                                              service.getSchematargetNamespacePrefix());
                     OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
-                            objArray, service.isElementFormDefault());
+                                                                             objArray, service.isElementFormDefault());
                     envelope.getBody().addChild(bodyChild);
                 } else {
                     RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                            envelope, method, service.isElementFormDefault());
+                                            envelope, method, service.isElementFormDefault());
                 }
             }
-
-
             outMessage.setEnvelope(envelope);
-
+        } catch (InvocationTargetException e) {
+            String msg = null;
+            if (e.getCause() != null) {
+                msg = e.getCause().getMessage();
+            }
+            if (msg == null) {
+                msg = "Exception occurred while trying to invoke service method " +
+                      method.getName();
+            }
+            log.error(msg, e);
+            throw new AxisFault(msg);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                    inMessage.getAxisOperation().getName().getLocalPart();
+                         method.getName();
             log.error(msg, e);
-            throw AxisFault.makeFault(e);
+            throw new AxisFault(msg, e);
         }
     }
-
-
 }

@@ -1,3 +1,18 @@
+/*
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
@@ -18,24 +33,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-/*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*
-*/
 
 public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
 
@@ -80,7 +79,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
 
             AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             String messageNameSpace;
-            QName elementQName = null;
+            QName elementQName;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
             for (int i = 0; i < methods.length; i++) {
@@ -155,13 +154,21 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                             envelope, method, service.isElementFormDefault());
                 }
             }
-
-
             outMessage.setEnvelope(envelope);
-
+        } catch (InvocationTargetException e) {
+            String msg = null;
+            if (e.getCause() != null) {
+                msg = e.getCause().getMessage();
+            }
+            if (msg == null) {
+                msg = "Exception occurred while trying to invoke service method " +
+                      method.getName();
+            }
+            log.error(msg, e);
+            throw new AxisFault(msg);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                    method.getName();
+                         method.getName();
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }
