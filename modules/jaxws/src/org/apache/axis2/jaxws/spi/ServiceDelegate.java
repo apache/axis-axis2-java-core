@@ -273,11 +273,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * @see javax.xml.ws.spi.ServiceDelegate#getExecutor()
      */
     public Executor getExecutor() {
-        if(executor == null){
-           executor = getDefaultExecutor();
-        }
-        
-         return executor;
+    	//FIXME: Use client provider executor too.	
+        executor = getDefaultExecutor();
+        return executor;
      }
     
     /*
