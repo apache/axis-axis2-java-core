@@ -188,7 +188,7 @@ public class TransportUtils {
 					: null;
 		}
 		fileCacheForAttachments = (Constants.VALUE_TRUE
-				.equals(cacheAttachmentString)) ? true : false;
+                .equals(cacheAttachmentString));
 
 		String attachmentRepoDir = null;
 		String attachmentSizeThreshold = null;
