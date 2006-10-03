@@ -33,7 +33,15 @@ import org.apache.commons.logging.LogFactory;
 import java.lang.reflect.Method;
 
 /**
- * This is a Simple java Provider.
+ * The RawXMLINOutMessageReceiver MessageReceiver hands over the raw request received to
+ * the service implementation class as an OMElement. The implementation class is expected
+ * to return back the OMElement to be returned to the caller. This is a synchronous
+ * MessageReceiver, and finds the service implementation class to invoke by referring to
+ * the "ServiceClass" parameter value specified in the service.xml and looking at the
+ * methods of the form OMElement <<methodName>>(OMElement request)
+ *
+ * @see RawXMLINOnlyMessageReceiver
+ * @see RawXMLINOutAsyncMessageReceiver
  */
 public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
         implements MessageReceiver {
@@ -65,6 +73,12 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
         return method;
     }
 
+    /**
+     * Invokes the bussiness logic invocation on the service implementation class
+     * @param msgContext the incoming message context
+     * @param newmsgContext the response message context
+     * @throws AxisFault on invalid method (wrong signature) or behaviour (return null)
+     */
     public void invokeBusinessLogic(MessageContext msgContext, MessageContext newmsgContext)
             throws AxisFault {
         try {
@@ -95,8 +109,11 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                     throw new AxisFault(Messages.getMessage("rawXmlProviderIsLimited"));
                 }
 
-                OMElement result;
-                    result = (OMElement) method.invoke(obj, args);
+                OMElement result = (OMElement) method.invoke(obj, args);
+                if (result == null) {
+                    throw new AxisFault(Messages.getMessage("implReturnedNull",
+                        opDesc.getName().toString()));
+                }
 
                 AxisService service = msgContext.getAxisService();
                 result.declareNamespace(service.getTargetNamespace(),

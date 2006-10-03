@@ -30,7 +30,15 @@ import org.apache.commons.logging.LogFactory;
 import java.lang.reflect.Method;
 
 /**
- * This is a Simple java Provider.
+ * The RawXMLINOnlyMessageReceiver MessageReceiver hands over the raw request received to
+ * the service implementation class as an OMElement. The implementation class is NOT
+ * expected to return any value, but may do so and it would be ignored. This is a
+ * synchronous MessageReceiver, and finds the service implementation class to invoke by
+ * referring to the "ServiceClass" parameter value specified in the service.xml and
+ * looking at the methods of the form void <<methodName>>(OMElement request)
+ *
+ * @see RawXMLINOutMessageReceiver
+ * @see RawXMLINOutAsyncMessageReceiver
  */
 public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
         implements MessageReceiver {
@@ -59,6 +67,11 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
     public RawXMLINOnlyMessageReceiver() {
     }
 
+    /**
+     * Invokes the bussiness logic invocation on the service implementation class
+     * @param msgContext the incoming message context
+     * @throws AxisFault on invalid method (wrong signature)
+     */
     public void invokeBusinessLogic(MessageContext msgContext) throws AxisFault {
         try {
 
@@ -89,6 +102,10 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
                 }
             }
 
+            if (method == null) {
+                throw new AxisFault(Messages.getMessage("invalidMethodName",
+                        methodName));
+            }
             Class[] parameters = method.getParameterTypes();
 
             if ((parameters != null) && (parameters.length == 1)
