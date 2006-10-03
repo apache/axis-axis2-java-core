@@ -976,10 +976,15 @@
           */
           private void writeAttribute(java.lang.String namespace,java.lang.String attName,
                                       java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
-
-           registerPrefix(xmlWriter, namespace);
-
-            xmlWriter.writeAttribute(namespace,attName,attValue);
+    	  	  if (namespace.equals(""))
+        	  {
+        		  xmlWriter.writeAttribute(attName,attValue);
+        	  }
+        	  else
+        	  {
+                  registerPrefix(xmlWriter, namespace);
+                  xmlWriter.writeAttribute(namespace,attName,attValue);
+              }
           }
 
          /**
@@ -2247,9 +2252,15 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
           private void writeAttribute(java.lang.String namespace,java.lang.String attName,
                                       java.lang.String attValue,javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException{
 
-           registerPrefix(xmlWriter, namespace);
-
-            xmlWriter.writeAttribute(namespace,attName,attValue);
+    	  	  if (namespace.equals(""))
+        	  {
+        		  xmlWriter.writeAttribute(attName,attValue);
+        	  }
+        	  else
+        	  {
+                  registerPrefix(xmlWriter, namespace);
+                  xmlWriter.writeAttribute(namespace,attName,attValue);
+              }
           }
 
          /**
