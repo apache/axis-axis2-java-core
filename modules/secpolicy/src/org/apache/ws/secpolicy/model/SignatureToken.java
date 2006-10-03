@@ -16,11 +16,11 @@
 
 package org.apache.ws.secpolicy.model;
 
-import org.apache.neethi.PolicyComponent;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.ws.secpolicy.Constants;
 
 public class SignatureToken extends AbstractSecurityAssertion implements TokenWrapper {
 
@@ -40,36 +40,71 @@ public class SignatureToken extends AbstractSecurityAssertion implements TokenWr
         this.signatureToken = signatureToken;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.ws.security.policy.TokenWrapper#setToken(org.apache.ws.security.policy.Token)
-     */
     public void setToken(Token tok) {
         this.setSignatureToken(tok);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#getName()
-     */
     public QName getName() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        return Constants.SIGNATURE_TOKEN;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#normalize()
-     */
-    public PolicyComponent normalize() {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.neethi.PolicyComponent#serialize(javax.xml.stream.XMLStreamWriter)
-     */
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO TODO
-        throw new UnsupportedOperationException("TODO");
+        
+        String localname = Constants.SIGNATURE_TOKEN.getLocalPart();
+        String namespaceURI = Constants.SIGNATURE_TOKEN.getNamespaceURI();
+        
+        String prefix;
+        String writerPrefix = writer.getPrefix(namespaceURI);
+        
+        if (writerPrefix == null) {
+            prefix = Constants.SIGNATURE_TOKEN.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+            
+        } else {
+            prefix = writerPrefix;
+        }
+        
+        // <sp:SignatureToken>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+        
+        if (writerPrefix == null) {
+            // xmlns:sp=".."
+            writer.writeNamespace(prefix, namespaceURI);
+        }
+        
+        
+        String wspNamespaceURI = Constants.POLICY.getNamespaceURI();
+        
+        String wspPrefix;
+        
+        String wspWriterPrefix = writer.getPrefix(wspNamespaceURI);
+        
+        if (wspWriterPrefix == null) {
+            wspPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(wspPrefix, wspNamespaceURI);
+            
+        } else {
+            wspPrefix = wspWriterPrefix;
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(wspPrefix, Constants.POLICY.getLocalPart(), wspNamespaceURI);
+        
+        if (wspWriterPrefix == null) {
+            // xmlns:wsp=".."
+            writer.writeNamespace(wspPrefix, wspNamespaceURI);
+        }
+        
+        if (signatureToken == null) {
+            throw new RuntimeException("EncryptionToken is not set");
+        }
+        
+        signatureToken.serialize(writer);
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:SignatureToken>
+        writer.writeEndElement();
     }
-    
-    
 }

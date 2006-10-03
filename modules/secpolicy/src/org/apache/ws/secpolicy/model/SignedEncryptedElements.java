@@ -17,6 +17,7 @@
 package org.apache.ws.secpolicy.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -28,18 +29,19 @@ import org.apache.ws.secpolicy.Constants;
 public class SignedEncryptedElements extends AbstractSecurityAssertion {
 
     private ArrayList xPathExpressions = new ArrayList();
+
     private String xPathVersion;
-    
+
     /**
-     * Just a flag to identify whether this holds 
-     * sign element info or encr elements info 
+     * Just a flag to identify whether this holds sign element info or encr
+     * elements info
      */
     private boolean signedElemets;
-    
+
     public SignedEncryptedElements(boolean signedElements) {
         this.signedElemets = signedElements;
     }
-    
+
     /**
      * @return Returns the xPathExpressions.
      */
@@ -59,7 +61,8 @@ public class SignedEncryptedElements extends AbstractSecurityAssertion {
     }
 
     /**
-     * @param pathVersion The xPathVersion to set.
+     * @param pathVersion
+     *            The xPathVersion to set.
      */
     public void setXPathVersion(String pathVersion) {
         xPathVersion = pathVersion;
@@ -73,18 +76,58 @@ public class SignedEncryptedElements extends AbstractSecurityAssertion {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+
+        String localName = getName().getLocalPart();
+        String namespaceURI = getName().getNamespaceURI();
+
+        String prefix;
+        String writerPrefix = writer.getPrefix(namespaceURI);
+
+        if (writerPrefix == null) {
+            prefix = getName().getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        } else {
+            prefix = writerPrefix;
+        }
+
+        // <sp:SignedElements> | <sp:EncryptedElements>
+        writer.writeStartElement(prefix, localName, namespaceURI);
+
+        if (writerPrefix == null) {
+            // xmlns:sp=".."
+            writer.writeNamespace(prefix, namespaceURI);
+        }
+
+        if (xPathVersion != null) {
+            writer.writeAttribute(prefix, namespaceURI,
+                    Constants.ATTR_XPATH_VERSION.getLocalPart(), xPathVersion);
+        }
+
+        String xpathExpression;
+
+        for (Iterator iterator = xPathExpressions.iterator(); iterator
+                .hasNext();) {
+            xpathExpression = (String) iterator.next();
+            // <sp:XPath ..>
+            writer.writeStartElement(prefix, Constants.XPATH_.getLocalPart(),
+                    namespaceURI);
+            writer.writeCharacters(xpathExpression);
+            writer.writeEndElement();
+        }
+
+        // </sp:SignedElements> | </sp:EncryptedElements>
+        writer.writeEndElement();
     }
 
     public QName getName() {
         if (signedElemets) {
             return Constants.SIGNED_ELEMENTS;
-        } 
-        
+        }
+
         return Constants.ENCRYPTED_ELEMENTS;
     }
 
     public PolicyComponent normalize() {
         return this;
-    }  
+    }
 }

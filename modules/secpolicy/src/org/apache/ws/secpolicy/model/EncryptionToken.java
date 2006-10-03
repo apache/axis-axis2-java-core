@@ -20,7 +20,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.neethi.PolicyComponent;
 import org.apache.ws.secpolicy.Constants;
 
 public class EncryptionToken extends AbstractSecurityAssertion implements TokenWrapper {
@@ -49,13 +48,61 @@ public class EncryptionToken extends AbstractSecurityAssertion implements TokenW
         return Constants.ENCRYPTION_TOKEN;
     }
 
-    public PolicyComponent normalize() {
-        throw new UnsupportedOperationException();
-    }
-
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();
+        String localname = Constants.ENCRYPTION_TOKEN.getLocalPart();
+        String namespaceURI = Constants.ENCRYPTION_TOKEN.getNamespaceURI();
+        String prefix;
+        
+        String writerPrefix = writer.getPrefix(namespaceURI);
+        
+        if (writerPrefix == null) {
+            prefix = Constants.ENCRYPTION_TOKEN.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        } else {
+            prefix = writerPrefix;
+        }
+        
+        // <sp:EncryptionToken>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+        
+        if (writerPrefix == null) {
+            // xmlns:sp=".."
+            writer.writeNamespace(prefix, namespaceURI);
+        }
+        
+        
+        String wspNamespaceURI = Constants.POLICY.getNamespaceURI();
+        
+        String wspPrefix;
+        
+        String wspWriterPrefix = writer.getPrefix(wspNamespaceURI);
+        
+        if (wspWriterPrefix == null) {
+            wspPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(wspPrefix, wspNamespaceURI);
+            
+        } else {
+            wspPrefix = wspWriterPrefix;
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(wspPrefix, Constants.POLICY.getLocalPart(), wspNamespaceURI);
+        
+        if (wspWriterPrefix == null) {
+            // xmlns:wsp=".."
+            writer.writeNamespace(wspPrefix, wspNamespaceURI);
+        }
+        
+        if (encryptionToken == null) {
+            throw new RuntimeException("EncryptionToken is not set");
+        }
+        
+        encryptionToken.serialize(writer);
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:EncryptionToken>
+        writer.writeEndElement();
     }
-    
-    
 }

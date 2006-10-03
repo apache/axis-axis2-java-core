@@ -28,13 +28,15 @@ import javax.xml.stream.XMLStreamWriter;
  * Model bean for the IssuedToken assertion.
  */
 public class IssuedToken extends Token {
-    
+
     private OMElement issuerEpr;
+
     private OMElement rstTemplate;
-    
+
     boolean requireExternalReference;
+
     boolean requireInternalReference;
-    
+
     /**
      * @return Returns the issuerEpr.
      */
@@ -43,7 +45,8 @@ public class IssuedToken extends Token {
     }
 
     /**
-     * @param issuerEpr The issuerEpr to set.
+     * @param issuerEpr
+     *            The issuerEpr to set.
      */
     public void setIssuerEpr(OMElement issuerEpr) {
         this.issuerEpr = issuerEpr;
@@ -57,7 +60,8 @@ public class IssuedToken extends Token {
     }
 
     /**
-     * @param requireExternalReference The requireExternalReference to set.
+     * @param requireExternalReference
+     *            The requireExternalReference to set.
      */
     public void setRequireExternalReference(boolean requireExternalReference) {
         this.requireExternalReference = requireExternalReference;
@@ -71,7 +75,8 @@ public class IssuedToken extends Token {
     }
 
     /**
-     * @param requireInternalReference The requireInternalReference to set.
+     * @param requireInternalReference
+     *            The requireInternalReference to set.
      */
     public void setRequireInternalReference(boolean requireInternalReference) {
         this.requireInternalReference = requireInternalReference;
@@ -85,33 +90,106 @@ public class IssuedToken extends Token {
     }
 
     /**
-     * @param rstTemplate The rstTemplate to set.
+     * @param rstTemplate
+     *            The rstTemplate to set.
      */
     public void setRstTemplate(OMElement rstTemplate) {
         this.rstTemplate = rstTemplate;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#getName()
-     */
     public QName getName() {
         return Constants.ISSUED_TOKEN;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.neethi.Assertion#normalize()
-     */
-    public PolicyComponent normalize() {
-        // TODO TODO sanka
-        throw new UnsupportedOperationException("TODO sanka");
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.neethi.PolicyComponent#serialize(javax.xml.stream.XMLStreamWriter)
-     */
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO TODO sanka
-        throw new UnsupportedOperationException("TODO sanka");
+        String localname = Constants.ISSUED_TOKEN.getLocalPart();
+        String namespaceURI = Constants.ISSUED_TOKEN.getNamespaceURI();
+
+        String prefix;
+        String writerPrefix = writer.getPrefix(namespaceURI);
+
+        if (writerPrefix == null) {
+            prefix = Constants.ISSUED_TOKEN.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+
+        } else {
+            prefix = writerPrefix;
+        }
+
+        // <sp:IssuedToken>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+
+        if (writerPrefix == null) {
+            writer.writeNamespace(prefix, namespaceURI);
+        }
+
+        String inclusion = getInclusion();
+        if (inclusion != null) {
+            writer.writeAttribute(prefix, namespaceURI,
+                    Constants.ATTR_INCLUDE_TOKEN, inclusion);
+        }
+
+        if (issuerEpr != null) {
+            writer.writeStartElement(prefix, Constants.ISSUER.getLocalPart(),
+                    namespaceURI);
+            issuerEpr.serialize(writer);
+            writer.writeEndElement();
+        }
+
+        if (rstTemplate != null) {
+            // <sp:RequestSecurityTokenTemplate>
+            writer.writeStartElement(prefix,
+                    Constants.REQUEST_SECURITY_TOKEN_TEMPLATE.getLocalPart(),
+                    namespaceURI);
+
+            rstTemplate.serialize(writer);
+
+            // </sp:RequestSecurityTokenTemplate>
+            writer.writeEndElement();
+        }
+
+        String policyLocalName = Constants.PROTECTION_TOKEN.getLocalPart();
+        String policyNamespaceURI = Constants.PROTECTION_TOKEN
+                .getNamespaceURI();
+
+        String wspPrefix;
+
+        String wspWriterPrefix = writer.getPrefix(policyNamespaceURI);
+
+        if (wspWriterPrefix == null) {
+            wspPrefix = Constants.PROTECTION_TOKEN.getPrefix();
+            writer.setPrefix(wspPrefix, policyNamespaceURI);
+        } else {
+            wspPrefix = wspWriterPrefix;
+        }
+
+        if (isRequireExternalReference() || isRequireInternalReference()) {
+
+            // <wsp:Policy>
+            writer.writeStartElement(wspPrefix, policyLocalName,
+                    policyNamespaceURI);
+
+            if (wspWriterPrefix == null) {
+                // xmlns:wsp=".."
+                writer.writeNamespace(wspPrefix, policyNamespaceURI);
+            }
+
+            if (isRequireExternalReference()) {
+                // <sp:RequireExternalReference />
+                writer.writeEmptyElement(prefix, Constants.REQUIRE_EXTERNAL_REFERNCE.getLocalPart(), namespaceURI);
+            }
+            
+            if (isRequireInternalReference()) {
+                // <sp:RequireInternalReference />
+                writer.writeEmptyElement(prefix, Constants.REQUIRE_INTERNAL_REFERNCE.getLocalPart(), namespaceURI);
+            }
+            
+            // <wsp:Policy>
+            writer.writeEndElement();
+        }
+
+        // </sp:IssuedToken>
+        writer.writeEndElement();
     }
 
 }

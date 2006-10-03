@@ -58,9 +58,60 @@ public class ProtectionToken extends AbstractSecurityAssertion implements TokenW
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        // TODO Auto-generated method stub
+        String localname = Constants.PROTECTION_TOKEN.getLocalPart();
+        String namespaceURI = Constants.PROTECTION_TOKEN.getNamespaceURI();
         
-    }
-    
-    
+        String prefix;
+        
+        String writerPrefix = writer.getPrefix(namespaceURI);
+        if (writerPrefix == null) {
+            prefix = Constants.PROTECTION_TOKEN.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+            
+        } else {
+            prefix = writerPrefix;
+        }
+        
+        // <sp:ProtectionToken>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+        
+        if (writerPrefix == null) {
+            // xmlns:sp=".."
+            writer.writeNamespace(prefix, namespaceURI);
+        }
+        
+        String policyLocalName = Constants.PROTECTION_TOKEN.getLocalPart();
+        String policyNamespaceURI = Constants.PROTECTION_TOKEN.getNamespaceURI();
+        
+        String wspPrefix;
+        
+        String wspWriterPrefix = writer.getPrefix(policyNamespaceURI);
+        
+        if (wspWriterPrefix == null) {
+            wspPrefix = Constants.PROTECTION_TOKEN.getPrefix();
+            writer.setPrefix(wspPrefix, policyNamespaceURI);
+        } else {
+            wspPrefix = wspWriterPrefix;
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(wspPrefix, policyLocalName, policyNamespaceURI);
+        
+        if (wspWriterPrefix == null) {
+            // xmlns:wsp=".."
+            writer.writeNamespace(wspPrefix, policyNamespaceURI);
+        }
+        
+        if (protectionToken == null) {
+            throw new RuntimeException("ProtectionToken is not set");
+        }
+        
+        protectionToken.serialize(writer);
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+
+        // </sp:ProtectionToken>
+        writer.writeEndElement();
+    }    
 }

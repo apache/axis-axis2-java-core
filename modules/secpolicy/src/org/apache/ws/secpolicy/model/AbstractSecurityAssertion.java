@@ -19,11 +19,11 @@ import org.apache.neethi.Assertion;
 import org.apache.neethi.Constants;
 import org.apache.neethi.PolicyComponent;
 
-public abstract class AbstractSecurityAssertion implements Assertion{
-    
-    private boolean normalized = false;
+public abstract class AbstractSecurityAssertion implements Assertion {
 
     private boolean isOptional;
+    
+    private boolean normalized = false;
 
     public boolean isOptional() {
         return isOptional;
@@ -46,6 +46,14 @@ public abstract class AbstractSecurityAssertion implements Assertion{
     }
     
     public boolean isNormalized() {
-        return normalized;
+        return true;
     }
+
+    public PolicyComponent normalize() {
+        
+        /*
+         * TODO: Handling the isOptional:TRUE case
+         */
+        return this;
+    }    
 }

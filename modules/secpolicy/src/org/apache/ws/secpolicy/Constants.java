@@ -186,6 +186,9 @@ public class Constants {
 
     // /////////////////////////////////////////////////////////////////////
 
+    public static final QName ATTR_XPATH_VERSION = new QName(SP_NS, "XPathVersion", Constants.SP_PREFIX);
+    
+    ////////////////////////////////////////////////////////////////////////
     public static final QName INCLUDE_TOKEN = new QName(SP_NS, "IncludeToken",
             Constants.SP_PREFIX);
 
@@ -410,4 +413,7 @@ public class Constants {
 
     public final static QName REQUIRE_CLIENT_CERTIFICATE = new QName(
             "RequireClientCertificate");
+
+    public final static QName XPATH_ = new QName(Constants.SP_NS, "XPath",
+            Constants.SP_PREFIX);
 }

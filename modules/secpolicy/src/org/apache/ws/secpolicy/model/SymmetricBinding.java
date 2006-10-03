@@ -144,6 +144,96 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        throw new UnsupportedOperationException();        
+        
+        String localname = Constants.SYMMETRIC_BINDING.getLocalPart();
+        String namespaceURI = Constants.SYMMETRIC_BINDING.getNamespaceURI();
+        
+        String prefix;
+        String writerPrefix = writer.getPrefix(namespaceURI);
+        
+        if (writerPrefix == null) {
+            prefix = Constants.SYMMETRIC_BINDING.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        } else {
+            prefix = writerPrefix;
+        }
+
+        // <sp:SymmetricBinding>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+        
+        if (writerPrefix == null) {
+            // xmlns:sp=".."
+            writer.writeNamespace(prefix, namespaceURI);
+        }
+        
+        
+        String policyLocalName = Constants.POLICY.getLocalPart();
+        String policyNamespaceURI = Constants.POLICY.getNamespaceURI();
+        
+        String wspPrefix;
+        
+        String wspWriterPrefix = writer.getPrefix(policyNamespaceURI);
+        if (wspWriterPrefix == null) {
+            wspPrefix = Constants.POLICY.getPrefix();
+            writer.setPrefix(wspPrefix, policyNamespaceURI);
+            
+        } else {
+           wspPrefix = wspWriterPrefix;
+        }
+        // <wsp:Policy>
+        writer.writeStartElement(wspPrefix, policyLocalName, policyNamespaceURI);
+        
+        if (encryptionToken != null) {
+            encryptionToken.serialize(writer);
+            
+        } else if ( protectionToken != null) {
+            protectionToken.serialize(writer);
+            
+        } else {
+            throw new RuntimeException("Either EncryptionToken or ProtectionToken must be set");
+        }
+        
+        AlgorithmSuite algorithmSuite = getAlgorithmSuite();
+        
+        if (algorithmSuite == null) {
+            throw new RuntimeException("AlgorithmSuite must be set");
+        }
+        // <sp:AlgorithmSuite />
+        algorithmSuite.serialize(writer);
+        
+        Layout layout = getLayout();
+        if (layout != null) {
+            // <sp:Layout />
+            layout.serialize(writer);
+        }
+        
+        if (isIncludeTimestamp()) {
+            // <sp:IncludeTimestamp />
+            writer.writeStartElement(prefix, Constants.INCLUDE_TIMESTAMP.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (Constants.ENCRYPT_BEFORE_SIGNING.equals(protectionToken)) {
+            // <sp:EncryptBeforeSigning />
+            writer.writeStartElement(prefix, Constants.ENCRYPT_BEFORE_SIGNING, namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isSignatureProtection()) {
+            // <sp:EncryptSignature />
+            writer.writeStartElement(prefix, Constants.ENCRYPT_SIGNATURE.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (protectionToken != null) {
+            protectionToken.serialize(writer);
+        }
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:SymmetricBinding>
+        writer.writeEndElement();
+        
     }
 }

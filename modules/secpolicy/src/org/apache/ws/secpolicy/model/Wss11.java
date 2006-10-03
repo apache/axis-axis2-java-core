@@ -16,6 +16,11 @@
 
 package org.apache.ws.secpolicy.model;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.ws.secpolicy.Constants;
+
 public class Wss11 extends Wss10 {
     
     private boolean MustSupportRefThumbprint;
@@ -58,6 +63,76 @@ public class Wss11 extends Wss10 {
     public void setRequireSignatureConfirmation(boolean requireSignatureConfirmation) {
         RequireSignatureConfirmation = requireSignatureConfirmation;
     }
-    
-    
+    public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+        String localname = Constants.WSS11.getLocalPart();
+        String namespaceURI = Constants.WSS11.getNamespaceURI();
+
+        String prefix = writer.getPrefix(namespaceURI);
+        if (prefix == null) {
+            prefix = Constants.WSS11.getPrefix();
+            writer.setPrefix(prefix, namespaceURI);
+        }
+
+        // <sp:Wss11>
+        writer.writeStartElement(prefix, localname, namespaceURI);
+        
+        // xmlns:sp=".."
+        writer.writeNamespace(prefix, namespaceURI);
+        
+        String pPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (pPrefix == null) {
+            writer.setPrefix(Constants.POLICY.getPrefix(), Constants.POLICY.getNamespaceURI());
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(prefix, Constants.POLICY.getLocalPart(), Constants.POLICY.getNamespaceURI());
+        
+        // <sp:MustSupportRefKeyIndentifier />
+        if (isMustSupportRefKeyIdentifier()) {
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_KEY_IDENTIFIER.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportRefIssuerSerial()) {
+            // <sp:MustSupportRefIssuerSerial />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_ISSUER_SERIAL.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportRefExternalURI()) {
+            // <sp:MustSupportRefExternalURI />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_EXTERNAL_URI.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportRefEmbeddedToken()) {
+            // <sp:MustSupportRefEmbeddedToken />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_EMBEDDED_TOKEN.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportRefThumbprint()) {
+            // <sp:MustSupportRefThumbprint />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_THUMBPRINT.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isMustSupportRefEncryptedKey()) {
+            // <sp:MustSupportRefEncryptedKey />
+            writer.writeStartElement(prefix, Constants.MUST_SUPPORT_REF_ENCRYPTED_KEY.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        if (isRequireSignatureConfirmation()) {
+            // <sp:RequireSignatureConfirmation />
+            writer.writeStartElement(prefix, Constants.REQUIRE_SIGNATURE_CONFIRMATION.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
+        // </sp:Wss11>
+        writer.writeEndElement();
+    }
 }

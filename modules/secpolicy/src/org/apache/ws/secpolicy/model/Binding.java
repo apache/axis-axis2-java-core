@@ -82,8 +82,4 @@ public abstract class Binding extends AbstractSecurityAssertion implements Algor
     public void setSignedSupportingToken(SupportingToken signedSupportingToken) {
         this.signedSupportingToken = signedSupportingToken;
     }
-    
-    
-    
-    
 }
