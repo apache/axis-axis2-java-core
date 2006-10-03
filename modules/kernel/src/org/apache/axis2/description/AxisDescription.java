@@ -92,12 +92,13 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public boolean isParameterLocked(String parameterName) {
 
-        if (getParent() != null && getParent().isParameterLocked(parameterName)) {
+        if (this.parent != null && this.parent.isParameterLocked(parameterName)) {
             return true;
         }
 
-        return getParameter(parameterName) != null
-                && getParameter(parameterName).isLocked();
+        Parameter parameter = getParameter(parameterName);
+        return parameter != null
+                && parameter.isLocked();
     }
 
     public void setParent(AxisDescription parent) {
@@ -281,8 +282,8 @@ public abstract class AxisDescription implements ParameterInclude,
             return (AxisConfiguration) this;
         }
 
-        if (getParent() != null) {
-            return getParent().getAxisConfiguration();
+        if (this.parent != null) {
+            return this.parent.getAxisConfiguration();
         }
 
         return null;

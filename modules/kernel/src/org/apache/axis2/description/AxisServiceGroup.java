@@ -89,7 +89,7 @@ public class AxisServiceGroup extends AxisDescription {
         AxisConfiguration axisConfig = (AxisConfiguration) getParent();
 
         if (axisConfig != null) {
-            Iterator modules = getEngagedModules().iterator();
+            Iterator modules = this.engagedModules.iterator();
 
             while (modules.hasNext()) {
                 QName moduleName = (QName) modules.next();
@@ -204,7 +204,7 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public Object getKey() {
-        return getServiceGroupName();
+        return this.serviceGroupName;
     }
 
     public boolean isEngaged(QName moduleName) {

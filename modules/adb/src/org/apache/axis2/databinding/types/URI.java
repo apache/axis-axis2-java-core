@@ -1413,7 +1413,7 @@ import java.io.Serializable;
       throw new MalformedURIException(
               "Query string can only be set for a generic URI!");
     }
-    else if (getPath() == null) {
+    else if (this.m_path == null) {
       throw new MalformedURIException(
               "Query string cannot be set when path is null!");
     }

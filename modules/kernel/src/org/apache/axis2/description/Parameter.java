@@ -160,7 +160,7 @@ public class Parameter {
             return true;
         }
         if(obj instanceof Parameter){
-            return ((Parameter) obj).getName().equals(name);
+            return ((Parameter) obj).name.equals(name);
         }
         return false;
     }

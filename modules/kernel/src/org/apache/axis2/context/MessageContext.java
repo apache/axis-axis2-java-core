@@ -1038,7 +1038,7 @@ public class MessageContext extends AbstractContext {
      * @return boolean
      */
     public boolean isHeaderPresent() {
-        OMElement node = getEnvelope().getFirstElement();
+        OMElement node = this.envelope.getFirstElement();
         if (node ==null)
         {
         	return false;

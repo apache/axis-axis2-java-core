@@ -558,7 +558,7 @@ public class AxisService extends AxisDescription {
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null) {
                     try {
-                        EndpointReference[] eprsForService = listener.getEPRsForService(getName(), requestIP);
+                        EndpointReference[] eprsForService = listener.getEPRsForService(this.name, requestIP);
                         if (eprsForService != null) {
                             for (int i = 0; i < eprsForService.length; i++) {
                                 EndpointReference endpointReference = eprsForService[i];
@@ -574,7 +574,7 @@ public class AxisService extends AxisDescription {
                 }
             }
         } else {
-            List trs = getExposedTransports();
+            List trs = this.exposedTransports;
             for (int i = 0; i < trs.size(); i++) {
                 String trsName = (String) trs.get(i);
                 TransportInDescription transportIn = axisConfig.getTransportIn(
@@ -583,7 +583,7 @@ public class AxisService extends AxisDescription {
                     TransportListener listener = transportIn.getReceiver();
                     if (listener != null) {
                         try {
-                            EndpointReference[] eprsForService = listener.getEPRsForService(getName(), requestIP);
+                            EndpointReference[] eprsForService = listener.getEPRsForService(this.name, requestIP);
                             if (eprsForService != null) {
                                 for (int j = 0; j < eprsForService.length; j++) {
                                     EndpointReference endpointReference = eprsForService[j];
@@ -636,13 +636,13 @@ public class AxisService extends AxisDescription {
         } else {
             setWsdlfound(true);
             //pick the endpoint and take it as the epr for the WSDL
-            getWSDL(out, new String[]{getEndpoint()}, "services");
+            getWSDL(out, new String[]{this.endpoint}, "services");
         }
 
     }
 
     private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
-        if (isWsdlfound()) {
+        if (this.wsdlfound) {
             AxisService2OM axisService2WOM = new AxisService2OM(this,
                     serviceURL, "document", "literal", servicePath);
             try {
@@ -695,7 +695,7 @@ public class AxisService extends AxisDescription {
         } else {
             setWsdlfound(true);
             //pick the endpoint and take it as the epr for the WSDL
-            getWSDL2(out, new String[]{getEndpoint()});
+            getWSDL2(out, new String[]{this.endpoint});
         }
     }
 
@@ -706,7 +706,7 @@ public class AxisService extends AxisDescription {
     }
 
     private void getWSDL2(OutputStream out, String [] serviceURL) throws AxisFault {
-        if (isWsdlfound()) {
+        if (this.wsdlfound) {
             AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
             try {
                 OMElement wsdlElement = axisService2WSDL2.generateOM();
@@ -983,7 +983,7 @@ public class AxisService extends AxisDescription {
     }
 
     public Object getKey() {
-        return getName();
+        return this.name;
     }
 
     public boolean isActive() {
@@ -1368,8 +1368,8 @@ public class AxisService extends AxisDescription {
     public void populateSchemaMappings() {
 
         //populate the axis service with the necessary schema references
-        ArrayList schema = getSchema();
-        if (!isSchemaLocationsAdjusted()) {
+        ArrayList schema = this.schemaList;
+        if (!this.schemaLocationsAdjusted) {
             Hashtable nameTable = new Hashtable();
             //calculate unique names for the schemas
             calcualteSchemaNames(schema, nameTable);
@@ -1473,7 +1473,7 @@ public class AxisService extends AxisDescription {
             xmlSchemaExternal.setSchemaLocation(
                     customSchemaNamePrefix == null ?
                             //use the default mode
-                            (getName() +
+                            (this.name +
                                     "?xsd=" +
                                     nameTable.get(s)) :
                             //custom prefix is present - add the custom prefix

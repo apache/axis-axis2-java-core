@@ -77,7 +77,7 @@ public class ServiceContext extends AbstractContext {
      */
     public EndpointReference getMyEPR(String transport) throws AxisFault {
         axisService.isEnableAllTransports();
-        ConfigurationContext configctx = getConfigurationContext();
+        ConfigurationContext configctx = this.configContext;
         if (configctx != null) {
             ListenerManager lm = configctx.getListenerManager();
             if (!lm.isListenerRunning(transport)) {

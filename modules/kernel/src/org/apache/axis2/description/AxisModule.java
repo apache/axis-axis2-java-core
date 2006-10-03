@@ -187,8 +187,8 @@ public class AxisModule implements FlowInclude, ParameterInclude {
         // checking the locked value of parent
         boolean loscked = false;
 
-        if (getParent() != null) {
-            loscked = getParent().isParameterLocked(parameterName);
+        if (this.parent != null) {
+            loscked = this.parent.isParameterLocked(parameterName);
         }
 
         if (loscked) {

@@ -95,7 +95,7 @@ public class AxisMessage extends AxisDescription {
     }
 
     public Object getKey() {
-        return getElementQName();
+        return this.elementQname;
     }
 
     public XmlSchemaElement getSchemaElement() {
@@ -109,7 +109,7 @@ public class AxisMessage extends AxisDescription {
                     Object item = schemaItems.next();
                     if (item instanceof XmlSchemaElement) {
                         XmlSchemaElement xmlSchemaElement = (XmlSchemaElement) item;
-                        if (xmlSchemaElement.getQName().equals(getElementQName())) {
+                        if (xmlSchemaElement.getQName().equals(this.elementQname)) {
                             return xmlSchemaElement;
                         }
                     }

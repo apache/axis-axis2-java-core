@@ -68,24 +68,24 @@ public class Notation implements java.io.Serializable {
             return false;
         Notation other = (Notation) obj;
         if (name == null) {
-            if (other.getName() != null) {
+            if (other.name != null) {
                 return false;
             }
-        } else if (!name.equals(other.getName())) {
+        } else if (!name.equals(other.name)) {
             return false;
         }
         if (publicURI == null) {
-            if (other.getPublic() != null) {
+            if (other.publicURI != null) {
                 return false;
             }
-        } else if (!publicURI.equals(other.getPublic())) {
+        } else if (!publicURI.equals(other.publicURI)) {
             return false;
         }
         if (systemURI == null) {
-            if (other.getSystem() != null) {
+            if (other.systemURI != null) {
                 return false;
             }
-        } else if (!systemURI.equals(other.getSystem())) {
+        } else if (!systemURI.equals(other.systemURI)) {
             return false;
         }
         return true;

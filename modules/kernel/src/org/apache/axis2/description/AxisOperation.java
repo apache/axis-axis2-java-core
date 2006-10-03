@@ -352,7 +352,7 @@ public abstract class AxisOperation extends AxisDescription
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
-                        this.getName().toString(), msgContext.getRelatesTo().getValue()));
+                        this.name.toString(), msgContext.getRelatesTo().getValue()));
             }
         }
         return operationContext;
@@ -393,22 +393,21 @@ public abstract class AxisOperation extends AxisDescription
 
         int temp = WSDL20_2004Constants.MEP_CONSTANT_INVALID;
 
-        String messageExchangePattern = getMessageExchangePattern();
-        if (WSDL20_2004Constants.MEP_URI_IN_OUT.equals(messageExchangePattern) || WSDL20_2006Constants.MEP_URI_IN_OUT.equals(messageExchangePattern)) {
+        if (WSDL20_2004Constants.MEP_URI_IN_OUT.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_IN_OUT;
-        } else if (WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern) || WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(messageExchangePattern)) {
+        } else if (WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern) || WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(messageExchangePattern)) {
+        } else if (WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_IN.equals(messageExchangePattern) || WSDL20_2006Constants.MEP_URI_OUT_IN.equals(messageExchangePattern)) {
+        } else if (WSDL20_2004Constants.MEP_URI_OUT_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_IN;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern) || WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(messageExchangePattern)) {
+        } else if (WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern) || WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(messageExchangePattern)) {
+        } else if (WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_OPTIONAL_IN;
-        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern) || WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(messageExchangePattern)) {
+        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern) || WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(messageExchangePattern)) {
+        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_ROBUST_OUT_ONLY;
         }
 
@@ -537,7 +536,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public Object getKey() {
-        return getName();
+        return this.name;
     }
 
     public ArrayList getFaultMessages() {
@@ -557,7 +556,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public String getInputAction() {
-        String result = getSoapAction();
+        String result = this.soapAction;
         if (result == null || "".equals(result)) {
             if (wsamappingList != null && !wsamappingList.isEmpty()) {
                 result = wsamappingList.get(0).toString();
