@@ -80,7 +80,7 @@ public class PublisherService {
 			OMElement publicationElement = factory.createOMElement(Publication,namespace);
 			
 			int value = r.nextInt();
-			publicationElement.setText(new Integer(value).toString());
+			publicationElement.setText(Integer.toString(value));
 			
 			OMElement publishMethod = factory.createOMElement("publish",namespace);
 			publishMethod.addChild(publicationElement);

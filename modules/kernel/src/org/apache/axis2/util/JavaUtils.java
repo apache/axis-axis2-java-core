@@ -111,13 +111,13 @@ public class JavaUtils {
             // The identifier cannot be mapped strictly according to
             // JSR 101
             if (Character.isJavaIdentifierPart(nameArray[0])) {
-                result.append("_" + nameArray[0]);
+                result.append("_").append(nameArray[0]);
             }
             else {
                 // The XML identifier does not contain any characters
                 // we can map to Java.  Using the length of the string
                 // will make it somewhat unique.
-                result.append("_" + nameArray.length);
+                result.append("_").append(nameArray.length);
             }
         }
 

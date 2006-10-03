@@ -245,16 +245,16 @@ public class EndpointReference implements Serializable {
         StringBuffer buffer = new StringBuffer("Address: " + address);
         
         if (metaData != null)
-            buffer.append(", Metadata: " + metaData);
-        
+            buffer.append(", Metadata: ").append(metaData);
+
         if (referenceParameters != null)
-            buffer.append(", Reference Parameters: " + referenceParameters);
+            buffer.append(", Reference Parameters: ").append(referenceParameters);
         
         if (extensibleElements != null)
-            buffer.append(", Extensibility elements: " + extensibleElements);
+            buffer.append(", Extensibility elements: ").append(extensibleElements);
         
         if (attributes != null)
-            buffer.append(", Attributes: " + attributes);
+            buffer.append(", Attributes: ").append(attributes);
         
         return buffer.toString();
     }

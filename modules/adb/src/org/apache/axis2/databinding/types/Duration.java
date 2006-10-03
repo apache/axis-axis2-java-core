@@ -383,30 +383,30 @@ public class Duration implements Serializable {
         duration.append("P");
 
         if (years != 0) {
-            duration.append(years + "Y");
+            duration.append(years).append("Y");
         }
         if (months != 0) {
-            duration.append(months + "M");
+            duration.append(months).append("M");
         }
         if (days != 0) {
-            duration.append(days + "D");
+            duration.append(days).append("D");
         }
         if (hours != 0 || minutes != 0 || seconds != 0.0) {
             duration.append("T");
 
             if (hours != 0) {
-                duration.append(hours + "H");
+                duration.append(hours).append("H");
 
             }
             if (minutes != 0) {
-                duration.append(minutes + "M");
+                duration.append(minutes).append("M");
 
             }
             if (seconds != 0) {
                 if (seconds == (int) seconds) {
-                    duration.append((int) seconds + "S");
+                    duration.append((int) seconds).append("S");
                 } else {
-                    duration.append(seconds + "S");
+                    duration.append(seconds).append("S");
                 }
             }
         }
