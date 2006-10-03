@@ -110,23 +110,14 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 }
 
                 OMElement result = (OMElement) method.invoke(obj, args);
-                if (result == null) {
-                    throw new AxisFault(Messages.getMessage("implReturnedNull",
-                        opDesc.getName().toString()));
-                }
-
-                AxisService service = msgContext.getAxisService();
-                result.declareNamespace(service.getTargetNamespace(),
-                        service.getTargetNamespacePrefix());
-                OMElement bodyContent;
-
                 SOAPFactory fac = getSOAPFactory(msgContext);
-                bodyContent = result;
-
                 SOAPEnvelope envelope = fac.getDefaultEnvelope();
 
-                if (bodyContent != null) {
-                    envelope.getBody().addChild(bodyContent);
+                if (result != null) {
+                    AxisService service = msgContext.getAxisService();
+                    result.declareNamespace(service.getTargetNamespace(),
+                        service.getTargetNamespacePrefix());
+                    envelope.getBody().addChild(result);
                 }
 
                 newmsgContext.setEnvelope(envelope);
