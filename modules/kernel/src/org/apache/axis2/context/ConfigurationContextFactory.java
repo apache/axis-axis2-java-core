@@ -130,7 +130,7 @@ public class ConfigurationContextFactory {
         if (restPathParam != null) {
             String restPath = ((String) restPathParam.getValue()).trim();
             if (restPath.length() > 0) {
-                configContext.setServicePath(restPath);
+                configContext.setRESTPath(restPath);
             }
         }
     }
