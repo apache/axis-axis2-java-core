@@ -46,31 +46,22 @@ import java.lang.reflect.Method;
 public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
         implements MessageReceiver {
 
-    /**
-     * Field log
-     */
 	private static final Log log = LogFactory.getLog(RawXMLINOutMessageReceiver.class);
 
-    /**
-     * Constructor RawXMLProvider
-     */
-    public RawXMLINOutMessageReceiver() {
-    }
-
-    public Method findOperation(AxisOperation op, Class ImplClass) {
-        Method method = null;
+    private Method findOperation(AxisOperation op, Class ImplClass) {
         String methodName = op.getName().getLocalPart();
         Method[] methods = ImplClass.getMethods();
 
         for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals(methodName)) {
-                method = methods[i];
-
-                break;
+            if (methods[i].getName().equals(methodName) &&
+                methods[i].getParameterTypes().length == 1 &&
+                OMElement.class.getName().equals(
+                    methods[i].getParameterTypes()[0].getName())) {
+                return methods[i];
             }
         }
 
-        return method;
+        return null;
     }
 
     /**
@@ -97,19 +88,8 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
             Method method = findOperation(opDesc, ImplClass);
 
             if (method != null) {
-                Class[]  parameters = method.getParameterTypes();
-                Object[] args;
-
-                if ((parameters == null) || (parameters.length == 0)) {
-                    args = new Object[0];
-                } else if (parameters.length == 1) {
-                    OMElement omElement = msgContext.getEnvelope().getBody().getFirstElement();
-                    args = new Object[]{omElement};
-                } else {
-                    throw new AxisFault(Messages.getMessage("rawXmlProviderIsLimited"));
-                }
-
-                OMElement result = (OMElement) method.invoke(obj, args);
+                OMElement result = (OMElement) method.invoke(
+                    obj, new Object[] {msgContext.getEnvelope().getBody().getFirstElement()});
                 SOAPFactory fac = getSOAPFactory(msgContext);
                 SOAPEnvelope envelope = fac.getDefaultEnvelope();
 
@@ -121,9 +101,10 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 }
 
                 newmsgContext.setEnvelope(envelope);
+
             } else {
-                throw new AxisFault(Messages.getMessage("methodNotImplemented",
-                        opDesc.getName().toString()));
+                throw new AxisFault(Messages.getMessage("methodDoesNotExistInOut",
+                    opDesc.getName().toString()));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

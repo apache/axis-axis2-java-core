@@ -43,28 +43,22 @@ import java.lang.reflect.Method;
 public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
         implements MessageReceiver {
 
-    /**
-     * Field log
-     */
 	private static final Log log = LogFactory.getLog(RawXMLINOnlyMessageReceiver.class);
 
-    /**
-     * Field scope
-     */
+    private Method findOperation(AxisOperation op, Class ImplClass) {
+        String methodName = op.getName().getLocalPart();
+        Method[] methods = ImplClass.getMethods();
 
-    /**
-     * Field method
-     */
-    private Method method;
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].getName().equals(methodName) &&
+                methods[i].getParameterTypes().length == 1 &&
+                OMElement.class.getName().equals(
+                    methods[i].getParameterTypes()[0].getName())) {
+                return methods[i];
+            }
+        }
 
-    /**
-     * Field classLoader
-     */
-
-    /**
-     * Constructor RawXMLProvider
-     */
-    public RawXMLINOnlyMessageReceiver() {
+        return null;
     }
 
     /**
@@ -85,45 +79,16 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
                     msgContext.getOperationContext());
 
             AxisOperation op = msgContext.getOperationContext().getAxisOperation();
+            Method method = findOperation(op, ImplClass);
 
-            if (op == null) {
-                throw new AxisFault(
-                        "Operation is not located, if this is doclit style the SOAP-ACTION should specified via the SOAP Action to use the RawXMLProvider");
-            }
-
-            String methodName = op.getName().getLocalPart();
-            Method[] methods = ImplClass.getMethods();
-
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].getName().equals(methodName)) {
-                    this.method = methods[i];
-
-                    break;
-                }
-            }
-
-            if (method == null) {
-                throw new AxisFault(Messages.getMessage("invalidMethodName",
-                        methodName));
-            }
-            Class[] parameters = method.getParameterTypes();
-
-            if ((parameters != null) && (parameters.length == 1)
-                    && OMElement.class.getName().equals(parameters[0].getName())) {
-                OMElement methodElement = msgContext.getEnvelope().getBody().getFirstElement();
-                OMElement parmeter;
-                parmeter = methodElement;
-                Object[] parms = new Object[]{parmeter};
-                // Need not have a return here
-                try {
-                    method.invoke(obj, parms);
-                } catch (Exception e) {
-                    throw new AxisFault(e.getMessage());
-                }
-
+            if (method != null) {
+                method.invoke(
+                    obj, new Object[] {msgContext.getEnvelope().getBody().getFirstElement()});
             } else {
-                throw new AxisFault(Messages.getMessage("rawXmlProviderIsLimited"));
+                throw new AxisFault(Messages.getMessage("methodDoesNotExistInOnly",
+                    op.getName().toString()));
             }
+
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
