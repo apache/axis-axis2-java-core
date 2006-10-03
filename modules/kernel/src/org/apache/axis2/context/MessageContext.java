@@ -417,19 +417,16 @@ public class MessageContext extends AbstractContext {
      * @return Parameter <code>Parameter</code>
      */
     public Parameter getParameter(String key) {
-        if (getAxisOperation() != null) {
-            AxisOperation opDesc = getAxisOperation();
-            return opDesc.getParameter(key);
+        if (axisOperation != null) {
+            return axisOperation.getParameter(key);
         }
 
-        if (getAxisService() != null) {
-            AxisService axisService = getAxisService();
+        if (axisService != null) {
             return axisService.getParameter(key);
         }
 
-        if (getAxisServiceGroup() != null) {
-            AxisServiceGroup axisServiceDesc = getAxisServiceGroup();
-            return axisServiceDesc.getParameter(key);
+        if (axisServiceGroup != null) {
+            return axisServiceGroup.getParameter(key);
         }
 
         if (configurationContext != null) {
