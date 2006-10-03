@@ -57,7 +57,7 @@ public class XMLUtils {
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
 
-    private static String empty = new String("");
+    private static String empty = "";
     private static ByteArrayInputStream bais = new ByteArrayInputStream(empty.getBytes());
 
     static {
@@ -450,7 +450,7 @@ public class XMLUtils {
     }
 
     public static String base64encode(byte[] bytes) {
-        return new String(Base64.encode(bytes));
+        return Base64.encode(bytes);
     }
 
     public static InputSource getEmptyInputSource() {

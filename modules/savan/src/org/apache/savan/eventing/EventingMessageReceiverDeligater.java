@@ -240,7 +240,7 @@ public class EventingMessageReceiverDeligater implements MessageReceiverDeligate
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(expires);
 			String expirationString = ConverterUtil.convertToString(calendar);
-			expiresElement.setText(expirationString.toString());
+			expiresElement.setText(expirationString);
 			getStatusResponseElement.addChild(expiresElement);
 		}
 		

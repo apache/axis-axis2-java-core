@@ -473,10 +473,8 @@ public class WhiteMesaIneterop extends XMLTestCase implements WhiteMesaConstants
     
     protected void assertValueIsInThePayload (SOAPEnvelope envelope,String value) {
     	SOAPBody body = envelope.getBody();
-    	String bodyStr = body.toString();
-    	
-        String envelopoStr = bodyStr.toString();
-        assertTrue(envelopoStr.indexOf(value)!=-1);
+
+        assertTrue(body.toString().indexOf(value)!=-1);
     }
     
     private void addNamespaces (XPath xpath) {
