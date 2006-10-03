@@ -411,8 +411,7 @@ public class CStructWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(), property);
             XSLTUtils.addAttribute(model, "prefix", name.getPrefix(), property);
 
-            String CName = xmlName;//makeUniqueCStructName(propertyNames, xmlName);
-            XSLTUtils.addAttribute(model, "cname", CName, property);
+            XSLTUtils.addAttribute(model, "cname", xmlName, property);
 
 
             String CClassNameForElement = metainf.getClassNameForQName(name);
@@ -429,7 +428,7 @@ public class CStructWriter implements BeanWriter {
             /**
              * Caps for use in C macros
              */
-            XSLTUtils.addAttribute(model, "caps-cname", CName.toUpperCase(), property);
+            XSLTUtils.addAttribute(model, "caps-cname", xmlName.toUpperCase(), property);
             XSLTUtils.addAttribute(model, "caps-type", CClassNameForElement.toUpperCase(), property);
 
             if (PrimitiveTypeFinder.isPrimitive(CClassNameForElement)){

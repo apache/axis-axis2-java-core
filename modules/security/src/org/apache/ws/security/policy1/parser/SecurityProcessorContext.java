@@ -195,8 +195,7 @@ public class SecurityProcessorContext {
     public PolicyEngineData commitPolicyEngineData() {
         if (pedStackPointer > 2) {
             pedStackPointer--;
-            PolicyEngineData ped = (PolicyEngineData) pedStack.get(pedStackPointer);
-            return ped;
+            return (PolicyEngineData) pedStack.get(pedStackPointer);
         } else if(pedStackPointer == 2) {
             RootPolicyEngineData rootData = (RootPolicyEngineData)this.pedStack.get(0);
             rootData.addTopLevelPED(readCurrentPolicyEngineData());

@@ -135,8 +135,7 @@ public class AddressingFaultsHelper{
 
         messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-        AxisFault fault = new AxisFault(faultReason, new QName(namespace, faultcode, AddressingConstants.WSA_DEFAULT_PREFIX));
-        throw fault;
+        throw new AxisFault(faultReason, new QName(namespace, faultcode, AddressingConstants.WSA_DEFAULT_PREFIX));
     }
 
     private static void setFaultCode(MessageContext messageContext, String faultCode, String faultSubCode) {

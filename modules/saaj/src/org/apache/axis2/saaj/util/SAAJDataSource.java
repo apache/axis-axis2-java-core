@@ -277,11 +277,10 @@ public class SAAJDataSource implements javax.activation.DataSource {
             throw new java.io.IOException("streamClosed");
         }
 
-        int writesz = length;
         int byteswritten = 0;
 
         if ((null != memorybuflist)
-            && (totalsz + writesz > maxCached)) {    // Cache to disk.
+            && (totalsz + length > maxCached)) {    // Cache to disk.
             if (null == cachediskstream) {               // Need to create a disk cache
                 flushToDisk();
             }
@@ -297,7 +296,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
                 }
 
                 // bytes to write is the min. between the remaining bytes and what is left in this buffer.
-                int bytes2write = Math.min((writesz - byteswritten),
+                int bytes2write = Math.min((length - byteswritten),
                                            (currentMemoryBuf.length
                                             - currentMemoryBufSz));
 
@@ -309,18 +308,18 @@ public class SAAJDataSource implements javax.activation.DataSource {
                 currentMemoryBufSz += bytes2write;
 
                 if (byteswritten
-                    < writesz) {    // only get more if we really need it.
+                    < length) {    // only get more if we really need it.
                     currentMemoryBuf = new byte[READ_CHUNK_SZ];
                     currentMemoryBufSz = 0;
                     memorybuflist.add(currentMemoryBuf);    // add it to the chain.
                 }
-            } while (byteswritten < writesz);
+            } while (byteswritten < length);
         }
 
         if (null != cachediskstream) {    // Write to the out going stream.
             cachediskstream.write(data, 0, length);
         }
-        totalsz += writesz;
+        totalsz += length;
     }
 
 
