@@ -512,11 +512,11 @@
             <mkdir dir="target/test-resources/repository-client/conf"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/samples/modules/addressing-${addressing_version}.mar"/>
-            <copy file="conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/test-resources/samples/conf/axis2.xml"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/repository-client/modules/addressing-${addressing_version}.mar"/>
-            <copy file="conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/test-resources/repository-client/conf/axis2.xml"/>
             <mkdir dir="target/toWar/services/"/>
 
@@ -573,7 +573,7 @@
             <mkdir dir="target/test-resources/integrationRepo/conf"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/integrationRepo/modules/addressing-${addressing_version}.mar"/>
-            <copy file="conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/test-resources/integrationRepo/conf/axis2.xml"/>
 
 
@@ -624,7 +624,7 @@
                       tofile="target/groovyRepo/services/groovyService.aar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/groovyRepo/modules/addressing-${addressing_version}.mar"/>
-            <copy file="conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/groovyRepo/conf/axis2.xml"/>
 
             <!-- Spring resources -->
@@ -642,7 +642,7 @@
                   tofile="target/test-resources/default_security_client_repo/modules/rampart-${rampart_version}.mar"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/default_security_client_repo/modules/addressing-${addressing_version}.mar"/>
-            <copy file="conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/test-resources/default_security_client_repo/conf/axis2.xml"/>
 
             <!-- Scenario 1 -->
@@ -1021,15 +1021,15 @@
             <mkdir dir="target/Repository/modules"/>
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/Repository/modules/addressing-${addressing_version}.mar"/>
-            <copy file="conf/axis2.xml"
+            <copy file="../kernel/conf/axis2.xml"
                   tofile="target/Repository/conf/axis2.xml"/>
            
            <mkdir dir="target/perf2/build/repo/conf"/>
            <mkdir dir="target/perf/build/repo/conf"/>
 
-           <copy file="conf/axis2.xml"
+           <copy file="../kernel/conf/axis2.xml"
                   tofile="target/perf2/build/repo/conf/axis2.xml"/>
-<copy file="conf/axis2.xml"
+<copy file="../kernel/conf/axis2.xml"
                   tofile="target/perf/build/repo/conf/axis2.xml"/>
 
 <mkdir dir="target/perf2/build/repo/modules"/>
