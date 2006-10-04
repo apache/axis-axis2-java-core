@@ -32,8 +32,8 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
-import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -667,7 +667,7 @@ public class AxisService extends AxisDescription {
                     "receivers for the service(s)/operation(s) in services.xml. If you have added a custom WSDL in the " +
                     "META-INF directory, then please make sure that make sure that the name of the service in services.xml " +
                     "(/serviceGroup/service/@name) is the same as in the " +
-                    "custom wsdl's service name (/wsdl:definitions/wsdl:service/@name). </reason>"  +
+                    "custom wsdl's service name (/wsdl:definitions/wsdl:service/@name). </reason>" +
                     "</error>";
             out.write(wsdlntfound.getBytes());
             out.flush();
@@ -1430,14 +1430,15 @@ public class AxisService extends AxisDescription {
      * Run 2  - adjust the names
      */
     private void adjustSchemaNames(List schemas, Hashtable nameTable) {
+        Hashtable importedSchemas = new Hashtable();
         //process the schemas in the main schema list
         for (int i = 0; i < schemas.size(); i++) {
-            adjustSchemaName((XmlSchema) schemas.get(i), nameTable);
+            adjustSchemaName((XmlSchema) schemas.get(i), nameTable, importedSchemas);
         }
         //process all the rest in the name table
         Enumeration nameTableKeys = nameTable.keys();
         while (nameTableKeys.hasMoreElements()) {
-            adjustSchemaName((XmlSchema) nameTableKeys.nextElement(), nameTable);
+            adjustSchemaName((XmlSchema) nameTableKeys.nextElement(), nameTable, importedSchemas);
 
         }
     }
@@ -1448,14 +1449,14 @@ public class AxisService extends AxisDescription {
      * @param parentSchema
      * @param nameTable
      */
-    private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable) {
+    private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable, Hashtable importedScheams) {
         XmlSchemaObjectCollection includes = parentSchema.getIncludes();
         for (int j = 0; j < includes.getCount(); j++) {
             Object item = includes.getItem(j);
             if (item instanceof XmlSchemaExternal) {
                 XmlSchemaExternal xmlSchemaExternal = (XmlSchemaExternal) item;
                 XmlSchema s = xmlSchemaExternal.getSchema();
-                adjustSchemaLocation(s, xmlSchemaExternal, nameTable);
+                adjustSchemaLocation(s, xmlSchemaExternal, nameTable, importedScheams);
             }
         }
 
@@ -1468,17 +1469,26 @@ public class AxisService extends AxisDescription {
      * @param xmlSchemaExternal
      * @param nameTable
      */
-    private void adjustSchemaLocation(XmlSchema s, XmlSchemaExternal xmlSchemaExternal, Hashtable nameTable) {
+    private void adjustSchemaLocation(XmlSchema s, XmlSchemaExternal xmlSchemaExternal, Hashtable nameTable, Hashtable importedScheams) {
         if (s != null) {
-            xmlSchemaExternal.setSchemaLocation(
-                    customSchemaNamePrefix == null ?
-                            //use the default mode
-                            (this.name +
-                                    "?xsd=" +
-                                    nameTable.get(s)) :
-                            //custom prefix is present - add the custom prefix
-                            (customSchemaNamePrefix +
-                                    nameTable.get(s)));
+            String schemaLocation = xmlSchemaExternal.getSchemaLocation();
+            if (importedScheams.get(schemaLocation) != null) {
+                xmlSchemaExternal.setSchemaLocation(
+                        (String) importedScheams.get(xmlSchemaExternal.getSchemaLocation()));
+            } else {
+                String newscheamlocation = customSchemaNamePrefix == null ?
+                        //use the default mode
+                        (getName() +
+                                "?xsd=" +
+                                nameTable.get(s)) :
+                        //custom prefix is present - add the custom prefix
+                        (customSchemaNamePrefix +
+                                nameTable.get(s));
+                xmlSchemaExternal.setSchemaLocation(
+                        newscheamlocation);
+                importedScheams.put(schemaLocation, newscheamlocation);
+            }
+
         }
     }
 
