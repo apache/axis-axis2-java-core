@@ -286,9 +286,9 @@ public class AxisService extends AxisDescription {
             if (this.getOperation(axisOperation.getName()) == null) {
                 ArrayList wsamappings = axisOperation.getWsamappingList();
                 if (wsamappings != null) {
-                    for (int j = 0; j < wsamappings.size(); j++) {
+                    for (int j = 0, size = wsamappings.size(); j < size; j++) {
                         String mapping = (String) wsamappings.get(j);
-                        this.mapActionToOperation(mapping, axisOperation);
+                        mapActionToOperation(mapping, axisOperation);
                     }
                 }
                 // this operation is a control operation.
@@ -357,21 +357,30 @@ public class AxisService extends AxisDescription {
          */
 
         Iterator axisMessageIter = axisOperation.getChildren();
-        AxisMessage axisMessage;
 
         while (axisMessageIter.hasNext()) {
-            axisMessage = (AxisMessage) axisMessageIter.next();
+            AxisMessage axisMessage = (AxisMessage) axisMessageIter.next();
             String messageName = axisMessage.getName();
             if (messageName != null && !messageName.equals(operationName)) {
-                operationsAliasesMap.put(messageName, axisOperation);
+                mapActionToOperation(messageName, axisOperation);
             }
         }
 
-        operationsAliasesMap.put(operationName, axisOperation);
+        mapActionToOperation(operationName, axisOperation);
+
         String action = axisOperation.getSoapAction();
         if (action.length() > 0) {
-            operationsAliasesMap.put(action, axisOperation);
+            mapActionToOperation(action, axisOperation);
         }
+
+        ArrayList wsamappings = axisOperation.getWsamappingList();
+        if (wsamappings != null) {
+            for (int j = 0, size = wsamappings.size(); j < size; j++) {
+                String mapping = (String) wsamappings.get(j);
+                mapActionToOperation(mapping, axisOperation);
+            }
+        }
+
         if (axisOperation.getMessageReceiver() == null) {
             axisOperation.setMessageReceiver(
                     loadDefaultMessageReceiver(
