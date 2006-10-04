@@ -1716,6 +1716,7 @@ public class SchemaCompiler {
                 fullyQualifiedClassName);
 
         BeanWriterMetaInfoHolder metaInfHolder = processSimpleType(simpleType, parentSchema);
+        metaInfHolder.setSimple(true);
         
         if(simpleType.getQName() == null) {
             this.processedAnonymousComplexTypesMap.put(xsElt, metaInfHolder);
