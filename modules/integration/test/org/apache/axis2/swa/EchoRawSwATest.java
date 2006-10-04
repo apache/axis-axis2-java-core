@@ -95,7 +95,7 @@ public class EchoRawSwATest extends UtilServerBasedTestCase implements TestConst
 
 
     public void testEchoXMLSync() throws Exception {
-        OMElement payload = createEnvelope();
+
         Options options = new Options();
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.ENABLE_SWA, Constants.VALUE_TRUE);
