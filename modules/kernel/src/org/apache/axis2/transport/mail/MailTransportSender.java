@@ -95,7 +95,7 @@ public class MailTransportSender extends AbstractTransportSender {
     }
 
     private void runtimeMailParameterSetting(MessageContext msgContext) {
-        Object obj = msgContext.getParameter(HTTPConstants.MAIL_SMTP);
+        Object obj = msgContext.getProperty(HTTPConstants.MAIL_SMTP);
         if (obj != null) {
             // Overide the axis2.xml cofiguration setting
             if (obj instanceof HttpTransportProperties.MailProperties) {
