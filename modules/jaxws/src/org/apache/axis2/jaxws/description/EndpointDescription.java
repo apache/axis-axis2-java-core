@@ -91,12 +91,16 @@ public class EndpointDescription {
     private AxisService axisService;
 
     private QName portQName;
+    // Corresponds to a port that was added dynamically via addPort and is not declared (either in WSDL or annotations)
+    private boolean isDynamicPort;
     // Note that an EndpointInterfaceDescription will ONLY be set for an Endpoint-based implementation;
     // it will NOT be set for a Provider-based implementation
     private EndpointInterfaceDescription endpointInterfaceDescription;
 
-    // This is only set on the service-side, not the client side.  It could
-    // be either an SEI class or a service implementation class.
+    // This can be an SEI (on the client or server) or a Service implentation (server only)
+    // Note that for clients that are Dispatch, this will be null.  Also note that a client that was initially
+    // dispatch (sei = null) could later do a getPort(sei), at which time the original EndpointDescription will be
+    // updated with the SEI information.
     private Class implOrSEIClass;
 
     //On Client side, there should be One ServiceClient instance per AxisSerivce
@@ -152,11 +156,15 @@ public class EndpointDescription {
      *                 since they don't use an SEI
      */
     public EndpointDescription(Class theClass, QName portName, ServiceDescription parent) {
+        this(theClass, portName, false, parent);
+    }
+    public EndpointDescription(Class theClass, QName portName, boolean dynamicPort, ServiceDescription parent) {
         // TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
         // TODO: If there is WSDL, could compare the namespace of the defn against the portQName.namespace
         this.parentServiceDescription = parent;
         this.portQName = portName;
         this.implOrSEIClass = theClass;
+        this.isDynamicPort = dynamicPort;
         
         // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
         setupAxisService();
@@ -313,6 +321,37 @@ public class EndpointDescription {
     public AxisService getAxisService() {
         return axisService;
     }
+    
+    public boolean isDynamicPort() {
+        return isDynamicPort;
+    }
+    
+    public void updateWithSEI(Class sei) {
+        // Updating with an SEI is only valid for declared ports; it is not valid for dynamic ports.
+        if (isDynamicPort()) {
+            // TODO: RAS and NLS
+            throw ExceptionFactory.makeWebServiceException("Can not update an SEI on a dynamic port.  PortQName:" + portQName);
+        }
+        if (sei == null) {
+            // TODO: RAS and NLS
+            throw ExceptionFactory.makeWebServiceException("EndpointDescription.updateWithSEI was passed a null SEI.  PortQName:" + portQName);
+        }
+
+        if (endpointInterfaceDescription != null) {
+            // The EndpointInterfaceDescription was created previously based on the port declaration (i.e. WSDL)
+            // so update that with information from the SEI annotations
+            endpointInterfaceDescription.updateWithSEI(sei);
+        }
+        else {
+            // An EndpointInterfaceDescription does not exist yet.  This currently happens in the case where there is 
+            // NO WSDL provided and a Dispatch client is created for prior to a getPort being done for that port.
+            // There was no WSDL to create the EndpointInterfaceDescription from and there was no annotated SEI to
+            // use at that time.  Now we have an annotated SEI, so create the EndpointInterfaceDescription now.
+            endpointInterfaceDescription = new EndpointInterfaceDescription(sei, this);
+        }
+        return;
+    }
+
 
     // ==========================================
     // Annotation-related methods
@@ -474,11 +513,11 @@ public class EndpointDescription {
     
     private void setupAxisService() {
         // TODO: Need to use MetaDataQuery validator to merge WSDL (if any) and annotations (if any)
-        // Build up the AxisService.  Note that if this is a dispatch client, then we don't use the
+        // Build up the AxisService.  Note that if this is a dynamic port, then we don't use the
         // WSDL to build up the AxisService since the port added to the Service by the client is not
         // one that will be present in the WSDL.  A null class passed in as the SEI indicates this 
         // is a dispatch client.
-        if (implOrSEIClass != null && getServiceDescription().getWSDLWrapper() != null) {
+        if (!isDynamicPort && getServiceDescription().getWSDLWrapper() != null) {
             buildAxisServiceFromWSDL();
         }
         else {
@@ -544,11 +583,10 @@ public class EndpointDescription {
     }
     
     private void buildDescriptionHierachy() {
-        // Build up the Description Hierachy.  Note that if this is a dispatch client, then we don't use the
+        // Build up the Description Hierachy.  Note that if this is a dynamic port, then we don't use the
         // WSDL to build up the hierachy since the port added to the Service by the client is not
-        // one that will be present in the WSDL.  A null class passed in as the SEI indicates this 
-        // is a dispatch client.
-        if (implOrSEIClass != null && getServiceDescription().getWSDLWrapper() != null) {
+        // one that will be present in the WSDL.
+        if (!isDynamicPort && getServiceDescription().getWSDLWrapper() != null) {
             buildEndpointDescriptionFromWSDL();
         }
         else if (implOrSEIClass != null){

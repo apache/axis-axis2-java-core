@@ -170,56 +170,157 @@ public class ServiceDescription {
     // START of public accessor methods
     
     /**
-     * Updates the ServiceDescription based on the SEI class and its annotations.
+     * Update or create an EndpointDescription. Updates to existing
+     * EndpointDescriptons will be based on the SEI class and its annotations.  Both declared
+     * ports and dynamic ports can be updated.  A declared port is one that is defined (e.g. in WSDL or
+     * via annotations); a dyamic port is one that is not defined (e.g. not via WSDL or annotations) and 
+     * has been added via Serivce.addPort.  
+     * 
+     * Notes on how an EndpointDescription can be updated or created:
+     * 1) Service.createDispatch can create a Dispatch client for either a declared or dynamic port
+     * 2) Note that creating a Dispatch does not associate an SEI with an endpoint
+     * 3) Service.getPort will associate an SEI with a port
+     * 4) A getPort on an endpoint which was originally created for a Distpatch will update that
+     *    EndpointDescription with the SEI provided on the getPort
+     * 5) Service.getPort can not be called on a dynamic port (per the JAX-WS spec)
+     * 6) Service.addPort can not be called for a declared port
+     * 
      * @param sei
+     *            This will be non-null if the update is of type GET_PORT; it
+     *            will be null if the update is ADD_PORT or CREATE_DISPATCH
      * @param portQName
+     * @param updateType
+     *            Indicates what is causing the update GET_PORT is an attempt to
+     *            get a declared SEI-based port ADD_PORT is an attempt to add a
+     *            previously non-existent dynamic port CREATE_DISPATCH is an
+     *            attempt to create a Dispatch-based client to either a declared
+     *            port or a pre-existing dynamic port.
      */
-    public void updateEndpointDescription(Class sei, QName portQName) {
+    public enum UpdateType {GET_PORT, ADD_PORT, CREATE_DISPATCH}
+    public void updateEndpointDescription(Class sei, QName portQName, UpdateType updateType) {
         
         // TODO: Add support: portQName can be null when called from Service.getPort(Class)
         if (portQName == null) {
             throw new UnsupportedOperationException("ServiceDescription.updateEndpointDescription null PortQName not supported");
         }
         
-        // If a Dispatch client is created on a service for which WSDL was supplied, it is an error
-        // to attempt to add a port with the same name as a port that exists in the WSDL.
-        // REVIEW: Is this a correct check to be making?
-        // TODO: Add logic to check the portQN namespace against the WSDL Definition NS
-        if (sei == null && getWSDLWrapper() != null) {
-            Definition wsdlDefn = getWSDLWrapper().getDefinition();
-            Service wsdlService = wsdlDefn.getService(serviceQName);
-            Port wsdlPort = wsdlService.getPort(portQName.getLocalPart());
-            if (wsdlPort != null) {
+        EndpointDescription endpointDescription = getEndpointDescription(portQName);
+        boolean isPortDeclared = isPortDeclared(portQName);
+
+        switch (updateType) {
+
+        case ADD_PORT:
+            // Port must NOT be declared (e.g. can not already exist in WSDL)
+            // If an EndpointDesc doesn't exist; create it as long as it doesn't exist in the WSDL
+            // TODO: This test can be simplified once isPortDeclared(QName) understands annotations and WSDL as ways to declare a port.
+            if (getWSDLWrapper() != null && isPortDeclared) {
                 // TODO: RAS & NLS
                 throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do an addPort with a PortQN that exists in the WSDL.  PortQN: " + portQName.toString());
             }
-        }
-        
+            else if (endpointDescription == null) {
+                // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
+                // are not created for dynamic ports.  It would be an error to later do a getPort against a dynamic port (per the JAX-WS spec)
+                endpointDescription = new EndpointDescription(sei, portQName, true, this);
+                addEndpointDescription(endpointDescription);
+            }
+            else {
+                // All error check above passed, the EndpointDescription already exists and needs no updating
+            }
+            break;
 
-        if (getEndpointDescription(portQName) != null) {
-            // The port has already been created, so the SEI settings must match.  Either
-            // this port was created as an SEI-based one via a getPort() call or
-            // a Dispatch-based one via an addPort() call.  Those two calls can not be
-            // done for the same portQName.  Additionally, if this is an SEI-based 
-            // endpoint, the SEIs for each subsequent getPort() must match.
-            // REVIEW: It is probably OK of the SEIs are functionally equivilent
-            //         they probably don't need to be the same class, so this check needs
-            //         to be expanded in that case.
-            Class endpointSEI = null;
-            EndpointInterfaceDescription endpointInterfaceDesc = getEndpointDescription(portQName).getEndpointInterfaceDescription();
-            if (endpointInterfaceDesc != null )
-                endpointSEI = endpointInterfaceDesc.getSEIClass();
-            
-            if (sei != endpointSEI)
+        case GET_PORT:
+            // If an endpointDesc doesn't exist, and the port exists in the WSDL, create it
+            // If an endpointDesc already exists and has an associated SEI already, make sure they match
+            // If an endpointDesc already exists and was created for Dispatch (no SEI), update that with the SEI provided on the getPort
+
+            // Port must be declared (e.g. in WSDL or via annotations)
+            // TODO: Once isPortDeclared understands annotations and not just WSDL, the 2nd part of this check can possibly be removed.
+            //       Although consider the check below that updates an existing EndpointDescritpion with an SEI.
+            if (!isPortDeclared || (endpointDescription != null && endpointDescription.isDynamicPort())) {
+                // This guards against the case where an addPort was done previously and now a getPort is done on it.
                 // TODO: RAS & NLS
-                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: SEIs don't match");
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " + portQName.toString());
+            }
+            else if (sei == null) {
+                // TODO: RAS & NLS
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do a getPort with a null SEI.  PortQN: " + portQName.toString());
+            }
+            else if (endpointDescription == null) {
+                // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
+                // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
+                endpointDescription = new EndpointDescription(sei, portQName, this);
+                addEndpointDescription(endpointDescription);
+            }
+            else if (getEndpointSEI(portQName) == null && !endpointDescription.isDynamicPort()) {
+                // Existing endpointDesc from a declared port needs to be updated with an SEI
+                // Note that an EndpointDescritption created from an addPort (i.e. a dynamic port) can not do this.
+                endpointDescription.updateWithSEI(sei);
+            }
+            else if (getEndpointSEI(portQName) != sei) {
+                // TODO: RAS & NLS
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can't do a getPort() specifiying a different SEI than the previous getPort().  PortQN: " 
+                        + portQName + "; current SEI: " + sei + "; previous SEI: " + getEndpointSEI(portQName));
+            }
+            else {
+                // All error check above passed, the EndpointDescription already exists and needs no updating
+            }
+            break;
+
+        case CREATE_DISPATCH:
+            // Port may or may not exist in WSDL.  
+            // If an endpointDesc doesn't exist and it is in the WSDL, it can be created
+            // Otherwise, it is an error.
+            if (endpointDescription != null) {
+                // The EndpoingDescription already exists; nothing needs to be done
+            }
+            else if (sei != null) {
+                // The Dispatch should not have an SEI associated with it on the update call.
+                // REVIEW: Is this a valid check?
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not specify an SEI when creating a Dispatch. PortQN: " + portQName);
+            }
+            else if (isPortDeclared) {
+                // EndpointDescription doesn't exist and this is a declared Port, so create one
+                // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
+                // are not created for Dipsatch-based ports, but might be updated later if a getPort is done against the same declared port.
+                // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
+                endpointDescription = new EndpointDescription(sei, portQName, this);
+                addEndpointDescription(endpointDescription);
+            }
+            else {
+                // The port is not a declared port and it does not have an EndpointDescription, meaning an addPort has not been done for it
+                // This is an error.
+                // TODO: RAS & NLS
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Attempt to create a Dispatch for a non-existant Dynamic por  PortQN: " + portQName);
+            }
+            break;
+        }
+    }
+
+    private Class getEndpointSEI(QName portQName) {
+        Class endpointSEI = null;
+        EndpointInterfaceDescription endpointInterfaceDesc = getEndpointDescription(portQName).getEndpointInterfaceDescription();
+        if (endpointInterfaceDesc != null ) {
+            endpointSEI = endpointInterfaceDesc.getSEIClass();
+        }
+        return endpointSEI;
+    }
+
+    private boolean isPortDeclared(QName portQName) {
+        // TODO: This needs to account for declaration of the port via annotations in addition to just WSDL
+        // TODO: Add logic to check the portQN namespace against the WSDL Definition NS
+        boolean portIsDeclared = false;
+        if (getWSDLWrapper() != null) {
+            Definition wsdlDefn = getWSDLWrapper().getDefinition();
+            Service wsdlService = wsdlDefn.getService(serviceQName);
+            Port wsdlPort = wsdlService.getPort(portQName.getLocalPart());
+            portIsDeclared = (wsdlPort != null);
         }
         else {
-            // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
-            // TODO: Need to create the Axis Description objects after we have all the config info (i.e. from this SEI)
-            EndpointDescription endpointDescription = new EndpointDescription(sei, portQName, this);
-            addEndpointDescription(endpointDescription);
+            // TODO: Add logic to determine if port is declared via annotations when no WSDL is present.  For now, we have to assume it is declared 
+            // so getPort(...) and createDispatch(...) calls work when there is no WSDL.
+            portIsDeclared = true;
         }
+        return portIsDeclared;
     }
     
     public EndpointDescription[] getEndpointDescriptions() {

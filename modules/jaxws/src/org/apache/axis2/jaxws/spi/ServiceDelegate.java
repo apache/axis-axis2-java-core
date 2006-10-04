@@ -99,7 +99,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         throws WebServiceException {
         
         addPortData(portName, bindingId, endpointAddress);
-        DescriptionFactory.updateEndpoint(serviceDescription, null, portName);
+        DescriptionFactory.updateEndpoint(serviceDescription, null, portName, ServiceDescription.UpdateType.ADD_PORT);
     }
     /**
      * Add a new port (either endpoint based or dispatch based) to the portData table.
@@ -153,8 +153,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         if(portData == null){
         	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail2", qname.toString())); 
     	}
-    	
-    	// FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
+        
+        DescriptionFactory.updateEndpoint(serviceDescription, null, qname, ServiceDescription.UpdateType.CREATE_DISPATCH);
+
+        // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
         addBinding(portData.getBindingID());
     	
         XMLDispatch<T> dispatch = new XMLDispatch<T>(portData);
@@ -186,9 +188,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         if (!isPortValid(qname)) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail1", qname.toString()));
         }
+
+        DescriptionFactory.updateEndpoint(serviceDescription, null, qname, ServiceDescription.UpdateType.CREATE_DISPATCH);
         
         PortData portData = (PortData) ports.get(qname);
-        
         addBinding(portData.getBindingID());
         
         JAXWSClientContext clientCtx = createClientContext(portData, Object.class, mode);
@@ -244,7 +247,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	 * if portQname is provided then add that to the ports table.
     	 */
         // TODO: Move the annotation processing to the DescriptionFactory
-        DescriptionFactory.updateEndpoint(serviceDescription, sei, portName);
+        DescriptionFactory.updateEndpoint(serviceDescription, sei, portName, ServiceDescription.UpdateType.GET_PORT);
 
         
     	if(portName!=null){

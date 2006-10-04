@@ -21,7 +21,16 @@ package org.apache.axis2.jaxws.description;
 import java.lang.reflect.Field;
 import java.net.URL;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.jws.WebParam.Mode;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.Holder;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
@@ -105,6 +114,31 @@ public class WSDLDescriptionTests extends TestCase {
         assertEquals(EchoPort.class, sei);
     }
     
+    public void testValidMultipleGetPort() {
+        EchoPort echoPort = service.getPort(validPortQName, EchoPort.class);
+        assertNotNull(echoPort);
+
+        EchoPort echoPort2 = service.getPort(validPortQName, EchoPort.class);
+        assertNotNull(echoPort2);
+    }
+    
+    public void testInvalidMultipleGetPort() {
+        EchoPort echoPort = service.getPort(validPortQName, EchoPort.class);
+        assertNotNull(echoPort);
+
+        try {
+            EchoPort2 echoPort2 = service.getPort(validPortQName, EchoPort2.class);
+            fail("Should have caught exception");
+        }
+        catch (WebServiceException e) {
+            // Expected flow
+        }
+        catch (Exception e) {
+            fail("Caught unexpected exception" + e);
+        }
+        
+    }
+    
     public void testValidAddPort() {
         QName dispatchPortQN = new QName(VALID_NAMESPACE, "dispatchPort");
         service.addPort(dispatchPortQN, null, null);
@@ -132,7 +166,6 @@ public class WSDLDescriptionTests extends TestCase {
         
         EchoPort echoPort = service.getPort(validPortQName, EchoPort.class);
         assertNotNull(echoPort);
-
         
         EndpointDescription endpointDesc = serviceDescription.getEndpointDescription(validPortQName);
         assertNotNull(endpointDesc);
@@ -152,6 +185,67 @@ public class WSDLDescriptionTests extends TestCase {
         assertNull(endpointInterfaceDescDispatch);
     }
     
+    public void testValidCreateDispatch() {
+        Dispatch<Source> dispatch = service.createDispatch(validPortQName, Source.class, Service.Mode.PAYLOAD);
+        assertNotNull(dispatch);
+
+        EndpointDescription endpointDesc = serviceDescription.getEndpointDescription(validPortQName);
+        assertNotNull(endpointDesc);
+        // Since ther is no SEI, can not get the endpointDescription based on the sei class
+        EndpointDescription[] endpointDescViaSEI = serviceDescription.getEndpointDescription(EchoPort.class);
+        assertNull(endpointDescViaSEI);
+        
+        // There will be an EndpointInterfaceDescription because the service was created with 
+        // WSDL, however there will be no SEI created because a getPort has not been done
+        EndpointInterfaceDescription endpointInterfaceDesc = endpointDesc.getEndpointInterfaceDescription();
+        assertNotNull(endpointInterfaceDesc);
+        assertNull(endpointInterfaceDesc.getSEIClass());
+    }
+    
+    public void testValidCreateAndGet() {
+        Dispatch<Source> dispatch = service.createDispatch(validPortQName, Source.class, Service.Mode.PAYLOAD);
+        assertNotNull(dispatch);
+        EndpointDescription endpointDesc = serviceDescription.getEndpointDescription(validPortQName);
+        assertNotNull(endpointDesc);
+        // Since ther is no SEI, can not get the endpointDescription based on the sei class
+        EndpointDescription[] endpointDescViaSEI = serviceDescription.getEndpointDescription(EchoPort.class);
+        assertNull(endpointDescViaSEI);
+        EndpointInterfaceDescription endpointInterfaceDesc = endpointDesc.getEndpointInterfaceDescription();
+        assertNotNull(endpointInterfaceDesc);
+        assertNull(endpointInterfaceDesc.getSEIClass());
+
+        EchoPort echoPort = service.getPort(validPortQName, EchoPort.class);
+        assertNotNull(echoPort);
+        // Since a getPort has been done, should now be able to get things based on the SEI
+        endpointDesc = serviceDescription.getEndpointDescription(validPortQName);
+        assertNotNull(endpointDesc);
+        // Since ther is no SEI, can not get the endpointDescription based on the sei class
+        endpointDescViaSEI = serviceDescription.getEndpointDescription(EchoPort.class);
+        assertNotNull(endpointDescViaSEI);
+        assertEquals(endpointDesc, endpointDescViaSEI[0]);
+        endpointInterfaceDesc = endpointDesc.getEndpointInterfaceDescription();
+        assertNotNull(endpointInterfaceDesc);
+        assertEquals(EchoPort.class, endpointInterfaceDesc.getSEIClass());
+    }
+    
+    public void testValidGetAndCreate() {
+        EchoPort echoPort = service.getPort(validPortQName, EchoPort.class);
+        assertNotNull(echoPort);
+        Dispatch<Source> dispatch = service.createDispatch(validPortQName, Source.class, Service.Mode.PAYLOAD);
+        assertNotNull(dispatch);
+
+        // Since a getPort has been done, should now be able to get things based on the SEI
+        EndpointDescription endpointDesc = serviceDescription.getEndpointDescription(validPortQName);
+        assertNotNull(endpointDesc);
+        // Since ther is no SEI, can not get the endpointDescription based on the sei class
+        EndpointDescription[] endpointDescViaSEI = serviceDescription.getEndpointDescription(EchoPort.class);
+        assertNotNull(endpointDescViaSEI);
+        assertEquals(endpointDesc, endpointDescViaSEI[0]);
+        EndpointInterfaceDescription endpointInterfaceDesc = endpointDesc.getEndpointInterfaceDescription();
+        assertNotNull(endpointInterfaceDesc);
+        assertEquals(EchoPort.class, endpointInterfaceDesc.getSEIClass());
+    }
+    // TODO: Need to add a similar test with no WSDL present; note that it currently would not pass
     public void testInvalidAddAndGetPort() {
         // Should not be able to do a getPort on one that was added with addPort
         QName dispatchPortQN = new QName(VALID_NAMESPACE, "dispatchPort");
@@ -163,7 +257,24 @@ public class WSDLDescriptionTests extends TestCase {
         catch (WebServiceException e) {
             // Expected path
         }
-
-        
     }
+}
+
+// EchoPort2 is identical to EchoPort, but it should still cause an exception
+// if it is used on a subsequent getPort after getPort(EchoPort.class) is done.
+@WebService(name = "EchoPort", targetNamespace = "http://ws.apache.org/axis2/tests", wsdlLocation = "\\work\\apps\\eclipse\\workspace\\axis2-live\\modules\\jaxws\\test-resources\\wsdl\\WSDLTests.wsdl")
+interface EchoPort2 {
+
+
+    /**
+     * 
+     * @param text
+     */
+    @WebMethod(operationName = "Echo", action = "http://ws.apache.org/axis2/tests/echo")
+    @RequestWrapper(localName = "Echo", targetNamespace = "http://ws.apache.org/axis2/tests", className = "org.apache.ws.axis2.tests.Echo")
+    @ResponseWrapper(localName = "EchoResponse", targetNamespace = "http://ws.apache.org/axis2/tests", className = "org.apache.ws.axis2.tests.EchoResponse")
+    public void echo(
+        @WebParam(name = "text", targetNamespace = "", mode = Mode.INOUT)
+        Holder<String> text);
+
 }
