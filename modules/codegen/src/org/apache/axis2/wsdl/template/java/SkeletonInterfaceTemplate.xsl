@@ -50,7 +50,7 @@
      </xsl:for-each>
 
 
-         <!-- write the classes for the exceptions if there are any present -->
+         <!-- write the classes for the exceptions if there are any present
    <xsl:for-each select="fault-list/fault">
          public static class <xsl:value-of select="@shortName"/> extends java.lang.Exception{
 
@@ -79,6 +79,7 @@
 
          }
    </xsl:for-each>
+    -->
          }
     </xsl:template>
  </xsl:stylesheet>

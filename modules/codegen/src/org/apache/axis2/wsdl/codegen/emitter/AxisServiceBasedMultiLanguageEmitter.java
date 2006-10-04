@@ -136,7 +136,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     //a map to keep the fault classNames
     protected Map fullyQualifiedFaultClassNameMap = new HashMap();
-    protected Map InstantiatableFaultClassNameMap = new HashMap();
     protected Map faultClassNameMap = new HashMap();
 
     protected Map instantiatableMessageClassNames = new HashMap();
@@ -225,10 +224,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     fullyQualifiedFaultClassNameMap.put(
                             faultMessage.getElementQName(),
                             className);
-                    //this needs to be kept seperate and updated later
-                    InstantiatableFaultClassNameMap.put(
-                            faultMessage.getElementQName(),
-                            className);
                     //we've to keep track of the fault base names seperately
                     faultClassNameMap.put(faultMessage.getElementQName(),
                             className);
@@ -270,6 +265,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             // write the call back handlers
             writeCallBackHandlers();
+
+            // write the Exceptions
+            writeExceptions();
 
             // write interface implementations
             writeInterfaceImplementation();
@@ -500,9 +498,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "name",
                     (String) fullyQualifiedFaultClassNameMap.get(key),
                     faultElement);
-            addAttribute(doc, "intantiatiableName",
-                    (String) InstantiatableFaultClassNameMap.get(key),
-                    faultElement);
             addAttribute(doc, "shortName",
                     (String) faultClassNameMap.get(key),
                     faultElement);
@@ -582,6 +577,80 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     }
 
+    /**
+     * Writes the exceptions.
+     */
+    protected void writeExceptions() throws Exception {
+        Element faultElement;
+        QName key;
+        Iterator iterator = fullyQualifiedFaultClassNameMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            Document doc = getEmptyDocument();
+
+            faultElement = doc.createElement("fault");
+
+            addAttribute(doc, "package", codeGenConfiguration.getPackageName(), faultElement);
+
+            key = (QName) iterator.next();
+
+            //as for the name of a fault, we generate an exception
+            addAttribute(doc, "name",
+                    (String) faultClassNameMap.get(key),
+                    faultElement);
+            addAttribute(doc, "shortName",
+                    (String) faultClassNameMap.get(key),
+                    faultElement);
+
+            //the type represents the type that will be wrapped by this
+            //name
+            String typeMapping =
+                    this.mapper.getTypeMappingName(key);
+            addAttribute(doc, "type", (typeMapping == null)
+                    ? ""
+                    : typeMapping, faultElement);
+            String attribValue = (String) instantiatableMessageClassNames.
+                    get(key);
+            addAttribute(doc, "instantiatableType",
+                    attribValue == null ? "" : attribValue,
+                    faultElement);
+
+            // add an extra attribute to say whether the type mapping is
+            // the default
+            if (mapper.getDefaultMappingName().equals(typeMapping)) {
+                addAttribute(doc, "default", "yes", faultElement);
+            }
+            addAttribute(doc, "value", getParamInitializer(typeMapping),
+                    faultElement);
+            ExceptionWriter exceptionWriter =
+                    new ExceptionWriter(
+                            codeGenConfiguration.isFlattenFiles() ?
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                            codeGenConfiguration.getSourceLocation()),
+                            codeGenConfiguration.getOutputLanguage());
+
+            doc.appendChild(faultElement);
+            writeClass(doc, exceptionWriter);
+        }
+    }
+
+    /**
+     * Generates the model for the callbacks.
+     */
+    protected Document createDOMDocumentForException() {
+        Document doc = getEmptyDocument();
+        Element rootElement = doc.createElement("callback");
+
+        addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
+        addAttribute(doc, "name", makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
+
+        // TODO JAXRPC mapping support should be considered here ??
+        this.loadOperations(doc, rootElement, null);
+
+        doc.appendChild(rootElement);
+        return doc;
+    }
+    
 
     /**
      * Writes the callback handlers.
@@ -727,7 +796,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             //handle faults
             generateAndPopulateFaultNames();
-            updateFaultPackageForSkeleton(codeGenConfiguration.isServerSideInterface());
 
             //
             if (codeGenConfiguration.isServerSideInterface()) {
@@ -749,6 +817,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // write a MessageReceiver for this particular service.
             writeMessageReceiver();
 
+            // write the Exceptions
+            writeExceptions();
+            
             // write service xml
             // if asked
             if (codeGenConfiguration.isGenerateDeployementDescriptor()) {
@@ -854,33 +925,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             String className = (String) fullyQualifiedFaultClassNameMap.get(key);
             //append the skelton name
             String fullyQualifiedStubName = getFullyQualifiedStubName();
-            fullyQualifiedFaultClassNameMap.put(key, fullyQualifiedStubName + "."
-                    + className);
-            InstantiatableFaultClassNameMap.put(key, fullyQualifiedStubName + "$"
-                    + className);
-        }
-    }
-
-    /**
-     *  Change the fault classnames to go with the package & class of the
-     *  skeleton
-     *  the faults are always generated as inner types
-     */
-    protected void updateFaultPackageForSkeleton(boolean isInterface) {
-        Iterator faultClassNameKeys = fullyQualifiedFaultClassNameMap.keySet().iterator();
-        while (faultClassNameKeys.hasNext()) {
-            Object key = faultClassNameKeys.next();
-            String className = (String) fullyQualifiedFaultClassNameMap.get(key);
-            //append the skelton name
-            String fullyQualifiedSkeletonName = null;
-            if (isInterface){
-                fullyQualifiedSkeletonName = getFullyQualifiedSkeletonInterfaceName();
-            }else{
-                fullyQualifiedSkeletonName = getFullyQualifiedSkeletonName();
-            }
-            fullyQualifiedFaultClassNameMap.put(key, fullyQualifiedSkeletonName + "."
-                    + className);
-            InstantiatableFaultClassNameMap.put(key, fullyQualifiedSkeletonName + "$"
+            fullyQualifiedFaultClassNameMap.put(key, codeGenConfiguration.getPackageName() + "."
                     + className);
         }
     }
@@ -1767,9 +1812,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 //as for the name of a fault, we generate an exception
                 addAttribute(doc, "name",
                         (String) fullyQualifiedFaultClassNameMap.get(msg.getElementQName()),
-                        paramElement);
-                addAttribute(doc, "intantiatiableName",
-                        (String) InstantiatableFaultClassNameMap.get(msg.getElementQName()),
                         paramElement);
                 addAttribute(doc, "shortName",
                         (String) faultClassNameMap.get(msg.getElementQName()),

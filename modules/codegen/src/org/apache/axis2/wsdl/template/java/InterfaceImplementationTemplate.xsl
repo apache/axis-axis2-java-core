@@ -116,7 +116,7 @@
               faultExeptionClassNameMap.put(new javax.xml.namespace.QName(
                 "<xsl:value-of select="@namespace"/>",
                 "<xsl:value-of select="@localname"/>"),
-                "<xsl:value-of select="@intantiatiableName"/>");
+                "<xsl:value-of select="@name"/>");
                faultMessageMap.put( new javax.xml.namespace.QName(
                  "<xsl:value-of select="@namespace"/>",
                  "<xsl:value-of select="@localname"/>"),
@@ -731,7 +731,7 @@
     }
 
 
-     <!-- write the classes for the exceptions if there are any present -->
+     <!-- write the classes for the exceptions if there are any present
    <xsl:for-each select="fault-list/fault">
          public static class <xsl:value-of select="@shortName"/> extends java.lang.Exception{
 
@@ -761,7 +761,7 @@
 
          }
    </xsl:for-each>
-
+     -->
     //<xsl:apply-templates/>
    }
    </xsl:template>

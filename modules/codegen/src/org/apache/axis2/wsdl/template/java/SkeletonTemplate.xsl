@@ -59,7 +59,8 @@
 
         <!-- we write the faults here only if it is not the interface mode-->
         <xsl:if test="not(@skeletonInterfaceName)">
-            <!-- write the classes for the exceptions if there are any present -->
+            <!-- write the classes for the exceptions if there are any present
+            
             <xsl:for-each select="fault-list/fault">
                 public static class <xsl:value-of select="@shortName"/> extends java.lang.Exception{
 
@@ -90,6 +91,7 @@
 
                 }
             </xsl:for-each>
+             -->
         </xsl:if>
     }
     </xsl:template>
