@@ -762,7 +762,7 @@
          }
    </xsl:for-each>
      -->
-    //<xsl:apply-templates/>
+     //<xsl:apply-templates><xsl:with-param name="context">interface-implementation</xsl:with-param></xsl:apply-templates>
    }
    </xsl:template>
 </xsl:stylesheet>

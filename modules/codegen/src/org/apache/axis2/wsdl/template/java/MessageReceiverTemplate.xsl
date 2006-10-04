@@ -146,7 +146,7 @@
                 </xsl:when>
 
                 <xsl:otherwise>
-                    envelope = <xsl:value-of select="$usedbmethod"/>(msgContext.getEnvelope().getBody().getFirstElement(), getSOAPFactory(msgContext));
+                    envelope = <xsl:value-of select="$usedbmethod"/>(msgContext.getEnvelope().getBody().getFirstElement(), skel, getSOAPFactory(msgContext));
                 </xsl:otherwise>
 
             </xsl:choose>
@@ -173,7 +173,7 @@
         }
         }
         <!-- Call templates recursively-->
-        //<xsl:apply-templates/>
+        //<xsl:apply-templates><xsl:with-param name="context">message-receiver</xsl:with-param></xsl:apply-templates>
 
         /**
         *  A utility method that copies the namepaces from the SOAPEnvelope
@@ -247,23 +247,21 @@
 
         <xsl:for-each select="method">
 
+            <xsl:variable name="namespace"><xsl:value-of select="@namespace"/></xsl:variable>
+            <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
+            <xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
+
+            if("<xsl:value-of select="@name"/>".equals(methodName)){
+
             <!-- If usedbmethod attribute present, gives name of method to call for implementation -->
             <xsl:variable name="usedbmethod"><xsl:value-of select="@usedbmethod"/></xsl:variable>
             <xsl:choose>
                 <xsl:when test="string-length(normalize-space($usedbmethod))=0">
-
-                    <xsl:variable name="namespace"><xsl:value-of select="@namespace"/></xsl:variable>
-                    <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
-                    <xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
-
-
-                    if("<xsl:value-of select="@name"/>".equals(methodName)){
-
                     <xsl:choose>
                         <xsl:when test="$style='rpc'">
-
+    
                             //rpc style  -- this needs to be filled
-
+    
                         </xsl:when>
                         <xsl:when test="$style='document'">
                             //doc style
@@ -281,7 +279,7 @@
                                 <xsl:otherwise>skel.<xsl:value-of select="@name"/>();</xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
-
+    
                         <xsl:otherwise>
                             //Unknown style!! No code is generated
                             throw new UnsupportedOperationException("Unknown Style");
@@ -290,7 +288,7 @@
                 </xsl:when>
 
                 <xsl:otherwise>
-                    <xsl:value-of select="$usedbmethod"/>(msgContext.getEnvelope().getBody().getFirstElement(), null);
+                    <xsl:value-of select="$usedbmethod"/>(msgContext.getEnvelope().getBody().getFirstElement(), skel, null);
                 </xsl:otherwise>
 
             </xsl:choose>
@@ -306,7 +304,7 @@
 
 
         <!-- Call templates recursively-->
-        //<xsl:apply-templates/>
+        //<xsl:apply-templates><xsl:with-param name="context">message-receiver</xsl:with-param></xsl:apply-templates>
 
 
 

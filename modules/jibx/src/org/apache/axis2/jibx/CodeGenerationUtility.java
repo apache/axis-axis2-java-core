@@ -22,9 +22,11 @@ import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -186,7 +188,9 @@ public class CodeGenerationUtility {
             Iterator operations = codeGenConfig.getAxisService().getOperations();
             boolean unwrap = !codeGenConfig.isParametersWrapped();
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            int index = 0;
+            int opindex = 0;
+            Map typeMappedClassMap = new HashMap();
+            String mappedclass = null;
             while (operations.hasNext()) {
                 
                 // get the basic operation information
@@ -209,33 +213,55 @@ public class CodeGenerationUtility {
                 if (unwrap) {
                     
                     // use unwrapping for both input and output
-                    String receivername = "jibxReceiver" + index++;
+                    String receivername = "jibxReceiver" + opindex++;
                     Element dbmethod = doc.createElement("dbmethod");
                     dbmethod.setAttribute("receiver-name", receivername);
+                    dbmethod.setAttribute("method-name", op.getName().getLocalPart());
+                    Set nameset = new HashSet();
                     if (inmsg != null) {
-                        dbmethod.appendChild(unwrapMessage(inmsg, false, simpleTypeMap, complexTypeMap, doc));
+                        dbmethod.appendChild(unwrapMessage(inmsg, false, simpleTypeMap, complexTypeMap, typeMappedClassMap, nameset, doc));
                     }
                     if (outmsg != null) {
-                        dbmethod.appendChild(unwrapMessage(outmsg, true, simpleTypeMap, complexTypeMap, doc));
+                        dbmethod.appendChild(unwrapMessage(outmsg, true, simpleTypeMap, complexTypeMap, typeMappedClassMap, nameset, doc));
                     }
                     
                     // save unwrapping information for use in code generation
                     op.addParameter(new Parameter(Constants.DATABINDING_GENERATED_RECEIVER, receivername));
                     op.addParameter(new Parameter(Constants.DATABINDING_GENERATED_IMPLEMENTATION, Boolean.TRUE));
-                    op.addParameter(new Parameter(Constants.DATABINDING_DETAILS, dbmethod));
+                    op.addParameter(new Parameter(Constants.DATABINDING_OPERATION_DETAILS, dbmethod));
                     
                 } else {
                     
                     // concrete mappings, just save the mapped class name(s)
                     if (inmsg != null) {
-                        mapMessage(inmsg, elementMap);
+                        mappedclass = mapMessage(inmsg, elementMap);
                     }
                     if (outmsg != null) {
-                        mapMessage(outmsg, elementMap);
+                        mappedclass = mapMessage(outmsg, elementMap);
                     }
                     
                 }
             }
+            
+            // add type usage information as service parameter
+            Element bindinit = doc.createElement("initialize-binding");
+            if (!typeMappedClassMap.isEmpty()) {
+                for (Iterator iter = typeMappedClassMap.keySet().iterator(); iter.hasNext();) {
+                    QName tname = (QName)iter.next();
+                    String clsindex = ((Integer)typeMappedClassMap.get(tname)).toString();
+                    Element detail = doc.createElement("abstract-type");
+                    detail.setAttribute("ns", tname.getNamespaceURI());
+                    detail.setAttribute("name", tname.getLocalPart());
+                    detail.setAttribute("type-index", clsindex);
+                    bindinit.appendChild(detail);
+                    if (mappedclass == null) {
+                        MappingElement mapping = (MappingElement)complexTypeMap.get(tname);
+                        mappedclass = mapping.getClassName();
+                    }
+                }
+            }
+            bindinit.setAttribute("bound-class", mappedclass);
+            codeGenConfig.getAxisService().addParameter(new Parameter(Constants.DATABINDING_SERVICE_DETAILS, bindinit));
             
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -280,11 +306,14 @@ public class CodeGenerationUtility {
      * @param isout output message flag (wrapper inherits inner type, for XSLTs)
      * @param simpleTypeMap binding formats
      * @param complexTypeMap binding mappings
+     * @param typeMappedClassMap map from type qname to index
+     * @param nameset parameter variable names used in method
      * @param doc document used for DOM components
      * @return detailed description element for code generation
      */
     private Element unwrapMessage(AxisMessage msg, boolean isout,
-        Map simpleTypeMap, Map complexTypeMap, Document doc) {
+        Map simpleTypeMap, Map complexTypeMap, Map typeMappedClassMap,
+        Set nameset, Document doc) {
         
         // find the schema definition for this message element
         QName qname = msg.getElementQName();
@@ -304,7 +333,7 @@ public class CodeGenerationUtility {
         
         // dig down to the sequence
         List partNameList = new ArrayList();
-        String wrappertype = "java.lang.Object";
+        String wrappertype = "";
         if (type instanceof XmlSchemaComplexType) {
             wrapdetail.setAttribute("empty", "false");
             XmlSchemaComplexType ctype = (XmlSchemaComplexType)type;
@@ -346,6 +375,7 @@ public class CodeGenerationUtility {
                 QName itemname = element.getQName();
                 param.setAttribute("ns", itemname.getNamespaceURI());
                 param.setAttribute("name", itemname.getLocalPart());
+                param.setAttribute("java-name", toJavaName(itemname.getLocalPart(), nameset));
                 param.setAttribute("nillable", Boolean.toString(element.isNillable()));
                 param.setAttribute("optional", Boolean.toString(element.getMinOccurs() == 0));
                 boolean isarray = element.getMaxOccurs() > 1;
@@ -367,7 +397,9 @@ public class CodeGenerationUtility {
                     if (dflt == null) {
                         dflt = format.getDefaultText();
                     }
-                    param.setAttribute("default", dflt);
+                    if (dflt != null) {
+                        param.setAttribute("default", dflt);
+                    }
                     
                 } else {
                     
@@ -377,18 +409,25 @@ public class CodeGenerationUtility {
                         throw new RuntimeException("Cannot unwrap element " +
                             qname + ": no abstract mapping definition found for child element " + itemname);
                     }
+                    Integer tindex = (Integer)typeMappedClassMap.get(typename);
+                    if (tindex == null) {
+                        tindex = new Integer(typeMappedClassMap.size());
+                        typeMappedClassMap.put(typename, tindex);
+                    }
                     javatype = mapping.getClassName();
                     param.setAttribute("form", "complex");
-                    param.setAttribute("type-ns", typename.getNamespaceURI());
-                    param.setAttribute("type-name", typename.getLocalPart());
+                    param.setAttribute("type-index", tindex.toString());
                     
                 }
+                param.setAttribute("java-type", javatype);
+                String fulltype = javatype;
                 if (isarray) {
-                    javatype = javatype + "[]";
+                    fulltype += "[]";
                 }
-                param.setAttribute("javatype", javatype);
                 if (isout) {
-                    wrappertype = javatype;
+                    wrappertype = fulltype;
+                } else {
+                    wrappertype = "java.lang.Object";
                 }
                 wrapdetail.appendChild(param);
                 
@@ -399,7 +438,7 @@ public class CodeGenerationUtility {
                 partNameList.add(partqname);
                 
                 // add type mapping so we look like ADB
-                codeGenConfig.getTypeMapper().addTypeMappingName(partqname, javatype);
+                codeGenConfig.getTypeMapper().addTypeMappingName(partqname, fulltype);
             }
             
         } else if (type == null) {
@@ -435,7 +474,28 @@ public class CodeGenerationUtility {
         return wrapdetail;
     }
     
-    private void mapMessage(AxisMessage msg, Map complexTypeMap) {
+    private static String toJavaName(String name, Set nameset) {
+        StringBuffer buff = new StringBuffer(name.length());
+        for (int i = 0; i < name.length(); i++) {
+            char chr = name.charAt(i);
+            if ((i == 0 && Character.isJavaIdentifierStart(chr)) ||
+                (i > 0 && Character.isJavaIdentifierPart(chr))) {
+                buff.append(chr);
+            } else if (chr == ':' || chr == '.') {
+                buff.append('$');
+            } else {
+                buff.append('_');
+            }
+        }
+        int count = 0;
+        String jname = buff.toString();
+        while (!nameset.add(jname)) {
+            jname = buff.toString() + count++;
+        }
+        return jname;
+    }
+    
+    private String mapMessage(AxisMessage msg, Map complexTypeMap) {
         QName qname = msg.getElementQName();
         if (qname == null) {
             throw new RuntimeException("No element reference in message " + msg.getName());
@@ -445,7 +505,9 @@ public class CodeGenerationUtility {
             throw new RuntimeException("No mapping defined for element " + qname);
         }
         MappingElement mapping = (MappingElement)obj;
-        codeGenConfig.getTypeMapper().addTypeMappingName(qname, mapping.getClassName());
+        String cname = mapping.getClassName();
+        codeGenConfig.getTypeMapper().addTypeMappingName(qname, cname);
+        return cname;
     }
 
     /**

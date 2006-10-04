@@ -1094,6 +1094,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //add the db type attribute  - the name of the databinding type
         //this will be used to select the correct template
         addAttribute(doc, "dbtype", codeGenConfiguration.getDatabindingType(), rootElement);
+        //add the wrapped flag state - this is used by JiBX, but may be useful
+        //for other frameworks in the future
+        String wrapflag = Boolean.toString(codeGenConfiguration.isParametersWrapped());
+        addAttribute(doc, "wrapped", wrapflag, rootElement);
 
         //at this point we may need to capture the extra parameters passes to the
         //particular databinding framework
@@ -1130,10 +1134,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             rootElement.appendChild((Element) iterator.next());
         }
 
-        // finish with any extra information from operations
-        for (Iterator operationsIterator = axisService.getOperations();operationsIterator.hasNext();) {
+        // finish with any extra information from service and operations
+        Parameter details = axisService.getParameter(Constants.DATABINDING_SERVICE_DETAILS);
+        if (details != null) {
+            rootElement.appendChild(doc.importNode((Element)details.getValue(), true));
+        }
+        for (Iterator operationsIterator = axisService.getOperations(); operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
-            Parameter details = axisOperation.getParameter(Constants.DATABINDING_DETAILS);
+            details = axisOperation.getParameter(Constants.DATABINDING_OPERATION_DETAILS);
             if (details != null) {
                 rootElement.appendChild(doc.importNode((Element)details.getValue(), true));
             }

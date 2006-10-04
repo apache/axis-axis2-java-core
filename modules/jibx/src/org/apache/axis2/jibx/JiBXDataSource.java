@@ -29,6 +29,7 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallable;
+import org.jibx.runtime.IMarshaller;
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IXMLWriter;
 import org.jibx.runtime.JiBXException;
@@ -39,21 +40,55 @@ import org.jibx.runtime.impl.StAXWriter;
  */
 public class JiBXDataSource implements OMDataSource
 {
-    /** Bound object for output. */
-    private final IMarshallable outObject;
+    /** Marshaller index (only needed if object does not have a top-level
+     mapping definition in the binding, <code>-1</code> if not used). */
+    private final int marshallerIndex;
+    
+    /** Data object for output. */
+    private final Object dataObject;
     
     /** Binding factory for creating marshaller. */
     private final IBindingFactory bindingFactory;
     
     /**
-     * Constructor from object and binding factory.
+     * Constructor from marshallable object and binding factory.
      * 
      * @param obj
      * @param factory
      */
     public JiBXDataSource(IMarshallable obj, IBindingFactory factory) {
-        outObject = obj;
+        marshallerIndex = -1;
+        dataObject = obj;
         bindingFactory = factory;
+    }
+    
+    /**
+     * Constructor from object with mapping index and binding factory.
+     * 
+     * @param obj
+     * @param index
+     * @param factory
+     */
+    public JiBXDataSource(Object obj, int index, IBindingFactory factory) {
+        marshallerIndex = index;
+        dataObject = obj;
+        bindingFactory = factory;
+    }
+
+    /**
+     * Internal method to handle the actual marshalling.
+     * 
+     * @param ctx
+     * @throws JiBXException
+     */
+    private void marshal(IMarshallingContext ctx) throws JiBXException {
+        if (dataObject instanceof IMarshallable) {
+            ((IMarshallable)dataObject).marshal(ctx);
+        } else {
+            IMarshaller mrsh = ctx.getMarshaller(marshallerIndex,
+                bindingFactory.getMappedClasses()[marshallerIndex]);
+            mrsh.marshal(dataObject, ctx);
+        }
     }
 
     /* (non-Javadoc)
@@ -63,7 +98,7 @@ public class JiBXDataSource implements OMDataSource
         try {
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
             ctx.setOutput(output, format.getCharSetEncoding());
-            outObject.marshal(ctx);
+            marshal(ctx);
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
         }
@@ -76,7 +111,7 @@ public class JiBXDataSource implements OMDataSource
         try {
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
             ctx.setOutput(writer);
-            outObject.marshal(ctx);
+            marshal(ctx);
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
         }
@@ -91,7 +126,7 @@ public class JiBXDataSource implements OMDataSource
                 xmlWriter);
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
             ctx.setXmlWriter(writer);
-            outObject.marshal(ctx);
+            marshal(ctx);
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
         }

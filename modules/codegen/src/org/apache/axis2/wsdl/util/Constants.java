@@ -50,10 +50,16 @@ public interface Constants {
     String DATABINDING_GENERATED_IMPLEMENTATION = "databinding-generated-implementation";
 
     /** Property for details to be passed inside the &lt;databinders> element.
-     This is an optional parameter for an  {@link
+     This is an optional parameter for an {@link
      org.apache.axis2.description.AxisOperation}. If present, the value is a DOM
      element to be appended to the &lt;databinders> content. */
-    String DATABINDING_DETAILS = "databinding-extra-details";
+    String DATABINDING_OPERATION_DETAILS = "databinding-operation-details";
+
+    /** Property for details to be passed inside the &lt;databinders> element.
+     This is an optional parameter for an {@link
+     org.apache.axis2.description.AxisService}. If present, the value is a DOM
+     element to be appended to the &lt;databinders> content. */
+    String DATABINDING_SERVICE_DETAILS = "databinding-service-details";
 
 
     public interface CodegenStyle {
