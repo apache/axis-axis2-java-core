@@ -63,6 +63,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
     private ArrayList extraClasses = null;
 
+    private boolean useScheamNameSpace = false;
+
     public SchemaGenerator(ClassLoader loader, String className,
                            String schematargetNamespace, String schematargetNamespacePrefix)
             throws Exception {
@@ -75,6 +77,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
         if (schematargetNamespace != null
                 && schematargetNamespace.trim().length() != 0) {
             this.schemaTargetNameSpace = schematargetNamespace;
+            useScheamNameSpace = true;
         } else {
             this.schemaTargetNameSpace = Java2WSDLUtils
                     .schemaNamespaceFromClassName(className, loader).toString();
@@ -230,9 +233,13 @@ public class SchemaGenerator implements Java2WSDLConstants {
             String simpleName = javaType.getSimpleName();
 
             String packageName = javaType.getContainingPackage().getQualifiedName();
-            String targetNameSpace = Java2WSDLUtils.schemaNamespaceFromPackageName(packageName).toString();
-
-            XmlSchema xmlSchema = getXmlSchema(Java2WSDLUtils.schemaNamespaceFromPackageName(packageName).toString());
+            String targetNameSpace;
+            if (useScheamNameSpace) {
+                targetNameSpace = this.schemaTargetNameSpace;
+            } else {
+                targetNameSpace = Java2WSDLUtils.schemaNamespaceFromPackageName(packageName).toString();
+            }
+            XmlSchema xmlSchema = getXmlSchema(targetNameSpace);
             String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(targetNameSpace);
 
             XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
@@ -288,12 +295,12 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         elt1.setMinOccurs(1);
                     }
 
-                    if (!((NamespaceMap)xmlSchema.getNamespaceContext()).values().
+                    if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
                             contains(typeTable.getComplexSchemaType(propertyName).getNamespaceURI())) {
                         XmlSchemaImport importElement = new XmlSchemaImport();
                         importElement.setNamespace(typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
                         xmlSchema.getItems().add(importElement);
-                        ((NamespaceMap)xmlSchema.getNamespaceContext()).
+                        ((NamespaceMap) xmlSchema.getNamespaceContext()).
                                 put(generatePrefix(), typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
                     }
                 }
@@ -322,8 +329,13 @@ public class SchemaGenerator implements Java2WSDLConstants {
                     partName,
                     isArrayType);
             //addImport((XmlSchema)schemaMap.get(schemaTargetNameSpace), schemaTypeName);
-            String schemaNamespace = Java2WSDLUtils.schemaNamespaceFromPackageName(type.getContainingPackage().
-                    getQualifiedName()).toString();
+            String schemaNamespace;
+            if (useScheamNameSpace) {
+                schemaNamespace = this.schemaTargetNameSpace;
+            } else {
+                schemaNamespace = Java2WSDLUtils.schemaNamespaceFromPackageName(type.getContainingPackage().
+                        getQualifiedName()).toString();
+            }
             addImport(getXmlSchema(schemaNamespace), schemaTypeName);
 
         } else {
@@ -420,12 +432,12 @@ public class SchemaGenerator implements Java2WSDLConstants {
     }
 
     private void addImport(XmlSchema xmlSchema, QName schemaTypeName) {
-        if (!((NamespaceMap)xmlSchema.getNamespaceContext()).values().
+        if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
                 contains(schemaTypeName.getNamespaceURI())) {
             XmlSchemaImport importElement = new XmlSchemaImport();
             importElement.setNamespace(schemaTypeName.getNamespaceURI());
             xmlSchema.getItems().add(importElement);
-            ((NamespaceMap)xmlSchema.getNamespaceContext()).
+            ((NamespaceMap) xmlSchema.getNamespaceContext()).
                     put(generatePrefix(), schemaTypeName.getNamespaceURI());
         }
     }
