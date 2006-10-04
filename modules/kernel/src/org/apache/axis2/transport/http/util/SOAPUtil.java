@@ -61,12 +61,12 @@ public class SOAPUtil {
                                                       soapAction,
                                                       request.getRequestURL().toString());
 
-            Object contextWritten =
-                    msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+            Object contextWritten = null;
+            if (msgContext.getOperationContext()!=null)
+            	contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
             response.setContentType("text/xml; charset="
                                     + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
-
 
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
