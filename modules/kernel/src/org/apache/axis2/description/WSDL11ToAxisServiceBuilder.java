@@ -511,7 +511,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             .get(faultMapKey);
                     Fault wsdl4jFault = wsdl4jOperation.getFault(bindingFault
                             .getName());
-                    if (wsdl4jFault == null) {
+                    if (wsdl4jFault == null || wsdl4jFault.getMessage().getParts().size()==0) {
                         throw new AxisFault("fault \"" + bindingFault.getName()
                                 + "\" not found in the Operation "
                                 + wsdl4jOperation.getName());
