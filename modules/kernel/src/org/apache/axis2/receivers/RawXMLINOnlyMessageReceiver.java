@@ -53,7 +53,8 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
             if (methods[i].getName().equals(methodName) &&
                 methods[i].getParameterTypes().length == 1 &&
                 OMElement.class.getName().equals(
-                    methods[i].getParameterTypes()[0].getName())) {
+                    methods[i].getParameterTypes()[0].getName()) &&
+                "void".equals(methods[i].getReturnType().getName())) {
                 return methods[i];
             }
         }

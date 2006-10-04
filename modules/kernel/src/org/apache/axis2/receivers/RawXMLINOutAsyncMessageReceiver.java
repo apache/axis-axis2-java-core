@@ -29,24 +29,42 @@ import java.lang.reflect.Method;
 *
 */
 
+/**
+ * The RawXMLINOutAsyncMessageReceiver MessageReceiver hands over the raw request received to
+ * the service implementation class as an OMElement. The implementation class is expected
+ * to return back the OMElement to be returned to the caller. This is an asynchronous
+ * MessageReceiver, and finds the service implementation class to invoke by referring to
+ * the "ServiceClass" parameter value specified in the service.xml and looking at the
+ * methods of the form OMElement <<methodName>>(OMElement request)
+ *
+ * @see RawXMLINOnlyMessageReceiver
+ * @see RawXMLINOutMessageReceiver
+ */
 public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
 
-    public Method findOperation(AxisOperation op, Class ImplClass) {
-        Method method = null;
+    private Method findOperation(AxisOperation op, Class ImplClass) {
         String methodName = op.getName().getLocalPart();
         Method[] methods = ImplClass.getMethods();
 
         for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals(methodName)) {
-                method = methods[i];
-
-                break;
+            if (methods[i].getName().equals(methodName) &&
+                methods[i].getParameterTypes().length == 1 &&
+                OMElement.class.getName().equals(
+                    methods[i].getParameterTypes()[0].getName()) &&
+                OMElement.class.getName().equals(methods[i].getReturnType().getName())) {
+                return methods[i];
             }
         }
 
-        return method;
+        return null;
     }
 
+    /**
+     * Invokes the bussiness logic invocation on the service implementation class
+     * @param msgContext the incoming message context
+     * @param newmsgContext the response message context
+     * @throws AxisFault on invalid method (wrong signature) or behaviour (return null)
+     */
     public void invokeBusinessLogic(MessageContext msgContext, MessageContext newmsgContext)
             throws AxisFault {
         try {
@@ -65,47 +83,23 @@ public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRe
             Method method = findOperation(opDesc, ImplClass);
 
             if (method != null) {
-                Class[]  parameters = method.getParameterTypes();
-                Object[] args;
-
-                if ((parameters == null) || (parameters.length == 0)) {
-                    args = new Object[0];
-                } else if (parameters.length == 1) {
-                    OMElement omElement = msgContext.getEnvelope().getBody().getFirstElement();
-                    args = new Object[]{omElement};
-                } else {
-                    throw new AxisFault(Messages.getMessage("rawXmlProviderIsLimited"));
-                }
-
-                OMElement result;
-                try {
-                    result = (OMElement) method.invoke(obj, args);
-                } catch (Exception e) {
-                    throw new AxisFault(e.getMessage());
-                }
-
-                AxisService service = msgContext.getAxisService();
-                service.getTargetNamespace();
-                if (result != null) {
-                    result.declareNamespace(service.getTargetNamespace(),
-                            service.getTargetNamespacePrefix());
-                }
-
-                OMElement bodyContent;
-
+                OMElement result = (OMElement) method.invoke(
+                    obj, new Object[] {msgContext.getEnvelope().getBody().getFirstElement()});
                 SOAPFactory fac = getSOAPFactory(msgContext);
-                bodyContent = result;
-
                 SOAPEnvelope envelope = fac.getDefaultEnvelope();
 
-                if (bodyContent != null) {
-                    envelope.getBody().addChild(bodyContent);
+                if (result != null) {
+                    AxisService service = msgContext.getAxisService();
+                    result.declareNamespace(service.getTargetNamespace(),
+                        service.getTargetNamespacePrefix());
+                    envelope.getBody().addChild(result);
                 }
 
                 newmsgContext.setEnvelope(envelope);
+
             } else {
-                throw new AxisFault(Messages.getMessage("methodNotImplemented",
-                        opDesc.getName().toString()));
+                throw new AxisFault(Messages.getMessage("methodDoesNotExistInOut",
+                    opDesc.getName().toString()));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
