@@ -606,7 +606,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     }
                 }
 
-                break;
+//                break;
 
             } else if (extElement instanceof UnknownExtensibilityElement) {
                 if (WSDLConstants.WSDL11Constants.SOAP_12_BODY
@@ -637,7 +637,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     }
                 }
                 // todo - add the code here to process the SOAP 1.2 body
-                break;
+//                break;
             }
         }
 

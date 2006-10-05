@@ -74,32 +74,17 @@
             </xsl:choose>
 
             __operation.setName(new javax.xml.namespace.QName("<xsl:value-of select="@namespace"/>", "<xsl:value-of select="@name"/>"));
-	
-	<!--
-        <xsl:if test="@policy">
-        __operation_policy_string = "<xsl:value-of select="@policy"/>";	
-        org.apache.neethi.Policy __operation_policy =  getPolicy(__operation_policy_string);
-        ((org.apache.axis2.description.PolicyInclude) __operation.getPolicyInclude()).setPolicy(__operation_policy);
-        </xsl:if>
-	-->
-
+	    _service.addOperation(__operation);
+	    
+	    <xsl:if test="input/@policy">
+	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_OUT_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="input/@policy"/>"));
+	    </xsl:if>
+	    
+	    <xsl:if test="output/@policy">
+	    (__operation).getMessage(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE).getPolicyInclude().setPolicy(getPolicy("<xsl:value-of select="output/@policy"/>"));
+	    </xsl:if>
+	    
             _operations[<xsl:value-of select="position()-1"/>]=__operation;
-            
-        <xsl:choose>
-		<xsl:when test="@policy">
-	    __operation_policy_string = "<xsl:value-of select="@policy"/>";	
-	    org.apache.neethi.Policy __operation_policy =  getPolicy(__operation_policy_string);
-		
-	    _service.addOperation(__operation);
-	    __operation.applyPolicy(__operation_policy);
-		</xsl:when>
-		<xsl:otherwise>
-	    _service.addOperation(__operation);
-	    __operation.applyPolicy(new org.apache.neethi.Policy());
-		</xsl:otherwise>
-	</xsl:choose>
-            
-            
             
         </xsl:for-each>
         }
@@ -139,6 +124,8 @@
          populateFaults();
 
         _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
+		_service.applyPolicy();
+	
         configurationContext = _serviceClient.getServiceContext().getConfigurationContext();
 
         _serviceClient.getOptions().setTo(new org.apache.axis2.addressing.EndpointReference(

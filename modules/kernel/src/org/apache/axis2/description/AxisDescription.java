@@ -97,8 +97,7 @@ public abstract class AxisDescription implements ParameterInclude,
         }
 
         Parameter parameter = getParameter(parameterName);
-        return parameter != null
-                && parameter.isLocked();
+        return parameter != null && parameter.isLocked();
     }
 
     public void setParent(AxisDescription parent) {
@@ -164,10 +163,10 @@ public abstract class AxisDescription implements ParameterInclude,
      */
     public void applyPolicy(Policy policy) throws AxisFault {
         AxisConfiguration configuration = getAxisConfiguration();
-        
+
         if (configuration == null) {
             // FIXME return or throw an Exception?
-            return;            
+            return;
         }
 
         // sets AxisDescription policy
@@ -232,6 +231,86 @@ public abstract class AxisDescription implements ParameterInclude,
          */
 
         engageModulesToAxisDescription(modulesToEngage, this);
+    }
+
+    /**
+     * Applies the policies on the Description Hierarchy recursively.
+     * 
+     * @throws AxisFault
+     * 
+     */
+    public void applyPolicy() throws AxisFault {
+
+        AxisConfiguration configuration = getAxisConfiguration();
+        if (configuration == null) {
+            return; // CHECKME: May be we need to throw an Exception ??
+        }
+
+        Policy effPolicy = getPolicyInclude().getEffectivePolicy();
+
+        if (effPolicy != null) {
+
+            /*
+             * for the moment we consider policies with only one alternative. If
+             * the policy contains multiple alternatives only the first
+             * alternative will be considered.
+             */
+            Iterator iterator = effPolicy.getAlternatives();
+            if (!iterator.hasNext()) {
+                throw new AxisFault(
+                        "Policy doesn't contain any policy alternatives");
+            }
+
+            List assertionList = (List) iterator.next();
+
+            Assertion assertion;
+            String namespaceURI;
+
+            List moduleList;
+
+            List namespaceList = new ArrayList();
+            List modulesToEngage = new ArrayList();
+
+            for (Iterator assertions = assertionList.iterator(); assertions
+                    .hasNext();) {
+                assertion = (Assertion) assertions.next();
+                namespaceURI = assertion.getName().getNamespaceURI();
+
+                moduleList = configuration
+                        .getModulesForPolicyNamesapce(namespaceURI);
+
+                if (moduleList == null) {
+                    log.debug("can't find any module to process "
+                            + assertion.getName() + " type assertions");
+                    continue;
+                }
+
+                if (!canSupportAssertion(assertion, moduleList)) {
+                    throw new AxisFault("atleast one module can't support "
+                            + assertion.getName());
+                }
+
+                if (!namespaceList.contains(namespaceURI)) {
+                    namespaceList.add(namespaceURI);
+                    modulesToEngage.addAll(moduleList);
+                }
+            }
+
+            /*
+             * FIXME We need to disengage any modules that are already engaged
+             * *but* has nothing to do with the policy to apply
+             */
+
+            engageModulesToAxisDescription(modulesToEngage, this);
+
+        }
+
+        AxisDescription child;
+
+        for (Iterator children = getChildren(); children.hasNext();) {
+            child = (AxisDescription) children.next();
+            child.applyPolicy();
+        }
     }
 
     private boolean canSupportAssertion(Assertion assertion, List moduleList) {
