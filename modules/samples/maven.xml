@@ -225,7 +225,7 @@
         </ant:copy>
 	<mkdir dir="target/mtomSample/META-INF"/>
 	<ant:copy todir="target/mtomSample/META-INF">
-            <ant:fileset dir="src/sample/mtom/filetransfer/service/META-INF/">
+            <ant:fileset dir="src/sample/mtom/filetransfer/service/meta-inf/">
                 <ant:include name="services.xml"/>
             </ant:fileset>
         </ant:copy>
