@@ -56,8 +56,8 @@ public class HTTPWorker implements Worker {
             final MessageContext msgContext) throws HttpException, IOException {    
 
         ConfigurationContext configurationContext = msgContext.getConfigurationContext();
-        final String contextPath = "/" + configurationContext.getContextRoot() + "/";
         final String servicePath = configurationContext.getServiceContextPath();
+        final String contextPath = (servicePath.startsWith("/") ? servicePath : "/" + servicePath) + "/";
 
         HttpVersion ver = request.getRequestLine().getHttpVersion();
         String uri = request.getRequestLine().getUri();
@@ -96,8 +96,8 @@ public class HTTPWorker implements Worker {
                 return;
             }
             if (uri.indexOf("?") < 0) {
-                if (!(uri.endsWith(contextPath) || uri.endsWith(contextPath+"/"))) {
-                    String serviceName = uri.replaceAll(contextPath+"/", "");
+                if (!uri.endsWith(contextPath)) {
+                    String serviceName = uri.replace(contextPath, "");
                     if (serviceName.indexOf("/") < 0) {
                         String res = HTTPTransportReceiver.printServiceHTML(serviceName, configurationContext);
                         StringEntity entity = new StringEntity(res);
