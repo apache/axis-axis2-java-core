@@ -716,39 +716,6 @@
         }
         return false;
     }
-
-
-     <!-- write the classes for the exceptions if there are any present
-   <xsl:for-each select="fault-list/fault">
-         public static class <xsl:value-of select="@shortName"/> extends java.lang.Exception{
-
-            private <xsl:value-of select="@type"/> faultMessage;
-
-            public <xsl:value-of select="@shortName"/>() {
-                super("<xsl:value-of select="@shortName"/>");
-            }
-       
-            public <xsl:value-of select="@shortName"/>(java.lang.String s) {
-               super(s);
-            }
-
-            public <xsl:value-of select="@shortName"/>(java.lang.String s, java.lang.Throwable ex) {
-              super(s, ex);
-            }
-
-            public void setFaultMessage(<xsl:value-of select="@type"/> msg){
-               faultMessage = msg;
-            }
-
-            public <xsl:value-of select="@type"/> getFaultMessage(){
-               return faultMessage;
-            }
-
-
-
-         }
-   </xsl:for-each>
-     -->
      //<xsl:apply-templates><xsl:with-param name="context">interface-implementation</xsl:with-param></xsl:apply-templates>
    }
    </xsl:template>
