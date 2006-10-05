@@ -56,43 +56,6 @@
                 <xsl:if test="$outputtype!=''">throw new  java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#<xsl:value-of select="@name"/>");</xsl:if>
         }
      </xsl:for-each>
-
-        <!-- we write the faults here only if it is not the interface mode-->
-        <xsl:if test="not(@skeletonInterfaceName)">
-            <!-- write the classes for the exceptions if there are any present
-            
-            <xsl:for-each select="fault-list/fault">
-                public static class <xsl:value-of select="@shortName"/> extends java.lang.Exception{
-
-                private <xsl:value-of select="@type"/> faultMessage;
-
-                public <xsl:value-of select="@shortName"/>() {
-                   super("<xsl:value-of select="@shortName"/>");
-                }
-
-                public <xsl:value-of select="@shortName"/>(java.lang.String s, <xsl:value-of select="@type"/> msg) {
-                   super(s);
-                   faultMessage = msg;
-                }
-
-                public <xsl:value-of select="@shortName"/>(java.lang.String s, <xsl:value-of select="@type"/> msg, java.lang.Throwable ex) {
-                  super(s, ex);
-                  faultMessage = msg;
-                }
-
-                public void setFaultMessage(<xsl:value-of select="@type"/> msg){
-                    faultMessage = msg;
-                }
-
-                public <xsl:value-of select="@type"/> getFaultMessage(){
-                   return faultMessage;
-                }
-
-
-                }
-            </xsl:for-each>
-             -->
-        </xsl:if>
     }
     </xsl:template>
  </xsl:stylesheet>
