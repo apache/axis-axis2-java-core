@@ -65,7 +65,8 @@ binary distribution of Axis2, are also discussed.</p>
   </li>
 </ul>
 <ul>
-  <li><p><a href="#Axis2_User's_Guide">Web Service Clients Using Axis2</a></p>
+  <li><p><a href="#Web_Service_Clients_Using_Axis2">Web Service Clients Using
+    Axis2</a></p>
     <ul>
       <li><a
         href="#Writing_Web_Service_Clients_using_Axis2's_Primary_APIs">Writing
@@ -97,7 +98,7 @@ binary distribution of Axis2, are also discussed.</p>
       </li>
     </ul>
   </li>
-  <li><p><a href="#Axis2_User's_Guide">Modules</a></p>
+  <li><p><a href="#Modules">Modules</a></p>
     <ul>
       <li><a href="#MyService_with_a_Logging_Module">MyService with a Logging
         Module</a>
@@ -117,7 +118,7 @@ binary distribution of Axis2, are also discussed.</p>
       </li>
     </ul>
   </li>
-  <li><p><a href="#Axis2_User's_Guide">Other Samples</a></p>
+  <li><p><a href="#Other_Samples">Other Samples</a></p>
     <ul>
       <li><a href="#Google_Spell_Checker_Sample">Google Spell Checker
         Sample</a></li>
@@ -720,13 +721,6 @@ channel invocations. Let's first see how we can write a client to invoke
 client code you need to write is as follows.</p>
 <source><pre>  try {
             OMElement payload = ClientUtil.getEchoOMElement();
-            <!--<span style="color: #24C113">-->
-
-
-
-
-
-
             <span style="color: rgb(36, 193, 19);">            
             Options options = new Options();
             options.setTo(targetEPR); // this sets the location of MyService service
@@ -1402,10 +1396,6 @@ INFO. The property file is located in
 Change the line "log4j.rootCategory= ERROR, LOGFILE" to
 "log4j.rootCategory=INFO, ERROR, LOGFILE".</p>
 
-<p><font size="4"><b>Note (on samples):</b></font> All samples mentioned in
-the user's guide are located at <b>"samples\userguide\src"</b> directory of
-the binary distribution.</p>
-
 <h2><a name="Other_Samples">Other Samples</a></h2>
 
 <p>To show the power of usage of Axis2, three standard samples are shipped
@@ -1467,17 +1457,15 @@ directory of the standard binary distribution with the required batch/shell
 scripts to run the sample.</p>
 
 <h2>Advanced Topics</h2>
-    <ul>
-      <li><a href="rest-ws.html" target="_blank">RESTful Web Services</a></li>
-      <li><a href="tcp-transport.html" target="_blank">TCP Transport</a></li>
-      <li><a href="mail-transport.html" target="_blank">Mail
-      Transport</a></li>
-      <li><a href="http-transport.html" target="_blank">HTTP
-      Transports</a></li>
-      <li><a href="jms-transport.html" target="_blank">JMS Transports</a></li>
-      <li><a href="mtom-guide.html" target="_blank">MTOM with Axis2</a></li>
-      <li><a href="../modules/wss4j/1_0/security-module.html"
-        target="_blank">Securing SOAP Messages with Apache Rampart</a></li>
-    </ul>
+<ul>
+  <li><a href="rest-ws.html" target="_blank">RESTful Web Services</a></li>
+  <li><a href="tcp-transport.html" target="_blank">TCP Transport</a></li>
+  <li><a href="mail-transport.html" target="_blank">Mail Transport</a></li>
+  <li><a href="http-transport.html" target="_blank">HTTP Transports</a></li>
+  <li><a href="jms-transport.html" target="_blank">JMS Transports</a></li>
+  <li><a href="mtom-guide.html" target="_blank">MTOM with Axis2</a></li>
+  <li><a href="../modules/wss4j/1_0/security-module.html"
+    target="_blank">Securing SOAP Messages with Apache Rampart</a></li>
+</ul>
 </body>
 </html>
