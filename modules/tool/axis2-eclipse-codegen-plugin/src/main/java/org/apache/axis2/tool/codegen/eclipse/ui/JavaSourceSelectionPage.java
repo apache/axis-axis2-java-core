@@ -39,13 +39,13 @@ import java.util.Iterator;
 
 public class JavaSourceSelectionPage extends AbstractWizardPage{
 
-   
+    private Composite container;
     private Text javaClassNameBox;
     private List javaClasspathList;
     private Label statusLabel;
 
     public JavaSourceSelectionPage() {  
-        super("page4");
+    	super("page4");
     }
 
     protected void initializeDefaultSettings() {
@@ -68,7 +68,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
-        Composite container = new Composite(parent, SWT.NULL);
+        container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
         container.setLayout(layout);
         layout.numColumns = 3;
@@ -141,7 +141,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         javaClasspathList = new List(container,SWT.READ_ONLY | SWT.BORDER);
         javaClasspathList.setLayoutData(gd);
         javaClasspathList.setItems(settings.getArray(JAVA_CLASS_PATH_ENTRIES));
-        
+        container.redraw();
         gd = new GridData(GridData.FILL_HORIZONTAL);
         Button tryLoadButton = new Button(container,SWT.PUSH);
         tryLoadButton.setLayoutData(gd);
@@ -175,12 +175,26 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         statusLabel = new Label(container,SWT.NULL);
         statusLabel.setLayoutData(gd);
         
+		//filling label 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		Label fillLabel3 = new Label(container, SWT.HORIZONTAL | SWT.SEPARATOR);
+		fillLabel3.setLayoutData(gd);
+		
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3; 
+		Label hintLabel = new Label(container, SWT.NULL);
+		hintLabel
+				.setText(CodegenWizardPlugin
+						.getResourceString("page4.hint.caption"));
+		hintLabel.setLayoutData(gd);
+        
         setPageComplete(false);
         
         if (restoredFromPreviousSettings){
             handleClassNameTextChange();
         }
-        
+        javaClasspathList.redraw();
         setControl(container);
 
     }
@@ -196,8 +210,13 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         if (dirName != null) {
         	javaClasspathList.add(dirName);
         	updateListEntries();
+            javaClasspathList.redraw();
+            container.redraw();
         }
+        container.redraw();
         updateStatusTextField(false,"");
+        javaClasspathList.redraw();
+        container.redraw();
     }
     
     
@@ -212,6 +231,8 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         }
         updateListEntries();
         updateStatusTextField(false,"");
+        javaClasspathList.redraw();
+        container.redraw();
     }
     
    
@@ -228,6 +249,8 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         	updateListEntries();
         }
         updateStatusTextField(false,"");
+        javaClasspathList.redraw();
+        container.redraw();
 
     }
     
@@ -235,10 +258,13 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
     	if (success){
     		getCodegenWizard().setDefaultNamespaces(javaClassNameBox.getText());
     	}
-    	statusLabel.setText(text);
+     	statusLabel.setText(text);
     }
+    
     private void updateListEntries(){
     	settings.put(JAVA_CLASS_PATH_ENTRIES,javaClasspathList.getItems());
+        javaClasspathList.redraw();
+        container.redraw();
     }
     /**
      * 

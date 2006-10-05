@@ -37,8 +37,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class WSDLFileSelectionPage extends AbstractWizardPage {
 
-    private Text fileText;
-
+    private Text fileText; 
 
    
     /**
@@ -68,13 +67,21 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
         GridLayout layout = new GridLayout();
         container.setLayout(layout);
         layout.numColumns = 3;
-        layout.verticalSpacing = 9;
+        //layout.verticalSpacing = 9;
 
+      
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 3;
         Label label = new Label(container, SWT.NULL);
         label.setText(CodegenWizardPlugin
+                .getResourceString("page1.discription.label"));
+        label.setLayoutData(gd);
+        
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        Label labelFile = new Label(container, SWT.NULL);
+        labelFile.setText(CodegenWizardPlugin
                 .getResourceString("page1.fileselection.label"));
-
+        
         fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
         fileText.setLayoutData(gd);
         fileText.setText(settings.get(PREF_WSDL_LOCATION));

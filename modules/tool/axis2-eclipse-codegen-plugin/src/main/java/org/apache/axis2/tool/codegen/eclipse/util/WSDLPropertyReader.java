@@ -64,6 +64,7 @@ public class WSDLPropertyReader {
 		return  URLProcessor.makePackageName(wsdlDefinition.getTargetNamespace());
 		
 	}
+	
 	/**
 	 * Returns a list of service names
 	 * the names are QNames

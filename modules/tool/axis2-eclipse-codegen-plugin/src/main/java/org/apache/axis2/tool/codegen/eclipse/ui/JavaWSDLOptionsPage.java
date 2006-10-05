@@ -15,6 +15,7 @@
  */
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
+import org.apache.axis2.tool.codegen.eclipse.CodeGenWizard;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.NamespaceFinder;
 import org.eclipse.swt.SWT;
@@ -55,8 +56,6 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 	 * @see org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage#initializeDefaultSettings()
 	 */
 	protected void initializeDefaultSettings() {
-
-		
 		settings.put(PREF_JAVA_TARGET_NS,"" );
 		settings.put(PREF_JAVA_TARGET_NS_PREF, "");
 		settings.put(PREF_JAVA_SCHEMA_TARGET_NS, "");
@@ -190,6 +189,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 		});
 
 		setControl(container);
+		
 
 	}
 
