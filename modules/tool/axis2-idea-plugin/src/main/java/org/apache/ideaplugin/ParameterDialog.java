@@ -1,13 +1,7 @@
 package org.apache.ideaplugin;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import java.awt.Font;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 /*
@@ -37,8 +31,8 @@ public class ParameterDialog extends JFrame implements ActionListener {
 
     Insets insets;
 
-    protected JLabel  paraName;
-    protected JLabel  paravale;
+    protected JLabel paraName;
+    protected JLabel paravale;
     protected JTextField txtpraName;
     protected JTextArea txtparaValue;
     protected JScrollPane sp;
@@ -50,7 +44,7 @@ public class ParameterDialog extends JFrame implements ActionListener {
     public ParameterDialog() {
         getContentPane().setFont(new Font("Helvetica", Font.PLAIN, 12));
         getContentPane().setLayout(null);
-        getContentPane().setBounds(150,150,300,180);
+        getContentPane().setBounds(150, 150, 300, 180);
         insets = getInsets();
 
         paraName = new JLabel("Parameter Name: ");
@@ -74,36 +68,36 @@ public class ParameterDialog extends JFrame implements ActionListener {
         addbut.addActionListener(this);
 
 
-        paraName.setBounds(insets.left + 5,insets.top +6 ,100,24);
-        paravale.setBounds(insets.left + 5,insets.top+34,100,24);
-        sp.setBounds(insets.left + 110,insets.top+34,160,60);
-        txtpraName.setBounds(insets.left + 110,insets.top+6,160,24);
-        addbut.setBounds(insets.left + 100,insets.top+100,60,24);
+        paraName.setBounds(insets.left + 5, insets.top + 6, 100, 24);
+        paravale.setBounds(insets.left + 5, insets.top + 34, 100, 24);
+        sp.setBounds(insets.left + 110, insets.top + 34, 160, 60);
+        txtpraName.setBounds(insets.left + 110, insets.top + 6, 160, 24);
+        addbut.setBounds(insets.left + 100, insets.top + 100, 60, 24);
 
         setSize(getPreferredSize());
         setResizable(false);
     }
 
-    public void showDialog(String in , JTextArea textarea , int position){
+    public void showDialog(String in, JTextArea textarea, int position) {
         this.textarea = textarea;
-        this.position =position;
+        this.position = position;
         this.show();
         this.val = in;
         this.setVisible(true);
     }
 
-    public String  hideForm(){
-        return  this.val;
+    public String hideForm() {
+        return this.val;
     }
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == addbut){
+        if (obj == addbut) {
             String str = "<parameter locked=\"false\" name=\"" + txtpraName.getText().trim() + "\">\n"
-                    + txtparaValue.getText() +"\n"+
+                    + txtparaValue.getText() + "\n" +
                     "</parameter>\n";
             val = str;
-            textarea.insert(str,position +1);
+            textarea.insert(str, position + 1);
             this.setVisible(false);
         }
     }

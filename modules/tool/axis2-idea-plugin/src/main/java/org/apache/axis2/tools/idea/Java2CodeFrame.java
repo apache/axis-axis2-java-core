@@ -1,9 +1,20 @@
 package org.apache.axis2.tools.idea;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.apache.axis2.tools.bean.CodegenBean;
+import org.apache.axis2.tools.bean.SrcCompiler;
+import org.apache.ideaplugin.bean.JarFileWriter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -32,9 +43,10 @@ public class Java2CodeFrame extends JFrame {
     ImagePanel panel_3;
     JPanel plMiddle;
     BottomPanel lblBottom;
-//    SecondPanel secondPanel;
+    //    SecondPanel secondPanel;
     SecondFrame secondPanel;
     OutPutPane outputpane;
+    OptionPane optionPane;
     private int panleID = 0;
     private ClassLoader classLoader;
 
@@ -62,6 +74,10 @@ public class Java2CodeFrame extends JFrame {
         BottomPanel.setEnable(false, false, true);
         getContentPane().add(lblBottom);
 
+        optionPane = new OptionPane();
+        optionPane.setVisible(false);
+        getContentPane().add(optionPane);
+
         secondPanel = new SecondFrame();
         secondPanel.setVisible(false);
         getContentPane().add(secondPanel);
@@ -70,10 +86,14 @@ public class Java2CodeFrame extends JFrame {
         outputpane.setVisible(false);
         getContentPane().add(outputpane);
 
-        Dimension dim = getPreferredSize();
+        Dimension dim = new Dimension(450, 350);
         setSize(dim);
         setBounds(200, 200, dim.width, dim.height);
         this.setResizable(false);
+    }
+
+    public void setProject(Project project) {
+        codegenBean.setProject(project);
     }
 
     public ClassLoader getClassLoader() {
@@ -84,41 +104,153 @@ public class Java2CodeFrame extends JFrame {
         this.classLoader = classLoader;
     }
 
-    public void showUI() {
-        Java2CodeFrame java2CodeFrame = new Java2CodeFrame();
-        java2CodeFrame.setTitle("Axis2 Code generation");
-        java2CodeFrame.pack();
-        java2CodeFrame.show();
-    }
-
     public void generatecode() throws Exception {
         secondPanel.fillBean();
         codegenBean.generate();
     }
 
+    public void generateDefaultServerCode(File temp, String output) throws Exception {
+
+
+        temp.mkdir();
+        try {
+            codegenBean.generate();
+            copyDirectory(new File(temp + File.separator + "src"), new File(output));
+            copyDirectory(new File(temp + File.separator + "resources"), new File(output + File.separator + ".." + File.separator + "resources"));
+
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        finally {
+
+            deleteDirectory(temp);
+        }
+    }
+
+    public void copyDirectory(File srcDir, File destDir) throws IOException {
+        if (srcDir.isDirectory()) {
+            if (!destDir.isDirectory()) {
+                destDir.mkdir();
+            }
+            String[] children = srcDir.list();
+            for (int count = 0; count < children.length; count++) {
+                copyDirectory(new File(srcDir, children[count]), new File(destDir, children[count]));
+            }
+        } else {
+            copyFiles(srcDir, destDir);
+        }
+    }
+
+    public void copyFiles(File src, File dest) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dest);
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+
+    }
+
+    public void deleteDirectory(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int count = 0; count < children.length; count++) {
+                deleteDirectory(new File(dir, children[count]));
+            }
+        }
+        dir.delete();
+    }
+
+    public void generateDefaultClientCode(File temp) throws Exception {
+
+
+        temp.mkdir();
+        try {
+            codegenBean.generate();
+            SrcCompiler compiler = new SrcCompiler();
+            compiler.compileSource(temp.getAbsolutePath());
+            String wsdl = codegenBean.getWSDLFileName();
+            final String name = wsdl.substring(wsdl.lastIndexOf(File.separatorChar) + 1, wsdl.lastIndexOf(".")) + "-stub.jar";
+            System.out.println(name);
+            File lib = new File(codegenBean.getActiveProject().getProjectFile().getParent().getPath() + File.separator + "lib");
+            if (!lib.isDirectory()) {
+                lib.mkdir();
+            }
+            JarFileWriter jarFileWriter = new JarFileWriter();
+            jarFileWriter.writeJarFile(lib, name, new File(temp + File.separator + "classes"));
+            Project project = codegenBean.getActiveProject();
+
+            final LibraryTable table = (LibraryTable) project.getComponent(LibraryTable.class);
+
+
+            String url = VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, lib.getAbsolutePath() + File.separator + name) + JarFileSystem.JAR_SEPARATOR;
+
+            final VirtualFile jarVirtualFile = VirtualFileManager.getInstance().findFileByUrl(url);
+
+            ApplicationManager.getApplication().runWriteAction(new
+                    Runnable() {
+                        public void run() {
+                            Library myLibrary = table.createLibrary(name);
+
+                            Library.ModifiableModel libraryModel = myLibrary.getModifiableModel();
+                            libraryModel.addRoot(jarVirtualFile, OrderRootType.CLASSES);
+                            libraryModel.commit();
+
+                        }
+                    });
+        } catch (Exception e1) {
+           throw e1;
+        }
+        finally {
+
+            deleteDirectory(temp);
+        }
+    }
+
 
     public void setPane() {
-        panleID ++;
+        panleID++;
         switch (panleID) {
-            case 1 : {
+            case 1: {
+                panel_3.setCaptions("  Options"
+                        , " Select from custom or default");
+                this.secondPanel.setVisible(false);
+                this.plMiddle.setVisible(false);
+                this.optionPane.setCodeGenBean(codegenBean);
+                this.optionPane.setVisible(true);
+                BottomPanel.setEnable(true, false, true);
+                break;
+            }
+            case 2: {
                 panel_3.setCaptions("  Options"
                         , "  Set the options for the code generation");
                 this.secondPanel.setVisible(true);
                 this.secondPanel.setCodeGenBean(codegenBean);
                 this.plMiddle.setVisible(false);
+                this.optionPane.setVisible(false);
                 BottomPanel.setEnable(true, false, true);
                 break;
             }
-            case 2 : {
+            case 3: {
                 panel_3.setCaptions("  Output"
                         , "  set the output project for the generated code");
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(false);
+                this.optionPane.setVisible(false);
+                outputpane.loadCmbCurrentProject();
+                outputpane.loadcmbModuleSrcProject();
                 this.outputpane.setVisible(true);
-                BottomPanel.setEnable(true, true, true);
+                BottomPanel.setEnable(false, true, true);
                 break;
             }
         }
+    }
+
+    public void increasePanelID() {
+        panleID++;
     }
 
     public void setMiddlerPanel(int panel) {
@@ -135,12 +267,6 @@ public class Java2CodeFrame extends JFrame {
     }
 
 
-    public static void main(String[] args) {
-        Java2CodeFrame java2CodeFrame = new Java2CodeFrame();
-        java2CodeFrame.setTitle("Axis2 Code generation");
-        java2CodeFrame.pack();
-        java2CodeFrame.show();
-    }
 }
 
 class windowLayout implements LayoutManager {
@@ -161,8 +287,8 @@ class windowLayout implements LayoutManager {
         Dimension dim = new Dimension(0, 0);
 
         Insets insets = parent.getInsets();
-        dim.width = 541 + insets.left + insets.right;
-        dim.height = 340 + insets.top + insets.bottom;
+        dim.width = 550 + insets.left + insets.right;
+        dim.height = 460 + insets.top + insets.bottom;
 
         return dim;
     }
@@ -177,23 +303,27 @@ class windowLayout implements LayoutManager {
         Component c;
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top, 544, 80);
+            c.setBounds(insets.left, insets.top, 550, 80);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 544, 180);
+            c.setBounds(insets.left, insets.top + 80, 550, 330);
         }
         c = parent.getComponent(3);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 544, 180);
+            c.setBounds(insets.left, insets.top + 80, 550, 330);
         }
         c = parent.getComponent(4);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 544, 180);
+            c.setBounds(insets.left, insets.top + 80, 550, 330);
+        }
+        c = parent.getComponent(5);
+        if (c.isVisible()) {
+            c.setBounds(insets.left, insets.top + 80, 550, 330);
         }
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 290, 544, 50);
+            c.setBounds(insets.left, insets.top + 410, 550, 50);
         }
     }
 }

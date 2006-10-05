@@ -1,6 +1,6 @@
 package org.apache.ideaplugin.bean;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -32,13 +32,16 @@ public interface ObjectKeeper {
 
     //to keep a refernce to next panel
     void setNext(JPanel next);
+
     JPanel getNext();
 
     //to keep a refernce to previous panel
     void setPrivious(JPanel privious);
+
     JPanel getPrivious();
-    
+
     String getTopLable();
+
     String getLable();
 
 }

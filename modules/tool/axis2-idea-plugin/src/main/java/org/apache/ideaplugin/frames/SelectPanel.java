@@ -6,16 +6,8 @@ import org.apache.ideaplugin.bean.OperationObj;
 import org.apache.ideaplugin.bean.ServiceObj;
 import org.apache.ideaplugin.frames.table.ArchiveTableModel;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import java.awt.Font;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -58,7 +50,6 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
     protected JScrollPane sp;
     protected JLabel tablelbl;
 
-//    private JPanel next;
     private JPanel previous;
     protected File file;
     protected Insets insets;
@@ -70,9 +61,9 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
     protected DescriptorFile disfile;
     protected String sgXMl;
 
-    public SelectPanel(ServiceArciveFrame parent , File file ) {
+    public SelectPanel(ServiceArciveFrame parent, File file) {
         this.parent = parent;
-        this.file =file;
+        this.file = file;
 
         setFont(new Font("Helvetica", Font.PLAIN, 12));
         this.setLayout(null);
@@ -81,11 +72,11 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
 
         lblClass = new JLabel("Select Service Classes");
         add(lblClass);
-        lblClass.setBounds(insets.left + 8, insets.top + 2, 150 , 24);
+        lblClass.setBounds(insets.left + 8, insets.top + 2, 150, 24);
 
         txtClassDir = new JTextField("");
         add(txtClassDir);
-        txtClassDir.setBounds(insets.left + 150 , insets.top + 2, 336, 24);
+        txtClassDir.setBounds(insets.left + 150, insets.top + 2, 336, 24);
 
         butSelect = new JButton(" ... ");
         add(butSelect);
@@ -138,31 +129,31 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == butSelect){
+        if (obj == butSelect) {
             parent.fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int returnVal = parent.fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File newfile = parent.fc.getSelectedFile();
-                String newFile =newfile.getPath();
+                String newFile = newfile.getPath();
                 int index = newFile.indexOf(file.getAbsolutePath().trim());
-                if(index >=0){
-                    int lastindex= file.getAbsolutePath().trim().length();
-                    newFile = newFile.substring(lastindex +1);
+                if (index >= 0) {
+                    int lastindex = file.getAbsolutePath().trim().length();
+                    newFile = newFile.substring(lastindex + 1);
                     char ch = parent.fileSeparator.toCharArray()[0];
-                    char newch= '.';
+                    char newch = '.';
                     int cindex = newFile.indexOf(ch);
-                    while(cindex >=0){
-                        newFile =   newFile.replace(ch,newch);
+                    while (cindex >= 0) {
+                        newFile = newFile.replace(ch, newch);
                         cindex = newFile.indexOf(ch);
                     }
                     fileName = newFile;
                     int classIndex = fileName.indexOf(".class");
-                    fileName = fileName.substring(0,classIndex);
+                    fileName = fileName.substring(0, classIndex);
                     txtClassDir.setText(fileName);
                 }
             }
-        } else if(obj == load){
-            if(file == null){
+        } else if (obj == load) {
+            if (file == null) {
                 return;
             }
             try {
@@ -180,26 +171,26 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
 //                        new URL[]{file.toURL()},SelectPanel.class.getClassLoader());
 
                 ClassLoader classLoader = parent.bean.getClassLoader();
-                Class serCla= Class.forName(fileName,true,classLoader);
-                Method[] methods =  serCla.getDeclaredMethods();
+                Class serCla = Class.forName(fileName, true, classLoader);
+                Method[] methods = serCla.getDeclaredMethods();
                 operations = new HashMap();
-                if(methods.length >0){
+                if (methods.length > 0) {
                     for (int i = 0; i < methods.length; i++) {
                         Method method = methods[i];
                         OperationObj operationobj = new OperationObj(method.getName(),
                                 method.getReturnType().toString(),
-                                new Integer(method.getParameterTypes().length),new Boolean(false));
-                        operations.put(method.getName() ,operationobj);
+                                new Integer(method.getParameterTypes().length), new Boolean(false));
+                        operations.put(method.getName(), operationobj);
                     }
                 }
 
                 ArchiveTableModel myModel = new ArchiveTableModel(operations);
                 JTable table = new JTable(myModel);
-                tablelbl = new JLabel("Mark operation you do not want to publish ") ;
+                tablelbl = new JLabel("Mark operation you do not want to publish ");
                 add(tablelbl);
                 tablelbl.setBounds(insets.left + 10, insets.top + 45, 400, 24);
 
-                sp =new JScrollPane(table);
+                sp = new JScrollPane(table);
                 add(sp);
                 sp.setAutoscrolls(true);
                 sp.setBounds(insets.left + 10, insets.top + 75, 550, 100);
@@ -207,28 +198,28 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
                 butDone.setVisible(true);
                 lblServiceNam.setVisible(true);
                 txtServiceName.setVisible(true);
-            }  catch (ClassNotFoundException e1) {
+            } catch (ClassNotFoundException e1) {
                 e1.printStackTrace();
             }
             parent.reShow();
 
-        } else if(obj == butDone){
+        } else if (obj == butDone) {
 
             ArrayList ops = new ArrayList();
             Iterator opitr = operations.values().iterator();
             while (opitr.hasNext()) {
                 OperationObj operationObj = (OperationObj) opitr.next();
-                if(operationObj.getSelect().booleanValue()){
+                if (operationObj.getSelect().booleanValue()) {
                     ops.add(operationObj.getOpName());
                 }
             }
 
-            ServiceObj service= new ServiceObj(txtServiceName.getText(),fileName,ops);
+            ServiceObj service = new ServiceObj(txtServiceName.getText(), fileName, ops);
             servicelsit.add(service);
-            if(!parent.singleService){
-                int valu = JOptionPane.showConfirmDialog(parent,"Do you want to add an another service to group","Service Archive",
+            if (!parent.singleService) {
+                int valu = JOptionPane.showConfirmDialog(parent, "Do you want to add an another service to group", "Service Archive",
                         JOptionPane.YES_NO_OPTION);
-                if(valu == 0){
+                if (valu == 0) {
                     txtClassDir.setText("");
                     fileName = "";
                     try {
@@ -240,29 +231,29 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
                     } catch (Exception e1) {
 //                    e1.printStackTrace();
                     }
-                    count ++;
+                    count++;
                     parent.reShow();
                     this.repaint();
                 } else {
-                    parent.setEnable(false,true,false,true);
+                    parent.setEnable(false, true, false, true);
                     sgXMl = "<serviceGroup>\n";
                     for (int i = 0; i < servicelsit.size(); i++) {
                         ServiceObj serviceObj = (ServiceObj) servicelsit.get(i);
                         sgXMl = sgXMl + serviceObj.toString();
                     }
                     sgXMl = sgXMl + "</serviceGroup>";
-                    disfile = new DescriptorFile(parent,sgXMl);
+                    disfile = new DescriptorFile(parent, sgXMl);
                     disfile.setPrivious(this);
                 }
             } else {
-                parent.setEnable(false,true,false,true);
+                parent.setEnable(false, true, false, true);
                 sgXMl = "<serviceGroup>\n";
                 for (int i = 0; i < servicelsit.size(); i++) {
                     ServiceObj serviceObj = (ServiceObj) servicelsit.get(i);
                     sgXMl = sgXMl + serviceObj.toString();
                 }
                 sgXMl = sgXMl + "</serviceGroup>";
-                disfile = new DescriptorFile(parent,sgXMl);
+                disfile = new DescriptorFile(parent, sgXMl);
                 disfile.setPrivious(this);
             }
 

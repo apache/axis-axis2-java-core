@@ -1,17 +1,10 @@
 package org.apache.axis2.tools.idea;
 
+import com.intellij.openapi.module.Module;
 import org.apache.axis2.tools.bean.CodegenBean;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -40,9 +33,18 @@ import java.io.File;
  * Time: 12:52:31 PM
  */
 public class OutPutPane extends JPanel implements ActionListener {
-    JLabel lbloutput;
     JTextField txtoutput;
     JButton btwBrowse;
+
+    JRadioButton radCurrentProject;
+    JLabel lblCurrentProject;
+    JComboBox cmbCurrentProject;
+    JRadioButton radCustomLocation;
+
+    ButtonGroup buttonGroup;
+
+    JLabel lblModuleSrc;
+    JComboBox cmbModuleSrc;
     private CodegenBean cogenbean;
     final JFileChooser fc = new JFileChooser();
 
@@ -52,18 +54,86 @@ public class OutPutPane extends JPanel implements ActionListener {
 
         setLayout(customLayout);
 
-        lbloutput = new JLabel("Output Path");
-        add(lbloutput);
+        buttonGroup = new ButtonGroup();
 
         txtoutput = new JTextField("");
+        txtoutput.setEnabled(false);
         add(txtoutput);
 
         btwBrowse = new JButton("Browse..");
         add(btwBrowse);
+        btwBrowse.setEnabled(false);
         btwBrowse.addActionListener(this);
+
+
+        radCurrentProject = new JRadioButton("Add sources to current project", true);
+        buttonGroup.add(radCurrentProject);
+        radCurrentProject.setActionCommand("radCurrentProject");
+        add(radCurrentProject);
+        radCurrentProject.addActionListener(this);
+
+        lblCurrentProject = new JLabel("Select Module");
+        lblCurrentProject.setEnabled(true);
+        add(lblCurrentProject);
+
+        radCustomLocation = new JRadioButton("Select custom output location");
+        buttonGroup.add(radCustomLocation);
+        radCustomLocation.setActionCommand("radCustomLocation");
+        add(radCustomLocation);
+        radCustomLocation.addActionListener(this);
+
+        cmbCurrentProject = new JComboBox();
+        loadCmbCurrentProject();
+        cmbCurrentProject.setEnabled(true);
+        add(cmbCurrentProject);
+
+        lblModuleSrc = new JLabel("Select Source Directory");
+        lblModuleSrc.setEnabled(true);
+        add(lblModuleSrc);
+
+        cmbModuleSrc = new JComboBox();
+        loadcmbModuleSrcProject();
+        cmbModuleSrc.setEnabled(true);
+        add(cmbModuleSrc);
+
 
         setSize(getPreferredSize());
     }
+
+    public void loadCmbCurrentProject() {
+        Module modules[] = cogenbean.getModules();
+        int count =-1;
+        if (modules != null) {
+            for (count = 0; count < modules.length; count++) {
+                cmbCurrentProject.addItem(modules[count].getName());
+            }
+        }
+
+        if (count == -1) {
+            radCurrentProject.setEnabled(false);
+            radCustomLocation.setSelected(true);
+            txtoutput.setEnabled(true);
+            btwBrowse.setEnabled(true);
+        }
+        else{
+            radCurrentProject.setEnabled(true);
+            radCurrentProject.setSelected(true);
+            txtoutput.setEnabled(false);
+            btwBrowse.setEnabled(false);
+        }
+    }
+
+    public void loadcmbModuleSrcProject() {
+        String module = null;
+        module = (String) cmbCurrentProject.getSelectedItem();
+        if (module != null) {
+            String src[] = cogenbean.getModuleSrc(module);
+            for (int count = 0; count < src.length; count++) {
+                cmbModuleSrc.addItem(src[count]);
+            }
+        }
+    }
+
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -77,6 +147,21 @@ public class OutPutPane extends JPanel implements ActionListener {
             } else {
                 System.out.println("no file");
             }
+        } else if (obj == radCurrentProject) {
+            lblCurrentProject.setEnabled(true);
+            cmbCurrentProject.setEnabled(true);
+            lblModuleSrc.setEnabled(true);
+            cmbModuleSrc.setEnabled(true);
+            txtoutput.setEnabled(false);
+            btwBrowse.setEnabled(false);
+
+        } else if (obj == radCustomLocation) {
+            lblCurrentProject.setEnabled(false);
+            cmbCurrentProject.setEnabled(false);
+            lblModuleSrc.setEnabled(false);
+            cmbModuleSrc.setEnabled(false);
+            txtoutput.setEnabled(true);
+            btwBrowse.setEnabled(true);
         }
     }
 }
@@ -110,17 +195,37 @@ class OutPutPaneLayout implements LayoutManager {
         Insets insets = parent.getInsets();
 
         Component c;
+        c = parent.getComponent(2);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 8, 350, 24);
+        }
+        c = parent.getComponent(3);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 30, insets.top + 40, 150, 24);
+        }
+        c = parent.getComponent(5);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 200, insets.top + 40, 250, 24);
+        }
+        c = parent.getComponent(6);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 30, insets.top + 70, 150, 24);
+        }
+        c = parent.getComponent(7);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 200, insets.top + 70, 250, 24);
+        }
+        c = parent.getComponent(4);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 100, 350, 24);
+        }
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 8, 72, 24);
+            c.setBounds(insets.left + 30, insets.top + 130, 150, 24);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 88, insets.top + 8, 354, 24);
-        }
-        c = parent.getComponent(2);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 450, insets.top + 8, 80, 24);
+            c.setBounds(insets.left + 200, insets.top + 130, 150, 24);
         }
     }
 }

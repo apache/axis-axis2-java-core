@@ -24,7 +24,7 @@ package org.apache.ideaplugin.bean;
  */
 public class OperationObj {
 
-    private String OpName ;
+    private String OpName;
     private String ReturnValue;
     private Integer parameters;
     private Boolean select;
@@ -69,7 +69,7 @@ public class OperationObj {
         this.select = select;
     }
 
-    public void printMe(){
+    public void printMe() {
         System.out.println("======== Row =============");
         System.out.println("OpName = " + OpName);
         System.out.println("parameters = " + parameters);

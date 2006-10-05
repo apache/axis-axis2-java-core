@@ -16,12 +16,10 @@
 
 package org.apache.axis2.tools.idea;
 
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.project.Project;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 public class ServiceArchiveCreator extends AnAction {
     private ImageIcon myIcon;
@@ -32,7 +30,9 @@ public class ServiceArchiveCreator extends AnAction {
 
     public void actionPerformed(AnActionEvent event) {
         Java2CodeFrame win = new Java2CodeFrame();
-        win.showUI();
+        win.setProject((Project) event.getDataContext().getData(DataConstants.PROJECT));
+        win.pack();
+        win.show();
     }
 
     public void update(AnActionEvent event) {

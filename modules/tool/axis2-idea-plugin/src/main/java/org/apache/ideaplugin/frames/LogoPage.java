@@ -1,15 +1,7 @@
 package org.apache.ideaplugin.frames;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -35,7 +27,7 @@ import java.awt.LayoutManager;
  */
 public class LogoPage extends JPanel {
     JLabel imagelbl;
-    ImageIcon apachelogo ;
+    ImageIcon apachelogo;
 
     public LogoPage() {
         LogoPageLayout customLayout = new LogoPageLayout();
@@ -82,6 +74,8 @@ class LogoPageLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+8,304,64);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 8, 304, 64);
+        }
     }
 }

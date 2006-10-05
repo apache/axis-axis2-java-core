@@ -1,12 +1,7 @@
 package org.apache.ideaplugin;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import java.awt.Font;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 /*
@@ -36,7 +31,7 @@ public class ModuleDialog extends JFrame implements ActionListener {
 
     Insets insets;
 
-    protected JLabel  moduleName;
+    protected JLabel moduleName;
     protected JTextField txtModule;
     protected JButton addbut;
 
@@ -47,7 +42,7 @@ public class ModuleDialog extends JFrame implements ActionListener {
     public ModuleDialog() {
         getContentPane().setFont(new Font("Helvetica", Font.PLAIN, 12));
         getContentPane().setLayout(null);
-        getContentPane().setBounds(150,150,300,100);
+        getContentPane().setBounds(150, 150, 300, 100);
         insets = getInsets();
 
         moduleName = new JLabel("Module Name: ");
@@ -61,32 +56,32 @@ public class ModuleDialog extends JFrame implements ActionListener {
         addbut.addActionListener(this);
 
 
-        moduleName.setBounds(insets.left + 5,insets.top +6 ,100,24);
-        txtModule.setBounds(insets.left + 110,insets.top+6,160,24);
-        addbut.setBounds(insets.left + 100,insets.top+45,60,24);
+        moduleName.setBounds(insets.left + 5, insets.top + 6, 100, 24);
+        txtModule.setBounds(insets.left + 110, insets.top + 6, 160, 24);
+        addbut.setBounds(insets.left + 100, insets.top + 45, 60, 24);
 
         setSize(getPreferredSize());
         setResizable(false);
     }
 
-    public void showDialog(String in , JTextArea textarea , int position){
+    public void showDialog(String in, JTextArea textarea, int position) {
         this.textarea = textarea;
-        this.position =position;
+        this.position = position;
         this.show();
         this.val = in;
         this.setVisible(true);
     }
 
-    public String  hideForm(){
-        return  this.val;
+    public String hideForm() {
+        return this.val;
     }
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == addbut){
-            String str = "<module ref=\"" +txtModule.getText().trim() + "\" >";
+        if (obj == addbut) {
+            String str = "<module ref=\"" + txtModule.getText().trim() + "\" >";
             val = str;
-            textarea.insert(str,position +1);
+            textarea.insert(str, position + 1);
             this.setVisible(false);
         }
     }

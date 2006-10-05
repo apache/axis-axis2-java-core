@@ -3,6 +3,7 @@ package org.apache.ideaplugin.plugin;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import org.apache.ideaplugin.frames.Axi2PluginPage;
 
 import javax.swing.*;
@@ -102,13 +103,10 @@ public class Axis2IdeaPlugin implements ApplicationComponent, Configurable {
         form = null;
     }
 
-    public void showTool() {
+    public void showTool(Project project) {
+        form.setProject(project);
         form.showUI();
-//        createComponent();
 
-//        if(form!=null){
-//            form.show();
-//        }
     }
 }
 

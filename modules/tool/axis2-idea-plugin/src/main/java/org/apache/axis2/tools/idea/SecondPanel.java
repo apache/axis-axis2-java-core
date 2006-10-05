@@ -1,8 +1,5 @@
 package org.apache.axis2.tools.idea;
 
-import org.apache.axis2.tools.bean.CodegenBean;
-
-import javax.swing.*;
 import java.awt.*;
 
 /*
@@ -39,7 +36,7 @@ class SecondPanelLayout implements LayoutManager {
 
         Insets insets = parent.getInsets();
         dim.width = 565 + insets.left + insets.right;
-        dim.height = 235 + insets.top + insets.bottom;
+        dim.height = 300 + insets.top + insets.bottom;
 
         return dim;
     }

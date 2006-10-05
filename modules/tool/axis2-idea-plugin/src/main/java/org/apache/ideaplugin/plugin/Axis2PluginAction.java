@@ -1,11 +1,9 @@
 package org.apache.ideaplugin.plugin;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 /*
@@ -42,9 +40,11 @@ public class Axis2PluginAction extends AnAction {
     public void actionPerformed(AnActionEvent anActionEvent) {
         Application application =
                 ApplicationManager.getApplication();
+        Project project = (Project) anActionEvent.getDataContext().getData(DataConstants.PROJECT);
+
         Axis2IdeaPlugin axis2component =
-                (Axis2IdeaPlugin)application.getComponent(Axis2IdeaPlugin.class);
-        axis2component.showTool();
+                (Axis2IdeaPlugin) application.getComponent(Axis2IdeaPlugin.class);
+        axis2component.showTool(project);
     }
 
     public void update(AnActionEvent event) {

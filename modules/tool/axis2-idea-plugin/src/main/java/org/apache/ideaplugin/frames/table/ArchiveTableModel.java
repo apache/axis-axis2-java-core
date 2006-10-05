@@ -31,24 +31,25 @@ import java.util.Iterator;
 public class ArchiveTableModel extends AbstractTableModel {
 
     final String[] columnNames = {"Operation Name", "Return Value", "Parameters ", "Select"};
-    Object [][] datvalue;
+    Object[][] datvalue;
     private HashMap datobjs;
 
     public ArchiveTableModel(HashMap dataobject) {
         int size = dataobject.size();
         datvalue = new Object[size][4];
-        Iterator itr =  dataobject.values().iterator();
-        int count =0;
+        Iterator itr = dataobject.values().iterator();
+        int count = 0;
         while (itr.hasNext()) {
             OperationObj operationObj = (OperationObj) itr.next();
-            datvalue[count][0]=operationObj.getOpName();
-            datvalue[count][1]=operationObj.getReturnValue();
-            datvalue[count][2]=operationObj.getParameters();
-            datvalue[count][3]=operationObj.getSelect();
-            count ++;
+            datvalue[count][0] = operationObj.getOpName();
+            datvalue[count][1] = operationObj.getReturnValue();
+            datvalue[count][2] = operationObj.getParameters();
+            datvalue[count][3] = operationObj.getSelect();
+            count++;
         }
         this.datobjs = dataobject;
     }
+
     public int getColumnCount() {
         return columnNames.length;
     }
@@ -72,15 +73,16 @@ public class ArchiveTableModel extends AbstractTableModel {
     public boolean isCellEditable(int row, int col) {
         return col >= 3;
     }
+
     public void setValueAt(Object value, int row, int col) {
-        OperationObj obj = (OperationObj)datobjs.get(getValueAt(row,0));
-        if(col == 3){
-            obj.setSelect((Boolean)value);
+        OperationObj obj = (OperationObj) datobjs.get(getValueAt(row, 0));
+        if (col == 3) {
+            obj.setSelect((Boolean) value);
         }
 
         if (datvalue[0][col] instanceof Integer) {
             try {
-                datvalue[row][col] = new Integer((String)value);
+                datvalue[row][col] = new Integer((String) value);
             } catch (NumberFormatException e) {
                 System.out.println("Error");
             }

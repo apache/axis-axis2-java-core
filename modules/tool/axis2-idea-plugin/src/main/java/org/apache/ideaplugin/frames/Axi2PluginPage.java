@@ -1,5 +1,6 @@
 package org.apache.ideaplugin.frames;
 
+import com.intellij.openapi.project.Project;
 import org.apache.axis2.tools.idea.Java2CodeFrame;
 
 import javax.swing.*;
@@ -36,6 +37,7 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
     JButton butOK;
     JButton butCancle;
     JPanel imglbl;
+    Project project;
 
     public Axi2PluginPage() {
         setBackground(Color.white);
@@ -47,13 +49,15 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
 
         setFont(new Font("Helvetica", Font.PLAIN, 12));
         setLayout(customLayout);
-
+        setTitle("Axis2 Plugin");
         cbg = new ButtonGroup();
         service = new JRadioButton("Create a service archive", false);
+        service.setToolTipText("Hepls package classes, libs and WSDLs to create a archive that can be deployed in Axis2");
         cbg.add(service);
         add(service);
 
         javawsdl = new JRadioButton("WSDL2Code codegenaration", false);
+        javawsdl.setToolTipText("Helps generate skeletons and stubs for a given WSDL");
         cbg.add(javawsdl);
         add(javawsdl);
 
@@ -77,10 +81,11 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         show();
     }
 
-//    public static void main(String args[]) {
-//        Axi2PluginPage window = new Axi2PluginPage();
-//        window.showUI();
-//    }
+    public void setProject(Project project) {
+
+        this.project = project;
+    }
+
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -92,7 +97,9 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
             setVisible(false);
             if (javawsdl.isSelected()) {
                 Java2CodeFrame win = new Java2CodeFrame();
-                win.showUI();
+                win.setProject(project);
+                win.pack();
+                win.show();
             } else {
                 ServiceArciveFrame window = new ServiceArciveFrame();
                 window.setTitle("Service Archive creation");

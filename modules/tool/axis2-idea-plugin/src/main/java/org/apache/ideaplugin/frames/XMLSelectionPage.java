@@ -3,13 +3,8 @@ package org.apache.ideaplugin.frames;
 import org.apache.ideaplugin.bean.ArchiveBean;
 import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.Font;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
@@ -39,7 +34,7 @@ import java.io.IOException;
  * Date: Sep 23, 2005
  * Time: 11:26:02 PM
  */
-public class XMLSelectionPage extends JPanel  implements ObjectKeeper, ActionListener {
+public class XMLSelectionPage extends JPanel implements ObjectKeeper, ActionListener {
     JLabel selectxml;
     JTextField txtService;
     JButton butSelect;
@@ -52,6 +47,7 @@ public class XMLSelectionPage extends JPanel  implements ObjectKeeper, ActionLis
     private JPanel previous;
 
     protected ServiceArciveFrame parent;
+
     public XMLSelectionPage(ServiceArciveFrame parent) {
         Insets insets = parent.getInsets();
         this.parent = parent;
@@ -78,13 +74,13 @@ public class XMLSelectionPage extends JPanel  implements ObjectKeeper, ActionLis
         bustSelectclss.addActionListener(this);
         add(bustSelectclss);
 
-        selectxml.setBounds(insets.left+16,insets.top+16,168,24);
-        txtService.setBounds(insets.left+192,insets.top+16,288,24);
-        butSelect.setBounds(insets.left+488,insets.top+16,72,24);
+        selectxml.setBounds(insets.left + 16, insets.top + 16, 168, 24);
+        txtService.setBounds(insets.left + 192, insets.top + 16, 288, 24);
+        butSelect.setBounds(insets.left + 488, insets.top + 16, 72, 24);
 
-        selctclass.setBounds(insets.left+16,insets.top+45,168,24);
-        txtclass.setBounds(insets.left+192,insets.top+45,288,24);
-        bustSelectclss.setBounds(insets.left+488,insets.top+45,72,24);
+        selctclass.setBounds(insets.left + 16, insets.top + 45, 168, 24);
+        txtclass.setBounds(insets.left + 192, insets.top + 45, 288, 24);
+        bustSelectclss.setBounds(insets.left + 488, insets.top + 45, 72, 24);
 
         setSize(getPreferredSize());
     }
@@ -99,7 +95,7 @@ public class XMLSelectionPage extends JPanel  implements ObjectKeeper, ActionLis
 
     }
 
-     public String getTopLable() {
+    public String getTopLable() {
         return "Class location & Service descriptor selection";
     }
 
@@ -108,14 +104,14 @@ public class XMLSelectionPage extends JPanel  implements ObjectKeeper, ActionLis
     }
 
     public JPanel getNext() {
-        DescriptorFile disfile = new DescriptorFile(parent,value);
+        DescriptorFile disfile = new DescriptorFile(parent, value);
         disfile.setPrivious(this);
         return disfile;
     }
 
     //to keep a refernce to previous panel
     public void setPrivious(JPanel privious) {
-        this.previous =privious;
+        this.previous = privious;
     }
 
     public JPanel getPrivious() {
@@ -124,7 +120,7 @@ public class XMLSelectionPage extends JPanel  implements ObjectKeeper, ActionLis
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == bustSelectclss){
+        if (obj == bustSelectclss) {
             parent.fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int returnVal = parent.fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -136,15 +132,15 @@ public class XMLSelectionPage extends JPanel  implements ObjectKeeper, ActionLis
                 parent.setEnable(true, false, false, true);
             }
 
-        }   else if(obj == butSelect){
+        } else if (obj == butSelect) {
             parent.fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int returnVal = parent.fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File  file = parent.fc.getSelectedFile();
+                File file = parent.fc.getSelectedFile();
 
                 byte[] buf = new byte[1024];
                 int read;
-                ByteArrayOutputStream out ;
+                ByteArrayOutputStream out;
                 try {
                     FileInputStream in = new FileInputStream(file);
 

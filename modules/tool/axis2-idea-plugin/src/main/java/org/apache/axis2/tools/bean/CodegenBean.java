@@ -1,5 +1,10 @@
 package org.apache.axis2.tools.bean;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.util.URLProcessor;
@@ -50,13 +55,25 @@ public class CodegenBean {
     private boolean syncOnly = false;
     private boolean serverSide = false;
     private boolean testcase = true;
-    private boolean generateServerXml = true;
     private boolean isServerXML;
     private boolean isGenerateAll;
     private boolean isTestCase;
     private String serviceName;
     private String portName;
     private String databindingName;
+
+    private boolean defaultClient = true;
+
+    Project project;
+
+
+    public boolean isDefaultClient() {
+        return defaultClient;
+    }
+
+    public void setDefaultClient(boolean defaultClient) {
+        this.defaultClient = defaultClient;
+    }
 
     public boolean isServerXML() {
         return isServerXML;
@@ -304,14 +321,6 @@ public class CodegenBean {
         this.serverSide = serverSide;
     }
 
-    public boolean isGenerateServerXml() {
-        return generateServerXml;
-    }
-
-    public void setGenerateServerXml(boolean generateServerXml) {
-        this.generateServerXml = generateServerXml;
-    }
-
     public boolean isTestcase() {
         return testcase;
     }
@@ -321,6 +330,8 @@ public class CodegenBean {
     }
 
     public void generate() throws Exception {
+
+
         ClassLoader tcl = Thread.currentThread().getContextClassLoader();
         try {
             if (!"xmlbeans".equals(getDatabindingName())) {
@@ -351,6 +362,7 @@ public class CodegenBean {
     private Definition wsdlDefinition = null;
 
     public void readWSDL() {
+
         try {
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             wsdlDefinition = reader.readWSDL(WSDLFileName);
@@ -407,4 +419,52 @@ public class CodegenBean {
 
         return returnList;
     }
+
+
+    public Project getActiveProject() {
+        return project;
+
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+        System.out.println();
+    }
+
+
+    public File getTemp() {
+
+        String time = Calendar.getInstance().getTime().toString().replace(':', '-');
+        File temp = new File(getActiveProject().getProjectFile().getParent().getPath() + File.separator + "temp-" + time);
+        return temp;
+    }
+
+    public Module[] getModules() {
+
+        Project project = getActiveProject();
+        if (project != null) {
+            return ModuleManager.getInstance(project).getModules();
+        }
+        return null;
+    }
+
+    public String[] getModuleSrc(String name) {
+        Project project = getActiveProject();
+        if (project != null) {
+            Module module = ModuleManager.getInstance(project).findModuleByName(name);
+            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+            VirtualFile virtualFiles[] = moduleRootManager.getSourceRoots();
+            String src[] = new String[virtualFiles.length];
+            for (int count = 0; count < src.length; count++) {
+                src[count] = virtualFiles[count].getPresentableUrl();
+            }
+            return src;
+        }
+        return null;
+    }
+
+
 }
+
+
+

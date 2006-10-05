@@ -3,13 +3,8 @@ package org.apache.ideaplugin.frames;
 import org.apache.ideaplugin.bean.ArchiveBean;
 import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import java.awt.Font;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -85,7 +80,7 @@ public class ClassSelctionPage extends JPanel implements ObjectKeeper, ActionLis
     public JPanel getNext() {
         ResourceChooser res = new ResourceChooser(parent);
         res.setPrivious(this);
-        return  res;
+        return res;
 //        return selectPanel;
     }
 

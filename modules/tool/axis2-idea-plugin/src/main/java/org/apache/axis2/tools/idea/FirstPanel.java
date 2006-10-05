@@ -2,18 +2,9 @@ package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -55,6 +46,7 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
         this.codegenBean = codegenBean;
         FirstPanelLayout customLayout = new FirstPanelLayout();
         setLayout(customLayout);
+
         setFont(new Font("Helvetica", Font.PLAIN, 12));
         lblWSDL = new JLabel("WSDL File");
         add(lblWSDL);
@@ -68,7 +60,10 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
         add(btnBrowse);
         btnBrowse.addActionListener(this);
 
-        setSize(getPreferredSize());
+
+        Dimension dim = new Dimension(450, 300);
+        setSize(dim);
+
 
     }
 
@@ -187,7 +182,7 @@ class FirstPanelLayout implements LayoutManager {
 
         Insets insets = parent.getInsets();
         dim.width = 541 + insets.left + insets.right;
-        dim.height = 204 + insets.top + insets.bottom;
+        dim.height = 300 + insets.top + insets.bottom;
 
         return dim;
     }

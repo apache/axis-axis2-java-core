@@ -1,15 +1,7 @@
 package org.apache.ideaplugin.frames;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -37,7 +29,7 @@ public class ImagePanel extends JPanel {
     JLabel lblImage;
     JLabel labTop;
     JLabel lblBottom;
-    ImageIcon apachelogo ;
+    ImageIcon apachelogo;
 
     public ImagePanel() {
         ImageLayout customLayout = new ImageLayout();
@@ -64,7 +56,7 @@ public class ImagePanel extends JPanel {
         this.setBackground(Color.white);
     }
 
-    public void setCaptions(String lbl1 , String lbl2){
+    public void setCaptions(String lbl1, String lbl2) {
         labTop.setText("  " + lbl1);
         lblBottom.setText("  " + lbl2);
     }
@@ -101,10 +93,16 @@ class ImageLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+368,insets.top+0,168,80);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 368, insets.top + 0, 168, 80);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+0,insets.top+0,368,40);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 0, insets.top + 0, 368, 40);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+0,insets.top+40,368,40);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 0, insets.top + 40, 368, 40);
+        }
     }
 }

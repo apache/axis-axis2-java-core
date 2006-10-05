@@ -39,16 +39,16 @@ public class JarFileWriter extends Jar {
         this.setOwningTarget(new org.apache.tools.ant.Target());
     }
 
-    public void writeJarFile(File outputFolder,String outputFileName, File inputFileFolder) throws IOException,Exception {
+    public void writeJarFile(File outputFolder, String outputFileName, File inputFileFolder) throws IOException, Exception {
 
-        if (!outputFolder.exists()){
+        if (!outputFolder.exists()) {
             outputFolder.mkdir(); //create the output path
-        }else{
+        } else {
             if (!outputFolder.isDirectory())
                 return;
         }
 
-        File targetFile = new File(outputFolder,outputFileName);
+        File targetFile = new File(outputFolder, outputFileName);
         this.setBasedir(inputFileFolder);
         this.setDestFile(targetFile);
 

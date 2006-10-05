@@ -3,16 +3,8 @@ package org.apache.ideaplugin.frames;
 import org.apache.ideaplugin.bean.ArchiveBean;
 import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -80,7 +72,6 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
         cbggenerateserviceDesc.add(radihaveService);
         add(radihaveService);
 
-
         //creating next page
 //        classPage = new ClassSelctionPage(parent);
 //        classPage.setPrivious(this);
@@ -98,16 +89,16 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
     }
 
     public JPanel getNext() {
-        boolean singleservice= radioSingle.isSelected();
-        boolean generateXML =radioGenerate.isSelected();
-        if(singleservice  && generateXML){
+        boolean singleservice = radioSingle.isSelected();
+        boolean generateXML = radioGenerate.isSelected();
+        if (singleservice && generateXML) {
             parent.singleService = true;
             parent.generateServiceXML = true;
             ClassSelctionPage classPage = new ClassSelctionPage(parent);
             classPage.setPrivious(this);
-            return classPage ;
-        } else if (!generateXML){
-             parent.generateServiceXML = false;
+            return classPage;
+        } else if (!generateXML) {
+            parent.generateServiceXML = false;
             XMLSelectionPage xml = new XMLSelectionPage(parent);
             xml.setPrivious(this);
             return xml;
@@ -116,7 +107,7 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
             parent.singleService = false;
             ClassSelctionPage classPage = new ClassSelctionPage(parent);
             classPage.setPrivious(this);
-            return classPage ;
+            return classPage;
         }
     }
 
@@ -126,7 +117,7 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
     }
 
     public JPanel getPrivious() {
-        return this.previous ;
+        return this.previous;
     }
 
     public String getTopLable() {
@@ -169,16 +160,28 @@ class FirstFrameLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+24,208,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 24, 208, 24);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+32,insets.top+56,184,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 32, insets.top + 56, 184, 24);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+32,insets.top+88,184,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 32, insets.top + 88, 184, 24);
+        }
         c = parent.getComponent(3);
-        if (c.isVisible()) {c.setBounds(insets.left+8,insets.top+136,250,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 136, 250, 24);
+        }
         c = parent.getComponent(4);
-        if (c.isVisible()) {c.setBounds(insets.left+32,insets.top+168,224,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 32, insets.top + 168, 224, 24);
+        }
         c = parent.getComponent(5);
-        if (c.isVisible()) {c.setBounds(insets.left+32,insets.top+200,224,16);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 32, insets.top + 200, 224, 16);
+        }
     }
 }

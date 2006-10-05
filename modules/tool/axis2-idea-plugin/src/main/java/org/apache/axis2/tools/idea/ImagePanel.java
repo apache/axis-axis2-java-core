@@ -1,15 +1,7 @@
 package org.apache.axis2.tools.idea;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -34,18 +26,15 @@ import java.awt.LayoutManager;
  * Date: Jul 20, 2005
  * Time: 9:33:14 PM
  */
-public class ImagePanel extends JPanel{
+public class ImagePanel extends JPanel {
     JLabel lblImage;
     JLabel labTop;
     JLabel lblBottom;
-    ImageIcon apachelogo ;
+    ImageIcon apachelogo;
 
     public ImagePanel() {
         ImageLayout customLayout = new ImageLayout();
         setLayout(customLayout);
-
-        java.net.URL resource = ImagePanel.class.getResource("/icons/asf-feather.png");
-        apachelogo = new ImageIcon(resource);
 
         lblImage = new JLabel(apachelogo);
         add(lblImage);
@@ -65,7 +54,7 @@ public class ImagePanel extends JPanel{
         this.setBackground(Color.white);
     }
 
-    public void setCaptions(String lbl1 , String lbl2){
+    public void setCaptions(String lbl1, String lbl2) {
         labTop.setText(lbl1);
         lblBottom.setText(lbl2);
     }
@@ -101,10 +90,16 @@ class ImageLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+368,insets.top,168,80);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 368, insets.top, 168, 80);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left,insets.top,368,40);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left, insets.top, 368, 40);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left,insets.top+40,368,40);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left, insets.top + 40, 368, 40);
+        }
     }
 }

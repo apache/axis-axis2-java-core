@@ -35,7 +35,7 @@ public class ServiceArciveFrame extends JFrame {
     public boolean singleService;
     public boolean generateServiceXML;
     //  protected JPanel firstpanel ;
-//    protected SelectPanel slectpanel;
+    //    protected SelectPanel slectpanel;
     protected JPanel currentpanle;
     public String fileSeparator = System.getProperty("file.separator");
     public final JFileChooser fc = new JFileChooser();

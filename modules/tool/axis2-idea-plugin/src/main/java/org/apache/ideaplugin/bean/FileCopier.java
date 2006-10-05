@@ -37,7 +37,7 @@ public class FileCopier extends Copy {
         this.setOwningTarget(new org.apache.tools.ant.Target());
     }
 
-    public void copyFiles(File sourceFile, File destinationDirectory,String filter){
+    public void copyFiles(File sourceFile, File destinationDirectory, String filter) {
 
         this.filesets.clear();
 
@@ -46,9 +46,9 @@ public class FileCopier extends Copy {
         else {
             FileSet fileset = new FileSet();
             fileset.setDir(sourceFile);
-            if (filter!=null){
-                if (filter.matches("\\.\\w*")){
-                    fileset.setIncludes("*/**/*"+filter);
+            if (filter != null) {
+                if (filter.matches("\\.\\w*")) {
+                    fileset.setIncludes("*/**/*" + filter);
                 }
             }
 

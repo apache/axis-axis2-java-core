@@ -3,20 +3,8 @@ package org.apache.ideaplugin.frames;
 import org.apache.ideaplugin.bean.ArchiveBean;
 import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -124,7 +112,7 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == butLoad ) {
+        if (obj == butLoad) {
             listModellibs.addElement(txtLibs.getText());
         } else if (obj == butselect) {
             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -133,36 +121,36 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 File newfile = fc.getSelectedFile();
                 txtLibs.setText(newfile.getAbsolutePath());
-            }  else {
+            } else {
                 txtLibs.setText("");
             }
-        } else if(obj == butSelectwsdl){
+        } else if (obj == butSelectwsdl) {
             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 File newfile = fc.getSelectedFile();
                 txtwsdl.setText(newfile.getAbsolutePath());
-            }  else {
+            } else {
                 txtwsdl.setText("");
             }
-        } else if(obj ==butaddwsdl ){
+        } else if (obj == butaddwsdl) {
             listModellwsdls.addElement(txtwsdl.getText());
-        } else if (obj == butDone){
-            parent.setEnable(false,true,false,true);
+        } else if (obj == butDone) {
+            parent.setEnable(false, true, false, true);
         }
     }
 
     public void fillBean(ArchiveBean bean) {
 
-        Enumeration enumerator =listModellibs.elements();
+        Enumeration enumerator = listModellibs.elements();
         ArrayList libs = new ArrayList();
-        URL urllist [] = new URL[listModellibs.size() +1];
+        URL urllist[] = new URL[listModellibs.size() + 1];
         int count = 0;
         while (enumerator.hasMoreElements()) {
             String s = (String) enumerator.nextElement();
             File file = new File(s);
-            if(file.exists()){
+            if (file.exists()) {
                 try {
                     urllist[count] = file.toURL();
                 } catch (MalformedURLException e) {
@@ -170,14 +158,14 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
                 }
             }
             libs.add(s);
-            count ++;
+            count++;
         }
         try {
             urllist[count] = bean.getClassLocation().toURL();
         } catch (MalformedURLException e) {
-            
+
         }
-        ClassLoader cls = new URLClassLoader(urllist,ResourceChooser.class.getClassLoader());
+        ClassLoader cls = new URLClassLoader(urllist, ResourceChooser.class.getClassLoader());
         bean.setClassLoader(cls);
 //        Enumeration enumerator =listModellibs.elements();
 //        ArrayList libs = new ArrayList();
@@ -186,7 +174,7 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
 //            libs.add(s);
 //        }
         bean.setLibs(libs);
-        enumerator =listModellwsdls.elements();
+        enumerator = listModellwsdls.elements();
         ArrayList wsdls = new ArrayList();
         while (enumerator.hasMoreElements()) {
             String s = (String) enumerator.nextElement();
@@ -210,12 +198,12 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
     }
 
     public JPanel getNext() {
-        if(parent.generateServiceXML){
-            SelectPanel sp = new SelectPanel(parent,parent.bean.getClassLocation());
+        if (parent.generateServiceXML) {
+            SelectPanel sp = new SelectPanel(parent, parent.bean.getClassLocation());
             sp.setPrivious(this);
             return sp;
         } else {
-            DescriptorFile dis = new DescriptorFile(parent,parent.bean.getServiceXML());
+            DescriptorFile dis = new DescriptorFile(parent, parent.bean.getServiceXML());
             dis.setPrivious(this);
             return dis;
         }
@@ -230,7 +218,7 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
     }
 
     public JPanel getPrivious() {
-        return  this.previous;
+        return this.previous;
     }
 }
 
@@ -265,27 +253,49 @@ class ResourceChooserLayout implements LayoutManager {
 
         Component c;
         c = parent.getComponent(0);
-        if (c.isVisible()) {c.setBounds(insets.left+16,insets.top+16,128,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 16, insets.top + 16, 128, 24);
+        }
         c = parent.getComponent(1);
-        if (c.isVisible()) {c.setBounds(insets.left+152,insets.top+16,312,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 152, insets.top + 16, 312, 24);
+        }
         c = parent.getComponent(2);
-        if (c.isVisible()) {c.setBounds(insets.left+496,insets.top+16,72,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 496, insets.top + 16, 72, 24);
+        }
         c = parent.getComponent(3);
-        if (c.isVisible()) {c.setBounds(insets.left+472,insets.top+16,16,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 472, insets.top + 16, 16, 24);
+        }
         c = parent.getComponent(4);
-        if (c.isVisible()) {c.setBounds(insets.left+152,insets.top+48,312,72);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 152, insets.top + 48, 312, 72);
+        }
         c = parent.getComponent(5);
-        if (c.isVisible()) {c.setBounds(insets.left+16,insets.top+128,128,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 16, insets.top + 128, 128, 24);
+        }
         c = parent.getComponent(6);
-        if (c.isVisible()) {c.setBounds(insets.left+152,insets.top+128,312,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 152, insets.top + 128, 312, 24);
+        }
         c = parent.getComponent(7);
-        if (c.isVisible()) {c.setBounds(insets.left+472,insets.top+128,16,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 472, insets.top + 128, 16, 24);
+        }
         c = parent.getComponent(8);
-        if (c.isVisible()) {c.setBounds(insets.left+496,insets.top+128,72,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 496, insets.top + 128, 72, 24);
+        }
         c = parent.getComponent(9);
-        if (c.isVisible()) {c.setBounds(insets.left+152,insets.top+160,312,64);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 152, insets.top + 160, 312, 64);
+        }
         c = parent.getComponent(10);
-        if (c.isVisible()) {c.setBounds(insets.left+248,insets.top+225,72,24);}
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 248, insets.top + 225, 72, 24);
+        }
     }
 }
 

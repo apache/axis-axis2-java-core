@@ -5,12 +5,8 @@ import org.apache.ideaplugin.ParameterDialog;
 import org.apache.ideaplugin.bean.ArchiveBean;
 import org.apache.ideaplugin.bean.ObjectKeeper;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import java.awt.Font;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 /*
@@ -36,7 +32,7 @@ import java.awt.event.ActionListener;
  * Date: Sep 22, 2005
  * Time: 11:42:16 PM
  */
-public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListener  {
+public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListener {
 
     protected JTextArea desArea;
     protected JButton butaddpara;
@@ -96,7 +92,7 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
 
     //to keep a refernce to previous panel
     public void setPrivious(JPanel privious) {
-        this.previous =privious;
+        this.previous = privious;
     }
 
     public JPanel getPrivious() {
@@ -105,15 +101,15 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if(obj == butaddpara){
+        if (obj == butaddpara) {
             String str = "";
-            int cusrpos =  desArea.getCaretPosition();
-            pradialog.showDialog(str,desArea,cusrpos);
+            int cusrpos = desArea.getCaretPosition();
+            pradialog.showDialog(str, desArea, cusrpos);
             pradialog.hideForm();
-        }  else if(obj == addModuleRef){
+        } else if (obj == addModuleRef) {
             String str = "";
-            int cusrpos =  desArea.getCaretPosition();
-            moduledialog.showDialog(str,desArea,cusrpos);
+            int cusrpos = desArea.getCaretPosition();
+            moduledialog.showDialog(str, desArea, cusrpos);
             moduledialog.hideForm();
         }
     }

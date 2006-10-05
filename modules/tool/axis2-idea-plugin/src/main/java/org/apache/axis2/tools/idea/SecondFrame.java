@@ -3,6 +3,7 @@ package org.apache.axis2.tools.idea;
 import org.apache.axis2.tools.bean.CodegenBean;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import javax.xml.namespace.QName;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,17 +30,34 @@ public class SecondFrame extends JPanel implements ActionListener {
 
     JLabel lblLangauge;
     JComboBox cmbLan;
-    JCheckBox serverside;
-    JCheckBox rdsyn;
-    JCheckBox rdasync;
-    JLabel lbldbtype;
-    JComboBox cmbdbtype;
+
     JLabel lblServiceName;
     JComboBox cmbServiceName;
+
     JLabel lblportName;
     JComboBox cmbPortName;
+
     JLabel lblpackgeName;
     JTextField txtPacakgeName;
+
+    JLabel lbldbtype;
+    JComboBox cmbdbtype;
+
+    JCheckBox chkTestCase;
+
+    JLabel lblClient;
+
+    JRadioButton rdBoth;
+    JRadioButton rdsyn;
+    JRadioButton rdasync;
+
+    JLabel lblServer;
+
+    JCheckBox serverside;
+    JCheckBox serviceXML;
+
+    ButtonGroup buttonGroup;
+
     private CodegenBean codegenBean;
     java.util.List serviceNameList;
 
@@ -49,22 +67,39 @@ public class SecondFrame extends JPanel implements ActionListener {
         setFont(new Font("Helvetica", Font.PLAIN, 12));
         setLayout(customLayout);
 
+        BevelBorder b = new BevelBorder(BevelBorder.LOWERED);
+        setBorder(b);
+
         lblLangauge = new JLabel("Select the output language");
         add(lblLangauge);
 
         cmbLan = new JComboBox();
         cmbLan.addItem("java");
         cmbLan.addItem("C#");
+        cmbLan.setToolTipText("Select the language of the generated code");
         add(cmbLan);
 
-        serverside = new JCheckBox("Generate server side ", true);
-        add(serverside);
+        lblServiceName = new JLabel("Select ServiceName");
+        add(lblServiceName);
 
-        rdsyn = new JCheckBox("Generate sync", false);
-        add(rdsyn);
+        cmbServiceName = new JComboBox();
+        add(cmbServiceName);
+        cmbServiceName.setToolTipText("Select the name of the service that the code should be generated for");
+        cmbServiceName.addActionListener(this);
 
-        rdasync = new JCheckBox("Generate async", false);
-        add(rdasync);
+        lblportName = new JLabel("Select Port Name");
+        add(lblportName);
+
+        cmbPortName = new JComboBox();
+        cmbPortName.setToolTipText("Select the port name that the code should be generated for");
+        add(cmbPortName);
+
+        lblpackgeName = new JLabel("Select the package name");
+        add(lblpackgeName);
+
+        txtPacakgeName = new JTextField("org.axis2");
+        txtPacakgeName.setToolTipText("Set the package name of the generated code");
+        add(txtPacakgeName);
 
         lbldbtype = new JLabel("Select Databinding type");
         add(lbldbtype);
@@ -73,28 +108,41 @@ public class SecondFrame extends JPanel implements ActionListener {
         cmbdbtype.addItem("adb");
         cmbdbtype.addItem("xmlbeans");
         cmbdbtype.addItem("none");
+        cmbdbtype.setToolTipText("Select the databinding framework to be used in the generation process");
         add(cmbdbtype);
 
-        lblServiceName = new JLabel("Select ServiceName");
-        add(lblServiceName);
+        chkTestCase = new JCheckBox("Generate Test Case", true);
+        chkTestCase.setToolTipText("A test case will be generated if this is checked");
+        add(chkTestCase);
 
-        cmbServiceName = new JComboBox();
-        add(cmbServiceName);
-        cmbServiceName.addActionListener(this);
+        lblClient = new JLabel("Client Side Options");
+        add(lblClient);
 
-        lblportName = new JLabel("Select Port Name");
-        add(lblportName);
+        buttonGroup = new ButtonGroup();
 
-        cmbPortName = new JComboBox();
-        add(cmbPortName);
+        rdBoth = new JRadioButton("Generate both sync and async", true);
+        buttonGroup.add(rdBoth);
+        add(rdBoth);
 
-        lblpackgeName = new JLabel("Select the package name");
-        add(lblpackgeName);
+        rdsyn = new JRadioButton("Generate sync only", false);
+        buttonGroup.add(rdsyn);
+        add(rdsyn);
 
-        txtPacakgeName = new JTextField("org.axis2");
-        add(txtPacakgeName);
+        rdasync = new JRadioButton("Generate async only", false);
+        buttonGroup.add(rdasync);
+        add(rdasync);
 
-        setSize(getPreferredSize());
+        lblServer = new JLabel("Server Side Options");
+        add(lblServer);
+
+        serverside = new JCheckBox("Generate server side ", true);
+        add(serverside);
+
+        serviceXML = new JCheckBox("Generate default service.xml", true);
+        add(serviceXML);
+
+        Dimension dim = new Dimension(450, 300);
+        setSize(dim);
     }
 
     public void setCodeGenBean(CodegenBean codegenBean) {
@@ -145,6 +193,9 @@ public class SecondFrame extends JPanel implements ActionListener {
         if (serverside.isSelected()) {
             codegenBean.setServerSide(true);
         }
+        if (chkTestCase.isSelected()) {
+            codegenBean.setTestCase(true);
+        }
         codegenBean.setPackageName(txtPacakgeName.getText());
         codegenBean.setServiceName(cmbServiceName.getSelectedItem().toString());
         codegenBean.setServiceName(cmbPortName.getSelectedItem().toString());
@@ -180,7 +231,7 @@ class SecondFrameLayout implements LayoutManager {
 
         Insets insets = parent.getInsets();
         dim.width = 575 + insets.left + insets.right;
-        dim.height = 268 + insets.top + insets.bottom;
+        dim.height = 450 + insets.top + insets.bottom;
 
         return dim;
     }
@@ -193,58 +244,100 @@ class SecondFrameLayout implements LayoutManager {
         Insets insets = parent.getInsets();
 
         Component c;
+
+        // Language selection
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 8, 192, 24);
+            c.setBounds(insets.left + 8, insets.top + 10, 192, 24);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 264, insets.top + 8, 184, 24);
+            c.setBounds(insets.left + 272, insets.top + 10, 176, 24);
         }
+
+        // Service Name selection
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 32, 208, 24);
+            c.setBounds(insets.left + 8, insets.top + 40, 192, 24);
         }
         c = parent.getComponent(3);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 220, insets.top + 32, 168, 24);
+            c.setBounds(insets.left + 272, insets.top + 40, 176, 24);
         }
+
+        // Port Name Selection
         c = parent.getComponent(4);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 385, insets.top + 32, 144, 24);
+            c.setBounds(insets.left + 8, insets.top + 70, 192, 24);
         }
         c = parent.getComponent(5);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 60, 192, 24);
+            c.setBounds(insets.left + 272, insets.top + 70, 176, 24);
         }
+
+        //Package NAme Selection
         c = parent.getComponent(6);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 272, insets.top + 60, 176, 24);
+            c.setBounds(insets.left + 8, insets.top + 100, 192, 24);
         }
         c = parent.getComponent(7);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 90, 192, 24);
+            c.setBounds(insets.left + 272, insets.top + 100, 176, 24);
         }
+
+        // Data Binding Selection
         c = parent.getComponent(8);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 272, insets.top + 90, 176, 24);
+            c.setBounds(insets.left + 8, insets.top + 130, 192, 24);
         }
         c = parent.getComponent(9);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 120, 192, 24);
+            c.setBounds(insets.left + 272, insets.top + 130, 176, 24);
         }
+
+        // Test Case Selection
         c = parent.getComponent(10);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 272, insets.top + 120, 176, 24);
+            c.setBounds(insets.left + 8, insets.top + 160, 208, 24);
         }
+
+        // Client side options
         c = parent.getComponent(11);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 8, insets.top + 154, 192, 24);
+            c.setBounds(insets.left + 8, insets.top + 190, 168, 24);
         }
+
+        // Service invocation both,sync,async
         c = parent.getComponent(12);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 272, insets.top + 154, 176, 24);
+            c.setBounds(insets.left + 8, insets.top + 220, 220, 24);
         }
+        c = parent.getComponent(13);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 230, insets.top + 220, 140, 24);
+        }
+        c = parent.getComponent(14);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 380, insets.top + 220, 160, 24);
+        }
+
+        // Server side options
+        c = parent.getComponent(15);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 250, 168, 24);
+        }
+
+        // Generate serverside, generate service XML
+        c = parent.getComponent(16);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 280, 200, 24);
+        }
+        c = parent.getComponent(17);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 228, insets.top + 280, 200, 24);
+        }
+
+
     }
 }
 
