@@ -5,13 +5,18 @@ Overview:
 ---------
 
 This sample provides the capabilities and power of MTOM support of AXIOM.
-In this sample a jpg image is send to a service, which will eventually save
-it according to the location the user provided.
+In this sample the user can send multiple files to the MTOM sample service, which will save them
+on the server or echo them depending on the selected operation (i.e. send or send & receive). Echoing would
+result the files to be saved on the client side. 
+
+The option of file caching can be used when echoing a larger amount amount of data which could result in
+memory overflows. This will first save the echoed data in the local machine and then process them avoiding 
+too much memory usage.
 
 PreConditions:
 --------------
 
-1.  Run maven dist-bin on project root. The generated target/dist folder contains
+1.  Run maven dist-std-bin on project root. The generated target/dist folder contains
 the binary distribution. Unzip the relevant distribution to a folder of choice (this
 will be referred to as AXIS2_DIST)
 
@@ -30,12 +35,21 @@ pertaining to the system you are using.
 
 UI Configuration:
 -----------------
-1.  First browse the .jpg picture that you have to transmit.
+1.  First browse a file or type the absolute path of a file that you want to transmit. Then click "Add".
+    Add more files as you needed. 
 
-2.  Give the desired location that you have to save it. for example [/usr/temp/temp.jpg]
-If everything works fine, you will get the conformation or an exception
-via a dialog box.  End point reference is given. You can change it according to
-your host.
+2.  Give the desired location that you want the files to be saved, for example [/usr/temp/].
+    The end point reference is given. You can change it according to your host.
+
+3.  Select the transfer method either as via MTOM or SOAP with attachments. Select the operatio as either to
+    send or send & receive.
+
+4.  File caching is enabled only for send & receive operation. Enter a threshold value in bytes so that files larger
+    than this will be cached. Files will be cached in the path given in the cache folder text box.
+
+5.  Pressing "Execute" will perform the intended operation under given conditions. On success a message box will appear
+    informing the number of files saved.
+    
 
 Please contact axis-dev list (axis-dev@ws.apache.org) if you have any trouble running the sample.
 

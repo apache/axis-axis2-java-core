@@ -13,7 +13,7 @@
         <path refid="mtom.classpath"/>
     </path>
     <target name="mtomSample">
-        <java classname="sample.mtom.imagetransfer.client.MTOMClient"
+        <java classname="sample.mtom.filetransfer.client.MTOMClient"
               classpathref="sample.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}"/>
         </java>
