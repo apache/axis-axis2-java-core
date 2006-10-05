@@ -13,10 +13,16 @@
 
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.WSDLPropertyReader;
 import org.apache.axis2.util.URLProcessor;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
@@ -24,24 +30,22 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import javax.xml.namespace.QName;
-
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Options Page lets the user change general settings on the code generation. It
@@ -118,22 +122,27 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
 	private WSDLPropertyReader reader;
 
-	private List serviceQNameList = null;
+	private java.util.List serviceQNameList = null;
 	
-	private static final int EDITABLECOLUMN = 1;
+	private final int EDITABLECOLUMN = 1;
+	
+	private String defaultPackageName = null;
+	
+	private Combo codegenOptionSelectionComboBox;
 	
 	/**
 	 * A table to keep the namespace to 
 	 * package mappings
 	 */
 	private Table namespace2packageTable = null;
+	
+	Composite container;
 
 	/**
 	 * Creates the page and initialize some settings
 	 */
 	public OptionsPage() {
 		super("page2");
-
 	}
 
 	/**
@@ -145,7 +154,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		settings.put(PREF_CHECK_GENERATE_SERVERSIDE, false);
 		settings.put(PREF_CHECK_GENERATE_TESTCASE, false);
 		settings.put(PREF_LANGUAGE_INDEX, 0);
-		settings.put(PREF_PACKAGE_NAME, "org.example.webservice");
+		settings.put(PREF_PACKAGE_NAME, DEFAULT_PACKAGENAME);
 		settings.put(PREF_RADIO_ASYNC_ONLY, false);
 		settings.put(PREF_RADIO_SYNC_AND_ASYNC, true);
 		settings.put(PREF_RADIO_SYNC_ONLY, false);
@@ -156,6 +165,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		settings.put(PREF_GEN_SS_INTERFACE, false);
 	}
 
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -163,21 +173,57 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 */
 	public void createControl(Composite parent) {
 
-		Composite container = new Composite(parent, SWT.NULL);
+		container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		layout.numColumns = 3;
-		layout.verticalSpacing = 9;
-
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+
+	    Label label = new Label(container, SWT.NULL);
+	    label.setText(CodegenWizardPlugin.getResourceString("page2.options.desc"));
+	    label.setLayoutData(gd);
+	    
+	        
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 
-		Label label = new Label(container, SWT.NULL);
-		label.setText(CodegenWizardPlugin
+		codegenOptionSelectionComboBox = new Combo(container, SWT.DROP_DOWN| SWT.BORDER | SWT.READ_ONLY);
+		// fill the combo
+		this.fillCodegenOptionSelectionComboBox();
+		codegenOptionSelectionComboBox.setLayoutData(gd);
+		settings.put(PREF_CODEGEN_OPTION_INDEX, codegenOptionSelectionComboBox
+				.getSelectionIndex());
+		codegenOptionSelectionComboBox.select(settings.getInt(PREF_CODEGEN_OPTION_INDEX));
+		codegenOptionSelectionComboBox.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				settings.put(PREF_CODEGEN_OPTION_INDEX, codegenOptionSelectionComboBox
+						.getSelectionIndex());
+				if (codegenOptionSelectionComboBox
+						.getSelectionIndex() == 0 ){
+					disableControls();
+					
+				}else if (codegenOptionSelectionComboBox
+						.getSelectionIndex() == 1){
+					enableControls();
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+			
+			
+			
+			
+
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+
+		Label label1 = new Label(container, SWT.NULL);
+		label1.setText(CodegenWizardPlugin
 				.getResourceString("page2.language.caption"));
 
-		languageSelectionComboBox = new Combo(container, SWT.DROP_DOWN
-				| SWT.BORDER | SWT.READ_ONLY);
+		languageSelectionComboBox = new Combo(container, SWT.DROP_DOWN| SWT.BORDER | SWT.READ_ONLY);
 		// fill the combo
 		this.fillLanguageCombo();
 		languageSelectionComboBox.setLayoutData(gd);
@@ -191,53 +237,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-
-		syncAndAsyncRadioButton = new Button(container, SWT.RADIO);
-		syncAndAsyncRadioButton.setText(CodegenWizardPlugin
-				.getResourceString("page2.syncAsync.caption"));
-		syncAndAsyncRadioButton.setSelection(settings
-				.getBoolean(PREF_RADIO_SYNC_AND_ASYNC));
-		syncAndAsyncRadioButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				settings.put(PREF_RADIO_SYNC_AND_ASYNC, syncAndAsyncRadioButton
-						.getSelection());
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
-		syncOnlyRadioButton = new Button(container, SWT.RADIO);
-		syncOnlyRadioButton.setText(CodegenWizardPlugin
-				.getResourceString("page2.sync.caption"));
-		syncOnlyRadioButton.setSelection(settings
-				.getBoolean(PREF_RADIO_SYNC_ONLY));
-		syncOnlyRadioButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				settings.put(PREF_RADIO_SYNC_ONLY, syncOnlyRadioButton
-						.getSelection());
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
-		asyncOnlyRadioButton = new Button(container, SWT.RADIO);
-		asyncOnlyRadioButton
-				.setText(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
-						.getResourceString("page2.async.caption"));
-		asyncOnlyRadioButton.setSelection(settings
-				.getBoolean(PREF_RADIO_ASYNC_ONLY));
-		asyncOnlyRadioButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				settings.put(PREF_RADIO_ASYNC_ONLY, asyncOnlyRadioButton
-						.getSelection());
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-
+		
 		// service name
 		label = new Label(container, SWT.NULL);
 		label.setText(CodegenWizardPlugin
@@ -281,7 +281,30 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		
+		// Databinding
+		label = new Label(container, SWT.NULL);
+		label.setText(CodegenWizardPlugin
+				.getResourceString("page2.databindingCheck.caption"));
 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		databindingTypeCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER
+				| SWT.READ_ONLY);
+		databindingTypeCombo.setLayoutData(gd);
+		fillDatabinderCombo();
+		databindingTypeCombo.select(settings.getInt(PREF_DATABINDER_INDEX));
+		databindingTypeCombo.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				settings.put(PREF_DATABINDER_INDEX, databindingTypeCombo
+						.getSelectionIndex());
+
+			};
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			};
+		});
+		
 		// package name
 		label = new Label(container, SWT.NULL);
 		label.setText(CodegenWizardPlugin
@@ -293,11 +316,17 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		packageText.setLayoutData(gd);
 		String packageName;
 		String storedPackageName = settings.get(PREF_PACKAGE_NAME);
+		this.defaultPackageName = storedPackageName;
 		if (storedPackageName.equals("")) {
 			packageName = URLProcessor.makePackageName("");
 		} else {
 			packageName = storedPackageName;
 		}
+		
+		//if the package name somehow turned out to be null set it to 
+		//default package
+		if (packageName==null)packageName=URLProcessor.DEFAULT_PACKAGE;
+		
 		packageText.setText(packageName); // get this text from the
 		// URLProcessor
 		packageText.addModifyListener(new ModifyListener() {
@@ -305,7 +334,8 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 				settings.put(PREF_PACKAGE_NAME, packageText.getText());
 			}
 		});
-
+		
+		// generate test case option
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		testCaseCheckBoxButton = new Button(container, SWT.CHECK);
@@ -324,6 +354,87 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		
+		//filling label 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		Label fillLabel = new Label(container, SWT.HORIZONTAL | SWT.SEPARATOR);
+		fillLabel.setLayoutData(gd);
+
+		//cleint side label 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		Label lblClientside = new Label(container, SWT.NONE);
+		lblClientside.setText(CodegenWizardPlugin
+				.getResourceString("page2.clientside.caption"));
+		lblClientside.setLayoutData(gd);
+
+		//client side buttons
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		syncAndAsyncRadioButton = new Button(container, SWT.RADIO);
+		syncAndAsyncRadioButton.setLayoutData(gd);
+		syncAndAsyncRadioButton.setText(CodegenWizardPlugin
+				.getResourceString("page2.syncAsync.caption"));
+		syncAndAsyncRadioButton.setSelection(settings
+				.getBoolean(PREF_RADIO_SYNC_AND_ASYNC));
+		syncAndAsyncRadioButton.setVisible(true);
+		syncAndAsyncRadioButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				settings.put(PREF_RADIO_SYNC_AND_ASYNC, syncAndAsyncRadioButton
+						.getSelection());
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		
+
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		syncOnlyRadioButton = new Button(container, SWT.RADIO);
+		syncOnlyRadioButton.setLayoutData(gd);
+		syncOnlyRadioButton.setText(CodegenWizardPlugin
+				.getResourceString("page2.sync.caption"));
+		syncOnlyRadioButton.setSelection(settings
+				.getBoolean(PREF_RADIO_SYNC_ONLY));
+		syncOnlyRadioButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				settings.put(PREF_RADIO_SYNC_ONLY, syncOnlyRadioButton
+						.getSelection());
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 1;
+		asyncOnlyRadioButton = new Button(container, SWT.RADIO);
+		asyncOnlyRadioButton.setLayoutData(gd);
+		asyncOnlyRadioButton
+				.setText(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+						.getResourceString("page2.async.caption"));
+		asyncOnlyRadioButton.setSelection(settings
+				.getBoolean(PREF_RADIO_ASYNC_ONLY));
+		asyncOnlyRadioButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				settings.put(PREF_RADIO_ASYNC_ONLY, asyncOnlyRadioButton
+						.getSelection());
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		//filling label 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		Label fillLabel1 = new Label(container, SWT.HORIZONTAL | SWT.SEPARATOR);
+		fillLabel1.setLayoutData(gd);
+		
+		
 		// Server side check box
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
@@ -401,30 +512,13 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		});
 		
 		
-		// Databinding
-		label = new Label(container, SWT.NULL);
-		label.setText(CodegenWizardPlugin
-				.getResourceString("page2.databindingCheck.caption"));
-
+		//filling label 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		databindingTypeCombo = new Combo(container, SWT.DROP_DOWN | SWT.BORDER
-				| SWT.READ_ONLY);
-		databindingTypeCombo.setLayoutData(gd);
-		fillDatabinderCombo();
-		databindingTypeCombo.select(settings.getInt(PREF_DATABINDER_INDEX));
-		databindingTypeCombo.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				settings.put(PREF_DATABINDER_INDEX, databindingTypeCombo
-						.getSelectionIndex());
+		gd.horizontalSpan = 3;
+		Label fillLabel2 = new Label(container, SWT.HORIZONTAL | SWT.SEPARATOR);
+		fillLabel2.setLayoutData(gd);
 
-			};
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-			};
-		});
-
-//		 Databinding
+		//		 Databinding
 		label = new Label(container, SWT.NULL);
 		label.setText(CodegenWizardPlugin
 				.getResourceString("page2.namespace2Pkg.caption"));
@@ -434,14 +528,14 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         gd.horizontalSpan = 3;
         gd.verticalSpan = 5;
         
-        namespace2packageTable = new Table(container,SWT.SINGLE|SWT.FULL_SELECTION);
+        namespace2packageTable = new Table(container,SWT.BORDER|SWT.MULTI);
         namespace2packageTable.setLinesVisible(true);
         namespace2packageTable.setHeaderVisible(true); 
         namespace2packageTable.setEnabled(true);
         namespace2packageTable.setLayoutData(gd);
        
         declareColumn(namespace2packageTable,
-        		200, //a default width until we adjust
+        		350, //a default width until we adjust
         		CodegenWizardPlugin
 				.getResourceString("page2.namespace.caption"));
         declareColumn(namespace2packageTable,
@@ -453,30 +547,64 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         
         // add the table editor
         final TableEditor editor = new TableEditor(namespace2packageTable);
-        namespace2packageTable.addSelectionListener(new SelectionAdapter() {
-    		public void widgetSelected(SelectionEvent e) {
-    			// Clean up any previous editor control
-    			Control oldEditor = editor.getEditor();
-    			if (oldEditor != null) oldEditor.dispose();
-    	
-    			// Identify the selected row
-    			TableItem item = (TableItem)e.item;
-    			if (item == null) return;
-    	
-    			// The control that will be the editor must be a child of the Table
-    			Text newEditor = new Text(namespace2packageTable, SWT.NONE);
-    			newEditor.setText(item.getText(EDITABLECOLUMN));
-    			newEditor.addModifyListener(new ModifyListener() {
-    				public void modifyText(ModifyEvent me) {
-    					Text text = (Text)editor.getEditor();
-    					editor.getItem().setText(EDITABLECOLUMN, text.getText());
-    				}
-    			});
-    			newEditor.selectAll();
-    			newEditor.setFocus();
-    			editor.setEditor(newEditor, item, EDITABLECOLUMN);
-    		}
-    	});
+        editor.setColumn(1);
+        editor.horizontalAlignment = SWT.LEFT;
+        editor.grabHorizontal = true;
+        //This is the cute way of making the namespaces columns editable
+        namespace2packageTable.addListener(SWT.MouseDown, new Listener() {
+            public void handleEvent(Event event) {
+              Rectangle clientArea = namespace2packageTable.getClientArea();
+              Point pt = new Point(event.x, event.y);
+              int index = namespace2packageTable.getTopIndex();
+              while (index < namespace2packageTable.getItemCount()) {
+                boolean visible = false;
+                final TableItem item = namespace2packageTable.getItem(index);
+                for (int i = 0; i < namespace2packageTable.getColumnCount(); i++) {
+                  Rectangle rect = item.getBounds(i);
+                  if (rect.contains(pt)) {
+                    final int column = i;
+                    final Text text = new Text(namespace2packageTable, SWT.NONE);
+                    Listener textListener = new Listener() {
+                      public void handleEvent(final Event e) {
+                        switch (e.type) {
+                        case SWT.FocusOut:
+                          item.setText(column, text.getText());
+                          text.dispose();
+                          break;
+                        case SWT.Traverse:
+                          switch (e.detail) {
+                          case SWT.TRAVERSE_RETURN:
+                            item
+                                .setText(column, text
+                                    .getText());
+                          // FALL THROUGH
+                          case SWT.TRAVERSE_ESCAPE:
+                            text.dispose();
+                            e.doit = false;
+                          }
+                          break;
+                        }
+                      }
+                    };
+                    text.addListener(SWT.FocusOut, textListener);
+                    text.addListener(SWT.Traverse, textListener);
+                    editor.setEditor(text, item, i);
+                    text.setText(item.getText(i));
+                    text.selectAll();
+                    text.setFocus();
+                    return;
+                  }
+                  if (!visible && rect.intersects(clientArea)) {
+                    visible = true;
+                  }
+                }
+                if (!visible)
+                  return;
+                index++;
+              }
+            }
+          });
+       
         
         //adjust the width
         //adjustColumnWidth(namespace2packageTable);
@@ -494,17 +622,21 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			populateParamsFromWSDL();
 			selectDefaults();
 		}
-
+		
+		//first appearence Disable all the controls 
+		disableControls();
+		
+		
 		setControl(container);
 
 		setPageComplete(true);
 
 	}
 
-	/**
-	 * Adjust the column widths
-	 * @param table
-	 */
+//	/**
+//	 * Adjust the column widths
+//	 * @param table
+//	 */
 //	private void adjustColumnWidth(Table table){
 //		 Point p = namespace2packageTable.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 //	     int columns = table.getColumnCount();
@@ -522,8 +654,6 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         TableColumn column = new TableColumn(table,SWT.NONE);
         column.setWidth(width);
         column.setText(colName);
-        
-        
     }
 	
 	private void selectDefaults() {
@@ -598,7 +728,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	private void loadPortNames() {
 		int selectionIndex = serviceNameCombo.getSelectionIndex();
 		if (selectionIndex != -1) {
-			List ports = reader.getPortNameList((QName) serviceQNameList
+			java.util.List ports = reader.getPortNameList((QName) serviceQNameList
 					.get(selectionIndex));
 			if (!ports.isEmpty()) {
 				portNameCombo.removeAll();
@@ -630,12 +760,17 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		Iterator namespaces = namespaceMap.values().iterator();
 		namespace2packageTable.removeAll();
         TableItem[] items = new TableItem[namespaceMap.size()]; // An item for each field
+        
         int i = 0;
         while(namespaces.hasNext()){
-           items[i] = new TableItem(namespace2packageTable, SWT.NONE);
-           items[i].setText(0,(String)namespaces.next());
+        	
+           items[i] = new TableItem(namespace2packageTable, SWT.NULL);
+           String namespace = (String)namespaces.next();
+           items[i].setText(0,namespace);
+           items[i].setText(1,getPackageFromNamespace(namespace));
            i++;
         }
+
         namespace2packageTable.setVisible(true);
 		
 	}
@@ -667,6 +802,17 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
 		languageSelectionComboBox.select(0);
 	}
+	
+	/**
+	 * Fill the combo with properoption selection
+	 * 
+	 */
+	private void fillCodegenOptionSelectionComboBox() {
+		codegenOptionSelectionComboBox.add(DEFAULT);
+		codegenOptionSelectionComboBox.add(CUSTOM);
+		codegenOptionSelectionComboBox.select(0);
+	}
+
 
 	/**
 	 * Validates the status of the server-side checkbox, and enables/disables
@@ -678,6 +824,11 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			this.generateAllCheckBoxButton.setEnabled(true);
 			this.generateServerSideInterfaceCheckBoxButton.setEnabled(true);
 		} else {
+			//added this to increase the UI features (this will deselct all the selected features)
+			this.serverXMLCheckBoxButton.setSelection(false);
+			this.generateAllCheckBoxButton.setSelection(false);
+			this.generateServerSideInterfaceCheckBoxButton.setSelection(false);
+			//earlier existing code (This only set focus false)
 			this.serverXMLCheckBoxButton.setEnabled(false);
 			this.generateAllCheckBoxButton.setEnabled(false);
 			this.generateServerSideInterfaceCheckBoxButton.setEnabled(false);
@@ -718,6 +869,12 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * @return a string containing the package name to use for code generation
 	 */
 	public String getPackageName() {
+		if ("".equals(packageText.getText().trim())){
+			//we do not allow the packaging to be empty
+			//if the user sets it to empty we set it to
+			//the default
+			return URLProcessor.DEFAULT_PACKAGE;
+		}
 		return this.packageText.getText();
 	}
 
@@ -839,5 +996,58 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			
 		}
 		return "".equals(returnList)?null:returnList;
+	}
+	
+	
+	private void disableControls(){
+		this.codegenOptionSelectionComboBox.select(0);
+		this.testCaseCheckBoxButton.setEnabled(false);
+        this.testCaseCheckBoxButton.setSelection(false);
+        this.databindingTypeCombo.setEnabled(false);
+        this.databindingTypeCombo.select(0);
+        this.generateAllCheckBoxButton.setEnabled(false);
+        this.generateAllCheckBoxButton.setSelection(false);
+        this.generateServerSideInterfaceCheckBoxButton.setEnabled(false);
+        this.generateServerSideInterfaceCheckBoxButton.setSelection(false);
+        this.languageSelectionComboBox.setEnabled(false);
+        this.namespace2packageTable.setEnabled(false);
+        this.packageText.setEditable(false);
+        this.portNameCombo.setEnabled(false);
+        this.portNameCombo.select(0);        
+        this.serverSideCheckBoxButton.setEnabled(false);
+        this.serverSideCheckBoxButton.setSelection(false);
+        this.serverXMLCheckBoxButton.setEnabled(false);
+        this.serverXMLCheckBoxButton.setSelection(false);
+        this.serviceNameCombo.setEnabled(false);
+        this.serviceNameCombo.select(0);
+        this.syncOnlyRadioButton.setEnabled(false);
+        this.syncOnlyRadioButton.setSelection(false);
+        this.asyncOnlyRadioButton.setEnabled(false);
+        this.asyncOnlyRadioButton.setSelection(false);
+        this.syncAndAsyncRadioButton.setEnabled(false);
+        this.syncAndAsyncRadioButton.setSelection(true);
+        this.packageText.setEnabled(false);
+	}
+	
+	private void enableControls(){
+        this.testCaseCheckBoxButton.setEnabled(true);
+        this.databindingTypeCombo.setEnabled(true);
+        this.languageSelectionComboBox.setEnabled(true);
+        this.namespace2packageTable.setEnabled(true);
+        this.packageText.setEditable(true);
+        this.portNameCombo.setEnabled(true);
+        this.serverSideCheckBoxButton.setEnabled(true);
+        this.serviceNameCombo.setEnabled(true);
+        this.syncOnlyRadioButton.setEnabled(true);
+        this.asyncOnlyRadioButton.setEnabled(true);
+        this.syncAndAsyncRadioButton.setEnabled(true);
+        this.packageText.setEnabled(true);
+	}
+	
+	/**
+	 * get the package derived by  Namespace
+	 */
+	public String getPackageFromNamespace(String namespace){
+		return  URLProcessor.makePackageName(namespace);
 	}
 }
