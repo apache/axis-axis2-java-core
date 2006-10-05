@@ -36,6 +36,26 @@
 
         <!-- start of the sync block -->                                          
          <xsl:if test="$isSync='1'">
+           <xsl:choose>
+             <xsl:when test="@usdbimpl='true'">
+             <!-- Unwrap input parameters to match databinding generated method -->
+        /**
+         * Auto generated method signatures
+         <xsl:for-each select="input/param/param[@type!='']">* @param <xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
+         */
+         public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
+        <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
+         <xsl:for-each select="input/param/param[@type!='']">
+            <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+          </xsl:for-each>) throws java.rmi.RemoteException
+          <!--add the faults-->
+          <xsl:for-each select="fault/param/param[@type!='']">
+          ,<xsl:value-of select="@name"/>
+          </xsl:for-each>             
+             ;
+             </xsl:when>
+             <xsl:otherwise>
+             <!-- Use object as wrapper for input parameters -->
         /**
          * Auto generated method signatures
          <xsl:for-each select="input/param[@type!='']">* @param <xsl:value-of select="@name"></xsl:value-of></xsl:for-each>
@@ -50,6 +70,8 @@
           ,<xsl:value-of select="@name"/>
           </xsl:for-each>             
              ;
+             </xsl:otherwise>
+           </xsl:choose>
         <!-- end of the sync block -->
         </xsl:if>
 
@@ -61,13 +83,25 @@
           */
 
         public void start<xsl:value-of select="@name"/>(
+         <xsl:choose>
+           <xsl:when test="@usdbimpl='true'">
+           <!-- Unwrap input parameters to match databinding generated method -->
+         <xsl:variable name="paramCount"><xsl:value-of select="count(input/param/param[@type!=''])"></xsl:value-of></xsl:variable>
+               <xsl:for-each select="input/param/param">
+            <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:if></xsl:for-each>
+           <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException;
+           </xsl:when>
+           <xsl:otherwise>
+           <!-- Use object as wrapper for input parameters -->
          <xsl:variable name="paramCount"><xsl:value-of select="count(input/param[@type!=''])"></xsl:value-of></xsl:variable>
                <xsl:for-each select="input/param">
             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"></xsl:value-of></xsl:if></xsl:for-each>
            <xsl:if test="$paramCount>0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback) throws java.rmi.RemoteException;
-        </xsl:if>
+           </xsl:otherwise>
+         </xsl:choose>
 <!-- end of async block-->
 
+     </xsl:if>
      </xsl:if>
         <!-- Code for in-only mep -->
        <xsl:if test="@mep='10'">
@@ -75,6 +109,22 @@
        <!-- For in-only meps there would not be any asynchronous methods since there is no output -->
          /**
          * Auto generated method signature
+         <xsl:choose>
+           <xsl:when test="@usdbimpl='true'">
+           <!-- Unwrap input parameters to match databinding generated method -->
+         <xsl:for-each select="input/param/param">
+         <xsl:if test="@type!=''">*@param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
+         </xsl:text></xsl:if></xsl:for-each>
+         */
+         public  void
+        <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
+         <xsl:for-each select="input/param/param">
+            <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+            </xsl:if>
+         </xsl:for-each>) throws java.rmi.RemoteException;
+           </xsl:when>
+           <xsl:otherwise>
+           <!-- Use object as wrapper for input parameters -->
          <xsl:for-each select="input/param">
          <xsl:if test="@type!=''">*@param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
          </xsl:text></xsl:if></xsl:for-each>
@@ -86,13 +136,14 @@
             </xsl:if>
          </xsl:for-each>) throws java.rmi.RemoteException;
 
+           </xsl:otherwise>
+         </xsl:choose>
         </xsl:if>
-       </xsl:for-each>
+
+      </xsl:for-each>
 
        <!-- Apply other templates --> 
        //<xsl:apply-templates/>
        }
-
-
     </xsl:template>
    </xsl:stylesheet>
