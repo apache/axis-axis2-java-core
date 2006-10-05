@@ -1538,8 +1538,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         methodElement.appendChild(getInputElement(doc,
                 axisOperation, soapHeaderInputParameterList));
-        methodElement.appendChild(getOutputElement(doc,
-                axisOperation, soapHeaderOutputParameterList));
+        if(!(axisOperation instanceof InOnlyAxisOperation)){
+            methodElement.appendChild(getOutputElement(doc,
+                    axisOperation, soapHeaderOutputParameterList));
+        }
         methodElement.appendChild(getFaultElement(doc,
                 axisOperation));
         return methodElement;
