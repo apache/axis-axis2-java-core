@@ -42,6 +42,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
+import org.apache.bcel.generic.Type;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
@@ -76,6 +77,19 @@ public class CodeGenerationUtility {
     private static final String SCHEMA_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
     
     private final CodeGenConfiguration codeGenConfig;
+    
+    private static HashSet s_primitiveSet = new HashSet();
+    static {
+        s_primitiveSet.add("boolean");
+        s_primitiveSet.add("byte");
+        s_primitiveSet.add("char");
+        s_primitiveSet.add("double");
+        s_primitiveSet.add("float");
+        s_primitiveSet.add("int");
+        s_primitiveSet.add("long");
+        s_primitiveSet.add("short");
+        s_primitiveSet.add("void");
+    }
     
     /**
      * Constructor.
@@ -420,10 +434,13 @@ public class CodeGenerationUtility {
                     
                 }
                 param.setAttribute("java-type", javatype);
+                boolean isobj = !s_primitiveSet.contains(javatype);
                 String fulltype = javatype;
                 if (isarray) {
                     fulltype += "[]";
+                    isobj = false;
                 }
+                param.setAttribute("object", Boolean.toString(isarray));
                 if (isout) {
                     wrappertype = fulltype;
                 } else {
