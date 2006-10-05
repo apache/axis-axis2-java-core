@@ -1,0 +1,19 @@
+<project basedir=".">
+	
+	<property environment="env"/>
+	
+	<target name="check.dependency" unless="env.AXIS2_HOME">
+		<echo message="AXIS2_HOME must be set"/>
+	</target>
+	
+	<!-- Generate the service classes from the WSDL. -->
+	<target name="generate.service" if="env.AXIS2_HOME" depends="check.dependency">
+		<ant dir="service"/>
+	</target>
+	
+	<!-- Build the service, then the client. -->
+	<target name="jar" if="env.AXIS2_HOME" depends="check.dependency">
+		<ant dir="service" target="jar.server"/>
+		<ant dir="client"/>
+	</target>
+</project>
