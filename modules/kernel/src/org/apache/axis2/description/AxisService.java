@@ -27,6 +27,7 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -123,6 +124,9 @@ public class AxisService extends AxisDescription {
 
     private boolean enableAllTransports = true;
     private List exposedTransports = new ArrayList();
+    //To keep reference to ServiceLifeCycle instance , if the user has
+    // specified in services.xml
+    private ServiceLifeCycle serviceLifeCycle;
 
     /**
      * Keeps track whether the schema locations are adjusted
@@ -1550,5 +1554,13 @@ public class AxisService extends AxisDescription {
             }
         }
         return false;
+    }
+
+    public ServiceLifeCycle getServiceLifeCycle() {
+        return serviceLifeCycle;
+    }
+
+    public void setServiceLifeCycle(ServiceLifeCycle serviceLifeCycle) {
+        this.serviceLifeCycle = serviceLifeCycle;
     }
 }

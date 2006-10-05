@@ -174,6 +174,8 @@ public class ListenerManager {
                 }
             }
         }
+        //calling service shutdown method
+        shutDownServices(configctx);
         configctx.cleanupContexts();
         stopped = true;
     }
@@ -202,5 +204,20 @@ public class ListenerManager {
 
     public boolean isStopped() {
         return stopped;
+    }
+
+    /**
+     * This will call shutDown method of all the service , if they have implemnted
+     * the ServiceLifeCycle interface
+     */
+    private void shutDownServices(ConfigurationContext configCtx) {
+        Iterator services = configCtx.getAxisConfiguration().getServices().values().iterator();
+        while (services.hasNext()) {
+            AxisService axisService = (AxisService) services.next();
+            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+            if (serviceLifeCycle != null) {
+                serviceLifeCycle.shutDown(configCtx, axisService);
+            }
+        }
     }
 }
