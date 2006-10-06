@@ -74,6 +74,8 @@ public class RampartMessageData {
 
     public static final String KEY_SCT_ISSUER_POLICY = "sct-issuer-policy";
     
+    public final static String CANCEL_REQUEST = "cancelrequest";
+    
     private MessageContext msgContext = null;
 
     private RampartPolicyData policyData = null;
