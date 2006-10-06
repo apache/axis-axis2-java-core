@@ -172,10 +172,6 @@ public class SCTIssuer implements TokenIssuer {
             
             sctToken.setState(Token.ISSUED);
             TrustUtil.getTokenStore(data.getInMessageContext()).add(sctToken);
-            this.getContextMap(data.getInMessageContext()).put(
-                    this.getContextIdentifierKey(data.getInMessageContext()),
-                    sctToken.getId());
-            
             return env;
         } catch (ConversationException e) {
             throw new TrustException(e.getMessage(), e);

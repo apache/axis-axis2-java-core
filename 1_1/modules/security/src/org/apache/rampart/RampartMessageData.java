@@ -38,10 +38,13 @@ import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSConfig;
+import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationConstants;
 import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.util.Loader;
 import org.w3c.dom.Document;
@@ -49,6 +52,7 @@ import org.w3c.dom.Document;
 import javax.xml.namespace.QName;
 
 import java.util.List;
+import java.util.Vector;
 
 public class RampartMessageData {
     
@@ -73,6 +77,10 @@ public class RampartMessageData {
     public final static String KEY_WSSC_VERSION = "wscVersion";
 
     public static final String KEY_SCT_ISSUER_POLICY = "sct-issuer-policy";
+    
+    public final static String CANCEL_REQUEST = "cancelrequest";
+    
+    public final static String SCT_ID = "sctID";
     
     private MessageContext msgContext = null;
 
@@ -229,15 +237,30 @@ public class RampartMessageData {
             this.isClientSide = !msgCtx.isServerSide();
             this.sender = sender;
             
+            OperationContext opCtx = this.msgContext.getOperationContext();
+            
             if(!this.isClientSide && this.sender) {
                 //Get hold of the incoming msg ctx
-                OperationContext opCtx = this.msgContext.getOperationContext();
                 MessageContext inMsgCtx;
                 if (opCtx != null
                         && (inMsgCtx = opCtx
                                 .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
                     msgContext.setProperty(WSHandlerConstants.RECV_RESULTS, 
                             inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
+                    
+                    //If someone set the sct_id externally use it at the receiver
+                    msgContext.setProperty(SCT_ID, inMsgCtx.getProperty(SCT_ID));
+                }
+            }
+            
+            if(this.isClientSide && !this.sender) {
+                MessageContext outMsgCtx;
+                if (opCtx != null
+                        && (outMsgCtx = opCtx
+                                .getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE)) != null) {
+                    
+                    //If someone set the sct_id externally use it at the receiver
+                    msgContext.setProperty(SCT_ID, outMsgCtx.getProperty(SCT_ID));
                 }
             }
             
@@ -394,8 +417,36 @@ public class RampartMessageData {
      * @return Returns the secConvTokenId.
      */
     public String getSecConvTokenId() {
-        String contextIdentifierKey = RampartUtil.getContextIdentifierKey(this.msgContext);
-        return (String) RampartUtil.getContextMap(this.msgContext).get(contextIdentifierKey);
+        String id = null;
+        
+        if(this.isClientSide) {
+            String contextIdentifierKey = RampartUtil.getContextIdentifierKey(this.msgContext);
+            id = (String) RampartUtil.getContextMap(this.msgContext).get(contextIdentifierKey);
+        } else {
+            //get the sec context id from the req msg ctx
+            Vector results = (Vector)this.msgContext.getProperty(WSHandlerConstants.RECV_RESULTS);
+            for (int i = 0; i < results.size(); i++) {
+                WSHandlerResult rResult = (WSHandlerResult) results.get(i);
+                Vector wsSecEngineResults = rResult.getResults();
+
+                for (int j = 0; j < wsSecEngineResults.size(); j++) {
+                    WSSecurityEngineResult wser = (WSSecurityEngineResult) wsSecEngineResults
+                            .get(j);
+                    if(WSConstants.SCT == wser.getAction()) {
+                        id = wser.getSecurityContextToken().getID();
+                    }
+
+                }
+            }
+        }
+
+        if(id == null || id.length() == 0) {
+            //If we can't find the sec conv token id up to this point then
+            //check if someone has specified which one to use
+            id = (String)this.msgContext.getProperty(SCT_ID);
+        }
+        
+        return id;
     }
 
     /**

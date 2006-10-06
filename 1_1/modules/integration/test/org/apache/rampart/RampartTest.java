@@ -30,7 +30,6 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
-import org.apache.rahas.RahasConstants;
 
 import javax.xml.namespace.QName;
 
@@ -101,9 +100,13 @@ public class RampartTest extends TestCase {
                 serviceClient.sendReceive(getEchoElement());
                 
                 //Cancel the token
-                options.setAction(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT);
+                options.setProperty(RampartMessageData.CANCEL_REQUEST, Constants.VALUE_TRUE);
                 serviceClient.sendReceive(getEchoElement());
                 
+                options.setProperty(RampartMessageData.CANCEL_REQUEST, Constants.VALUE_FALSE);
+                serviceClient.sendReceive(getEchoElement());
+                options.setProperty(RampartMessageData.CANCEL_REQUEST, Constants.VALUE_TRUE);
+                serviceClient.sendReceive(getEchoElement());
             }
 
         } catch (Exception e) {

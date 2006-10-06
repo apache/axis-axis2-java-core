@@ -18,6 +18,10 @@ package org.apache.rampart;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -36,6 +40,8 @@ import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.xml.namespace.QName;
 
 public class MessageBuilder {
     
@@ -65,16 +71,34 @@ public class MessageBuilder {
             }
         }
         
-        String action = msgCtx.getOptions().getAction();
-        System.out.println("MessageBuilder: 52: " + action);
-        if(action !=null && (action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT) ||
-                action.equals(RahasConstants.WST_NS_05_12 + RahasConstants.RSTR_ACTION_CANCEL_SCT))) {
-            
-            //set payload to a cancel request
-            String ctxIdKey = RampartUtil.getContextIdentifierKey(msgCtx);
-            String tokenId = (String)RampartUtil.getContextMap(msgCtx).get(ctxIdKey);
+        
+        String isCancelreq = (String)msgCtx.getProperty(RampartMessageData.CANCEL_REQUEST);
+        if(isCancelreq != null && Constants.VALUE_TRUE.equals(isCancelreq)) {
             try {
-                if(RampartUtil.isTokenValid(rmd, tokenId)) {
+                
+                String cancelAction = TrustUtil.getWSTNamespace(rmd.getWstVersion()) + RahasConstants.RST_ACTION_CANCEL_SCT;
+                //Set action
+                msgCtx.getOptions().setAction(cancelAction);
+                
+                //Change the wsa:Action header
+                String wsaNs = Final.WSA_NAMESPACE;
+                Object addressingVersionFromCurrentMsgCtxt = msgCtx.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                if (Submission.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt)) {
+                    wsaNs = Submission.WSA_NAMESPACE;
+                }
+                OMElement header = msgCtx.getEnvelope().getHeader();
+                if(header != null) {
+                    OMElement actionElem = header.getFirstChildWithName(new QName(wsaNs, AddressingConstants.WSA_ACTION));
+                    if(actionElem != null) {
+                        actionElem.setText(cancelAction);
+                    }
+                }
+                
+                //set payload to a cancel request
+                String ctxIdKey = RampartUtil.getContextIdentifierKey(msgCtx);
+                String tokenId = (String)RampartUtil.getContextMap(msgCtx).get(ctxIdKey);
+                
+                if(tokenId != null && RampartUtil.isTokenValid(rmd, tokenId)) {
                     OMElement bodyElem = msgCtx.getEnvelope().getBody();
                     OMElement child = bodyElem.getFirstElement();
                     OMElement newChild = TrustUtil.createCancelRequest(tokenId, rmd.getWstVersion());
@@ -86,6 +110,7 @@ public class MessageBuilder {
                 }
                 
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new RampartException("errorInTokenCancellation");
             }
         }
