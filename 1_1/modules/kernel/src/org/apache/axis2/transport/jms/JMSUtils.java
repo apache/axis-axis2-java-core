@@ -303,7 +303,7 @@ public class JMSUtils {
                 HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
                 // It is MTOM
                 builder = TransportUtils.selectBuilderForMIME(
-                    msgContext, in, contentType);
+                    msgContext, in, contentType,true);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
 
             } else {
