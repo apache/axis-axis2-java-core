@@ -205,8 +205,7 @@ public class RESTUtil {
                 // if the media type is multipart/related, get help from Axis2 :)
             } else if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
                 body.addChild(TransportUtils.selectBuilderForMIME(msgCtxt,
-                        inputStream,
-                        contentType).getDocumentElement());
+                        inputStream,contentType,false).getDocumentElement());
             }
 
             return soapEnvelope;
