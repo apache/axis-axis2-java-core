@@ -93,7 +93,7 @@ public class AxisOperationFactory implements WSDLConstants {
         } else if (WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
         } else if (WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
-            abOpdesc = new InOutAxisOperation();
+            abOpdesc = new InOnlyAxisOperation();
         }else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
         }

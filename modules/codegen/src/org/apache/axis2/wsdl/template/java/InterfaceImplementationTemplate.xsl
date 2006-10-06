@@ -68,6 +68,9 @@
                 <xsl:when test="@mep='10'">
                     __operation = new org.apache.axis2.description.OutOnlyAxisOperation();
                 </xsl:when>
+                <xsl:when test="@mep='11'">
+                    __operation = new org.apache.axis2.description.RobustOutOnlyAxisOperation();
+                </xsl:when>
                 <xsl:otherwise>
                    __operation = new org.apache.axis2.description.OutInAxisOperation();
                 </xsl:otherwise>
@@ -553,7 +556,7 @@
 
 
             <!-- Start of in only mep-->
-            <xsl:if test="$mep='10'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
+            <xsl:if test="$mep='10' or $mep='11'"> <!-- These constants can be found in org.apache.axis2.wsdl.WSDLConstants -->
                 <!-- for the in only mep there is no notion of sync or async. And there is no return type also -->
                 public void <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
                  <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
@@ -581,8 +584,16 @@
                         <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
                     </xsl:for-each>
 
-                ) throws java.rmi.RemoteException{
+                ) throws java.rmi.RemoteException
+                <!--add the faults-->
+                <xsl:if test="$mep='11'">
+                    <xsl:for-each select="fault/param[@type!='']">
+                        ,<xsl:value-of select="@name"/>
+                    </xsl:for-each>
+                </xsl:if>
+                {
 
+                <xsl:if test="$mep='11'">try {</xsl:if>
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
                 _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
                 _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -669,6 +680,58 @@
             _operationClient.addMessageContext(_messageContext);
 
              _operationClient.execute(true);
+           <xsl:if test="$mep='11'">
+               }catch(org.apache.axis2.AxisFault f){
+                  org.apache.axiom.om.OMElement faultElt = f.getDetail();
+                  if (faultElt!=null){
+                      if (faultExeptionNameMap.containsKey(faultElt.getQName())){
+                          //make the fault by reflection
+                          try{
+                              java.lang.String exceptionClassName = (java.lang.String)faultExeptionClassNameMap.get(faultElt.getQName());
+                              java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
+                              java.lang.Exception ex=
+                                      (java.lang.Exception) exceptionClass.newInstance();
+                              //message class
+                              java.lang.String messageClassName = (java.lang.String)faultMessageMap.get(faultElt.getQName());
+                              java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
+                              java.lang.Object messageObject = fromOM(faultElt,messageClass,null);
+                              java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+                                         new java.lang.Class[]{messageClass});
+                              m.invoke(ex,new java.lang.Object[]{messageObject});
+                              <xsl:for-each select="fault/param">
+                              if (ex instanceof <xsl:value-of select="@name"/>){
+                                throw (<xsl:value-of select="@name"/>)ex;
+                              }
+                              </xsl:for-each>
+
+                              throw new java.rmi.RemoteException(ex.getMessage(), ex);
+                          }catch(java.lang.ClassCastException e){
+                             // we cannot intantiate the class - throw the original Axis fault
+                              throw f;
+                          } catch (java.lang.ClassNotFoundException e) {
+                              // we cannot intantiate the class - throw the original Axis fault
+                              throw f;
+                          }catch (java.lang.NoSuchMethodException e) {
+                              // we cannot intantiate the class - throw the original Axis fault
+                              throw f;
+                          } catch (java.lang.reflect.InvocationTargetException e) {
+                              // we cannot intantiate the class - throw the original Axis fault
+                              throw f;
+                          }  catch (java.lang.IllegalAccessException e) {
+                              // we cannot intantiate the class - throw the original Axis fault
+                              throw f;
+                          }   catch (java.lang.InstantiationException e) {
+                              // we cannot intantiate the class - throw the original Axis fault
+                              throw f;
+                          }
+                      }else{
+                          throw f;
+                      }
+                  }else{
+                      throw f;
+                  }
+              }
+           </xsl:if>
              return;
            }
             </xsl:if>
