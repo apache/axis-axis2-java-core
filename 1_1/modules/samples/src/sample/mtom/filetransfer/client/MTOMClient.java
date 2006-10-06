@@ -20,9 +20,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MTOMClient extends JFrame {
-    public static final int TOLERANCE = 200;
-    public static final int WIDTH = 430;
-    public static final int HEIGHT = 560;
 
     public MTOMClient(String title) throws HeadlessException {
         super(title);
@@ -34,10 +31,10 @@ public class MTOMClient extends JFrame {
     public static void main(String[] args) {
         MTOMClient form = new MTOMClient("MTOM Sample Client");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int left = (screenSize.width - WIDTH) / 2;
-        int top = (screenSize.height - HEIGHT) / 2;
+        int left = (screenSize.width - UserInterface.WIDTH) / 2;
+        int top = (screenSize.height - UserInterface.HEIGHT) / 2;
         form.setLocation(left, top);
-        form.setSize(WIDTH, HEIGHT);
+        form.setSize(UserInterface.WIDTH, UserInterface.HEIGHT);
         form.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         form.setVisible(true);
     }
