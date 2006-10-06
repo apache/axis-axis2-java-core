@@ -22,7 +22,7 @@
 
     <name>Apache Axis 2.0 - SAAJ</name>
     <id>axis2-saaj</id>
-    <groupId>axis2</groupId>
+    <groupId>org.apache.axis2</groupId>
     <description>Axis2 SAAJ implementation</description>
 
     <build>
@@ -86,37 +86,37 @@
 
     <dependencies>
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
         </dependency>
 		<dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-dom</artifactId>
             <version>${axiom.version}</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-addressing</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
@@ -202,7 +202,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.neethi</groupId>
             <artifactId>neethi</artifactId>
             <version>${neethi.version}</version>
             <properties>
@@ -210,7 +210,7 @@
             </properties>
         </dependency>
          <dependency>
-            <groupId>org.apache.ws.commons</groupId>
+            <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
         </dependency>

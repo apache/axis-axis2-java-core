@@ -67,7 +67,7 @@
     </dependency>
     <!-- Added this to support WS Policy in Axis2 -->
     <dependency>
-      <groupId>org.apache.ws.commons</groupId>
+      <groupId>org.apache.ws.commons.schema</groupId>
       <artifactId>neethi</artifactId>
     </dependency>
     <dependency>
