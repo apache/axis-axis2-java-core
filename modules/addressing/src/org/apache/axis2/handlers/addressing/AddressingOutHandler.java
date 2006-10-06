@@ -181,6 +181,9 @@ public class AddressingOutHandler extends AddressingHandler {
                     String relationshipType = relatesTo[i].getRelationshipType();
 
                     if (relatesToHeader != null) {
+                        
+                        // I think that if it's one of these two constants we can just not add the attribute
+                        // which would save some small amount of bandwidth and processing.
                         if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) ||
                             Submission.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType)) {
                             relationshipType = isFinalAddressingNamespace ?

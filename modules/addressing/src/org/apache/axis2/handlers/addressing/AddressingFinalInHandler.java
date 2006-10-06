@@ -49,8 +49,14 @@ public class AddressingFinalInHandler extends AddressingInHandler {
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
             OMAttribute isRefParamAttr = soapHeaderBlock.getAttribute(new QName(namespace, "IsReferenceParameter"));
+            if (log.isTraceEnabled()){
+                log.trace("extractToEprReferenceParameters: Checking header: "+soapHeaderBlock.getQName());
+            }
             if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
                 toEPR.addReferenceParameter(soapHeaderBlock.getQName(), soapHeaderBlock.getText());
+                if (log.isTraceEnabled()){
+                    log.trace("extractToEprReferenceParameters: Header: "+soapHeaderBlock.getQName()+" has IsReferenceParameter attribute. Adding to toEPR.");
+                }
             }
         }
     }

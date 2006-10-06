@@ -191,6 +191,11 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     	}else{
     		checkedHeaderNames.add(addressingHeaderName);
     	}
+        
+        if(log.isTraceEnabled()){
+            log.trace("checkDuplicateHeaders: addressingHeaderName="+addressingHeaderName+" isDuplicate="+shouldIgnore);
+        }
+        
     	return shouldIgnore;
     }
 
@@ -199,20 +204,32 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 
     private void extractRelatesToInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, Options messageContextOptions) {
         String address = soapHeaderBlock.getText();
+        
+        // Extract the RelationshipType attribute if it exists
         OMAttribute relationshipType =
                 soapHeaderBlock.getAttribute(
                         new QName(AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
-        String relationshipTypeDefaultValue =
+        
+        String relationshipTypeString = null;
+        
+        // If an attribute was found, use the value from it 
+        if(relationshipType!=null){
+            relationshipTypeString = relationshipType.getAttributeValue();
+        }else{ // Else use the appropriate default (depends on namespace in use)
+            relationshipTypeString =
                 Submission.WSA_NAMESPACE.equals(addressingNamespace)
                         ? Submission.WSA_DEFAULT_RELATIONSHIP_TYPE
                         : Final.WSA_DEFAULT_RELATIONSHIP_TYPE;
-        RelatesTo relatesTo =
-                new RelatesTo(
-                        address,
-                        relationshipType == null
-                                ? relationshipTypeDefaultValue
-                                : relationshipType.getAttributeValue());
+        }
+        
+        if(log.isTraceEnabled()){
+            log.trace("extractRelatesToInformation: Extracted Relationship. Value="+address+" RelationshipType="+relationshipTypeString);
+        }
+        
+        RelatesTo relatesTo = new RelatesTo(address, relationshipTypeString);
         messageContextOptions.addRelatesTo(relatesTo);
+        
+        // Completed processing of this header
         soapHeaderBlock.setProcessed();
     }
 
@@ -224,6 +241,9 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             messageContextOptions.setFaultTo(epr);
         }
         extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
+        if(log.isTraceEnabled()){
+            log.trace("extractFaultToEPRInformation: Extracted FaultTo EPR: "+epr);
+        }
         soapHeaderBlock.setProcessed();
     }
 
@@ -235,6 +255,9 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             messageContextOptions.setReplyTo(epr);
         }
         extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
+        if(log.isTraceEnabled()){
+            log.trace("extractReplyToEPRInformation: Extracted ReplyTo EPR: "+epr);
+        }
         soapHeaderBlock.setProcessed();
     }
 
@@ -247,6 +270,9 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
             messageContextOptions.setFrom(epr);
         }
         extractEPRInformation(soapHeaderBlock, epr, addressingNamespace, messageContext);
+        if(log.isTraceEnabled()){
+            log.trace("extractFromEPRInformation: Extracted From EPR: "+epr);
+        }
         soapHeaderBlock.setProcessed();
     }
 
@@ -261,6 +287,9 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         extractToEprReferenceParameters(epr, header, namespace);
         soapHeaderBlock.setProcessed();
 
+        if(log.isTraceEnabled()){
+            log.trace("extractToEPRInformation: Extracted To EPR: "+epr);
+        }
     }
     
     //We assume that any action that already exists in the message context must be the
@@ -269,14 +298,19 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     private void extractActionInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, MessageContext messageContext) throws AxisFault {
         Options messageContextOptions = messageContext.getOptions();
         String soapAction = messageContextOptions.getAction();
+        String wsaAction = soapHeaderBlock.getText();
+        
+        if(log.isTraceEnabled()){
+            log.trace("extractActionInformation: soapAction='"+soapAction+"' wsa:Action='"+wsaAction+"'");
+        }
         
         if (soapAction != null && !"".equals(soapAction)) {
-            if (!soapAction.equals(soapHeaderBlock.getText())) {
+            if (!soapAction.equals(wsaAction)) {
                 AddressingFaultsHelper.triggerActionMismatchFault(messageContext);
             }
         }
         else {
-            messageContextOptions.setAction(soapHeaderBlock.getText());            
+            messageContextOptions.setAction(wsaAction);            
         }
         
         soapHeaderBlock.setProcessed();        
@@ -292,8 +326,10 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     private void extractEPRInformation(SOAPHeaderBlock headerBlock, EndpointReference epr, String addressingNamespace, MessageContext messageContext) throws AxisFault {
         try {
             EndpointReferenceHelper.fromOM(epr, headerBlock, addressingNamespace);
-        }
-        catch (AxisFault af) {
+        }catch (AxisFault af) {
+            if(log.isTraceEnabled()){
+                log.trace("extractEPRInformation: Exception occurred deserialising an EndpointReference.",af);
+            }
             AddressingFaultsHelper.triggerMissingAddressInEPRFault(messageContext, headerBlock.getLocalName());
         }
     }
