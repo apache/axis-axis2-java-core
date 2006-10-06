@@ -29,7 +29,7 @@ public class MTOMClient extends JFrame {
     }
 
     public static void main(String[] args) {
-        MTOMClient form = new MTOMClient("MTOM Sample Client");
+        MTOMClient form = new MTOMClient("Axis2 Attachment Sample Client");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int left = (screenSize.width - UserInterface.WIDTH) / 2;
         int top = (screenSize.height - UserInterface.HEIGHT) / 2;
