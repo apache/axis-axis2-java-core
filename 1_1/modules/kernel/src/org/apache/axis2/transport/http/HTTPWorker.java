@@ -26,15 +26,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.OutputBuffer;
 import org.apache.axis2.transport.http.server.Worker;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.MethodNotSupportedException;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.entity.ContentProducer;
 import org.apache.http.entity.EntityTemplate;
 import org.apache.http.entity.StringEntity;
@@ -97,7 +89,7 @@ public class HTTPWorker implements Worker {
             }
             if (uri.indexOf("?") < 0) {
                 if (!uri.endsWith(contextPath)) {
-                    String serviceName = uri.replace(contextPath, "");
+                    String serviceName = uri.replaceAll(contextPath, "");
                     if (serviceName.indexOf("/") < 0) {
                         String res = HTTPTransportReceiver.printServiceHTML(serviceName, configurationContext);
                         StringEntity entity = new StringEntity(res);
