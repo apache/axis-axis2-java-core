@@ -112,6 +112,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         mepToClassMap = new HashMap();
         mepToClassMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
         mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY, "org.apache.axis2.receivers.AbstractRobustInMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, "org.apache.axis2.receivers.AbstractRobustInMessageReceiver");
         mepToClassMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
         mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
 
@@ -119,6 +121,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         mepToSuffixMap = new HashMap();
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
         //register the other types as necessary
@@ -1538,8 +1542,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         methodElement.appendChild(getInputElement(doc,
                 axisOperation, soapHeaderInputParameterList));
-        methodElement.appendChild(getOutputElement(doc,
-                axisOperation, soapHeaderOutputParameterList));
+        if(WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())){
+            methodElement.appendChild(getOutputElement(doc,
+                    axisOperation, soapHeaderOutputParameterList));
+        }
         methodElement.appendChild(getFaultElement(doc,
                 axisOperation));
         return methodElement;

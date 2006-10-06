@@ -168,7 +168,7 @@
       <!-- end of in-out mep -->
       </xsl:if>
       <!-- start of in-only mep-->
-      <xsl:if test="@mep='10'">
+      <xsl:if test="@mep='10' or @mep='11'">
           /**
           * Auto generated test method
           */

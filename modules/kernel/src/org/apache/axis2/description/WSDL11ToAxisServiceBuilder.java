@@ -689,6 +689,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             boolean isWrapped) {
 
         List extensibilityElements = bindingOutput.getExtensibilityElements();
+        if(wsdl4jOperation.getOutput() == null) {
+            return;
+        }
         Message wsdl4jMessage = wsdl4jOperation.getOutput().getMessage();
 
         for (int i = 0; i < extensibilityElements.size(); i++) {
@@ -1972,8 +1975,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (operationType.equals(OperationType.REQUEST_RESPONSE))
                     return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
 
-                if (operationType.equals(OperationType.ONE_WAY))
+                if (operationType.equals(OperationType.ONE_WAY)) {
+                    if(operation.getFaults().size() > 0) {
+                        return WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY;
+                    }
                     return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY;
+                }
 
                 if (operationType.equals(OperationType.NOTIFICATION))
                     return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY;
