@@ -17,6 +17,7 @@
 package org.apache.rampart.builder;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rahas.RahasConstants;
@@ -57,8 +58,10 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             this.addTimestamp(rmd);
         }
         
-        //Setup required tokens
-        initializeTokens(rmd);
+        if(rmd.isClientSide()) {
+            //Setup required tokens
+            initializeTokens(rmd);
+        }
         
             
         if(Constants.ENCRYPT_BEFORE_SIGNING.equals(rpd.getProtectionOrder())) {
@@ -97,6 +100,10 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             } else if(encryptionToken instanceof SecureConversationToken) {
                 tokenId = rmd.getSecConvTokenId();
                 log.debug("SCT Id : " + tokenId);
+            }
+            
+            if(tokenId == null || tokenId.length() == 0) {
+                throw new RampartException("noSecurityToken");
             }
             
             /*
@@ -294,6 +301,10 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             throw new RampartException("signatureTokenMissing");
         }
         
+        if(sigTokId == null || sigTokId.length() == 0) {
+            throw new RampartException("noSecurityToken");
+        }
+        
         sigTok = this.getToken(rmd, sigTokId);
 
         if(Constants.INCLUDE_ALWAYS.equals(sigToken.getInclusion()) ||
@@ -456,7 +467,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
         
         RampartPolicyData rpd = rmd.getPolicyData();
         
-        if(rpd.isSymmetricBinding() && !rmd.getMsgContext().isServerSide()) {
+        MessageContext msgContext = rmd.getMsgContext();
+        if(rpd.isSymmetricBinding() && !msgContext.isServerSide()) {
             log.debug("Procesing symmentric binding: " +
                     "Setting up encryption token and signature token");
             //Setting up encryption token and signature token
@@ -488,7 +500,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 String secConvTokenId = rmd.getSecConvTokenId();
                 
                 //The RSTR has to be secured with the cancelled token
-                String action = rmd.getMsgContext().getOptions().getAction();
+                String action = msgContext.getOptions().getAction();
                 boolean cancelReqResp = action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RSTR_ACTION_CANCEL_SCT) || 
                                            action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RSTR_ACTION_CANCEL_SCT) ||
                                            action.equals(RahasConstants.WST_NS_05_02 + RahasConstants.RST_ACTION_CANCEL_SCT) || 
@@ -498,6 +510,11 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 if(secConvTokenId != null && cancelReqResp) {
                     try {
                         rmd.getTokenStorage().getToken(secConvTokenId).setState(org.apache.rahas.Token.CANCELLED);
+                        msgContext.setProperty(RampartMessageData.SCT_ID, secConvTokenId);
+                        
+                        //remove from the local map of contexts
+                        String contextIdentifierKey = RampartUtil.getContextIdentifierKey(msgContext);
+                        RampartUtil.getContextMap(msgContext).remove(contextIdentifierKey);
                     } catch (TrustException e) {
                         throw new RampartException("errorExtractingToken");
                     }
