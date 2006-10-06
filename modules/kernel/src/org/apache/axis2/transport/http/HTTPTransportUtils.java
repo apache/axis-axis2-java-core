@@ -193,9 +193,8 @@ public class HTTPTransportUtils {
 
             if (contentType != null) {
                 if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-
                     // It is MIME (MTOM or SwA)
-                    builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType);
+                    builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType,true);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 } else {
                     XMLStreamReader xmlreader;

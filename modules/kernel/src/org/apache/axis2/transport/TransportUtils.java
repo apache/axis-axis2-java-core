@@ -23,11 +23,12 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.mtom.MTOMStAXSOAPModelBuilder;
+import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.AxisFault;
@@ -95,7 +96,7 @@ public class TransportUtils {
             if (contentType != null) {
                 msgContext.setDoingMTOM(true);
                 builder = selectBuilderForMIME(msgContext, inStream,
-                        (String) contentType);
+                        (String) contentType,true);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             } else if (msgContext.isDoingREST()) {
                 XMLStreamReader xmlreader =
@@ -166,7 +167,7 @@ public class TransportUtils {
     }
 
 	public static StAXBuilder selectBuilderForMIME(MessageContext msgContext,
-			InputStream inStream, String contentTypeString) throws OMException,
+			InputStream inStream, String contentTypeString,boolean isSOAP) throws OMException,
 			XMLStreamException, FactoryConfigurationError {
 		StAXBuilder builder = null;
 
@@ -241,8 +242,8 @@ public class TransportUtils {
         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEncoding);
 
         /*
-        * put a reference to Attachments in to the message context
-        * Leaving this out for backword compatibility with 1.0
+        * Put a reference to Attachments Map in to the message context 
+        * For backword compatibility with Axis2 1.0
         */
         msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
         
@@ -259,6 +260,8 @@ public class TransportUtils {
         	soapEnvelopeNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
         }
         
+        if (isSOAP)   
+        {
         if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)& null!=soapEnvelopeNamespaceURI) {
 
             /*
@@ -269,6 +272,18 @@ public class TransportUtils {
         } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)& null!=soapEnvelopeNamespaceURI) {
             builder = new StAXSOAPModelBuilder(streamReader,
                     soapEnvelopeNamespaceURI);
+        }
+        }
+        // To handle REST XOP case
+        else
+        {
+            if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {            
+                XOPAwareStAXOMBuilder stAXOMBuilder = new XOPAwareStAXOMBuilder(streamReader,attachments);
+                builder= stAXOMBuilder;
+            	 
+            } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
+                builder = new StAXOMBuilder(streamReader);
+            }
         }
 
         return builder;
