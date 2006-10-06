@@ -103,6 +103,10 @@ public class RampartTest extends TestCase {
                 options.setProperty(RampartMessageData.CANCEL_REQUEST, Constants.VALUE_TRUE);
                 serviceClient.sendReceive(getEchoElement());
                 
+                options.setProperty(RampartMessageData.CANCEL_REQUEST, Constants.VALUE_FALSE);
+                serviceClient.sendReceive(getEchoElement());
+                options.setProperty(RampartMessageData.CANCEL_REQUEST, Constants.VALUE_TRUE);
+                serviceClient.sendReceive(getEchoElement());
             }
 
         } catch (Exception e) {

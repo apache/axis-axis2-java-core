@@ -98,7 +98,7 @@ public class MessageBuilder {
                 String ctxIdKey = RampartUtil.getContextIdentifierKey(msgCtx);
                 String tokenId = (String)RampartUtil.getContextMap(msgCtx).get(ctxIdKey);
                 
-                if(RampartUtil.isTokenValid(rmd, tokenId)) {
+                if(tokenId != null && RampartUtil.isTokenValid(rmd, tokenId)) {
                     OMElement bodyElem = msgCtx.getEnvelope().getBody();
                     OMElement child = bodyElem.getFirstElement();
                     OMElement newChild = TrustUtil.createCancelRequest(tokenId, rmd.getWstVersion());
