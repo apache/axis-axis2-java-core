@@ -122,9 +122,16 @@ public class AddressingOutHandler extends AddressingHandler {
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,
                                   MessageContext msgCtxt, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) {
         String action = messageContextOptions.getAction();
+        
+        if(log.isTraceEnabled()){
+            log.trace("processWSAAction: action from messageContext: "+action);
+        }
         if(action == null || "".equals(action)){
             if(msgCtxt.getAxisOperation()!=null){
                 action = msgCtxt.getAxisOperation().getOutputAction();
+                if(log.isTraceEnabled()){
+                    log.trace("processWSAAction: action from AxisOperation: "+action);
+                }
             }
         }
         
