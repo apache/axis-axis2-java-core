@@ -22,22 +22,22 @@
 
     <name>Apache Axis 2.0 - Security Policy</name>
     <id>axis2-secpolicy</id>
-    <groupId>axis2</groupId>
+    <groupId>org.apache.axis2</groupId>
     <description>Axis2 : WS-Security Policy implementation</description>
 
     <dependencies>
     	<dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
         </dependency>
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
         </dependency>
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-dom</artifactId>
             <version>${axiom.version}</version>
         </dependency>
@@ -66,7 +66,7 @@
 			</properties>
 		</dependency>
     	<dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.neethi</groupId>
             <artifactId>neethi</artifactId>
             <version>${neethi.version}</version>
             <properties>

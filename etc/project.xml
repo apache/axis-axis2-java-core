@@ -24,7 +24,7 @@
     <!-- a unique name for this project -->
     <name>Apache Axis 2.0</name>
     <id>axis2</id>
-    <groupId>axis2</groupId>
+    <groupId>org.apache.axis2</groupId>
     <package>org.apache.axis2</package>
     <currentVersion>${axis2_version}</currentVersion>
     <!-- details about the organization that 'owns' the project -->
