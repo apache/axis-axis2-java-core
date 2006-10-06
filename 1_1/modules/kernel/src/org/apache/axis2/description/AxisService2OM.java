@@ -249,8 +249,6 @@ public class AxisService2OM implements Java2WSDLConstants {
                     .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
-                    .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
@@ -383,8 +381,6 @@ public class AxisService2OM implements Java2WSDLConstants {
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
-                    .equals(MEP)
-                || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
@@ -619,8 +615,6 @@ public class AxisService2OM implements Java2WSDLConstants {
                     .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
-                    .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
@@ -755,8 +749,6 @@ public class AxisService2OM implements Java2WSDLConstants {
                     .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
-                    .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
@@ -856,8 +848,6 @@ public class AxisService2OM implements Java2WSDLConstants {
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
-                    .equals(MEP)
-                || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
                 || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {

@@ -104,7 +104,8 @@
      </xsl:if>
      </xsl:if>
         <!-- Code for in-only mep -->
-       <xsl:if test="@mep='10'">
+       <xsl:if test="@mep='10' or @mep='11'">
+       <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
 
        <!-- For in-only meps there would not be any asynchronous methods since there is no output -->
          /**
@@ -121,7 +122,13 @@
          <xsl:for-each select="input/param/param">
             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
             </xsl:if>
-         </xsl:for-each>) throws java.rmi.RemoteException;
+         </xsl:for-each>) throws java.rmi.RemoteException
+               <xsl:if test="$mep='11'"><!--add the faults-->
+               <xsl:for-each select="fault/param[@type!='']">
+               ,<xsl:value-of select="@name"/>
+               </xsl:for-each>
+               </xsl:if>
+               ;
            </xsl:when>
            <xsl:otherwise>
            <!-- Use object as wrapper for input parameters -->
@@ -134,7 +141,13 @@
          <xsl:for-each select="input/param">
             <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
             </xsl:if>
-         </xsl:for-each>) throws java.rmi.RemoteException;
+         </xsl:for-each>) throws java.rmi.RemoteException
+               <xsl:if test="$mep='11'"><!--add the faults-->
+               <xsl:for-each select="fault/param[@type!='']">
+               ,<xsl:value-of select="@name"/>
+               </xsl:for-each>
+               </xsl:if>
+               ;
 
            </xsl:otherwise>
          </xsl:choose>
