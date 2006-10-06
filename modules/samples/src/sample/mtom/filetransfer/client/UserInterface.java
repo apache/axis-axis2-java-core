@@ -25,8 +25,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class UserInterface extends JPanel implements ActionListener {
+    public static final int WIDTH = 480;
+    public static final int HEIGHT = 560;
 
-    JButton browseButton;
+    JButton brwsBut1;
+    JButton brwsBut2;
     JButton addFileButton;
     JButton removeButton;
     JButton executeButton;
@@ -75,7 +78,8 @@ public class UserInterface extends JPanel implements ActionListener {
         this.parent = parent;
         initComponents();
 
-        browseButton.addActionListener(this);
+        brwsBut1.addActionListener(this);
+        brwsBut2.addActionListener(this);
         addFileButton.addActionListener(this);
         removeButton.addActionListener(this);
 
@@ -135,7 +139,7 @@ public class UserInterface extends JPanel implements ActionListener {
         this.setLayout(null);
 
         pane.add(fileField);
-        pane.add(browseButton);
+        pane.add(brwsBut1);
         pane.add(addFileButton);
         pane.add(removeButton);
 
@@ -163,6 +167,7 @@ public class UserInterface extends JPanel implements ActionListener {
 
         pane.add(cacheFolderLabel);
         pane.add(cacheFolderText);
+        pane.add(brwsBut2);
 
         pane.add(executeButton);
     }
@@ -171,17 +176,20 @@ public class UserInterface extends JPanel implements ActionListener {
         files = new ArrayList(0);
 
         fileField = new JTextField();
-        fileField.setBounds(20, 20, 270, 20);
+        fileField.setBounds(20, 20, 320, 20);
 
-        this.browseButton = new JButton("Browse");
-        browseButton.setBounds(300, 20, 100, 20);
+        this.brwsBut1 = new JButton("Browse");
+        brwsBut1.setBounds(350, 20, 100, 20);
+        brwsBut1.setToolTipText("Browse a file");
 
         addFileButton = new JButton("Add");
         addFileButton.setBounds(20, 50, 100, 20);
+        addFileButton.setToolTipText("Add file to the file list");
         addFileButton.setEnabled(false);
 
         removeButton = new JButton("Remove Selection");
         removeButton.setBounds(140, 50, 150, 20);
+        removeButton.setToolTipText("Remove selected file from the file list");
         removeButton.setEnabled(false);
 
         fileListLabel = new JLabel("File List");
@@ -190,20 +198,20 @@ public class UserInterface extends JPanel implements ActionListener {
         model = new DefaultListModel();
         fileList = new JList(model);
         fileListScroller = new JScrollPane(fileList);
-        fileListScroller.setBounds(20, 100, 380, 80);
+        fileListScroller.setBounds(20, 100, 430, 80);
 
 
         destDir = new JLabel("Dest. Folder: ", JLabel.RIGHT);
         destDir.setBounds(20, 200, 100, 20);
         destFolderText = new JTextField();
-        destFolderText.setBounds(120, 200, 280, 20);
+        destFolderText.setBounds(120, 200, 330, 20);
 
 
         EPRLabel = new JLabel("End Point: ", JLabel.RIGHT);
         EPRLabel.setBounds(20, 230, 100, 20);
         EPRText = new JTextField();
         EPRText.setText("http://127.0.0.1:8080/axis2/services/mtomSample");
-        EPRText.setBounds(120, 230, 280, 20);
+        EPRText.setBounds(120, 230, 330, 20);
 
         MTOMSOAPLabel = new JLabel("Send Using");
         MTOMSOAPLabel.setBounds(20, 270, 150, 20);
@@ -225,10 +233,10 @@ public class UserInterface extends JPanel implements ActionListener {
         sendRecRadio = new JRadioButton("Send & Receive");
         sendRecRadio.setBounds(140, 345, 150, 20);
 
-        cacheBox = new JCheckBox("Enable File Caching");
+        cacheBox = new JCheckBox("Enable Client Side File Caching");
         cacheBox.setSelected(false);
         cacheBox.setEnabled(false);
-        cacheBox.setBounds(20, 380, 150, 20);
+        cacheBox.setBounds(20, 380, 250, 20);
 
         thresholdLabel = new JLabel("File Cache Threshold: ");
         thresholdLabel.setBounds(50, 410, 150, 20);
@@ -241,11 +249,16 @@ public class UserInterface extends JPanel implements ActionListener {
         cacheFolderLabel.setBounds(50, 440, 150, 20);
         cacheFolderLabel.setEnabled(false);
         cacheFolderText = new JTextField();
-        cacheFolderText.setBounds(200, 440, 200, 20);
+        cacheFolderText.setBounds(200, 440, 210, 20);
         cacheFolderText.setEnabled(false);
 
+        brwsBut2 = new JButton("...");
+        brwsBut2.setBounds(420, 440, 30, 20);
+        brwsBut2.setToolTipText("Browse for a cache folder");
+        brwsBut2.setEnabled(false);
+
         this.executeButton = new JButton("Execute");
-        executeButton.setBounds(20, 490, 150, 20);
+        executeButton.setBounds(((WIDTH - 200) / 2), 490, 200, 20);
 
         fileChooser = new JFileChooser();
         fileChooser.setName("File Chooser");
@@ -263,6 +276,7 @@ public class UserInterface extends JPanel implements ActionListener {
         cacheThresholdText.setEnabled(cacheEnable);
         cacheFolderLabel.setEnabled(cacheEnable);
         cacheFolderText.setEnabled(cacheEnable);
+        brwsBut2.setEnabled(cacheEnable);
     }
 
     public void switchRadios(JRadioButton me, JRadioButton partner) {
@@ -271,8 +285,17 @@ public class UserInterface extends JPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == browseButton) {
-            browse();
+        if (e.getSource() == brwsBut1) {
+            String str = browse(JFileChooser.FILES_ONLY);
+            if(str != null){
+                fileField.setText(str);
+                addFileButton.setEnabled(true);
+            }
+        } else if (e.getSource() == brwsBut2) {
+            String str = browse(JFileChooser.FILES_AND_DIRECTORIES);
+            if(str != null){
+                cacheFolderText.setText(str);
+            }
         } else if (e.getSource() == executeButton) {
             execute();
         } else if (e.getSource() == addFileButton) {
@@ -282,18 +305,18 @@ public class UserInterface extends JPanel implements ActionListener {
         }
     }
 
-    public void browse() {
-        int returnVal = fileChooser.showDialog(this,
-                "Select");
+    public String browse(int selectionMode) {
+        fileChooser.setFileSelectionMode(selectionMode);
+        int returnVal = fileChooser.showDialog(this, "Select");
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             file = fileChooser.getSelectedFile();
             if (file.getAbsolutePath() != null) {
-                fileField.setText(file.getAbsolutePath());
-                addFileButton.setEnabled(true);
+                return file.getAbsolutePath();
             }
         }
         fileChooser.setSelectedFile(null);
+        return null;
     }
 
     public void addFile() {
@@ -354,6 +377,7 @@ public class UserInterface extends JPanel implements ActionListener {
                     } catch (NumberFormatException e) {
                         JOptionPane.showMessageDialog(parent, "Please enter an integer value",
                                 "Cache Threshold Error", JOptionPane.ERROR_MESSAGE);
+                        return;
                     }
                 }
 
@@ -366,10 +390,10 @@ public class UserInterface extends JPanel implements ActionListener {
                 } else {
                     sendAndReceive(sendMethod, cacheThreshold, cacheFolder);
                 }
-                return;
+            } else {
+                JOptionPane.showMessageDialog(parent, "Destination Folder or End Point cannot be null",
+                        "Data Error", JOptionPane.ERROR_MESSAGE);
             }
-            JOptionPane.showMessageDialog(parent, "Destination Folder or End Point cannot be null",
-                    "Data Error", JOptionPane.ERROR_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(parent, "Add at least one file",
                     "File List Empty", JOptionPane.ERROR_MESSAGE);
