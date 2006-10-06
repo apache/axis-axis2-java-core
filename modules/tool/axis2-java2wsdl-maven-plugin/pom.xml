@@ -107,17 +107,17 @@
       <version>0.1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.ws.commons</groupId>
+      <groupId>org.apache.ws.commons.schema</groupId>
       <artifactId>XmlSchema</artifactId>
       <version>SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>ws-commons</groupId>
+      <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-api</artifactId>
       <version>SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>ws-commons</groupId>
+      <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-impl</artifactId>
       <version>SNAPSHOT</version>
     </dependency>

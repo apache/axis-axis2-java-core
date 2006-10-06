@@ -22,17 +22,17 @@
 
     <name>Apache Axis 2.0 - Java2WSDL</name>
     <id>axis2-java2wsdl</id>
-    <groupId>axis2</groupId>
+    <groupId>org.apache.axis2</groupId>
     <description>To generate WSDL file for a given Java class</description>
 
     <dependencies>
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
         </dependency>
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
         </dependency>
@@ -72,7 +72,7 @@
         </dependency>
         <!--added this to support to keep WSDL information in AxisService-->
         <dependency>
-            <groupId>org.apache.ws.commons</groupId>
+            <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
         </dependency>

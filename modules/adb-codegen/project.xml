@@ -22,40 +22,40 @@
 
     <id>axis2-adb-codegen</id>
     <name>Apache Axis 2.0 - ADB Codegen</name>
-    <groupId>axis2</groupId>
+    <groupId>org.apache.axis2</groupId>
     <description>ADB code generation support for Axis2</description>
 
     <dependencies>
        <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
         </dependency>
        
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
 	  <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.ws.commons</groupId>
+            <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
         </dependency>
@@ -137,7 +137,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>ws-commons</groupId>
+            <groupId>org.apache.ws.commons.neethi</groupId>
             <artifactId>neethi</artifactId>
             <version>${neethi.version}</version>
             <properties>
