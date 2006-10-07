@@ -754,12 +754,14 @@
                 <ant:include name="**/modules/java2wsdl/**"/>
                 <ant:include name="**/modules/kernel/**"/>
                 <ant:include name="**/modules/adb/**"/>
+		<ant:include name="**/modules/adb-codegen/**"/> 
                 <ant:include name="**/modules/codegen/**"/>
                 <ant:include name="**/modules/webapp/**"/>
                 <ant:include name="**/modules/xmlbeans/**"/>
                 <ant:include name="**/modules/jibx/**"/>
-                <ant:include name="**/modules/jaxbri/**"/>
+                	<ant:include name="**/modules/jaxbri/**"/>
                 <ant:include name="**/modules/addressing/**"/>
+                <ant:include name="**/modules/saaj/**"/>
                 <ant:include name="**/modules/samples/**"/>
                 <ant:include name="**/modules/spring/**"/>
                 <ant:include name="**/modules/tool/**"/>
