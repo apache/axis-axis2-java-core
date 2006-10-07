@@ -466,7 +466,8 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                                 .getSignatureElement());
 
                 signatureValues.add(dkSign.getSignatureValue());
-
+                
+                signatureElement = dkSign.getSignatureElement();
             } catch (WSSecurityException e) {
                 throw new RampartException("errorInDerivedKeyTokenSignature", e);
             } catch (ConversationException e) {

@@ -83,6 +83,8 @@ public class SymmetricBindingBuilder implements AssertionBuilder {
                 
             } else if (Constants.ONLY_SIGN_ENTIRE_HEADERS_AND_BODY.equals(name.getLocalPart())) {
                 symmetricBinding.setEntireHeadersAndBodySignatures(true);
+            } else if (Constants.ENCRYPT_SIGNATURE.equals(name)) {
+                symmetricBinding.setSignatureProtection(true);
             }
         }        
     }

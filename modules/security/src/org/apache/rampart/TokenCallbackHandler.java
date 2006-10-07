@@ -16,17 +16,13 @@
 
 package org.apache.rampart;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.rahas.Token;
 import org.apache.rahas.TokenStorage;
-import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSPasswordCallback;
-import org.apache.ws.security.message.token.Reference;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.xml.namespace.QName;
 
 import java.io.IOException;
 
@@ -34,29 +30,40 @@ import java.io.IOException;
 public class TokenCallbackHandler implements CallbackHandler {
 
     private TokenStorage store;
-
+    private CallbackHandler handler;
     
-    public TokenCallbackHandler(TokenStorage store) {
+    public TokenCallbackHandler(TokenStorage store, CallbackHandler handler) {
         this.store = store;
+        this.handler = handler;
     }
     
-    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+    public void handle(Callback[] callbacks) 
+    throws IOException, UnsupportedCallbackException {
+        
         for (int i = 0; i < callbacks.length; i++) {
 
             if (callbacks[i] instanceof WSPasswordCallback) {
                 WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
-                String id = pc.getIdentifer();
-                Token tok;
-                try {
-                    //Pick up the token from the token store
-                    tok = this.store.getToken(id);
-                    if(tok != null) {
-                        //Get the secret and set it in the callback object
-                        pc.setKey(tok.getSecret());
+                if(pc.getUsage() == WSPasswordCallback.SECURITY_CONTEXT_TOKEN &&
+                        this.store != null) {
+                    String id = pc.getIdentifer();
+                    Token tok;
+                    try {
+                        //Pick up the token from the token store
+                        tok = this.store.getToken(id);
+                        if(tok != null) {
+                            //Get the secret and set it in the callback object
+                            pc.setKey(tok.getSecret());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new IOException(e.getMessage());
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new IOException(e.getMessage());
+                } else {
+                    //Handle other types of callbacks with the usual handler
+                    if(this.handler != null) {
+                        handler.handle(new Callback[]{pc});
+                    }
                 }
 
             } else {
