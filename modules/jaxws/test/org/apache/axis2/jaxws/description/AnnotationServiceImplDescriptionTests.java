@@ -133,8 +133,10 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // Check the Java parameters, WebParam names, and WebResult (actually lack thereof) for each of these operations
         
         // Note regarding WebParam names:
-        // Unlike the Java paramaters, the WebParam names will remove the JAX-WS AsyncHandler
-        // parameter.  That is because it is NOT part of the contract, and thus it is NOT part of
+        //In the client Async Call the the WebParam name will not remove JAX-WS AsyncHandler.
+        //Proxy invoking the the Async Call will check the input method object and if
+        //its of type JAX-WS AsyncHandler then that WebParam will be skipped.
+        //This is done because AsyncHandler is NOT part of the contract, and thus it is NOT part of
         // the JAXB object constructed for the method invocation.  The AsyncHandler is part of the 
         // JAX-WS programming model to support an asynchronous callback to receive the response.
         
@@ -173,7 +175,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     assertEquals(checkParams[0], "java.lang.String" );
                     assertEquals(checkParams[1], "javax.xml.ws.AsyncHandler");
                     // Check the WebParam Names (see note above) 
-                    assertEquals(1, webParamNames.length);
+                    assertEquals(2, webParamNames.length);
                     assertEquals("invoke_str", webParamNames[0]);
                     // Check the lack of a WebResult annotation
                     assertEquals(false, operation.isWebResultAnnotationSpecified());
@@ -210,7 +212,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     assertEquals(checkParams[1], "int");
                     assertEquals(checkParams[2], "javax.xml.ws.AsyncHandler");
                     // Check the WebParam Names (see note above) 
-                    assertEquals(2, webParamNames.length);
+                    assertEquals(3, webParamNames.length);
                     assertEquals("twoWayHolder_str", webParamNames[0]);
                     assertEquals("twoWayHolder_int", webParamNames[1]);
                     // Check the lack of a WebResult annotation

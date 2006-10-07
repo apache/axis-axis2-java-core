@@ -5,11 +5,13 @@ package org.apache.axis2.jaxws.sample;
 
 import java.util.concurrent.Future;
 
+import javax.xml.ws.Holder;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapService;
 import org.test.sample.nonwrap.ObjectFactory;
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
+import org.test.sample.nonwrap.TwoWayHolder;
 
 import junit.framework.TestCase;
 
@@ -42,6 +44,7 @@ public class NonWrapTests extends TestCase {
 			System.out.println("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
+			fail();
 		}
 	}
 	public void testTwoWayASyncCallback(){
@@ -58,6 +61,30 @@ public class NonWrapTests extends TestCase {
 			System.out.println("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
+			fail();
+		}
+	}
+	public void testTwoWayHolder(){
+		System.out.println("------------------------------");
+		System.out.println("Test : "+getName());
+		try{
+			TwoWayHolder twh = new TwoWayHolder();
+			twh.setTwoWayHolderInt(new Integer(0));
+			twh.setTwoWayHolderStr(new String("Request Holder String"));
+			Holder<TwoWayHolder> holder = new Holder<TwoWayHolder>(twh);
+			TwoWay twoWay = new ObjectFactory().createTwoWay();
+			twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
+			DocLitNonWrapService service = new DocLitNonWrapService();
+			DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
+			proxy.twoWayHolder(holder);
+			twh = holder.value;
+			System.out.println("Holder string ="+twh.getTwoWayHolderStr());
+			System.out.println("Holder int ="+twh.getTwoWayHolderInt());
+			
+			System.out.println("------------------------------");
+		}catch(Exception e){
+			e.printStackTrace();
+			fail();
 		}
 	}
 }

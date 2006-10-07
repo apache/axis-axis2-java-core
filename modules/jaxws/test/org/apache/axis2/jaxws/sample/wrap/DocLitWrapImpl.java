@@ -48,7 +48,9 @@ public class DocLitWrapImpl implements DocLitWrap {
 	 */
 	public void twoWayHolder(Holder<String> twoWayHolderStr,
 			Holder<Integer> twoWayHolderInt) {
-		// TODO Auto-generated method stub
+
+		twoWayHolderInt.value = 10;
+		twoWayHolderStr.value = "Response String";
 
 	}
 

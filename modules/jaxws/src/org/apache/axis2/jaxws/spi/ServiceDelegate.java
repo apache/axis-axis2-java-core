@@ -41,10 +41,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.JAXWSClientContext;
 import org.apache.axis2.jaxws.client.JAXBDispatch;
 import org.apache.axis2.jaxws.client.XMLDispatch;
-import org.apache.axis2.jaxws.client.factory.DescriptorFactory;
-import org.apache.axis2.jaxws.client.factory.ProxyHandlerFactory;
-import org.apache.axis2.jaxws.client.proxy.BaseProxyHandler;
-import org.apache.axis2.jaxws.client.proxy.ProxyDescriptor;
+import org.apache.axis2.jaxws.client.proxy.JAXWSProxyHandler;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.PortData;
@@ -259,15 +256,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
                 addPortData(portName, null, address);
     		}
     	}
-    	DescriptorFactory df = (DescriptorFactory)FactoryRegistry.getFactory(DescriptorFactory.class);
-    	ProxyDescriptor pd = df.create(sei, serviceDescription);
-    	pd.setPort(ports.get(portName));
-    	ProxyHandlerFactory phf =(ProxyHandlerFactory) FactoryRegistry.getFactory(ProxyHandlerFactory.class);
-    	BaseProxyHandler proxyHandler = phf.create(pd, this);
+    	JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, sei, ports.get(portName));
     	
     	Class[] seiClazz = new Class[]{sei, BindingProvider.class};
     	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
-    	
     	return sei.cast(proxyClass);
     }
     

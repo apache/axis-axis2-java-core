@@ -66,7 +66,10 @@ public class DocLitNonWrapPortTypeImpl implements DocLitNonWrapPortType {
 	 * @see org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType#twoWayHolder(javax.xml.ws.Holder)
 	 */
 	public void twoWayHolder(Holder<TwoWayHolder> allByMyself) {
-		// TODO Auto-generated method stub
+		//TODO Auto-generated method stub
+		TwoWayHolder twh = allByMyself.value;
+		twh.setTwoWayHolderInt(10);
+		twh.setTwoWayHolderStr("Response String");
 
 	}
 

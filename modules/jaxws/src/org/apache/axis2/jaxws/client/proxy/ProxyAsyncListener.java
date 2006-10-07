@@ -16,13 +16,6 @@
  */
 package org.apache.axis2.jaxws.client.proxy;
 
-import java.util.concurrent.ExecutionException;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAPBody;
-import javax.xml.ws.WebServiceException;
-
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -37,17 +30,22 @@ import org.apache.axis2.jaxws.impl.AsyncListener;
  */
 public class ProxyAsyncListener extends AsyncListener {
 
-	BaseProxyHandler handler = null;
+	JAXWSProxyHandler handler = null;
+	Object[] inputArgs = null;
 	public ProxyAsyncListener() {
 		super();
 	}
-
-	public BaseProxyHandler getHandler() {
+	
+	public JAXWSProxyHandler getHandler() {
 		return handler;
 	}
 
-	public void setHandler(BaseProxyHandler handler) {
+	public void setHandler(JAXWSProxyHandler handler) {
 		this.handler = handler;
+	}
+	
+	public void setInputArgs(Object[] inputArgs){
+		this.inputArgs = inputArgs;
 	}
 
 	/**
@@ -62,8 +60,8 @@ public class ProxyAsyncListener extends AsyncListener {
 		 
 		 try{
 			 //I will delegate the request to create respose to proxyHandler since it has all the logic written to create response for Sync and oneWay.
-			  return handler.createResponse(null, mc);
-		 }catch(Exception e){
+			  return handler.createResponse(null,inputArgs, mc);
+		 }catch(Throwable e){
 			throw ExceptionFactory.makeWebServiceException(e);
 		 }
 	 }

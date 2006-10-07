@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 
 
@@ -113,6 +114,22 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 		}catch(NoSuchFieldException e){
 			throw new JAXBWrapperException(e);
 		}
+	}
+	
+	public Object wrap(Class jaxbClass, String jaxbClassName, ArrayList<MethodParameter> mps) throws JAXBWrapperException{
+		if(mps == null){
+			throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr7"));
+		}
+		ArrayList<String> nameList = new ArrayList<String>();
+		Map<String, Object> objectList = new WeakHashMap<String, Object>();
+		for(MethodParameter mp:mps){
+			String name = mp.getName();
+			Object object = mp.getValue();
+			
+			nameList.add(name);
+			objectList.put(name, object);
+		}
+		return wrap(jaxbClass, jaxbClassName, nameList, objectList);
 	}
 	
 	public JAXBElement wrapAsJAXBElement(Class jaxbClass, String jaxbClassName,

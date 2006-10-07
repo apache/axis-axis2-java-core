@@ -26,6 +26,7 @@ import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
+import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.RequestWrapper;
@@ -138,6 +139,7 @@ public class OperationDescription {
     // TODO: Should WebParam annotation be moved to the ParameterDescription?
     private WebParam[]          webParamAnnotations;
     private String[]            webParamNames;
+    private Mode[]				webParamMode;
     private String[]            webParamTNS;
 
     
@@ -439,14 +441,7 @@ public class OperationDescription {
             ArrayList<String> buildNames = new ArrayList<String>();
             WebParam[] webParams = getWebParam();
             for (WebParam currentParam:webParams) {
-                // TODO: Is skipping param names of "asyncHandler" correct?  This came from original ProxyDescription class and ProxyTest fails without this code
-                //       Due to code in DocLitProxyHandler.getParamValues() which does not add values for AsyncHandler objects.
-                //       It probably DOES need to be skipped, albeit more robustly (check that the type of the param is javax.xml.ws.AsyncHandler also)
-                //       The reason is that the handler is part of the JAX-WS async callback programming model; it is NOT part of the formal params
-                //       to the actual method and therefore is NOT part of the JAXB request wrapper
-                if(!currentParam.name().equals("asyncHandler")){
                     buildNames.add(currentParam.name());
-                }
             }
             webParamNames = buildNames.toArray(new String[0]);
         }
@@ -459,20 +454,24 @@ public class OperationDescription {
             ArrayList<String> buildNames = new ArrayList<String>();
             WebParam[] webParams = getWebParam();
             for (WebParam currentParam:webParams) {
-                // TODO: Is skipping param names of "asyncHandler" correct?  This came from original ProxyDescription class and ProxyTest fails without this code
-                //       Due to code in DocLitProxyHandler.getParamValues() which does not add values for AsyncHandler objects.
-                //       It probably DOES need to be skipped, albeit more robustly (check that the type of the param is javax.xml.ws.AsyncHandler also)
-                //       The reason is that the handler is part of the JAX-WS async callback programming model; it is NOT part of the formal params
-                //       to the actual method and therefore is NOT part of the JAXB request wrapper
-                if(!currentParam.name().equals("asyncHandler")){
-                    buildNames.add(currentParam.targetNamespace());
-                }
+            	buildNames.add(currentParam.targetNamespace());
             }
             webParamTNS = buildNames.toArray(new String[0]);
         }
         return webParamTNS;
     }
              
+    public Mode[] getWebParamModes(){
+    	if(webParamMode == null){
+    		ArrayList<Mode> buildModes = new ArrayList<Mode>();
+    		WebParam[] webParams = getWebParam();
+    		for (WebParam currentParam:webParams){
+                buildModes.add(currentParam.mode());
+    		}
+    		 webParamMode = buildModes.toArray(new Mode[0]);
+    	}
+    	return webParamMode;
+    }
     public String getWebParamTNS(String name){
        WebParam[] webParams = getWebParam();
        for (WebParam currentParam:webParams){
@@ -584,4 +583,13 @@ public class OperationDescription {
         }
         return onewayIsOneway.booleanValue();   
     }
+    
+    public boolean isWebMethodExcluded(){
+		WebMethod webMethod = getWebMethod();
+		if(webMethod == null){
+			return false;
+		}
+		
+		return webMethod.exclude();
+	}
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 
+import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 
 
@@ -48,7 +49,16 @@ public interface JAXBWrapperTool {
      * @return list of Objects in the same order as the element names.
      */ 
     public Object wrap(Class jaxbClass, String jaxbClassName, ArrayList<String> childNames, Map<String, Object> childObjects) throws JAXBWrapperException;
-    
+    /**
+     * wrap
+     * Creates a jaxb object that is initialized with the child objects
+     * @param jaxbClass
+     * @param jaxbClassName
+     * @param methodParameters
+     * @return
+     * @throws JAXBWrapperException
+     */
+    public Object wrap(Class jaxbClass, String jaxbClassName, ArrayList<MethodParameter> methodParameters) throws JAXBWrapperException;
     /**
      * wrapAsJAXBElement
      * Creates a JAXBElement that is initialized with the child objects and can be serialsed to xml later.

@@ -14,17 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.client.factory;
+package org.apache.axis2.jaxws.marshaller;
 
-import org.apache.axis2.jaxws.client.proxy.ProxyDescriptor;
-import org.apache.axis2.jaxws.description.ServiceDescription;
-
-
-public class DescriptorFactory{
-
-	public ProxyDescriptor create(Class seiClass, ServiceDescription serviceDescription) {
-		// TODO Auto-generated method stub
-		return new ProxyDescriptor(seiClass, serviceDescription);
-	}
+public interface DocLitBareMethodMarshaller extends MethodMarshaller {
 
 }

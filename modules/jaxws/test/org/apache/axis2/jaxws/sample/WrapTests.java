@@ -3,6 +3,7 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import javax.xml.ws.Holder;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
 
@@ -42,6 +43,7 @@ public class WrapTests extends TestCase {
 			System.out.println("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
+			fail();
 		}
 	}
 	
@@ -57,6 +59,27 @@ public class WrapTests extends TestCase {
 			System.out.println("------------------------------");
 		}catch(Exception e){
 			e.printStackTrace();
+			fail();
+		}
+	}
+	
+	public void testTwoWayHolder(){
+		System.out.println("------------------------------");
+		System.out.println("Test : "+getName());
+		try{
+			String holderString = new String("Test twoWay Sync");
+			Integer holderInteger = new Integer(0);
+			Holder<String> strHolder = new Holder<String>(holderString);
+			Holder<Integer> intHolder = new Holder<Integer>(holderInteger);
+			DocLitWrapService service = new DocLitWrapService();
+			DocLitWrap proxy = service.getDocLitWrapPort();
+			proxy.twoWayHolder(strHolder, intHolder);
+			System.out.println("Holder Response String =" + strHolder.value);;
+			System.out.println("Holder Response Integer ="+ intHolder.value);
+			System.out.println("------------------------------");
+		}catch(Exception e){
+			e.printStackTrace();
+			fail();
 		}
 	}
 

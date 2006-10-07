@@ -20,12 +20,16 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.concurrent.Future;
 
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Binding;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 
@@ -38,9 +42,18 @@ import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
+import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
+import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
@@ -82,19 +95,28 @@ import org.apache.commons.logging.LogFactory;
  * 
  */
 
-public abstract class BaseProxyHandler extends BindingProvider implements
+public class JAXWSProxyHandler extends BindingProvider implements
 		InvocationHandler {
-	private static Log log = LogFactory.getLog(BaseProxyHandler.class);
-//	TODO remove axisController once InvocationController code is build.
-	private AxisController axisController = null;
+	private static Log log = LogFactory.getLog(JAXWSProxyHandler.class);
+
 	//Reference to ServiceDelegate instance that was used to create the Proxy
 	private ServiceDelegate delegate = null;
-	protected ProxyDescriptor proxyDescriptor = null;
+	protected ServiceDescription serviceDesc = null;
+	protected EndpointDescription endpointDesc = null;
+	protected OperationDescription operationDesc = null;
+	protected MethodMarshaller methodMarshaller = null;
+	private PortData port = null;
+	private Class seiClazz = null;
+	private Method method = null;
 	
-	public BaseProxyHandler(ProxyDescriptor pd, ServiceDelegate delegate) {
+	public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, PortData port) {
 		super();
-		this.proxyDescriptor = pd;
 		this.delegate = delegate;
+		this.seiClazz = seiClazz;
+		this.port = port;
+		this.serviceDesc=delegate.getServiceDescription();
+//		FIXME: This probably needs to be more robust; can there be > 1 endpoints; if so, how choose which one?
+		this.endpointDesc = serviceDesc.getEndpointDescription(seiClazz)[0];
 		initRequestContext();
 	}
 	
@@ -109,20 +131,38 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 		if (log.isDebugEnabled()) {
             log.debug("Attemping to invoke Method: " +method.getName());
         }
+        
+		this.method = method;
+		
 		if(!isValidMethodCall(method)){
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr1",method.getName(), axisController.getClientContext().getClazz().getName()));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr1",method.getName(), seiClazz.getName()));
+		}
+		
+		if(!isPublic(method)){
+			throw ExceptionFactory.makeWebServiceException("Invalid Method Call, Method "+method.getName() + " not a public method"); 
 		}
 		
 		if(isBindingProviderInvoked(method)){
 			if (log.isDebugEnabled()) {
 	            log.debug("Invoking method on Binding Provider");
 	        }
-			return method.invoke(this, args);
+			try{
+				return method.invoke(this, args);
+			}catch(Throwable e){
+				throw ExceptionFactory.makeMessageException(e);
+			}
 			
 		}
 		else{
-			proxyDescriptor.setSeiMethod(method);
-			return InvokeSEIMethod(method, args);
+			operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
+			if(isMethodExcluded()){
+				throw ExceptionFactory.makeWebServiceException("Invalid Method Call, Method "+method.getName() + " has been excluded using @webMethod annotation");
+			}
+			try{
+				return InvokeSEIMethod(method, args);
+			}catch(Throwable e){
+				throw ExceptionFactory.makeWebServiceException(e);
+			}
 		}
 	}
 	
@@ -131,23 +171,31 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 	 * runs invoke.
 	 * 
 	 */
-	private Object InvokeSEIMethod(Method method, Object[] args)throws ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, XMLStreamException, IllegalAccessException,IntrospectionException, NoSuchFieldException, InvocationTargetException{
+	private Object InvokeSEIMethod(Method method, Object[] args)throws Throwable{
 		if (log.isDebugEnabled()) {
             log.debug("Attempting to Invoke SEI Method "+ method.getName());
         }
-		
-		//TODO make sure the method is a public method and it is declared in SEI.
-		
+		initialize();
 		InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
 		MessageContext requestContext = createRequest(method, args);
-        requestContext.setOperationDescription(proxyDescriptor.getOperationDescription());
+		//Enable MTOM on the Message if the property was
+        //set on the SOAPBinding.
+        Binding bnd = getBinding();
+        if (bnd != null && bnd instanceof SOAPBinding) {
+            javax.xml.ws.soap.SOAPBinding soapBnd = (javax.xml.ws.soap.SOAPBinding) bnd;
+            if (soapBnd.isMTOMEnabled()) {
+                Message requestMsg = requestContext.getMessage();
+                requestMsg.setMTOMEnabled(true);
+            }
+        }
+        requestContext.setOperationDescription(operationDesc);
 		requestIC.setRequestMessageContext(requestContext);
 		InvocationController controller = new AxisInvocationController();
-		//FIXME: Fix based on how InvocationContext changes to get ServiceClient.
-		requestIC.setServiceClient(proxyDescriptor.getEndpointDescription().getServiceClient());
+		requestIC.setServiceClient(delegate.getServiceClient(port.getPortName()));
 		
 		//check if the call is OneWay, Async or Sync
-		if(proxyDescriptor.isOneWay() || method.getReturnType().getName().equals("void")){
+		//if(operationDesc.isOneWay() || method.getReturnType().getName().equals("void")){
+		if(operationDesc.isOneWay()){
 			if(log.isDebugEnabled()){
 				log.debug("OneWay Call");
 			}
@@ -169,7 +217,7 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 			if(asyncHandler == null){
 				throw ExceptionFactory.makeWebServiceException("AynchHandler null for Async callback, Invalid AsyncHandler callback Object");
 			}
-			AsyncListener listener = createProxyListener();
+			AsyncListener listener = createProxyListener(args);
 			requestIC.setAsyncListener(listener);
 			requestIC.setExecutor(delegate.getExecutor());
 			return controller.invokeAsync(requestIC, asyncHandler);
@@ -179,31 +227,32 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 			if(log.isDebugEnabled()){
 				log.debug("Async Polling");
 			}
-			AsyncListener listener = createProxyListener();
+			AsyncListener listener = createProxyListener(args);
 			requestIC.setAsyncListener(listener);
 			requestIC.setExecutor(delegate.getExecutor());
 			return controller.invokeAsync(requestIC);
 		}
 		
-		if(!proxyDescriptor.isOneWay()){
+		if(!operationDesc.isOneWay()){
 			InvocationContext responseIC = controller.invoke(requestIC);
 		
 			MessageContext responseContext = responseIC.getResponseMessageContext();
-			Object responseObj = createResponse(method, responseContext);
+			Object responseObj = createResponse(method, args, responseContext);
 			return responseObj;
 		}
 		return null;
 	}
 	
-	private AsyncListener createProxyListener(){
+	private AsyncListener createProxyListener(Object[] args){
 		ProxyAsyncListener listener = new ProxyAsyncListener();
 		listener.setHandler(this);
+		listener.setInputArgs(args);
 		return listener;
 	}
 	
 	protected boolean isAsync(){
-		String methodName = proxyDescriptor.getSeiMethod().getName();
-		Class returnType = proxyDescriptor.getSeiMethod().getReturnType();
+		String methodName = method.getName();
+		Class returnType = method.getReturnType();
 		return methodName.endsWith("Async") && (returnType.isAssignableFrom(Response.class) || returnType.isAssignableFrom(Future.class));
 	}
 	/**
@@ -212,7 +261,23 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 	 * @param args
 	 * @return
 	 */
-	protected abstract MessageContext createRequest(Method method, Object[] args) throws ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, javax.xml.stream.XMLStreamException;
+	protected MessageContext createRequest(Method method, Object[] args) throws Throwable{
+		if (log.isDebugEnabled()) {
+            log.debug("Converting objects to Message");
+        }
+		Message message = methodMarshaller.marshalRequest(args);
+		
+		if (log.isDebugEnabled()) {
+            log.debug("Objects converted to Message");
+        }
+		MessageContext request = new MessageContext();
+		request.setMessage(message);
+		request.getProperties().putAll(getRequestContext());
+		if (log.isDebugEnabled()) {
+            log.debug("Request Created");
+        }
+		return request;	
+	}
 	
 	/**
 	 * Creates response context for the method call. This response context will be used to create response result to the client call.
@@ -220,25 +285,29 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 	 * @param responseContext
 	 * @return
 	 */
-	protected abstract Object createResponse(Method method, MessageContext responseContext)throws IllegalAccessException, ClassNotFoundException, JAXBWrapperException, JAXBException, javax.xml.stream.XMLStreamException, MessageException, IntrospectionException, NoSuchFieldException, InvocationTargetException;
+	protected Object createResponse(Method method, Object[] args, MessageContext responseContext)throws Throwable{
+		Message responseMsg = responseContext.getMessage();
+		if (log.isDebugEnabled()) {
+            log.debug("Converting Message to Response Object");
+        }
+		Object object = methodMarshaller.demarshalResponse(responseMsg, args);
+		if (log.isDebugEnabled()) {
+            log.debug("Message Converted to response Object");
+        }
+		return object;
+	}
 	
 	private boolean isBindingProviderInvoked(Method method){
-		Class SEIClass = proxyDescriptor.getSeiClazz();
 		Class methodsClass = method.getDeclaringClass();
-		return (SEIClass == methodsClass)?false:true;
+		return (seiClazz == methodsClass)?false:true;
 	}
 	
 	private boolean isValidMethodCall(Method method){
-		Class SEIClass = proxyDescriptor.getSeiClazz();
 		Class clazz = method.getDeclaringClass();
-		if(clazz == javax.xml.ws.BindingProvider.class || clazz == SEIClass){
+		if(clazz == javax.xml.ws.BindingProvider.class || clazz == seiClazz){
 			return true;
 		}
 		return false;
-	}
-	//TODO: remove reference to AxisController.
-	protected void setAxisController(AxisController ac) {
-		this.axisController = ac;
 	}
 	
 	public void setDelegate(ServiceDelegate delegate) {
@@ -248,10 +317,10 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 	protected void initRequestContext() {
 		String soapAddress = null;
 		String soapAction = null;
-		String endPointAddress = proxyDescriptor.getPort().getEndpointAddress();
+		String endPointAddress = port.getEndpointAddress();
 		WSDLWrapper wsdl = delegate.getServiceDescription().getWSDLWrapper();
 		QName serviceName = delegate.getServiceName();
-		QName portName = proxyDescriptor.getPort().getPortName();
+		QName portName = port.getPortName();
 		if (wsdl != null) {
 			soapAddress = wsdl.getSOAPAddress(serviceName, portName);
 			soapAction = wsdl.getSOAPAction(serviceName, portName);
@@ -262,5 +331,82 @@ public abstract class BaseProxyHandler extends BindingProvider implements
 	protected ServiceDelegate getDelegate() {
 		return delegate;
 	}
+	
+	private boolean isPublic(Method method){
+		return Modifier.isPublic(method.getModifiers());
+	}
+	
+	private boolean isMethodExcluded(){
+		return operationDesc.isWebMethodExcluded();
+	}
 
+	public PortData getPort() {
+		return port;
+	}
+
+	public void setPort(PortData port) {
+		this.port = port;
+	}
+
+	public Class getSeiClazz() {
+		return seiClazz;
+	}
+
+	public void setSeiClazz(Class seiClazz) {
+		this.seiClazz = seiClazz;
+	}
+	private void initialize(){
+		SOAPBinding.Style styleOnSEI = endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();
+		SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
+		if(styleOnMethod!=null && styleOnSEI!=styleOnMethod){
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
+		}
+		
+		MethodMarshallerFactory cf = (MethodMarshallerFactory) FactoryRegistry.getFactory(MethodMarshallerFactory.class);
+		if(styleOnSEI == SOAPBinding.Style.DOCUMENT){
+			methodMarshaller = createDocLitMethodMarshaller(cf);
+		}
+		if(styleOnSEI == SOAPBinding.Style.RPC){
+			methodMarshaller = createRPCLitMethodMarshaller(cf);
+			
+		}
+	
+	}
+	private MethodMarshaller createDocLitMethodMarshaller(MethodMarshallerFactory cf){
+		ParameterStyle parameterStyle = null;
+		if(isDocLitBare()){
+			parameterStyle = SOAPBinding.ParameterStyle.BARE;
+		}
+		if(isDocLitWrapped()){
+			parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
+		}
+		//FIXME: The protocol should actually come from the binding information included in
+	    // either the WSDL or an annotation.
+		return cf.createDocLitMethodMarshaller(parameterStyle, serviceDesc, endpointDesc, operationDesc, Protocol.soap11);
+	}
+	
+	private MethodMarshaller createRPCLitMethodMarshaller(MethodMarshallerFactory cf){
+		return cf.createDocLitMethodMarshaller(null, serviceDesc, endpointDesc, operationDesc, Protocol.soap11);
+	}
+	protected boolean isDocLitBare(){
+		SOAPBinding.ParameterStyle methodParamStyle = operationDesc.getSoapBindingParameterStyle();
+		if(methodParamStyle!=null){
+			return methodParamStyle == SOAPBinding.ParameterStyle.BARE;
+		}
+		else{
+			SOAPBinding.ParameterStyle SEIParamStyle = endpointDesc.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+			return SEIParamStyle == SOAPBinding.ParameterStyle.BARE;
+		}
+	}
+	
+	protected boolean isDocLitWrapped(){
+		SOAPBinding.ParameterStyle methodParamStyle = operationDesc.getSoapBindingParameterStyle();
+		if(methodParamStyle!=null){
+			return methodParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
+		}
+		else{
+		SOAPBinding.ParameterStyle SEIParamStyle = endpointDesc.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+		return SEIParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
+		}
+	}
 }

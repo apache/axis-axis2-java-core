@@ -94,7 +94,6 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(NonWrapTests.class);
         suite.addTestSuite(WrapTests.class);
         suite.addTestSuite(AddNumbersTests.class);
-        suite.addTestSuite(BareTests.class);
         
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
