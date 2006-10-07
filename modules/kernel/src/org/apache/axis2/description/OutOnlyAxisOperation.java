@@ -40,7 +40,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
 
     private AxisMessage inFaultMessage;
 
-    // just to keep the inflow , there wont be any usage
+    // just to keep the inflow , there won't be any usage
     private ArrayList inPhases;
 
     private AxisMessage outFaultMessage;
@@ -329,7 +329,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
         // do Target Resolution
         cc.getAxisConfiguration().getTargetResolverChain().resolveTarget(mc);
 
-        // setting messge ID if it null
+        // setting message ID if it null
         // if the transport to use for sending is not specified, try to find it
         // from the URL
         TransportOutDescription senderTransport = options.getTransportOut();
