@@ -260,7 +260,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
 
     /**
      * Create a message ID for the given message context if needed. If user gives an option with
-     * MessageID then just copy that into MessageContext , and with that there can be mutiple
+     * MessageID then just copy that into MessageContext , and with that there can be multiple
      * message with same MessageID unless user call setOption for each invocation.
      * <p/>
      * If user want to give message ID then the better way is to set the message ID in the option and
