@@ -31,14 +31,17 @@ import org.apache.ws.secpolicy.model.IssuedToken;
 import org.apache.ws.secpolicy.model.SecureConversationToken;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
+import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.message.WSSecDKEncrypt;
 import org.apache.ws.security.message.WSSecEncrypt;
+import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
@@ -100,6 +103,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             } else if(encryptionToken instanceof SecureConversationToken) {
                 tokenId = rmd.getSecConvTokenId();
                 log.debug("SCT Id : " + tokenId);
+            } else if (encryptionToken instanceof X509Token) {
+                tokenId = setupEncryptedKey(rmd, encryptionToken);
             }
             
             if(tokenId == null || tokenId.length() == 0) {
@@ -129,6 +134,10 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 attached = true;
             }
             
+            //In the X509 case we MUST add the EncryptedKey
+            if(encryptionToken instanceof X509Token) {
+                RampartUtil.appendChildToSecHeader(rmd, tok.getToken());
+            }
             Document doc = rmd.getDocument();
 
             if(encryptionToken.isDerivedKeys()) {
@@ -296,6 +305,8 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 sigTokId = rmd.getSecConvTokenId();
             } else if(sigToken instanceof IssuedToken) {
                 sigTokId = rmd.getIssuedSignatureTokenId();
+            } else if(sigToken instanceof X509Token) {
+                sigTokId = setupEncryptedKey(rmd, sigToken);
             }
         } else {
             throw new RampartException("signatureTokenMissing");
@@ -309,11 +320,23 @@ public class SymmetricBindingBuilder extends BindingBuilder {
 
         if(Constants.INCLUDE_ALWAYS.equals(sigToken.getInclusion()) ||
                 Constants.INCLUDE_ONCE.equals(sigToken.getInclusion()) ||
-                (rmd.isClientSide() && Constants.INCLUDE_ALWAYS_TO_RECIPIENT.equals(sigToken.getInclusion()))) {
-            sigTokElem = RampartUtil.appendChildToSecHeader(rmd, sigTok.getToken());
+                (rmd.isClientSide() && 
+                        Constants.INCLUDE_ALWAYS_TO_RECIPIENT.equals(
+                                sigToken.getInclusion()))) {
+            sigTokElem = RampartUtil.appendChildToSecHeader(rmd, 
+                                                            sigTok.getToken());
+            this.setInsertionLocation(sigTokElem);
         }
+        
 
-        this.setInsertionLocation(sigTokElem);
+        
+        //In the X509 case we MUST add the EncryptedKey
+        if(sigToken instanceof X509Token) {
+            sigTokElem = RampartUtil.appendChildToSecHeader(rmd, sigTok.getToken());
+            
+            //Set the insertion location
+            this.setInsertionLocation(sigTokElem);
+        }
         
 
         HashMap sigSuppTokMap = null;
@@ -361,6 +384,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 signatureValues.add(iter.next());
             }
         }
+
         //Encryption
         Token encrToken = rpd.getEncryptionToken();
         Element encrTokElem = null;
@@ -454,6 +478,49 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             } catch (WSSecurityException e) {
                 throw new RampartException("errorInEncryption", e);
             }    
+        }
+    }
+
+    /**
+     * @param rmd
+     * @param sigToken
+     * @return
+     * @throws RampartException
+     */
+    private String setupEncryptedKey(RampartMessageData rmd, Token sigToken) 
+    throws RampartException {
+        try {
+            WSSecEncryptedKey encrKey = this.getEncryptedKeyBuilder(rmd, 
+                                                                sigToken);
+            String id = encrKey.getId();
+            //Create a rahas token from this info and store it so we can use
+            //it in the next steps
+    
+            Date created = new Date();
+            Date expires = new Date();
+            //TODO make this lifetime configurable ???
+            expires.setTime(System.currentTimeMillis() + 300000);
+            org.apache.rahas.Token tempTok = new org.apache.rahas.Token(
+                            id, 
+                            (OMElement) encrKey.getEncryptedKeyElement(),
+                            created, 
+                            expires);
+            tempTok.setSecret(encrKey.getEphemeralKey());
+            
+            rmd.getTokenStorage().add(tempTok);
+            
+            String bstTokenId = encrKey.getBSTTokenId();
+            //If direct ref is used to refer to the cert
+            //then add the cert to the sec header now
+            if(bstTokenId != null && bstTokenId.length() > 0) {
+                RampartUtil.appendChildToSecHeader(rmd, 
+                        encrKey.getBinarySecurityTokenElement());
+            }
+            
+            return id;
+            
+        } catch (TrustException e) {
+            throw new RampartException("errorInAddingTokenIntoStore");
         }
     }
     

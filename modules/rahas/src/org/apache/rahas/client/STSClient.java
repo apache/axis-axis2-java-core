@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.util.Base64;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -116,6 +117,7 @@ public class STSClient {
             ServiceClient client = getServiceClient(rstQn, issuerAddress);
             
             client.getOptions().setProperty(RAMPART_POLICY, issuerPolicy);
+            client.getOptions().setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI); 
             //TODO : Get the soap version from config 
 
             //Process the STS and service policy policy
