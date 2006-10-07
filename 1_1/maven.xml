@@ -698,6 +698,11 @@
             <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
 
+        <!-- Copy addressing mar to the classpath (Samples need this) -->
+        <ant:copy toDir="${std.bin.temp.dir}/lib">
+            <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
+        </ant:copy>
+        	
         <!-- Copy the codegen jar -->
         <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
