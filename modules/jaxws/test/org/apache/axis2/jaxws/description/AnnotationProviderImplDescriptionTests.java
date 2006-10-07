@@ -47,10 +47,10 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals("http://www.w3.org/2003/05/soap/bindings/HTTP/", testEndpointDesc.getBindingTypeValue());
         // The WebServiceProvider annotation specified no values on it.
         // TODO: When the Description package changes to provide default values when no annotation present, this may need to change.
-        assertEquals("", testEndpointDesc.getWSDLLocation());
-        assertEquals("", testEndpointDesc.getServiceName());
-        assertEquals("", testEndpointDesc.getPortName());
-        assertEquals("", testEndpointDesc.getTargetNamespace());
+        assertEquals("", testEndpointDesc.getWebServiceWSDLLocation());
+        assertEquals("BasicProviderTestImplService", testEndpointDesc.getWebServiceServiceName());
+        assertEquals("BasicProviderTestImplPort", testEndpointDesc.getWebServicePortName());
+        assertEquals("http://description.jaxws.axis2.apache.org/", testEndpointDesc.getWebServiceTargetNamespace());
     }
 
     public void testWebServiceProvider() {
@@ -69,10 +69,10 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals(Service.Mode.PAYLOAD, testEndpointDesc.getServiceModeValue());
         assertEquals("http://www.w3.org/2003/05/soap/bindings/HTTP/", testEndpointDesc.getBindingTypeValue());
 
-        assertEquals("http://wsdl.test", testEndpointDesc.getWSDLLocation());
-        assertEquals("ProviderService", testEndpointDesc.getServiceName());
-        assertEquals("ProviderServicePort", testEndpointDesc.getPortName());
-        assertEquals("http://namespace.test", testEndpointDesc.getTargetNamespace());
+        assertEquals("http://wsdl.test", testEndpointDesc.getWebServiceWSDLLocation());
+        assertEquals("ProviderService", testEndpointDesc.getWebServiceServiceName());
+        assertEquals("ProviderServicePort", testEndpointDesc.getWebServicePortName());
+        assertEquals("http://namespace.test", testEndpointDesc.getWebServiceTargetNamespace());
     }
     
     public void testDefaultServiceModeProvider() {

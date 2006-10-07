@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.jws.WebService;
 import javax.wsdl.Definition;
@@ -123,7 +124,7 @@ public class EndpointDescription {
     private String              annotation_ServiceName;
     private String              annotation_PortName;
     private String              annotation_TargetNamespace;
-    // Information only set on WebService annotation
+    // ANNOTATION: @WebService
     private String              webService_EndpointInterface;
     private String              webService_Name;
 
@@ -277,7 +278,7 @@ public class EndpointDescription {
         if (webServiceAnnotation != null) {
             // If this impl class references an SEI, then use that SEI to create the EndpointInterfaceDesc.
             // TODO: Add support for service impl endpoints that don't reference an SEI; remember that this is also called with just an SEI interface from svcDesc.updateWithSEI()
-            String seiClassName = getEndpointInterface();
+            String seiClassName = getWebServiceEndpointInterface();
             Class seiClass = null;
             if (DescriptionUtils.isEmpty(seiClassName)) {
                 // For now, just build the EndpointInterfaceDesc based on the class itself.
@@ -302,8 +303,8 @@ public class EndpointDescription {
         if (portQName == null) {
             // The name was not set by the constructors, so get it from the
             // appropriate annotaion.
-            String name = getPortName();
-            String tns = getTargetNamespace();
+            String name = getWebServicePortName();
+            String tns = getWebServiceTargetNamespace();
             // TODO: Check for name &/| tns null or empty string and add tests for same
             portQName = new QName(tns, name);
         }
@@ -351,166 +352,6 @@ public class EndpointDescription {
         }
         return;
     }
-
-
-    // ==========================================
-    // Annotation-related methods
-    // ==========================================
-    
-    public boolean isProviderBased() {
-        return webServiceProviderAnnotation != null;
-    }
-    
-    public boolean isEndpointBased() {
-        return webServiceAnnotation != null;
-    }
-    
-    // ------------------------------------------
-    // Common WebService and WebServiceProvider annotation-related getters
-    // ------------------------------------------
-    
-    public String getWSDLLocation() {
-        if (annotation_WsdlLocation == null) {
-            if (webServiceAnnotation != null) {
-                annotation_WsdlLocation = webServiceAnnotation.wsdlLocation();
-            }
-            else if (webServiceProviderAnnotation != null) {
-                annotation_WsdlLocation = webServiceProviderAnnotation.wsdlLocation();
-            }
-        }
-        return annotation_WsdlLocation;
-    }
-
-    public String getServiceName() {
-        if (annotation_ServiceName == null) {
-            if (webServiceAnnotation != null) {
-                annotation_ServiceName = webServiceAnnotation.serviceName();
-            }
-            else if (webServiceProviderAnnotation != null) {
-                annotation_ServiceName = webServiceProviderAnnotation.serviceName();
-            }
-        }
-        return annotation_ServiceName;
-    }
-    
-    public String getPortName() {
-        if (annotation_PortName == null) {
-            if (webServiceAnnotation != null) {
-                // REVIEW: Should this be portName() or just name()?
-                annotation_PortName = webServiceAnnotation.portName();
-            }
-            else if (webServiceProviderAnnotation != null) {
-                annotation_PortName = webServiceProviderAnnotation.portName();
-            }
-        }
-        return annotation_PortName;
-    }
-
-    public String getTargetNamespace() {
-        if (annotation_TargetNamespace == null) {
-            if (webServiceAnnotation != null) {
-                annotation_TargetNamespace = webServiceAnnotation.targetNamespace();
-            }
-            else if (webServiceProviderAnnotation != null) {
-                annotation_TargetNamespace = webServiceProviderAnnotation.targetNamespace();
-            }
-        }
-        return annotation_TargetNamespace;
-    }
-    // ------------------------------------------
-    // WebServiceProvider annotation related getters
-    // ------------------------------------------
-
-    WebServiceProvider getWebServiceProviderAnnotation() {
-        return webServiceProviderAnnotation;
-    }
-
-    // ------------------------------------------
-    // WebService annotation related getters
-    // ------------------------------------------
-
-    WebService getWebServiceAnnotation() {
-        return webServiceAnnotation;
-    }
-    
-    public String getEndpointInterface() {
-        if (webService_EndpointInterface == null && webServiceAnnotation != null) {
-            webService_EndpointInterface = webServiceAnnotation.endpointInterface();
-        }
-        return webService_EndpointInterface;
-    }
-    
-    public String getName() {
-        if (webService_Name == null && webServiceAnnotation != null) {
-            webService_Name = webServiceAnnotation.name();
-        }
-        return webService_Name;
-    }
-    
-    // ------------------------------------------
-    // ServiceMode annotation related getters
-    // ------------------------------------------
-    // REVIEW: Should this be returning an enum other than the one defined within the annotation?
-    ServiceMode getServiceMode() {
-        if (serviceModeAnnotation == null && implOrSEIClass != null) {
-            serviceModeAnnotation = (ServiceMode) implOrSEIClass.getAnnotation(ServiceMode.class);
-        }
-        return serviceModeAnnotation;
-    }
-    
-    public Service.Mode getServiceModeValue() {
-        // This annotation is only valid on Provider-based endpoints. 
-        if (isProviderBased() && serviceModeValue == null) {
-            if (getServiceMode() != null) {
-                serviceModeValue = getServiceMode().value();
-            }
-            else {
-                serviceModeValue = ServiceMode_DEFAULT; 
-            }
-        }
-        return serviceModeValue;
-    }
-    
-    // ------------------------------------------
-    // BindingType annotation related getters
-    // ------------------------------------------
-
-    BindingType getBindingType() {
-        if (bindingTypeAnnotation == null && implOrSEIClass != null) {
-            bindingTypeAnnotation = (BindingType) implOrSEIClass.getAnnotation(BindingType.class);
-        }
-        return bindingTypeAnnotation;
-    }
-    
-    public String getBindingTypeValue() {
-        if (bindingTypeValue == null) {
-            if (getBindingType() != null) {
-                bindingTypeValue = getBindingType().value();
-            }
-            else {
-                // No BindingType annotation present; use default value
-                bindingTypeValue = BindingType_DEFAULT;
-            }
-        }
-        return bindingTypeValue;
-    }
-
-    // ------------------------------------------
-    // HandlerChaing annotation related getters
-    // ------------------------------------------
-
-    /**
-     * Returns a live list describing the handlers on this port.
-     * TODO: This is currently returning List<String>, but it should return a HandlerDescritpion
-     * object that can represent a handler description from various Metadata (annotation, deployment descriptors, etc);
-     * use JAX-WS Appendix B Handler Chain Configuration File Schema as a starting point for HandlerDescription.
-     *  
-     * @return A List of handlers for this port.  The actual list is returned, and therefore can be modified.
-     */
-    public List<String> getHandlerList() {
-        return handlerList;
-    }
-    
     private void setupAxisService() {
         // TODO: Need to use MetaDataQuery validator to merge WSDL (if any) and annotations (if any)
         // Build up the AxisService.  Note that if this is a dynamic port, then we don't use the
@@ -674,4 +515,300 @@ public class EndpointDescription {
         return getServiceDescription().getServiceQName().getLocalPart() + "." + portName;
     }
 
+    public boolean isProviderBased() {
+        return webServiceProviderAnnotation != null;
+    }
+    
+    public boolean isEndpointBased() {
+        return webServiceAnnotation != null;
+    }
+
+    // ===========================================
+    // ANNOTATION: WebService and WebServiceProvider
+    // ===========================================
+    
+    public String getWebServiceWSDLLocation() {
+        if (annotation_WsdlLocation == null) {
+            if (getWebServiceAnnotation() != null 
+                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().wsdlLocation())) {
+                annotation_WsdlLocation = getWebServiceAnnotation().wsdlLocation();
+            }
+            else if (getWebServiceProviderAnnotation() != null 
+                    && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().wsdlLocation())) {
+                annotation_WsdlLocation = getWebServiceProviderAnnotation().wsdlLocation();
+            }
+            else {
+                // There is no default value per JSR-181 MR Sec 4.1 pg 16
+                annotation_WsdlLocation = "";
+            }
+        }
+        return annotation_WsdlLocation;
+    }
+
+    public String getWebServiceServiceName() {
+        if (annotation_ServiceName == null) {
+            if (getWebServiceAnnotation() != null 
+                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().serviceName())) {
+                annotation_ServiceName = getWebServiceAnnotation().serviceName();
+            }
+            else if (getWebServiceProviderAnnotation() != null 
+                    && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().serviceName())) {
+                annotation_ServiceName = getWebServiceProviderAnnotation().serviceName();
+            }
+            else {
+                // Default value is the "simple name" of the class or interface + "Service"
+                // Per JSR-181 MR Sec 4.1, pg 15
+                annotation_ServiceName = getSimpleJavaClassName(implOrSEIClass) + "Service";
+            }
+        }
+        return annotation_ServiceName;
+    }
+    
+    public String getWebServicePortName() {
+        if (annotation_PortName == null) {
+            if (getWebServiceAnnotation() != null
+                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().portName())) {
+                annotation_PortName = getWebServiceAnnotation().portName();
+            }
+            else if (getWebServiceProviderAnnotation() != null
+                    && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().portName())) {
+                annotation_PortName = getWebServiceProviderAnnotation().portName();
+            }
+            else {
+                // Default the value
+                if (isProviderBased()) {
+                    // This is the @WebServiceProvider annotation path
+                    // Default value is not specified in JSR-224, but we can assume it is 
+                    // similar to the default in the WebService case, however there is no
+                    // name attribute for a WebServiceProvider.  So in this case we use 
+                    // the default value for WebService.name per JSR-181 MR sec 4.1 pg 15.
+                    // Note that this is really the same thing as the call to getWebServiceName() 
+                    // in the WebService case; it is done sepertely just to be clear there is no 
+                    // name element on the WebServiceProvider annotation
+                    annotation_PortName = getSimpleJavaClassName(implOrSEIClass) + "Port";
+                }
+                else {
+                    // This is the @WebService annotation path
+                    // Default value is the @WebService.name of the class or interface + "Port"
+                    // Per JSR-181 MR Sec 4.1, pg 15
+                    annotation_PortName = getWebServiceName() + "Port";
+                }
+            }
+        }
+        return annotation_PortName;
+    }
+
+    public String getWebServiceTargetNamespace() {
+        if (annotation_TargetNamespace == null) {
+            if (getWebServiceAnnotation() != null 
+                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().targetNamespace())) {
+                annotation_TargetNamespace = getWebServiceAnnotation().targetNamespace();
+            }
+            else if (getWebServiceProviderAnnotation() != null
+                    && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().targetNamespace())) {
+                annotation_TargetNamespace = getWebServiceProviderAnnotation().targetNamespace();
+            }
+            else {
+                // Default value per JSR-181 MR Sec 4.1 pg 15 defers to "Implementation defined, 
+                // as described in JAX-WS 2.0, section 3.2" which is JAX-WS 2.0 Sec 3.2, pg 29.
+                // FIXME: Hardcoded protocol for namespace
+                annotation_TargetNamespace = makeNamespaceFromPackageName(getJavaPackageName(implOrSEIClass), "http");
+            }
+        }
+        return annotation_TargetNamespace;
+    }
+    
+    
+    /**
+     * Return the name of the class without any package qualifier.
+     * @param theClass
+     * @return the name of the class sans package qualification.
+     */
+    private static String getSimpleJavaClassName(Class theClass) {
+        String returnName = null;
+        if (theClass != null) {
+            String fqName = theClass.getName();
+            // We need the "simple name", so strip off any package information from the name
+            int endOfPackageIndex = fqName.lastIndexOf('.');
+            int startOfClassIndex = endOfPackageIndex + 1;
+            returnName = fqName.substring(startOfClassIndex);
+        }
+        else {
+            // TODO: RAS and NLS
+            throw new UnsupportedOperationException("Java class is null");
+        }
+        return returnName;
+    }
+    /**
+     * Returns the package name from the class.  If no package, then returns null
+     * @param theClass
+     * @return
+     */
+    private static String getJavaPackageName(Class theClass) {
+        String returnPackage = null;
+        if (theClass != null) {
+            String fqName = theClass.getName();
+            // Get the package name, if there is one
+            int endOfPackageIndex = fqName.lastIndexOf('.');
+            if (endOfPackageIndex >= 0) {
+                returnPackage = fqName.substring(0, endOfPackageIndex);
+            }
+        }
+        else {
+            // TODO: RAS and NLS
+            throw new UnsupportedOperationException("Java class is null");
+        }
+        return returnPackage;
+    }
+    
+    /**
+     * Create a JAX-WS namespace based on the package name
+     * @param packageName
+     * @param protocol
+     * @return
+     */
+    private static final String NO_PACKAGE_HOST_NAME = "DefaultNamespace";
+
+    private static String makeNamespaceFromPackageName(String packageName, String protocol) {
+        if (DescriptionUtils.isEmpty(protocol)) {
+            protocol = "http";
+        }
+        if (DescriptionUtils.isEmpty(packageName)) {
+            return protocol + "://" + NO_PACKAGE_HOST_NAME;
+        }
+        StringTokenizer st = new StringTokenizer( packageName, "." );
+        String[] words = new String[ st.countTokens() ];
+        for(int i = 0; i < words.length; ++i)
+            words[i] = st.nextToken();
+
+        StringBuffer sb = new StringBuffer(80);
+        for(int i = words.length-1; i >= 0; --i) {
+            String word = words[i];
+            // seperate with dot
+            if( i != words.length-1 )
+                sb.append('.');
+            sb.append( word );
+        }
+        return protocol + "://" + sb.toString() + "/";
+    }
+
+    // ===========================================
+    // ANNOTATION: WebServiceProvider
+    // ===========================================
+
+    WebServiceProvider getWebServiceProviderAnnotation() {
+        return webServiceProviderAnnotation;
+    }
+
+    // ===========================================
+    // ANNOTATION: WebService
+    // ===========================================
+
+    WebService getWebServiceAnnotation() {
+        return webServiceAnnotation;
+    }
+    
+    public String getWebServiceEndpointInterface() {
+        // TODO: Validation: Not allowed on WebServiceProvider
+        if (webService_EndpointInterface == null) {
+            if (!isProviderBased() && getWebServiceAnnotation() != null
+                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().endpointInterface())) {
+                webService_EndpointInterface = getWebServiceAnnotation().endpointInterface();
+            }
+            else {
+                // This element is not valid on a WebServiceProvider annotation
+                // REVIEW: Is this a correct thing to return if this is called against a WebServiceProvier
+                //         which does not support this element?
+                webService_EndpointInterface = "";
+            }
+        }
+        return webService_EndpointInterface;
+    }
+    
+    public String getWebServiceName() {
+        // TODO: Validation: Not allowed on WebServiceProvider
+        if (webService_Name == null) {
+            if (!isProviderBased()) {
+                if (getWebServiceAnnotation() != null 
+                        && !DescriptionUtils.isEmpty(getWebServiceAnnotation().name())) {
+                    webService_Name = getWebServiceAnnotation().name();
+                }
+                else {
+                    // Default per JSR-181 Sec 4.1, pg 15
+                    webService_Name = getSimpleJavaClassName(implOrSEIClass);
+                }
+            }
+            else {
+                // This element is not valid on a WebServiceProvider annotation
+                // REVIEW: Is this a correct thing to return if this is called against a WebServiceProvier
+                //         which does not support this element?
+                webService_Name = "";
+            }
+        }
+        return webService_Name;
+    }
+    
+    // ===========================================
+    // ANNOTATION: ServiceMode
+    // ===========================================
+    // REVIEW: Should this be returning an enum other than the one defined within the annotation?
+    ServiceMode getServiceMode() {
+        if (serviceModeAnnotation == null && implOrSEIClass != null) {
+            serviceModeAnnotation = (ServiceMode) implOrSEIClass.getAnnotation(ServiceMode.class);
+        }
+        return serviceModeAnnotation;
+    }
+    
+    public Service.Mode getServiceModeValue() {
+        // This annotation is only valid on Provider-based endpoints. 
+        if (isProviderBased() && serviceModeValue == null) {
+            if (getServiceMode() != null) {
+                serviceModeValue = getServiceMode().value();
+            }
+            else {
+                serviceModeValue = ServiceMode_DEFAULT; 
+            }
+        }
+        return serviceModeValue;
+    }
+    
+    // ===========================================
+    // ANNOTATION: BindingType
+    // ===========================================
+
+    BindingType getBindingType() {
+        if (bindingTypeAnnotation == null && implOrSEIClass != null) {
+            bindingTypeAnnotation = (BindingType) implOrSEIClass.getAnnotation(BindingType.class);
+        }
+        return bindingTypeAnnotation;
+    }
+    
+    public String getBindingTypeValue() {
+        if (bindingTypeValue == null) {
+            if (getBindingType() != null) {
+                bindingTypeValue = getBindingType().value();
+            }
+            else {
+                // No BindingType annotation present; use default value
+                bindingTypeValue = BindingType_DEFAULT;
+            }
+        }
+        return bindingTypeValue;
+    }
+
+    // ===========================================
+    // ANNOTATION: HandlerChain
+    // ===========================================
+
+    /**
+     * Returns a live list describing the handlers on this port.
+     * TODO: This is currently returning List<String>, but it should return a HandlerDescritpion
+     * object that can represent a handler description from various Metadata (annotation, deployment descriptors, etc);
+     * use JAX-WS Appendix B Handler Chain Configuration File Schema as a starting point for HandlerDescription.
+     *  
+     * @return A List of handlers for this port.  The actual list is returned, and therefore can be modified.
+     */
+    public List<String> getHandlerList() {
+        return handlerList;
+    }
 }

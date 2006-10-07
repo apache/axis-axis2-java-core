@@ -18,6 +18,7 @@
 
 package org.apache.axis2.jaxws.description;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.RequestWrapper;
@@ -379,6 +380,49 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("org.apache.axis2.jaxws.description.method2ReqWrapper", operationDesc.getRequestWrapperClassName());
         assertEquals("org.apache.axis2.jaxws.description.Method2", operationDesc.getResponseWrapperClassName());
     }
+    
+    public void testWebMethod() {
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(WebMethodTestImpl.class);
+        
+        // Test results from method with no annotation
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("method1")[0];
+        assertNotNull(operationDesc);
+        assertEquals("method1", operationDesc.getWebMethodOperationName());
+        assertEquals("", operationDesc.getWebMethodAction());
+        assertFalse(operationDesc.getWebMethodExclude());
+        
+        operationDesc = testEndpointInterfaceDesc.getOperation("method2")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod2", operationDesc.getWebMethodOperationName());
+        assertEquals("", operationDesc.getWebMethodAction());
+        assertFalse(operationDesc.getWebMethodExclude());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method3")[0];
+        assertNotNull(operationDesc);
+        assertEquals("method3", operationDesc.getWebMethodOperationName());
+        assertEquals("ActionMethod3", operationDesc.getWebMethodAction());
+        assertFalse(operationDesc.getWebMethodExclude());
+        
+        operationDesc = testEndpointInterfaceDesc.getOperation("method4")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod4", operationDesc.getWebMethodOperationName());
+        assertEquals("ActionMethod4", operationDesc.getWebMethodAction());
+        assertFalse(operationDesc.getWebMethodExclude());
+        
+        operationDesc = testEndpointInterfaceDesc.getOperation("method4")[0];
+        assertNotNull(operationDesc);
+        assertEquals("renamedMethod4", operationDesc.getWebMethodOperationName());
+        assertEquals("ActionMethod4", operationDesc.getWebMethodAction());
+        assertFalse(operationDesc.getWebMethodExclude());
+
+        // REVIEW: Should these getters be throwing an exception or returning a default value since exclude=true? 
+        operationDesc = testEndpointInterfaceDesc.getOperation("method5")[0];
+        assertNotNull(operationDesc);
+        assertEquals("method5", operationDesc.getWebMethodOperationName());
+        assertEquals("", operationDesc.getWebMethodAction());
+        assertTrue(operationDesc.getWebMethodExclude());
+
+    }
 
     /*
      * Method to return the endpoint interface description for a given implementation class.
@@ -480,4 +524,35 @@ class ReqRspWrapperTestImpl {
     public String method2 (String s) {
         return s;
     }
-}   
+}
+
+// =============================================================================
+// testWebMethod service implementaiton class
+// =============================================================================
+@WebService
+class WebMethodTestImpl {
+    // No web method annotation
+    public String method1 (String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod2")
+    public String method2 (String s) {
+        return s;
+    }
+    
+    @WebMethod(action="ActionMethod3")
+    public String method3 (String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod4", action="ActionMethod4")
+    public String method4 (String s) {
+        return s;
+    }
+    
+    @WebMethod(exclude=true)
+    public String method5(String s) {
+        return s;
+    }
+}

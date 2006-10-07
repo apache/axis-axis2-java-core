@@ -134,6 +134,12 @@ public class OperationDescription {
     // ANNOTATION: @WebMethod
     private WebMethod           webMethodAnnotation;
     private String              webMethodOperationName;
+    // Default value per JSR-181 MR Sec 4.2, pg 17
+    public static final String  WebMethod_Action_DEFAULT = "";
+    private String              webMethodAction;
+    // Default value per JSR-181 MR sec 4.2, pg 17
+    public static final Boolean WebMethod_Exclude_DEFAULT = new Boolean(false);
+    private Boolean             webMethodExclude;
     
     // ANNOTATION: @WebParam
     // TODO: Should WebParam annotation be moved to the ParameterDescription?
@@ -248,6 +254,35 @@ public class OperationDescription {
         return webMethodOperationName;
     }
     
+    public String getWebMethodAction() {
+        if (webMethodAction == null) {
+            if (getWebMethod() != null && !DescriptionUtils.isEmpty(getWebMethod().action())) {
+                webMethodAction = getWebMethod().action();
+            }
+            else {
+                webMethodAction = WebMethod_Action_DEFAULT;
+            }
+        }
+        return webMethodAction;
+    }
+    
+    public boolean getWebMethodExclude() {
+        if (webMethodExclude == null) {
+            // TODO: Validation: if this attribute specified, no other elements allowed per JSR-181 MR Sec 4.2, pg 17
+            // TODO: Validation: This element is not allowed on endpoint interfaces
+            // Unlike the elements with a String value, if the annotation is present, exclude will always 
+            // return a usable value since it will default to FALSE if the element is not present.
+            if (getWebMethod() != null) {
+                webMethodExclude = new Boolean(getWebMethod().exclude());
+            }
+            else {
+                webMethodExclude = WebMethod_Exclude_DEFAULT;
+            }
+        }
+        
+        return webMethodExclude.booleanValue();
+    }
+    
     // ==========================================
     // ANNOTATION: RequestWrapper
     // ==========================================
@@ -297,9 +332,9 @@ public class OperationDescription {
             }
             else {
                 // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.3, p. 80]
-                // TODO: Get the TNS from the SEI via the endpoint interface desc.
-                throw new UnsupportedOperationException("RequestWrapper.targetNamespace default not implented yet");
-            }
+                // TODO: Implement getting the TNS from the SEI 
+//                requestWrapperTargetNamespace = getEndpointInterfaceDescription().getWebServiceTargetNamespace();
+                throw new UnsupportedOperationException("RequestWrapper.targetNamespace default not implented yet");            }
         }
         return requestWrapperTargetNamespace;
     }
@@ -380,9 +415,10 @@ public class OperationDescription {
                 responseWrapperTargetNamespace = getResponseWrapper().targetNamespace();
             }
             else {
-                // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.4, p. 81]
-                // TODO: Get the TNS from the SEI via the endpoint interface desc.
-                throw new UnsupportedOperationException("ResponseWrapper.targetNamespace default not implented yet");
+                // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.3, p. 80]
+                // TODO: Implement getting the TNS from the SEI 
+//                responseWrapperTargetNamespace = getEndpointInterfaceDescription().getWebServiceTargetNamespace();
+                throw new UnsupportedOperationException("RequestWrapper.targetNamespace default not implented yet");
             }
         }
         return responseWrapperTargetNamespace;
