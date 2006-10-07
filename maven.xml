@@ -766,6 +766,9 @@
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
+            	<ant:exclude name="**/modules/samples/src/sample/eventing/**"/>
+            	<ant:exclude name="**/modules/samples/src/sample/yahooservices/**"/>
+            	<ant:exclude name="**/modules/samples/src/sample/axis2rest/**"/>
                 <ant:exclude name="xdocs/**"/>
                 <ant:exclude name="**/*class*/**"/>
                 <ant:exclude name="**/.svn/**"/>
