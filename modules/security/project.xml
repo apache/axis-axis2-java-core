@@ -89,7 +89,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-rahas</artifactId>
-            <version>${rahas_version}</version>
+            <version>${pom.currentVersion}</version>
         </dependency>
         <!-- external JARs -->
         <dependency>
