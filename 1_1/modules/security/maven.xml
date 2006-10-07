@@ -63,7 +63,7 @@
 			<copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
-			<copy file="${maven.repo.local}/axis2/jars/axis2-rahas-${rahas_version}.jar" todir="target/temp-mar/lib"/>
+			<copy file="${maven.repo.local}/org.apache.axis2/jars/axis2-rahas-${rahas_version}.jar" todir="target/temp-mar/lib"/>
 
         </j:if>
 		
