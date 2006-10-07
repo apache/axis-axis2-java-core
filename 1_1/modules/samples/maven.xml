@@ -41,7 +41,7 @@
         <attainGoal name="groovy"/>
 <!--        <attainGoal name="securitySample"/> -->
         <attainGoal name="sgccalculator"/>
-        <attainGoal name="eventing"/>
+        <!--attainGoal name="eventing"/-->
     </goal>
 
     <!-- ================================================================ -->
