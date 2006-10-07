@@ -48,7 +48,7 @@ public class Parameter {
     private String name;
 
     /**
-     * to store the parameter lement
+     * to store the parameter element
      * <parameter name="ServiceClass1" locked="false">
      * org.apache.axis2.sample.echo.EchoImpl</parameter>
      */

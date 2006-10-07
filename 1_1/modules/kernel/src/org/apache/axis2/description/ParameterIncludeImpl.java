@@ -73,7 +73,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
 
         while (iterator.hasNext()) {
 
-            // this is to check whether some one has locked the parmter at the top level
+            // this is to check whether some one has locked the parmeter at the top level
             OMElement parameterElement = (OMElement) iterator.next();
             Parameter parameter = new Parameter();
 
@@ -86,7 +86,7 @@ public class ParameterIncludeImpl implements ParameterInclude {
 
             parameter.setName(paraName.getAttributeValue());
 
-            // setting parameter Value (the chiled element of the parameter)
+            // setting parameter Value (the child element of the parameter)
             OMElement paraValue = parameterElement.getFirstElement();
 
             if (paraValue != null) {

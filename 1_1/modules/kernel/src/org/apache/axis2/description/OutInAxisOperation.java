@@ -178,7 +178,7 @@ class OutInAxisOperationClient implements OperationClient {
 
     /**
      * Create a message ID for the given message context if needed. If user gives an option with
-     * MessageID then just copy that into MessageContext , and with that there can be mutiple
+     * MessageID then just copy that into MessageContext , and with that there can be multiple
      * message with same MessageID unless user call setOption for each invocation.
      * <p/>
      * If user want to give message ID then the better way is to set the message ID in the option and
@@ -270,8 +270,7 @@ class OutInAxisOperationClient implements OperationClient {
             } else {
                 mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
             }
-            //if dont do this , this guy will wait till its gets HTTP 202 in the case
-            //HTTP
+            //if we don't do this , this guy will wait till it gets HTTP 202 in the HTTP case
             mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
             AxisEngine engine = new AxisEngine(cc);
             mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
@@ -427,7 +426,7 @@ class OutInAxisOperationClient implements OperationClient {
 
         public void run() {
             try {
-                // send the request and wait for reponse
+                // send the request and wait for response
                 MessageContext response = send(msgctx);
                 // call the callback
                 if (response != null) {
