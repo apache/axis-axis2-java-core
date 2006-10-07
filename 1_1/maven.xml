@@ -529,7 +529,7 @@
         <ant:mkdir dir="target/dist"/>
     </goal>
 
-    <goal name="dist-min-bin" prereqs="init-dist,cache-min-deps">
+    <goal name="dist-min-bin" prereqs="jar,init-dist,cache-min-deps">
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Minimal Binary Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
@@ -636,7 +636,7 @@
         <ant:delete dir="target/temp/min/src"/>
     </goal>
 
-    <goal name="dist-std-bin" prereqs="init-dist,cache-std-deps">
+    <goal name="dist-std-bin" prereqs="jar,init-dist,cache-std-deps">
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Standard Binary Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
@@ -863,7 +863,7 @@
         <ant:mkdir dir="${std_dep_cache}"/>
         <j:if test="${stdDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${std_dep_cache}"
-                              mods="codegen,jibx"/>
+                              mods="codegen,jibx,spring"/>
             <property name="stdDeps.uptodate" value="yes"/>
         </j:if>
 
@@ -887,7 +887,7 @@
         <ant:mkdir dir="${war_dep_cache}"/>
         <j:if test="${warDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${war_dep_cache}"
-                              mods="webapp"/>
+                              mods="webapp,spring,jibx"/>
             <property name="warDeps.uptodate" value="yes"/>
         </j:if>
 
