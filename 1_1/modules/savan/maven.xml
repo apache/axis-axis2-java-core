@@ -44,7 +44,7 @@
 
         <!-- copying the jar and mar files to the local repo-->
         <copy file="target/savan-${savan_version}.mar" 
-            tofile="${maven.repo.local}/axis2/mars/savan-${savan_version}.mar"/>
+            tofile="${maven.repo.local}/org.apache.axis2/mars/savan-${savan_version}.mar"/>
 
     </postGoal>
 
