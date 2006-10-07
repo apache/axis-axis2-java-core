@@ -293,6 +293,15 @@
 		    <jar jarfile="target/test-resources/rampart_service_repo/services/SecureServiceSC1.aar"
                  basedir="target/temp-ramp"/>
 				 
+			<copy overwrite="yes" file="test-resources/rampart/issuer.properties"
+                  tofile="target/temp-ramp/issuer.properties"/>
+				  
+			<copy overwrite="yes" file="test-resources/rampart/services-sc-2.xml"
+                  tofile="target/temp-ramp/META-INF/services.xml"/>
+
+		    <jar jarfile="target/test-resources/rampart_service_repo/services/SecureServiceSC2.aar"
+                 basedir="target/temp-ramp"/>
+				 
 			<!-- Service classes for the SecConv tests -->
 			<mkdir dir="target/temp-sc"/>
 			<mkdir dir="target/temp-sc/META-INF"/>

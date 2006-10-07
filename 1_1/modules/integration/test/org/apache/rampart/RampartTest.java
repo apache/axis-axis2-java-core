@@ -60,19 +60,20 @@ public class RampartTest extends TestCase {
     
             ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
-            Options options = new Options();
+            
 
             serviceClient.engageModule(new QName("addressing"));
             serviceClient.engageModule(new QName("rampart"));
 
             //TODO : figure this out !!
-            boolean basic256Supported = false;
+            boolean basic256Supported = true;
             
             for (int i = 1; i <= 9; i++) { //<-The number of tests we have
                 if(!basic256Supported && (i == 3 || i == 4 || i ==5)) {
                     //Skip the Basic256 tests
                     continue;
                 }
+                Options options = new Options();
                 System.out.println("Testing WS-Sec: custom scenario " + i);
                 options.setAction("urn:echo");
                 options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureService" + i));
@@ -84,11 +85,9 @@ public class RampartTest extends TestCase {
             }
 
             
-            for (int i = 1; i <= 1; i++) { //<-The number of tests we have
-                if(!basic256Supported && (i == 3 || i == 4 || i ==5)) {
-                    //Skip the Basic256 tests
-                    continue;
-                }
+            for (int i = 1; i <= 2; i++) { //<-The number of tests we have
+
+                Options options = new Options();
                 System.out.println("Testing WS-SecConv: custom scenario " + i);
                 options.setAction("urn:echo");
                 options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureServiceSC" + i));

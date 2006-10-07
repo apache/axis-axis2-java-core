@@ -447,6 +447,12 @@ public abstract class BindingBuilder {
                 try {
                     sig.addReferencesToSign(sigParts, rmd.getSecHeader());
                     sig.computeSignature();
+                    
+                    this.setInsertionLocation(RampartUtil.insertSiblingAfter(
+                            rmd, 
+                            this.getInsertionLocation(), 
+                            sig.getSignatureElement()));
+                    
                 } catch (WSSecurityException e) {
                     throw new RampartException("errorInSignatureWithX509Token", e);
                 }
