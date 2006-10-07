@@ -144,7 +144,7 @@ public class HandlerDescription implements ParameterInclude {
         return rules;
     }
 
-    // to check whether the parameter is locked at any levle
+    // to check whether the parameter is locked at any level
     public boolean isParameterLocked(String parameterName) {
         if (parent != null) {
             if (parent.isParameterLocked(parameterName)) {

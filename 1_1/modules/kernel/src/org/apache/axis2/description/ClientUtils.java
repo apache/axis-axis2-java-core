@@ -81,7 +81,7 @@ public class ClientUtils {
                     //need to ignore
                 }
             } else {
-                //assume listner transport as sender transport
+                //assume listener transport as sender transport
                 listenerTransportProtocol = msgCtxt.getTransportOut().getName().getLocalPart();
             }
         }
