@@ -369,7 +369,7 @@
     <!-- ================================================================ -->
     <!--- Eventing Sample -->
     <!-- ================================================================ -->
-    <goal name="eventing">
+    <!--goal name="eventing">
     
         <property name="eventing.temp.dir" value="${samples.dir}/eventing/temp" />
         <property name="listner1.temp.dir" value="${eventing.temp.dir}/listner1" />
@@ -433,7 +433,7 @@
             <ant:fileset dir="script/eventing"/>
         </ant:copy>
 
-    </goal>
+    </goal-->
 
 
     <preGoal name="itest:compile">
