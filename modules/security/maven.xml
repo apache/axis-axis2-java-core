@@ -77,7 +77,7 @@
         </jar>
 
         <copy file="target/rampart-${rampart_version}.mar" tofile="target/modules/rampart-${rampart_version}.mar"/>
-        <copy file="target/rampart-${rampart_version}.mar" tofile="${maven.repo.local}/axis2/mars/rampart-${rampart_version}.mar"/>
+        <copy file="target/rampart-${rampart_version}.mar" tofile="${maven.repo.local}/org.apache.axis2/mars/rampart-${rampart_version}.mar"/>
 		
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>
