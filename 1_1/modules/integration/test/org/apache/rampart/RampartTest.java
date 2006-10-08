@@ -66,7 +66,7 @@ public class RampartTest extends TestCase {
             serviceClient.engageModule(new QName("rampart"));
 
             //TODO : figure this out !!
-            boolean basic256Supported = true;
+            boolean basic256Supported = false;
             
             for (int i = 1; i <= 9; i++) { //<-The number of tests we have
                 if(!basic256Supported && (i == 3 || i == 4 || i ==5)) {
