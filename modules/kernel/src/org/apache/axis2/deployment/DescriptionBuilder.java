@@ -463,7 +463,13 @@ public class DescriptionBuilder implements DeploymentConstants {
             if (log.isTraceEnabled()) {
                 log.trace("Input Action Mapping found: " + inputActionString);
             }
-            mappingList.add(inputActionString);
+            if(!"".equals(inputActionString)){
+                mappingList.add(inputActionString);
+            }else{
+                if (log.isTraceEnabled()) {
+                    log.trace("Zero length input action string found. Not added to mapping");
+                }
+            }
         }
         op_descrip.setWsamappingList(mappingList);
 
