@@ -21,7 +21,7 @@
 	<extend>../../etc/project.xml</extend>
 	
 	<name>Apache Axis 2.0 - JAX-WS</name>
-	<id>jaxws</id>
+	<id>axis2-jaxws</id>
 	<groupId>org.apache.axis2</groupId>
 	<description>JAX-WS implementation using Axis 2.0</description>
 	
