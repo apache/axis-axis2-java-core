@@ -125,9 +125,7 @@ public class TransportBindingBuilder extends BindingBuilder {
             //Store the signature values vector
             rmd.getMsgContext().setProperty(WSHandlerConstants.SEND_SIGV, signatureValues);
         } else {
-            if(rpd.isSignatureConfirmation()) {
-                ///TODO : signature configmation : after completing the engine
-            }
+            addSignatureConfirmation(rmd, null);
         }
     }
 
@@ -164,6 +162,7 @@ public class TransportBindingBuilder extends BindingBuilder {
                 
                 dkSig.setSigCanonicalization(rpd.getAlgorithmSuite().getInclusiveC14n());
                 dkSig.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
+                dkSig.setDerivedKeyLength(rpd.getAlgorithmSuite().getMinimumSymmetricKeyLength()/8);
                 
                 dkSig.setExternalKey(encrKey.getEphemeralKey(), encrKey.getId());
                 

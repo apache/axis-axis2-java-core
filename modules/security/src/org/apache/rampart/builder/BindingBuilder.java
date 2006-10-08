@@ -34,13 +34,18 @@ import org.apache.ws.secpolicy.model.X509Token;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSPasswordCallback;
+import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
+import org.apache.ws.security.handler.WSHandlerConstants;
+import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecDKSign;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.message.WSSecSignature;
+import org.apache.ws.security.message.WSSecSignatureConfirmation;
 import org.apache.ws.security.message.WSSecTimestamp;
 import org.apache.ws.security.message.WSSecUsernameToken;
+import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -487,7 +492,7 @@ public abstract class BindingBuilder {
 
                 //Set the algo info
                 dkSign.setSignatureAlgorithm(rpd.getAlgorithmSuite().getSymmetricSignature());
-                
+                dkSign.setDerivedKeyLength(rpd.getAlgorithmSuite().getMinimumSymmetricKeyLength()/8);
                 
                 dkSign.prepare(doc, rmd.getSecHeader());
                 
@@ -552,5 +557,63 @@ public abstract class BindingBuilder {
         }
         return tok;
     }
+    
+
+    protected void addSignatureConfirmation(RampartMessageData rmd, Vector sigParts) {
+        
+        if(!rmd.getPolicyData().isSignatureConfirmation()) {
+            
+            //If we don't require sig confirmation simply go back :-)
+            return;
+        }
+        
+        Document doc = rmd.getDocument();
+        
+        Vector results = (Vector)rmd.getMsgContext().getProperty(WSHandlerConstants.RECV_RESULTS);
+        /*
+         * loop over all results gathered by all handlers in the chain. For each
+         * handler result get the various actions. After that loop we have all
+         * signature results in the signatureActions vector
+         */
+        Vector signatureActions = new Vector();
+        for (int i = 0; i < results.size(); i++) {
+            WSHandlerResult wshResult = (WSHandlerResult) results.get(i);
+
+            WSSecurityUtil.fetchAllActionResults(wshResult.getResults(),
+                    WSConstants.SIGN, signatureActions);
+            WSSecurityUtil.fetchAllActionResults(wshResult.getResults(),
+                    WSConstants.ST_SIGNED, signatureActions);
+            WSSecurityUtil.fetchAllActionResults(wshResult.getResults(),
+                    WSConstants.UT_SIGN, signatureActions);
+        }
+        
+        // prepare a SignatureConfirmation token
+        WSSecSignatureConfirmation wsc = new WSSecSignatureConfirmation();
+        if (signatureActions.size() > 0) {
+            if (log.isDebugEnabled()) {
+                log.debug("Signature Confirmation: number of Signature results: "
+                        + signatureActions.size());
+            }
+            for (int i = 0; i < signatureActions.size(); i++) {
+                WSSecurityEngineResult wsr = (WSSecurityEngineResult) signatureActions
+                        .get(i);
+                byte[] sigVal = wsr.getSignatureValue();
+                wsc.setSignatureValue(sigVal);
+                wsc.prepare(doc);
+                RampartUtil.appendChildToSecHeader(rmd, wsc.getSignatureConfirmationElement());
+                if(sigParts != null) {
+                    sigParts.add(new WSEncryptionPart(wsc.getId()));
+                }
+            }
+        } else {
+            //No Sig value
+            wsc.prepare(doc);
+            RampartUtil.appendChildToSecHeader(rmd, wsc.getSignatureConfirmationElement());
+            if(sigParts != null) {
+                sigParts.add(new WSEncryptionPart(wsc.getId()));
+            }
+        }
+    }
+
     
 }
