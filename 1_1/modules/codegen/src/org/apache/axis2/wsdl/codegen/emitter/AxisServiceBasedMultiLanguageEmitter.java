@@ -1677,7 +1677,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param axisOperation
      */
     protected void addSOAPAction(Document doc, Element rootElement, AxisOperation axisOperation) {
-        addAttribute(doc, "soapaction", axisOperation.getSoapAction(), rootElement);
+        addAttribute(doc, "soapaction", axisOperation.getInputAction(), rootElement);
     }
 
     /**
