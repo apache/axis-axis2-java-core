@@ -18,7 +18,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
-//import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,8 +27,6 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -1675,7 +1672,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param axisOperation
      */
     protected void addSOAPAction(Document doc, Element rootElement, AxisOperation axisOperation) {
-        addAttribute(doc, "soapaction", axisOperation.getSoapAction(), rootElement);
+        addAttribute(doc, "soapaction", axisOperation.getInputAction(), rootElement);
     }
 
     /**
