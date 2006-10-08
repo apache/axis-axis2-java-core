@@ -850,8 +850,8 @@
                 <!-- if the element is associated with a type, then its gonna be only one -->
                 //We can safely assume an element has only one type associated with it
                 <xsl:variable name="varName">local<xsl:value-of select="property/@javaname"/></xsl:variable>
-                <xsl:variable name="nillable"><xsl:value-of select="property/@nillable"/></xsl:variable>
-                <xsl:variable name="primitive"><xsl:value-of select="property/@primitive"/></xsl:variable>
+                <xsl:variable name="nillable" select="property/@nillable"/>
+                <xsl:variable name="primitive" select="property/@primitive"/>
                 <xsl:variable name="propertyType"><xsl:value-of select="property/@type"/></xsl:variable>
 
                 <xsl:choose>
@@ -1197,8 +1197,8 @@
                 <!-- if the element is associated with a type, then its gonna be only one -->
                 //We can safely assume an element has only one type associated with it
                 <xsl:variable name="varName">local<xsl:value-of select="property/@javaname"/></xsl:variable>
-                <xsl:variable name="nillable"><xsl:value-of select="property/@nillable"/></xsl:variable>
-                <xsl:variable name="primitive"><xsl:value-of select="property/@primitive"/></xsl:variable>
+                <xsl:variable name="nillable" select="property/@nillable"/>
+                <xsl:variable name="primitive" select="property/@primitive"/>
 
                 <xsl:choose>
                     <!-- This better be only one!!-->
@@ -2879,8 +2879,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                 <!-- if the element is associated with a type, then its gonna be only one -->
                 //We can safely assume an element has only one type associated with it
                 <xsl:variable name="varName">local<xsl:value-of select="property/@javaname"/></xsl:variable>
-                <xsl:variable name="nillable"><xsl:value-of select="property/@nillable"/></xsl:variable>
-                <xsl:variable name="primitive"><xsl:value-of select="property/@primitive"/></xsl:variable>
+                <xsl:variable name="nillable" select="property/@nillable"/>
+                <xsl:variable name="primitive" select="property/@primitive"/>
 
                 <xsl:choose>
                     <!-- This better be only one!!-->
