@@ -583,8 +583,6 @@
                     <xsl:variable name="settingTracker">local<xsl:value-of select="@javaname"/>Tracker</xsl:variable>
 
                     <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
-                    <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
-
 
                     <xsl:if test="$min=0 or $choice"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
                     <xsl:choose>
@@ -805,7 +803,8 @@
                                           // write the nil attribute
                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
                                          }else{
-                                               <xsl:if test="$propertyTypeName=$propertyType">
+                                          <xsl:choose>
+                                              <xsl:when test="$propertyType='javax.xml.namespace.QName'">
                                                     java.lang.String namespaceURI =<xsl:value-of select="$varName"/>.getNamespaceURI();
                                                     if(namespaceURI !=null){
                                                        prefix = <xsl:value-of select="$varName"/>.getPrefix();
@@ -817,10 +816,14 @@
                                                     } else {
                                                        xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                                                     }
-                                               </xsl:if>
-                                              <xsl:if test="not($propertyTypeName=$propertyType)">
+                                              </xsl:when>
+                                              <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
+                                                  <xsl:value-of select="$varName"/>.serialize(xmlWriter);
+                                              </xsl:when>
+                                              <xsl:otherwise>
                                                xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                               </xsl:if>
+                                               </xsl:otherwise>
+                                          </xsl:choose>
                                          }
                                     </xsl:if>
                                     <xsl:if test="@primitive">
@@ -850,8 +853,6 @@
                 <xsl:variable name="nillable"><xsl:value-of select="property/@nillable"/></xsl:variable>
                 <xsl:variable name="primitive"><xsl:value-of select="property/@primitive"/></xsl:variable>
                 <xsl:variable name="propertyType"><xsl:value-of select="property/@type"/></xsl:variable>
-                <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
-
 
                 <xsl:choose>
                     <!-- This better be only one!!-->
@@ -930,23 +931,28 @@
                                           // write the nil attribute
                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
                                          }else{
-                                               <xsl:if test="$propertyTypeName=$propertyType">
-                                                   java.lang.String prefix ="";
+                                            <xsl:choose>
+                                                <xsl:when test="$propertyType='javax.xml.namespace.QName'">
+                                                    java.lang.String prefix ="";
                                                     java.lang.String namespaceURI =<xsl:value-of select="$varName"/>.getNamespaceURI();
                                                     if(namespaceURI !=null){
                                                        prefix = <xsl:value-of select="$varName"/>.getPrefix();
                                                        if (prefix == null) {
-                                                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-                                                      }
-                                                     xmlWriter.writeNamespace(prefix,namespaceURI );
-                                                     xmlWriter.writeCharacters(prefix + ":"+ org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                                          prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                       }
+                                                       xmlWriter.writeNamespace(prefix,namespaceURI );
+                                                       xmlWriter.writeCharacters(prefix + ":"+ org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                                                     } else {
                                                        xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                                                     }
-                                               </xsl:if>
-                                              <xsl:if test="not($propertyTypeName=$propertyType)">
-                                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                               </xsl:if>
+                                                </xsl:when>
+                                                <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
+                                                    <xsl:value-of select="$varName"/>.serialize(xmlWriter);
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                          }
                                     </xsl:if>
                                     <xsl:if test="$primitive">
@@ -1303,7 +1309,6 @@
                     <xsl:variable name="javaName" select="@javaname"/>
                     <xsl:variable name="namespace" select="@nsuri"/>
                     <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
-                    <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
 
                     <xsl:if test="$propertyName != 'extraAttributes'">
                     // handle attribute "<xsl:value-of select="$propertyName"/>"
@@ -1311,7 +1316,8 @@
                       reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                    if (<xsl:value-of select="$attribName"/>!=null){
                          java.lang.String content = <xsl:value-of select="$attribName"/>;
-                        <xsl:if test="$propertyTypeName=$propertyType">
+                        <xsl:choose>
+                            <xsl:when test="$propertyType='javax.xml.namespace.QName'">
                                 int index = <xsl:value-of select="$attribName"/>.indexOf(":");
                                 java.lang.String prefix ="";
                                 java.lang.String namespaceuri ="";
@@ -1321,12 +1327,13 @@
                                  }
                                  object.set<xsl:value-of select="$javaName"/>(
                                       org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(<xsl:value-of select="$attribName"/>,namespaceuri));
-                        </xsl:if>
-                        <xsl:if test="not($propertyTypeName=$propertyType)">
+                            </xsl:when>
+                            <xsl:otherwise>
                          object.set<xsl:value-of select="$javaName"/>(
                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
                                 <xsl:value-of select="$attribName"/>));
-                        </xsl:if>
+                            </xsl:otherwise>
+                       </xsl:choose>
                     }
                     handledAttributes.add("<xsl:value-of select="$propertyName"/>");
                     </xsl:if>
@@ -1400,7 +1407,6 @@
                             <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                             <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                             <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
-                            <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
 
                             <xsl:variable name="propQName">new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")</xsl:variable>
 
@@ -1629,7 +1635,8 @@
                                     </xsl:if>
                                     java.lang.String content = reader.getElementText();
                                     <xsl:if test="not(enumFacet)">
-                                    <xsl:if test="$propertyTypeName=$propertyType">
+                                        <xsl:choose>
+                                            <xsl:when test="$propertyType='javax.xml.namespace.QName'">
                                             int index = content.indexOf(":");
                                             java.lang.String prefix ="";
                                             java.lang.String namespaceuri ="";
@@ -1639,11 +1646,12 @@
                                              }
                                              object.set<xsl:value-of select="$javaName"/>(
                                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(content,namespaceuri));
-                                    </xsl:if>
-                                    <xsl:if test="not($propertyTypeName=$propertyType)">
+                                            </xsl:when>
+                                            <xsl:otherwise>
                                               object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
-                                    </xsl:if>
+                                            </xsl:otherwise>
+                                       </xsl:choose>
                                     </xsl:if>
                                     <xsl:if test="(enumFacet)">
                                     object = <xsl:value-of select="$name"/>.fromString(content);
@@ -2363,12 +2371,12 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                     <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
                     <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                     <xsl:variable name="attribName">tempAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
-                    <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
 
                     java.lang.String <xsl:value-of select="$attribName"/> =
                       reader.getAttributeValue("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>");
                    if (<xsl:value-of select="$attribName"/>!=null){
-                    <xsl:if test="$propertyTypeName=$propertyType">
+                    <xsl:choose>
+                        <xsl:when test="$propertyType='javax.xml.namespace.QName'">
                             int index = <xsl:value-of select="$attribName"/>.indexOf(":");
                             java.lang.String prefix ="";
                             java.lang.String namespaceuri ="";
@@ -2378,12 +2386,13 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                              }
                              object.set<xsl:value-of select="$javaName"/>(
                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(<xsl:value-of select="$attribName"/>,namespaceuri));
-                    </xsl:if>
-                    <xsl:if test="not($propertyTypeName=$propertyType)">
+                        </xsl:when>
+                        <xsl:otherwise>
                          object.set<xsl:value-of select="$javaName"/>(
                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
                                 <xsl:value-of select="$attribName"/>));
-                    </xsl:if>
+                        </xsl:otherwise>
+                   </xsl:choose>
                     }
 
                 </xsl:for-each>
@@ -2433,7 +2442,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                             <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                             <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
                             <xsl:variable name="min"><xsl:value-of select="@minOccurs"/></xsl:variable>
-                             <xsl:variable name="propertyTypeName">javax.xml.namespace.QName</xsl:variable>
 
                             <xsl:variable name="propQName">new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>")</xsl:variable>
 
@@ -2649,7 +2657,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                        if (!"true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
                                     </xsl:if>
                                     java.lang.String content = reader.getElementText();
-                                    <xsl:if test="$propertyTypeName=$propertyType">
+                                    <xsl:choose>
+                                        <xsl:when test="$propertyType='javax.xml.namespace.QName'">
                                             int index = content.indexOf(":");
                                             java.lang.String prefix ="";
                                             java.lang.String namespaceuri ="";
@@ -2659,11 +2668,12 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                              }
                                              object.set<xsl:value-of select="$javaName"/>(
                                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(content,namespaceuri));
-                                         </xsl:if>
-                                    <xsl:if test="not($propertyTypeName=$propertyType)">
+                                        </xsl:when>
+                                        <xsl:otherwise>
                                               object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
-                                          </xsl:if>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                     <xsl:if test="@nillable">
                                         } else {
                                             reader.getElementText(); // throw away text nodes if any.
