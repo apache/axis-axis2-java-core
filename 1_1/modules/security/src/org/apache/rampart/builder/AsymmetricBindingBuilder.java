@@ -201,7 +201,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                 sigParts = addSignatureParts(sigSuppTokMap, sigParts);
                 sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
             } else {
-                // TODO: Add sig confirmation
+                addSignatureConfirmation(rmd, sigParts);
             }
             
             if(rpd.getInitiatorToken() != null) {
@@ -300,7 +300,7 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
             sigParts = addSignatureParts(sigSuppTokMap, sigParts);
             sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
         } else {
-            // TODO: Add sig confirmation
+            addSignatureConfirmation(rmd, sigParts);
         }
 
         if(rpd.getInitiatorToken() != null) {
@@ -438,7 +438,9 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
             // Set the algo info
             dkSign.setSignatureAlgorithm(rpd.getAlgorithmSuite()
                     .getSymmetricSignature());
-
+            dkSign.setDerivedKeyLength(rpd.getAlgorithmSuite()
+                    .getMinimumSymmetricKeyLength() / 8);
+            
             try {
                 dkSign.prepare(doc, rmd.getSecHeader());
 

@@ -58,7 +58,8 @@ public class RampartTest extends TestCase {
         try {
             String repo = Constants.TESTING_PATH + "rampart_client_repo";
     
-            ConfigurationContext configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repo, null);
+            ConfigurationContext configContext = ConfigurationContextFactory.
+                        createConfigurationContextFromFileSystem(repo, null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             
 
@@ -68,6 +69,11 @@ public class RampartTest extends TestCase {
             //TODO : figure this out !!
             boolean basic256Supported = false;
             
+            if(basic256Supported) {
+                System.out.println("WARNING: We are using key sizes from JCE " +
+                        "Unlimited Strength Jurisdiction Policy !!!");
+            }
+            
             for (int i = 1; i <= 9; i++) { //<-The number of tests we have
                 if(!basic256Supported && (i == 3 || i == 4 || i ==5)) {
                     //Skip the Basic256 tests
@@ -76,8 +82,11 @@ public class RampartTest extends TestCase {
                 Options options = new Options();
                 System.out.println("Testing WS-Sec: custom scenario " + i);
                 options.setAction("urn:echo");
-                options.setTo(new EndpointReference("http://127.0.0.1:" + PORT + "/axis2/services/SecureService" + i));
-                options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, loadPolicy("test-resources/rampart/policy/" + i + ".xml"));
+                options.setTo(new EndpointReference("http://127.0.0.1:" +
+                                        PORT + 
+                                        "/axis2/services/SecureService" + i));
+                options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, 
+                        loadPolicy("test-resources/rampart/policy/" + i + ".xml"));
                 serviceClient.setOptions(options);
 
                 //Blocking invocation
