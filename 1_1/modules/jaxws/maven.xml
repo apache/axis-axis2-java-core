@@ -312,19 +312,19 @@
 
     <!-- Create the API and Impl jars --> 
     <postGoal name="jar">
-        <jar destfile="target/jaxws-api-${jaxws.version}.jar">
+        <jar destfile="target/axis2-jaxws-api-${jaxws.version}.jar">
             <ant:fileset dir="target/classes">
             	<ant:exclude name="com/ibm/webservices/**"/>
             </ant:fileset>
         </jar>
-    	<jar destfile="target/jaxws-impl-${jaxws.version}.jar">
+    	<jar destfile="target/axis2-jaxws-impl-${jaxws.version}.jar">
     	    <ant:fileset dir="target/classes">
                 <ant:exclude name="javax/**"/>
             </ant:fileset>
     	</jar>
-        <ant:copy toDir="${maven.repo.local}/jaxws/jars">
-            <ant:fileset file="target/jaxws-impl-${jaxws.version}.jar"/>
-        	<ant:fileset file="target/jaxws-api-${jaxws.version}.jar"/>
+        <ant:copy toDir="${maven.repo.local}/org.apache.axis2/jars">
+            <ant:fileset file="target/axis2-jaxws-impl-${jaxws.version}.jar"/>
+        	<ant:fileset file="target/axis2-jaxws-api-${jaxws.version}.jar"/>
         </ant:copy>
     </postGoal>
 
@@ -395,8 +395,8 @@
 
         <!--add jars-->
         <ant:copy toDir="${dist}/build">
-            <ant:fileset file="target/jaxws-api-${jaxws.version}.jar"/>
-            <ant:fileset file="target/jaxws-impl-${jaxws.version}.jar"/>
+            <ant:fileset file="target/axis2-jaxws-api-${jaxws.version}.jar"/>
+            <ant:fileset file="target/axis2-jaxws-impl-${jaxws.version}.jar"/>
         </ant:copy>
 
         <!--add documents-->
