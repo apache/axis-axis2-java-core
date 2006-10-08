@@ -1540,8 +1540,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
 
-        methodElement.appendChild(getInputElement(doc,
-                axisOperation, soapHeaderInputParameterList));
+        if(WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())){
+            methodElement.appendChild(getInputElement(doc,
+                    axisOperation, soapHeaderInputParameterList));
+        }
         if(WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())){
             methodElement.appendChild(getOutputElement(doc,
                     axisOperation, soapHeaderOutputParameterList));
