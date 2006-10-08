@@ -217,7 +217,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 sigParts = addSignatureParts(sigSuppTokMap, sigParts);
                 sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
             } else {
-                //TODO: Add sig confirmation
+                addSignatureConfirmation(rmd, sigParts);
             }
             
             //Sign the message
@@ -364,7 +364,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
             sigParts = addSignatureParts(sigSuppTokMap, rpd.getSignedParts());
             sigParts = addSignatureParts(sgndEndSuppTokMap, sigParts);
         } else {
-            //TODO: Add sig confirmation
+            addSignatureConfirmation(rmd, sigParts);
         }
         //Sign the message
         signatureValues.add(this.doSymmSignature(rmd, sigToken, sigTok, sigParts));
