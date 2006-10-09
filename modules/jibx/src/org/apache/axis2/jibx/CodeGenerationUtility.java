@@ -42,7 +42,6 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
-import org.apache.bcel.generic.Type;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
@@ -142,6 +141,12 @@ public class CodeGenerationUtility {
                 throw new RuntimeException("invalid jibx binding definition file " + path);
             }
             
+            // make sure classes will be generated for abstract mappings
+            boolean unwrap = !codeGenConfig.isParametersWrapped();
+            if (unwrap && !binding.isForceClasses()) {
+                throw new RuntimeException("unwrapped binding must use force-classes='true' option in " + path);
+            }
+            
             // create table with all built-in format definitions
             Map simpleTypeMap = new HashMap();
             buildFormat("byte", "byte",
@@ -200,7 +205,6 @@ public class CodeGenerationUtility {
             // configure handling for all operations of service
             codeGenConfig.setTypeMapper(new NamedParameterTypeMapper());
             Iterator operations = codeGenConfig.getAxisService().getOperations();
-            boolean unwrap = !codeGenConfig.isParametersWrapped();
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             int opindex = 0;
             Map typeMappedClassMap = new HashMap();
@@ -401,7 +405,8 @@ public class CodeGenerationUtility {
                     FormatElement format = (FormatElement)simpleTypeMap.get(typename);
                     if (format == null) {
                         throw new RuntimeException("Cannot unwrap element " +
-                            qname + ": no format definition found for child element " + itemname);
+                            qname + ": no format definition found for type " +
+                            typename + " (used by element " + itemname + ')');
                     }
                     javatype = format.getTypeName();
                     param.setAttribute("form", "simple");
@@ -421,7 +426,8 @@ public class CodeGenerationUtility {
                     MappingElement mapping = (MappingElement)complexTypeMap.get(typename);
                     if (mapping == null) {
                         throw new RuntimeException("Cannot unwrap element " +
-                            qname + ": no abstract mapping definition found for child element " + itemname);
+                            qname + ": no abstract mapping definition found for type " +
+                            typename + " (used by element " + itemname + ')');
                     }
                     Integer tindex = (Integer)typeMappedClassMap.get(typename);
                     if (tindex == null) {
@@ -440,7 +446,7 @@ public class CodeGenerationUtility {
                     fulltype += "[]";
                     isobj = false;
                 }
-                param.setAttribute("object", Boolean.toString(isarray));
+                param.setAttribute("object", Boolean.toString(isobj));
                 if (isout) {
                     wrappertype = fulltype;
                 } else {

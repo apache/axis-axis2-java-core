@@ -309,11 +309,11 @@
     <xsl:if test="out-wrapper/@empty='false'">
                 org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient
                     .getMessageContext(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                org.apache.axiom.om.OMElement result = _returnMessageContext.getEnvelope().getFirstElement();
+                org.apache.axiom.om.OMElement result = _returnMessageContext.getEnvelope().getBody().getFirstElement();
                 if (result != null &amp;&amp; "<xsl:value-of select='out-wrapper/@name'/>".equals(result.getLocalName()) &amp;&amp;
                     "<xsl:value-of select='out-wrapper/@ns'/>".equals(result.getNamespace().getNamespaceURI())) {
                     org.jibx.runtime.impl.UnmarshallingContext uctx = getNewUnmarshalContext(result);
-                    uctx.next();
+                    uctx.parsePastStartTag("<xsl:value-of select='out-wrapper/@ns'/>", "<xsl:value-of select='out-wrapper/@name'/>");
                     int index;
       <xsl:apply-templates select="out-wrapper/return-element" mode="interface-implementation"/>
                     return <xsl:value-of select="out-wrapper/return-element/@java-name"/>;
@@ -383,10 +383,10 @@
   </xsl:template>
   
   <!-- Invoked to get the operation index number for a method. -->
-  <xsl:template match="method" mode="get-index"><xsl:value-of select="position()-1"/></xsl:template>
+  <xsl:template match="method" mode="get-index"><xsl:value-of select="count(preceding-sibling::method)"/></xsl:template>
   
   <!-- Invoked to get the operation action for a method. -->
-  <xsl:template match="method" mode="get-action"><xsl:value-of select="@action"/></xsl:template>
+  <xsl:template match="method" mode="get-action"><xsl:value-of select="@soapaction"/></xsl:template>
   
   <!-- Generate code for a particular parameter element in a client stub method -->
   <xsl:template match="parameter-element" mode="interface-implementation">
@@ -406,7 +406,7 @@
     <xsl:choose>
       <xsl:when test="@optional='true'"></xsl:when>
       <xsl:when test="@nillable='true'">
-        child = factory.createOMElement("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>", "");
+        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
         org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         child.declareNamespace(xsins);
         child.addAttribute("nil", "true", xsins);
@@ -422,7 +422,7 @@
     <xsl:choose>
       <xsl:when test="@object='true' and @nillable='true'">
             if (_item == null) {
-                child = factory.createOMElement("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>", "");
+                child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
                 org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
                 child.declareNamespace(xsins);
                 child.addAttribute("nil", "true", xsins);
@@ -451,7 +451,7 @@
     <xsl:choose>
       <xsl:when test="@object='true' and @nillable='true'">
         if (<xsl:value-of select="@java-name"/> == null) {
-            child = factory.createOMElement("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>", "");
+            child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
             org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
             child.declareNamespace(xsins);
             child.addAttribute("nil", "true", xsins);
@@ -477,15 +477,15 @@
   <xsl:template name="serialize-value-to-child">
     <xsl:choose>
       <xsl:when test="@java-type='java.lang.String' and @serializer=''">
-        child = factory.createOMElement("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>", "");
+        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
         child.setText(<xsl:call-template name="parameter-or-array-item"/>);
       </xsl:when>
       <xsl:when test="@form='simple' and @serializer=''">
-        child = factory.createOMElement("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>", "");
+        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
         child.setText(<xsl:call-template name="parameter-or-array-item"/>.toString());
       </xsl:when>
       <xsl:when test="@form='simple'">
-        child = factory.createOMElement("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>", "");
+        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
         child.setText(<xsl:value-of select="@serializer"/>(<xsl:call-template name="parameter-or-array-item"/>));
       </xsl:when>
       <xsl:when test="@form='complex'">
@@ -556,7 +556,7 @@
   <!-- Called by "initialize-binding" template to initialize mapped class index fields. -->
   <xsl:template match="abstract-type" mode="set-index-fields">
          _type_index<xsl:value-of select="@type-index"/> = (bindingFactory == null) ?
-            -1 : bindingFactory.getTypeIndex("{<xsl:value-of select="@ns"/>}<xsl:value-of select="@name"/>");
+            -1 : bindingFactory.getTypeIndex("{<xsl:value-of select="@ns"/>}:<xsl:value-of select="@name"/>");
   </xsl:template>
   
   
@@ -581,6 +581,7 @@
     <xsl:if test="@nillable='true'">
           }
     </xsl:if>
+          uctx.next();
       }
       <xsl:value-of select="@java-name"/> = (<xsl:value-of select="@java-type"/>[])org.jibx.runtime.Utility.resizeArray(index, <xsl:value-of select="@java-name"/>);
     <xsl:if test="@optional!='true'">
@@ -628,7 +629,7 @@
         <xsl:value-of select="@deserializer"/>(uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>"))
       </xsl:when>
       <xsl:when test="@form='complex'">
-        uctx.getUnmarshaller(_type_index<xsl:value-of select="@type-index"/>).unmarshal(null, uctx)
+        uctx.getUnmarshaller(_type_index<xsl:value-of select="@type-index"/>).unmarshal(new <xsl:value-of select="@java-type"/>(), uctx)
       </xsl:when>
     </xsl:choose>
   </xsl:template>
