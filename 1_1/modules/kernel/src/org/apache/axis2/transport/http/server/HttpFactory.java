@@ -169,7 +169,7 @@ public class HttpFactory {
     private String getStringParam(String name, String def) {
         Parameter param = httpConfiguration.getParameter(name);
         if (param!=null) {
-            assert param.getParameterType() == Parameter.TEXT_PARAMETER;
+//            assert param.getParameterType() == Parameter.TEXT_PARAMETER;
             String config = (String) param.getValue();
             if (config!=null)
                 return config;
