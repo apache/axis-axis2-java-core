@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.*;
 import javax.wsdl.factory.WSDLFactory;
@@ -1683,6 +1684,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // WSDL4J has all the SOAP 1.1 Items built in. So we can check
                 // the
                 // items directly
+            } else if (wsdl4jElement instanceof SOAP12Address) {
+                SOAP12Address soapAddress = (SOAP12Address) wsdl4jElement;
+                axisService.setEndpoint(soapAddress.getLocationURI());
             } else if (wsdl4jElement instanceof SOAPAddress) {
                 SOAPAddress soapAddress = (SOAPAddress) wsdl4jElement;
                 axisService.setEndpoint(soapAddress.getLocationURI());
