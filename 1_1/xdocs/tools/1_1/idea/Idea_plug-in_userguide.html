@@ -5,7 +5,7 @@
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <meta content="text/html; charset=iso-8859-1">
   <title>How to use IDEA plug-in</title>
-  <meta name="generator" content="amaya 9.2.1, see http://www.w3.org/Amaya/">
+  <meta name="generator" content="Bluefish 1.0.5">
 </head>
 
 <body lang="en">
@@ -35,8 +35,8 @@ Plug-in]</a></p>
 <h2>Introduction</h2>
 
 <p>Using this IntelliJ IDEA plug-in you can either create a service archive
-that can be deployed as a Web service to the Axis2 or generate a java class
-file from a WSDL file. Installation process is described first here followed
+that can be deployed as a Web service to the Axis2 or generate java class
+files from a WSDL file. Installation process is described first here followed
 by the above mentioned operations.</p>
 <a name="installation"></a>
 
@@ -46,8 +46,7 @@ by the above mentioned operations.</p>
 the plug-in which is a zipped file, and extract it into plugins directory in
 IDEA installation directory or plugins directory in user directory
 (user/idea/conf/plugins). If you have correctly extracted the file you would
-see a directory called Axis2 in which there should be only one directory
-called lib containing a few .jar files.</p>
+see a directory called axis2-idea-plugin in which there should be three directories.</p>
 
 <p>Next step is to restart IDEA so that the changes can take place. If the
 plug-in has been installed correctly, when you restart IDEA you will see
@@ -92,17 +91,40 @@ type the whole path.</p>
 <p>Once the WSDL file is selected, click on the "Next" button which will take
 you to the page below.</p>
 
+
 <p><strong>WSDL2Java Page 3:</strong></p>
 
-<p><strong>Codegen options</strong> are to be selected here. By far this is
-the most important page in this wizard, which determines the characteristics
-of the code being generated.</p>
+<p>This page gives the user the option of selecting default or custom code 
+generation options. There are three default code generation options in all. 
+The first enables the user to generate both client and server code under 
+default configurations while the second generates just the client side under 
+default configurations. The third option generates server side code under 
+default configurations.</p>
 
-<p>Novices need not worry about these options since the most common options
-are defaulted. Advanced users will find it very easy to "turn the knobs"
-using these options.</p>
+<p>
+	<strong>Note: 
+	</strong>
+		<ul>
+			<li>When client side code is generated under default configurations it generates 
+the stub, compiles it, packages it as a jar (the name of the jar will be 
+&lt;service name &gt;-jar) places it in a lib folder (If there is no lib 
+folder it is created) under the idea project that is opened. This jar thats 
+generated will also be added as a project library to the current active idea project.
+			</li>
+			
+			<li>When server code is generated under default configurations it generates the 
+			server side code and also generates a default service.xml. The user will then be taken to page 5.
+			</li>
+			
+			<li>When both server and client side is generated under default configurations the client stub is 
+			added are a jar to the current idea project and the user is adked to select the output path for 
+			the server side code.			
+			</li>
 
-<p><img alt="Figure5" src="images/fig18.jpg"></p>
+	</ul>
+</p>
+
+<p><img alt="Figure5" src="images/fig19.jpg"></p>
 
 <p><strong>Here's some information on the options for selection:</strong></p>
 <ul>
@@ -119,11 +141,43 @@ using these options.</p>
     you wish.</li>
 </ul>
 
+<p>With these enhanced options novices need not worry about the options that 
+can be set because the default options cover the most common cases. Advanced 
+users will find it very easy to "turn the knobs" using the custom generation option.</p>
+
 <p><strong>WSDL2Java Page 4:</strong></p>
+
+<p><strong>Codegen options</strong> are to be selected here. By far this is
+the most important page in this wizard, which determines the characteristics
+of the code being generated.</p>
+
+<p><img alt="Figure5" src="images/fig18.jpg"></p>
+
+<p><strong>Here's some information on the options for selection:</strong></p>
+<ul>
+  <li>Output language can be Java, C#. But we have not fully tested C#
+    codegeneration, therefore, it is better to select Java as output
+  language.</li>
+  <li>Since Axis2 supports both synchronous and asynchronous client
+    programming model, the tool has provided a way to select one of the two or even both
+    from this page.</li>
+  <li>The default data binding type is adb (Axis2 data binding). Although the
+    tool is capable of providing XML beans, due to class loading issues in
+    XML beans, current implementation only generate code with OM and adb.</li>
+  <li>As for the package name of the generated code, you can set the name as
+    you wish.</li>
+</ul>
+
+<p><strong>WSDL2Java Page 5:</strong></p>
 
 <p><img alt="Figure6" src="images/fig3.jpg"></p>
 
-<p>You can simply browse and select the output location/path (the location at
+<p>Here uses have the option of adding the generated code directly to their 
+working idea project or choose a custom location. If the user decides to add 
+it to the current idea project he/she will have to choose the module and the 
+source directory that the code should be generated to. </p>
+
+<p>Alternatively the user can browse and select the output location/path (the location at
 which the code is to be generated) using the "Browse" button. Because of the
 "Browse" button you do not need to type in the output file path.</p>
 
