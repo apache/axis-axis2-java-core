@@ -1,0 +1,154 @@
+<h1>Code Listing For Axis2SampleDocLitService Service</h1>
+
+<h2>Server</h2>
+
+<h3>echoString</h3>
+
+<p>Locate the following code segment  in "Axis2SampleDocLitServiceSkeleton.java"  and add the business logic as shown below.</p>
+<pre>
+ public org.apache.axis2.userguide.xsd.EchoStringReturnDocument echoString
+   (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4 ){
+      //Todo fill this with the necessary business logic
+      throw new  java.lang.UnsupportedOperationException();
+   }
+ </pre>
+
+<p>Once the business logic is added, the source code appears as below:</p>
+<pre>
+public org.apache.axis2.userguide.xsd.EchoStringReturnDocument echoString
+   (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4) throws Exception {
+   //Use the factory to create the output document.
+   EchoStringReturnDocument retDoc = EchoStringReturnDocument.Factory.newInstance();
+   //send the string back.
+   retDoc.setEchoStringReturn(param4.getEchoStringParam());
+   return retDoc;
+ }
+</pre>
+
+<h3>echoStringArray</h3>
+<p>The code segment for echoStringArray is shown below:</p>
+<pre>
+public org.apache.axis2.userguide.xsd.EchoStringArrayReturnDocument echoStringArray
+   (org.apache.axis2.userguide.xsd.EchoStringArrayParamDocument param0) throws Exception {
+   //Use the factory to create the output document.
+   EchoStringArrayReturnDocument retDoc = EchoStringArrayReturnDocument.Factory.newInstance();
+   //Get the String array from the input parameters.
+   String[] inParams = param0.getEchoStringArrayParam().getStringArray();
+   ArrayOfstringLiteral retParams = ArrayOfstringLiteral.Factory.newInstance();
+   //Set the input parameters to the output parameters for echoing.
+     for (int i = 0; i < inParams.length; i++) {
+        retParams.addString(inParams[i]);
+     }
+   //return the output document.
+   retDoc.setEchoStringArrayReturn(retParams);
+   return retDoc;
+}
+</pre>
+
+<h3>echoStruct</h3>
+<p>The code segment for echoStruct is shown below:</p>
+<pre>
+public org.apache.axis2.userguide.xsd.EchoStructReturnDocument echoStruct
+     (org.apache.axis2.userguide.xsd.EchoStructParamDocument param2) throws Exception {
+     //Use the factory to create the output document.
+     EchoStructReturnDocument retDoc = EchoStructReturnDocument.Factory.newInstance();
+
+     //Get the SOAPStrcut from the incoming parameters
+     SOAPStruct inStruct = param2.getEchoStructParam();
+
+     //Struct for the sending back
+     SOAPStruct outStruct = SOAPStruct.Factory.newInstance();
+
+     //Fill the outgoing struct
+     outStruct.setVarFloat(inStruct.getVarFloat());
+     outStruct.setVarInt(inStruct.getVarInt());
+     outStruct.setVarString(inStruct.getVarString());
+     //Set the outgoing document.
+     retDoc.setEchoStructReturn(outStruct);
+
+     return retDoc;
+}
+</pre>
+
+
+
+<h2>Client</h2>
+
+
+<h3>Client for echoString Operation</h3>
+
+<p>The following code fragment shows the necessary code for utilizing the echoString operation of the Axis2SampleDocLitService that we have already deployed. The code is very simple to understand and the explanations are in the form of comments.</p>
+<pre>
+     //Create the stub by passing the AXIS_HOME and target EPR.
+     //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME 
+     Axis2SampleDocLitPortTypeStub stub= new Axis2SampleDocLitPortTypeStub(null,
+                                "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
+     //Create the request document to be sent.
+     EchoStringParamDocument  reqDoc= EchoStringParamDocument.Factory.newInstance();
+     reqDoc.setEchoStringParam("Axis2 Echo");
+     //invokes the Web service.
+     EchoStringReturnDocument resDoc=stub.echoString(reqDoc);
+     System.out.println(resDoc.getEchoStringReturn());
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+</pre>
+
+<p>Similarly the following code fragments show client side code for echoStringArray operation and echoStruct operation respectively.</p>
+
+<h3>Client for echoStringArray Operation</h3>
+<pre>
+     //Create the stub by passing the AXIS_HOME and target EPR.
+     //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
+     Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null,
+                                "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
+
+     //Create the request document to be sent.
+     EchoStringArrayParamDocument reqDoc = EchoStringArrayParamDocument.Factory.newInstance();
+     ArrayOfstringLiteral paramArray = ArrayOfstringLiteral.Factory.newInstance();
+
+     paramArray.addString("Axis2");
+     paramArray.addString("Echo");
+
+      reqDoc.setEchoStringArrayParam(paramArray);
+      EchoStringArrayReturnDocument resDoc = stub.echoStringArray(reqDoc);
+
+      //Get the response params
+      String[] resParams = resDoc.getEchoStringArrayReturn().getStringArray();
+
+      for (int i = 0; i < resParams.length; i++) {
+           System.out.println(resParams[i]);
+      }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+</pre>
+
+<h3>Client for echoStruct Operation</h3>
+<pre>
+    //Create the stub by passing the AXIS_HOME and target EPR.
+    //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME
+    Axis2SampleDocLitPortTypeStub stub = new Axis2SampleDocLitPortTypeStub(null, 
+                                "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
+    //Create the request Document
+    EchoStructParamDocument reqDoc = EchoStructParamDocument.Factory.newInstance();
+
+    //Create the complex type
+    SOAPStruct reqStruct = SOAPStruct.Factory.newInstance();
+
+    reqStruct.setVarFloat(100.50F);
+    reqStruct.setVarInt(10);
+    reqStruct.setVarString("High");
+
+    reqDoc.setEchoStructParam(reqStruct);
+
+    //Service invocation
+    EchoStructReturnDocument resDoc = stub.echoStruct(reqDoc);
+    SOAPStruct resStruct = resDoc.getEchoStructReturn();
+
+    System.out.println("floot Value :" + resStruct.getVarFloat());
+    System.out.println("int Value :" + resStruct.getVarInt());
+    System.out.println("String Value :" + resStruct.getVarString());
+
+</pre>
