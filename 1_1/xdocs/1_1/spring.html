@@ -35,7 +35,7 @@
 <h2>Introduction</h2>
 
 <p>The idea behind Axis2 and Spring integration is that Axis2 simply needs to
-have Spring supply in one of its pre-loaded beans to the Axis2 Message
+have Spring supply one of its pre-loaded beans to the Axis2 Message
 Receiver defined in the AAR services.xml . While Axis2 typically uses
 reflection to instantiate the ServiceClass defined in the services.xml that
 the Message Receiver will use, alternatively one can define a
@@ -412,7 +412,7 @@ public class SpringInit implements Service {
 }</pre>
     </source>
     <p>Here's the services.xml that now includes SpringInit and the
-    needed load-on-startup parameter. There is also the forceTCCL parameter which is needed
+    needed load-on-startup parameter. There is also the composite parameter which is needed
     when loading Spring in the AAR - see the <a href="#263">Known issues running Spring inside the AAR</a>
     area. </p>
     <source><pre>&lt;serviceGroup&gt;
@@ -421,7 +421,7 @@ public class SpringInit implements Service {
         This is a spring sample Web Service with two operations.
     &lt;/description&gt;
     &lt;parameter name="ServiceClass" locked="false"&gt;spring.SpringInit&lt;/parameter&gt;
-    &lt;parameter name="forceTCCL" locked="false"&gt;true&lt;/parameter&gt;
+    &lt;parameter name="composite" locked="false"&gt;true&lt;/parameter&gt;
     &lt;parameter name="load-on-startup" locked="false"&gt;true&lt;/parameter&gt;
     &lt;operation name="springInit"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
@@ -445,8 +445,8 @@ public class SpringInit implements Service {
   </li>
 </ul>
     <p>The Axis2 classloader strategy by default does not permit Spring to run inside the AAR. To allow
-    Spring to run inside the AAR, the forceTCCL parameter is used in the services.xml as shown in the example
-    above. The behavior of forceTCCL was the default in the developement cycle in between 1.0 and 1.1, but 
+    Spring to run inside the AAR, the 'composite' parameter is used in the services.xml as shown in the example
+    above. The behavior of 'composite' was the default in the developement cycle in between 1.0 and 1.1, but 
     it resulted in the JIRA issue AXIS2-1214 - essentially problems with getting an initContext.lookup() 
     handle inside the AAR. Spring users typically have little desire to use initContext.lookup() however, 
     as they get their Datasources via org.springframework.jdbc.datasource.DriverManagerDataSource in an
