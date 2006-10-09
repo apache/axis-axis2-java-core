@@ -11,8 +11,6 @@
 <tr>
   <td colspan="2" >
      <p>Only the services that are active are listed below. Note that although you can activate a service from this page,once system is restarted the service will be active again</p>
-<%--    <b>Remove Service :</b> The selected axisService will be removed from the file system and if the--%>
-<%--    &nbsp; system restart it wont be there next time--%>
   </td>
   </tr>
   <tr>

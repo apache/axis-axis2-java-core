@@ -23,7 +23,7 @@
 <jsp:include page="include/adminheader.jsp"></jsp:include>
   <table>
   <tr>
-  <td align="center">An error has occured!. Please check the details below</td>
+  <td align="center">An error has occured!. Please check the details below.</td>
   </tr>
   <tr>
   <td align="center"><%=exception.getMessage()%></td>
