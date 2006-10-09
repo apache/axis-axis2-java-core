@@ -19,7 +19,6 @@ package org.apache.axis2.handlers.addressing;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.ElementHelper;
-import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
@@ -138,7 +137,7 @@ public class AddressingOutHandler extends AddressingHandler {
         if (Final.WSA_FAULT_ACTION.equals(action) || Submission.WSA_FAULT_ACTION.equals(action)) {
             action = isFinalAddressingNamespace ? Final.WSA_FAULT_ACTION : Submission.WSA_FAULT_ACTION;
         }
-        else if (Final.WSA_SOAP_FAULT_ACTION.equals(action) && !isFinalAddressingNamespace) {
+        else if (!isFinalAddressingNamespace && Final.WSA_SOAP_FAULT_ACTION.equals(action)) {
             action = Submission.WSA_FAULT_ACTION;
         }
         
@@ -152,7 +151,7 @@ public class AddressingOutHandler extends AddressingHandler {
         OMElement detailElement = AddressingFaultsHelper.getDetailElementForAddressingFault(msgContext, addressingNamespaceObject);
         if(detailElement != null){
             //The difference between SOAP 1.1 and SOAP 1.2 fault messages is explained in the WS-Addressing Specs.
-            if(msgContext.isSOAP11() && isFinalAddressingNamespace){
+            if(isFinalAddressingNamespace && msgContext.isSOAP11()){
                 // Add detail as a wsa:FaultDetail header
                 if (!isAddressingHeaderAlreadyAvailable(Final.FAULT_HEADER_DETAIL, envelope, addressingNamespaceObject, replaceHeaders)) {
                     SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
@@ -270,7 +269,7 @@ public class AddressingOutHandler extends AddressingHandler {
         if (epr == null) {
             epr = new EndpointReference(anonymous);
         }
-        else if (epr.hasNoneAddress() && !isFinalAddressingNamespace) {
+        else if (!isFinalAddressingNamespace && epr.hasNoneAddress()) {
             return; //Omit the header.
         }
         else if (epr.hasAnonymousAddress()) {
@@ -337,22 +336,10 @@ public class AddressingOutHandler extends AddressingHandler {
         Object flag = msgContext.getProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS);
         if (JavaUtils.isTrueExplicitly(flag)) {
             List headers = envelope.getHeader().getHeaderBlocksWithNSURI(addressingNamespaceObject.getNamespaceURI());
-            Iterator iterator = headers.iterator();
 
-            while (iterator.hasNext()) {
-                OMElement elem = (OMElement)iterator.next();
-                if(elem instanceof SOAPHeaderBlock) {
-                    SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) elem;
-                    soapHeaderBlock.setMustUnderstand(true);  
-                } else {
-//                  Temp workaround to aviod hitting -  https://issues.apache.org/jira/browse/WSCOMMONS-103 
-//                  since Axis2 next release (1.1) will be based on Axiom 1.1 
-//                  We can get rid of this fix with the Axiom SNAPSHOT
-                    elem.addAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND,
-                             "1",
-                            envelope.getNamespace());
-                }
-                
+            for (int i = 0, size = headers.size(); i < size; i++) {
+                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headers.get(i);
+                soapHeaderBlock.setMustUnderstand(true);  
             }
         }
     }

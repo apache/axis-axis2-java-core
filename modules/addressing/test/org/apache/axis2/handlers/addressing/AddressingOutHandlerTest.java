@@ -98,8 +98,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setTo(epr);
         msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
 
-        epr =
-                new EndpointReference("http://www.replyTo.org/service/");
+        epr = new EndpointReference("http://www.replyTo.org/service/");
         msgCtxt.setReplyTo(epr);
 
         msgCtxt.setMessageID("123456-7890");
@@ -141,8 +140,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setTo(epr);
         msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
 
-        epr =
-                new EndpointReference("http://www.replyTo.org/service/");
+        epr = new EndpointReference("http://www.replyTo.org/service/");
         msgCtxt.setReplyTo(epr);
 
         msgCtxt.setMessageID("123456-7890");
