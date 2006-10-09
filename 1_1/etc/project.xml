@@ -121,6 +121,12 @@
             <organization>Sonic Software</organization>
         </developer>
         <developer>
+            <name>Brian DePradine</name>
+            <id>pradine</id>
+            <email>pradine AT uk.ibm.com</email>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
             <name>Jaliya Ekanayake</name>
             <id>jaliya</id>
             <email>jaliya AT opensource.lk</email>
