@@ -219,8 +219,8 @@ public class AdminAgent extends AbstractAgent {
             }
 
             OutputStream out = res.getOutputStream();
-            res.setContentType("text/xml");
-            out.write("Parameters  changed Successfully".getBytes());
+            res.setContentType("text/html");
+            out.write(getBasicHTML("Parameters Changed Successfully").getBytes());
             out.flush();
             out.close();
             req.getSession().removeAttribute(Constants.SERVICE);
@@ -238,6 +238,14 @@ public class AdminAgent extends AbstractAgent {
         renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
     }
 
+    private String getBasicHTML(String s) {
+        return "<html>\n" +
+                "<body>\n" +
+                s +
+                "</body>\n" +
+                "</html>";
+    }
+
 
     protected void processEngagingGlobally(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         HashMap modules = configContext.getAxisConfiguration().getModules();
@@ -252,7 +260,7 @@ public class AdminAgent extends AbstractAgent {
             try {
                 configContext.getAxisConfiguration().engageModule(new QName(moduleName));
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                        moduleName + " module engaged globally Successfully");
+                        moduleName + " module engaged globally successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -299,7 +307,7 @@ public class AdminAgent extends AbstractAgent {
                         configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         moduleName
-                                + " module engaged to the operation Successfully");
+                                + " module engaged to the operation successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -332,7 +340,7 @@ public class AdminAgent extends AbstractAgent {
                         configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                         moduleName
-                                + " module engaged to the service Successfully");
+                                + " module engaged to the service successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -367,7 +375,7 @@ public class AdminAgent extends AbstractAgent {
                     configContext.getAxisConfiguration());
             req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                     moduleName
-                            + " module engaged to the serviceGroup Successfully");
+                            + " module engaged to the service group successfully");
         }
 
         req.getSession().setAttribute("axisService", null);
@@ -518,19 +526,19 @@ public class AdminAgent extends AbstractAgent {
         AxisModule module = axisConfiguration.getModule(new QName(moduleName));
         if (type.equals("operation")) {
             if (service.isEngaged(module.getName()) || axisConfiguration.isEngaged(module.getName())) {
-                req.getSession().setAttribute("status", "can not disengage module has engage to top levle");
+                req.getSession().setAttribute("status", "can not dis-engage module. This module is engaged at the top level");
             } else {
                 String opName = req.getParameter("operation");
                 AxisOperation op = service.getOperation(new QName(opName));
                 op.disengageModule(module);
-                req.getSession().setAttribute("status", "disenged from the operation");
+                req.getSession().setAttribute("status", "dis-engaged from the operation");
             }
         } else {
             if (axisConfiguration.isEngaged(module.getName())) {
-                req.getSession().setAttribute("status", "can not disengage module has engage to top levle");
+                req.getSession().setAttribute("status", "can not dis-engage module. This module is engaged at the top level");
             } else {
                 service.disengageModule(axisConfiguration.getModule(new QName(moduleName)));
-                req.getSession().setAttribute("status", "disenged from the service");
+                req.getSession().setAttribute("status", "dis-engaged from the service");
             }
         }
         renderView("disengage.jsp", req, res);
