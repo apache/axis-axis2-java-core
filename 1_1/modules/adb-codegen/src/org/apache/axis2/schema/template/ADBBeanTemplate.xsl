@@ -1550,7 +1550,15 @@
                                     </xsl:choose>
                                 </xsl:when>
                                 <xsl:when test="@ours">
+                                    <xsl:if test="@nillable">
+                                       if (!"true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                    </xsl:if>
                                     object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(reader));
+                                    <xsl:if test="@nillable">
+                                       } else {
+                                           reader.getElementText(); // throw away text nodes if any.
+                                       }
+                                    </xsl:if>
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
