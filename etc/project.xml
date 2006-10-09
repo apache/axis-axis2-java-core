@@ -136,8 +136,9 @@
         <developer>
             <name>Thilina Gunarathne</name>
             <id>thilina</id>
-            <email>thilina AT opensource.lk</email>
-            <organization>Lanka Software Foundation</organization>
+            <email>thilina AT wso2.com</email>
+            <organization>WSO2</organization>
+	    <url>www.apache.org/~thilina</url>
         </developer>
         <developer>
             <name>Chathura Herath</name>
