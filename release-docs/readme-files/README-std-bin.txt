@@ -1,5 +1,5 @@
 ======================================================
-Apache Axis2 @axis2_version@ build (@release_date@)
+Apache Axis2 1.1-RC1 build (9th Oct 2006)
 Standard Binary Release
 
 http://ws.apache.org/axis2
@@ -9,10 +9,17 @@ This is the Standard Binary release of Axis2.
 
 The lib directory contains;
 
-1. axis2-kernel-@axis2_version@.jar
-2. axis2-adb-@axis2_version@.jar
-3. axis2-codegen-@axis2_version@.jar
-4. axis2-doom-@axis2_version@.jar
+1. axis2-adb-1.1-RC1.jar          
+2. axis2-adb-codegen-1.1-RC1.jar  
+3. axis2-codegen-1.1-RC1.jar      
+4. axis2-java2wsdl-1.1-RC1.jar    
+5. axis2-jibx-1.1-RC1.jar
+6. axis2-kernel-1.1-RC1.jar
+7. axis2-spring-1.1-RC1.jar
+8. axis2-tools-1.1-RC1.jar
+9. axis2-xmlbeans-1.1-RC1.jar
+10. axis2-saaj-1.1-RC1.jar
+
 5. All 3rd party distributable dependencies of the above jars
 
 The modules directory contains the deployable addressing

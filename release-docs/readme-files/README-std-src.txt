@@ -1,5 +1,5 @@
 ======================================================
-Apache Axis2 @axis2_version@ build (@release_date@)
+Apache Axis2 1.1-RC1 build (9th Oct 2006)
 Standard Source Release
 
 http://ws.apache.org/axis2
@@ -10,16 +10,19 @@ This is the Standard source release of Axis2.
 The modules directory contains source code of the following 
 Axis2 modules:
 
-1. core
-2. common
+1. kernel
+2. java2wsdl
 3. addressing
 4. adb
-5. codegen
-6. webapp
-7. java2wsdl
+5. adb-codegen
+6. codegen
+7. webapp
 8. jibx
 9. samples
 10. xmlbeans
+11. saaj
+12. spring
+13. tool
 
 The samples directory contains all the Axis2 module & service samples.
 
