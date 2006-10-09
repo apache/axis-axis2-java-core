@@ -43,7 +43,7 @@ public class Version {
      * @return the full version of this axis2
      */
     public static String getVersionText() {
-        return Messages.getMessage("axisVersionRaw") + " " + Messages.getMessage("axisBuiltOnRaw");
+        return Messages.getMessage("axisVersionRaw");
     }
 
     /**

@@ -27,4 +27,9 @@
             <j:expr value="${context.setVariable('maven.itest.skip', 'true')}"/>
         </j:if>
     </preGoal>
+
+    <preGoal name="jar:jar">
+        <ant:filter token="axisVersion" value="${pom.currentVersion}"/>
+        <ant:copy toDir="target/classes/org/apache/axis2/i18n" overwrite="true" filtering="on" file="src/org/apache/axis2/i18n/resource.properties" />
+    </preGoal>
 </project>
