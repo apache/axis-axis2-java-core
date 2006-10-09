@@ -17,11 +17,6 @@
   *
   */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 26, 2005
- * Time: 7:14:26 PM
- */
 %>
 <html>
   <head>

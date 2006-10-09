@@ -17,17 +17,11 @@
 *
 *
 */
-
-/**
-* Author : Deepal Jayasinghe
-* Date: May 26, 2005
-* Time: 7:14:26 PM
-*/
 --%>
 <html>
   <head>
     <jsp:include page="include/httpbase.jsp"/>
-    <title>Login to Axis2:: Administration page</title>
+    <title>Login to Axis2 :: Administration Page</title>
     <link href="axis2-web/css/axis-style.css" rel="stylesheet" type="text/css">
   </head>
 

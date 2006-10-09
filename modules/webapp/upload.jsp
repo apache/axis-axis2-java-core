@@ -18,17 +18,17 @@
 %>
 
 <jsp:include page="include/adminheader.jsp"/>
-<h2>Upload a AxisService Archive File</h2>
+<h2>Upload an Axis Service Archive File</h2>
 
-<p>You can upload a packaged Axis 2 AxisService from this page in two small steps.</p>
+<p>You can upload a packaged Axis2 service from this page in two small steps.</p>
 <ul>
-  <li>Browse to the location and select the axisService archive file you wish to upload</li>
-  <li>Click Upload button</li>
+  <li>Browse to the location and select the axis service archive file you wish to upload.</li>
+  <li>Click "Upload" button</li>
 </ul>
 <p>Simple as that!</p>
 
 <% if ("success".equals(request.getAttribute("status"))) { %>
-<font color="green">File <%= request.getAttribute("filename") %> successfully uploaded </font><br/><br/>
+<font color="green">File <%= request.getAttribute("filename") %> successfully uploaded. </font><br/><br/>
 <%
 } else if ("failure".equals(request.getAttribute("status"))) {
 %>

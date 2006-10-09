@@ -6,13 +6,6 @@
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.Map" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: Indika Deepal
-  Date: Sep 21, 2005
-  Time: 11:15:46 AM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"/>
 <h1>Running Context Hierarchy</h1>
@@ -45,7 +38,7 @@
 <%
 } else {
 %>
-<h4>No persistance property found in the context</h4>
+<h4>No persistance properties found in the context</h4>
 <%
         }
     }

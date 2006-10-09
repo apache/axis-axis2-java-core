@@ -3,13 +3,12 @@
 <%@ page import="org.apache.axis2.description.AxisService" %>
 <%@ page import="org.apache.axis2.description.Parameter" %>
 <%@ page import="org.apache.axis2.engine.AxisConfiguration" %>
-<%@ page import="org.apache.axis2.transport.http.AxisServlet" %>
 <%@ page import="org.apache.axis2.util.JavaUtils" %>
 <%@ page import="java.util.Hashtable" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"/>
-<h1>List Single service</h1>
+<h1>List Single Service</h1>
 <%
     String prefix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) + "/";
     String restPrefix = request.getAttribute("frontendHostUrl") + "rest/";
@@ -20,7 +19,7 @@
     if (Constants.IS_FAULTY.equals(isFault)) {
         Hashtable errornessservices = (Hashtable) request.getSession().getAttribute(Constants.ERROR_SERVICE_MAP);
 %>
-<h3>This Web axisService has deployment faults</h3><%
+<h3>This Axis service has deployment faults.</h3><%
 %><font color="red"><%=(String) errornessservices.get(servicName) %></font>
 <%
 
@@ -106,7 +105,7 @@
 <%
 } else {
 %>
-<h3><font color="red">No service found in this location</font></h3>
+<h3><font color="red">No services found in this location</font></h3>
 <%
         }
 
