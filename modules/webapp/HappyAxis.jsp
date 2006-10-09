@@ -10,20 +10,27 @@
                  org.apache.axis2.client.ServiceClient,
                  org.apache.axis2.context.ConfigurationContext,
                  org.apache.axis2.context.ConfigurationContextFactory,
-                 org.apache.axis2.transport.http.AxisServlet,
                  javax.servlet.ServletContext,
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
                  javax.servlet.jsp.JspWriter,
-                 javax.xml.parsers.SAXParser"
+                 javax.xml.parsers.SAXParser,
+                 javax.xml.parsers.SAXParserFactory"
          session="false" %>
-<%@ page import="javax.xml.parsers.SAXParserFactory" %>
 <%@ page import="javax.xml.stream.XMLOutputFactory" %>
 <%@ page import="javax.xml.stream.XMLStreamException" %>
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.io.InputStream" %>
 <%@ page import="java.io.StringWriter" %>
-<%@ page import="org.apache.axis2.deployment.WarBasedAxisConfigurator"%>
+<%@ page import="java.lang.Class" %>
+<%@ page import="java.lang.ClassNotFoundException"%>
+<%@ page import="java.lang.Exception" %>
+<%@ page import="java.lang.Integer" %>
+<%@ page import="java.lang.NoClassDefFoundError" %>
+<%@ page import="java.lang.SecurityException" %>
+<%@ page import="java.lang.String" %>
+<%@ page import="java.lang.System" %>
+<%@ page import="java.lang.Throwable" %>
 
 <%
     /*
@@ -68,8 +75,8 @@
     public String getInstallHints(HttpServletRequest request) {
 
         return "<B><I>Note:</I></B> On Tomcat 4.x and Java1.4, you may need to put libraries that contain "
-                        + "java.* or javax.* packages into CATALINA_HOME/common/lib"
-                        + "<br>jaxrpc.jar and saaj.jar are two such libraries.";
+                + "java.* or javax.* packages into CATALINA_HOME/common/lib"
+                + "<br>jaxrpc.jar and saaj.jar are two such libraries.";
     }
 
     /**
@@ -330,7 +337,7 @@
         return method;
     }
 
-    public boolean inVokeTheService() {
+    public boolean invokeTheService() {
         try {
             // since this one is an internal request we do not use public frontendHostUrl
             // for it
@@ -338,7 +345,7 @@
             IP = IP.substring(0, lastindex);
             ///axis2/axis2-web/services/version
             IP = IP.replaceAll("axis2-web", "");
-            
+
             OMElement payload = createEnvelope();
             ConfigurationContext configctx =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
@@ -356,7 +363,7 @@
             value = writer.toString();
             return true;
         } catch (AxisFault axisFault) {
-            System.out.println( value);
+            System.out.println(value);
             return false;
         } catch (XMLStreamException e) {
             value = e.getMessage();
@@ -389,13 +396,13 @@
             "Axis2 will not work",
             "http://jakarta.apache.org/commons/logging.html");
     needed += needClass(out, "javax.xml.stream.XMLStreamReader",
-            "stax-api-1.0.jar",
+            "stax-api-1.0.1.jar",
             "Streaming API for XML",
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");
     needed += needClass(out, "org.codehaus.stax2.XMLStreamWriter2",
-            "wstx-asl-2.8.jar",
-            "Streaming Impl for XML implementation",
+            "wstx-asl-3.0.1.jar",
+            "Streaming API for XML implementation",
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");
 
@@ -432,15 +439,12 @@
 %>
 <p>
     <B><I>Note:</I></B> Even if everything this page probes for is present,
-    there is no guarantee
-    your
-    web axisService will work, because there are many configuration options that
-    we do
-    not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
+    there is no guarantee your Axis Service will work, because there are many configuration options
+    that we do not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
 
 <h2>Examining Version Service</h2>
 <%
-    boolean serviceStatus = inVokeTheService();
+    boolean serviceStatus = invokeTheService();
     if (serviceStatus) {
 %>
 <p>
@@ -448,7 +452,7 @@
         Found the Axis2 default Version service and Axis2 is working
         properly.Now you can drop a service archive in axis2/WEB-INF/services.
 
-        Following output was produced while invoking the version axisService:
+        Following output was produced while invoking Axis2 version service
         <br>
         <%= value%></font>
 </p>
@@ -457,10 +461,10 @@
 } else {
 %>
 <p>
-    <font color="brown"> There was a problem of examine Version service , may be
+    <font color="brown"> There was a problem in Axis2 version service , may be
         the service not available or some thing has gone wrong. But this does
-        not mean system does not working !
-        Try to upload a some other service and check to see whether it is
+        not mean system is not working !
+        Try to upload some other service and check to see whether it is
         working.
         <br>
     </font>
