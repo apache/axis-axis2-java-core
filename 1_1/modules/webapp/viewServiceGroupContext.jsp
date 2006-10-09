@@ -4,13 +4,6 @@
 <%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.Map"%>
-<%--
-  Created by IntelliJ IDEA.
-  User: Indika Deepal
-  Date: Sep 21, 2005
-  Time: 10:41:24 AM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Runing Context hierachy</h1>
@@ -46,14 +39,14 @@
             }   else if("DELETE".equals(type)){
                 Object obj = serviceGroupContextsMap.remove(sgID);
                 if(obj != null){
-                 %>Reomoved the context <%
+                 %>Removed the context <%
             }else {
-                %>Unable to reomove the context <%
+                %>Unable to remove the context <%
             }
             }
         }
     } else {
-%> <h4>No Service Group Context found</h4><%
+%> <h4>No service group context found</h4><%
     }
 %>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>

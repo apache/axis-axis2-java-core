@@ -57,7 +57,7 @@
            <%
                     } else{
                            %>
-                <h3><font color="red" >No services are found in this location</font></h3>
+                <h3><font color="red" >No services found in this location.</font></h3>
  <%
                     }
 

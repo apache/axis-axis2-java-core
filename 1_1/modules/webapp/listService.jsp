@@ -25,11 +25,6 @@
     *
     */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 26, 2005
- * Time: 7:14:26 PM
- */
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"/>
@@ -179,7 +174,7 @@
         status = true;
     }
     if (!status) {
-%> There seems to be no services listed! Try hitting refresh <%
+%> No services listed! Try hitting refresh. <%
     }
 %>
 <jsp:include page="include/adminfooter.jsp" />

@@ -4,13 +4,6 @@
 <%@ page import="org.apache.axis2.context.ServiceGroupContext"%>
 <%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
-<%--
-  Created by IntelliJ IDEA.
-  User: Indika Deepal
-  Date: Sep 20, 2005
-  Time: 9:16:56 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Running Context Hierarchy</h1>
@@ -47,7 +40,7 @@
     %>  </ul>
         <%
             } else {%>
-	<p>No Running Contexts were found on the system.</p>
+	<p>No running contexts were found on the system.</p>
             <%}
 %>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>

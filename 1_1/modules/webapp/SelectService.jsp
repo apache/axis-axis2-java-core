@@ -21,37 +21,31 @@
 *
 *
 */
-
-/**
- * Author : Deepal Jayasinghe
- * Date: May 26, 2005
- * Time: 7:14:26 PM
- */
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 
   <%
-      String action ="";
-      String buttonName="" ;
-      String status = (String)request.getSession().getAttribute(Constants.SELECT_SERVICE_TYPE);
+      String action = "";
+      String buttonName = "";
+      String status = (String) request.getSession().getAttribute(Constants.SELECT_SERVICE_TYPE);
       String heading = "";
       String disc = "";
-      if(status != null && status.equals("MODULE")) {
+      if (status != null && status.equals("MODULE")) {
           action = "listOperations";
           buttonName = " View Operations";
-          heading = "Select a Service to View Operation Specific Chains";
-          disc = "Select a axisService from the combo and click on the 'View Operations' button to view Operation specific Chains.";
-      } else if(status != null && status.equals("VIEW")){
+          heading = "Select a service to view operation specific chains";
+          disc = "Select an Axis service from the combo and click on the 'View Operations' button to view operation specific Chains.";
+      } else if (status != null && status.equals("VIEW")) {
           buttonName = " View ";
           action = "viewServiceHandlers";
-          heading = "Select a Service to View Service Handlers";
-          disc = "Select a axisService from the combo and click on the 'View' button to view Service Handlers.";
-      } else if (status != null && status.equals("SERVICE_PARAMETER")){
+          heading = "Select a service to view service handlers";
+          disc = "Select an Axis service from the combo and click on the 'View' button to view service handlers.";
+      } else if (status != null && status.equals("SERVICE_PARAMETER")) {
           buttonName = " Edit Parameters ";
-          action = Constants.EDIR_SERVICE_PARA;
+          action = Constants.EDIT_SERVICE_PARA;
           heading = "Select a Service to Edit Parameters";
-          disc = "Select a axisService from the combo and click on the 'Edit Parameters' button to Edit Parameters.";
+          disc = "Select an Axis service from the combo and click on the 'Edit Parameters' button to edit parameters.";
       }
   %>
 <h1><%=heading%></h1>
