@@ -133,7 +133,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String VIEW_GLOBAL_HANDLERS = "viewGlobalHandlers";
     public static final String SELECT_SERVICE_FOR_PARA_EDIT = "selectServiceParaEdit";
     public static final String SELECT_SERVICE = "selectService";
-    public static final String EDIR_SERVICE_PARA = "editServicepara";
+    public static final String EDIT_SERVICE_PARA = "editServicepara";
     public static final String VIEW_SERVICE_HANDLERS = "viewServiceHandlers";
     public static final String USER_NAME = "userName";
     public static final String ADMIN_SECURITY_DISABLED = "disableAdminSecurity";
