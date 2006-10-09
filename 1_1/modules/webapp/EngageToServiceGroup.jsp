@@ -14,13 +14,21 @@
     request.getSession().setAttribute(Constants.SERVICE_GROUP_MAP,null);
 %>
 <h1>Engage Module for a Service Group</h1>
-<p>To engage a module for a set of services grouped as a axisService group, first select the module you want to engage and then select the axisService group you like the module to be engaged on and click "Engage".</p>
+<p>To engage a module for a set of services grouped as an axis service group,
+
+    <ol>
+        <li>select the module you want to engage </li>
+        <li>select the axis service group you like the module to be engaged.</li>
+        <li>click "Engage".</li>
+    </ol>
+
+    </p>
 <%
 	if (!moduleCol.iterator().hasNext()) {%>
 		<p>No modules are present to be engaged.</p>
 	<%} else {
 		if  (!servicesGroups.hasNext()) {%>
-		<p>No axisService groups are present to be engaged.</p>
+		<p>No Axis service groups are present to be engaged.</p>
 		<%} else {
 %>
 <form method="get" name="selectModuleForm" action="axis2-admin/engageToServiceGroup">

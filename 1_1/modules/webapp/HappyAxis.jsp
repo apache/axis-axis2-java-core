@@ -449,7 +449,7 @@
 %>
 <p>
     <font color="blue">
-        Found the Axis2 default Version service and Axis2 is working
+        Found Axis2 default Version service and Axis2 is working
         properly.Now you can drop a service archive in axis2/WEB-INF/services.
 
         Following output was produced while invoking Axis2 version service
@@ -493,10 +493,15 @@
     }
     if (e != null) {
         out.write("<pre>");
+        out.write("<table>");
         for (; e.hasMoreElements();) {
+            out.write("<tr>");
             String key = (String) e.nextElement();
-            out.write(key + "=" + System.getProperty(key) + "\n");
+            out.write("<td><strong>" + key + "</strong></td>");
+            out.write("<td>" + System.getProperty(key) + "</td>");
+            out.write("<tr>");
         }
+        out.write("</table>");
         out.write("</pre><p>");
     } else {
         out.write("System properties are not accessible<p>");

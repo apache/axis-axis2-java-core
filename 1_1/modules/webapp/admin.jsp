@@ -18,14 +18,14 @@
 *
 */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 26, 2005
- * Time: 7:14:26 PM
- */
 %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Welcome to Axis2 Web Admin Module !!</h1>
-<p>The Axis2 administration system can be used to check on the health of your Axis2 deployment. And you may use it to change any parameters at run time.</p> 
-<p>Other than changing of parameters the Web interface also has the ability to upload new services into Axis2 [Service hot-deployment].</p>
+<p>The Axis2 administration system can be used
+    <ul>
+        <li>to check on the health of your Axis2 deployment.</li>
+        <li>to change any parameters at run time.</li>
+        <li>to upload new services into Axis2 [Service hot-deployment].</li>
+    </ul>
+    </p>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>
