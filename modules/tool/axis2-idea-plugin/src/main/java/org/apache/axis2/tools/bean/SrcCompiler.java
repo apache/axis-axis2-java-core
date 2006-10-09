@@ -63,7 +63,7 @@ public class SrcCompiler extends Javac {
             classpath.add(path);
         }
         this.setClasspath(classpath);
-       this.setFork(false);
+       this.setFork(true);
         this.perform();
 
     }
