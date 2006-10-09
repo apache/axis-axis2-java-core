@@ -1624,11 +1624,16 @@
                                             java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
                                             object.set<xsl:value-of select="$javaName"/>(((org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
                                             reader.next();
-                                        } else if(reader.hasText()) {
-                                            //Do the usual conversion
-                                            java.lang.String content = reader.getText();
-                                            object.set<xsl:value-of select="$javaName"/>(
-                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
+                                        } else {
+                                            if(reader.isStartElement()) {
+                                                reader.next();
+                                            }
+                                            if(reader.hasText()) {
+                                                //Do the usual conversion
+                                                java.lang.String content = reader.getText();
+                                                object.set<xsl:value-of select="$javaName"/>(
+                                                        org.apache.axis2.databinding.utils.ConverterUtil.convertToBase64Binary(content));
+                                            }
                                         }
                                     }
 
@@ -2648,7 +2653,11 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
                                             object.set<xsl:value-of select="$javaName"/>(((org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder) ((org.apache.axiom.om.impl.llom.OMStAXWrapper) reader).getBuilder()).getDataHandler(id));
                                             reader.next();
-                                        } else if(reader.hasText()) {
+                                    } else {
+                                        if(reader.isStartElement()) {
+                                            reader.next();
+                                        }
+                                        if(reader.hasText()) {
                                             //Do the usual conversion
                                             java.lang.String content = reader.getText();
                                             object.set<xsl:value-of select="$javaName"/>(
