@@ -5,7 +5,6 @@
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="java.util.Iterator" %>
-<%@ page import="org.apache.axis2.transport.http.AxisServlet"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -43,7 +42,7 @@
   String moduleName;
   if (engagedModules.size() > 0) {
 %>
-<i>Engaged Modules for the axisService</i><ul>
+<i>Engaged Modules for the Axis Service</i><ul>
   <%
     for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
       AxisModule axisOperation = (AxisModule) iteratorm.next();

@@ -3,7 +3,6 @@
 <%@ page import="org.apache.axis2.description.AxisService"%>
 <%@ page import="java.util.Hashtable"%>
 <%@ page import="java.util.Iterator"%>
-<%@ page import="org.apache.axis2.transport.http.AxisServlet"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
   <head>
@@ -52,14 +51,13 @@
             while (opItr.hasNext()) {
                 AxisOperation axisOperation = (AxisOperation) opItr.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li>
-<%--                <br>Operation EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
                 <%
             }
            %></ul>
            <%
                     } else{
                            %>
-                <h3><font color="red" >No service found in this location</font></h3>
+                <h3><font color="red" >No services are found in this location</font></h3>
  <%
                     }
 

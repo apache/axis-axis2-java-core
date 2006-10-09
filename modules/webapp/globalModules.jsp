@@ -17,11 +17,6 @@
 *
 */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 26, 2005
- * Time: 7:14:26 PM
- */
         %>
 <%@ page import="org.apache.axis2.Constants,
                  javax.xml.namespace.QName,
@@ -56,7 +51,7 @@
 		}
          } else{
      %>
-     <h2><font color="blue">There is no module engaged globally</font></h2>
+     <h2><font color="blue">There are no modules engaged globally</font></h2>
                  <%
          }
                  %>

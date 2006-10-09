@@ -18,11 +18,6 @@
 *
 */
 
-/**
- * Author : Deepal Jayasinghe
- * Date: May 26, 2005
- * Time: 7:14:26 PM
- */
 %>
 <table width="100%" style="border-right:1px solid #CCCCCC;">
     <tr>
