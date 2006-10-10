@@ -68,8 +68,11 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		String resultName = operationDesc.getWebResultName();
 		Object bo = createBusinessObject(wrapperClazz, message);
 		createResponseHolders(bo, inputArgs, false);
-		//if result name is null and that means there is no webResult meaning its a void return.
-		if(resultName !=null){
+        // REVIEW: Is the the appropriate logic, to be checking for the existence of the annotation
+        //         as the decision point for getting into the property logic?  Note that even if the annotation
+        //         is not present, a default result name will be returned.
+		// If the WebResult annotation is present, then look up the result Name
+		if(operationDesc.isWebResultAnnotationSpecified()){
 		//if ReturnType is not of same type as JAXBBlock business Object then I will look for resultName in Business Object and return that.
 			Object resultObject = findProperty(resultName, bo);
 			return resultObject;

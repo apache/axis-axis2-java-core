@@ -152,6 +152,13 @@ public class OperationDescription {
     // ANNOTATION: @WebResult
     private WebResult           webResultAnnotation;
     private String              webResultName;
+    private String              webResultPartName;
+    // Default value per JSR-181 MR Sec 4.5.1, pg 23
+    public static final String  WebResult_TargetNamespace_DEFAULT = "";
+    private String              webResultTargetNamespace;
+    // Default value per JSR-181 MR sec 4.5, pg 24
+    public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
+    private Boolean             webResultHeader;
     
     OperationDescription(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
@@ -527,22 +534,92 @@ public class OperationDescription {
         }
         return webResultAnnotation;
     }
+    
     public boolean isWebResultAnnotationSpecified() {
         return getWebResult() != null;
     }
 
-    // TODO: This method returns null if the annotation is not specified; others return default values.  I think null is the correct thing to return; change the others
+    public boolean isOperationReturningResult() {
+        return !isOneWay() && (seiMethod.getReturnType() != Void.TYPE);
+    }
+
     public String getWebResultName() {
-        if (isWebResultAnnotationSpecified() && webResultName == null) {
-            if (!DescriptionUtils.isEmpty(getWebResult().name())) {
+        if (!isOperationReturningResult()) {
+            return null;
+        }
+        if (webResultName == null) {
+            if (getWebResult() != null && !DescriptionUtils.isEmpty(getWebResult().name())) {
                 webResultName = getWebResult().name();
             }
+            else if (getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT
+                    && getSoapBindingParameterStyle() == SOAPBinding.ParameterStyle.BARE) {
+                // Default for operation style DOCUMENT and paramater style BARE per JSR 181 MR Sec 4.5.1, pg 23
+                webResultName = getWebMethodOperationName() + "Response";
+                
+            }
             else {
-                // Defeault value is "return" per JSR-181 Sec. 4.5.1, p. 22
+                // Defeault value is "return" per JSR-181 MR Sec. 4.5.1, p. 22
                 webResultName = "return";
             }
         }
         return webResultName;
+    }
+    
+    public String getWebResultPartName() {
+        if (!isOperationReturningResult()) {
+            return null;
+        }
+        if (webResultPartName == null) {
+            if (getWebResult() != null && !DescriptionUtils.isEmpty(getWebResult().partName())) {
+                webResultPartName = getWebResult().partName();
+            }
+            else {
+                // Default is the WebResult.name per JSR-181 MR Sec 4.5.1, pg 23
+                webResultPartName = getWebResultName();
+            }
+        }
+        return webResultPartName;
+    }
+    
+    public String getWebResultTargetNamespace() {
+        if (!isOperationReturningResult()) {
+            return null;
+        }
+        if (webResultTargetNamespace == null) {
+            if (getWebResult() != null && !DescriptionUtils.isEmpty(getWebResult().targetNamespace())) {
+                webResultTargetNamespace = getWebResult().targetNamespace();
+            }
+            else if (getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT
+                    && getSoapBindingParameterStyle() == SOAPBinding.ParameterStyle.WRAPPED
+                    && !getWebResultHeader()) {
+                // Default for operation style DOCUMENT and paramater style WRAPPED and the return value
+                // does not map to a header per JSR-181 MR Sec 4.5.1, pg 23-24
+                webResultTargetNamespace = WebResult_TargetNamespace_DEFAULT;
+            }
+            else {
+                // Default is the namespace from the WebService per JSR-181 MR Sec 4.5.1, pg 23-24
+                webResultTargetNamespace = getEndpointInterfaceDescription().getEndpointDescription().getWebServiceTargetNamespace();
+            }
+            
+        }
+        return webResultTargetNamespace;
+    }
+    
+    public boolean getWebResultHeader() {
+        if (!isOperationReturningResult()) {
+            return false;
+        }
+        if (webResultHeader == null) {
+            if (getWebResult() != null) {
+                // Unlike the elements with a String value, if the annotation is present, exclude will always 
+                // return a usable value since it will default to FALSE if the element is not present.
+                webResultHeader = new Boolean(getWebResult().header());
+            }
+            else {
+                webResultHeader = WebResult_Header_DEFAULT;
+            }
+        }
+        return webResultHeader.booleanValue();
     }
 
     // ===========================================

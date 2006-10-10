@@ -18,7 +18,9 @@
 
 package org.apache.axis2.jaxws.description;
 
+import javax.jws.Oneway;
 import javax.jws.WebMethod;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.RequestWrapper;
@@ -160,9 +162,14 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     // Check the WebParam Names (see note above) 
                     assertEquals(1, webParamNames.length);
                     assertEquals("invoke_str", webParamNames[0]);
-                    // Check the lack of a WebResult annotation
-                    assertEquals(false, operation.isWebResultAnnotationSpecified());
-                    assertEquals(null, operation.getWebResultName());
+                    // Check the lack of a WebResult annotation and the default values for
+                    // SOAPBinding Style=DOCUMENT, Use=LITERAL, ParamStyle=WRAPPED
+                    // Note that the SOAPBinding annotation is also not present and thus fully defaulted.
+                    assertNull(operation.getWebResult());
+                    assertEquals("return", operation.getWebResultName());
+                    assertEquals("return", operation.getWebResultPartName());
+                    assertEquals("", operation.getWebResultTargetNamespace());
+                    assertFalse(operation.getWebResultHeader());
                 }
             }
             else if (checkParams.length == 2) {
@@ -178,9 +185,14 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     // Check the WebParam Names (see note above) 
                     assertEquals(2, webParamNames.length);
                     assertEquals("invoke_str", webParamNames[0]);
-                    // Check the lack of a WebResult annotation
-                    assertEquals(false, operation.isWebResultAnnotationSpecified());
-                    assertEquals(null, operation.getWebResultName());
+                    // Check the lack of a WebResult annotation and the default values for
+                    // SOAPBinding Style=DOCUMENT, Use=LITERAL, ParamStyle=WRAPPED
+                    // Note that the SOAPBinding annotation is also not present and thus fully defaulted.
+                    assertNull(operation.getWebResult());
+                    assertEquals("return", operation.getWebResultName());
+                    assertEquals("return", operation.getWebResultPartName());
+                    assertEquals("", operation.getWebResultTargetNamespace());
+                    assertFalse(operation.getWebResultHeader());
                 }
             }
             else {
@@ -216,9 +228,14 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     assertEquals(3, webParamNames.length);
                     assertEquals("twoWayHolder_str", webParamNames[0]);
                     assertEquals("twoWayHolder_int", webParamNames[1]);
-                    // Check the lack of a WebResult annotation
-                    assertEquals(false, operation.isWebResultAnnotationSpecified());
-                    assertEquals(null, operation.getWebResultName());
+                    // Check the lack of a WebResult annotation and the default values for
+                    // SOAPBinding Style=DOCUMENT, Use=LITERAL, ParamStyle=WRAPPED
+                    // Note that the SOAPBinding annotation is also not present and thus fully defaulted.
+                    assertNull(operation.getWebResult());
+                    assertEquals("return", operation.getWebResultName());
+                    assertEquals("return", operation.getWebResultPartName());
+                    assertEquals("", operation.getWebResultTargetNamespace());
+                    assertFalse(operation.getWebResultHeader());
                 }
             }
             else if (checkParams.length == 2) {
@@ -234,9 +251,14 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     assertEquals(2, webParamNames.length);
                     assertEquals("twoWayHolder_str", webParamNames[0]);
                     assertEquals("twoWayHolder_int", webParamNames[1]);
-                    // Check the lack of a WebResult annotation
-                    assertEquals(false, operation.isWebResultAnnotationSpecified());
-                    assertEquals(null, operation.getWebResultName());
+                    // Check the lack of a WebResult annotation and the default values for
+                    // SOAPBinding Style=DOCUMENT, Use=LITERAL, ParamStyle=WRAPPED
+                    // Note that the SOAPBinding annotation is also not present and thus fully defaulted.
+                    assertNull(operation.getWebResult());
+                    assertEquals("return", operation.getWebResultName());
+                    assertEquals("return", operation.getWebResultPartName());
+                    assertEquals("", operation.getWebResultTargetNamespace());
+                    assertFalse(operation.getWebResultHeader());
                 }
             }
             else {
@@ -253,16 +275,27 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNotNull(checkEmptyParams);
         assertEquals(checkEmptyParams.length, 0);
         assertEquals(true, operations[0].isOneWay());
-        assertEquals(false, operations[0].isWebResultAnnotationSpecified());
+        // Check the lack of a WebResult annotation and the default values for
+        // a ONE-WAY / VOID operation with a SOAPBinding Style=DOCUMENT, Use=LITERAL, ParamStyle=WRAPPED
+        // Note that the SOAPBinding annotation is also not present and thus fully defaulted.
+        assertNull(operations[0].getWebResult());
+        assertFalse(operations[0].isWebResultAnnotationSpecified());
+        assertFalse(operations[0].isOperationReturningResult());
         assertEquals(null, operations[0].getWebResultName());
+        assertEquals(null, operations[0].getWebResultPartName());
+        assertEquals(null, operations[0].getWebResultTargetNamespace());
+        assertFalse(operations[0].getWebResultHeader());
         
         // Test two-way method for lack of OneWay annotation and WebResult annotation
         operations = endpointIntfDesc.getOperation("invoke");
         assertNotNull(operations);
         assertEquals(1, operations.length);
         assertEquals(false, operations[0].isOneWay());
-        assertEquals(true, operations[0].isWebResultAnnotationSpecified());
+        assertNotNull(operations[0].getWebResult());
         assertEquals("return_str", operations[0].getWebResultName());
+        assertEquals("return_str", operations[0].getWebResultPartName());
+        assertEquals("", operations[0].getWebResultTargetNamespace());
+        assertFalse(operations[0].getWebResultHeader());
     }
     
     // ===========================================
@@ -277,6 +310,15 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
         assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
+        
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("echoString")[0];
+        // Verify WebResult annotation default values for DOC/LIT/WRAPPED from a defaulted SOAPBinding
+        assertNull(operationDesc.getWebResult());
+        assertEquals("return", operationDesc.getWebResultName());
+        assertEquals("return", operationDesc.getWebResultPartName());
+        assertEquals("", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
     }
 
     public void testSOAPBindingDocEncBare() {
@@ -331,6 +373,14 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // TODO: Tests for request and response wrapper namespace; currently throws UnsupportedOperationException
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getResponseWrapperClassName());
+        // Test WebResult annotation defaults
+        assertNull(operationDesc.getWebResult());
+        assertFalse(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("return", operationDesc.getWebResultName());
+        assertEquals("return", operationDesc.getWebResultPartName());
+        assertEquals("", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
 
         operationDesc = testEndpointInterfaceDesc.getOperation("bareParams")[0];
         assertNotNull(operationDesc);
@@ -340,6 +390,14 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNull(operationDesc.getResponseWrapperTargetNamespace());
         assertNull(operationDesc.getRequestWrapperClassName());
         assertNull(operationDesc.getResponseWrapperClassName());
+        // Test WebResult annotation defaults
+        assertNull(operationDesc.getWebResult());
+        assertFalse(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("bareParamsResponse", operationDesc.getWebResultName());
+        assertEquals("bareParamsResponse", operationDesc.getWebResultPartName());
+        assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
 
         // Test paramaterStyle = BARE set a the type level with various combinations of method annotation setting
         testEndpointInterfaceDesc = getEndpointInterfaceDesc(DefaultReqRspWrapperBareTestImpl.class);
@@ -423,6 +481,174 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertTrue(operationDesc.getWebMethodExclude());
 
     }
+    
+    public void testWebResult() {
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(WebResultTestImpl.class);
+        
+        // DOCUMENT / LITERAL / WRAPPED methods
+        
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("method0")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getWebResult());
+        assertFalse(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("return", operationDesc.getWebResultName());
+        assertEquals("return", operationDesc.getWebResultPartName());
+        assertEquals("", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+        
+        operationDesc = testEndpointInterfaceDesc.getOperation("method1")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getWebResult());
+        assertFalse(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("return", operationDesc.getWebResultName());
+        assertEquals("return", operationDesc.getWebResultPartName());
+        assertEquals("", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method2")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("return", operationDesc.getWebResultName());
+        assertEquals("return", operationDesc.getWebResultPartName());
+        assertEquals("", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method3")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("resultName", operationDesc.getWebResultName());
+        assertEquals("resultName", operationDesc.getWebResultPartName());
+        assertEquals("", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method4")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("resultName", operationDesc.getWebResultName());
+        assertEquals("partName", operationDesc.getWebResultPartName());
+        assertEquals("http://result.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method5")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("resultName5", operationDesc.getWebResultName());
+        assertEquals("partName5", operationDesc.getWebResultPartName());
+        assertEquals("http://result.test.target.namespace.5/", operationDesc.getWebResultTargetNamespace());
+        assertTrue(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method6")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getWebResult());
+        assertFalse(operationDesc.isWebResultAnnotationSpecified());
+        assertFalse(operationDesc.isOperationReturningResult());
+        assertEquals(null, operationDesc.getWebResultName());
+        assertEquals(null, operationDesc.getWebResultPartName());
+        assertEquals(null, operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method7")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("resultName7", operationDesc.getWebResultName());
+        assertEquals("partName7", operationDesc.getWebResultPartName());
+        assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
+        assertTrue(operationDesc.getWebResultHeader());
+        
+        // DOCUMENT / LITERAL / BARE methods
+        
+        operationDesc = testEndpointInterfaceDesc.getOperation("method0_bare")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getWebResult());
+        assertFalse(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("method0_bareResponse", operationDesc.getWebResultName());
+        assertEquals("method0_bareResponse", operationDesc.getWebResultPartName());
+        assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+        
+        operationDesc = testEndpointInterfaceDesc.getOperation("method1_bare")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getWebResult());
+        assertFalse(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("renamedMethod1BareResponse", operationDesc.getWebResultName());
+        assertEquals("renamedMethod1BareResponse", operationDesc.getWebResultPartName());
+        assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method2_bare")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("renamedMethod2BareResponse", operationDesc.getWebResultName());
+        assertEquals("renamedMethod2BareResponse", operationDesc.getWebResultPartName());
+        assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method3_bare")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("resultName", operationDesc.getWebResultName());
+        assertEquals("resultName", operationDesc.getWebResultPartName());
+        assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method4_bare")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("resultName", operationDesc.getWebResultName());
+        assertEquals("partName", operationDesc.getWebResultPartName());
+        assertEquals("http://result.bare.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method5_bare")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("resultName5", operationDesc.getWebResultName());
+        assertEquals("partName5", operationDesc.getWebResultPartName());
+        assertEquals("http://result.bare.test.target.namespace.5/", operationDesc.getWebResultTargetNamespace());
+        assertTrue(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method6_bare")[0];
+        assertNotNull(operationDesc);
+        assertNull(operationDesc.getWebResult());
+        assertFalse(operationDesc.isWebResultAnnotationSpecified());
+        assertFalse(operationDesc.isOperationReturningResult());
+        assertEquals(null, operationDesc.getWebResultName());
+        assertEquals(null, operationDesc.getWebResultPartName());
+        assertEquals(null, operationDesc.getWebResultTargetNamespace());
+        assertFalse(operationDesc.getWebResultHeader());
+
+        operationDesc = testEndpointInterfaceDesc.getOperation("method7")[0];
+        assertNotNull(operationDesc);
+        assertNotNull(operationDesc.getWebResult());
+        assertTrue(operationDesc.isWebResultAnnotationSpecified());
+        assertTrue(operationDesc.isOperationReturningResult());
+        assertEquals("resultName7", operationDesc.getWebResultName());
+        assertEquals("partName7", operationDesc.getWebResultPartName());
+        assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
+        assertTrue(operationDesc.getWebResultHeader());
+    }
 
     /*
      * Method to return the endpoint interface description for a given implementation class.
@@ -448,6 +674,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
 // ============================================================================
 // SOAPBindingDefaultTest service implementation class
+// @SOAPBinding values: style=DOCUMENT, use=LITERAL, paramaterStyle=WRAPPED
+// @WebResult values: are all defaulted
 // ============================================================================
 @WebService()
 class SOAPBindingDefaultTestImpl {
@@ -468,7 +696,7 @@ class SOAPBindingDocEncBareTestImpl {
 }
 // ============================================================================
 // SOAPBindingDefaultMethodTest service implementation class
-// Note that style should default to DOCUMENT based on Type annotation
+// Note that style will default to DOCUMENT based on Type annotation
 // ============================================================================
 @WebService()
 class SOAPBindingDefaultMethodTestImpl {
@@ -553,6 +781,113 @@ class WebMethodTestImpl {
     
     @WebMethod(exclude=true)
     public String method5(String s) {
+        return s;
+    }
+}
+
+// ===============================================
+// Web Result 
+// ===============================================
+@WebService(targetNamespace="http://service.test.target.namespace/")
+// Default SOAPBinding Style=DOCUMENT, Use=LITERAL, ParamStyle=WRAPPED
+class WebResultTestImpl {
+    // DOCUMENT / LITERAL / WRAPPED methods
+    public String method0(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod1")
+    public String method1(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod2")
+    @WebResult()
+    public String method2(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod3")
+    @WebResult(name="resultName")
+    public String method3(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod4")
+    @WebResult(name="resultName", partName="partName", targetNamespace="http://result.test.target.namespace/")
+    public String method4(String s) {
+        return s;
+    }
+
+    @WebMethod(operationName="renamedMethod5")
+    @WebResult(name="resultName5", partName="partName5", targetNamespace="http://result.test.target.namespace.5/", header=true)
+    public String method5(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod6")
+    @Oneway
+    public void method6(String s) {
+        return;
+    }
+
+    @WebMethod(operationName="renamedMethod7")
+    @WebResult(name="resultName7", partName="partName7", header=true)
+    public String method7(String s) {
+        return s;
+    }
+
+    // DOCUMENT / LITERAL / BARE methods
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    public String method0_bare(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod1Bare")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    public String method1_bare(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod2Bare")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult()
+    public String method2_bare(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod3Bare")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult(name="resultName")
+    public String method3_bare(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod4Bare")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult(name="resultName", partName="partName", targetNamespace="http://result.bare.test.target.namespace/")
+    public String method4_bare(String s) {
+        return s;
+    }
+
+    @WebMethod(operationName="renamedMethod5Bare")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult(name="resultName5", partName="partName5", targetNamespace="http://result.bare.test.target.namespace.5/", header=true)
+    public String method5_bare(String s) {
+        return s;
+    }
+    
+    @WebMethod(operationName="renamedMethod6Bare")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @Oneway
+    public void method6_bare(String s) {
+        return;
+    }
+
+    @WebMethod(operationName="renamedMethod7Bare")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult(name="resultName7", partName="partName7", header=true)
+    public String method7_bare(String s) {
         return s;
     }
 }

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target (ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WebResult {
-	String name() default "return";
+	String name() default "";
 	String targetNamespace() default "";
 	boolean header() default false;
 	String partName() default "";
