@@ -45,8 +45,10 @@ import java.util.ArrayList;
  */
 public class ServiceClient {
 
-    /** Base name used for a service created without an existing configuration. */
-    public static final String ANON_SERVICE = "annonService";
+    /**
+     * Base name used for a service created without an existing configuration.
+     */
+    public static final String ANON_SERVICE = "anonService";
 
     /**
      * Operation name used for an anonymous out-only operation (meaning we send
@@ -54,7 +56,7 @@ public class ServiceClient {
      * In-Only operation).
      */
     public static final QName ANON_OUT_ONLY_OP = new QName(
-            "annonOutonlyOp");
+            "anonOutonlyOp");
 
     /**
      * Operation name used for an anonymous robust-out-only operation
@@ -62,13 +64,13 @@ public class ServiceClient {
      * equivalent to a WSDL Robust-In-Only operation).
      */
     public static final QName ANON_ROBUST_OUT_ONLY_OP = new QName(
-            "annonRobustOp");
+            "anonRobustOp");
 
     /**
      * Operation name used for an anonymous in-out operation (meaning we sent a
      * message and receive a response, equivalent to a WSDL In-Out operation).
      */
-    public static final QName ANON_OUT_IN_OP = new QName("annonOutInOp");
+    public static final QName ANON_OUT_IN_OP = new QName("anonOutInOp");
 
     // the meta-data of the service that this client access
     private AxisService axisService;
@@ -103,7 +105,7 @@ public class ServiceClient {
      * @param configContext The configuration context under which this service lives (may
      *                      be null, in which case a new local one will be created)
      * @param axisService   The service for which this is the client (may be
-     * <code>null</code>, in which case an anonymous service will be created)
+     *                      <code>null</code>, in which case an anonymous service will be created)
      * @throws AxisFault if something goes wrong while creating a config context (if
      *                   needed)
      */
@@ -141,7 +143,7 @@ public class ServiceClient {
      * We are going to make this policy aware
      *
      * @param configContext
-     * @param wsdl4jDefinition 
+     * @param wsdl4jDefinition
      * @param wsdlServiceName
      * @param portName
      * @throws AxisFault
@@ -265,7 +267,7 @@ public class ServiceClient {
      * operation client. Any values set in this configuration will be used for
      * each client, with the standard values for the client still used for any
      * values not set in the override configuration.
-     * 
+     *
      * @param overrideOptions
      */
     public void setOverrideOptions(Options overrideOptions) {
@@ -345,7 +347,7 @@ public class ServiceClient {
      *
      * @param headerName
      * @param headerText
-     * @throws AxisFault 
+     * @throws AxisFault
      */
     public void addStringHeader(QName headerName, String headerText) throws AxisFault {
         if (headerName.getNamespaceURI() == null || "".equals(headerName.getNamespaceURI())) {
@@ -363,10 +365,10 @@ public class ServiceClient {
      * more control, you can instead create a client for the operation and use
      * that client to execute the send.
      *
-     * @see #createClient(QName)
      * @param elem XML to send
      * @throws AxisFault if something goes wrong while sending, or if a fault is
      *                   received in response (per the Robust In-Only MEP).
+     * @see #createClient(QName)
      */
     public void sendRobust(OMElement elem) throws AxisFault {
         sendRobust(ANON_ROBUST_OUT_ONLY_OP, elem);
@@ -378,11 +380,11 @@ public class ServiceClient {
      * control, you can instead create a client for the operation and use that
      * client to execute the send.
      *
-     * @see #createClient(QName)
      * @param operation name of operation to be invoked (non-<code>null</code>)
      * @param elem      XML to send
      * @throws AxisFault if something goes wrong while sending it or if a fault is
      *                   received in response (per the Robust In-Only MEP).
+     * @see #createClient(QName)
      */
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
         if (options.isUseSeparateListener()) {
@@ -453,9 +455,9 @@ public class ServiceClient {
      * such as "Host not found"). For more control, you can instead create a
      * client for the operation and use that client to execute the send.
      *
-     * @see #createClient(QName)
      * @param elem XML to send
      * @throws AxisFault ff something goes wrong trying to send the XML
+     * @see #createClient(QName)
      */
     public void fireAndForget(OMElement elem) throws AxisFault {
         fireAndForget(ANON_OUT_ONLY_OP, elem);
@@ -468,10 +470,10 @@ public class ServiceClient {
      * as "Host not found"). For more control, you can instead create a client
      * for the operation and use that client to execute the send.
      *
-     * @see #createClient(QName)
      * @param operation name of operation to be invoked (non-<code>null</code>)
      * @param elem      XML to send
      * @throws AxisFault if something goes wrong trying to send the XML
+     * @see #createClient(QName)
      */
     public void fireAndForget(QName operation, OMElement elem) throws AxisFault {
         // look up the appropriate axisop and create the client
@@ -491,10 +493,10 @@ public class ServiceClient {
      * can instead create a client for the operation and use that client to
      * execute the exchange.
      *
-     * @see #createClient(QName)
      * @param elem
      * @return response
      * @throws AxisFault
+     * @see #createClient(QName)
      */
     public OMElement sendReceive(OMElement elem) throws AxisFault {
         return sendReceive(ANON_OUT_IN_OP, elem);
@@ -580,10 +582,10 @@ public class ServiceClient {
      * create a client for the operation and use that client to execute the
      * exchange.
      *
-     * @see #createClient(QName)
      * @param elem
      * @param callback
      * @throws AxisFault
+     * @see #createClient(QName)
      */
     public void sendReceiveNonBlocking(OMElement elem, Callback callback)
             throws AxisFault {
@@ -597,11 +599,11 @@ public class ServiceClient {
      * create a client for the operation and use that client to execute the
      * exchange.
      *
-     * @see #createClient(QName)
      * @param operation name of operation to be invoked (non-<code>null</code>)
      * @param elem
      * @param callback
      * @throws AxisFault
+     * @see #createClient(QName)
      */
     public void sendReceiveNonBlocking(QName operation, OMElement elem,
                                        Callback callback) throws AxisFault {
@@ -629,9 +631,9 @@ public class ServiceClient {
      * constructed operation client to use the current normal and override
      * options. This method is used internally, and also by generated client
      * stub code.
-     * 
+     *
      * @param operation qualified name of operation (local name is operation
-     *        name, namespace URI is just the empty string)
+     *                  name, namespace URI is just the empty string)
      * @return client configured to talk to the given operation
      * @throws AxisFault if the operation is not found
      */
@@ -655,24 +657,12 @@ public class ServiceClient {
     }
 
     /**
-     * Stops the transports and shuts down modules. This should only be called
-     * when you're done using all instances of this class created for a
-     * particular {@link org.apache.axis2.context.ConfigurationContext}, since
-     * all these instances will share a common set of listeners and modules.
-     *
-     * @throws AxisFault
-     */
-    public void finalizeInvoke() throws AxisFault {
-        configContext.getListenerManager().stop();
-    }
-
-    /**
      * Return the SOAP factory to use depending on what options have been set.
      * If the SOAP version has not be seen in the options, version 1.1 is the
      * default.
      *
-     * @see Options#setSoapVersionURI()
      * @return the SOAP factory
+     * @see Options#setSoapVersionURI()
      */
     private SOAPFactory getSOAPFactory() {
         String soapVersionURI = options.getSoapVersionURI();
@@ -706,7 +696,7 @@ public class ServiceClient {
 
     /**
      * Add all configured headers to a SOAP envelope.
-     * 
+     *
      * @param envelope
      */
     public void addHeadersToEnvelope(SOAPEnvelope envelope) {
@@ -721,7 +711,7 @@ public class ServiceClient {
 
     /**
      * Get the endpoint reference for this client using a particular transport.
-     * 
+     *
      * @param transport transport name (non-<code>null</code>)
      * @return local endpoint
      * @throws AxisFault
@@ -741,7 +731,7 @@ public class ServiceClient {
 
     /**
      * Set the endpoint reference for the service.
-     * 
+     *
      * @param targetEpr
      */
     public void setTargetEPR(EndpointReference targetEpr) {
@@ -816,6 +806,9 @@ public class ServiceClient {
             if (asg != null) {
                 axisConfiguration.removeServiceGroup(serviceGroupName);
             }
+        } else {
+            //Stopping listeners if you start any
+            configContext.getListenerManager().stop();
         }
     }
 }

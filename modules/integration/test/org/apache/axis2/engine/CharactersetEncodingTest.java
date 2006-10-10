@@ -98,7 +98,7 @@ public class CharactersetEncodingTest extends UtilServerBasedTestCase implements
             assertNotNull("Result value is null", result);
 
             assertEquals("Expected result not received.", expected, result);
-            sender.finalizeInvoke();
+            sender.cleanup();
         } catch (AxisFault e) {
             log.error(e, e);
             assertFalse("Failure in processing", true);

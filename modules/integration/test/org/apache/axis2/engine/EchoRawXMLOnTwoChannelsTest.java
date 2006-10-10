@@ -125,7 +125,7 @@ public class EchoRawXMLOnTwoChannelsTest extends UtilServerBasedTestCase impleme
             }
             log.info("send the reqest");
         } finally {
-            sender.finalizeInvoke();
+            sender.cleanup();
         }
 
     }

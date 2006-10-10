@@ -242,7 +242,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         assertNotNull(env);
         env.getBody().serialize(StAXUtils.createXMLStreamWriter(
                 System.out));
-        sender.finalizeInvoke();
+        sender.cleanup();
     }
 }
 

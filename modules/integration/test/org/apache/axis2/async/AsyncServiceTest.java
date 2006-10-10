@@ -137,7 +137,7 @@ public class AsyncServiceTest extends UtilServerBasedTestCase implements TestCon
             }
         } finally {
             if (sender != null)
-                sender.finalizeInvoke();
+                sender.cleanup();
         }
 
     }
