@@ -392,6 +392,43 @@ public class Phase implements Handler {
         checkPostConditions(msgctx);
     }
 
+    public void flowComplete(MessageContext msgContext)
+    {
+      boolean isDebugEnabled = log.isDebugEnabled();
+      
+      if (isDebugEnabled)
+      {
+        log.debug("Invoking flowComplete() in Phase \"" + phaseName + "\"");
+      }
+      
+      /*This will be non-zero if we failed during execution of one of the
+       *handlers in this phase*/
+      int currentHandlerIndex = msgContext.getCurrentPhaseIndex();
+      if (currentHandlerIndex == 0)
+      {
+        currentHandlerIndex = handlers.size();
+      }
+      else
+      {
+        /*We need to set it to 0 so that any previous phases will execute all
+         * of their handlers.*/
+        msgContext.setCurrentPhaseIndex(0);
+      }
+      
+      for (; currentHandlerIndex > 0; currentHandlerIndex--)
+      {
+        Handler handler = (Handler) handlers.get(currentHandlerIndex-1);
+        
+        if (isDebugEnabled)
+        {
+          log.debug("Invoking flowComplete() for Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
+        }
+        
+        handler.flowComplete(msgContext);
+      }
+    }
+        
+    
     public String toString() {
         return this.getPhaseName();
     }
