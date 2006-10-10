@@ -128,7 +128,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
     public void close() throws SOAPException {
         if (serviceClient != null) {
             try {
-                serviceClient.finalizeInvoke();
+                serviceClient.cleanup();
             } catch (AxisFault axisFault) {
                 throw new SOAPException(axisFault.getMessage());
             }

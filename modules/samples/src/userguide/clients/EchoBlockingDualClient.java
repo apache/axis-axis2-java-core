@@ -66,7 +66,7 @@ public class EchoBlockingDualClient {
             ex.printStackTrace();
         } finally{
             try {
-                sender.finalizeInvoke();
+                sender.cleanup();
             } catch (AxisFault axisFault) {
                 //
             }

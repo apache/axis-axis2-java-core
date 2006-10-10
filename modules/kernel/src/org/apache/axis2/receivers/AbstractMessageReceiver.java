@@ -23,9 +23,6 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.MultiParentClassLoader;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.Loader;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
@@ -33,6 +30,8 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.MultiParentClassLoader;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -45,10 +44,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
     protected void saveTCCL(MessageContext msgContext) {
         AxisService service =
-                msgContext.getOperationContext().getServiceContext().getAxisService();
-        if(!init) {
+                msgContext.getAxisService();
+        if (!init) {
             init = true;
-            if(service.getParameter(Constants.SERVICE_TCCL) != null) {
+            if (service.getParameter(Constants.SERVICE_TCCL) != null) {
                 Parameter serviceObjectParam =
                         service.getParameter(Constants.SERVICE_TCCL);
                 serviceTCCL = ((String)
@@ -74,10 +73,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     }
 
     protected void restoreTCCL(MessageContext msgContext) {
-        if(serviceTCCL != null) {
+        if (serviceTCCL != null) {
             ClassLoader oldTCCL = (ClassLoader) msgContext.getProperty(SAVED_TCCL);
-            if(oldTCCL != null) {
-                if(serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
+            if (oldTCCL != null) {
+                if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
                     Thread.currentThread().setContextClassLoader(oldTCCL);
                 } else if (serviceTCCL.equals(Constants.TCCL_SERVICE)) {
                     Thread.currentThread().setContextClassLoader(oldTCCL);
@@ -96,7 +95,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     protected Object makeNewServiceObject(MessageContext msgContext) throws AxisFault {
         try {
             AxisService service =
-                    msgContext.getOperationContext().getServiceContext().getAxisService();
+                    msgContext.getAxisService();
             ClassLoader classLoader = service.getClassLoader();
 
             // allow alternative definition of makeNewServiceObject
@@ -109,9 +108,9 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                 // Find static getServiceObject() method, call it if there   
                 Method method = serviceObjectMaker.
                         getMethod("getServiceObject",
-                                  new Class[] { AxisService.class });
+                                new Class[]{AxisService.class});
                 if (method != null)
-                    return method.invoke(serviceObjectMaker.newInstance(), new Object[] { service });
+                    return method.invoke(serviceObjectMaker.newInstance(), new Object[]{service});
             }
 
             Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);
@@ -148,7 +147,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
      * @throws AxisFault
      */
     protected Object getTheImplementationObject(MessageContext msgContext) throws AxisFault {
-        ServiceContext serviceContext = msgContext.getOperationContext().getServiceContext();
+        ServiceContext serviceContext = msgContext.getServiceContext();
         Object serviceimpl = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
         if (serviceimpl != null) {
             // since service impl is there in service context , take that from there

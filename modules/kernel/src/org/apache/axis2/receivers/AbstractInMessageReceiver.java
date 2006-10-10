@@ -34,6 +34,7 @@ public abstract class AbstractInMessageReceiver extends AbstractMessageReceiver 
         try {
             saveTCCL(messageCtx);
             invokeBusinessLogic(messageCtx);
+            
         } finally {
             restoreTCCL(messageCtx);
         }

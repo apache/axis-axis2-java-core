@@ -111,7 +111,7 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
         }
 //        call.close();
 //
-        sender.finalizeInvoke();
+        sender.cleanup();
         log.info("send the reqest");
     }
 
@@ -128,7 +128,7 @@ public class CommonsHTTPEchoRawXMLTest extends UtilServerBasedTestCase implement
         OMElement result = sender.sendReceive(payload);
 
         TestingUtils.campareWithCreatedOMElement(result);
-        sender.finalizeInvoke();
+        sender.cleanup();
 //        call.close();
     }
 

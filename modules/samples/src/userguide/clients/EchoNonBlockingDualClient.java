@@ -76,7 +76,7 @@ public class EchoNonBlockingDualClient {
             ex.printStackTrace();
         } finally {
             try {
-                sender.finalizeInvoke();
+                sender.cleanup();
             } catch (AxisFault axisFault) {
                 //have to ignore this
             }

@@ -111,7 +111,7 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
             assertEquals("echoOMElementResponse", result.getLocalName());
         } finally {
             if (sender != null)
-                sender.finalizeInvoke();
+                sender.cleanup();
         }
     }
 

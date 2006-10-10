@@ -43,7 +43,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
 
         AxisEngine engine =
                 new AxisEngine(
-                        msgContext.getOperationContext().getServiceContext().getConfigurationContext());
+                        msgContext.getConfigurationContext());
 
         engine.send(outMsgContext);
     }
