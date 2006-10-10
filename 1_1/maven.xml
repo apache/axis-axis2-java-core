@@ -377,6 +377,17 @@
         <ant:mkdir dir="target/temp/war/toWEB-INF/services"/>
         <ant:mkdir dir="target/temp/war/toWEB-INF/conf"/>
 
+
+        <!-- let's now remove un-necessary jars. Please refer -->
+        <!-- http://marc.theaimsgroup.com/?l=axis-dev&m=116047407714969&w=2, if you wanna know-->
+        <!-- why I removed this. -->
+        <ant:delete>
+            <fileset dir="${war_dep_cache}">
+                <include name="bcel-${bcel.version}.jar"/>
+                <include name="jibx-bind-${jibx.version}.jar"/>
+            </fileset>
+        </ant:delete>
+
         <!-- Copy the java2wsdl jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
