@@ -696,13 +696,4 @@ public class OperationDescription {
         }
         return onewayIsOneway.booleanValue();   
     }
-    
-    public boolean isWebMethodExcluded(){
-		WebMethod webMethod = getWebMethod();
-		if(webMethod == null){
-			return false;
-		}
-		
-		return webMethod.exclude();
-	}
 }

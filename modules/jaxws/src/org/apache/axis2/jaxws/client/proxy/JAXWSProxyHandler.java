@@ -337,7 +337,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	}
 	
 	private boolean isMethodExcluded(){
-		return operationDesc.isWebMethodExcluded();
+		return operationDesc.getWebMethodExclude();
 	}
 
 	public PortData getPort() {
