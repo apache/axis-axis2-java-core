@@ -602,6 +602,7 @@
                 <ant:include name="**/modules/java2wsdl/**"/>
                 <ant:include name="**/modules/kernel/**"/>
                 <ant:include name="**/modules/adb/**"/>
+                <ant:include name="**/modules/adb-codegen/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
