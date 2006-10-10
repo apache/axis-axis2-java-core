@@ -44,6 +44,16 @@ echo This environment variable is needed to run this program
 goto end
 
 :okHome
+rem check for the default service repository
+if exist "%AXIS2_HOME%\repository" goto okRepo
+mkdir "%AXIS2_HOME%\repository"
+
+:okRepo
+set REPO_FOLDER=%AXIS2_HOME%\repository
+if exist "%REPO_FOLDER%\services" goto okService
+mkdir "%REPO_FOLDER%\services"
+
+:okService
 rem set the classes
 setlocal EnableDelayedExpansion
 rem loop through the libs and add them to the class path
@@ -55,6 +65,6 @@ echo Using AXIS2_HOME:   %AXIS2_HOME%
 echo Using JAVA_HOME:    %JAVA_HOME%
 set _RUNJAVA="%JAVA_HOME%\bin\java"
 
-%_RUNJAVA% %JAVA_OPTS% -cp %AXIS2_CLASS_PATH% org.apache.axis2.transport.tcp.TCPServer %AXIS2_HOME% 6060 %*
+%_RUNJAVA% %JAVA_OPTS% -cp %AXIS2_CLASS_PATH% org.apache.axis2.transport.tcp.TCPServer %REPO_FOLDER% 6060 %*
 endlocal
 :end
