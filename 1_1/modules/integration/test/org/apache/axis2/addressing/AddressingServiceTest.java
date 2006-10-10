@@ -144,7 +144,7 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
             }
         } finally {
             if (sender != null)
-                sender.finalizeInvoke();
+                sender.cleanup();
         }
     }
 
@@ -167,7 +167,7 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
             }
         } finally {
             if (sender != null)
-                sender.finalizeInvoke();
+                sender.cleanup();
         }
     }
 
@@ -224,7 +224,7 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
             }
         } finally {
             if (sender != null)
-                sender.finalizeInvoke();
+                sender.cleanup();
         }
     }
 

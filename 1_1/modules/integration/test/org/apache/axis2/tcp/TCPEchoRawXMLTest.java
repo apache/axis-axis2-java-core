@@ -144,7 +144,7 @@ public class TCPEchoRawXMLTest extends TestCase {
                         "Server was shutdown as the async response take too long to complete");
             }
         }
-        sender.finalizeInvoke();
+        sender.cleanup();
     }
 
     public void testEchoXMLSync() throws Exception {
@@ -161,7 +161,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         result.serialize(StAXUtils.createXMLStreamWriter(
                 System.out));
-        sender.finalizeInvoke();
+        sender.cleanup();
     }
 
     public void testEchoXMLCompleteSync() throws Exception {
@@ -185,7 +185,7 @@ public class TCPEchoRawXMLTest extends TestCase {
 
         result.serialize(StAXUtils.createXMLStreamWriter(
                 System.out));
-        sender.finalizeInvoke();
+        sender.cleanup();
 
     }
 
@@ -228,7 +228,7 @@ public class TCPEchoRawXMLTest extends TestCase {
         assertNotNull(env);
         env.getBody().serialize(StAXUtils.createXMLStreamWriter(
                 System.out));
-        sender.finalizeInvoke();
+        sender.cleanup();
     }
 
 

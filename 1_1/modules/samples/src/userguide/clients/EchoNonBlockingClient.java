@@ -66,7 +66,7 @@ public class EchoNonBlockingClient {
             ex.printStackTrace();
         } finally {
             try {
-                sender.finalizeInvoke();
+                sender.cleanup();
             } catch (AxisFault axisFault) {
                 //
             }
