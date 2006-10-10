@@ -39,6 +39,7 @@ import java.util.Map;
  */
 public class ExtensionUtility {
 
+
     public static void invoke(CodeGenConfiguration configuration) throws Exception {
         List schemaList = configuration.getAxisService().getSchema();
 
@@ -227,6 +228,16 @@ public class ExtensionUtility {
                                 xmlSchemaElement.getSchemaTypeName());
                         if (eltSchemaType != null) {
                             populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement);
+                        } else if (xmlSchemaElement.getSchemaTypeName().equals(SchemaConstants.XSD_ANYTYPE)) {
+                            QName partQName = WSDLUtil.getPartQName(opName,
+                                    WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                    xmlSchemaElement.getName());
+
+                            if (xmlSchemaElement.getMaxOccurs() > 1) {
+                                mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement[]");
+                            } else {
+                                mapper.addTypeMappingName(partQName, "org.apache.axiom.om.OMElement");
+                            }
                         }
                     }
                 } else if (item instanceof XmlSchemaAny) {
@@ -254,6 +265,8 @@ public class ExtensionUtility {
         }
     }
 
+    // private static void
+
     /**
      * Util method to populate the class name into the typeMap
      *
@@ -278,9 +291,10 @@ public class ExtensionUtility {
             // we have to store them in XmlElement
             if (isArray && !className.endsWith("[]")) {
                 className += "[]";
-            } else if (!isArray && className.endsWith("[]")){
-                className = className.substring(0,className.length() - 2);
+            } else if (!isArray && className.endsWith("[]")) {
+                className = className.substring(0, className.length() - 2);
             }
+
 
             QName partQName = WSDLUtil.getPartQName(opName,
                     WSDLConstants.INPUT_PART_QNAME_SUFFIX,
@@ -294,9 +308,9 @@ public class ExtensionUtility {
                 //for now lets add a boolean
                 typeMap.addTypeMappingStatus(partQName, Boolean.TRUE);
             }
-
         }
     }
+
 
     /**
      * Look for a given schema type given the schema type Qname
