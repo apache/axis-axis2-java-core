@@ -742,6 +742,11 @@
         <ant:copy todir="${std.bin.temp.dir}/samples/userguide">
             <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
         </ant:copy>
+        <ant:mkdir dir="${std.bin.temp.dir}/samples/FaultHandling" />
+        <ant:copy todir="${std.bin.temp.dir}/samples/FaultHandling">
+            <ant:fileset dir="modules/samples/FaultHandling"/>
+        </ant:copy>
+
         <ant:delete file="${std.bin.temp.dir}/samples/groovyService.aar"/>
 
         <!-- Copy the release documents -->
