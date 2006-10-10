@@ -29,13 +29,18 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.rampart.handler.WSSHandlerConstants;
 import org.apache.ws.security.WSSecurityException;
-import org.apache.xml.security.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -172,17 +177,23 @@ public class Axis2Util {
 	 * @throws Exception
 	 */
 	public static OMElement toOM(Element element) throws Exception {
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			XMLUtils.outputDOM(element, os, true);
-			
-			ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
-			XMLStreamReader reader = StAXUtils
-					.createXMLStreamReader(is);
 
-			StAXOMBuilder builder = new StAXOMBuilder(reader);
-			builder.setCache(true);
+        Source source = new DOMSource(element);
+         
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Result result = new StreamResult(baos);
 
-			return builder.getDocumentElement();
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+        xformer.transform(source, result);
+
+		ByteArrayInputStream is = new ByteArrayInputStream(baos.toByteArray());
+		XMLStreamReader reader = StAXUtils
+				.createXMLStreamReader(is);
+
+		StAXOMBuilder builder = new StAXOMBuilder(reader);
+		builder.setCache(true);
+
+		return builder.getDocumentElement();
 	}
 	
 
