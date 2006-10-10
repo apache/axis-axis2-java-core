@@ -21,7 +21,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -35,12 +34,6 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -170,49 +163,6 @@ public class Axis2Util {
 		return originalKey;
 	}
 	
-	/**
-	 * Converts a given DOM Element to an OMElement.
-	 * @param element
-	 * @return Returns OMElement.
-	 * @throws Exception
-	 */
-	public static OMElement toOM(Element element) throws Exception {
-
-        Source source = new DOMSource(element);
-         
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Result result = new StreamResult(baos);
-
-        Transformer xformer = TransformerFactory.newInstance().newTransformer();
-        xformer.transform(source, result);
-
-		ByteArrayInputStream is = new ByteArrayInputStream(baos.toByteArray());
-		XMLStreamReader reader = StAXUtils
-				.createXMLStreamReader(is);
-
-		StAXOMBuilder builder = new StAXOMBuilder(reader);
-		builder.setCache(true);
-
-		return builder.getDocumentElement();
-	}
-	
-
-	/**
-	 * Converts a given OMElement to a DOM Element.
-	 * @param element
-	 * @return Returns Element.
-	 * @throws Exception
-	 */
-	public static Element toDOM(OMElement element) throws Exception {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			element.serialize(baos);
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-	
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(true);
-			return factory.newDocumentBuilder().parse(bais).getDocumentElement();
-	}
-    
     /**
      * This will build a DOOM Element that is of the same <code>Document</code>
      * @param factory

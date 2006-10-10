@@ -24,6 +24,7 @@ import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -102,7 +103,7 @@ public class MessageBuilder {
                     OMElement bodyElem = msgCtx.getEnvelope().getBody();
                     OMElement child = bodyElem.getFirstElement();
                     OMElement newChild = TrustUtil.createCancelRequest(tokenId, rmd.getWstVersion());
-                    Element newDomChild = Axis2Util.toDOM(newChild);
+                    Element newDomChild = XMLUtils.toDOM(newChild);
                     Node importedNode = rmd.getDocument().importNode((Element) newDomChild, true);
                     ((Element) bodyElem).replaceChild(importedNode, (Element) child);
                 } else {
