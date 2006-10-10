@@ -255,6 +255,13 @@ public class ServiceBuilder extends DescriptionBuilder {
                     try {
                         if (generateWsdl(service)) {
                             Utils.fillAxisService(service, axisConfig, excludeops);
+                        } else {
+                            ArrayList nonRpcOperations = getNonPRCMethods(service);
+                            for (int i = 0; i < excludeops.size(); i++) {
+                                String opName = (String) excludeops.get(i);
+                                nonRpcOperations.add(opName);
+                                Utils.fillAxisService(service, axisConfig, nonRpcOperations);
+                            }
                         }
                     } catch (Exception e) {
                         /**
@@ -310,13 +317,44 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
                         .equals(messageReceiverClass)
                         || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
-                        .equals(messageReceiverClass) || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                        .equals(messageReceiverClass)
+                        || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
                         .equals(messageReceiverClass))) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    /**
+     * To get the methods which dose not use RPC* Message Recievers
+     *
+     * @return
+     */
+    private ArrayList getNonPRCMethods(AxisService axisService) {
+        ArrayList excludeOperations = new ArrayList();
+        Iterator operatins = axisService.getOperations();
+        if (operatins.hasNext()) {
+            while (operatins.hasNext()) {
+                AxisOperation axisOperation = (AxisOperation) operatins
+                        .next();
+                if (axisOperation.getMessageReceiver() == null) {
+                    continue;
+                }
+                String messageReceiverClass = axisOperation
+                        .getMessageReceiver().getClass().getName();
+                if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
+                        .equals(messageReceiverClass)
+                        || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
+                        .equals(messageReceiverClass)
+                        || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                        .equals(messageReceiverClass))) {
+                    excludeOperations.add(axisOperation.getName().getLocalPart());
+                }
+            }
+        }
+        return excludeOperations;
     }
 
     /**
