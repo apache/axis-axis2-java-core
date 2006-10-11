@@ -19,8 +19,6 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.Loader;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -28,6 +26,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,26 +49,19 @@ public class DependencyManager {
                                                       OperationContext opCtx)
             throws AxisFault {
         try {
+            Class classToLoad = obj.getClass();
 
-            // if this service is implementing the o.a.a.Service interface, then use that fact to invoke the
-            // proper method.
-            if (obj instanceof Service) {
-                ((org.apache.axis2.engine.Service) obj).setOperationContext(opCtx);
-            } else {
-                Class classToLoad = obj.getClass();
+            // We can not call classToLoad.getDeclaredMethed() , since there
+            //  can be insatnce where mutiple services extends using one class
+            // just for init and other reflection methods
+            Method[] methods = classToLoad.getMethods();
 
-                // We can not call classToLoad.getDeclaredMethed() , since there
-                //  can be insatnce where mutiple services extends using one class
-                // just for init and other reflection methods
-                Method[] methods = classToLoad.getMethods();
-
-                for (int i = 0; i < methods.length; i++) {
-                    if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName())
-                            && (methods[i].getParameterTypes().length == 1)
-                            && (methods[i].getParameterTypes()[0] == OperationContext.class)) {
-                        methods[i].invoke(obj, new Object[]{opCtx});
-                        break;
-                    }
+            for (int i = 0; i < methods.length; i++) {
+                if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName())
+                        && (methods[i].getParameterTypes().length == 1)
+                        && (methods[i].getParameterTypes()[0] == OperationContext.class)) {
+                    methods[i].invoke(obj, new Object[]{opCtx});
+                    break;
                 }
             }
         } catch (SecurityException e) {
@@ -90,23 +82,18 @@ public class DependencyManager {
     public static void initServiceClass(Object obj,
                                         ServiceContext serviceContext) throws AxisFault {
         try {
-            if (obj instanceof org.apache.axis2.engine.Service) {
-                Service service = (org.apache.axis2.engine.Service) obj;
-                service.init(serviceContext);
-            } else {
-                Class classToLoad = obj.getClass();
-                // We can not call classToLoad.getDeclaredMethed() , since there
-                //  can be insatnce where mutiple services extends using one class
-                // just for init and other reflection methods
-                Method[] methods = classToLoad.getMethods();
+            Class classToLoad = obj.getClass();
+            // We can not call classToLoad.getDeclaredMethed() , since there
+            //  can be insatnce where mutiple services extends using one class
+            // just for init and other reflection methods
+            Method[] methods = classToLoad.getMethods();
 
-                for (int i = 0; i < methods.length; i++) {
-                    if (SERVICE_INIT_METHOD.equals(methods[i].getName())
-                            && (methods[i].getParameterTypes().length == 1)
-                            && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
-                        methods[i].invoke(obj, new Object[]{serviceContext});
-                        break;
-                    }
+            for (int i = 0; i < methods.length; i++) {
+                if (SERVICE_INIT_METHOD.equals(methods[i].getName())
+                        && (methods[i].getParameterTypes().length == 1)
+                        && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
+                    methods[i].invoke(obj, new Object[]{serviceContext});
+                    break;
                 }
             }
         } catch (SecurityException e) {
@@ -159,59 +146,25 @@ public class DependencyManager {
     /**
      * To startup service when user puts load-on-startup parameter
      */
-    public static void startService(AxisService axisService,
-                                    ConfigurationContext configCtx) {
-        ClassLoader classLoader = axisService.getClassLoader();
-        Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
-        if (implInfoParam != null) {
-            try {
-                Class implClass = Loader.loadClass(
-                        classLoader,
-                        ((String) implInfoParam.getValue()).trim());
-                Object serviceImpl = implClass.newInstance();
-                if (serviceImpl instanceof Service) {
-                    org.apache.axis2.engine.Service service = (Service) serviceImpl;
-                    service.startUp(configCtx, axisService);
-                } else {
-                    Method[] methods = serviceImpl.getClass().getMethods();
-                    for (int i = 0; i < methods.length; i++) {
-                        if (SERVICE_START_METHOD.equals(methods[i].getName())
-                                && (methods[i].getParameterTypes().length == 2)
-                                && (methods[i].getParameterTypes()[0] == ConfigurationContext.class)
-                                && (methods[i].getParameterTypes()[1] == AxisService.class)) {
-                            methods[i].invoke(serviceImpl, new Object[]{configCtx, axisService});
-                            break;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                log.info("Exception trying to call " + SERVICE_START_METHOD, e);
-                new AxisFault(e);
-            }
-        }
-    }
+
 
     public static void destroyServiceObject(ServiceContext serviceContext) throws AxisFault {
         try {
             Object obj = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
             if (obj != null) {
                 Class classToLoad = obj.getClass();
-                if (obj instanceof Service) {
-                    org.apache.axis2.engine.Service service = (Service) obj;
-                    service.destroy(serviceContext);
-                } else {
-                    // We can not call classToLoad.getDeclaredMethed() , since there
-                    //  can be insatnce where mutiple services extends using one class
-                    // just for init and other reflection methods
-                    Method[] methods = classToLoad.getMethods();
 
-                    for (int i = 0; i < methods.length; i++) {
-                        if (SERVICE_DESTROY_METHOD.equals(methods[i].getName())
-                                && (methods[i].getParameterTypes().length == 1)
-                                && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
-                            methods[i].invoke(obj, new Object[]{serviceContext});
-                            break;
-                        }
+                // We can not call classToLoad.getDeclaredMethed() , since there
+                //  can be insatnce where mutiple services extends using one class
+                // just for init and other reflection methods
+                Method[] methods = classToLoad.getMethods();
+
+                for (int i = 0; i < methods.length; i++) {
+                    if (SERVICE_DESTROY_METHOD.equals(methods[i].getName())
+                            && (methods[i].getParameterTypes().length == 1)
+                            && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
+                        methods[i].invoke(obj, new Object[]{serviceContext});
+                        break;
                     }
                 }
             }

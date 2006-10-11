@@ -31,8 +31,8 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -428,12 +428,9 @@ public class DeploymentEngine implements DeploymentConstants {
         Iterator services = serviceGroup.getServices();
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
-            Parameter load_on_startup = axisService.getParameter(Constants.LOAD_ON_STARTUP);
-            if (load_on_startup != null) {
-                String value = (String) load_on_startup.getValue();
-                if ("true".equals(value.trim())) {
-                    DependencyManager.startService(axisService, configContext);
-                }
+            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+            if (serviceLifeCycle != null) {
+                serviceLifeCycle.startUp(configContext, axisService);
             }
         }
 

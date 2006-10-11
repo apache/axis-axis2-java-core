@@ -175,6 +175,7 @@ public class ListenerManager {
             }
         }
         configctx.cleanupContexts();
+        shutDownServices(configctx);
         stopped = true;
     }
 
@@ -203,4 +204,16 @@ public class ListenerManager {
     public boolean isStopped() {
         return stopped;
     }
+
+    private void shutDownServices(ConfigurationContext configCtx) {
+        Iterator services = configCtx.getAxisConfiguration().getServices().values().iterator();
+        while (services.hasNext()) {
+            AxisService axisService = (AxisService) services.next();
+            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+            if (serviceLifeCycle != null) {
+                serviceLifeCycle.shutDown(configCtx, axisService);
+            }
+        }
+    }
+
 }
