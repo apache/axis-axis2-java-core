@@ -14,8 +14,7 @@
 </head>
 
 <body>
-<jsp:include page="include/adminheader.jsp">
-</jsp:include>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Available services</h1>
 <%
   String prifix = request.getAttribute("frontendHostUrl") + (String)request.getSession().getAttribute(Constants.SERVICE_PATH) +"/";
@@ -82,7 +81,6 @@
 <%
   }
 %>
-<jsp:include page="include/adminfooter.jsp">
-</jsp:include>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>
 </body>
 </html>
