@@ -25,7 +25,7 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.ServiceLifeCycle;
+//import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -119,7 +119,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
             //Processing service lifecycle attribute
-            OMAttribute serviceLifeCycleClass = service_element.
+  /*          OMAttribute serviceLifeCycleClass = service_element.
                     getAttribute(new QName(TAG_CLASS_NAME));
             if (serviceLifeCycleClass != null) {
                 String className = serviceLifeCycleClass.getAttributeValue();
@@ -133,7 +133,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                         throw new DeploymentException(e.getMessage(), e);
                     }
                 }
-            }
+            }*/
             //Setting schema namespece if any
             OMElement schemaElement = service_element.getFirstChildWithName(new QName(SCHEMA));
             if (schemaElement != null) {
