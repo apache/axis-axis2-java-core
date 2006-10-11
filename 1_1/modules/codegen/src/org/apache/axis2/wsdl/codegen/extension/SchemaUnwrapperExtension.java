@@ -161,7 +161,9 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                 complexType += cmplxType.getName();
             }
             if (cmplxType.getContentModel() == null) {
-                processXMLSchemaSequence(cmplxType.getParticle(), message, partNameList);
+                if (cmplxType.getParticle() != null){
+                    processXMLSchemaSequence(cmplxType.getParticle(), message, partNameList);
+                }
             } else {
                 // now lets handle case with extensions
                 processComplexContentModel(cmplxType, message, partNameList);
