@@ -5,8 +5,7 @@
                                                                              java.util.HashMap,
                                                                              java.util.Iterator"
          errorPage="" %>
-<jsp:include page="include/adminheader.jsp">
-</jsp:include>
+<jsp:include page="include/adminheader.jsp"></jsp:include>
 <%
     String status = (String) request.getSession().getAttribute(Constants.ENGAGE_STATUS);
 %>
@@ -121,6 +120,5 @@
         </tr>
     </table>
 </form>
-<jsp:include page="include/adminfooter.jsp">
-</jsp:include>
+<jsp:include page="include/adminfooter.jsp"></jsp:include>
 
