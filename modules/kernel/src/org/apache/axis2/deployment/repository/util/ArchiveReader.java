@@ -43,7 +43,7 @@ import java.util.zip.ZipInputStream;
 public class ArchiveReader implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(ArchiveReader.class);
 
-    private ArrayList buildServiceGroup(InputStream zin, ArchiveFileData currentFile,
+    public ArrayList buildServiceGroup(InputStream zin, ArchiveFileData currentFile,
                                         AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
                                         AxisConfiguration axisConfig)
             throws XMLStreamException, AxisFault {
