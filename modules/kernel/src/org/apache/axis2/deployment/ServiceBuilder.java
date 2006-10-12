@@ -118,6 +118,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service.setTargetNamespace(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
                 }
             }
+
+            
+
             //Processing service lifecycle attribute
             OMAttribute serviceLifeCycleClass = service_element.
                     getAttribute(new QName(TAG_CLASS_NAME));

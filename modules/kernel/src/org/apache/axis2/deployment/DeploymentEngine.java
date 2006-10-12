@@ -338,6 +338,19 @@ public class DeploymentEngine implements DeploymentConstants {
                                  URL serviceLocation,
                                  ArchiveFileData currentArchiveFile)
             throws AxisFault {
+        fillServiceGroup(serviceGroup, serviceList, serviceLocation, axisConfig);
+        axisConfig.addServiceGroup(serviceGroup);
+        startUpService(serviceGroup);
+        if (currentArchiveFile != null) {
+            addAsWebResources(currentArchiveFile.getFile(),
+                    serviceGroup.getServiceGroupName(), serviceGroup);
+        }
+    }
+
+    private static void fillServiceGroup(AxisServiceGroup serviceGroup,
+                                         ArrayList serviceList,
+                                         URL serviceLocation,
+                                         AxisConfiguration axisConfig) throws AxisFault {
         serviceGroup.setParent(axisConfig);
         // module from services.xml at serviceGroup level
         ArrayList groupModules = serviceGroup.getModuleRefs();
@@ -408,12 +421,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 }
             }
         }
-        axisConfig.addServiceGroup(serviceGroup);
-        startUpService(serviceGroup);
-        if (currentArchiveFile != null) {
-            addAsWebResources(currentArchiveFile.getFile(),
-                    serviceGroup.getServiceGroupName(), serviceGroup);
-        }
     }
 
     /**
@@ -433,7 +440,6 @@ public class DeploymentEngine implements DeploymentConstants {
                 serviceLifeCycle.startUp(configContext, axisService);
             }
         }
-
     }
 
     private void addAsWebResources(File in, String serviceFileName, AxisServiceGroup serviceGroup) {
@@ -1006,5 +1012,36 @@ public class DeploymentEngine implements DeploymentConstants {
         }
 
         return axisService;
+    }
+
+    /**
+     * To build a AxisServiceGroup for a given services.xml
+     * You have to add the created group into AxisConfig
+     * @param servicesxml : inpupstream create using services.xml
+     * @param classLoader : corresponding class loader to load the class
+     * @param serviceGroupName : name of the service group
+     * @param axisConfig : 
+     * @return
+     * @throws AxisFault
+     */
+    public static AxisServiceGroup buildServiceGroup(InputStream servicesxml,
+                                                     ClassLoader classLoader,
+                                                     String serviceGroupName,
+                                                     AxisConfiguration axisConfig) throws AxisFault {
+        ArchiveFileData currentArchiveFile = new ArchiveFileData(
+                DeploymentConstants.TYPE_SERVICE, "", false);
+        currentArchiveFile.setClassLoader(classLoader);
+        ArchiveReader archiveReader = new ArchiveReader();
+        AxisServiceGroup serviceGroup = new AxisServiceGroup();
+        serviceGroup.setServiceGroupName(serviceGroupName);
+        try {
+            ArrayList serviceList = archiveReader.buildServiceGroup(servicesxml,
+                    currentArchiveFile, serviceGroup,
+                    new HashMap(), axisConfig);
+            fillServiceGroup(serviceGroup, serviceList, null, axisConfig);
+            return serviceGroup;
+        } catch (XMLStreamException e) {
+            throw new AxisFault(e);
+        }
     }
 }
