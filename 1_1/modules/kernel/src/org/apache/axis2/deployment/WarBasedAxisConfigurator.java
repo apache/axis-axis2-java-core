@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
@@ -229,7 +230,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
      */
     public void loadServices() {
         try {
-            String repository ;
+            String repository;
 
             repository = config.getInitParameter(PARAM_AXIS2_REPOSITORY_PATH);
             if (repository != null) {
@@ -244,7 +245,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 log.debug("loaded services from URL: " + repository);
                 return;
             }
-
+            loadServicesFromWebInf();
             if (config.getServletContext().getRealPath("") != null) {
                 super.loadServices();
                 log.debug("loaded services from webapp");
@@ -264,5 +265,24 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
     //To engage globally listed modules
     public void engageGlobalModules() throws AxisFault {
         engageModules();
+    }
+
+    /**
+     * This method will look inside the web-inf directory to find services.xml
+     * inside that , if it is there will load that and creat service group out
+     * of that and add into axisConfig. User can drop corresponding class files
+     * into class directory.
+     */
+    private void loadServicesFromWebInf() {
+        try {
+            InputStream servicexml = config.getServletContext().
+                    getResourceAsStream("/WEB-INF/services.xml");
+            AxisServiceGroup serviceGroup = DeploymentEngine.buildServiceGroup(servicexml,
+                    Thread.currentThread().getContextClassLoader(),
+                    "annonServiceGroup", axisConfig);
+            axisConfig.addServiceGroup(serviceGroup);
+        } catch (AxisFault axisFault) {
+            log.info(axisFault);
+        }
     }
 }
