@@ -220,17 +220,21 @@ public class ArchiveReader implements DeploymentConstants {
                 File meta_inf = new File(serviceFile, META_INF);
 
                 if (!meta_inf.exists()) {
-                    throw new DeploymentException(
-                            Messages.getMessage(
-                                    DeploymentErrorMsgs.META_INF_MISSING, serviceFile.getName()));
+                    meta_inf = new File(serviceFile, META_INF.toLowerCase());
+                    if (!meta_inf.exists()) {
+                        throw new DeploymentException(
+                                Messages.getMessage(
+                                        DeploymentErrorMsgs.META_INF_MISSING, serviceFile.getName()));
+                    }
                 }
+
                 File files[] = meta_inf.listFiles();
                 for (int i = 0; i < files.length; i++) {
                     File file1 = files[i];
                     if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
                         InputStream in = new FileInputStream(file1);
                         FileInputStream in2 = null;
-                        
+
                         // now the question is which version of WSDL file this archive contains.
                         // lets check the namespace of the root element and decide. But since we are
                         // using axiom (dude, you are becoming handy here :)), we will not build the
@@ -253,7 +257,7 @@ public class ArchiveReader implements DeploymentConstants {
                             FileInputStream in3 = new FileInputStream(file1);
                             AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false, in2);
                             try {
-                                if(in2 != null) {
+                                if (in2 != null) {
                                     in2.close();
                                 }
                                 in3.close();
