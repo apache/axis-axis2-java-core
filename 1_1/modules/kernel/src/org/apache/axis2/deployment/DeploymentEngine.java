@@ -234,7 +234,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
                             new WSDL11ToAxisServiceBuilder(wsdlStream, null, null);
                     axisService = wsdl2AxisServiceBuilder.populateService();
-                    axisService.setWsdlfound(true);
+                    axisService.setWsdlFound(true);
                     axisService.setName(serviceName);
                 }
                 if (axisService == null) {
@@ -264,7 +264,7 @@ public class DeploymentEngine implements DeploymentConstants {
                             WSDL11ToAxisServiceBuilder wsdl2AxisServiceBuilder =
                                     new WSDL11ToAxisServiceBuilder(wsdlStream, axisService);
                             axisService = wsdl2AxisServiceBuilder.populateService();
-                            axisService.setWsdlfound(true);
+                            axisService.setWsdlFound(true);
                             // Set the default message receiver for the operations that were
                             // not listed in the services.xml
                             Iterator operations = axisService.getOperations();

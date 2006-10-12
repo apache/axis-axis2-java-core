@@ -212,14 +212,14 @@ public class AxisConfiguration extends AxisDescription {
      * @param axisService
      */
     private void isWSDLEnable(AxisService axisService) {
-        if (!axisService.isWsdlfound()) {
+        if (!axisService.isWsdlFound()) {
             Iterator operatins = axisService.getOperations();
             if (operatins.hasNext()) {
                 while (operatins.hasNext()) {
                     AxisOperation axisOperation = (AxisOperation) operatins
                             .next();
                     if (axisOperation.getMessageReceiver() == null) {
-                        axisService.setWsdlfound(false);
+                        axisService.setWsdlFound(false);
                         return;
                     }
                     String messageReceiverClass = axisOperation
@@ -229,13 +229,13 @@ public class AxisConfiguration extends AxisDescription {
                             || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
                             .equals(messageReceiverClass) || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
                             .equals(messageReceiverClass))) {
-                        axisService.setWsdlfound(false);
+                        axisService.setWsdlFound(false);
                         return;
                     }
                 }
-                axisService.setWsdlfound(true);
+                axisService.setWsdlFound(true);
             } else {
-                axisService.setWsdlfound(false);
+                axisService.setWsdlFound(false);
             }
         }
     }

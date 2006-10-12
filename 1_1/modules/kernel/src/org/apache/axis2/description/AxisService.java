@@ -95,7 +95,7 @@ public class AxisService extends AxisDescription {
     //private XmlSchema schema;
 
     //wsdl is there for this service or not (in side META-INF)
-    private boolean wsdlfound = false;
+    private boolean wsdlFound = false;
 
     //to store the scope of the service
     private String scope;
@@ -649,7 +649,7 @@ public class AxisService extends AxisDescription {
                 printWSDLError(out);
             }
         } else {
-            setWsdlfound(true);
+            setWsdlFound(true);
             //pick the endpoint and take it as the epr for the WSDL
             getWSDL(out, new String[]{this.endpoint}, "services");
         }
@@ -657,7 +657,7 @@ public class AxisService extends AxisDescription {
     }
 
     private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
-        if (this.wsdlfound) {
+        if (this.wsdlFound) {
             AxisService2OM axisService2WOM = new AxisService2OM(this,
                     serviceURL, "document", "literal", servicePath);
             try {
@@ -708,7 +708,7 @@ public class AxisService extends AxisDescription {
                 printWSDLError(out);
             }
         } else {
-            setWsdlfound(true);
+            setWsdlFound(true);
             //pick the endpoint and take it as the epr for the WSDL
             getWSDL2(out, new String[]{this.endpoint});
         }
@@ -721,7 +721,7 @@ public class AxisService extends AxisDescription {
     }
 
     private void getWSDL2(OutputStream out, String [] serviceURL) throws AxisFault {
-        if (this.wsdlfound) {
+        if (this.wsdlFound) {
             AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
             try {
                 OMElement wsdlElement = axisService2WSDL2.generateOM();
@@ -961,12 +961,12 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    public boolean isWsdlfound() {
-        return wsdlfound;
+    public boolean isWsdlFound() {
+        return wsdlFound;
     }
 
-    public void setWsdlfound(boolean wsdlfound) {
-        this.wsdlfound = wsdlfound;
+    public void setWsdlFound(boolean wsdlFound) {
+        this.wsdlFound = wsdlFound;
     }
 
     public String getScope() {
