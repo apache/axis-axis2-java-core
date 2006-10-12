@@ -277,10 +277,12 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         try {
             InputStream servicexml = config.getServletContext().
                     getResourceAsStream("/WEB-INF/services.xml");
-            AxisServiceGroup serviceGroup = DeploymentEngine.buildServiceGroup(servicexml,
-                    Thread.currentThread().getContextClassLoader(),
-                    "annonServiceGroup", axisConfig);
-            axisConfig.addServiceGroup(serviceGroup);
+            if (servicexml != null) {
+                AxisServiceGroup serviceGroup = DeploymentEngine.buildServiceGroup(servicexml,
+                        Thread.currentThread().getContextClassLoader(),
+                        "annonServiceGroup", axisConfig);
+                axisConfig.addServiceGroup(serviceGroup);
+            }
         } catch (AxisFault axisFault) {
             log.info(axisFault);
         }
