@@ -312,9 +312,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             axisConfiguration.addParameter(servletConfigParam);
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
-            // setting ServletContext into configctx
-            configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
-                    servletConfig.getServletContext());
             TransportInDescription transportInDescription = new TransportInDescription(
                     new QName(Constants.TRANSPORT_HTTP));
             transportInDescription.setReceiver(this);

@@ -1,6 +1,8 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -286,5 +288,12 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         } catch (AxisFault axisFault) {
             log.info(axisFault);
         }
+    }
+
+    public void setConfigContext(ConfigurationContext configContext) {
+        super.setConfigContext(configContext);
+        // setting ServletContext into configctx
+        configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
+                config.getServletContext());
     }
 }
