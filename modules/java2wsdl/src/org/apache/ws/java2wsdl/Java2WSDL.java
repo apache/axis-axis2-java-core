@@ -45,6 +45,9 @@ public class Java2WSDL {
         System.out.println("-st <binding style> : style for the WSDL");
         System.out.println("-u <binding use> : use for the WSDL");
         System.out.println("-l <soap address> : address of the port for the WSDL");
+        System.out.println("-nsg <generator class name> : fully qualified name of the class that implements NamespaceGenerator");
+        System.out.println("-p2n [<java package>,<namespace] [<java package>,<namespace]... : java package to namespace mapping for argument and return types..." +
+                                "\t\t to assign all types to a single namespace : -p2n [all , <namespace>] ...");
         System.out.println("-efd <qualified/unqualified> : Setting for elementFormDefault (defaults to qualified)");
         System.out.println("-afd <qualified/unqualified> : Setting for attributeFormDefault (defaults to qualified)");
         System.out.println("-xc <extra class> : Extra class for which schematype must be generated.  " +

@@ -63,7 +63,24 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
     private ArrayList extraClasses = null;
 
-    private boolean useScheamNameSpace = false;
+    private boolean useWSDLTypesNamespace = false;
+    
+    private Map pkg2nsmap = null;
+    
+    private String nsGenClassName = null;
+    
+    private NamespaceGenerator nsGen = null;
+
+    public NamespaceGenerator getNsGen() {
+        if ( nsGen == null ) {
+            nsGen = new DefaultNamespaceGenerator();
+        }
+        return nsGen;
+    }
+
+    public void setNsGen(NamespaceGenerator nsGen) {
+        this.nsGen = nsGen;
+    }
 
     public SchemaGenerator(ClassLoader loader, String className,
                            String schematargetNamespace, String schematargetNamespacePrefix)
@@ -77,10 +94,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
         if (schematargetNamespace != null
                 && schematargetNamespace.trim().length() != 0) {
             this.schemaTargetNameSpace = schematargetNamespace;
-            useScheamNameSpace = true;
         } else {
-            this.schemaTargetNameSpace = Java2WSDLUtils
-                    .schemaNamespaceFromClassName(className, loader).toString();
+            this.schemaTargetNameSpace =
+                Java2WSDLUtils.schemaNamespaceFromClassName(className, loader, getNsGen()).toString();
         }
         if (schematargetNamespacePrefix != null
                 && schematargetNamespacePrefix.trim().length() != 0) {
@@ -233,12 +249,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
             String simpleName = javaType.getSimpleName();
 
             String packageName = javaType.getContainingPackage().getQualifiedName();
-            String targetNameSpace;
-            if (useScheamNameSpace) {
-                targetNameSpace = this.schemaTargetNameSpace;
-            } else {
-                targetNameSpace = Java2WSDLUtils.schemaNamespaceFromPackageName(packageName).toString();
-            }
+            String targetNameSpace = resolveSchemaNamespace(packageName).toString();
+            
             XmlSchema xmlSchema = getXmlSchema(targetNameSpace);
             String targetNamespacePrefix = (String) targetNamespacePrefixMap.get(targetNameSpace);
 
@@ -330,12 +342,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
                     isArrayType);
             //addImport((XmlSchema)schemaMap.get(schemaTargetNameSpace), schemaTypeName);
             String schemaNamespace;
-            if (useScheamNameSpace) {
-                schemaNamespace = this.schemaTargetNameSpace;
-            } else {
-                schemaNamespace = Java2WSDLUtils.schemaNamespaceFromPackageName(type.getContainingPackage().
-                        getQualifiedName()).toString();
-            }
+            schemaNamespace = resolveSchemaNamespace(type.getContainingPackage().
+                                                         getQualifiedName()).toString();
             addImport(getXmlSchema(schemaNamespace), schemaTypeName);
 
         } else {
@@ -484,5 +492,54 @@ public class SchemaGenerator implements Java2WSDLConstants {
     public void setExtraClasses(ArrayList extraClasses) {
         this.extraClasses = extraClasses;
     }
+    
+    private String resolveSchemaNamespace(String packageName) {
+        //if all types must go into the wsdl types schema namespace
+        if ( useWSDLTypesNamespace ) {
+            //return schemaTargetNameSpace;
+            return (String)pkg2nsmap.get("all");
+        } else {
+            if ( pkg2nsmap != null && !pkg2nsmap.isEmpty() ) {
+                //if types should go into namespaces that are mapped against the package name for the type
+                if ( pkg2nsmap.get(packageName) != null ) {
+                    //return that mapping
+                    return (String)pkg2nsmap.get(packageName);
+                } else {
+                    //return the wsdl types schema namespace as a default
+                    return nsGen.schemaNamespaceFromPackageName(packageName).toString();
+                }
+            } else {
+                return nsGen.schemaNamespaceFromPackageName(packageName).toString();
+            }
+        }
+    }
+
+    public boolean isUseWSDLTypesNamespace() {
+        return useWSDLTypesNamespace;
+    }
+
+    public void setUseWSDLTypesNamespace(boolean useWSDLTypesNamespace) {
+        this.useWSDLTypesNamespace = useWSDLTypesNamespace;
+    }
+
+    public String getNsGenClassName() {
+        return nsGenClassName;
+    }
+
+    public void setNsGenClassName(String nsGenClassName) throws Exception {
+        this.nsGenClassName = nsGenClassName;
+        if ( this.nsGenClassName != null ){
+            setNsGen((NamespaceGenerator)Class.forName(this.nsGenClassName).newInstance());
+        }
+    }
+
+    public Map getPkg2nsmap() {
+        return pkg2nsmap;
+    }
+
+    public void setPkg2nsmap(Map pkg2nsmap) {
+        this.pkg2nsmap = pkg2nsmap;
+    }
+    
 
 }
