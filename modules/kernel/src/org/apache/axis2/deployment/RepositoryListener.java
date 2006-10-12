@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-
+import java.net.URLDecoder;
 public class RepositoryListener implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(RepositoryListener.class);
     private DeploymentEngine deploymentEngine;
@@ -138,7 +138,8 @@ public class RepositoryListener implements DeploymentConstants {
                 location = url.toString();
             }
             if (location.startsWith("file")) {
-                java.io.File file = new java.io.File(url.getFile());
+                java.io.File file = new java.io.File(java.net.URLDecoder.decode(url.getPath()).replace('/',
+                        File.separatorChar).replace('|', ':'));
                 return file.getAbsolutePath();
             } else {
                 return url.toString();
