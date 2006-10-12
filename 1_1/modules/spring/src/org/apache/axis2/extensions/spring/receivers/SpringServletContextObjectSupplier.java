@@ -47,13 +47,20 @@ public class SpringServletContextObjectSupplier implements ServiceObjectSupplier
             Parameter implBeanParam = axisService.getParameter(SERVICE_SPRING_BEANNAME);
             String beanName = ((String) implBeanParam.getValue()).trim();
             if (beanName != null) {
-                ServletConfig servletConfig = (ServletConfig) axisService.getAxisConfiguration()
+                Parameter servletConfigParam = axisService.getAxisConfiguration()
                         .getParameter(HTTPConstants.HTTP_SERVLETCONFIG);
-                if (servletConfig == null) {
+
+                if (servletConfigParam == null) {
+                    throw new Exception("Axis2 Can't find ServletConfigParameter");
+                }
+                Object obj = servletConfigParam.getValue();
+                ServletContext servletContext;
+                if (obj instanceof ServletConfig) {
+                    ServletConfig servletConfig = (ServletConfig)obj;
+                    servletContext = servletConfig.getServletContext();
+                } else {
                     throw new Exception("Axis2 Can't find ServletConfig");
                 }
-                ServletContext servletContext = servletConfig.getServletContext();
-
                 ApplicationContext aCtx =
                         WebApplicationContextUtils.getWebApplicationContext(servletContext);
                 if (aCtx == null) {
