@@ -49,7 +49,7 @@
                     <!-- for now think there is only one input element -->
                     //There is no output to be tested!
                     stub.<xsl:value-of select="@name"/>(
-                        <xsl:for-each select="input/param">
+                        <xsl:for-each select="input/param[@type!='']">
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>
@@ -68,7 +68,7 @@
                     </xsl:when>
                     <xsl:otherwise>
                         assertNotNull(stub.<xsl:value-of select="@name"/>(
-                        <xsl:for-each select="input/param">
+                        <xsl:for-each select="input/param[@type!='']">
 
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
@@ -123,7 +123,7 @@
                 </xsl:for-each>
 
                 stub.start<xsl:value-of select="@name"/>(
-                         <xsl:for-each select="input/param">
+                         <xsl:for-each select="input/param[@type!='']">
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>
@@ -186,7 +186,7 @@
 
                   //There is no output to be tested!
                   stub.<xsl:value-of select="@name"/>(
-                  <xsl:for-each select="input/param">
+                  <xsl:for-each select="input/param[@type!='']">
                       <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>

@@ -421,12 +421,12 @@
                         </xsl:when>
                         <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
                     </xsl:choose>                                                
-                    <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
+                    <xsl:if test="$inputcount=1">,</xsl:if>
                     <xsl:for-each select="input/param[not(@location='body') and @type!='']">
-                       <xsl:if test="position() &gt; 1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                       <xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>,
                     </xsl:for-each>
 
-                <xsl:if test="$inputcount &gt; 0">,</xsl:if>final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback)
+                  final <xsl:value-of select="$package"/>.<xsl:value-of select="$callbackname"/> callback)
 
                 throws java.rmi.RemoteException{
 
