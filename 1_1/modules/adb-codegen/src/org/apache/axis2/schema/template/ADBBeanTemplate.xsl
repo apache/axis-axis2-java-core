@@ -1788,7 +1788,50 @@
                                                     <xsl:value-of select="$listName"/>));
                                         </xsl:when>
                                         <!-- End of Array handling of ADB classes -->
-                                        <xsl:when test="@default">
+
+                                        <!--Let's handle xs:any here-->
+                                        <xsl:when test="$shortTypeName='OMElement'">
+                                           boolean <xsl:value-of select="$loopBoolName"/>=false;
+
+                                             while (!<xsl:value-of select="$loopBoolName"/>){
+                                                 event = reader.getEventType();
+                                                 if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
+
+                                                      <!-- if-block that handles nillable -->
+                                                      <xsl:if test="@nillable">
+                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                              <xsl:value-of select="$listName"/>.add(null);
+                                                          }else{
+                                                      </xsl:if>
+
+                                                      // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
+                                                      org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/>
+                                                         = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
+                                                              new org.apache.axis2.util.StreamWrapper(reader), reader.getName());
+
+                                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
+                                                       <xsl:if test="@nillable">}</xsl:if>
+                                                 } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else{
+                                                     reader.next();
+                                                 }
+
+                                             }
+
+                                             object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                 org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                                                     <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+                                        </xsl:when>
+
+
+                                        <xsl:otherwise>
+                                            <xsl:choose>
+                                             <xsl:when test="@default">
                                              boolean <xsl:value-of select="$loopBoolName"/>=false;
                                              javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = new javax.xml.namespace.QName(
                                                     "<xsl:value-of select="$namespace"/>",
@@ -1863,6 +1906,8 @@
                                                 org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                                     <xsl:value-of select="$basePropertyType"/>.class,
                                                     <xsl:value-of select="$listName"/>));
+                                        </xsl:otherwise>
+                                        </xsl:choose>
                                         </xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:when>
@@ -2840,6 +2885,50 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                     <xsl:value-of select="$basePropertyType"/>.class,
                                                     <xsl:value-of select="$listName"/>));
                                         </xsl:when>
+
+                                        <!--Let's handle xs:any here-->
+                                        <xsl:when test="$shortTypeName='OMElement'">
+                                           boolean <xsl:value-of select="$loopBoolName"/>=false;
+
+                                             while (!<xsl:value-of select="$loopBoolName"/>){
+                                                 event = reader.getEventType();
+                                                 if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
+
+                                                      <!-- if-block that handles nillable -->
+                                                      <xsl:if test="@nillable">
+                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                              <xsl:value-of select="$listName"/>.add(null);
+                                                          }else{
+                                                      </xsl:if>
+
+                                                      // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
+                                                      org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/>
+                                                         = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
+                                                              new org.apache.axis2.util.StreamWrapper(reader), reader.getName());
+
+                                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
+                                                       <xsl:if test="@nillable">}</xsl:if>
+                                                 } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else{
+                                                     reader.next();
+                                                 }
+
+                                             }
+
+                                             object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                 org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                                                     <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+                                        </xsl:when>
+
+
+                                        <xsl:otherwise>
+                                            <xsl:choose>
+
                                         <!-- End of Array handling of ADB classes -->
                                         <xsl:when test="@default">
                                              boolean <xsl:value-of select="$loopBoolName"/>=false;
@@ -2917,6 +3006,9 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                     <xsl:value-of select="$basePropertyType"/>.class,
                                                     <xsl:value-of select="$listName"/>));
                                         </xsl:otherwise>
+                                    </xsl:choose>
+
+                                    </xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:when>
                                 <xsl:when test="@ours">
