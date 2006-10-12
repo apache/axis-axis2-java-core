@@ -241,8 +241,8 @@ public class EndpointInterfaceDescription {
      * @return
      */
     // FIXME: This is confusing; some getOperations use the QName from the WSDL or annotation; this one uses the java method name; rename this signature I think; add on that takes a String but does a QName lookup against the WSDL/Annotation
-    public OperationDescription[] getOperation(String javaMethodName) {
-        if (javaMethodName == null) {
+    public OperationDescription[] getOperationForJavaMethod(String javaMethodName) {
+        if (DescriptionUtils.isEmpty(javaMethodName)) {
             return null;
         }
         
@@ -257,6 +257,26 @@ public class EndpointInterfaceDescription {
             return null;
         else
             return matchingOperations.toArray(new OperationDescription[0]);
+    }
+    
+    /**
+     * Return the OperationDesription (only one) corresponding to the OperationName passed in.
+     * @param operationName
+     * @return
+     */
+    public OperationDescription getOperation(String operationName) {
+        if (DescriptionUtils.isEmpty(operationName)) {
+            return null;
+        }
+        
+        OperationDescription matchingOperation = null;
+        for (OperationDescription operation:getOperations()) {
+            if (operationName.equals(operation.getWebMethodOperationName())) {
+                matchingOperation = operation;
+                break;
+            }
+        }
+        return matchingOperation;
     }
     
     public OperationDescription[] getOperations() {

@@ -214,12 +214,6 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		ArrayList<Class> actualTypes = getInputTypes();
 		int i =0;
 		
-		//if no webParam defined then lets get default names.
-		if(paramNames.size() == 0 && paramValues.size()>0){
-			while(i< paramValues.size()){
-				paramNames.add(DEFAULT_ARG + i++);
-			}
-		}
 		if(paramNames.size() != paramValues.size()){
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("InvalidWebParams"));
 		}

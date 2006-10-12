@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.description;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import javax.jws.Oneway;
@@ -93,6 +94,7 @@ public class OperationDescription {
     private AxisOperation axisOperation;
     private QName operationName;
     private Method seiMethod;
+    private ParameterDescription[] parameterDescriptions;
 
     // ===========================================
     // ANNOTATION related information
@@ -130,7 +132,6 @@ public class OperationDescription {
     // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
     public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 
-    
     // ANNOTATION: @WebMethod
     private WebMethod           webMethodAnnotation;
     private String              webMethodOperationName;
@@ -146,7 +147,7 @@ public class OperationDescription {
     private WebParam[]          webParamAnnotations;
     private String[]            webParamNames;
     private Mode[]				webParamMode;
-    private String[]            webParamTNS;
+    private String[]            webParamTargetNamespace;
 
     
     // ANNOTATION: @WebResult
@@ -164,7 +165,7 @@ public class OperationDescription {
         // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;
         setSEIMethod(method);
-        webMethodAnnotation = seiMethod.getAnnotation(WebMethod.class);
+
         
         this.operationName = new QName(getWebMethodOperationName());
     }
@@ -175,11 +176,15 @@ public class OperationDescription {
     }
 
     public void setSEIMethod(Method method) {
-        if (seiMethod != null)
+        if (seiMethod != null) {
             // TODO: This is probably an error, but error processing logic is incorrect
             throw new UnsupportedOperationException("Can not set an SEI method once it has been set.");
-        else 
+        }
+        else  {
             seiMethod = method;
+            webMethodAnnotation = seiMethod.getAnnotation(WebMethod.class);
+            parameterDescriptions = createParameterDescriptions();
+        }
     }
 
     public EndpointInterfaceDescription getEndpointInterfaceDescription() {
@@ -225,6 +230,18 @@ public class OperationDescription {
     private boolean isWrappedParameters() {
         // TODO: WSDL may need to be considered in this check as well
         return getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+    }
+    
+    private ParameterDescription[] createParameterDescriptions() {
+       Class[] parameters = seiMethod.getParameterTypes();
+       Type[] paramaterTypes = seiMethod.getGenericParameterTypes();
+       Annotation[][] annotations = seiMethod.getParameterAnnotations();
+       ArrayList<ParameterDescription> buildParameterList = new ArrayList<ParameterDescription>();
+       for(int i = 0; i < parameters.length; i++) {
+           ParameterDescription paramDesc = new ParameterDescription(i, parameters[i], paramaterTypes[i], annotations[i], this);
+           buildParameterList.add(paramDesc);
+       }
+       return buildParameterList.toArray(new ParameterDescription[buildParameterList.size()]);
     }
 
     // =====================================
@@ -462,69 +479,77 @@ public class OperationDescription {
     // ===========================================
     // ANNOTATION: WebParam
     // ===========================================
-    // TODO: Should this annotation be moved to ParameterDescription 
-    WebParam[] getWebParam() {
-        if (webParamAnnotations == null) {
-            Annotation[][] paramAnnotation = seiMethod.getParameterAnnotations();
-            ArrayList<WebParam> webParamList = new ArrayList<WebParam>();
-            for(Annotation[] pa:paramAnnotation){
-                for(Annotation webParam:pa){
-                    if(webParam.annotationType() == WebParam.class){
-                        webParamList.add((WebParam)webParam);
-                    }
+    // Note that this annotation is handled by the ParameterDescripton.
+    // Methods are provided on OperationDescription as convenience methods.
+    public ParameterDescription[] getParameterDescriptions() {
+        return parameterDescriptions;
+    }
+    
+    public ParameterDescription getParameterDescription(String parameterName) {
+        // TODO: Validation: For BARE paramaterUse, only a single IN our INOUT paramater and a single output (either return or OUT or INOUT) is allowed 
+        //       Per JSR-224, Sec 3.6.2.2, pg 37
+        ParameterDescription matchingParamDesc = null;
+        if (parameterName != null && !parameterName.equals("")) {
+            for (ParameterDescription paramDesc:parameterDescriptions) {
+                if (parameterName.equals(paramDesc.getWebParamName())) {
+                    matchingParamDesc = paramDesc;
+                    break;
                 }
             }
-            webParamAnnotations = webParamList.toArray(new WebParam[0]);
         }
-        return webParamAnnotations;
+        return matchingParamDesc;
+    }
+    
+    public ParameterDescription getParameterDescription(int parameterNumber) {
+        return parameterDescriptions[parameterNumber];
     }
     
     public String[] getWebParamNames() {
         if (webParamNames == null) {
             ArrayList<String> buildNames = new ArrayList<String>();
-            WebParam[] webParams = getWebParam();
-            for (WebParam currentParam:webParams) {
-                    buildNames.add(currentParam.name());
+            ParameterDescription[] paramDescs = getParameterDescriptions();
+            for (ParameterDescription currentParamDesc:paramDescs) {
+                buildNames.add(currentParamDesc.getWebParamName());
             }
             webParamNames = buildNames.toArray(new String[0]);
         }
         return webParamNames;
-        
     }
     
-    public String[] getWebParamTNS(){
-        if (webParamTNS == null) {
-            ArrayList<String> buildNames = new ArrayList<String>();
-            WebParam[] webParams = getWebParam();
-            for (WebParam currentParam:webParams) {
-            	buildNames.add(currentParam.targetNamespace());
+    public String[] getWebParamTargetNamespaces(){
+        if (webParamTargetNamespace == null) {
+            ArrayList<String> buildTargetNS = new ArrayList<String>();
+            ParameterDescription[] paramDescs = getParameterDescriptions();
+            for (ParameterDescription currentParamDesc:paramDescs) {
+                buildTargetNS.add(currentParamDesc.getWebParamTargetNamespace());
             }
-            webParamTNS = buildNames.toArray(new String[0]);
+            webParamTargetNamespace = buildTargetNS.toArray(new String[0]);
         }
-        return webParamTNS;
+        return webParamTargetNamespace;
     }
+
+    public String getWebParamTargetNamespace(String name){
+        String returnTargetNS = null;
+        ParameterDescription paramDesc = getParameterDescription(name);
+        if (paramDesc != null) {
+            returnTargetNS = paramDesc.getWebParamTargetNamespace();
+        }
+        return returnTargetNS;
+    }
+    
              
     public Mode[] getWebParamModes(){
     	if(webParamMode == null){
     		ArrayList<Mode> buildModes = new ArrayList<Mode>();
-    		WebParam[] webParams = getWebParam();
-    		for (WebParam currentParam:webParams){
-                buildModes.add(currentParam.mode());
-    		}
+            ParameterDescription[] paramDescs = getParameterDescriptions();
+            for (ParameterDescription currentParamDesc:paramDescs) {
+                buildModes.add(currentParamDesc.getWebParamMode());
+            }
     		 webParamMode = buildModes.toArray(new Mode[0]);
     	}
     	return webParamMode;
     }
-    public String getWebParamTNS(String name){
-       WebParam[] webParams = getWebParam();
-       for (WebParam currentParam:webParams){
-           if(currentParam.name().equals(name)){
-                return currentParam.targetNamespace();
-            }
-        }
-        return null;    
-     }
-    
+
     // ===========================================
     // ANNOTATION: WebResult
     // ===========================================

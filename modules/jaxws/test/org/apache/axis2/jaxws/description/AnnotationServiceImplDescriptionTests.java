@@ -20,9 +20,11 @@ package org.apache.axis2.jaxws.description;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Holder;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
@@ -58,13 +60,13 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNotNull(endpointIntfDesc);
         assertEquals(endpointIntfDesc.getSEIClass(), EchoPort.class);
         
-        OperationDescription[] operations = endpointIntfDesc.getOperation("badMethodName");
+        OperationDescription[] operations = endpointIntfDesc.getOperationForJavaMethod("badMethodName");
         assertNull(operations);
-        operations = endpointIntfDesc.getOperation("");
+        operations = endpointIntfDesc.getOperationForJavaMethod("");
         assertNull(operations);
-        operations = endpointIntfDesc.getOperation((String) null);
+        operations = endpointIntfDesc.getOperationForJavaMethod((String) null);
         assertNull(operations);
-        operations = endpointIntfDesc.getOperation("echo");
+        operations = endpointIntfDesc.getOperationForJavaMethod("echo");
         assertNotNull(operations);
         assertEquals(operations.length, 1);
         assertEquals(operations[0].getJavaMethodName(), "echo");
@@ -127,7 +129,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         // Test for overloaded methods
         // SEI defines two Java methods with this name
-        OperationDescription[] operations = endpointIntfDesc.getOperation("invokeAsync");
+        OperationDescription[] operations = endpointIntfDesc.getOperationForJavaMethod("invokeAsync");
         assertNotNull(operations);
         assertEquals(operations.length, 2);
         assertEquals(operations[0].getJavaMethodName(), "invokeAsync");
@@ -202,7 +204,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         // Test for a method with parameters of primitive types.  Note
         // this method IS overloaded
-        operations = endpointIntfDesc.getOperation("twoWayHolderAsync");
+        operations = endpointIntfDesc.getOperationForJavaMethod("twoWayHolderAsync");
         assertNotNull(operations);
         assertEquals(operations.length, 2);
         assertEquals(operations[0].getJavaMethodName(), "twoWayHolderAsync");
@@ -267,7 +269,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         }
 
         // Test for a one-way, void method with no parameters which also is not overloaded
-        operations = endpointIntfDesc.getOperation("oneWayVoid");
+        operations = endpointIntfDesc.getOperationForJavaMethod("oneWayVoid");
         assertNotNull(operations);
         assertEquals(operations.length, 1);
         assertEquals(operations[0].getJavaMethodName(), "oneWayVoid");
@@ -287,7 +289,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertFalse(operations[0].getWebResultHeader());
         
         // Test two-way method for lack of OneWay annotation and WebResult annotation
-        operations = endpointIntfDesc.getOperation("invoke");
+        operations = endpointIntfDesc.getOperationForJavaMethod("invoke");
         assertNotNull(operations);
         assertEquals(1, operations.length);
         assertEquals(false, operations[0].isOneWay());
@@ -311,7 +313,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
         
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("echoString")[0];
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("echoString")[0];
         // Verify WebResult annotation default values for DOC/LIT/WRAPPED from a defaulted SOAPBinding
         assertNull(operationDesc.getWebResult());
         assertEquals("return", operationDesc.getWebResultName());
@@ -339,7 +341,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
 
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("echoString")[0];
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("echoString")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, operationDesc.getSoapBindingStyle());
@@ -354,7 +356,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("echoString")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("echoString")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, operationDesc.getSoapBindingStyle());
@@ -366,7 +368,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         // Test paramaterStyle = WRAPPED set a the type level with various combinations of method annotation setting
         EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(DefaultReqRspWrapperTestImpl.class);
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("wrappedParams")[0];
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("wrappedParams")[0];
         assertNotNull(operationDesc);
         assertEquals("wrappedParams", operationDesc.getRequestWrapperLocalName());
         assertEquals("wrappedParamsResponse", operationDesc.getResponseWrapperLocalName());
@@ -382,7 +384,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("bareParams")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("bareParams")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getRequestWrapperLocalName());
         assertNull(operationDesc.getResponseWrapperLocalName());
@@ -401,7 +403,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
 
         // Test paramaterStyle = BARE set a the type level with various combinations of method annotation setting
         testEndpointInterfaceDesc = getEndpointInterfaceDesc(DefaultReqRspWrapperBareTestImpl.class);
-        operationDesc = testEndpointInterfaceDesc.getOperation("wrappedParams")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("wrappedParams")[0];
         assertNotNull(operationDesc);
         assertEquals("wrappedParams", operationDesc.getRequestWrapperLocalName());
         assertEquals("wrappedParamsResponse", operationDesc.getResponseWrapperLocalName());
@@ -409,7 +411,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getResponseWrapperClassName());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("bareParams")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("bareParams")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getRequestWrapperLocalName());
         assertNull(operationDesc.getResponseWrapperLocalName());
@@ -421,7 +423,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     
     public void testReqRspWrapper() {
         EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(ReqRspWrapperTestImpl.class);
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("method1")[0];
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
         assertNotNull(operationDesc);
         assertEquals("method1ReqWrapper", operationDesc.getRequestWrapperLocalName());
         assertEquals("method1RspWrapper", operationDesc.getResponseWrapperLocalName());
@@ -430,7 +432,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("org.apache.axis2.jaxws.description.method1ReqWrapper", operationDesc.getRequestWrapperClassName());
         assertEquals("org.apache.axis2.jaxws.description.method1RspWrapper", operationDesc.getResponseWrapperClassName());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method2")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
         assertEquals("method2", operationDesc.getRequestWrapperLocalName());
         assertEquals("method2RspWrapper", operationDesc.getResponseWrapperLocalName());
         assertEquals("http://a.b.c.method2ReqTNS", operationDesc.getRequestWrapperTargetNamespace());
@@ -443,38 +445,38 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(WebMethodTestImpl.class);
         
         // Test results from method with no annotation
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("method1")[0];
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
         assertNotNull(operationDesc);
         assertEquals("method1", operationDesc.getWebMethodOperationName());
         assertEquals("", operationDesc.getWebMethodAction());
         assertFalse(operationDesc.getWebMethodExclude());
         
-        operationDesc = testEndpointInterfaceDesc.getOperation("method2")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
         assertNotNull(operationDesc);
         assertEquals("renamedMethod2", operationDesc.getWebMethodOperationName());
         assertEquals("", operationDesc.getWebMethodAction());
         assertFalse(operationDesc.getWebMethodExclude());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method3")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method3")[0];
         assertNotNull(operationDesc);
         assertEquals("method3", operationDesc.getWebMethodOperationName());
         assertEquals("ActionMethod3", operationDesc.getWebMethodAction());
         assertFalse(operationDesc.getWebMethodExclude());
         
-        operationDesc = testEndpointInterfaceDesc.getOperation("method4")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4")[0];
         assertNotNull(operationDesc);
         assertEquals("renamedMethod4", operationDesc.getWebMethodOperationName());
         assertEquals("ActionMethod4", operationDesc.getWebMethodAction());
         assertFalse(operationDesc.getWebMethodExclude());
         
-        operationDesc = testEndpointInterfaceDesc.getOperation("method4")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4")[0];
         assertNotNull(operationDesc);
         assertEquals("renamedMethod4", operationDesc.getWebMethodOperationName());
         assertEquals("ActionMethod4", operationDesc.getWebMethodAction());
         assertFalse(operationDesc.getWebMethodExclude());
 
         // REVIEW: Should these getters be throwing an exception or returning a default value since exclude=true? 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method5")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method5")[0];
         assertNotNull(operationDesc);
         assertEquals("method5", operationDesc.getWebMethodOperationName());
         assertEquals("", operationDesc.getWebMethodAction());
@@ -487,7 +489,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         
         // DOCUMENT / LITERAL / WRAPPED methods
         
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperation("method0")[0];
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method0")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getWebResult());
         assertFalse(operationDesc.isWebResultAnnotationSpecified());
@@ -497,7 +499,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
         
-        operationDesc = testEndpointInterfaceDesc.getOperation("method1")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getWebResult());
         assertFalse(operationDesc.isWebResultAnnotationSpecified());
@@ -507,7 +509,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method2")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -517,7 +519,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method3")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method3")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -527,7 +529,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method4")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -537,7 +539,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://result.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method5")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method5")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -547,7 +549,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://result.test.target.namespace.5/", operationDesc.getWebResultTargetNamespace());
         assertTrue(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method6")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method6")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getWebResult());
         assertFalse(operationDesc.isWebResultAnnotationSpecified());
@@ -557,7 +559,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals(null, operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method7")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method7")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -569,7 +571,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         
         // DOCUMENT / LITERAL / BARE methods
         
-        operationDesc = testEndpointInterfaceDesc.getOperation("method0_bare")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method0_bare")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getWebResult());
         assertFalse(operationDesc.isWebResultAnnotationSpecified());
@@ -579,7 +581,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
         
-        operationDesc = testEndpointInterfaceDesc.getOperation("method1_bare")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1_bare")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getWebResult());
         assertFalse(operationDesc.isWebResultAnnotationSpecified());
@@ -589,7 +591,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method2_bare")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2_bare")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -599,7 +601,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method3_bare")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method3_bare")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -609,7 +611,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method4_bare")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4_bare")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -619,7 +621,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://result.bare.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method5_bare")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method5_bare")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -629,7 +631,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://result.bare.test.target.namespace.5/", operationDesc.getWebResultTargetNamespace());
         assertTrue(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method6_bare")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method6_bare")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getWebResult());
         assertFalse(operationDesc.isWebResultAnnotationSpecified());
@@ -639,7 +641,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals(null, operationDesc.getWebResultTargetNamespace());
         assertFalse(operationDesc.getWebResultHeader());
 
-        operationDesc = testEndpointInterfaceDesc.getOperation("method7")[0];
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method7")[0];
         assertNotNull(operationDesc);
         assertNotNull(operationDesc.getWebResult());
         assertTrue(operationDesc.isWebResultAnnotationSpecified());
@@ -649,7 +651,454 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://service.test.target.namespace/", operationDesc.getWebResultTargetNamespace());
         assertTrue(operationDesc.getWebResultHeader());
     }
+    
+    public void testWebParamWrapped() {
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(WebParamTestImpl.class);
+        
+        // DOCUMENT / LITERAL / WRAPPED methods
+        
+        // method0
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method0")[0];
+        assertNotNull(operationDesc);
+        ParameterDescription[] paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        ParameterDescription checkParamDesc = paramDesc[0];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg0", checkParamDesc.getWebParamName());
+        assertEquals("arg0", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg0"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals(String.class, checkParamDesc.getParameterActualType());
+        assertFalse(checkParamDesc.isHolderType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        // method00
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method00")[0];
+        assertNotNull(operationDesc);
+        assertEquals(0, operationDesc.getParameterDescriptions().length);
+        
+        // method1
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        checkParamDesc = paramDesc[0];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg0", checkParamDesc.getWebParamName());
+        assertEquals("arg0", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg0"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
 
+        // method2
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("arg0", checkParamDesc.getWebParamName());
+        assertEquals("arg0", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg0"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+
+        // method3
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method3")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(5, paramDesc.length);
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param0NameMethod3", checkParamDesc.getWebParamName());
+        assertEquals("param0NameMethod3", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param0NameMethod3"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[1];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param1NameMethod3", checkParamDesc.getWebParamName());
+        assertEquals("param1NameMethod3", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(1));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param1NameMethod3"));
+        assertEquals(Holder.class, checkParamDesc.getParameterType());
+        assertEquals(Integer.class, checkParamDesc.getParameterActualType());
+        assertTrue(checkParamDesc.isHolderType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.INOUT, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[2];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg2", checkParamDesc.getWebParamName());
+        assertEquals("arg2", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(2));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg2"));
+        assertEquals(Object.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[3];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg3", checkParamDesc.getWebParamName());
+        assertEquals("arg3", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(3));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg3"));
+        assertEquals(Integer.TYPE, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[4];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("lastParamNameMethod3", checkParamDesc.getWebParamName());
+        assertEquals("lastParamNameMethod3", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(4));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("lastParamNameMethod3"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        // method4
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(5, paramDesc.length);
+        
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param0NameMethod4", checkParamDesc.getWebParamName());
+        assertEquals("param0PartName", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param0NameMethod4"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("http://param.4.0.result.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[1];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param1NameMethod4", checkParamDesc.getWebParamName());
+        assertEquals("param1PartName", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(1));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param1NameMethod4"));
+        assertEquals(Integer.TYPE, checkParamDesc.getParameterType());
+        assertEquals("http://param.4.1.result.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[2];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg2", checkParamDesc.getWebParamName());
+        assertEquals("arg2", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(2));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg2"));
+        assertEquals(Object.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[3];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg3", checkParamDesc.getWebParamName());
+        assertEquals("arg3", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(3));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg3"));
+        assertEquals(Holder.class, checkParamDesc.getParameterType());
+        assertEquals(Integer.class, checkParamDesc.getParameterActualType());
+        assertTrue(checkParamDesc.isHolderType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.INOUT, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[4];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("lastParamNameMethod4", checkParamDesc.getWebParamName());
+        assertEquals("lastParamNameMethod4", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(4));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("lastParamNameMethod4"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        // method5
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method5")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(5, paramDesc.length);
+        
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param0NameMethod5", checkParamDesc.getWebParamName());
+        assertEquals("param0PartName", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param0NameMethod5"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertFalse(checkParamDesc.isHolderType());
+        assertEquals("http://param.5.0.result.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertTrue(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[1];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param1NameMethod5", checkParamDesc.getWebParamName());
+        assertEquals("param1PartName", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(1));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param1NameMethod5"));
+        assertEquals(Integer.TYPE, checkParamDesc.getParameterType());
+        assertFalse(checkParamDesc.isHolderType());
+        assertEquals("http://param.5.1.result.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[2];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg2", checkParamDesc.getWebParamName());
+        assertEquals("arg2", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(2));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg2"));
+        assertEquals(Holder.class, checkParamDesc.getParameterType());
+        assertEquals(Object.class, checkParamDesc.getParameterActualType());
+        assertTrue(checkParamDesc.isHolderType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.INOUT, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[3];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg3", checkParamDesc.getWebParamName());
+        assertEquals("arg3", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(3));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg3"));
+        assertEquals(Integer.TYPE, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[4];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("lastParamNameMethod5", checkParamDesc.getWebParamName());
+        assertEquals("lastParamNameMethod5", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(4));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("lastParamNameMethod5"));
+        assertEquals(Holder.class, checkParamDesc.getParameterType());
+        assertEquals(String.class, checkParamDesc.getParameterActualType());
+        assertTrue(checkParamDesc.isHolderType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.OUT, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        // method6
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method6")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(5, paramDesc.length);
+        
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param0NameMethod6", checkParamDesc.getWebParamName());
+        assertEquals("param0PartName", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param0NameMethod6"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("http://param.service.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertTrue(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[1];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param1NameMethod6", checkParamDesc.getWebParamName());
+        assertEquals("param1PartName", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(1));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param1NameMethod6"));
+        assertEquals(Integer.TYPE, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[2];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg2", checkParamDesc.getWebParamName());
+        assertEquals("arg2", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(2));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg2"));
+        assertEquals(Object.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[3];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("arg3", checkParamDesc.getWebParamName());
+        assertEquals("arg3", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(3));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg3"));
+        assertEquals(Integer.TYPE, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        checkParamDesc = paramDesc[4];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("lastParamNameMethod6", checkParamDesc.getWebParamName());
+        assertEquals("lastParamNameMethod6", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(4));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("lastParamNameMethod6"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+    }
+
+    public void testWebParamBare() {
+        EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(WebParamTestImpl.class);
+        
+        // DOCUMENT / LITERAL / BARE methods
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method0_bare")[0];
+        assertNotNull(operationDesc);
+        ParameterDescription[] paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        ParameterDescription checkParamDesc = paramDesc[0];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("method0_bare", checkParamDesc.getWebParamName());
+        assertEquals("method0_bare", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("method0_bare"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals(String.class, checkParamDesc.getParameterActualType());
+        assertFalse(checkParamDesc.isHolderType());
+        assertEquals("http://param.service.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        // method00
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method00_bare")[0];
+        assertNotNull(operationDesc);
+        assertEquals(0, operationDesc.getParameterDescriptions().length);
+        
+        // method1
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1_bare")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        checkParamDesc = paramDesc[0];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("renamedMethod1", checkParamDesc.getWebParamName());
+        assertEquals("renamedMethod1", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("renamedMethod1"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("http://param.service.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+
+        // method2
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2_bare")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("renamedMethod2", checkParamDesc.getWebParamName());
+        assertEquals("renamedMethod2", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("renamedMethod2"));
+        assertEquals(String.class, checkParamDesc.getParameterType());
+        assertEquals("http://param.service.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.IN, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+
+        // method3
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method3_bare")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param1NameMethod3", checkParamDesc.getWebParamName());
+        assertEquals("param1NameMethod3", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param1NameMethod3"));
+        assertEquals(Holder.class, checkParamDesc.getParameterType());
+        assertEquals(Integer.class, checkParamDesc.getParameterActualType());
+        assertTrue(checkParamDesc.isHolderType());
+        assertEquals("http://param.service.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.INOUT, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        // method4
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method4_bare")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        
+        checkParamDesc = paramDesc[0];
+        assertNull(checkParamDesc.getWebParam());
+        assertEquals("renamedMethod4", checkParamDesc.getWebParamName());
+        assertEquals("renamedMethod4", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("renamedMethod4"));
+        assertEquals(Holder.class, checkParamDesc.getParameterType());
+        assertEquals(Integer.class, checkParamDesc.getParameterActualType());
+        assertEquals("http://param.service.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.INOUT, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+
+        // method5
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method5_bare")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("lastParamNameMethod5", checkParamDesc.getWebParamName());
+        assertEquals("lastParamNameMethod5", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("lastParamNameMethod5"));
+        assertEquals(Holder.class, checkParamDesc.getParameterType());
+        assertEquals(String.class, checkParamDesc.getParameterActualType());
+        assertTrue(checkParamDesc.isHolderType());
+        assertEquals("http://method5.bare.result.test.target.namespace.5/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.OUT, checkParamDesc.getWebParamMode());
+        assertFalse(checkParamDesc.getWebParamHeader());
+        
+        // method6
+        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method6_bare")[0];
+        assertNotNull(operationDesc);
+        paramDesc = operationDesc.getParameterDescriptions();
+        assertEquals(1, paramDesc.length);
+        
+        checkParamDesc = paramDesc[0];
+        assertNotNull(checkParamDesc.getWebParam());
+        assertEquals("param0NameMethod6", checkParamDesc.getWebParamName());
+        assertEquals("param0PartName", checkParamDesc.getWebParamPartName());
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
+        assertEquals(checkParamDesc, operationDesc.getParameterDescription("param0NameMethod6"));
+        assertEquals(Holder.class, checkParamDesc.getParameterType());
+        assertEquals(String.class, checkParamDesc.getParameterActualType());
+        assertEquals("http://param.service.test.target.namespace/", checkParamDesc.getWebParamTargetNamespace());
+        assertEquals(WebParam.Mode.INOUT, checkParamDesc.getWebParamMode());
+        assertTrue(checkParamDesc.getWebParamHeader());
+    }
+
+    
     /*
      * Method to return the endpoint interface description for a given implementation class.
      */
@@ -889,5 +1338,153 @@ class WebResultTestImpl {
     @WebResult(name="resultName7", partName="partName7", header=true)
     public String method7_bare(String s) {
         return s;
+    }
+}
+
+// ===============================================
+// Web Param test impl
+// ===============================================
+@WebService(targetNamespace="http://param.service.test.target.namespace/")
+//Default SOAPBinding Style=DOCUMENT, Use=LITERAL, ParamStyle=WRAPPED
+class WebParamTestImpl {
+    
+    // DOCUMENT / LITERAL / WRAPPED methods
+    public String method0(String s) {
+        return s;
+    }
+    
+    public void method00() {
+        return;
+    }
+
+    @WebMethod(operationName = "renamedMethod1")
+    public String method1(String s) {
+        return s;
+    }
+
+    @WebMethod(operationName = "renamedMethod2")
+    @WebResult()
+    public String method2(
+            @WebParam()
+            String s) {
+        return s;
+    }
+
+    @WebMethod(operationName = "renamedMethod3")
+    @WebResult(name = "resultName")
+    public String method3(
+            @WebParam(name="param0NameMethod3")
+            String s, 
+            @WebParam(name="param1NameMethod3")
+            javax.xml.ws.Holder<Integer> holderInteger,
+            Object objNoWebParamAnno,
+            int intNoWebParamAnno,
+            @WebParam(name="lastParamNameMethod3")
+            String last) {
+        return s;
+    }
+
+    @WebMethod(operationName = "renamedMethod4")
+    @WebResult(name = "resultName", partName = "partName", targetNamespace = "http://result.test.target.namespace/")
+    public String method4(
+            @WebParam(name="param0NameMethod4", partName="param0PartName", targetNamespace="http://param.4.0.result.test.target.namespace/")
+            String s, 
+            @WebParam(name="param1NameMethod4", partName="param1PartName", targetNamespace="http://param.4.1.result.test.target.namespace/")
+            int i,
+            Object objNoWebParamAnno,
+            javax.xml.ws.Holder<Integer> intNoWebParamAnno,
+            @WebParam(name="lastParamNameMethod4")
+            String last) {
+
+        return s;
+    }
+
+    @WebMethod(operationName = "renamedMethod5")
+    @WebResult(name = "resultName5", partName = "partName5", targetNamespace = "http://result.test.target.namespace.5/", header = true)
+    public String method5(
+            @WebParam(name="param0NameMethod5", partName="param0PartName", targetNamespace="http://param.5.0.result.test.target.namespace/", header=true)
+            String s, 
+            @WebParam(name="param1NameMethod5", partName="param1PartName", targetNamespace="http://param.5.1.result.test.target.namespace/", header=false)
+            int i,
+            javax.xml.ws.Holder<Object> objNoWebParamAnno,
+            int intNoWebParamAnno,
+            @WebParam(name="lastParamNameMethod5", mode=WebParam.Mode.OUT)
+            javax.xml.ws.Holder<String> last) {
+        return s;
+    }
+
+    @WebMethod(operationName = "renamedMethod6")
+    @WebResult(name = "resultName5", partName = "partName5", header = true)
+    public String method6(
+            @WebParam(name="param0NameMethod6", partName="param0PartName", header=true)
+            String s, 
+            @WebParam(name="param1NameMethod6", partName="param1PartName", header=false)
+            int i,
+            Object objNoWebParamAnno,
+            int intNoWebParamAnno,
+            @WebParam(name="lastParamNameMethod6")
+            String last) {
+        return s;
+    }
+
+    // DOCUMENT / LITERAL / BARE methods
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    public String method0_bare(String s) {
+        return s;
+    }
+    
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    public void method00_bare() {
+        return;
+    }
+
+    @WebMethod(operationName = "renamedMethod1")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    public String method1_bare(String s) {
+        return s;
+    }
+
+    @WebMethod(operationName = "renamedMethod2")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult()
+    public String method2_bare(
+            @WebParam()
+            String s) {
+        return s;
+    }
+    @WebMethod(operationName = "renamedMethod3")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult(name = "resultName")
+    public String method3_bare(
+            @WebParam(name="param1NameMethod3")
+            javax.xml.ws.Holder<Integer> holderInteger) {
+        return null;
+    }
+
+    @WebMethod(operationName = "renamedMethod4")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult(name = "resultName", partName = "partName", targetNamespace = "http://result.test.target.namespace/")
+    public String method4_bare(
+            javax.xml.ws.Holder<Integer> intNoWebParamAnno) {
+
+        return null;
+    }
+
+    @WebMethod(operationName = "renamedMethod5")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult(name = "resultName5", partName = "partName5", targetNamespace = "http://result.test.target.namespace.5/", header = true)
+    public void method5_bare(
+            @WebParam(name="lastParamNameMethod5", mode=WebParam.Mode.OUT, targetNamespace = "http://method5.bare.result.test.target.namespace.5/")
+            javax.xml.ws.Holder<String> last) {
+        return;
+    }
+
+    @WebMethod(operationName = "renamedMethod6")
+    @SOAPBinding(parameterStyle=SOAPBinding.ParameterStyle.BARE)
+    @WebResult(name = "resultName5", partName = "partName5", header = true)
+    public String method6_bare(
+            @WebParam(name="param0NameMethod6", partName="param0PartName", header=true)
+            javax.xml.ws.Holder<String> s) {
+        return null;
     }
 }
