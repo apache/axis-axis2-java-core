@@ -101,6 +101,8 @@ public interface Java2WSDLConstants {
     String ATTR_FORM_DEFAULT_OPTION = "afd";
     String ELEMENT_FORM_DEFAULT_OPTION = "efd";
     String EXTRA_CLASSES_DEFAULT_OPTION = "xc";
+    String NAMESPACE_GENERATOR_OPTION = "nsg";
+    String JAVA_PKG_2_NSMAP_OPTION = "p2n";
 
     //long option constants
     String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -119,6 +121,8 @@ public interface Java2WSDLConstants {
     String ATTR_FORM_DEFAULT_OPTION_LONG = "attributeFormDefault";
     String ELEMENT_FORM_DEFAULT_OPTION_LONG = "elementFormDefault";
     String EXTRA_CLASSES_DEFAULT_OPTION_LONG = "extraClasses";
+    String NAMESPACE_GENERATOR_OPTION_LONG = "namespaceGenerator";
+    String JAVA_PKG_2_NSMAP_OPTION_LONG = "package2Namespace";
 
     public static final String SOLE_INPUT = "SOLE_INPUT";
 

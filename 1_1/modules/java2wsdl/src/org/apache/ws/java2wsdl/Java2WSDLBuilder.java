@@ -5,6 +5,8 @@ import org.apache.axiom.om.OMElement;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -25,6 +27,7 @@ import java.util.Collection;
 
 public class Java2WSDLBuilder {
 
+    public static final String ALL = "all";
     private OutputStream out;
     private String className;
     private ClassLoader classLoader;
@@ -44,6 +47,9 @@ public class Java2WSDLBuilder {
     private String use = Java2WSDLConstants.LITERAL;
     private String locationUri = Java2WSDLConstants.DEFAULT_LOCATION_URL;
     private ArrayList extraClasses;
+    
+    private String nsGenClassName = null;
+    private Map pkg2nsMap = null;
 
     public String getSchemaTargetNamespace() {
         return schemaTargetNamespace;
@@ -148,12 +154,20 @@ public class Java2WSDLBuilder {
         schemaGenerator.setAttrFormDefault(getAttrFormDefault());
         schemaGenerator.setElementFormDefault(getElementFormDefault());
         schemaGenerator.setExtraClasses(getExtraClasses());
+        schemaGenerator.setNsGenClassName(getNsGenClassName());
+        schemaGenerator.setPkg2nsmap(getPkg2nsMap());
+        if ( getPkg2nsMap() != null && !getPkg2nsMap().isEmpty() && 
+                (getPkg2nsMap().containsKey(ALL) || getPkg2nsMap().containsKey(ALL.toUpperCase())) ) {
+            schemaGenerator.setUseWSDLTypesNamespace(true);
+        } 
+        
         Collection schemaCollection = schemaGenerator.generateSchema();
+        
         Java2OMBuilder java2OMBuilder = new Java2OMBuilder(schemaGenerator.getMethods(),
                 schemaCollection,
                 schemaGenerator.getTypeTable(),
                 serviceName == null ? Java2WSDLUtils.getSimpleClassName(className) : serviceName,
-                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className,classLoader).toString() : targetNamespace,
+                targetNamespace == null ? Java2WSDLUtils.namespaceFromClassName(className,classLoader, resolveNSGen()).toString() : targetNamespace,
                 targetNamespacePrefix,
                 style,
                 use,
@@ -187,5 +201,33 @@ public class Java2WSDLBuilder {
     public void setExtraClasses(ArrayList extraClasses) {
         this.extraClasses = extraClasses;
     }
+
+    public String getNsGenClassName() {
+        return nsGenClassName;
+    }
+
+    public void setNsGenClassName(String nsGenClassName) {
+        this.nsGenClassName = nsGenClassName;
+    }
+
+    public Map getPkg2nsMap() {
+        return pkg2nsMap;
+    }
+
+    public void setPkg2nsMap(Map pkg2nsMap) {
+        this.pkg2nsMap = pkg2nsMap;
+    }
+    
+    private NamespaceGenerator resolveNSGen() {
+        NamespaceGenerator nsGen = null;
+        try {
+            nsGen = (NamespaceGenerator)Class.forName(this.nsGenClassName).newInstance();
+        } catch ( Exception e ) {
+            nsGen = new DefaultNamespaceGenerator();
+        }
+        
+        return nsGen;
+    }
+    
 }
 
