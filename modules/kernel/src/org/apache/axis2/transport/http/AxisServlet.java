@@ -305,11 +305,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             axisConfiguration = configContext.getAxisConfiguration();
             config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
-            // setting the ServletConfig to AxisConfiguration
-            Parameter servletConfigParam = new Parameter();
-            servletConfigParam.setName(HTTPConstants.HTTP_SERVLETCONFIG);
-            servletConfigParam.setValue(this.servletConfig);
-            axisConfiguration.addParameter(servletConfigParam);
+            
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
             TransportInDescription transportInDescription = new TransportInDescription(

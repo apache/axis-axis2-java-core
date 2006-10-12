@@ -295,5 +295,16 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         // setting ServletContext into configctx
         configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
                 config.getServletContext());
+        // setting ServletContext into configctx
+        configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
+                                  config.getServletContext());
+        Parameter servletConfigParam = new Parameter();
+        servletConfigParam.setName(HTTPConstants.HTTP_SERVLETCONFIG);
+        servletConfigParam.setValue(config);
+        try {
+            configContext.getAxisConfiguration().addParameter(servletConfigParam);
+        } catch (AxisFault axisFault) {
+            log.error(axisFault);
+        }
     }
 }
