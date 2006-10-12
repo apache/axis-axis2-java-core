@@ -306,6 +306,29 @@ public class TestClient {
     }
 } </pre>
 
+<p>The examples above assumes that the spring framework jar is under WEB-INF/lib. In such a case, 
+the classes shown in this tutorial need to be placed in a JAR under WEB-INF/lib. In this example the
+JAR layout is:</p>
+    <source>
+    <pre>./mySpring.jar
+./META-INF
+./META-INF/MANIFEST.MF
+./spring
+./spring/MyBean.class
+./spring/MyBeanImpl.class
+./spring/SpringAwareService.class
+</pre> </source>
+
+<p>Since all the user classes are in mySpring.jar in this example, the AAR merely contains the 
+services.xml file:</p>
+
+    <source>
+    <pre>./springExample.aar
+./META-INF
+./META-INF/MANIFEST.MF
+./META-INF/services.xml
+</pre> </source>
+
 <p>To run this example, make sure you have the axis2-spring*.jar that comes
 from the axis2-std-*-bin distro in the server side WEB-INF/lib, as well as
 the appropriate Spring jar - most will use the full spring.jar, but the
@@ -444,18 +467,19 @@ public class SpringInit implements Service {
     <strong><a name="263"></a>Known issues running Spring inside the AAR</strong>
   </li>
 </ul>
-    <p>The Axis2 classloader strategy by default does not permit Spring to run inside the AAR. To allow
-    Spring to run inside the AAR, the 'composite' parameter is used in the services.xml as shown in the example
-    above. The behavior of 'composite' was the default in the developement cycle in between 1.0 and 1.1, but 
-    it resulted in the JIRA issue AXIS2-1214 - essentially problems with getting an initContext.lookup() 
-    handle inside the AAR. Spring users typically have little desire to use initContext.lookup() however, 
-    as they get their Datasources via org.springframework.jdbc.datasource.DriverManagerDataSource in an
-    xml file or with annotations. For ejb home references and the like, Spring provides JndiObjectFactoryBean.
-    While fully testing JndiObjectFactoryBean with ejb has not been done yet - if you do, please send a message 
-    to the axis users list - Datasources via Spring inside the AAR have been tested. Basically it works as 
-    typically done with Spring, though if you are passing Hibernate XML files you need to put them in a 
-    place where Spring will find them. The most flexible way is as follows, using logging in DEBUG mode
-    to see where Spring will look in your jar / class locations: </p>
+    <p>The Axis2 classloader strategy by default does not permit Spring to run inside the AAR. To 
+    allow Spring to run inside the AAR, the 'composite' parameter is used in the services.xml as 
+    shown in the example above. The behavior of 'composite' was the default in the developement 
+    cycle in between 1.0 and 1.1, but it resulted in the JIRA issue AXIS2-1214 - essentially 
+    problems with getting an initContext.lookup() handle inside the AAR. Spring users typically 
+    have little desire to use initContext.lookup() however, as they get their Datasources via 
+    org.springframework.jdbc.datasource.DriverManagerDataSource in an xml file or with annotations. 
+    For ejb home references and the like, Spring provides JndiObjectFactoryBean. While fully testing 
+    JndiObjectFactoryBean with ejb has not been done yet - if you do, please send a message 
+    to the axis users list - Datasources via Spring inside the AAR have been tested. Basically 
+    it works as typically done with Spring, though if you are passing Hibernate XML files you need 
+    to put them in a place where Spring will find them. The most flexible way is as follows, using 
+    logging in DEBUG mode to see where Spring will look in your jar / class locations: </p>
     <source><pre>
     &lt;bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
                 &lt;property name="mappingLocations"&gt;
