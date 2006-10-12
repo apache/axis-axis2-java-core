@@ -253,7 +253,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
             if (!service.isUseUserWSDL()) {
                 // Generating schema for the service if the impl class is Java
-                if (!service.isWsdlfound()) {
+                if (!service.isWsdlFound()) {
                     //trying to generate WSDL for the service using JAM  and Java reflection
                     try {
                         if (generateWsdl(service)) {

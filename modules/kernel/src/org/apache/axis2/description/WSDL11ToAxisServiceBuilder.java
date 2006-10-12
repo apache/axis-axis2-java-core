@@ -6,8 +6,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
@@ -27,9 +25,9 @@ import org.xml.sax.SAXException;
 import javax.wsdl.*;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
-import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.*;
+import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
@@ -185,10 +183,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             setup();
             // Setting wsdl4jdefintion to axisService , so if some one want
             // to play with it he can do that by getting the parameter
-            Parameter wsdldefintionParamter = new Parameter();
-            wsdldefintionParamter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
-            wsdldefintionParamter.setValue(wsdl4jDefinition);
-            axisService.addParameter(wsdldefintionParamter);
+            Parameter wsdlDefinitionParameter = new Parameter();
+            wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
+            wsdlDefinitionParameter.setValue(wsdl4jDefinition);
+            axisService.addParameter(wsdlDefinitionParameter);
 
             if (wsdl4jDefinition == null) {
                 return null;

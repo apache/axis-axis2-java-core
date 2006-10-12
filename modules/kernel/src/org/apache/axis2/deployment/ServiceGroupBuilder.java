@@ -80,7 +80,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                     if (axisService == null) {
                         axisService = new AxisService(serviceName);
                     } else {
-                        axisService.setWsdlfound(true);
+                        axisService.setWsdlFound(true);
                     }
 
                     // the service that has to be deployed

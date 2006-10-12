@@ -54,7 +54,6 @@ public class ArchiveReader implements DeploymentConstants {
 
         if (TAG_SERVICE.equals(elementName)) {
             AxisService axisService = null;
-//            OMAttribute serviceNameatt = rootElement.getAttribute(new QName(ATTRIBUTE_NAME));
             String serviceName = DescriptionBuilder.getShortFileName(currentFile.getName());
             if (serviceName != null) {
                 axisService = (AxisService) wsdlServices.get(serviceName);
@@ -66,7 +65,7 @@ public class ArchiveReader implements DeploymentConstants {
             if (axisService == null) {
                 axisService = new AxisService(serviceName);
             } else {
-                axisService.setWsdlfound(true);
+                axisService.setWsdlFound(true);
             }
 
             axisService.setParent(axisServiceGroup);
@@ -83,7 +82,7 @@ public class ArchiveReader implements DeploymentConstants {
                     axisConfig);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
-        throw new AxisFault("In valid services.xml found");
+        throw new AxisFault("Invalid services.xml found");
     }
 
     /**
@@ -217,18 +216,18 @@ public class ArchiveReader implements DeploymentConstants {
         boolean isDirectory = serviceFile.isDirectory();
         if (isDirectory) {
             try {
-                File meta_inf = new File(serviceFile, META_INF);
+                File metaInfFolder = new File(serviceFile, META_INF);
 
-                if (!meta_inf.exists()) {
-                    meta_inf = new File(serviceFile, META_INF.toLowerCase());
-                    if (!meta_inf.exists()) {
+                if (!metaInfFolder.exists()) {
+                    metaInfFolder = new File(serviceFile, META_INF.toLowerCase());
+                    if (!metaInfFolder.exists()) {
                         throw new DeploymentException(
                                 Messages.getMessage(
                                         DeploymentErrorMsgs.META_INF_MISSING, serviceFile.getName()));
                     }
                 }
 
-                File files[] = meta_inf.listFiles();
+                File files[] = metaInfFolder.listFiles();
                 for (int i = 0; i < files.length; i++) {
                     File file1 = files[i];
                     if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
@@ -362,7 +361,7 @@ public class ArchiveReader implements DeploymentConstants {
             throws DeploymentException {
 
         // get attribute values
-        boolean foundmoduleXML = false;
+        boolean moduleXMLFound = false;
         if (!explodedDir) {
             ZipInputStream zin;
             FileInputStream fin;
@@ -372,7 +371,7 @@ public class ArchiveReader implements DeploymentConstants {
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equalsIgnoreCase(MODULE_XML)) {
-                        foundmoduleXML = true;
+                        moduleXMLFound = true;
                         ModuleBuilder builder = new ModuleBuilder(zin, module, axisConfig);
                         // setting module name
                         module.setName(
@@ -385,7 +384,7 @@ public class ArchiveReader implements DeploymentConstants {
                 }
                 zin.close();
                 fin.close();
-                if (!foundmoduleXML) {
+                if (!moduleXMLFound) {
                     throw new DeploymentException(
                             Messages.getMessage(
                                     DeploymentErrorMsgs.MODULE_XML_MISSING, archiveFile.getAbsolutePath()));
