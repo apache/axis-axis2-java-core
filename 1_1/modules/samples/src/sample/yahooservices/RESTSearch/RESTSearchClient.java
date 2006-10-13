@@ -1,67 +1,46 @@
 /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package sample.yahooservices.RESTSearch;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.ServiceClient;
+import javax.swing.*;
+import java.awt.*;
 
-public class RESTSearchClient {
+public class RESTSearchClient extends JFrame {
+    public static int width;
+    public static int height;
+
+    public RESTSearchClient(String title) throws HeadlessException {
+        super(title);
+
+        this.getContentPane().add(new UserInterface(this));
+        this.setVisible(true);
+    }
+
     public static void main(String[] args) {
-        try {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        width = screenSize.width;
+        height = screenSize.height;
+        RESTSearchClient form = new RESTSearchClient("Axis2 REST Search Client");
 
-            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch";
-
-            ServiceClient client = new ServiceClient();
-            Options options = new Options();
-            client.setOptions(options);
-            options.setTo(new EndpointReference(epr));
-            options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
-            options.setProperty(Constants.Configuration.HTTP_METHOD, Constants.Configuration.HTTP_METHOD_GET);
-
-            //if post is through GET of HTTP
-            OMElement response = client.sendReceive(getPayloadForYahooSearchCall());
-            System.out.println("response = " + response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        int left = (width) / 2;
+        int top = (height) / 2;
+        form.setLocation(left, top);
+        form.setSize(width, height);
+        form.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        form.setVisible(true);
     }
-
-    private static OMElement getPayloadForYahooSearchCall() {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        OMElement rootElement = fac.createOMElement("webSearch", null);
-
-        OMElement appId = fac.createOMElement("appid", null, rootElement);
-        appId.setText("ApacheRestDemo");
-
-        OMElement query = fac.createOMElement("query", null, rootElement);
-        query.setText("Axis2");
-
-        OMElement format = fac.createOMElement("format", null, rootElement);
-        format.setText("pdf");
-
-        return rootElement;
-    }
-
-
 }
-
