@@ -448,10 +448,11 @@ class OutInAxisOperationClient implements OperationClient {
                     }
                 }
 
-                callback.setComplete(true);
             } catch (Exception e) {
-                callback.onError(e);
-            }
+				callback.onError(e);
+			} finally {
+				callback.setComplete(true);
+			}
         }
     }
 }
