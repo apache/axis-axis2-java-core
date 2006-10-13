@@ -23,6 +23,7 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
+import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.client.ServiceClient;
@@ -105,9 +106,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
             log.debug("Entered synchronous invocation: BaseDispatch.invoke()");
         }
         
-        //Check for valid invocation parameter
-        obj = validateInvocationParam(obj);
-        
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
         invocationContext.setServiceClient(serviceClient);
@@ -117,10 +115,17 @@ public abstract class BaseDispatch<T> extends BindingProvider
         MessageContext requestMsgCtx = new MessageContext();
         invocationContext.setRequestMessageContext(requestMsgCtx);
         
-        Message requestMsg = createMessageFromValue(obj);
-        setupMessageProperties(requestMsg);
-        requestMsgCtx.setMessage(requestMsg);
+        Message requestMsg = null;
+        if (isValidInvocationParam(obj)) {
+            requestMsg = createMessageFromValue(obj);
+        }
+        else {
+            throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+        }
         
+        setupMessageProperties(requestMsg);
+        requestMsgCtx.setMessage(requestMsg);            
+            
         // Copy the properties from the request context into the MessageContext
         requestMsgCtx.getProperties().putAll(requestContext);
         
@@ -145,9 +150,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
             log.debug("Entered one-way invocation: BaseDispatch.invokeOneWay()");
         }
         
-        //Check for valid invocation parameter
-        obj = validateInvocationParam(obj);
-       
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
         invocationContext.setServiceClient(serviceClient);
@@ -157,7 +159,14 @@ public abstract class BaseDispatch<T> extends BindingProvider
         MessageContext requestMsgCtx = new MessageContext();
         invocationContext.setRequestMessageContext(requestMsgCtx);
        
-        Message requestMsg = createMessageFromValue(obj);
+        Message requestMsg = null;
+        if (isValidInvocationParam(obj)) {
+            requestMsg = createMessageFromValue(obj);
+        }
+        else {
+            throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+        }
+        
         setupMessageProperties(requestMsg);
         requestMsgCtx.setMessage(requestMsg);
        
@@ -179,9 +188,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
             log.debug("Entered asynchronous (callback) invocation: BaseDispatch.invokeAsync()");
         }
         
-        //Check for valid invocation parameter
-        obj = validateInvocationParam(obj);
-        
         // Create the InvocationContext instance for this request/response flow.
         InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
         invocationContext.setServiceClient(serviceClient);
@@ -191,7 +197,14 @@ public abstract class BaseDispatch<T> extends BindingProvider
         MessageContext requestMsgCtx = new MessageContext();
         invocationContext.setRequestMessageContext(requestMsgCtx);
         
-        Message requestMsg = createMessageFromValue(obj);
+        Message requestMsg = null;
+        if (isValidInvocationParam(obj)) {
+            requestMsg = createMessageFromValue(obj);
+        }
+        else {
+            throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+        }
+        
         setupMessageProperties(requestMsg);
         requestMsgCtx.setMessage(requestMsg);
         
@@ -283,36 +296,35 @@ public abstract class BaseDispatch<T> extends BindingProvider
         }
     }
     
-    /**
-     * Validate invocation parameter value.
-     * @param object
-     * @return object
+    /*
+     * Validate the invocation param for the Dispatch.  There are 
+     * some cases when nulls are allowed and others where it's 
+     * a violation.
      */
-    private Object validateInvocationParam(Object object){
-    	Object obj = object;
+    private boolean isValidInvocationParam(Object object){
     	String bindingId = port.getBindingID();
-    	
-    	try {
-    		if(bindingId.equalsIgnoreCase(SOAPBinding.SOAP11HTTP_BINDING) ||
-    		   bindingId.equalsIgnoreCase(SOAPBinding.SOAP11HTTP_MTOM_BINDING)){
-    			if(mode.toString().equalsIgnoreCase(Mode.PAYLOAD.toString()) && object == null){
-    				//TODO Per JAXWS 2.0 Specification in Section 4.3.2, may need to send a soap
-    				//     message with empty body. For now, implementation will through a
-    				//     NullPointerException wrapped in WebServiceException
-    				throw new NullPointerException("Error: Dispatch invocation value is NULL");
-    			}
-    		}
-    		else if(object == null){
-    			throw new NullPointerException("Error: Dispatch invocation value is NULL");
-    		}
-    	}
-    	catch(NullPointerException npe){
-    		throw ExceptionFactory.makeWebServiceException(npe);
-    	}
-    	catch(Exception e){
-    		throw ExceptionFactory.makeWebServiceException(e);
-    	}
-    	
-    	return obj;
+        
+        // If no bindingId was found, use the default.
+        if (bindingId == null) {
+            bindingId = SOAPBinding.SOAP11HTTP_BINDING;
+        }
+        
+        // If it's not an HTTP_BINDING, then we can allow for null params,  
+        // but only in PAYLOAD mode per JAX-WS Section 4.3.2.
+        if (!bindingId.equals(HTTPBinding.HTTP_BINDING)) { 
+            if (mode.equals(Mode.MESSAGE) && object == null) {
+                throw ExceptionFactory.makeWebServiceException("dispatchNullParamMessageMode");
+            }
+        }
+        else {
+            // In all cases (PAYLOAD and MESSAGE) we must throw a WebServiceException
+            // if the parameter is null.
+            if (object == null) {
+                throw ExceptionFactory.makeWebServiceException("dispatchNullParamHttpBinding");
+            }
+        }
+        
+        // If we've gotten this far, then all is good.
+        return true;
     }
 }
