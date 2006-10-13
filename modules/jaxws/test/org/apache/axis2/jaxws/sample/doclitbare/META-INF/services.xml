@@ -4,7 +4,11 @@
    <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
   </messageReceivers>
   <parameter locked="false" name="ServiceClass">org.apache.axis2.jaxws.sample.doclitbare.DocLitBarePortTypeImpl</parameter>
-    <actionMapping/>
+  <operation name="twoWaySimple" mep="http://www.w3.org/2004/08/wsdl/in-out">
+	<messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
+	</messageReceivers>
+    <actionMapping>twoWaySimple<actionMapping/>
+  <operation/>
  </service>
 </serviceGroup>
 

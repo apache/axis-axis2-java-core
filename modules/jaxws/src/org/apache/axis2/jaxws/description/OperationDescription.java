@@ -549,7 +549,14 @@ public class OperationDescription {
     	}
     	return webParamMode;
     }
-
+    public boolean isWebParamHeader(String name){
+    	ParameterDescription paramDesc = getParameterDescription(name);
+    	if (paramDesc != null) {
+            return paramDesc.getWebParamHeader();
+        }
+        return false;    
+    }
+    
     // ===========================================
     // ANNOTATION: WebResult
     // ===========================================

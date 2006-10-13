@@ -6,6 +6,12 @@ package org.apache.axis2.jaxws.sample;
 import javax.xml.ws.Holder;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
+import org.test.sample.wrap.Header;
+import org.test.sample.wrap.HeaderPart0;
+import org.test.sample.wrap.HeaderPart1;
+import org.test.sample.wrap.HeaderResponse;
+
+import com.ibm.CORBA.iiop.Response;
 
 import junit.framework.TestCase;
 
@@ -82,5 +88,48 @@ public class WrapTests extends TestCase {
 			fail();
 		}
 	}
+	
+	public void testTwoWayWithHeadersAndHolders(){
+		System.out.println("------------------------------");
+		System.out.println("Test : "+getName());
+		try{
+			Header header = new Header();
+			header.setOut(0);
+			HeaderPart0 hp0= new HeaderPart0();
+			hp0.setHeaderType("Client setup Header Type for HeaderPart0");
+			HeaderPart1 hp1 = new HeaderPart1();
+			hp1.setHeaderType("Client setup Header Type for HeaderPart0");
+			Holder<HeaderPart0> holder = new Holder<HeaderPart0>(hp0);
+			DocLitWrapService service = new DocLitWrapService();
+			DocLitWrap proxy = service.getDocLitWrapPort();
+			HeaderResponse hr = proxy.header(header, holder, hp1);
+			hp0=holder.value;
+			System.out.println("Holder Response String =" + hp0.getHeaderType());
+			System.out.println("Header Response Long =" + hr.getOut());
+			System.out.println("------------------------------");
+		}catch(Exception e){
+			e.printStackTrace();
+			fail();
+		}
+	}
 
+	public void testTwoWayHolderAsync(){
+		System.out.println("------------------------------");
+		System.out.println("Test : "+getName());
+		try{
+			String holderString = new String("Test twoWay Sync");
+			Integer holderInteger = new Integer(0);
+			Holder<String> strHolder = new Holder<String>(holderString);
+			Holder<Integer> intHolder = new Holder<Integer>(holderInteger);
+			DocLitWrapService service = new DocLitWrapService();
+			DocLitWrap proxy = service.getDocLitWrapPort();
+			proxy.twoWayHolder(strHolder, intHolder);
+			System.out.println("Holder Response String =" + strHolder.value);;
+			System.out.println("Holder Response Integer ="+ intHolder.value);
+			System.out.println("------------------------------");
+		}catch(Exception e){
+			e.printStackTrace();
+			fail();
+		}
+	}
 }

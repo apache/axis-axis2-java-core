@@ -32,6 +32,8 @@ public class MethodParameter {
 	private Class type = null;
 	private Class actualType = null; //If parameter is a GenericType, this property stores the actual Type
 	private boolean isHolder = false;
+	private String targetNamespace = null;
+	private boolean isHeader = false;
 	
 	public MethodParameter(String name, Object value, Mode mode) {
 		super();
@@ -39,11 +41,13 @@ public class MethodParameter {
 		this.value = value;
 		this.mode = mode;
 	}
-	public MethodParameter(String name, Object value, Mode mode, Class type, Class actualType, boolean isHolder) {
+	public MethodParameter(String name, Object value, Mode mode, Class type, Class actualType, boolean isHolder, String targetNamespace, boolean isHeader) {
 		this(name,value,mode);
 		this.type = type;
 		this.isHolder = isHolder;
 		this.actualType = actualType;
+		this.targetNamespace = targetNamespace;
+		this.isHeader = isHeader;
 	}
 	public String getName() {
 		return name;
@@ -71,5 +75,17 @@ public class MethodParameter {
 	}
 	public void setHolder(boolean isHolder) {
 		this.isHolder = isHolder;
+	}
+	public String getTargetNamespace() {
+		return targetNamespace;
+	}
+	public void setTargetNamespace(String targetNamespace) {
+		this.targetNamespace = targetNamespace;
+	}
+	public boolean isHeader() {
+		return isHeader;
+	}
+	public void setHeader(boolean isHeader) {
+		this.isHeader = isHeader;
 	}
 }

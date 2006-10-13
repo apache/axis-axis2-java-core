@@ -117,6 +117,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 	public Message marshalResponse(Object returnObject, Object[] holderObjects)throws ClassNotFoundException, JAXBException, MessageException, JAXBWrapperException, XMLStreamException, InstantiationException, IllegalAccessException {
 		Class wrapperClazz = null;
 		String wrapperClazzName = operationDesc.getResponseWrapperClassName();
+		String wrapperTNS = operationDesc.getResponseWrapperTargetNamespace();
 		String webResult = operationDesc.getWebResultName();
 		//TODO Move this to Operation Description.
 		if(wrapperClazzName == null || (wrapperClazzName!=null && wrapperClazzName.length()==0)){
@@ -158,7 +159,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
         Object wrapper = wrapperTool.wrap(wrapperClazz, 
         		wrapperClazzName, mps);
         
-		Message message = createMessage(wrapper, wrapperClazz, wrapperClazzName);
+		Message message = createMessage(wrapper, wrapperClazz, wrapperClazzName, wrapperTNS);
 		return message;
 		
 	}
@@ -172,6 +173,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		String className = operationDesc.getRequestWrapperClassName();
 		Class wrapperClazz = loadClass(className);
 		String localName = operationDesc.getRequestWrapperLocalName();
+		String wrapperTNS = operationDesc.getRequestWrapperTargetNamespace();
 		
 		//Get Name Value pair for input parameter Objects, skip AsyncHandler and identify Holders.
 		ArrayList<MethodParameter> methodParameters = toInputMethodParameters(objects);
@@ -185,7 +187,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
             log.debug("JAXBWrapperTool wrapped following propertes :");
         }
 		
-		Message message = createMessage(jaxbObject, wrapperClazz, localName);
+		Message message = createMessage(jaxbObject, wrapperClazz, localName, wrapperTNS);
 		return message;
 	}
 

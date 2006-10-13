@@ -5,6 +5,8 @@ import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
@@ -12,6 +14,10 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 import org.test.sample.wrap.FinancialOperation;
+import org.test.sample.wrap.Header;
+import org.test.sample.wrap.HeaderPart0;
+import org.test.sample.wrap.HeaderPart1;
+import org.test.sample.wrap.HeaderResponse;
 
 
 /**
@@ -98,5 +104,25 @@ public interface DocLitWrap {
     public FinancialOperation finOp(
         @WebParam(name = "op", targetNamespace = "")
         FinancialOperation op);
+    
+    /**
+     * 
+     * @param header1
+     * @param header0
+     * @param payload
+     * @return
+     *     returns org.test.sample.wrap.HeaderResponse
+     */
+    @WebMethod(action = "http://addheaders.sample.test.org/header")
+    @WebResult(name = "headerResponse", targetNamespace = "http://wrap.sample.test.org", partName = "payload")
+    @SOAPBinding(parameterStyle = ParameterStyle.BARE)
+    public HeaderResponse header(
+        @WebParam(name = "header", targetNamespace = "http://wrap.sample.test.org", partName = "payload")
+        Header payload,
+        @WebParam(name = "headerPart0", targetNamespace = "http://wrap.sample.test.org", header = true, mode = Mode.INOUT, partName = "header0")
+        Holder<HeaderPart0> header0,
+        @WebParam(name = "headerPart1", targetNamespace = "http://wrap.sample.test.org", header = true, partName = "header1")
+        HeaderPart1 header1);
+
 
 }

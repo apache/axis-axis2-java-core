@@ -10,6 +10,10 @@ import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.test.sample.nonwrap.ObjectFactory;
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.wrap.FinancialOperation;
+import org.test.sample.wrap.Header;
+import org.test.sample.wrap.HeaderPart0;
+import org.test.sample.wrap.HeaderPart1;
+import org.test.sample.wrap.HeaderResponse;
 
 @WebService(endpointInterface="org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap")
 public class DocLitWrapImpl implements DocLitWrap {
@@ -69,5 +73,17 @@ public class DocLitWrapImpl implements DocLitWrap {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+    public HeaderResponse header(Header payload, Holder<HeaderPart0> header0, HeaderPart1 header1){
+    	
+    	HeaderPart0 hpo= (HeaderPart0)header0.value;
+    	hpo = new HeaderPart0();
+    	hpo.setHeaderType("Header Type from Endpoint implementation");
+    	header0.value = hpo;
+    	//hpo.setHeaderType("");
+    	HeaderResponse response = new HeaderResponse();
+    	response.setOut(1000);
+    	return response;
+    }
 
 }

@@ -153,14 +153,14 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		}
 		
 		ArrayList<Object> paramValues = toArrayList(holderObjects);
+		ArrayList<MethodParameter> mps = createMethodParameters(paramNames, paramValues, paramMode, paramTypes, actualTypes);
 		if(webResultObject!=null){
-			paramValues.add(webResultObject);
-			paramNames.add(operationDesc.getWebResultName());
-			//dummy mode for return object
-			paramMode.add(Mode.IN);
+			MethodParameter outputResult = new MethodParameter(operationDesc.getWebResultName(), webResultObject, null);
+			mps.add(outputResult);
 		}
+		
 		//lets create name value pair.
-		return createMethodParameters(paramNames, paramValues, paramMode, paramTypes, actualTypes);
+		return mps;
 		
 	}
 	
@@ -214,8 +214,61 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		ArrayList<Class> actualTypes = getInputTypes();
 		int i =0;
 		
+		//if no webParam defined then lets get default names.
+		if(paramNames.size() == 0 && paramTypes.size()>0){
+			while(i< paramTypes.size()){
+				paramNames.add(DEFAULT_ARG + i++);
+			}
+		}
 		if(paramNames.size() != paramValues.size()){
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("InvalidWebParams"));
+		}
+		//lets create name value pair.
+		mps = createMethodParameters(paramNames, paramValues, paramMode, paramTypes, actualTypes);
+		
+		return mps;
+	}
+	
+	protected ArrayList<MethodParameter> toInputMethodParameter(Message message)throws IllegalAccessException, InstantiationException, ClassNotFoundException, MessageException, XMLStreamException, JAXBException{
+		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
+		if(message == null){
+			return null;
+		}
+		ArrayList<String> paramNames = new ArrayList<String>();
+		paramNames =toArrayList(operationDesc.getWebParamNames());
+		
+		//Get all modes for params
+		ArrayList<Mode> paramMode = new ArrayList<Mode>();
+		paramMode = toArrayList(operationDesc.getWebParamModes());
+		
+		Method seiMethod = operationDesc.getSEIMethod();
+		
+		Class[] clazz = seiMethod.getParameterTypes();
+		ArrayList<Class> paramTypes = toArrayList(clazz);
+     
+		ArrayList<Class> actualTypes = getInputTypes();
+		
+		int i =0;
+		//if no webParam defined then lets get default names.
+		if(paramNames.size() == 0 && paramTypes.size()>0){
+			while(i< paramTypes.size()){
+				paramNames.add(DEFAULT_ARG + i++);
+			}
+		}
+		i =0;
+		ArrayList<Object> paramValues = new ArrayList<Object>(); 
+		for(String paramName:paramNames){
+			String paramTNS = operationDesc.getWebParamTargetNamespace(paramName);
+			boolean isHeader = operationDesc.isWebParamHeader(paramName);
+			Object bo = null;
+			if(isHeader){
+				bo = createBOFromHeaderBlock(actualTypes.get(i), message, paramTNS, paramName);
+			}
+			else{
+				bo = createBOFromBodyBlock(actualTypes.get(i),message);
+			}
+			paramValues.add(bo);
+			i++;
 		}
 		//lets create name value pair.
 		mps = createMethodParameters(paramNames, paramValues, paramMode, paramTypes, actualTypes);
@@ -233,12 +286,6 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 				Class rawClazz = (Class)pType.getRawType();
 				Class actualClazz = (Class)pType.getActualTypeArguments()[0];
 				paramTypes.add(actualClazz);
-				/*
-				if(rawClazz.isAssignableFrom(Holder.class)){
-					Class actualClazz = (Class)pType.getActualTypeArguments()[0];
-					paramTypes.add(actualClazz);
-				}
-				*/
 			}
 			else{
 				Class formalClazz= (Class)type;
@@ -273,7 +320,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		
 	}
 	
-	protected Block createJAXBBlock(String name, Object jaxbObject, JAXBContext context) throws MessageException{
+	protected Block createJAXBBlock(String name, Object jaxbObject, JAXBContext context, String targetNamespace) throws MessageException{
 		
 		JAXBIntrospector introspector = context.createJAXBIntrospector();
 		if(introspector.isElement(jaxbObject)){
@@ -282,7 +329,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		else{
 			//Create JAXBElement then use that to create JAXBBlock.
 			Class clazz = jaxbObject.getClass();
-			JAXBElement<Object> element = new JAXBElement<Object>(new QName(name), clazz, jaxbObject);
+			JAXBElement<Object> element = new JAXBElement<Object>(new QName(targetNamespace, name), clazz, jaxbObject);
 			JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 			return factory.createFrom(element,context ,null);
 		}
@@ -355,7 +402,8 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		int i=0;
 		for(String paramName:paramNames){
 			Object paramValue = paramValues.get(i);
-			
+			String paramTNS = operationDesc.getWebParamTargetNamespace(paramName);
+			boolean isHeader = operationDesc.isWebParamHeader(paramName);
 			//initialize to default value.
 			Mode paramMode = Mode.IN;
 			if(paramModes !=null && paramModes.size() >0){
@@ -377,25 +425,31 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 					//Identify Holders and get Holder Values, this if condition will mostly execute during client side call
 					if(isHolder(paramValue) && isHolder(paramType)){
 						Object holderValue = getHolderValue(paramMode, paramValue);
-						mp = new MethodParameter(paramName, holderValue, paramMode, paramType, actualType, true);
+						mp = new MethodParameter(paramName, holderValue, paramMode, paramType, actualType, true, paramTNS, isHeader);
 						
 					}
 					//Identify that param value is not Holders however if the method parameter is holder type and create Holder, this will mostly be called during server side call 
 					else if(!isHolder(paramValue) && isHolder(paramType)){
 						Holder<Object> holder = createHolder(paramType, paramValue);
-						mp=new MethodParameter(paramName, holder, paramMode, paramType, actualType, true);
+						mp=new MethodParameter(paramName, holder, paramMode, paramType, actualType, true, paramTNS, isHeader);
 					}
 					else{
-						mp = new MethodParameter(paramName, paramValue, paramMode, paramType, actualType, false);
+						mp = new MethodParameter(paramName, paramValue, paramMode, paramType, actualType, false, paramTNS, isHeader);
 					}
 				}
 				if(paramType == null){
 					if(isHolder(paramValue)){
 						Object holderValue = getHolderValue(paramMode, paramValue);
-						mp = new MethodParameter(paramName, holderValue, paramMode);	
+						mp = new MethodParameter(paramName, holderValue, paramMode);
+						mp.setHolder(true);
+						mp.setTargetNamespace(paramTNS);
+						mp.setHeader(isHeader);
 					}
 					else{
 						mp = new MethodParameter(paramName, paramValues, paramMode);
+						mp.setHolder(false);
+						mp.setTargetNamespace(paramTNS);
+						mp.setHeader(isHeader);
 					}
 				}
 				mps.add(mp);
@@ -461,7 +515,60 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return null;
 	}
 	
-	protected Message createMessage(Object jaxbObject, Class jaxbClazz, String jaxbClassName)throws JAXBException, MessageException, XMLStreamException{
+	protected Message createMessage(ArrayList<MethodParameter> mps) throws JAXBException, MessageException, XMLStreamException{
+		Block block = null;
+		Object requestObject = null;
+		String requestObjectName = null;
+		String requestTNS = null;
+		Class requestObjectType = null;
+		boolean isHeader =false;
+		
+		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+		Message m = mf.create(protocol);
+		
+		for(MethodParameter mp : mps){
+			requestObject = mp.getValue();
+			requestObjectName = mp.getName();
+			requestObjectType = mp.getActualType();
+			requestTNS = mp.getTargetNamespace();
+			isHeader = mp.isHeader();
+			if(!isHeader && requestObject == null){
+				if (log.isDebugEnabled()) {
+		            log.debug("Method Input parameter for NON Wrapped Request cannot be null");
+		        }
+				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr2"));
+			}
+			JAXBContext ctx = createJAXBContext(requestObjectType);
+			if (log.isDebugEnabled()) {
+	            log.debug("Attempting to create Block");
+	        }
+			if(isXmlRootElementDefined(requestObjectType)){
+				block = createJAXBBlock(requestObject, ctx);
+			}
+			else{
+				
+				block =  createJAXBBlock(requestObjectName, requestObject, ctx, requestTNS);
+			}
+			if (log.isDebugEnabled()) {
+	            log.debug("JAXBBlock Created");
+	        }	
+			if(isHeader){
+				m.setHeaderBlock(requestTNS, requestObjectName, block);
+				if (log.isDebugEnabled()) {
+		            log.debug("Header Block Created");
+		        }
+			}
+			else{
+				m.setBodyBlock(0,block);
+				if (log.isDebugEnabled()) {
+		            log.debug("Body Block Created");
+		        }
+			}
+		}
+		return m;
+	}
+	
+	protected Message createMessage(Object jaxbObject, Class jaxbClazz, String jaxbClassName, String targetNamespace)throws JAXBException, MessageException, XMLStreamException{
 		Block bodyBlock = null;
 		JAXBContext ctx = createJAXBContext(jaxbClazz);
 		if (log.isDebugEnabled()) {
@@ -471,7 +578,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			bodyBlock = createJAXBBlock(jaxbObject, ctx);
 		}
 		else{
-			bodyBlock =  createJAXBBlock(jaxbClassName, jaxbObject, ctx);
+			bodyBlock =  createJAXBBlock(jaxbClassName, jaxbObject, ctx, targetNamespace);
 		}
 		if (log.isDebugEnabled()) {
             log.debug("JAXBBlock Created");
@@ -483,12 +590,27 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		m.setBodyBlock(0,bodyBlock);
 		return m;
 	}
+	
 	protected Message createEmptyMessage()throws JAXBException, MessageException, XMLStreamException{
 		Block emptyBodyBlock = createEmptyBodyBlock();
 		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
 		Message m = mf.create(protocol);
 		m.setBodyBlock(0,emptyBodyBlock);
 		return m;
+	}
+	
+	protected Object createBOFromHeaderBlock(Class jaxbClazz, Message message, String targetNamespace, String localPart) throws JAXBException, MessageException, XMLStreamException{
+		JAXBContext ctx = createJAXBContext(jaxbClazz);
+		
+		// Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
+        // out of the Message
+        JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class); 
+        Block block = message.getHeaderBlock(targetNamespace, localPart, ctx, factory);
+        return block.getBusinessObject(false);
+	}
+	
+	protected Object createBOFromBodyBlock(Class jaxbClazz, Message message) throws JAXBException, MessageException, XMLStreamException{
+		return createBusinessObject(jaxbClazz, message);
 	}
 	
 	protected Object createBusinessObject(Class jaxbClazz, Message message) throws JAXBException, MessageException, XMLStreamException{
@@ -500,7 +622,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         
         Block block = message.getBodyBlock(0, ctx, factory);
         try{
-        	return block.getBusinessObject(true);
+        	return block.getBusinessObject(false);
         }catch(Exception e){
         //FIXME: this is the bare case where child of body is not a method but a primitive data type. Reader from Block is throwing exception.
         	block = message.getBodyBlock(0, ctx,factory);
@@ -515,6 +637,28 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         	return o.getValue();
         
         }       
+	}
+	protected void createResponseHolders(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message)throws JAXBException, MessageException, XMLStreamException{
+		Object bo = null;
+		int index = 0;
+		for(MethodParameter mp:mps){
+			if(mp.isHeader() && mp.isHolder()){
+				bo = createBOFromHeaderBlock(mp.getActualType(),message, mp.getTargetNamespace(), mp.getName());
+				
+			}
+			else if(!mp.isHeader() && mp.isHolder()){
+				bo = createBOFromBodyBlock(mp.getActualType(), message);
+			}
+			try{
+				Holder inputArgHolder = (Holder)inputArgHolders.get(index);
+				inputArgHolder.value = bo;
+				index++;
+			}catch(Exception e){
+				ExceptionFactory.makeWebServiceException(e);
+			}
+		}
+		
+	
 	}
 	
 	protected void createResponseHolders(Object bo, Object[] inputArgs, boolean isBare)throws JAXBWrapperException, InstantiationException, ClassNotFoundException, IllegalAccessException{

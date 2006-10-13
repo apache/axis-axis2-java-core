@@ -125,6 +125,40 @@
 				</xsd:complexContent>
 			</xsd:complexType>
 
+			<xsd:element name="headerPart0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="headerType" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="headerPart1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="headerType" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="header">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="in" type="xsd:string" />
+						<xsd:element name="out" type="xsd:long" />
+						<xsd:element name="inout" type="xsd:integer" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="headerResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="out" type="xsd:long" />
+						<xsd:element name="inout" type="xsd:integer" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
 		</xsd:schema>
 	</wsdl:types>
 
@@ -168,6 +202,16 @@
 		<wsdl:part name="op" element="tns:finOpResponse" />
 	</wsdl:message>
 
+	<wsdl:message name="headerRequest">
+		<wsdl:part name="payload" element="tns:header" />
+		<wsdl:part name="header0" element="tns:headerPart0" />
+		<wsdl:part name="header1" element="tns:headerPart1" />
+	</wsdl:message>
+
+	<wsdl:message name="headerResponse">
+		<wsdl:part name="payload" element="tns:headerResponse" />
+		<wsdl:part name="header0" element="tns:headerPart0" />
+	</wsdl:message>
 	<wsdl:portType name="DocLitWrap">
 
 		<wsdl:operation name="oneWayVoid">
@@ -188,6 +232,10 @@
 			<wsdl:output message="tns:twoWayResponse" />
 		</wsdl:operation>
 		
+		<wsdl:operation name="header">
+			<wsdl:input message="tns:headerRequest" />
+			<wsdl:output message="tns:headerResponse" />
+		</wsdl:operation>		
 		<wsdl:operation name="invoke">
 			<wsdl:input message="tns:invokeRequest" />
 			<wsdl:output message="tns:invokeResponse" />
@@ -230,7 +278,21 @@
 			<wsdl:output>
 				<soap:body use="literal" />
 			</wsdl:output>
+		</wsdl:operation>
 
+		<wsdl:operation name="header">
+			<soap:operation
+				soapAction="http://addheaders.sample.test.org/header" />
+        
+			<wsdl:input>
+				<soap:header use="literal" message="tns:headerRequest" part="header0"/>			
+				<soap:header use="literal" message="tns:headerRequest" part="header1"/>			
+				<soap:body use="literal" parts="payload"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:header use="literal" message="tns:headerResponse" part="header0"/>			
+				<soap:body use="literal" parts="payload"/>			
+			</wsdl:output>
 		</wsdl:operation>
 
 		<wsdl:operation name="twoWay">

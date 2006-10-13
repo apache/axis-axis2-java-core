@@ -87,4 +87,29 @@ public class NonWrapTests extends TestCase {
 			fail();
 		}
 	}
+	
+	public void testTwoWayHolderAsync(){
+		System.out.println("------------------------------");
+		System.out.println("Test : "+getName());
+		try{
+			TwoWayHolder twh = new TwoWayHolder();
+			twh.setTwoWayHolderInt(new Integer(0));
+			twh.setTwoWayHolderStr(new String("Request Holder String"));
+			Holder<TwoWayHolder> holder = new Holder<TwoWayHolder>(twh);
+			TwoWay twoWay = new ObjectFactory().createTwoWay();
+			twoWay.setTwowayStr("testing sync call for java bean non wrap endpoint");
+			DocLitNonWrapService service = new DocLitNonWrapService();
+			DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
+			AsyncCallback callback = new AsyncCallback();
+			Future<?> monitor =proxy.twoWayHolderAsync(twh, callback);
+			while(!monitor.isDone()){
+				Thread.sleep(1000);
+			}
+			
+			System.out.println("------------------------------");
+		}catch(Exception e){
+			e.printStackTrace();
+			fail();
+		}
+	}
 }

@@ -23,7 +23,7 @@ public class BareDocLitService
 
     private final static URL BAREDOCLITSERVICE_WSDL_LOCATION;
 
-    private static String wsdlLocation="/test/org/apache/axis2/jaxws/sample/doclitbare/META-INF/doclitbare.wsdl";
+    private static String wsdlLocation="/modules/jaxws/test/org/apache/axis2/jaxws/sample/doclitbare/META-INF/doclitbare.wsdl";
     static {
         URL url = null;
         try {

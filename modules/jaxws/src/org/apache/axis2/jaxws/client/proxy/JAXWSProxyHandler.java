@@ -356,17 +356,13 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		this.seiClazz = seiClazz;
 	}
 	private void initialize(){
-		SOAPBinding.Style styleOnSEI = endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();
-		SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
-		if(styleOnMethod!=null && styleOnSEI!=styleOnMethod){
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
-		}
+		SOAPBinding.Style style = operationDesc.getSoapBindingStyle();
 		
 		MethodMarshallerFactory cf = (MethodMarshallerFactory) FactoryRegistry.getFactory(MethodMarshallerFactory.class);
-		if(styleOnSEI == SOAPBinding.Style.DOCUMENT){
+		if(style == SOAPBinding.Style.DOCUMENT){
 			methodMarshaller = createDocLitMethodMarshaller(cf);
 		}
-		if(styleOnSEI == SOAPBinding.Style.RPC){
+		if(style == SOAPBinding.Style.RPC){
 			methodMarshaller = createRPCLitMethodMarshaller(cf);
 			
 		}

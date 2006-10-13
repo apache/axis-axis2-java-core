@@ -9,6 +9,7 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
 import org.test.sample.nonwrap.ReturnType;
+import org.test.sample.nonwrap.TwoWayHolder;
 
 
 
@@ -36,6 +37,11 @@ public class AsyncCallback implements AsyncHandler {
 				ReturnType type = (ReturnType)obj;
 				System.out.println(">>Return String = "+type.getReturnStr());
 				return;
+			}
+			if(obj instanceof TwoWayHolder){
+				TwoWayHolder twh = (TwoWayHolder)obj;
+				System.out.println("AsyncCallback Holder string ="+twh.getTwoWayHolderStr());
+				System.out.println("AsyncCallback Holder int ="+twh.getTwoWayHolderInt());
 			}
 			
 		}catch(ExecutionException e){

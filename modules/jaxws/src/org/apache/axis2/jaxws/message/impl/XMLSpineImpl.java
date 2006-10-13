@@ -115,7 +115,8 @@ class XMLSpineImpl implements XMLSpine {
 		SOAPHeader header = root.getHeader();
 		if (header != null) {
             Iterator it = header.getChildren();
-            advanceIterator(it, headerBlocks, true);            
+            advanceIterator(it, headerBlocks, false); 
+            //advanceIterator(it, headerBlocks, true);            
         }
 
 		
@@ -296,8 +297,8 @@ class XMLSpineImpl implements XMLSpine {
 	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws MessageException {
 		int index = getHeaderBlockIndex(namespace, localPart);
 		try {
-			Block oldBlock = bodyBlocks.get(index);
-		
+			//Block oldBlock = bodyBlocks.get(index);
+			Block oldBlock = headerBlocks.get(index);
 			// Convert to new Block
 			Block newBlock = blockFactory.createFrom(oldBlock, context);
 			if (newBlock != oldBlock) {
@@ -311,7 +312,8 @@ class XMLSpineImpl implements XMLSpine {
 
 	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
 		int index = getHeaderBlockIndex(namespace, localPart);
-		headerBlocks.set(index, block);
+		headerBlocks.add(block);
+		//headerBlocks.set(index, block);
         block.setParent(this);
 	}
 

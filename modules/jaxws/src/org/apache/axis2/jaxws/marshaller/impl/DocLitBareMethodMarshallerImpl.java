@@ -60,23 +60,47 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 	public Object demarshalResponse(Message message, Object[] inputArgs) throws IllegalAccessException, InstantiationException, ClassNotFoundException, JAXBWrapperException, JAXBException, XMLStreamException, MessageException{
 		
 		Class returnType = getReturnType();
-		String resultName = operationDesc.getWebResultName();
-		Object bo = null;
-		if(returnType.getName().equals("void")){
-			ArrayList<MethodParameter> mps = toInputMethodParameters(inputArgs);
-			for(MethodParameter mp:mps){
-				if(mp.isHolder()){
-					returnType = mp.getActualType();
-				}
+		ArrayList<Object> holderArgs = toArrayList(inputArgs);
+		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
+		mps = toInputMethodParameters(inputArgs);
+		ArrayList<MethodParameter> holdermps = new ArrayList<MethodParameter>(mps);
+		int index =0;
+		//Remove everything except holders from method parameters and input arguments.
+		for(MethodParameter mp: mps){
+			if(!mp.isHolder()){
+				holdermps.remove(mp);
+				holderArgs.remove(mp.getValue());
 			}
+			index++;
+		}
+		mps = null;
+		if(holdermps.size() == 0 && returnType.getName().equals("void")){
+			//No holders and return type void example --> public void someMethod() I will return null for this case.
+			//doNothing as there is nothing to return.
+			
+			return null;
+		
+		}
+		else if(holdermps.size() == 0 && !returnType.getName().equals("void")){
+			//No holders but a return type example --> public ReturnType someMethod()
+			Object bo = createBusinessObject(returnType, message);
+			return bo;
 			
 		}
-		bo = createBusinessObject(returnType, message);
-		//In a bare case there should not be a situation where there is a return type and a holder.
-		createResponseHolders(bo, inputArgs, true);
-		
-		return bo;
-		
+		else if(holdermps.size()>0 && returnType.getName().equals("void")){
+			//Holders found and no return type example --> public void someMethod(Holder<AHolder>)	
+			createResponseHolders(holdermps, holderArgs, message);
+			
+		}
+		else{
+			//Holders found and return type example --> public ReturnType someMethod(Holder<AHolder>)
+			//Note that SEI implementation will wrap return type in a holder if method has a return type and input param as holder.
+			//WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject property, if wsdl schema forces a holder and a return type.
+			createResponseHolders(holdermps, holderArgs, message);
+			Object bo = createBusinessObject(returnType, message);
+			return bo;
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -90,31 +114,23 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		if(inputParams.size() == 0){
 			return null;
 		}
-		if(inputParams.size() > SIZE){
-			if (log.isDebugEnabled()) {
-	            log.debug("As per WS-I compliance, Multi part WSDL not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
-	        }
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr1"));
-		}
-		
-		Class jaxbClass = inputParams.get(0);
-		
-		Object jaxbObject = createBusinessObject(jaxbClass, message);
-        
-        if (log.isDebugEnabled()) {
+		ArrayList<Object> objectList = new ArrayList<Object>();
+		int index =0;
+		ArrayList<MethodParameter> mps = toInputMethodParameter(message);
+		if (log.isDebugEnabled()) {
             log.debug("reading input method parameters");
         }
-        Class rawType = operationDesc.getSEIMethod().getParameterTypes()[0];
-       
-        if(isHolder(rawType)){
-        	
-        	return new Object[]{createHolder(rawType, jaxbObject)};
-        }
-        else{
-        	return new Object[]{jaxbObject};
-        }
-       
-		
+		for(MethodParameter mp:mps){
+			
+			if(mp.isHolder()){
+	        	Object holderObject = mp.getValue();
+	        	objectList.add(holderObject);
+	        }
+	        else{
+	        	objectList.add(mp.getValue());
+	        }
+		}
+       return objectList.toArray();		
 	}
 
 	/* (non-Javadoc)
@@ -124,46 +140,54 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 	public Message marshalResponse(Object returnObject, Object[] holderObjects) throws ClassNotFoundException, JAXBException, MessageException, JAXBWrapperException, XMLStreamException, InstantiationException, IllegalAccessException{
 		// Response wrapper is basically the return type. so the return object is a jaxbObject. If there is a holder objects then that is the responsewrapper.
 		Class wrapperClazz = getReturnType();
-		String wrapperClazzName = wrapperClazz.getName();
-		String webResult = operationDesc.getWebResultName();
+		String wrapperClazzName = operationDesc.getWebResultName();
+		if(wrapperClazzName == null || wrapperClazzName.trim().length() == 0){
+			wrapperClazzName = wrapperClazz.getName();
+		}
+		String wrapperTNS = operationDesc.getWebResultTargetNamespace();
 		
-		//create all holders list
-		ArrayList<Object> objectList = new ArrayList<Object>();
-		if(holderObjects!=null){
-			objectList = toArrayList(holderObjects);
-			for(Object obj:holderObjects){
-				if(!(isHolder(obj))){
-					objectList.remove(obj);
-				}
+		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
+		mps = toInputMethodParameters(holderObjects);
+		ArrayList<MethodParameter> holdersNreturnObject = new ArrayList<MethodParameter>(mps);
+		
+		//Remove everything except holders
+		for(MethodParameter mp: mps){
+			if(!mp.isHolder()){
+				holdersNreturnObject.remove(mp);
 			}
 		}
-		if(objectList.size()> SIZE){
-			//More than one holder input parameter found, this is a WS-I violation.
-			if (log.isDebugEnabled()) {
-	            log.debug("As per WS-I compliance, Multi part WSDL not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
-	        }
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr1"));
-		}
+		
+		mps = null;
 		Message message = null;
-		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
-		if(objectList.size() == 0 && wrapperClazz.getName().equals("void")){
+		
+		if(holdersNreturnObject.size() == 0 && wrapperClazz.getName().equals("void")){
 			//No holders and return type void example --> public void someMethod() I will return empty ResponseWrapper in message body for this case.
 			//doNothing as there is nothing to wrap
+			
+			message = createEmptyMessage();
 		
 		}
-		if(objectList.size() == 0 && !wrapperClazz.getName().equals("void")){
+		else if(holdersNreturnObject.size() == 0 && !wrapperClazz.getName().equals("void")){
 			//No holders but a return type example --> public ReturnType someMethod()
+			MethodParameter mp = new MethodParameter(wrapperClazzName,returnObject,null, wrapperClazz, wrapperClazz, false, wrapperTNS, false);
+			holdersNreturnObject.add(mp);
+			message = createMessage(holdersNreturnObject);
 			
-			message = createMessage(returnObject, wrapperClazz, wrapperClazzName);
+		}
+		else if(holdersNreturnObject.size()>0 && wrapperClazz.getName().equals("void")){
+			//Holders found and no return type example --> public void someMethod(Holder<AHolder>)	
+			message = createMessage(holdersNreturnObject);
+			
 		}
 		else{
-			//Holders found and return type or no return type. example --> public ReturnType someMethod(Holder<AHolder>) or public void someMethod(Holder<AHolder>)
+			//Holders found and return type example --> public ReturnType someMethod(Holder<AHolder>)
 			//Note that SEI implementation will wrap return type in a holder if method has a return type and input param as holder.
 			//WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject property, if wsdl schema forces a holder and a return type.
-			ArrayList<Class> holderType = getInputTypes();
-			Holder holder = (Holder)objectList.get(0);
-			Object value = holder.value;
-			message = createMessage(value, holderType.get(0), holderType.get(0).getName());
+			
+			MethodParameter mp = new MethodParameter(wrapperClazzName,returnObject,null, wrapperClazz, wrapperClazz, false, wrapperTNS, false);
+			holdersNreturnObject.add(mp);
+			message = createMessage(holdersNreturnObject);
+			
 		}
 		
 		return message;
@@ -176,38 +200,29 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 	@Override
 	public Message marshalRequest(Object[] objects) throws IllegalAccessException, InstantiationException, ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, javax.xml.stream.XMLStreamException{
 		
-		
 		ArrayList<MethodParameter> mps = toInputMethodParameters(objects);
-		
 		//WSDL wrapped and running wsImport with non-wrap binding or wsdl un-Wrapped and running wsImport with no binding, EITHER WAYS 
 		//there can be only 0 or 1 Body parts as per WS-I. 
 		if(mps.size()> SIZE){
-			if (log.isDebugEnabled()) {
-	            log.debug("As per WS-I compliance, Multi part WSDL not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
-	        }
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr1"));
+			int numberOfBodyPart =0;
+			for(MethodParameter mp:mps){
+				if(!mp.isHeader()){
+					numberOfBodyPart++;
+				}
+			}
+			if(numberOfBodyPart > SIZE){
+				if (log.isDebugEnabled()) {
+		            log.debug("As per WS-I compliance, Multi part WSDL with more than one body part not allowed for Doc/Lit NON Wrapped request, Method invoked has multiple input parameter");
+		        }
+				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr1"));
+			}
 		}
 		
 		//Lets handle case where there is one message part or one input parameter
 		Message message = null;
+		
 		if(mps.size() !=0){
-			Object requestObject = null;
-			String requestObjectName = null;
-			Class requestObjectType = null;
-			JAXBContext ctx = null;
-			for(MethodParameter mp : mps){
-				requestObject = mp.getValue();
-				requestObjectName = mp.getName();
-				requestObjectType = mp.getActualType();
-				if(requestObject == null){
-					if (log.isDebugEnabled()) {
-			            log.debug("Method Input parameter for NON Wrapped Request cannot be null");
-			        }
-					throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr2"));
-				}
-			}
-				
-			message = createMessage(requestObject, requestObjectType, requestObjectName);
+			message = createMessage(mps);
 		}
 		//no message part case or no input parameter
 		if(mps.size() == 0){
