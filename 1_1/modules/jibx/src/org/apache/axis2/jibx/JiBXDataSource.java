@@ -17,6 +17,7 @@ package org.apache.axis2.jibx;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
@@ -44,6 +45,12 @@ public class JiBXDataSource implements OMDataSource
      mapping definition in the binding, <code>-1</code> if not used). */
     private final int marshallerIndex;
     
+    /** Element name (only used with {@link #marshallerIndex}). */
+    private final String elementName;
+    
+    /** Element namespace URI (only used with {@link #marshallerIndex}). */
+    private final String elementNamespaceUri;
+    
     /** Data object for output. */
     private final Object dataObject;
     
@@ -60,6 +67,7 @@ public class JiBXDataSource implements OMDataSource
         marshallerIndex = -1;
         dataObject = obj;
         bindingFactory = factory;
+        elementName = elementNamespaceUri = null;
     }
     
     /**
@@ -67,10 +75,19 @@ public class JiBXDataSource implements OMDataSource
      * 
      * @param obj
      * @param index
+     * @param name
+     * @param uri
      * @param factory
      */
-    public JiBXDataSource(Object obj, int index, IBindingFactory factory) {
+    public JiBXDataSource(Object obj, int index, String name, String uri,
+        IBindingFactory factory) {
+        if (index < 0) {
+            throw new
+                IllegalArgumentException("index value must be non-negative");
+        }
         marshallerIndex = index;
+        elementName = name;
+        elementNamespaceUri = uri;
         dataObject = obj;
         bindingFactory = factory;
     }
@@ -82,12 +99,43 @@ public class JiBXDataSource implements OMDataSource
      * @throws JiBXException
      */
     private void marshal(IMarshallingContext ctx) throws JiBXException {
-        if (dataObject instanceof IMarshallable) {
+        if (marshallerIndex < 0) {
             ((IMarshallable)dataObject).marshal(ctx);
         } else {
-            IMarshaller mrsh = ctx.getMarshaller(marshallerIndex,
-                bindingFactory.getMappedClasses()[marshallerIndex]);
-            mrsh.marshal(dataObject, ctx);
+            IXMLWriter wrtr = ctx.getXmlWriter();
+            int nsidx = 0;
+            boolean nsfound = true;
+            if (!"".equals(elementNamespaceUri)) {
+                nsfound = false;
+                for (nsidx = wrtr.getNamespaceCount()-1; nsidx > 1; nsidx--) {
+                    if (elementNamespaceUri.equals(wrtr.getNamespaceUri(nsidx))) {
+                        nsfound = true;
+                        break;
+                    }
+                }
+            }
+            try {
+                if (nsfound) {
+                    wrtr.startTagOpen(nsidx, elementName);
+                } else {
+                    nsidx = wrtr.getNamespaceCount();
+                    String[] uris = new String[] { elementNamespaceUri };
+                    int[] indexes = new int[] { nsidx };
+                    String[] prefixes = new String[] { "" };
+                    wrtr.pushExtensionNamespaces(uris);
+                    wrtr.startTagNamespaces(nsidx, elementName, indexes, prefixes);
+                }
+                IMarshaller mrsh = ctx.getMarshaller(marshallerIndex,
+                    bindingFactory.getMappedClasses()[marshallerIndex]);
+                mrsh.marshal(dataObject, ctx);
+                wrtr.endTag(nsidx, elementName);
+                if (!nsfound) {
+                    wrtr.popExtensionNamespaces();
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
