@@ -26,16 +26,15 @@ import org.apache.commons.logging.LogFactory;
  * This is takes care of the IN-OUT sync MEP in the server side
  */
 public abstract class AbstractRobustInMessageReceiver extends AbstractMessageReceiver {
-	private static final Log log = LogFactory.getLog(AbstractRobustInMessageReceiver.class);
 
     public abstract void invokeBusinessLogic(MessageContext inMessage) throws AxisFault;
 
     public final void receive(final MessageContext messageCtx) throws AxisFault {
+        ThreadContextDescriptor tc = setThreadContext(messageCtx);
         try {
-            saveTCCL(messageCtx);
             invokeBusinessLogic(messageCtx);
         } finally {
-            restoreTCCL(messageCtx);
+            restoreThreadContext(tc);
         }
     }
 }

@@ -40,49 +40,69 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
     public static final String SCOPE = "scope";
     protected String serviceTCCL = null;
     public static final String SAVED_TCCL = "_SAVED_TCCL_";
-    protected boolean init = false;
+    public static final String SAVED_MC = "_SAVED_MC_";
 
-    protected void saveTCCL(MessageContext msgContext) {
+    // Place to store previous values
+    public class ThreadContextDescriptor {
+        public ClassLoader oldClassLoader;
+        public MessageContext oldMessageContext;
+    }
+
+    /**
+     * A place to store the current MessageContext
+     */
+    protected static ThreadLocal currentMessageContext = new ThreadLocal();
+
+    protected static MessageContext getCurrentMessageContext() {
+        return (MessageContext) currentMessageContext.get();
+    }
+
+    protected static void setCurrentMessageContext(MessageContext ctx) {
+        currentMessageContext.set(ctx);
+    }
+
+    /**
+     * Several pieces of information need to be available to the service
+     * implementation class.  For one, the ThreadContextClassLoader needs
+     * to be correct, and for another we need to give the service code
+     * access to the MessageContext (getCurrentContext()).  So we toss these
+     * things in TLS.
+     *
+     * @param msgContext
+     */
+    protected ThreadContextDescriptor
+            setThreadContext(MessageContext msgContext) {
+
+        ThreadContextDescriptor tc = new ThreadContextDescriptor();
+        tc.oldMessageContext = (MessageContext) currentMessageContext.get();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        tc.oldClassLoader = contextClassLoader;
+
         AxisService service =
                 msgContext.getAxisService();
-        if (!init) {
-            init = true;
-            if (service.getParameter(Constants.SERVICE_TCCL) != null) {
-                Parameter serviceObjectParam =
-                        service.getParameter(Constants.SERVICE_TCCL);
-                serviceTCCL = ((String)
-                        serviceObjectParam.getValue()).trim().toLowerCase();
-            }
-        }
-        if (serviceTCCL != null && service != null &&
-                service.getClassLoader() != null) {
-            ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        String serviceTCCL = (String) service.getParameterValue(
+                Constants.SERVICE_TCCL);
+        if (serviceTCCL != null) {
+            serviceTCCL = serviceTCCL.trim().toLowerCase();
+
+
             if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
-                msgContext.setProperty(SAVED_TCCL, contextClassLoader);
                 Thread.currentThread().setContextClassLoader(new MultiParentClassLoader(new URL[]{}, new ClassLoader[]{
                         msgContext.getAxisService().getClassLoader(),
                         contextClassLoader,
                 }));
             } else if (serviceTCCL.equals(Constants.TCCL_SERVICE)) {
-                msgContext.setProperty(SAVED_TCCL, contextClassLoader);
                 Thread.currentThread().setContextClassLoader(
                         msgContext.getAxisService().getClassLoader()
                 );
             }
         }
+        return tc;
     }
 
-    protected void restoreTCCL(MessageContext msgContext) {
-        if (serviceTCCL != null) {
-            ClassLoader oldTCCL = (ClassLoader) msgContext.getProperty(SAVED_TCCL);
-            if (oldTCCL != null) {
-                if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
-                    Thread.currentThread().setContextClassLoader(oldTCCL);
-                } else if (serviceTCCL.equals(Constants.TCCL_SERVICE)) {
-                    Thread.currentThread().setContextClassLoader(oldTCCL);
-                }
-            }
-        }
+    protected void restoreThreadContext(ThreadContextDescriptor tc) {
+        Thread.currentThread().setContextClassLoader(tc.oldClassLoader);
+        currentMessageContext.set(tc.oldMessageContext);
     }
 
     /**
