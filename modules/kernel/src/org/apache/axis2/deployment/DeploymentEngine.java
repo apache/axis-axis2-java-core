@@ -1033,6 +1033,7 @@ public class DeploymentEngine implements DeploymentConstants {
         currentArchiveFile.setClassLoader(classLoader);
         ArchiveReader archiveReader = new ArchiveReader();
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
+        serviceGroup.setServiceGroupClassLoader(classLoader);
         serviceGroup.setServiceGroupName(serviceGroupName);
         try {
             ArrayList serviceList = archiveReader.buildServiceGroup(servicesxml,
