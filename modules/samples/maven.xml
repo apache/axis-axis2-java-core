@@ -36,6 +36,7 @@
         <attainGoal name="amazonQS"/>
         <attainGoal name="googleSearch"/>
         <attainGoal name="googleSpellcheck"/>
+    	<attainGoal name="yahooRESTSearch"/>
         <attainGoal name="version"/>
         <attainGoal name="mtomSample"/>
         <attainGoal name="groovy"/>
@@ -183,6 +184,36 @@
             </fileset>
         </jar>
     </goal>
+
+    <!-- ================================================================ -->
+    <!--- Yahoo Search Sample (REST)-->
+    <!-- ================================================================ -->
+
+    <goal name="yahooRESTSearch">
+        <mkdir dir="${samples.dir}/yahooRESTSearch"/>
+        <mkdir dir="${samples.dir}/yahooRESTSearch/src"/>
+        <ant:copy todir="${samples.dir}/yahooRESTSearch/src">
+            <ant:fileset dir="src">
+                <ant:include name="sample/yahooservices/RESTSearch/**"/>
+            </ant:fileset>
+        </ant:copy>
+        <mkdir dir="${samples.dir}/yahooRESTSearch/docs"/>
+    	
+    	<!-- TODO we need docs for this sample -->
+        <!--ant:copy todir="${samples.dir}/yahooRESTSearch/docs">
+            <ant:fileset dir="xdocs/yahooRESTSearch"/>
+        </ant:copy-->
+        
+        <ant:copy todir="${samples.dir}/yahooRESTSearch">
+            <ant:fileset dir="script/yahooRESTSearch"/>
+        </ant:copy>
+        <jar destfile="${samples.dir}/yahooRESTSearch/yahooRESTSearch.jar">
+            <fileset dir="target/classes">
+                <include name="sample/yahooservices/RESTSearch/**"/>
+            </fileset>
+        </jar>
+    </goal>
+	
     <!-- ================================================================ -->
     <!--- Google SpellCheck Sample -->
     <!-- ================================================================ -->
