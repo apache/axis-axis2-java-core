@@ -49,26 +49,29 @@ public class CallbackReceiver implements MessageReceiver {
         RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackStore.get(messageID);
-        AsyncResult result = new AsyncResult(messageCtx);
+		AsyncResult result = new AsyncResult(messageCtx);
 
-        if (callback != null) {
-        	
-        	//check weather the result is a fault.
-        	SOAPEnvelope envelope = result.getResponseEnvelope();
-        	SOAPFault fault = envelope.getBody().getFault();
-        	
-        	if (fault==null) {
-        		//if there is not fault call the onComplete method
-        		callback.onComplete(result);
-        	} else {
-        		//else call the on error method with the fault
-                AxisFault axisFault = new AxisFault(fault.getCode(), fault.getReason(),
-                		fault.getNode(), fault.getRole(), fault.getDetail());
+		if (callback != null) {
+			try {
+				// check weather the result is a fault.
+				SOAPEnvelope envelope = result.getResponseEnvelope();
+				SOAPFault fault = envelope.getBody().getFault();
 
-        		callback.onError(axisFault);
-        	}
-            callback.setComplete(true);
-        } else {
+				if (fault == null) {
+					// if there is not fault call the onComplete method
+					callback.onComplete(result);
+				} else {
+					// else call the on error method with the fault
+					AxisFault axisFault = new AxisFault(fault.getCode(), fault
+							.getReason(), fault.getNode(), fault.getRole(),
+							fault.getDetail());
+
+					callback.onError(axisFault);
+				}
+			} finally {
+				callback.setComplete(true);
+			}
+		} else {
             throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }
     }
