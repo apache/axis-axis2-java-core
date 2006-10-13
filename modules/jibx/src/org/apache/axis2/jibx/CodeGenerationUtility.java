@@ -353,7 +353,6 @@ public class CodeGenerationUtility {
         List partNameList = new ArrayList();
         String wrappertype = "";
         if (type instanceof XmlSchemaComplexType) {
-            wrapdetail.setAttribute("empty", "false");
             XmlSchemaComplexType ctype = (XmlSchemaComplexType)type;
             if (ctype.getAttributes().getCount() != 0) {
                 throw new RuntimeException("Cannot unwrap element " +
@@ -464,12 +463,15 @@ public class CodeGenerationUtility {
                 codeGenConfig.getTypeMapper().addTypeMappingName(partqname, fulltype);
             }
             
-        } else if (type == null) {
+        } else if (type != null) {
+            throw new RuntimeException("Cannot unwrap element " + qname +
+                ": not a complexType definition");
+        }
+        if (wrapdetail.getFirstChild() == null) {
             wrapdetail.setAttribute("empty", "true");
             wrappertype = "";
         } else {
-            throw new RuntimeException("Cannot unwrap element " + qname +
-                ": not a complexType definition");
+            wrapdetail.setAttribute("empty", "false");
         }
 
         // this magic code comes from org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension

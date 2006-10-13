@@ -147,7 +147,7 @@
               </xsl:otherwise>
             </xsl:choose>
                       } else {
-                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, bindingFactory);
+                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", bindingFactory);
                           org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                           wrapper.addChild(child);
                       }
@@ -197,7 +197,7 @@
               </xsl:otherwise>
             </xsl:choose>
               } else {
-                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, bindingFactory);
+                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", bindingFactory);
                   org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                   wrapper.addChild(child);
               }
@@ -212,6 +212,7 @@
               child.setText(<xsl:value-of select="out-wrapper/return-element/@serializer"/>(result));
               </xsl:otherwise>
             </xsl:choose>
+              wrapper.addChild(child);
           </xsl:otherwise>
         </xsl:choose>
       </xsl:when>
@@ -221,7 +222,7 @@
               skel.<xsl:call-template name="call-arg-list"/>;
         <xsl:if test="count(out-wrapper)&gt;0">
               envelope = factory.getDefaultEnvelope();
-              envelope.getBody().addChild(factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='out-wrapper/@ns'/>", ""););
+              envelope.getBody().addChild(factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='out-wrapper/@ns'/>", ""));
         </xsl:if>
       </xsl:otherwise>
       
@@ -272,7 +273,7 @@
          * @param param18
          * 
          */
-        public <xsl:value-of select="$return-full-type"/><xsl:text> </xsl:text><xsl:value-of select="@method-name"/>(
+        public <xsl:choose><xsl:when test="out-wrapper/@empty='true'">void</xsl:when><xsl:otherwise><xsl:value-of select="$return-full-type"/></xsl:otherwise></xsl:choose><xsl:text> </xsl:text><xsl:value-of select="@method-name"/>(
     <xsl:for-each select="in-wrapper/parameter-element">
       <xsl:if test="position()&gt;1">, </xsl:if><xsl:value-of select="@java-type"/><xsl:if test="@array='true'">[]</xsl:if><xsl:text> </xsl:text><xsl:value-of select="@java-name"/>
     </xsl:for-each>
@@ -321,8 +322,10 @@
                     throw new org.apache.axis2.AxisFault("Missing expected result wrapper element {<xsl:value-of select='out-wrapper/@ns'/>}<xsl:value-of select='out-wrapper/@name'/>");
                 }
     </xsl:if>
+    <xsl:if test="out-wrapper/@empty='false' or count(in-wrapper/parameter-element[@form='simple']) &gt; 0">
             } catch (org.jibx.runtime.JiBXException e) {
                 throw new org.apache.axis2.AxisFault(e);
+    </xsl:if>
             } catch (org.apache.axis2.AxisFault f) {
                 org.apache.axiom.om.OMElement faultElt = f.getDetail();
                 if (faultElt != null) {
@@ -489,9 +492,8 @@
         child.setText(<xsl:value-of select="@serializer"/>(<xsl:call-template name="parameter-or-array-item"/>));
       </xsl:when>
       <xsl:when test="@form='complex'">
-        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_index<xsl:value-of select="@type-index"/>, bindingFactory);
+        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_index<xsl:value-of select="@type-index"/>, "<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", bindingFactory);
         org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='@ns'/>", "");
-        child.declareNamespace(appns);
         child = factory.createOMElement(src, "<xsl:value-of select='@name'/>", appns);
       </xsl:when>
     </xsl:choose>
@@ -544,6 +546,7 @@
               (org.jibx.runtime.impl.UnmarshallingContext)bindingFactory.createUnmarshallingContext();
           org.jibx.runtime.IXMLReader reader = new org.jibx.runtime.impl.StAXReaderWrapper(param.getXMLStreamReaderWithoutCaching(), "SOAP-message", true);
           ctx.setDocument(reader);
+          ctx.toTag();
           return ctx;
       }
   </xsl:template>
@@ -578,10 +581,12 @@
           } else {
     </xsl:if>
     <xsl:value-of select="@java-name"/>[index++] = (<xsl:value-of select="@java-type"/>)<xsl:call-template name="deserialize-element-value"/>;
+    <xsl:if test="@form='complex'">
+              uctx.parsePastCurrentEndTag("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>");
+    </xsl:if>
     <xsl:if test="@nillable='true'">
           }
     </xsl:if>
-          uctx.next();
       }
       <xsl:value-of select="@java-name"/> = (<xsl:value-of select="@java-type"/>[])org.jibx.runtime.Utility.resizeArray(index, <xsl:value-of select="@java-name"/>);
     <xsl:if test="@optional!='true'">
@@ -601,6 +606,9 @@
               } else {
     </xsl:if>
     <xsl:value-of select="@java-name"/> = (<xsl:value-of select="@java-type"/>)<xsl:call-template name="deserialize-element-value"/>;
+    <xsl:if test="@form='complex'">
+              uctx.parsePastCurrentEndTag("<xsl:value-of select='@ns'/>", "<xsl:value-of select='@name'/>");
+    </xsl:if>
     <xsl:if test="@nillable='true'">
               }
     </xsl:if>
