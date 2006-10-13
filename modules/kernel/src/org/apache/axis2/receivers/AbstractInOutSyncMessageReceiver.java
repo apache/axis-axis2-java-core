@@ -34,11 +34,11 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
         MessageContext outMsgContext = Utils.createOutMessageContext(msgContext);
         outMsgContext.getOperationContext().addMessageContext(outMsgContext);
 
+        ThreadContextDescriptor tc = setThreadContext(msgContext);
         try {
-            saveTCCL(msgContext);
             invokeBusinessLogic(msgContext, outMsgContext);
         } finally {
-            restoreTCCL(msgContext);
+            restoreThreadContext(tc);
         }
 
         AxisEngine engine =

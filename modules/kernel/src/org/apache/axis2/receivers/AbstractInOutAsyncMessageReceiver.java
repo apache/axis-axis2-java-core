@@ -56,11 +56,11 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                 try {
                     MessageContext newmsgCtx = Utils.createOutMessageContext(messageCtx);
                     newmsgCtx.getOperationContext().addMessageContext(newmsgCtx);
+                    ThreadContextDescriptor tc = setThreadContext(messageCtx);
                     try {
-                        saveTCCL(messageCtx);
                         invokeBusinessLogic(messageCtx, newmsgCtx);
                     } finally {
-                        restoreTCCL(messageCtx);
+                        restoreThreadContext(tc);
                     }
                     callback.handleResult(newmsgCtx);
                 } catch (AxisFault e) {

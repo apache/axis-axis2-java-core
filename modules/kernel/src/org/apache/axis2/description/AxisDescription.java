@@ -86,6 +86,12 @@ public abstract class AxisDescription implements ParameterInclude,
         }
     }
 
+    public Object getParameterValue(String name) {
+        Parameter param = getParameter(name);
+        if (param == null) return null;
+        return param.getValue();
+    }
+
     public ArrayList getParameters() {
         return parameterInclude.getParameters();
     }
