@@ -16,30 +16,35 @@
 
 package sample.mtom.filetransfer.client;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.awt.image.BufferedImage;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.*;
+import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPBody;
-import org.apache.axiom.attachments.Attachments;
-import org.apache.axis2.Constants;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 
 public class MTOMClientModel {
@@ -177,7 +182,7 @@ public class MTOMClientModel {
 
         OMElement payload = buildPayloadForMTOM(folderName, "uploadFileUsingMTOM");
         Options options = new Options();
-        options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setTo(targetEPR);
         // enabling MTOM in the client side
         options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
