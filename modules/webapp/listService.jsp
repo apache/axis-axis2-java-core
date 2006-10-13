@@ -7,7 +7,7 @@
 <%@ page import="org.apache.axis2.util.JavaUtils" %>
 <%@ page import="java.util.*" %>
 <%
-    /*
+   /*
     * Copyright 2004,2005 The Apache Software Foundation.
     *
     * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,12 +24,6 @@
     *
     *
     */
-
-/**
- * Author : Deepal Jayasinghe
- * Date: May 26, 2005
- * Time: 7:14:26 PM
- */
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"/>

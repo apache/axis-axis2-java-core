@@ -6,7 +6,7 @@
 <%@ page import="org.apache.axis2.util.JavaUtils" %>
 <%@ page import="java.util.*" %>
 <%--
-    /*
+/*
  * Copyright 2002,2004 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
