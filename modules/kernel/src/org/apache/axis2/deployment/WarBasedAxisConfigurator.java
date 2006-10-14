@@ -1,6 +1,7 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -11,12 +12,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletConfig;
+import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -280,13 +284,24 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             InputStream servicexml = config.getServletContext().
                     getResourceAsStream("/WEB-INF/services.xml");
             if (servicexml != null) {
+                HashMap wsdlServices = new HashMap();
+                ArchiveReader archiveReader = new ArchiveReader();
+                String path = config.getServletContext().getRealPath("/WEB-INF");
+                if(path != null){
+                    archiveReader.processFilesInFolder(new File(path),wsdlServices);
+                }
                 AxisServiceGroup serviceGroup = DeploymentEngine.buildServiceGroup(servicexml,
                         Thread.currentThread().getContextClassLoader(),
-                        "annonServiceGroup", axisConfig);
+                        "annonServiceGroup", axisConfig,
+                        archiveReader, wsdlServices);
                 axisConfig.addServiceGroup(serviceGroup);
             }
         } catch (AxisFault axisFault) {
             log.info(axisFault);
+        } catch (FileNotFoundException e) {
+            log.info(e);
+        } catch (XMLStreamException e) {
+            log.info(e);
         }
     }
 

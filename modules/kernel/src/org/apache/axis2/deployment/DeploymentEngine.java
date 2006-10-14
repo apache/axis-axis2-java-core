@@ -988,7 +988,6 @@ public class DeploymentEngine implements DeploymentConstants {
         try {
 
             Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
-//        Parameter paraantiJARLocking = axisConfig.getParameter(TAG_ANTI_JAR_LOCKING);
             boolean antiJARLocking = true;
             if (parahotupdate != null) {
                 String value = (String) parahotupdate.getValue();
@@ -1027,18 +1026,19 @@ public class DeploymentEngine implements DeploymentConstants {
     public static AxisServiceGroup buildServiceGroup(InputStream servicesxml,
                                                      ClassLoader classLoader,
                                                      String serviceGroupName,
-                                                     AxisConfiguration axisConfig) throws AxisFault {
+                                                     AxisConfiguration axisConfig,
+                                                     ArchiveReader archiveReader,
+                                                     HashMap wsdlServices) throws AxisFault {
         ArchiveFileData currentArchiveFile = new ArchiveFileData(
                 DeploymentConstants.TYPE_SERVICE, "", false);
         currentArchiveFile.setClassLoader(classLoader);
-        ArchiveReader archiveReader = new ArchiveReader();
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         serviceGroup.setServiceGroupClassLoader(classLoader);
         serviceGroup.setServiceGroupName(serviceGroupName);
         try {
             ArrayList serviceList = archiveReader.buildServiceGroup(servicesxml,
                     currentArchiveFile, serviceGroup,
-                    new HashMap(), axisConfig);
+                    wsdlServices, axisConfig);
             fillServiceGroup(serviceGroup, serviceList, null, axisConfig);
             return serviceGroup;
         } catch (XMLStreamException e) {
