@@ -169,9 +169,17 @@ public class AxisInvocationController implements InvocationController {
                 // Set the Axis2 request MessageContext
                 opClient.addMessageContext(axisRequestMsgCtx);
 
-                //This assumes that we are on the ultimate execution thread
-                ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                opClient.execute(true);
+                try
+                {
+                  //This assumes that we are on the ultimate execution thread
+                  ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+                  opClient.execute(true);
+                }
+                catch (AxisFault e)
+                {
+                  ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+                  throw e;
+                }
                 ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
                 
                 // Collect the response MessageContext and envelope
@@ -322,8 +330,16 @@ public class AxisInvocationController implements InvocationController {
                 opClient.addMessageContext(axisRequestMsgCtx);
 
                 //This assumes that we are on the ultimate execution thread
-                ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                opClient.execute(true);
+                try
+                {
+                  ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+                  opClient.execute(true);
+                }
+                catch (AxisFault e)
+                {
+                  ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+                  throw e;
+                }
                 ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
             } catch (AxisFault e) {
                 throw ExceptionFactory.makeWebServiceException(e);
@@ -459,8 +475,16 @@ public class AxisInvocationController implements InvocationController {
                 axisRequestMsgCtx.setServiceContext(svcClient.getServiceContext());
                 opClient.addMessageContext(axisRequestMsgCtx);
                 opClient.setCallback(axisCallback);
-                ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                opClient.execute(false);
+                try
+                {
+                  ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+                  opClient.execute(false);
+                }
+                catch (AxisFault e)
+                {
+                  ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+                  throw e;
+                }
                 ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
             } catch (AxisFault e) {
                 throw ExceptionFactory.makeWebServiceException(e);
