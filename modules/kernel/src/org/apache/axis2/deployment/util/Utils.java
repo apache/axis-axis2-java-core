@@ -19,6 +19,8 @@ import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
@@ -49,6 +51,9 @@ import java.util.zip.ZipInputStream;
 */
 
 public class Utils {
+
+    private static Log log = LogFactory.getLog(Utils.class);
+
     public static void addFlowHandlers(Flow flow, ClassLoader clsLoader) throws AxisFault {
         int count = flow.getHandlerCount();
 
@@ -243,7 +248,8 @@ public class Utils {
                     obj = method.invoke(serviceObjectMaker.newInstance(), new Object[]{axisService});
                 }
                 if (obj == null) {
-                    throw new Exception("ServiceObjectSupplier implmentation Object could not be found");
+                    log.warn("ServiceObjectSupplier implmentation Object could not be found");
+                    return;
                 }
                 serviceClass = obj.getClass().getName();
             } else {

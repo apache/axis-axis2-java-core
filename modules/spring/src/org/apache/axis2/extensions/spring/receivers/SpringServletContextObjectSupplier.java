@@ -22,6 +22,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -29,6 +31,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 public class SpringServletContextObjectSupplier implements ServiceObjectSupplier {
+
+    private static Log log = LogFactory.getLog(SpringServletContextObjectSupplier.class);
+
     public static final String SERVICE_SPRING_BEANNAME = "SpringBeanName";
 
     /**
@@ -64,7 +69,8 @@ public class SpringServletContextObjectSupplier implements ServiceObjectSupplier
                 ApplicationContext aCtx =
                         WebApplicationContextUtils.getWebApplicationContext(servletContext);
                 if (aCtx == null) {
-                    throw new Exception("Axis2 Can't find Spring's ApplicationContext");
+                    log.warn("Axis2 Can't find Spring's ApplicationContext");
+                    return null;
                 } else if (aCtx.getBean(beanName) == null) {
                     throw new Exception("Axis2 Can't find Spring Bean: " + beanName);
                 }
