@@ -154,7 +154,7 @@ public class SimpleHTTPServer implements TransportListener {
                 + new File(repository).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
         try {
-            ConfigurationContext configctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(args[0], null);
+            ConfigurationContext configctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repository, null);
             SimpleHTTPServer receiver = new SimpleHTTPServer(configctx, port);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
