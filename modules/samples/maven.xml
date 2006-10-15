@@ -205,7 +205,7 @@
         </ant:copy-->
         
         <ant:copy todir="${samples.dir}/yahooRESTSearch">
-            <ant:fileset dir="script/yahooRestSearch"/>
+            <ant:fileset dir="script/yahooRESTSearch"/>
         </ant:copy>
         <jar destfile="${samples.dir}/yahooRESTSearch/yahooRESTSearch.jar">
             <fileset dir="target/classes">
