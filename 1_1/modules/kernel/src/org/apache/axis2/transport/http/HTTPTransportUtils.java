@@ -52,15 +52,11 @@ import java.util.zip.GZIPInputStream;
 public class HTTPTransportUtils {
 
 
-    public static SOAPEnvelope
-            createEnvelopeFromGetRequest(String requestUrl,
-                                         Map map,
-                                         ConfigurationContext configCtx) throws AxisFault {
+    public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl,
+                                   Map map,ConfigurationContext configCtx) throws AxisFault {
         String[] values =
                 Utils.parseRequestURLForServiceAndOperation(requestUrl,
-                                                            configCtx.
-                                                                    getServiceContextPath());
-
+                                                        configCtx.getServiceContextPath());
         if (values == null) {
             return new SOAP11Factory().getDefaultEnvelope();
         }
@@ -192,7 +188,7 @@ public class HTTPTransportUtils {
             StAXBuilder builder = null;
 
             if (contentType != null) {
-                if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
+                if (contentType.toLowerCase().indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
                     // It is MIME (MTOM or SwA)
                     builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType,true);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();

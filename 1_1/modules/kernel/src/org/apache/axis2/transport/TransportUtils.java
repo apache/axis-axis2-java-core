@@ -167,8 +167,8 @@ public class TransportUtils {
     }
 
 	public static StAXBuilder selectBuilderForMIME(MessageContext msgContext,
-			InputStream inStream, String contentTypeString,boolean isSOAP) throws OMException,
-			XMLStreamException, FactoryConfigurationError {
+			InputStream inStream, String contentTypeString, boolean isSOAP)
+			throws OMException, XMLStreamException, FactoryConfigurationError {
 		StAXBuilder builder = null;
 
 		Object cacheAttachmentProperty = msgContext
@@ -189,7 +189,7 @@ public class TransportUtils {
 					: null;
 		}
 		fileCacheForAttachments = (Constants.VALUE_TRUE
-                .equals(cacheAttachmentString));
+				.equals(cacheAttachmentString));
 
 		String attachmentRepoDir = null;
 		String attachmentSizeThreshold = null;
@@ -221,81 +221,90 @@ public class TransportUtils {
 			}
 		}
 
-        Attachments attachments = new Attachments(inStream, contentTypeString,
-                fileCacheForAttachments, attachmentRepoDir,
-                attachmentSizeThreshold);
-        String charSetEncoding =
-                getCharSetEncoding(attachments.getSOAPPartContentType());
-        XMLStreamReader streamReader;
+		Attachments attachments = new Attachments(inStream, contentTypeString,
+				fileCacheForAttachments, attachmentRepoDir,
+				attachmentSizeThreshold);
+		String charSetEncoding = getCharSetEncoding(attachments
+				.getSOAPPartContentType());
+		XMLStreamReader streamReader;
 
-        if ((charSetEncoding == null) || "null".equalsIgnoreCase(charSetEncoding)) {
-            charSetEncoding = MessageContext.UTF_8;
-        }
+		if ((charSetEncoding == null)
+				|| "null".equalsIgnoreCase(charSetEncoding)) {
+			charSetEncoding = MessageContext.UTF_8;
+		}
 
-        try {
-            streamReader = StAXUtils.createXMLStreamReader(
-                    getReader(attachments.getSOAPPartInputStream(), charSetEncoding));
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
+		try {
+			streamReader = StAXUtils.createXMLStreamReader(getReader(
+					attachments.getSOAPPartInputStream(), charSetEncoding));
+		} catch (IOException e) {
+			throw new XMLStreamException(e);
+		}
 
-        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEncoding);
+		msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+				charSetEncoding);
 
-        /*
-        * Put a reference to Attachments Map in to the message context 
-        * For backword compatibility with Axis2 1.0
-        */
-        msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
-        
-        /*
-         * Setting the Attachments map to new SwA API
-         */
-        msgContext.setAttachmentMap(attachments);
+		/*
+		 * Put a reference to Attachments Map in to the message context For
+		 * backword compatibility with Axis2 1.0
+		 */
+		msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
 
-        String soapEnvelopeNamespaceURI=null;
-        if (contentTypeString.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-        	soapEnvelopeNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-        }
-        else if (contentTypeString.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-        	soapEnvelopeNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-        }
-        
-        if (isSOAP)   
-        {
-        if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)& null!=soapEnvelopeNamespaceURI) {
+		/*
+		 * Setting the Attachments map to new SwA API
+		 */
+		msgContext.setAttachmentMap(attachments);
 
-            /*
-            * Creates the MTOM specific MTOMStAXSOAPModelBuilder
-            */             
-            builder = new MTOMStAXSOAPModelBuilder(streamReader, attachments, soapEnvelopeNamespaceURI);
-        	 
-        } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)& null!=soapEnvelopeNamespaceURI) {
-            builder = new StAXSOAPModelBuilder(streamReader,
-                    soapEnvelopeNamespaceURI);
-        }
-        }
-        // To handle REST XOP case
-        else
-        {
-            if (attachments.getAttachmentSpecType().equals(MTOMConstants.MTOM_TYPE)) {            
-                XOPAwareStAXOMBuilder stAXOMBuilder = new XOPAwareStAXOMBuilder(streamReader,attachments);
-                builder= stAXOMBuilder;
-            	 
-            } else if (attachments.getAttachmentSpecType().equals(MTOMConstants.SWA_TYPE)) {
-                builder = new StAXOMBuilder(streamReader);
-            }
-        }
+		String soapEnvelopeNamespaceURI = null;
+		if (contentTypeString.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+			soapEnvelopeNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+		} else if (contentTypeString
+				.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+			soapEnvelopeNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+		}
 
-        return builder;
-    }
+		if (isSOAP) {
+			if (attachments.getAttachmentSpecType().equals(
+					MTOMConstants.MTOM_TYPE)
+					& null != soapEnvelopeNamespaceURI) {
+
+				/*
+				 * Creates the MTOM specific MTOMStAXSOAPModelBuilder
+				 */
+				builder = new MTOMStAXSOAPModelBuilder(streamReader,
+						attachments, soapEnvelopeNamespaceURI);
+
+			} else if (attachments.getAttachmentSpecType().equals(
+					MTOMConstants.SWA_TYPE)
+					& null != soapEnvelopeNamespaceURI) {
+				builder = new StAXSOAPModelBuilder(streamReader,
+						soapEnvelopeNamespaceURI);
+			}
+		}
+		// To handle REST XOP case
+		else {
+			if (attachments.getAttachmentSpecType().equals(
+					MTOMConstants.MTOM_TYPE)) {
+				XOPAwareStAXOMBuilder stAXOMBuilder = new XOPAwareStAXOMBuilder(
+						streamReader, attachments);
+				builder = stAXOMBuilder;
+
+			} else if (attachments.getAttachmentSpecType().equals(
+					MTOMConstants.SWA_TYPE)) {
+				builder = new StAXOMBuilder(streamReader);
+			}
+		}
+
+		return builder;
+	}
 
     /**
-     * Use the BOM Mark to identify the encoding to be used. Fall back to default encoding specified
-     *
-     * @param is
-     * @param charSetEncoding
-     * @throws java.io.IOException
-     */
+	 * Use the BOM Mark to identify the encoding to be used. Fall back to
+	 * default encoding specified
+	 * 
+	 * @param is
+	 * @param charSetEncoding
+	 * @throws java.io.IOException
+	 */
     private static Reader getReader(InputStream is, String charSetEncoding) throws IOException {
         PushbackInputStream is2 = new PushbackInputStream(is, BOM_SIZE);
         String encoding;
