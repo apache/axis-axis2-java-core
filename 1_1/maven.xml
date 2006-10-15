@@ -556,17 +556,19 @@
         <ant:echo>+----------------------------------------------</ant:echo>
 
         <ant:mkdir dir="target/dist"/>
-        <ant:mkdir dir="target/temp/min/bin/lib"/>
-
+    	
+    	<ant:property name="min.bin.temp.dir" value="target/temp/min/bin/axis2-min-${pom.currentVersion}-bin"/>
+    	 <ant:mkdir dir="${min.bin.temp.dir}/lib"/>
+    	
         <!-- Copy the 3rd party libs -->
-        <ant:copy toDir="target/temp/min/bin/lib">
+        <ant:copy toDir="${min.bin.temp.dir}/lib">
             <ant:fileset dir="${min_dep_cache}"/>
         </ant:copy>
 
         <!-- Delete testing jars -->
         <echo message="Deleting Unwanted testing jars"/>
         <ant:delete>
-            <fileset dir="target/temp/min/bin/lib">
+            <fileset dir="${min.bin.temp.dir}/lib">
                 <include name="**/ant*.jar"/>
                 <include name="**/xmlunit*.jar"/>
                 <include name="**/junit*.jar"/>
@@ -575,32 +577,27 @@
 
 
         <!--copy NOTICE.txt file-->
-        <ant:copy toFile="target/temp/min/bin/NOTICE.txt">
+        <ant:copy toFile="${min.bin.temp.dir}/NOTICE.txt">
             <ant:fileset file="NOTICE.txt"/>
         </ant:copy>
 
         <!-- Copy the java2wsdl jar -->
-        <ant:copy toDir="target/temp/min/bin/lib">
+        <ant:copy toDir="${min.bin.temp.dir}/lib">
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy the kernel jar -->
-        <ant:copy toDir="target/temp/min/bin/lib">
+        <ant:copy toDir="${min.bin.temp.dir}/lib">
             <ant:fileset file="modules/kernel/target/axis2-kernel-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy the adb jar -->
-        <ant:copy toDir="target/temp/min/bin/lib">
+        <ant:copy toDir="${min.bin.temp.dir}/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
-        </ant:copy>
-
- <!-- Copy the adb  codegen jar -->
-        <ant:copy toDir="target/temp/min/bin/lib">
-            <ant:fileset file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
         </ant:copy>
         
         <!-- Copy the release documents -->
-        <macros:copy-release-docs toDir="target/temp/min/bin"
+        <macros:copy-release-docs toDir="${min.bin.temp.dir}"
                                   readmeFile="release-docs/readme-files/README-min-bin.txt"/>
 
         <ant:mkdir dir="${dist.dir}"/>
@@ -613,17 +610,17 @@
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Minimal Source Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
-
+    	
         <ant:mkdir dir="target/dist"/>
         <ant:mkdir dir="target/temp/min/src"/>
 
-        <ant:copy toDir="target/temp/min/src">
+    	<ant:property name="min.src.temp.dir" value="target/temp/min/src/axis2-min-${pom.currentVersion}-src"/>
+        <ant:copy toDir="${min.src.temp.dir}">
             <ant:fileset dir=".">
                 <ant:include name="**/etc/**"/>
                 <ant:include name="**/modules/java2wsdl/**"/>
                 <ant:include name="**/modules/kernel/**"/>
                 <ant:include name="**/modules/adb/**"/>
-                <ant:include name="**/modules/adb-codegen/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
@@ -636,26 +633,26 @@
                 <ant:exclude name="**/*.iml"/>
             </ant:fileset>
         </ant:copy>
-        <ant:copy toDir="target/temp/min/src/etc" overwrite="true" filtering="on">
+        <ant:copy toDir="${min.src.temp.dir}/etc" overwrite="true" filtering="on">
             <ant:fileset dir="release-docs/release-etc/min"/>
         </ant:copy>
 
         <!-- Copy the master maven files for the minimal src distro -->
-        <ant:copy toFile="target/temp/min/src/maven.xml">
+        <ant:copy toFile="${min.src.temp.dir}/maven.xml">
             <ant:fileset file="release-docs/maven-scripts/maven-min.xml"/>
         </ant:copy>
-        <ant:copy toDir="target/temp/min/src">
+        <ant:copy toDir="${min.src.temp.dir}">
             <ant:fileset file="project.xml"/>
         </ant:copy>
 
         <!-- Copy the release documents -->
-        <macros:copy-release-docs toDir="target/temp/min/src"
+        <macros:copy-release-docs toDir="${min.src.temp.dir}"
                                   readmeFile="release-docs/readme-files/README-min-src.txt"/>
 
         <ant:zip file="${dist.dir}/axis2-min-${pom.currentVersion}-src.zip">
             <ant:fileset dir="target/temp/min/src"/>
         </ant:zip>
-        <ant:delete dir="target/temp/min/src"/>
+        <ant:delete dir="${min.src.temp.dir}"/>
     </goal>
 
     <goal name="dist-std-bin" prereqs="jar,init-dist,cache-std-deps">
@@ -663,7 +660,7 @@
         <ant:echo>| Creating: Axis2 Standard Binary Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:property name="std.bin.temp.dir" value="target/temp/std/bin"/>
+        <ant:property name="std.bin.temp.dir" value="target/temp/std/bin/axis2-std-${pom.currentVersion}-bin"/>
 
         <ant:mkdir dir="${std.bin.temp.dir}/lib"/>
         <ant:mkdir dir="${std.bin.temp.dir}/bin"/>
@@ -688,6 +685,12 @@
         </ant:copy>
 
 
+        <ant:delete>
+            <fileset dir="${std.bin.temp.dir}/lib">
+            	<!--Deleting as per Dennis's suggestion on http://wiki.apache.org/ws/FrontPage/Axis2/axis2_std_build_list -->
+                <include name="bcel-${bcel.version}.jar"/>
+            </fileset>
+        </ant:delete>
         <!-- Delete tesing jars -->
         <echo message="Deleting Unwanted testing jars"/>
         <ant:delete>
@@ -765,8 +768,8 @@
                                   readmeFile="release-docs/readme-files/README-std-bin.txt"/>
 
         <ant:zip file="${dist.dir}/axis2-std-${pom.currentVersion}-bin.zip"
-                 basedir="${std.bin.temp.dir}"/>
-        <ant:delete dir="${std.bin.temp.dir}"/>
+                 basedir="target/temp/std/bin"/>
+        <ant:delete dir="target/temp/std/bin"/>
     </goal>
 
     <goal name="dist-std-src" prereqs="init-dist">
@@ -774,7 +777,7 @@
         <ant:echo>| Creating: Axis2 Standard Source Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:property name="std.src.temp.dir" value="target/temp/std/src"/>
+        <ant:property name="std.src.temp.dir" value="target/temp/std/src/axis2-std-${pom.currentVersion}-src"/>
 
         <!-- Copy bin scripts -->
         <ant:copy todir="${std.src.temp.dir}/bin">
@@ -833,9 +836,9 @@
                                   readmeFile="release-docs/readme-files/README-std-src.txt"/>
 
         <ant:zip file="${dist.dir}/axis2-std-${pom.currentVersion}-src.zip">
-            <ant:fileset dir="${std.src.temp.dir}"/>
+            <ant:fileset dir="target/temp/std/src"/>
         </ant:zip>
-        <ant:delete dir="${std.src.temp.dir}"/>
+        <ant:delete dir="target/temp/std/src"/>
     </goal>
 
     <goal name="dist-war" prereqs="war">
@@ -850,22 +853,22 @@
         <ant:echo>+----------------------------------------------</ant:echo>
 
         <ant:mkdir dir="target/dist"/>
-        <ant:mkdir dir="target/temp/docs/xdocs"/>
-        <ant:mkdir dir="target/temp/docs/javadocs"/>
+        <ant:mkdir dir="target/temp/docs/axis2-${pom.currentVersion}-docs/xdocs"/>
+        <ant:mkdir dir="target/temp/docs/axis2-${pom.currentVersion}-docs/javadocs"/>
 
-        <ant:copy toDir="target/temp/docs/xdocs">
+        <ant:copy toDir="target/temp/docs/axis2-${pom.currentVersion}-docs/xdocs">
             <ant:fileset dir="xdocs"/>
         </ant:copy>
 
-        <!-- Delete 0.93 docs -->
-        <ant:delete dir="target/temp/docs/xdocs/0_93"/>
+        <!-- Delete 1.0 docs -->
+        <ant:delete dir="target/temp/docs/axis2-${pom.currentVersion}-docs/xdocs/1_0"/>
 
 
-        <ant:copy toDir="target/temp/docs/javadocs">
+        <ant:copy toDir="target/temp/docs/axis2-${pom.currentVersion}-docs/javadocs">
             <ant:fileset dir="target/apidocs"/>
         </ant:copy>
 
-        <macros:copy-release-docs toDir="target/temp/docs"
+        <macros:copy-release-docs toDir="target/temp/docs/axis2-${pom.currentVersion}-docs"
                                   readmeFile="release-docs/readme-files/README-docs.txt"/>
 
         <ant:zip file="${dist.dir}/axis2-${pom.currentVersion}-docs.zip">
