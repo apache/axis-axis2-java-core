@@ -67,6 +67,7 @@
         </jar>
         <copy file="${samples.dir}/version/version.jar"
             tofile="target/toWar/services/version.aar"/>
+	<delete file="${samples.dir}/version/version.jar"/>
     </goal>
     <!-- ================================================================ -->
     <!--- User Guide Sample -->
