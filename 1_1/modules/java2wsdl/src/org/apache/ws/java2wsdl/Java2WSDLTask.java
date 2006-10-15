@@ -3,6 +3,8 @@ package org.apache.ws.java2wsdl;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 
 import java.util.HashMap;
@@ -28,14 +30,13 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
 
     private String className = null;
     private String outputLocation = null;
-    private String classpathURI = null;
     private String targetNamespace = null;
     private String targetNamespacePrefix = null;
     private String schemaTargetNamespace = null;
     private String schemaTargetNamespacePrefix = null;
     private String serviceName = null;
     private String outputFileName = null;
-    private String classPath = null;
+    private Path classpath = null;
 
     /**
      *
@@ -68,9 +69,6 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
         addToOptionMap(optionMap,
                 Java2WSDLConstants.OUTPUT_LOCATION_OPTION,
                 outputLocation);
-
-        String[] jars = classpathURI.split(";");
-        optionMap.put(Java2WSDLConstants.CLASSPATH_OPTION, new Java2WSDLCommandLineOption(Java2WSDLConstants.CLASSPATH_OPTION, jars));
 
         // Target namespace
         addToOptionMap(optionMap,
@@ -134,27 +132,20 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
 
     public void execute() throws BuildException {
         try {
-            /**
-             * <comment borrowed from AntCodegenTask>
-             *
-             * This needs the ClassLoader we use to load the task have all the dependancies set, hope that
-             * is ok for now
-             *
-             * todo look into this further!!!!!
-             */
 
+            Map commandLineOptions = this.fillOptionMap();
 
-            AntClassLoader cl = new AntClassLoader(
-                    null,
+            AntClassLoader cl = new AntClassLoader(getClass().getClassLoader(),
                     getProject(),
-                    null,
+                    classpath == null ? createClasspath() : classpath,
                     false);
+
+            commandLineOptions.put(Java2WSDLConstants.CLASSPATH_OPTION, new Java2WSDLCommandLineOption(Java2WSDLConstants.CLASSPATH_OPTION, classpath.list()));
 
             Thread.currentThread().setContextClassLoader(cl);
 
             if (outputLocation != null) cl.addPathElement(outputLocation);
 
-            Map commandLineOptions = this.fillOptionMap();
             new Java2WSDLCodegenEngine(commandLineOptions).generate();
 
         } catch (Throwable e) {
@@ -169,10 +160,6 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
 
     public void setOutputLocation(String outputLocation) {
         this.outputLocation = outputLocation;
-    }
-
-    public void setClassPathURI(String classpathURI) {
-        this.classpathURI = classpathURI;
     }
 
     public void setTargetNamespace(String targetNamespace) {
@@ -199,6 +186,36 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
         this.outputFileName = outputFileName;
     }
 
+    /**
+     * Set the optional classpath
+     *
+     * @param classpath the classpath to use when loading class
+     */
+    public void setClasspath(Path classpath) {
+        createClasspath().append(classpath);
+    }
+
+    /**
+     * Set the optional classpath
+     *
+     * @return a path instance to be configured by the Ant core.
+     */
+    public Path createClasspath() {
+        if (classpath == null) {
+            classpath = new Path(getProject());
+            classpath = classpath.concatSystemClasspath();
+        }
+        return classpath.createPath();
+    }
+
+    /**
+     * Set the reference to an optional classpath
+     *
+     * @param r the id of the Ant path instance to act as the classpath
+     */
+    public void setClasspathRef(Reference r) {
+        createClasspath().setRefid(r);
+    }
 
 }
 
