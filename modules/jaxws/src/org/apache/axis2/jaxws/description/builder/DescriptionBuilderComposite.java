@@ -3,10 +3,15 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.wsdl.Definition;
+
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 
 public class DescriptionBuilderComposite {
 	/*
@@ -18,18 +23,24 @@ public class DescriptionBuilderComposite {
 
 	public DescriptionBuilderComposite () {
 		
+		methodDescriptions = new ArrayList<MethodDescriptionComposite>();
+		fieldDescriptions = new ArrayList<FieldDescriptionComposite>();
+		webServiceRefAnnotList = new ArrayList<WebServiceRefAnnot>();	
+		interfacesList = new ArrayList<String>();
 	}
 
 	//Class type within the module
-	private enum ModuleClassType { SERVICEIMPL, SEI, SERVICE, SUPER, PROVIDER, FAULT }
+	public static enum ModuleClassType { SERVICEIMPL, SEI, SERVICE, SUPER, PROVIDER, FAULT}
+	private ModuleClassType moduleClassType = null;
 	
 	//Note: a WSDL is not necessary
-	private Definition	wsdlDefinition;
+	private Definition 	wsdlDefinition = null;
+	private URL			wsdlURL = null;
 
 	// Class-level annotations
 	private WebServiceAnnot 			webServiceAnnot;	
-	private WebServiceProviderAnnot 	webServiceProviderAnnot; //	TODO EDIT CHECK: WebService and WebServiceProvider are mutually exclusive
-	private ServiceModeAnnot 			serviceModeAnnot;	//	TODO EDIT CHECK: valid only if is a provider class	
+	private WebServiceProviderAnnot 	webServiceProviderAnnot;
+	private ServiceModeAnnot 			serviceModeAnnot;	
 	private WebServiceClientAnnot 		webServiceClientAnnot;
 	private WebFaultAnnot 				webFaultAnnot;
 	private HandlerChainAnnot 			handlerChainAnnot;
@@ -43,7 +54,8 @@ public class DescriptionBuilderComposite {
 	private String[] 		classModifiers; //public, abstract, final, strictfp...
 	private String			extendsClass;	//Set to the name of the super class
 	private List<String>	interfacesList; //Set this for all implemented interfaces
-
+	private boolean			isInterface = false;
+	
 	private List<MethodDescriptionComposite> methodDescriptions;		
 	private List<FieldDescriptionComposite> fieldDescriptions;		
 
@@ -123,6 +135,13 @@ public class DescriptionBuilderComposite {
 	}
 
 	/**
+	 * @return Returns the webServiceRefAnnot list.
+	 */
+	public List<WebServiceRefAnnot> getAllWebServiceRefAnnots() {		
+		return webServiceRefAnnotList;
+	}
+	
+	/**
 	 * @return Returns the webServiceRefAnnot.
 	 */
 	public WebServiceRefAnnot getWebServiceRefAnnot(String name) {
@@ -154,10 +173,17 @@ public class DescriptionBuilderComposite {
 	}
 
 	/**
-	 * @return Returns the wsdlDefinition.
+	 * @return Returns the wsdlDefinition
 	 */
 	public Definition getWsdlDefinition() {
 		return wsdlDefinition;
+	}
+	
+	/**
+	 * @return Returns the wsdlURL
+	 */
+	public URL getWsdlURL() {
+		return this.wsdlURL;
 	}
 	
 	/**
@@ -187,6 +213,10 @@ public class DescriptionBuilderComposite {
 		return composite;
 	}
 	
+	public List<MethodDescriptionComposite> getMethodDescriptionsList() {
+		return methodDescriptions;
+	}
+	
 	/**
 	 *
 	 * @return Returns the methodDescriptionComposite..null if not found
@@ -203,6 +233,15 @@ public class DescriptionBuilderComposite {
 				return composite;
 		}
 		return composite;
+	}
+	
+	/**
+	 *
+	 * @return Returns true if this is an interface
+	 */
+	public boolean isInterface(){
+
+		return isInterface;
 	}
 	
 	//++++++++
@@ -236,7 +275,7 @@ public class DescriptionBuilderComposite {
 	/**
 	 * @param interfacesList  The interfacesList to set.
 	 */
-	public void getInterfacesList(List<String> interfacesList) {
+	public void setInterfacesList(List<String> interfacesList) {
 		this.interfacesList = interfacesList;
 	}
 	
@@ -300,6 +339,13 @@ public class DescriptionBuilderComposite {
 	}
 
 	/**
+	 * @param wsdlURL The wsdlURL to set.
+	 */
+	public void setwsdlURL(URL wsdlURL) {
+		this.wsdlURL = wsdlURL;
+	}
+
+	/**
 	 * @param BindingTypeAnnot The BindingTypeAnnot to set.
 	 */
 	public void setBindingTypeAnnot(
@@ -316,6 +362,13 @@ public class DescriptionBuilderComposite {
 	}
 
 	/**
+	 * @param isInterface Sets whether this composite represents a class or interface
+	 */
+	public void setIsInterface(boolean isInterface){
+		this.isInterface = isInterface;
+	}
+
+	/**
 	 *  @param methodDescription The methodDescription to add to the set.
 	 */
 	public void addMethodDescriptionComposite(MethodDescriptionComposite methodDescription) {
@@ -328,5 +381,112 @@ public class DescriptionBuilderComposite {
 	public void addFieldDescriptionComposite(FieldDescriptionComposite fieldDescription) {
 		fieldDescriptions.add(fieldDescription);
 	}
+		
+	/**
+	 * @return Returns the ModuleClassType.
+	 */
+	public ModuleClassType getClassType() {
+		
+		if (moduleClassType == null) {
+			//TODO: Determine the class type
+		}
+		return moduleClassType;
+	}
 	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append("***** BEGIN DescriptionBuilderComposite *****");
+		sb.append(newLine);
+		sb.append("DBC.className= " + className);
+		sb.append(newLine);
+		sb.append("DBC.superClass=" + extendsClass);
+		sb.append(newLine);
+		if(classModifiers != null) {
+			for(int i=0; i < classModifiers.length; i++) {
+				sb.append("DBC.classModifier=" + classModifiers[i]);
+				sb.append(newLine);
+			}
+		}
+		sb.append(newLine);
+		Iterator<String> intIter = interfacesList.iterator();
+		while(intIter.hasNext()) {
+			String inter = intIter.next();
+			sb.append("DBC.interface= " + inter);
+			sb.append(newLine);
+		}
+		sb.append(newLine);
+		if(webServiceAnnot != null) {
+			sb.append("\t ** @WebService **");
+			sb.append(newLine);
+			sb.append("\t" + webServiceAnnot.toString());
+		}
+		sb.append(newLine);
+		if(webServiceProviderAnnot != null) {
+			sb.append("\t ** @WebServiceProvider **");
+			sb.append(newLine);
+			sb.append("\t" + webServiceProviderAnnot.toString());
+		}
+		sb.append(newLine);
+		if(webServiceClientAnnot != null) {
+			sb.append("\t ** @WebServiceClient **");
+			sb.append(newLine);
+			sb.append("\t" + webServiceClientAnnot.toString());
+		}
+		sb.append(newLine);
+		if(webFaultAnnot != null) {
+			sb.append("\t ** @WebFault **");
+			sb.append(newLine);
+			sb.append("\t" + webFaultAnnot.toString());
+		}
+		sb.append(newLine);
+		if(serviceModeAnnot != null) {
+			sb.append("\t ** @ServiceMode **");
+			sb.append(newLine);
+			sb.append("\t" + serviceModeAnnot.toString());
+		}
+		sb.append(newLine);
+		if(soapBindingAnnot != null) {
+			sb.append("\t ** @SOAPBinding **");
+			sb.append(newLine);
+			sb.append("\t" + soapBindingAnnot.toString());
+		}
+		sb.append(newLine);
+		if(handlerChainAnnot != null) {
+			sb.append("\t ** @HandlerChain **");
+			sb.append(newLine);
+			sb.append("\t" + handlerChainAnnot.toString());
+		}
+		sb.append(newLine);
+		Iterator<WebServiceRefAnnot> wsrIter = webServiceRefAnnotList.iterator();
+		while(wsrIter.hasNext()) {
+			WebServiceRefAnnot wsr = wsrIter.next();
+			sb.append("\t ** @WebServiceRef **");
+			sb.append(newLine);
+			sb.append("\t" + wsr.toString());
+			sb.append(newLine);
+		}
+		sb.append(newLine);
+		Iterator<MethodDescriptionComposite> mdcIter =  methodDescriptions.iterator();
+		sb.append(newLine);
+		while(mdcIter.hasNext()) {
+			MethodDescriptionComposite mdc = mdcIter.next();
+			sb.append("\t\t" + mdc.toString());
+			sb.append(newLine);
+		}
+		sb.append(newLine);
+		Iterator<FieldDescriptionComposite> fdcIter = fieldDescriptions.iterator();
+		sb.append(newLine);
+		while(fdcIter.hasNext()) {
+			FieldDescriptionComposite fdc = fdcIter.next();
+			sb.append("\t\t" + fdc.toString());
+			sb.append(newLine);
+		}
+		sb.append("***** END DescriptionBuilderComposite *****");
+		return sb.toString();
+	}
 }

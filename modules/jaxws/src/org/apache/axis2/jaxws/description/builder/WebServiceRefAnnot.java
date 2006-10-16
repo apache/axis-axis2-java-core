@@ -187,4 +187,25 @@ public class WebServiceRefAnnot implements javax.xml.ws.WebServiceRef{
 	public Class<Annotation> annotationType(){
 		return Annotation.class;
 	}
+	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@WebServiceRef.name= " + name);
+		sb.append(newLine);
+		sb.append("@WebServiceRef.wsdlLocation= " + wsdlLocation);
+		sb.append(newLine);
+		sb.append("@WebServiceRef.mappedName= " + mappedName);
+		sb.append(newLine);
+		sb.append("@WebServiceRef.type= " + typeString);
+		sb.append(newLine);
+		sb.append("@WebServiceRef.value= " + valueString);
+		sb.append(newLine);
+		return sb.toString();
+	}
 }

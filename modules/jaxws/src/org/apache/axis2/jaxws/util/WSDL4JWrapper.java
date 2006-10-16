@@ -52,6 +52,13 @@ public class WSDL4JWrapper implements WSDLWrapper {
 		wsdlDefinition = reader.readWSDL(wsdlURL.toString());
 		
 	}
+
+    public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition) throws WSDLException{
+		super();
+		this.wsdlURL = wsdlURL;
+		this.wsdlDefinition = wsdlDefinition;
+		
+	}
 	//TODO: Perform validations for each method to check for null parameters on QName.
 	
 	public Definition getDefinition(){

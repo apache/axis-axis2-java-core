@@ -105,5 +105,21 @@ public class WebServiceClientAnnot implements javax.xml.ws.WebServiceClient{
 		return Annotation.class;
 	}
 
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@WebServiceClient.name= " + name);
+		sb.append(newLine);
+		sb.append("@WebServiceClient.targetNamespace= " + targetNamespace);
+		sb.append(newLine);
+		sb.append("@WebServiceClient.wsdlLocation= " + wsdlLocation);
+		sb.append(newLine);
+		return sb.toString();
+	}
 
 }

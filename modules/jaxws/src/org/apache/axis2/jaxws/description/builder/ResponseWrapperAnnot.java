@@ -104,6 +104,23 @@ public class ResponseWrapperAnnot implements javax.xml.ws.ResponseWrapper{
 	public Class<Annotation> annotationType(){
 		return Annotation.class;
 	}
+	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@ResponseWrapper.localName= " + localName);
+		sb.append(newLine);
+		sb.append("@ResponseWrapper.className= " + className);
+		sb.append(newLine);
+		sb.append("@ResponseWrapper.targetNamespace= " + targetNamespace);
+		sb.append(newLine);
+		return sb.toString();
+	}
 
 
 }

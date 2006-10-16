@@ -104,6 +104,23 @@ public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper{
 	public Class<Annotation> annotationType(){
 		return Annotation.class;
 	}
+	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@RequestWrapper.localName= " + localName);
+		sb.append(newLine);
+		sb.append("@RequestWrapper.className= " + className);
+		sb.append(newLine);
+		sb.append("@RequestWrapper.targetNamespace= " + targetNamespace);
+		sb.append(newLine);
+		return sb.toString();
+	}
 
 
 }

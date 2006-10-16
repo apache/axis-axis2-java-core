@@ -98,5 +98,30 @@ public class WebResultAnnot implements javax.jws.WebResult{
 	public Class<Annotation> annotationType(){
 		return Annotation.class;
 	}
+	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@WebResult.name= " + name);
+		sb.append(newLine);
+		sb.append("@WebResult.partName= " + partName);
+		sb.append(newLine);
+		sb.append("@WebResult.targetNamespace= " + targetNamespace);
+		sb.append(newLine);
+		sb.append("@WebResult.header= ");
+		if(header) {
+			sb.append("true");
+		}
+		else {
+			sb.append("false");
+		}
+		sb.append(newLine);
+		return sb.toString();
+	}
 
 }

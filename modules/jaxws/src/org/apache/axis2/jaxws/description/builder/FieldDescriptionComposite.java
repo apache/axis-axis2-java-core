@@ -87,5 +87,30 @@ public class FieldDescriptionComposite {
 	public void setWebServiceRefAnnot(WebServiceRefAnnot webServiceRefAnnot) {
 		this.webServiceRefAnnot = webServiceRefAnnot;
 	}
+	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append("***** BEGIN FieldDescriptionComposite *****");
+		sb.append("FDC.fieldName=" + fieldName);
+		sb.append(newLine);
+		if(handlerChainAnnot != null) {
+			sb.append("\t @HandlerChain");
+			sb.append(newLine);
+			sb.append("\t" + handlerChainAnnot.toString());
+		}
+		sb.append(newLine);
+		if(webServiceRefAnnot != null) {
+			sb.append("\t @WebServiceRef");
+			sb.append(newLine);
+			sb.append("\t" + webServiceRefAnnot.toString());
+		}
+		sb.append("***** END FieldDescriptionComposite");
+		return sb.toString();
+	}
 }
 	

@@ -9,6 +9,7 @@ public class ParameterDescriptionComposite {
 	private WebParamAnnot			webParamAnnot;
 	private WebServiceRefAnnot 		webServiceRefAnnot;
 	private WebServiceContextAnnot	webServiceContextAnnot;
+	private int listOrder; //represents this composites order in the list
 
 	public ParameterDescriptionComposite () {
 		
@@ -30,21 +31,21 @@ public class ParameterDescriptionComposite {
 	/**
 	 * @return Returns the parameterType.
 	 */
-	private String getParameterType() {
+	public String getParameterType() {
 		return parameterType;
 	}
 
 	/**
 	 * @return Returns the webParamAnnot.
 	 */
-	private WebParamAnnot getWebParamAnnot() {
+	public WebParamAnnot getWebParamAnnot() {
 		return webParamAnnot;
 	}
 
 	/**
 	 * @return Returns the webServiceRefAnnot.
 	 */
-	private WebServiceRefAnnot getWebServiceRefAnnot() {
+	public WebServiceRefAnnot getWebServiceRefAnnot() {
 		return webServiceRefAnnot;
 	}
 
@@ -56,31 +57,70 @@ public class ParameterDescriptionComposite {
 	}
 
 	/**
+	 * @return Returns the webServiceContextAnnot.
+	 */
+	public int getListOrder() {
+		return listOrder;
+	}
+
+	/**
 	 * @param parameterType The parameterType to set.
 	 */
-	private void setParameterType(String parameterType) {
+	public void setParameterType(String parameterType) {
 		this.parameterType = parameterType;
 	}
 
 	/**
 	 * @param webParamAnnot The webParamAnnot to set.
 	 */
-	private void setWebParamAnnot(WebParamAnnot webParamAnnot) {
+	public void setWebParamAnnot(WebParamAnnot webParamAnnot) {
 		this.webParamAnnot = webParamAnnot;
 	}
 
 	/**
 	 * @param webServiceRefAnnot The webServiceRefAnnot to set.
 	 */
-	private void setWebServiceRefAnnot(WebServiceRefAnnot webServiceRefAnnot) {
+	public void setWebServiceRefAnnot(WebServiceRefAnnot webServiceRefAnnot) {
 		this.webServiceRefAnnot = webServiceRefAnnot;
 	}
 
 	/**
 	 * @param webServiceContextAnnot The webServiceContextAnnot to set.
 	 */
-	private void setWebServiceContextAnnot(WebServiceContextAnnot webServiceContextAnnot) {
+	public void setWebServiceContextAnnot(WebServiceContextAnnot webServiceContextAnnot) {
 		this.webServiceContextAnnot = webServiceContextAnnot;
 	}
 
+	/**
+	 * @param webServiceContextAnnot The webServiceContextAnnot to set.
+	 */
+	public void setListOrder(int listOrder) {
+		this.listOrder = listOrder;
+	}
+
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append("***** BEGIN ParameterDescriptionComposite *****");
+		sb.append("PDC.parameterType= " + parameterType);
+		sb.append(newLine);
+		if(webParamAnnot != null) {
+			sb.append("\t @WebParam");
+			sb.append(newLine);
+			sb.append("\t" + webParamAnnot.toString());
+		}
+		sb.append(newLine);
+		if(webServiceRefAnnot != null) {
+			sb.append("\t @WebServiceRef");
+			sb.append(newLine);
+			sb.append("\t" + webServiceRefAnnot.toString());
+		}
+		sb.append(newLine);
+		sb.append("***** END ParameterDescriptionComposite *****");
+		return sb.toString();
+	}
 }

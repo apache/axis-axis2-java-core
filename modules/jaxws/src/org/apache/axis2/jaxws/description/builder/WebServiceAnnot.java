@@ -145,4 +145,26 @@ public class WebServiceAnnot implements javax.jws.WebService{
 	}
 	
 	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@WebService.name= " + name);
+		sb.append(newLine);
+		sb.append("@WebService.serviceName= " + serviceName);
+		sb.append(newLine);
+		sb.append("@WebService.endpointInterface= " + endpointInterface);
+		sb.append(newLine);
+		sb.append("@WebService.targetNamespace= " + targetNamespace);
+		sb.append(newLine);
+		sb.append("@WebService.wsdlLocation= " + wsdlLocation);
+		sb.append(newLine);
+		sb.append("@WebService.portName= " + portName);
+		sb.append(newLine);
+		return sb.toString();
+	}
 }

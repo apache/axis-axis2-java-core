@@ -3,6 +3,8 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MethodDescriptionComposite {
@@ -13,22 +15,22 @@ public class MethodDescriptionComposite {
 	private String[]	exceptions;
 
 	boolean	oneWayAnnotated;	
-	private WebMethodAnnot	webMethodAnnot;	
-	private WebResultAnnot 	webResultAnnot;
+	private WebMethodAnnot			webMethodAnnot;	
+	private WebResultAnnot 			webResultAnnot;
 	private WebServiceContextAnnot 	webServiceContextAnnot;	
-	private HandlerChainAnnot	handlerChainAnnot;	
-	private SoapBindingAnnot 	soapBindingAnnot;
-	private WebServiceRefAnnot 	webServiceRefAnnot;	
-	private WebEndpointAnnot 	webEndpointAnnot;
-	private RequestWrapperAnnot requestWrapperAnnot; //TODO EDIT CHECK: only on methods of SEI
-	private ResponseWrapperAnnot responseWrapperAnnot;//TODO EDIT CHECK: only on methods of SEI
+	private HandlerChainAnnot		handlerChainAnnot;	
+	private SoapBindingAnnot 		soapBindingAnnot;
+	private WebServiceRefAnnot 		webServiceRefAnnot;	
+	private WebEndpointAnnot 		webEndpointAnnot;
+	private RequestWrapperAnnot 	requestWrapperAnnot; //TODO EDIT CHECK: only on methods of SEI
+	private ResponseWrapperAnnot 	responseWrapperAnnot;//TODO EDIT CHECK: only on methods of SEI
 	private List<ParameterDescriptionComposite> parameterDescriptions;//TODO EDIT CHECK: only on methods of SEI
 
 	/*
 	 * Default Constructor
 	 */
 	public MethodDescriptionComposite () {
-		
+		parameterDescriptions = new ArrayList<ParameterDescriptionComposite>();
 	}
 	
 	public MethodDescriptionComposite (	
@@ -250,9 +252,10 @@ public class MethodDescriptionComposite {
 	 *  @param index The index at which to place this parameterDescription
 	 */
 	public void addParameterDescriptionComposite(ParameterDescriptionComposite parameterDescription, int index) {
+		parameterDescription.setListOrder(index);
 		parameterDescriptions.add(index, parameterDescription);
 	}
-	
+
 	/**
 	 *  @param parameterDescription The parameterDescription to add to the set.
 	 */
@@ -272,5 +275,92 @@ public class MethodDescriptionComposite {
 	 */
 	public void setExceptions(String[] exceptions) {
 		this.exceptions = exceptions;
+	}
+	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append("***** BEGIN MethodDescriptionComposite *****");
+		sb.append(newLine);
+		sb.append("MDC.name= " + methodName);
+		sb.append(newLine);
+		sb.append("MDC.returnType= " + returnType);
+		if(exceptions != null) {
+			for(int i=0; i < exceptions.length; i++) {
+				sb.append("MDC.exception= " + exceptions[i]);
+				sb.append(newLine);
+			}
+		}
+		sb.append(newLine);
+		sb.append("\t ** @OneWay **");
+		sb.append(newLine);
+		sb.append("\t isOneWay= ");
+		if(oneWayAnnotated) {
+			sb.append("true");
+		}
+		else {
+			sb.append("false");
+		}
+		sb.append(newLine);
+		if(webMethodAnnot != null) {
+			sb.append("\t ** @WebMethod **");
+			sb.append(newLine);
+			sb.append("\t" + webMethodAnnot.toString());
+		}
+		sb.append(newLine);
+		if(requestWrapperAnnot != null) {
+			sb.append("\t ** @RequestWrapper **");
+			sb.append(newLine);
+			sb.append("\t" + requestWrapperAnnot.toString());
+		}
+		sb.append(newLine);
+		if(responseWrapperAnnot != null) {
+			sb.append("\t ** @ResponsetWrapper **");
+			sb.append(newLine);
+			sb.append("\t" + responseWrapperAnnot.toString());
+		}
+		sb.append(newLine);
+		if(soapBindingAnnot != null) {
+			sb.append("\t ** @SOAPBinding **");
+			sb.append(newLine);
+			sb.append("\t" + soapBindingAnnot.toString());
+		}
+		sb.append(newLine);
+		if(webEndpointAnnot != null) {
+			sb.append("\t ** @WebEndpoint **");
+			sb.append(newLine);
+			sb.append("\t" + webEndpointAnnot.toString());
+		}
+		sb.append(newLine);
+		if(webResultAnnot != null) {
+			sb.append("\t ** @WebResult **");
+			sb.append(newLine);
+			sb.append("\t" + webResultAnnot.toString());
+		}
+		sb.append(newLine);
+		if(webServiceRefAnnot != null) {
+			sb.append("\t ** @WebServiceRef **");
+			sb.append(newLine);
+			sb.append("\t" + webServiceRefAnnot.toString());
+		}
+		sb.append(newLine);
+		if(handlerChainAnnot != null) {
+			sb.append("\t ** @HandlerChain **");
+			sb.append(newLine);
+			sb.append("\t" + handlerChainAnnot.toString());
+		}
+		sb.append(newLine);
+		Iterator<ParameterDescriptionComposite> pdcIter = parameterDescriptions.iterator();
+		while(pdcIter.hasNext()) {
+			ParameterDescriptionComposite pdc = pdcIter.next();
+			sb.append("\t\t" + pdc.toString());
+			sb.append(newLine);
+		}
+		sb.append("***** END MethodDescriptionComposite *****");
+		return sb.toString();
 	}
 }

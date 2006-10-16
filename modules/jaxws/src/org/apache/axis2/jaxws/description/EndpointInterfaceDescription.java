@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -33,6 +34,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 
 /**
  * An EndpointInterfaceDescription corresponds to a particular SEI-based Service
@@ -117,6 +119,15 @@ public class EndpointInterfaceDescription {
         
         parentEndpointDescription = parent;
     }
+    
+	EndpointInterfaceDescription(	DescriptionBuilderComposite dbc, 
+									boolean isClass,
+									EndpointDescription parent){
+		//TODO: Determine if the isClass parameter is really necessary
+		
+		//Get all the 
+	}
+
     
     private static Method[] getSEIMethods(Class sei) {
         // Per JSR-181 all methods on the SEI are mapped to operations regardless

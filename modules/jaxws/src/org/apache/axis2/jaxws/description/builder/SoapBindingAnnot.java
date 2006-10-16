@@ -77,4 +77,18 @@ public class SoapBindingAnnot implements javax.jws.soap.SOAPBinding{
 		return Annotation.class;
 	}
 
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@SOAPBinding.style= " + style.toString());
+		sb.append("@SOAPBinding.parameterStyle= " + parameterStyle.toString());
+		sb.append("@SOAPBinding.use= " + use.toString());
+		sb.append(newLine);
+		return sb.toString();
+	}
 }

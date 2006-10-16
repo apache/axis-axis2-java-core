@@ -60,4 +60,17 @@ public class ServiceModeAnnot implements javax.xml.ws.ServiceMode{
 		this.value = value;
 	}
 	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@ServiceMode.value= " + value.toString());
+		sb.append(newLine);
+		return null;
+	}
+	
 }

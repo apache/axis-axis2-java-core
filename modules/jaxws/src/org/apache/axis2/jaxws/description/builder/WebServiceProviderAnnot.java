@@ -123,4 +123,23 @@ public class WebServiceProviderAnnot implements javax.xml.ws.WebServiceProvider{
 	public Class<Annotation> annotationType(){
 		return Annotation.class;
 	}
+	
+	/**
+	 * Convenience method for unit testing. We will print all of the 
+	 * data members here.
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		String newLine = "\n";
+		sb.append(newLine);
+		sb.append("@WebServiceProvider.serviceName= " + serviceName);
+		sb.append(newLine);
+		sb.append("@WebServiceProvider.targetNamespace= " + targetNamespace);
+		sb.append(newLine);
+		sb.append("@WebServiceProvider.wsdlLocation= " + wsdlLocation);
+		sb.append(newLine);
+		sb.append("@WebServiceProvider.portName= " + portName);
+		sb.append(newLine);
+		return sb.toString();
+	}
 }
