@@ -96,10 +96,8 @@ call to the Google web API from the Async Client is done by the </p>
 GoogleCallBack(word));</font></p>
  <p>
 <br>
-axisop – is a string which caries the operation name. <br>
-toSend – is a Element that holds the request soap envelope. <br>
-callback – is a class that receives the response soap envelope. </p>
- <p>
+requestElement – is an Element that holds the request soap envelope. <br>
+<p>
 <br>
 In non blocking API client, the client will not hang until the operation 
 completes ,on the other hand it needs a callback 
@@ -133,7 +131,7 @@ method.addAttribute(&quot;soapenv:encodingStyle&quot;,&quot;http://schemas.xmlso
 <br>
 You can find a sample SOAP response message from the toolkit that you download 
 from the Google Web API page. To get the suggested text first take the body of 
-the SOAP Envelop .In the SOAP Envelop there are two 
+the SOAP Envelop. In the SOAP Envelop there are two 
 elements(doSpellingSuggestionResponse, return) but we only want one of them that 
 is “return” element. Then acquire the text of the return “element”. That is the 
 “suggested string” from Google.!!<br>
