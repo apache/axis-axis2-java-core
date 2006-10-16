@@ -124,7 +124,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @param req
      */
     public void initContextRoot(HttpServletRequest req) {
-        if (contextRoot == null) {
+
+        if (contextRoot == null && ((contextRoot = configContext.getContextRoot()) == null)) {
             String [] parts = JavaUtils.split(req.getContextPath(), '/');
             if (parts != null) {
                 for (int i = 0; i < parts.length; i++) {
@@ -340,6 +341,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (parameter != null) {
             disableSeperateEndpointForREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
         }
+
     }
 
     public void init() throws ServletException {
