@@ -271,6 +271,8 @@ public class Utils {
         if (!axisService.isElementFormDefault()) {
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
         }
+        // package to namespace map
+        schemaGenerator.setPkg2nsmap(axisService.getP2nMap());
         Collection schemas = schemaGenerator.generateSchema();
         axisService.addSchema(schemas);
         axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());

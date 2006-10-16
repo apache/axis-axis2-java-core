@@ -89,6 +89,8 @@ public interface DeploymentConstants {
     String SCHEMA_NAME_SPACE = "schemaNamespace";
     String SCHEMA_ELEMENT_QUALIFIED = "elementFormDefaultQualified";
     String SCHEMA = "schema";
+    String P2N = "p2n";
+    String COMMA = ",";
 
     String ATTRIBUTE_DEFAULT_VERSION = "version";
     String ATTRIBUTE_SCOPE = "scope";

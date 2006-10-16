@@ -172,6 +172,9 @@ public class AxisService extends AxisDescription {
     private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
     private boolean clientSide = false;
 
+    // package to namespace mapping
+    private Map p2nMap;
+
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
     }
@@ -1569,5 +1572,13 @@ public class AxisService extends AxisDescription {
 
     public void setServiceLifeCycle(ServiceLifeCycle serviceLifeCycle) {
         this.serviceLifeCycle = serviceLifeCycle;
+    }
+
+    public Map getP2nMap() {
+        return p2nMap;
+    }
+
+    public void setP2nMap(Map p2nMap) {
+        this.p2nMap = p2nMap;
     }
 }
