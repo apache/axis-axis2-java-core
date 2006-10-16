@@ -40,6 +40,7 @@ import org.apache.axis2.jaxws.message.MessageTests;
 import org.apache.axis2.jaxws.message.SAAJConverterTests;
 import org.apache.axis2.jaxws.message.SOAP12Tests;
 import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
+import org.apache.axis2.jaxws.nonanonymous.complextype.NonAnonymousComplexTypeTests;
 import org.apache.axis2.jaxws.provider.*;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
@@ -95,6 +96,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(MtomSampleTests.class);
         suite.addTestSuite(NonWrapTests.class);
         suite.addTestSuite(WrapTests.class);
+        suite.addTestSuite(NonAnonymousComplexTypeTests.class);
         suite.addTestSuite(AddNumbersTests.class);
         
         // Start (and stop) the server only once for all the tests

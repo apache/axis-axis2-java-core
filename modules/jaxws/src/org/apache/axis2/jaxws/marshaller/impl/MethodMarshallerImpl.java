@@ -33,6 +33,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -328,13 +329,22 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		}
 		else{
 			//Create JAXBElement then use that to create JAXBBlock.
-			Class clazz = jaxbObject.getClass();
-			JAXBElement<Object> element = new JAXBElement<Object>(new QName(targetNamespace, name), clazz, jaxbObject);
+			Class objectType = jaxbObject.getClass();
+			String xmlName = readXMLTypeName(objectType);
+			JAXBElement<Object> element = null;
+			if(xmlName !=null){
+				element = new JAXBElement<Object>(new QName(targetNamespace, xmlName), objectType, jaxbObject);
+			}
+			else{
+				element = new JAXBElement<Object>(new QName(targetNamespace, name), objectType, jaxbObject);
+			}
+			
 			JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 			return factory.createFrom(element,context ,null);
 		}
 		
 	}
+	
 	protected Block createJAXBBlock(OMElement om, JAXBContext context)throws javax.xml.stream.XMLStreamException{
 		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 		return factory.createFrom(om,context,null);
@@ -345,6 +355,14 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		String emptyBody = "";
 		XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
 		return stringFactory.createFrom(emptyBody, null, SOAPENV_QNAME);
+	}
+	
+	protected String readXMLTypeName(Class jaxbClazz){
+		XmlType type = (XmlType)jaxbClazz.getAnnotation(XmlType.class);
+		if(type !=null){
+			return type.name();
+		}
+		return null;
 	}
 	
 	protected JAXBContext createJAXBContext(String wrapperClazzName) throws ClassNotFoundException, JAXBException {
