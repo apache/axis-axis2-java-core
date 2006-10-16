@@ -7,6 +7,7 @@ import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.util.SchemaUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -228,6 +229,14 @@ public class SchemaCompiler {
                 //mapper namespace
                 for (int i = 0; nsp == null && i < schemalist.size(); i++) {
                     nsp = ((XmlSchema) schemalist.get(i)).getTargetNamespace();
+                    if (nsp != null)
+                        break;
+                    XmlSchema[] schemas = SchemaUtil.getAllSchemas((XmlSchema) schemalist.get(i));
+                    for (int j = 0; schemas != null && j < schemas.length; j++) {
+                        nsp = schemas[j].getTargetNamespace();
+                        if (nsp != null)
+                            break;
+                    }
                 }
                 if(nsp == null) {
                     nsp = URLProcessor.DEFAULT_PACKAGE;
