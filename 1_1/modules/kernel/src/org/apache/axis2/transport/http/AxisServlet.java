@@ -79,8 +79,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
 
     protected MessageContext
-            createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
-                                               HttpServletRequest req) throws AxisFault {
+    createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
+                                       HttpServletRequest req) throws AxisFault {
         MessageContext msgContext = new MessageContext();
         if (axisConfiguration.isManageTransportSession()) {
             // We need to create this only if transport session is enabled.
@@ -119,14 +119,17 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     /**
-     * Set the context root if it is not set already. 
-     * 
+     * Set the context root if it is not set already.
+     *
      * @param req
      */
     public void initContextRoot(HttpServletRequest req) {
 
-        if (contextRoot == null && ((contextRoot = configContext.getContextRoot()) == null)) {
-            String [] parts = JavaUtils.split(req.getContextPath(), '/');
+        if (contextRoot == null) {
+            contextRoot = configContext.getContextRoot();
+        }
+        if (contextRoot == null || "".equals(contextRoot)) {
+            String[] parts = JavaUtils.split(req.getContextPath(), '/');
             if (parts != null) {
                 for (int i = 0; i < parts.length; i++) {
                     if (parts[i].length() > 0) {
@@ -152,7 +155,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                          HttpServletResponse resp) throws ServletException, IOException {
 
         initContextRoot(req);
-        
+
         // this method is also used to serve for the listServices request.
 
         String requestURI = req.getRequestURI();
@@ -165,13 +168,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
                 query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0)) { // handling meta data exchange stuff
             agent.processListService(req, resp);
-        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) || requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) { // handling list services request
+        } else
+        if (requestURI.endsWith(LIST_SERVICES_SUFIX) || requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) { // handling list services request
             try {
                 agent.handle(req, resp);
             } catch (Exception e) {
                 throw new ServletException(e);
             }
-        } else if (!disableREST && enableRESTInAxis2MainServlet) { // if the main servlet should handle REST also
+        } else
+        if (!disableREST && enableRESTInAxis2MainServlet) { // if the main servlet should handle REST also
             MessageContext messageContext = null;
             try {
                 messageContext = createMessageContext(req, resp);
@@ -306,7 +311,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             axisConfiguration = configContext.getAxisConfiguration();
             config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
-            
+
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
             TransportInDescription transportInDescription = new TransportInDescription(
@@ -443,7 +448,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         if (!disableREST && !disableSeperateEndpointForREST) {
             EndpointReference restEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
-                configContext.getRESTContextPath() + "/" + serviceName);
+                    configContext.getRESTContextPath() + "/" + serviceName);
             return new EndpointReference[]{soapEndpoint, restEndpoint};
         } else {
             return new EndpointReference[]{soapEndpoint};
