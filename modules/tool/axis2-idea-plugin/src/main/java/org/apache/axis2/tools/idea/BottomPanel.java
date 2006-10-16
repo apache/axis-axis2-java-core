@@ -76,7 +76,27 @@ public class BottomPanel extends JPanel implements ActionListener {
 
             String selected = java2CodeFrame.optionPane.buttonGroup.getSelection().getActionCommand();
 
-            if (selected.equalsIgnoreCase("radCustom")) {
+            if (selected.equalsIgnoreCase("radDefaultClient")) {
+                    File temp = java2CodeFrame.optionPane.setDefaultClientConfigurations();
+                    try {
+                        java2CodeFrame.generateDefaultClientCode(temp);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                        StringWriter writer = new StringWriter();
+                        e1.printStackTrace(new PrintWriter(writer));
+                        JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
+                                "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
+                        java2CodeFrame.setVisible(false);
+                    }
+
+                    JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration successful!",
+                            "Axis2 codegeneration", JOptionPane.INFORMATION_MESSAGE);
+                    java2CodeFrame.setVisible(false);
+                    return;
+
+                }
+
+           else if (selected.equalsIgnoreCase("radCustom")) {
 
                 try {
                     java2CodeFrame.generatecode();
@@ -190,25 +210,7 @@ public class BottomPanel extends JPanel implements ActionListener {
 
                 String selected = java2CodeFrame.optionPane.buttonGroup.getSelection().getActionCommand();
 
-                if (selected.equalsIgnoreCase("radDefaultClient")) {
-                    File temp = java2CodeFrame.optionPane.setDefaultClientConfigurations();
-                    try {
-                        java2CodeFrame.generateDefaultClientCode(temp);
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                        StringWriter writer = new StringWriter();
-                        e1.printStackTrace(new PrintWriter(writer));
-                        JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
-                        java2CodeFrame.setVisible(false);
-                    }
 
-                    JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration successful!",
-                            "Axis2 codegeneration", JOptionPane.INFORMATION_MESSAGE);
-                    java2CodeFrame.setVisible(false);
-                    return;
-
-                } else
                 if (selected.equalsIgnoreCase("radDefaultServer") || selected.equalsIgnoreCase("radDefaultBoth")) {
 
                     java2CodeFrame.increasePanelID();
