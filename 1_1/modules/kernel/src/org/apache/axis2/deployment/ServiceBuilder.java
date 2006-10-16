@@ -37,9 +37,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Builds a service description from OM
@@ -114,12 +112,12 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             } else {
                 if (service.getTargetNamespace() == null ||
-                        "".equals(service.getTargetNamespace())) {
+                    "".equals(service.getTargetNamespace())) {
                     service.setTargetNamespace(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
                 }
             }
 
-            
+
 
             //Processing service lifecycle attribute
             OMAttribute serviceLifeCycleClass = service_element.
@@ -158,6 +156,25 @@ public class ServiceBuilder extends DescriptionBuilder {
                         service.setElementFormDefault(false);
                     }
                 }
+
+                //p2n mapping. This will be an element that maps pkg names to a namespace
+                //when this is doing AxisService.getSchematargetNamespace will be overridden
+                //This will be <p2n>pkgName,namespace</p2n>
+                Iterator p2nIterator = schemaElement.getChildrenWithName(new QName(P2N));
+                if (p2nIterator != null) {
+                    Map pkg2nsMap = new Hashtable();
+                    while(p2nIterator.hasNext()) {
+                        OMElement p2nElement = (OMElement)p2nIterator.next();
+                        String p2nText = p2nElement.getText();
+                        if (p2nText != null) {
+                            pkg2nsMap.put(p2nText.substring(0, p2nText.indexOf(COMMA)).trim(),
+                                        p2nText.substring(p2nText.indexOf(COMMA) + 1, p2nText.length()).trim());
+                        }
+                    }
+                    service.setP2nMap(pkg2nsMap);
+
+                }
+
             }
 
             //processing Default Message receivers
@@ -205,7 +222,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY,
-                        policyRefElements, service.getPolicyInclude());
+                                         policyRefElements, service.getPolicyInclude());
             }
 
             //processing service scope
@@ -319,9 +336,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                         .getMessageReceiver().getClass().getName();
                 if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
                         .equals(messageReceiverClass)
-                        || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
+                      || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
                         .equals(messageReceiverClass)
-                        || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                      || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
                         .equals(messageReceiverClass))) {
                     return false;
                 }
@@ -349,9 +366,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                         .getMessageReceiver().getClass().getName();
                 if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
                         .equals(messageReceiverClass)
-                        || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
+                      || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
                         .equals(messageReceiverClass)
-                        || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                      || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
                         .equals(messageReceiverClass))) {
                     excludeOperations.add(axisOperation.getName().getLocalPart());
                 }
@@ -500,11 +517,11 @@ public class ServiceBuilder extends DescriptionBuilder {
                 op_descrip.setName(new QName(opname));
                 String MEP = op_descrip.getMessageExchangePattern();
                 if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage inaxisMessage = op_descrip
                             .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                     if (inaxisMessage != null) {
@@ -513,11 +530,11 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
 
                 if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                    WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage outAxisMessage = op_descrip
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                     if (outAxisMessage != null) {
@@ -553,7 +570,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             if (receiverElement != null) {
                 MessageReceiver messageReceiver = loadMessageReceiver(service.getClassLoader(),
-                        receiverElement);
+                                                                      receiverElement);
 
                 op_descrip.setMessageReceiver(messageReceiver);
             } else {
