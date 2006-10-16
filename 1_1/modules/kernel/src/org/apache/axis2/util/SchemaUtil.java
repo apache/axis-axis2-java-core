@@ -26,16 +26,50 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaInclude;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 import java.util.Map;
-
+import java.util.HashMap;
 /**
  * 
  */
 public class SchemaUtil {
+
+    public static XmlSchema[] getAllSchemas(XmlSchema schema) {
+        HashMap map = new HashMap();
+        traverseSchemas(schema, map);
+        return (XmlSchema[]) map.values().toArray(new XmlSchema[map.values().size()]);
+    }
+
+    private static void traverseSchemas(XmlSchema schema, HashMap map) {
+        String key = schema.getTargetNamespace() + ":" + schema.getSourceURI();
+        if (map.containsKey(key)) {
+            return;
+        }
+        map.put(key, schema);
+
+        XmlSchemaObjectCollection includes = schema.getIncludes();
+        if (includes != null) {
+            Iterator tempIterator = includes.getIterator();
+            while (tempIterator.hasNext()) {
+                Object o = tempIterator.next();
+                if (o instanceof XmlSchemaImport) {
+                    XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
+                    if (schema1 != null) traverseSchemas(schema1, map);
+                }
+                if (o instanceof XmlSchemaInclude) {
+                    XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
+                    if (schema1 != null) traverseSchemas(schema1, map);
+                }
+            }
+        }
+    }
 
     /**
      * This method is designed for REST handling. Parameter of a REST request comes in the URL or in

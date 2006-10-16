@@ -21,6 +21,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -128,7 +129,7 @@ public class CodeGenerationUtility {
                 XmlOptions options = new XmlOptions();
                 options.setLoadAdditionalNamespaces(
                         nameSpacesMap); //add the namespaces
-                XmlSchema[] allSchemas = getAllSchemas(schema);
+                XmlSchema[] allSchemas = SchemaUtil.getAllSchemas(schema);
                 for (int j = 0; j < allSchemas.length; j++) {
                     completeSchemaList.add(allSchemas[j]);
                 }
@@ -458,36 +459,6 @@ public class CodeGenerationUtility {
         return (SchemaDocument.Schema[])
                 uniqueSchemas.toArray(
                         new SchemaDocument.Schema[uniqueSchemas.size()]);
-    }
-
-    private static XmlSchema[] getAllSchemas(XmlSchema schema) {
-        HashMap map = new HashMap();
-        traverseSchemas(schema, map);
-        return (XmlSchema[]) map.values().toArray(new XmlSchema[map.values().size()]);
-    }
-
-    private static void traverseSchemas(XmlSchema schema, HashMap map) {
-        String key = schema.getTargetNamespace() + ":" + schema.getSourceURI();
-        if (map.containsKey(key)) {
-            return;
-        }
-        map.put(key, schema);
-
-        XmlSchemaObjectCollection includes = schema.getIncludes();
-        if (includes != null) {
-            Iterator tempIterator = includes.getIterator();
-            while (tempIterator.hasNext()) {
-                Object o = tempIterator.next();
-                if (o instanceof XmlSchemaImport) {
-                    XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
-                    if (schema1 != null) traverseSchemas(schema1, map);
-                }
-                if (o instanceof XmlSchemaInclude) {
-                    XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
-                    if (schema1 != null) traverseSchemas(schema1, map);
-                }
-            }
-        }
     }
 
     /**
