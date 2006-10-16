@@ -103,7 +103,7 @@ public class AxisService extends AxisDescription {
     //to store default message receivers
     private HashMap messageReceivers;
 
-// to set the handler chain available in phase info
+    // to set the handler chain available in phase info
     private boolean useDefaultChains = true;
 
     //to keep the status of the service , since service can stop at the run time
@@ -125,7 +125,7 @@ public class AxisService extends AxisDescription {
     private boolean enableAllTransports = true;
     private List exposedTransports = new ArrayList();
 
-//To keep reference to ServiceLifeCycle instance , if the user has
+    //To keep reference to ServiceLifeCycle instance , if the user has
     // specified in services.xml
     private ServiceLifeCycle serviceLifeCycle;
 
@@ -656,7 +656,7 @@ public class AxisService extends AxisDescription {
 
     }
 
-    private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
+    private void getWSDL(OutputStream out, String[] serviceURL, String servicePath) throws AxisFault {
         if (this.wsdlFound) {
             AxisService2OM axisService2WOM = new AxisService2OM(this,
                     serviceURL, "document", "literal", servicePath);
@@ -698,10 +698,15 @@ public class AxisService extends AxisDescription {
             Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
             if (wsld4jdefinition != null) {
                 try {
-                    Definition definition = (Definition) wsld4jdefinition.getValue();
-                    WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
-                    writer.writeWSDL(definition, out);
-                } catch (WSDLException e) {
+                    String error = "<error>" +
+                            "<description>Unable to show WSDL for this service</description>" +
+                            "<reason>WSDL 2.0 document is to be shown. But we do not support WSDL 2.0" +
+                            "serialization yet.</reason>" +
+                            "</error>";
+                    out.write(error.getBytes());
+                    out.flush();
+                    out.close();
+                } catch (IOException e) {
                     throw new AxisFault(e);
                 }
             } else {
@@ -720,7 +725,7 @@ public class AxisService extends AxisDescription {
         getWSDL2(out, getEPRs());
     }
 
-    private void getWSDL2(OutputStream out, String [] serviceURL) throws AxisFault {
+    private void getWSDL2(OutputStream out, String[] serviceURL) throws AxisFault {
         if (this.wsdlFound) {
             AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
             try {
@@ -1285,7 +1290,7 @@ public class AxisService extends AxisDescription {
             throw new AxisFault(e);
         }
 
-        JMethod [] method = schemaGenerator.getMethods();
+        JMethod[] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();
 
         PhasesInfo pinfo = axisConfig.getPhasesInfo();
@@ -1371,7 +1376,7 @@ public class AxisService extends AxisDescription {
         }
         if (!found) {
             nameSpacesMap.put("ns" + nsCount, targetNameSpace);
-            nsCount ++;
+            nsCount++;
         }
     }
 
