@@ -23,6 +23,7 @@ import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
@@ -86,12 +87,13 @@ public class CodeGenerationUtility {
             	
                 SchemaCompiler sc = XJC.createSchemaCompiler();
                 XmlSchema schema = (XmlSchema) schemas.get(i);
+
                 String pkg = null;
                 if(nsMap != null) {
                     pkg = (String) nsMap.get(schema.getTargetNamespace());
                 }
-                if(pkg == null) {
-                    pkg = URLProcessor.makePackageName(schema.getTargetNamespace());
+                if (pkg == null) {
+                    pkg = extractNamespace(schema);
                 }
                 sc.setDefaultPackageName(pkg);
 
@@ -125,6 +127,24 @@ public class CodeGenerationUtility {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String extractNamespace(XmlSchema schema) {
+        String pkg;
+        pkg = schema.getTargetNamespace();
+        if (pkg == null) {
+            XmlSchema[] schemas2 = SchemaUtil.getAllSchemas(schema);
+            for (int j = 0; schemas2 != null && j < schemas2.length; j++) {
+                pkg = schemas2[j].getTargetNamespace();
+                if (pkg != null)
+                    break;
+            }
+        }
+        if (pkg == null) {
+            pkg = URLProcessor.DEFAULT_PACKAGE;
+        }
+        pkg = URLProcessor.makePackageName(pkg);
+        return pkg;
     }
 
     private static String getSchemaAsString(XmlSchema schema) {

@@ -24,7 +24,7 @@
                         javax.xml.bind.Marshaller marshaller = context.createMarshaller();
                         marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, Boolean.TRUE);            
         
-                        JaxbRIDataSource source = new JaxbRIDataSource(param, marshaller);
+                        JaxbRIDataSource source = new JaxbRIDataSource(<xsl:value-of select="@type"/>.class, param, marshaller);
                         javax.xml.namespace.QName elementName = context.createJAXBIntrospector().getElementName(param);
                         org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(elementName.getNamespaceURI(), null);
                         return factory.createOMElement(source, elementName.getNamespaceURI(), namespace);
@@ -72,6 +72,11 @@
             private final Object outObject;
 
             /**
+             * Bound class for output.
+             */
+            private final Class outClazz;
+
+            /**
              * Marshaller.
              */
             private final javax.xml.bind.Marshaller marshaller;
@@ -82,7 +87,8 @@
              * @param obj
              * @param marshaller
              */
-            public JaxbRIDataSource(Object obj, javax.xml.bind.Marshaller marshaller) {
+            public JaxbRIDataSource(Class clazz, Object obj, javax.xml.bind.Marshaller marshaller) {
+                this.outClazz = clazz;
                 this.outObject = obj;
                 this.marshaller = marshaller;
             }
@@ -113,7 +119,7 @@
 
             public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
                 try {
-                    javax.xml.bind.JAXBContext context = javax.xml.bind.JAXBContext.newInstance(edu.indiana.extreme.www.wsdl.benchmark1.EchoVoid.class);
+                    javax.xml.bind.JAXBContext context = javax.xml.bind.JAXBContext.newInstance(outClazz);
                     org.apache.axiom.om.impl.builder.SAXOMBuilder builder = new org.apache.axiom.om.impl.builder.SAXOMBuilder();
                     javax.xml.bind.Marshaller marshaller = context.createMarshaller();
                     marshaller.marshal(outObject, builder);
