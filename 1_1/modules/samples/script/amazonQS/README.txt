@@ -3,16 +3,17 @@ Sample for Amazon Simple Queuing Service
 
 Running the Sample:
 -------------------
+There are two methods to run the sample
 
-First way, Type <ant> command to run the sample. Here, Out operations GUI pop-up
-first, Once you closed it, In operations GUI will be poped-up.
+1. Type <ant> command to run the sample. Here, Out operations GUI pops-up
+first. Once you've closed it, In operations GUI will pop-up.
 
-Second way is the scrip files. Use run.sh or run.bat to run the sample pertaining
+2. Using the scrip files. Use run.sh or run.bat to run the sample pertaining
 to the system you are using.
 
 Help:
 -----
 
-Please refer to the sample help page for more details
+Please refer to the sample help page at "AXIS2_HOME\modules\samples\xdocs\amazonQS" for more details
 
 
