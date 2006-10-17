@@ -21,7 +21,17 @@ href="http://ws.apache.org/axis2/mail-lists.html">mailing lists</a>.</p>
 
 <p>We recommend using the exploded configuration to deploy Axis2 WAR in
 WebLogic and WebSphere application servers to support the hotupdate/
-hotdeployment features in Axis2.</p>
+hotdeployment features in Axis2. However if you do want to deploy custom
+wars say in a clustering environment, You need to add two additional 
+files into the WEB-INF named "services.list" and "modules.list" under 
+modules and services directory respectively.
+</p>
+
+<ul>
+<li><b>WEB-INF/services/services.list</b> : should list all the services (aar files) that you want to expose.</li>
+<li><b>WEB-INF/modules/modules.list</b> : should list all the modules (mar files) that you want to use.</li>
+</ul>
+NOTE: In both cases, please list one entry per line
 
 <p>WebLogic ships with jars which conflict with jars present in Axis2. So,
 kindly use &lt;prefer-web-inf-classes&gt; to ensure that jars packaged in
