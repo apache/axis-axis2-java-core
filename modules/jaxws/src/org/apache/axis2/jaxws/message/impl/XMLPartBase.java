@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
+import java.util.Iterator;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFactory;
@@ -26,6 +28,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.impl.llom.SOAPBodyImpl;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
@@ -33,9 +36,11 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
+import org.apache.axis2.namespace.Constants;
 
 /**
  * XMLPartBase class for an XMLPart
@@ -89,6 +94,8 @@ public abstract class XMLPartBase implements XMLPart {
 	static final int SOAPENVELOPE = 2;
 	static final int SPINE = 3;
 	boolean consumed = false;
+    boolean isfault = false;
+    XMLFault xmlfault = null;
     
     Message parent;
 	
@@ -128,6 +135,20 @@ public abstract class XMLPartBase implements XMLPart {
 		} else {
 			throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
 		}
+
+		// TODO MIKE revisit?
+		// It seems we do need this detection (see FaultTests)
+		// I don't really like this here because it seems like it would degrade performance for faults.
+		// It does speed things up during processing though since we just have to check the isfault flag.
+		// For now we won't worry about it.
+		Iterator children = root.getChildElements();
+		while(children.hasNext()) {
+			OMElement firstChild = (OMElement)children.next();
+			if ((firstChild != null) && "Body".equals(firstChild.getLocalName()) && ("http://schemas.xmlsoap.org/soap/envelope/".equals(firstChild.getNamespace().getNamespaceURI()) || "http://www.w3.org/2003/05/soap-envelope".equals(firstChild.getNamespace().getNamespaceURI()))) {
+				isfault = ((SOAPBodyImpl)firstChild).hasFault();
+				break;
+			}
+		}
 	}
 	
 	/**
@@ -155,6 +176,10 @@ public abstract class XMLPartBase implements XMLPart {
 	}
 	
 	private OMElement getContentAsOMElement() throws MessageException {
+		
+		if (isfault)
+			return XMLFaultConvertor.toOMElement(xmlfault);
+		
 		OMElement om = null;
 		switch (contentType) {
 		case (OM):
@@ -174,6 +199,13 @@ public abstract class XMLPartBase implements XMLPart {
 	}
 		
 	private SOAPEnvelope getContentAsSOAPEnvelope() throws MessageException {
+		
+		/*
+		 *  TODO do we need something similar here as in getContentAsOMElement?
+		 *  if (isfault)
+		 *  return XMLFaultConvertor.toOMElement(xmlfault);
+		 */
+		
 		SOAPEnvelope se = null;
 		switch (contentType) {
 		case (SOAPENVELOPE):
@@ -260,6 +292,34 @@ public abstract class XMLPartBase implements XMLPart {
 		}
 		consumed = consume;
 		return reader;
+	}
+
+	public XMLFault getXMLFault() throws MessageException {
+		/*
+		 * TODO revisit?
+		 * Watch out for infinite recursion here.  At first, I was going to have XMLSpineImpl call
+		 * parent.setXMLFault() to set this.xmlfault, but parent is still null when we get there.
+		 * Instead, I'm doing what you see below.
+		 */
+		if (xmlfault != null)
+			return xmlfault;
+		
+		XMLSpine spine = getContentAsXMLSpine();
+		xmlfault = spine.getXMLFault();
+		
+		return xmlfault;
+	}
+	
+	public void setXMLFault(XMLFault xmlfault) {
+		this.xmlfault = xmlfault;
+		// just to make sure...and as it turns out, this is necessary to set
+		// due to a call into this method from the server where we're not
+		// parsing XML
+		isfault = true;
+	}
+
+	public boolean isFault() {
+		return isfault;
 	}
 
 	public boolean isConsumed() {
@@ -393,7 +453,7 @@ public abstract class XMLPartBase implements XMLPart {
 	 */
 	protected XMLSpine _createSpine(Protocol protocol) throws MessageException {
 		// Default implementation is to simply construct the spine. 
-		// Devived classes may wish to construct a different kind of XMLSpine
+		// Derived classes may wish to construct a different kind of XMLSpine
 		return new XMLSpineImpl(protocol);
 	}
 	

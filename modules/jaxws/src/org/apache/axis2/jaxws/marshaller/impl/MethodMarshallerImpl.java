@@ -19,6 +19,9 @@ package org.apache.axis2.jaxws.marshaller.impl;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -54,9 +57,11 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
+import org.apache.axis2.jaxws.message.impl.XMLFaultConvertor;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
@@ -104,18 +109,65 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#demarshalFaultResponse(org.apache.axis2.jaxws.message.Message)
 	 */
-	public abstract Object demarshalFaultResponse(Message message); 
-
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#isFault(org.apache.axis2.jaxws.message.Message)
-	 */
-	public abstract boolean isFault(Message message); 
+	public Object demarshalFaultResponse(Message message) {
 		
+		Exception exception = null;
+		String className = operationDesc.getWebExceptionClassName();
+		String jaxbClassName = operationDesc.getWebFaultClassName();
+		if(className == null || (className != null && className.length()==0)){
+			// TODO do something here, like throw an exception?
+		}
+		else{
+			try {
+				XMLFault xmlfault = message.getXMLFault();
+				Class beanclass = loadClass(jaxbClassName);
+				Block[] blocks = xmlfault.getDetailBlocks();
+				
+				if ((beanclass == null) || (blocks == null)) {
+					exception = createGenericException(xmlfault.getString());
+				} else {
+					// TODO for now, just use the first block, until we do the resolution mentioned above
+					Object obj = createFaultBusinessObject(beanclass,  blocks[0]);
+					// create the exception we actually want to throw
+					Class exceptionclass = loadClass(className);
+					exception = createCustomException(xmlfault.getString(), exceptionclass, obj);
+				}
+			} catch (Exception e) {
+				// TODO if we have problems creating the exception object, we'll end up here,
+				// where we should return at least a meaningfull exception to the user
+				exception = ExceptionFactory.makeWebServiceException(e.toString());
+			}
+		}
+
+		return exception;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalFaultResponse(java.lang.Throwable)
 	 */
-	public abstract Message marshalFaultResponse(Throwable throwable); 
+	public Message marshalFaultResponse(Throwable throwable) throws IllegalAccessException, InvocationTargetException, JAXBException, ClassNotFoundException, NoSuchMethodException, MessageException, XMLStreamException {
+		Throwable t = XMLFaultConvertor.getRootCause(throwable);
+		
+		String faultClazzName = operationDesc.getWebFaultClassName();
+
+		// if faultClazzName is still null, don't create a detail block.  If it's non-null, we need a detail block.
+		XMLFault xmlfault = null;
+		Object faultBean = null;
+		if (faultClazzName != null) {
+			Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
+			faultBean = getFaultInfo.invoke(t, null);
+			// TODO more than one detail block is possible..  ?
+			xmlfault = XMLFaultConvertor.createXMLFault(t, null, new Block[]{this.createJAXBBlock(faultBean, this.createJAXBContext(faultClazzName))}, protocol);
+		}
+		
+		Message message = null;
+		message = createEmptyMessage();
+		message.setXMLFault(xmlfault);
+		
+		return message;
+		
+		//throw new UnsupportedOperationException();
+	}
 		
 	/*
 	 * Creates method output parameter/return parameter. reads webResult annotation and then matches them with the response/result value of Invoked method
@@ -609,6 +661,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return m;
 	}
 	
+	protected Message createFaultMessage(OMElement element) throws XMLStreamException, MessageException {
+		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+		return mf.createFrom(element);
+	}
+	
 	protected Message createEmptyMessage()throws JAXBException, MessageException, XMLStreamException{
 		Block emptyBodyBlock = createEmptyBodyBlock();
 		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -679,6 +736,19 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	
 	}
 	
+	protected Object createFaultBusinessObject(Class jaxbClazz, Block block) throws JAXBException, MessageException, XMLStreamException {
+		JAXBContext ctx = createJAXBContext(jaxbClazz);
+    	OMElement om = block.getOMElement();
+    	
+    	XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
+	
+    	Unmarshaller u = ctx.createUnmarshaller();
+    	Reader inputReader = new InputStreamReader(new ByteArrayInputStream(om.toString().getBytes()));
+    	XMLStreamReader sr = xmlFactory.createXMLStreamReader(inputReader);
+    	JAXBElement o =u.unmarshal(sr, jaxbClazz);
+    	return o.getValue();
+	}
+	
 	protected void createResponseHolders(Object bo, Object[] inputArgs, boolean isBare)throws JAXBWrapperException, InstantiationException, ClassNotFoundException, IllegalAccessException{
 		if(inputArgs == null){
 			return;
@@ -740,5 +810,23 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	}
 
 	
+	/*
+	 * Utility methods below are used entiredly by marshalFaultResponse and
+	 * demarshalFaultResponse
+	 */
 	
+	
+    private static Exception createCustomException(String message, Class exceptionclass, Object bean) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+		// All webservice exception classes are required to have a constructor that takes a (String, bean) argument
+    	// TODO necessary to be more careful here with instantiating, cassting, etc?
+		Constructor constructor = exceptionclass.getConstructor(new Class[] { String.class, bean.getClass() });
+		Object exception = constructor.newInstance(new Object[] { message, bean });
+
+		return (Exception) exception;
+
+    }
+    
+    private static Exception createGenericException(String message) {
+    	return ExceptionFactory.makeWebServiceException(message);
+    }
 }

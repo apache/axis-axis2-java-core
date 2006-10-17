@@ -231,19 +231,4 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		
 		return message;
 	}
-
-	@Override
-	public Object demarshalFaultResponse(Message message) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean isFault(Message message) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Message marshalFaultResponse(Throwable throwable) {
-		throw new UnsupportedOperationException();
-	}
 }

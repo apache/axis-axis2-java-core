@@ -149,11 +149,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			if(isMethodExcluded()){
 				throw ExceptionFactory.makeWebServiceException("Invalid Method Call, Method "+method.getName() + " has been excluded using @webMethod annotation");
 			}
-			try{
-				return InvokeSEIMethod(method, args);
-			}catch(Throwable e){
-				throw ExceptionFactory.makeWebServiceException(e);
-			}
+			return InvokeSEIMethod(method, args);
 		}
 	}
 	
@@ -281,6 +277,13 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		if (log.isDebugEnabled()) {
             log.debug("Converting Message to Response Object");
         }
+		if (responseMsg.isFault()) {
+		    Object object = methodMarshaller.demarshalFaultResponse(responseMsg);
+		    if (log.isDebugEnabled()) {
+		        log.debug("Message Converted to response Throwable.  Throwing back to client.");
+		    }
+		    throw (Throwable)object;
+		}
 		Object object = methodMarshaller.demarshalResponse(responseMsg, args);
 		if (log.isDebugEnabled()) {
             log.debug("Message Converted to response Object");

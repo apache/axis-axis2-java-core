@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.marshaller;
 
+import java.lang.reflect.InvocationTargetException;
+
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
@@ -61,7 +63,7 @@ public interface MethodMarshaller {
 	 * @param jaxbObject
 	 * @return
 	 */
-	public Message marshalFaultResponse(Throwable throwable);
+	public Message marshalFaultResponse(Throwable throwable) throws IllegalAccessException, InvocationTargetException, JAXBException, ClassNotFoundException, NoSuchMethodException, MessageException, XMLStreamException;
 	/**
 	 * This method converts Message to java objects. Used on Server Side to this extract method input parameters from message and invokes method on service
 	 * with found input parameters on ServiceEndpoint.
@@ -86,20 +88,13 @@ public interface MethodMarshaller {
 	 * @param message
 	 * @return
 	 */
-	public Object demarshalResponse(Message message, Object[] inputArgs) throws IllegalAccessException, InstantiationException, ClassNotFoundException, JAXBWrapperException, JAXBException, XMLStreamException, MessageException;
+	public Object demarshalResponse(Message message, Object[] inputArgs) throws IllegalAccessException, InstantiationException, InvocationTargetException, ClassNotFoundException, JAXBWrapperException, JAXBException, XMLStreamException, MessageException;
 	/**
 	 * This method converts Fault Message to fault java objects. Used on Client Side to extract Fault Object expected by client from message.
 	 * @param message
 	 * @return
 	 */
 	public Object demarshalFaultResponse(Message message);
-	
-	/**
-	 * Indicates if message contains fault.
-	 * @param message
-	 * @return
-	 */
-	public boolean isFault(Message message);
 	
 	
 }

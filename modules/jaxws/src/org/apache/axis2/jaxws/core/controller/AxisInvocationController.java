@@ -124,12 +124,13 @@ public class AxisInvocationController extends InvocationController {
           //This assumes that we are on the ultimate execution thread
           ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
           opClient.execute(true);
+        } catch (AxisFault axisFault) {
+        	// TODO MIKE revisit?
+               	// do nothing here.  The exception we get is from the endpoint,
+               	// and will be sitting on the message context.  We need to save it
+               	// to process it through jaxws
         }
-        catch (AxisFault e)
-        {
-          ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-          throw ExceptionFactory.makeWebServiceException(e);
-        }
+
         ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
         
         try {
@@ -180,12 +181,13 @@ public class AxisInvocationController extends InvocationController {
         {
           ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
           opClient.execute(true);
-        }
-        catch (AxisFault e)
-        {
-          ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-          throw ExceptionFactory.makeWebServiceException(e);
-        }
+        } catch (AxisFault axisFault) {
+         	// TODO MIKE revisit?
+               	// do nothing here.  The exception we get is from the endpoint,
+               	// and will be sitting on the message context.  We need to save it
+             	// to process it through jaxws
+         }
+
         ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
         
         return;
@@ -270,12 +272,13 @@ public class AxisInvocationController extends InvocationController {
         {
           ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
           opClient.execute(false);
-        }
-        catch (AxisFault e)
-        {
-          ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-          throw ExceptionFactory.makeWebServiceException(e);
-        }
+          } catch (AxisFault axisFault) {
+               	// TODO MIKE revisit?
+               	// do nothing here.  The exception we get is from the endpoint,
+               	// and will be sitting on the message context.  We need to save it
+               	// to process it through jaxws
+          }
+
         ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
 
         // Now that the request has been sent, start the listener thread so that it can

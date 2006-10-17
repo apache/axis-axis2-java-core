@@ -39,6 +39,7 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
@@ -281,18 +282,31 @@ public class MessageImpl implements Message {
     public Message getParent() {
         throw new UnsupportedOperationException();
     }
-    
+
     //FIXME: This doesn't make much sense, but has to be here because Message extends
     //XMLPart.  
     public void setParent(Message msg) { 
         throw new UnsupportedOperationException();
     }
-    
+
     public boolean isMTOMEnabled() {
         return mtomEnabled;
     }
-    
+
     public void setMTOMEnabled(boolean b) {
         mtomEnabled = b;
     }
+
+	public XMLFault getXMLFault() throws MessageException {
+		return xmlPart.getXMLFault();
+	}
+
+	public void setXMLFault(XMLFault xmlfault) {
+		xmlPart.setXMLFault(xmlfault);
+	}
+
+	public boolean isFault() {
+		return xmlPart.isFault();
+	}
+
 }

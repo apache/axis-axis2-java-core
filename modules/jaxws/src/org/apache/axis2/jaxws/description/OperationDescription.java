@@ -22,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -32,6 +33,7 @@ import javax.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+import javax.xml.ws.WebFault;
 
 import org.apache.axis2.description.AxisOperation;
 
@@ -156,6 +158,10 @@ public class OperationDescription {
     private String              webResultPartName;
     // Default value per JSR-181 MR Sec 4.5.1, pg 23
     public static final String  WebResult_TargetNamespace_DEFAULT = "";
+    // ANNOTATION @WebFault
+    private WebFault[]			webFaultAnnotations;
+    private String[]			webFaultNames;
+    private String[]			webExceptionNames;  // the fully-qualified names of declared exceptions with WebFault annotations
     private String              webResultTargetNamespace;
     // Default value per JSR-181 MR sec 4.5, pg 24
     public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
@@ -476,6 +482,93 @@ public class OperationDescription {
         return responseWrapperClassName;
     }
 
+    
+    // ===========================================
+    // ANNOTATION: WebFault
+    // ===========================================
+
+    /*
+     * TODO some of the WebFault stuff should be moved to FaultDescription
+     */
+    
+    /*
+     *  TODO:  this will need revisited.  The problem is that a WebFault is not mapped 1:1 to an
+     *  OperationDescription.  We should do a better job caching the information.  For now, I'm
+     *  following the getWebParam() pattern.
+     *  
+     *  This is gonna get complicated.  One other thing to consider is that a method (opdesc) may declare
+     *  several types of exceptions it throws
+     *  
+     */
+    private WebFault[] getWebResponseFaults() {
+        if (webFaultAnnotations == null) {
+        	Class[] webFaultClasses = seiMethod.getExceptionTypes();
+
+        	ArrayList<WebFault> webFaultList = new ArrayList<WebFault>();
+            for(Class wfClass:webFaultClasses) {
+            	for (Annotation anno:wfClass.getAnnotations()) {
+            		if (anno.annotationType() == WebFault.class) {
+            			webFaultList.add((WebFault)anno);
+            		}
+            	}
+            }
+            webFaultAnnotations = webFaultList.toArray(new WebFault[0]);
+        }
+        return webFaultAnnotations;
+    }
+
+    /*
+     * TODO:  also will need revisited upon the re-working of getResponseFaults()
+     */
+    private String[] getWebFaultClassNames() {
+        if (webFaultNames == null) {
+        	// get exceptions this method "throws"
+        	Class[] webFaultClasses = seiMethod.getExceptionTypes();
+
+        	ArrayList<String> webFaultList = new ArrayList<String>();
+            for(Class wfClass:webFaultClasses) {
+            	for (Annotation anno:wfClass.getAnnotations()) {
+            		if (anno.annotationType() == WebFault.class) {
+            			webFaultList.add(((WebFault)anno).faultBean());
+            		}
+            	}
+            }
+            webFaultNames = webFaultList.toArray(new String[0]);
+        }
+        return webFaultNames;
+    }
+    
+    /*
+     * TODO:  also will need revisited upon the re-working of getResponseFaults()
+     */
+    private String[] getWebExceptionClassNames() {
+        if (webExceptionNames == null) {
+        	// get exceptions this method "throws"
+        	Class[] webFaultClasses = seiMethod.getExceptionTypes();
+
+        	ArrayList<String> webFaultList = new ArrayList<String>();
+            for(Class wfClass:webFaultClasses) {
+            	for (Annotation anno:wfClass.getAnnotations()) {
+            		if (anno.annotationType() == WebFault.class) {
+            			webFaultList.add(wfClass.getCanonicalName());
+            		}
+            	}
+            }
+            webExceptionNames = webFaultList.toArray(new String[0]);
+        }
+        return webExceptionNames;
+    }
+    
+    public String getWebFaultClassName() {
+    	// TODO will need to pass in the exception class to compare with the names???
+    	return getWebFaultClassNames()[0];
+    }
+    
+    public String getWebExceptionClassName() {
+    	// TODO will need to pass in the fault detail child element name (as a string) to
+    	// compare with the WebFault of the declared exceptions
+    	return getWebExceptionClassNames()[0];
+    }
     // ===========================================
     // ANNOTATION: WebParam
     // ===========================================

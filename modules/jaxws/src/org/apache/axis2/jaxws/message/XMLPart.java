@@ -77,7 +77,26 @@ public interface XMLPart {
 	 * @return true if the block is consumed (a method was called with consume=true)
 	 */
 	public boolean isConsumed();
-    
+	
+	/**
+	 * isFault
+	 * Check if the data is part of a fault message
+	 * @return
+	 */
+	public boolean isFault();
+	
+	/**
+	 * getXMLFault
+	 * @return the XMLFault object
+	 */
+	public XMLFault getXMLFault() throws MessageException;
+	
+	/**
+	 * setXMLFault
+	 * @param xmlfault
+	 */
+	public void setXMLFault(XMLFault xmlfault);
+	
     /**
      * getParent
      * Get the Message object that this XMLPart is attached to, if it is 

@@ -77,12 +77,20 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         //do the invoke.
         serviceInstance = createServiceInstance();
         //Passing method input params to grab holder values, if any.
-        Object response = target.invoke(serviceInstance, methodInputParams);
+        Object response = null;
+        try {
+        	response = target.invoke(serviceInstance, methodInputParams);
+        } catch (Exception e) {
+        	response = e;
+        }
         
         Message message = null;
         //No need to create Response Messagecontext if its a one way call.
         if(operationDesc.isOneWay()){
         	message = null;
+        }
+        else if (response instanceof Throwable) {
+        	message = methodMarshaller.marshalFaultResponse((Throwable)response); 
         }
         else if(target.getReturnType().getName().equals("void")){
         	message = methodMarshaller.marshalResponse(null, methodInputParams);

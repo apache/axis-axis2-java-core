@@ -32,6 +32,8 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
@@ -42,6 +44,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
@@ -71,7 +74,11 @@ class XMLSpineImpl implements XMLSpine {
 	private List<Block> detailBlocks = new ArrayList<Block>();
 	private boolean consumed = false;
 	private Iterator bodyIterator = null;
-    private Message parent;
+	private Iterator detailIterator = null;
+    private Message parent = null;
+    
+    // ideally, this should be set on the parent, but the parent is null when we create an XMLSpineImpl
+    private XMLFault xmlfaultcache = null;
 
 	/**
 	 * Create a lightweight representation of this protocol
@@ -108,6 +115,7 @@ class XMLSpineImpl implements XMLSpine {
 		bodyBlocks.clear();
 		detailBlocks.clear();
 		bodyIterator = null;
+		detailIterator = null;
 		
 		
 		// If a header block exists, create an OMBlock for each element
@@ -129,8 +137,16 @@ class XMLSpineImpl implements XMLSpine {
 			advanceIterator(bodyIterator, bodyBlocks, false);
 		} else {
 			// Process the Fault
-			// TODO Add Fault Processing
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("SOAPFaultIsNotImplemented"));
+
+			SOAPFault fault = body.getFault();
+			SOAPFaultDetail detail = fault.getDetail();
+			if (detail != null) {
+			  detailIterator = detail.getChildren();
+			  advanceIterator(detailIterator, detailBlocks, false);
+			}
+			
+			setXMLFault(XMLFaultConvertor.createXMLFault(fault, detailBlocks));
+			
 		}
 		return;
 	}
@@ -227,6 +243,16 @@ class XMLSpineImpl implements XMLSpine {
 	public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException {
 		return new XMLStreamReaderForXMLSpine(root, protocol,
 					headerBlocks, bodyBlocks, detailBlocks, consume);
+	}
+
+	public XMLFault getXMLFault() throws MessageException {
+		// TODO ideally I'd like to get this from the parent, but the parent is null
+		return xmlfaultcache;
+	}
+	
+	public void setXMLFault(XMLFault xmlfault) {
+		// TODO ideally I'd like to set this on the parent, but the parent is null
+		xmlfaultcache = xmlfault;
 	}
 
 	public boolean isConsumed() {
@@ -343,6 +369,11 @@ class XMLSpineImpl implements XMLSpine {
 	public String traceString(String indent) {
 		// TODO Trace String Support
 		return null;
+	}
+
+	public boolean isFault() {
+		return parent.isFault();
+		//return root.getBody().hasFault();
 	}
 	
 }

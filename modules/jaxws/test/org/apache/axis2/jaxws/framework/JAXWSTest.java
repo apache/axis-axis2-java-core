@@ -37,12 +37,14 @@ import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
 import org.apache.axis2.jaxws.i18n.JaxwsMessageBundleTests;
 import org.apache.axis2.jaxws.message.BlockTests;
 import org.apache.axis2.jaxws.message.MessageTests;
+import org.apache.axis2.jaxws.message.FaultTests;
 import org.apache.axis2.jaxws.message.SAAJConverterTests;
 import org.apache.axis2.jaxws.message.SOAP12Tests;
 import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.nonanonymous.complextype.NonAnonymousComplexTypeTests;
 import org.apache.axis2.jaxws.provider.*;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
+import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
 import org.apache.axis2.jaxws.sample.BareTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
@@ -66,6 +68,7 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(BlockTests.class);
         suite.addTestSuite(MessageTests.class);
+        suite.addTestSuite(FaultTests.class);
         suite.addTestSuite(SAAJConverterTests.class);
         suite.addTestSuite(XMLStreamReaderSplitterTests.class);
         suite.addTestSuite(SOAP12Tests.class);
@@ -100,6 +103,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(WrapTests.class);
         suite.addTestSuite(NonAnonymousComplexTypeTests.class);
         suite.addTestSuite(AddNumbersTests.class);
+        suite.addTestSuite(FaultyWebServiceTests.class);
         
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {

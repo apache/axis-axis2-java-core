@@ -165,28 +165,17 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
                 
                 OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
                 opCtx.addMessageContext(axisResponseMsgCtx);
-
-                try
-                {
                   //This assumes that we are on the ultimate execution thread
                   ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
                 
                   //Create the AxisEngine for the reponse and send it.
                   AxisEngine engine = new AxisEngine(axisResponseMsgCtx.getConfigurationContext());
                   engine.send(axisResponseMsgCtx);
-                }
-                catch (AxisFault e)
-                {
-                  ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
-                  throw e;
-                }
-                
                 //This assumes that we are on the ultimate execution thread
                 ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
             }
 
         } catch (Exception e) {
-        	//TODO: This temp code for alpha till we add fault processing on client code.
         	// TODO NLS
             ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
             throw ExceptionFactory.makeWebServiceException(e);
