@@ -1,5 +1,5 @@
 <%
-  /*
+ /*
   * Copyright 2004,2005 The Apache Software Foundation.
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,12 +16,11 @@
   *
   *
   */
-
 %>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <title>Axis2 Administration</title>
+    <title>Axis2 Administration </title>
     <style type="text/css">
     </style></head>
 

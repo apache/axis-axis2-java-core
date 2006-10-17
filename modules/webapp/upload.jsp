@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-  /*
+ /*
   * Copyright 2002,2004 The Apache Software Foundation.
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,33 +18,45 @@
 %>
 
 <jsp:include page="include/adminheader.jsp"/>
+<script type="text/javascript">
+<!--
+	function checkFileUpload(){
+		if (document.getElementById('serviceUpload').value == '') {
+			alert('Please select a file before clicking the upload button.');
+			return false;
+		} else {
+			document.Axis2upload.submit();
+		}
+	}
+//-->
+</script>
 <h2>Upload an Axis Service Archive File</h2>
 
 <p>You can upload a packaged Axis2 service from this page in two small steps.</p>
 <ul>
-  <li>Browse to the location and select the axis service archive file you wish to upload.</li>
+  <li>Browse to the location and select the axis service archive file you wish to upload</li>
   <li>Click "Upload" button</li>
 </ul>
 <p>Simple as that!</p>
 
 <% if ("success".equals(request.getAttribute("status"))) { %>
-<font color="green">File <%= request.getAttribute("filename") %> successfully uploaded. </font><br/><br/>
+<font color="green">File <%= request.getAttribute("filename") %> successfully uploaded </font><br/><br/>
 <%
 } else if ("failure".equals(request.getAttribute("status"))) {
 %>
 <font color="red">The following error occurred <br/> <%= request.getAttribute("cause") %></font><br/>
 <% } %>
 
-<form method="post" name="Axis2upload" action="axis2-admin/upload"
+<form method="post" name="Axis2upload" id="Axis2upload" action="axis2-admin/upload"
       enctype="multipart/form-data">
   <table>
     <tr>
       <td>Service archive : </td>
-      <td><input type="file" name="filename" size="50"/></td>
+      <td><input id="serviceUpload" type="file" name="filename" size="50"/></td>
     </tr>
     <tr>
       <td>&nbsp;</td>
-      <td><input name="upload" type="submit" value=" Upload "/></td>
+      <td><input name="upload" type="button" onclick="javascript:checkFileUpload();" value=" Upload "/></td>
     </tr>
   </table>
 </form>
