@@ -24,7 +24,7 @@
   */
 %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>Turn Off Service</h1>
+<h1>Deactivate Service</h1>
 <form method="get" name="serviceInActivate" action="axis2-admin/deactivateService">
   <table width="100%"  border="0">
 <tr>
@@ -52,14 +52,14 @@
                   </td>
   </tr>
   <tr>
-    <td width="20%">Inactivate Service </td>
+    <td width="20%">Deactivate Service </td>
     <td width="80%"><input type="checkbox" name="turnoff">
     </td>
   </tr>
   <tr>
   <td>&nbsp;</td>
   <td>
-    <input name="submit" type="submit" value=" Inactivate " >
+    <input name="submit" type="submit" value=" Deactivate " >
    <input name="reset" type="reset" value=" Clear " >
   </td>
   </tr>

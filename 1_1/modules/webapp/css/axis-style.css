@@ -26,3 +26,7 @@ TABLE.LOG_IN_FORM{
 	cellpadding:1px;
 	background-color: #f7f7f7 ;
 }
+
+UL.loginUL LI{
+	padding: 10pt;
+}

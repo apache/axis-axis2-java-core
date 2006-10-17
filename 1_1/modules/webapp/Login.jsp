@@ -30,8 +30,18 @@
     <jsp:include page="include/link-footer.jsp"/>
     <table class="FULL_BLANK">
       <tr>
-        <td valign="top"></td>
-        <td valign="middle" align="left">
+        <td valign="top">
+        	<h2>Welcome :</h2>
+        	<p>Welcome to the Axis2 administration console. From inside the Axis2 administration console you can :</p>
+	    	<ul style="list-style: none;" class="loginUL">
+	       		<li>Check on the health of your Axis2 deployment.</li>
+ 	       		<li>Change any parameters at run time.</li>
+ 	       		<li>Upload new services into Axis2 [Service hot-deployment].</li>
+ 	   		</ul>
+	        <font color="orange">Warning: Please note that configuration changes done though the administration console
+    	    will be lost when the server is restarted.</font>
+    	</td>
+        <td valign="top" align="left">
           <form method="post" name="LoginForm" action="axis2-admin/login">
             <table class="LOG_IN_FORM">
               <tr>
@@ -41,7 +51,7 @@
                  <td align="center" colspan="2">&nbsp;</td>
                </tr>
               <tr>
-                <td align="right">User :</td>
+                <td align="right">Username:</td>
                 <td><input align="left" type="text" name="userName" tabindex="1">
                 </td>
               </tr>
@@ -72,6 +82,7 @@
         </td>
       </tr>
     </table>
+    <p>Test</p>
     <jsp:include page="include/footer.inc"/>
   </body>
 </html>
