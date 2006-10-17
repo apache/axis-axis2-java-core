@@ -1695,7 +1695,7 @@
                 }
 
 
-                <xsl:if test="$isType or $anon">
+                <xsl:if test="($isType or $anon) and not($simple)">
                     <!-- Skip the outer start element in order to process the subelements. -->
                     reader.next();
                 </xsl:if>
@@ -2031,7 +2031,7 @@
                                            reader.getElementText(); // throw away text nodes if any.
                                        }
                                     </xsl:if>
-                                    <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
+                                    <xsl:if test="($isType or $anon) and not($simple)">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
                                 </xsl:otherwise>
