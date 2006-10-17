@@ -18,7 +18,7 @@ SYNOPSIS
        WSDL2Java.sh [OPTION]... -uri &lt;Location of WSDL&gt;
 
 DESCRIPTION
-       Given a WSDL file, generates java code to handle Web service invocation.
+       Given a WSDL file, this generates java code to handle Web service invocations.
 
         -o &lt;output Location&gt; : output file location
         -a : Generate async style code only. Default is off
@@ -29,7 +29,7 @@ DESCRIPTION
         -ss : Generate server side code (i.e. skeletons). Default is off
         -sd : Generate service descriptor (i.e. services.xml). Default is off. Valid with -ss
         -d &lt;databinding&gt; : valid databinding(s) are adb, xmlbeans and jaxme. Default is adb
-        -g Generates all the classes. valid only with the -ss (This will generate client and server codes)
+        -g : Generates all the classes. valid only with the -ss (This will generate client and server codes)
         -pn &lt;port_name&gt; : name of port in the presence of multiple ports
         -sn &lt;service_name&gt; : name of service in the presence of multiple services
         -u : unpacks the databinding classes
@@ -37,8 +37,7 @@ DESCRIPTION
 EXAMPLES
        WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl
        WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd 
-       WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans -o ../samples -p org.apache.axis2.userguide
-</pre>
+       WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans -o ../samples -p org.apache.axis2.userguide</pre>
 
 <h2 name="wsdl2java">Java2WSDL Reference</h2>
 <pre>NAME
@@ -69,7 +68,6 @@ EXAMPLES
        Java2WSDL.sh -cn ../samples/test/searchTool.Search
        Java2WSDL.sh -cn ../samples/test/searchTool.Search -sn search
        Java2WSDL.sh -cn ../samples/test/searchTool.Search -u -sn search
-       Java2WSDL.sh -cn ../samples/test/searchTool.Search -sn search -o ../samples/test/wsdl        
-</pre>
+       Java2WSDL.sh -cn ../samples/test/searchTool.Search -sn search -o ../samples/test/wsdl        </pre>
 </body>
 </html>
