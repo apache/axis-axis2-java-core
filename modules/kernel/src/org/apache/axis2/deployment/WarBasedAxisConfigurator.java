@@ -1,23 +1,19 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.repository.util.ArchiveReader;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletConfig;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -86,11 +82,11 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
      * <li> When none of the above could be found, the axis2.xml is loaded from the classpath resource, the value of DeploymenConstants.AXIS2_CONFIGURATION_RESOURCE.
      * </ul>
      *
-     * @param svconfig the ServletConfig object from the AxisServlet. This method is called from the init() of the AxisServlet.
+     * @param servletConfig the ServletConfig object from the AxisServlet. This method is called from the init() of the AxisServlet.
      */
-    public WarBasedAxisConfigurator(ServletConfig svconfig) {
+    public WarBasedAxisConfigurator(ServletConfig servletConfig) {
         try {
-            this.config = svconfig;
+            this.config = servletConfig;
             InputStream axis2Stream = null;
 
             try {

@@ -702,7 +702,7 @@ public class AxisService extends AxisDescription {
             if (wsld4jdefinition != null) {
                 try {
                     String error = "<error>" +
-                            "<description>Unable to show WSDL for this service</description>" +
+                            "<description>Unable to showtwo will WSDL for this service</description>" +
                             "<reason>WSDL 2.0 document is to be shown. But we do not support WSDL 2.0" +
                             "serialization yet.</reason>" +
                             "</error>";

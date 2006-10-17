@@ -23,10 +23,10 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.*;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
-import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -345,9 +345,9 @@ public class HTTPTransportUtils {
             return true;
         }
 
-        if (msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
-            enableREST = JavaUtils.isTrueExplicitly(
-                    msgContext.getProperty(Constants.Configuration.ENABLE_REST));
+        Object enableRESTProperty = msgContext.getProperty(Constants.Configuration.ENABLE_REST);
+        if (enableRESTProperty != null) {
+            enableREST = JavaUtils.isTrueExplicitly(enableRESTProperty);
         }
 
         msgContext.setDoingREST(enableREST);
