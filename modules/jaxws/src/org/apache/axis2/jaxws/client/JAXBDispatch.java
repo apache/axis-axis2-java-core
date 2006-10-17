@@ -18,7 +18,6 @@ package org.apache.axis2.jaxws.client;
 
 import javax.xml.bind.JAXBContext;
 
-import org.apache.axis2.jaxws.AxisController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.impl.AsyncListener;
@@ -36,10 +35,6 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
     
     public JAXBDispatch(PortData pd) {
         super(pd);
-    }
-    
-    public JAXBDispatch(AxisController ac) {
-        super(ac);
     }
     
     public JAXBContext getJAXBContext() {

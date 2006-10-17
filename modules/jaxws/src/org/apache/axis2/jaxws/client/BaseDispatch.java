@@ -27,7 +27,6 @@ import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.jaxws.AxisController;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
@@ -39,7 +38,6 @@ import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -47,9 +45,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
     implements javax.xml.ws.Dispatch {
 
     private Log log = LogFactory.getLog(BaseDispatch.class);
-    
-    //FIXME: Remove the AxisController completely and replace with InvocationController
-    protected AxisController axisController = null;
     
     protected InvocationController ic;
     protected ServiceDelegate serviceDelegate;
@@ -61,16 +56,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
         super();
         
         port = p;
-        ic = new AxisInvocationController();
-        setRequestContext();
-    }
-    
-    protected BaseDispatch(AxisController ac) {
-        super();
-        
-        //FIXME: Remove this when we remove the AxisController
-        axisController = ac;
-        
         ic = new AxisInvocationController();
         setRequestContext();
     }
