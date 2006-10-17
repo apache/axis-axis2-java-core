@@ -16,12 +16,13 @@
 package org.apache.axis2.transport.jms;
 
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.*;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
@@ -349,9 +350,29 @@ public class JMSUtils {
             // Set the encoding scheme in the message context
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                    MessageContext.DEFAULT_CHAR_SET_ENCODING);
-            builder = new StAXSOAPModelBuilder(
-                xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-            envelope = (SOAPEnvelope) builder.getDocumentElement();
+            builder = new StAXOMBuilder(xmlreader);
+            SOAPFactory soapFactory = new SOAP11Factory();
+            builder.setOMBuilderFactory(soapFactory);
+            try {
+                if (builder.getDocumentElement() instanceof SOAPEnvelope) {
+                    envelope = (SOAPEnvelope) builder.getDocumentElement();
+                } else {
+                    envelope = soapFactory.getDefaultEnvelope();
+                    envelope.getBody().addChild(builder.getDocumentElement());
+                }
+            } catch (OMException e) {
+                handleException("Unsupported JMS Message format : " + message.getClass(), e);                
+                /*if (message instanceof TextMessage) {
+
+                } else if (message instanceof BytesMessage) {
+
+                } else {
+                    log.error("Unsupported JMS Message format : " + message.getJMSType());
+                }
+                log.debug("Non SOAP/XML message received");
+                envelope = soapFactory.getDefaultEnvelope();
+                envelope.getBody().addChild(soapFactory.createOMText(null, true));*/
+            }
         }
 
         String charEncOfMessage = builder.getDocument().getCharsetEncoding();
