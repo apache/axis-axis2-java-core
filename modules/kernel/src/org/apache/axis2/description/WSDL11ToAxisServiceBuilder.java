@@ -1,7 +1,5 @@
 package org.apache.axis2.description;
 
-import com.ibm.wsdl.extensions.soap.SOAPConstants;
-import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -22,20 +20,51 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Import;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.soap.*;
-import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPHeader;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import com.ibm.wsdl.extensions.soap.SOAPConstants;
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -183,10 +212,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             setup();
             // Setting wsdl4jdefintion to axisService , so if some one want
             // to play with it he can do that by getting the parameter
-            Parameter wsdlDefinitionParameter = new Parameter();
-            wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
-            wsdlDefinitionParameter.setValue(wsdl4jDefinition);
-            axisService.addParameter(wsdlDefinitionParameter);
+            Parameter wsdldefintionParamter = new Parameter();
+            wsdldefintionParamter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
+            wsdldefintionParamter.setValue(wsdl4jDefinition);
+            axisService.addParameter(wsdldefintionParamter);
 
             if (wsdl4jDefinition == null) {
                 return null;
@@ -793,7 +822,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (wsdl4jMessagePart == null) {
             throw new WSDLProcessingException();
         }
-        faultMessage.setElementQName(wsdl4jMessagePart.getElementName());
+        
+        QName name = wsdl4jMessagePart.getElementName();
+        if (name == null) {
+            name = wsdl4jMessagePart.getTypeName();
+        }
+        
+        faultMessage.setElementQName(name);
 
     }
 
@@ -1682,9 +1717,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // WSDL4J has all the SOAP 1.1 Items built in. So we can check
                 // the
                 // items directly
-            } else if (wsdl4jElement instanceof SOAP12Address) {
-                SOAP12Address soapAddress = (SOAP12Address) wsdl4jElement;
-                axisService.setEndpoint(soapAddress.getLocationURI());
             } else if (wsdl4jElement instanceof SOAPAddress) {
                 SOAPAddress soapAddress = (SOAPAddress) wsdl4jElement;
                 axisService.setEndpoint(soapAddress.getLocationURI());
