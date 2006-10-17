@@ -21,11 +21,16 @@ import java.util.concurrent.Future;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * The <tt>InvocationController</tt> is an interface for an entity used to
- * invoke a target web service.  All of the information that the 
+ * The <tt>InvocationController</tt> is an abstract implementation modeling
+ * the invocation of a target web service.  All of the information that the 
  * InvocationController needs should exist within the InvocatonContext
  * that is passed in to the various invoke methods.  
  * 
@@ -51,7 +56,9 @@ import org.apache.axis2.jaxws.core.InvocationContext;
  * 
  * 4) asynchronous (polling) - {@link #invokeAsync(InvocationContext)}
  */
-public interface InvocationController {
+public abstract class InvocationController {
+    
+    private static final Log log = LogFactory.getLog(InvocationController.class);
     
     /**
      * Performs a synchronous (blocking) invocation of a target service.  The 
@@ -63,7 +70,37 @@ public interface InvocationController {
      * @param ic
      * @return
      */
-    public InvocationContext invoke(InvocationContext ic);
+    public InvocationContext invoke(InvocationContext ic) {
+        if (log.isDebugEnabled()) {
+            log.debug("Invocation pattern: synchronous");
+        }
+        
+        // Check to make sure we at least have a valid InvocationContext
+        // and request MessageContext
+        if (ic == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr1"));
+        }
+        if (ic.getRequestMessageContext() == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr2"));
+        }
+        
+        MessageContext request = ic.getRequestMessageContext();
+        MessageContext response = null;
+
+        // TODO: Place-holder for running the JAX-WS request handler chain
+        
+        prepareRequest(request);
+        
+        response = doInvoke(request);
+        prepareResponse(response);
+        ic.setResponseMessageContext(response);
+        
+        // TODO: Place-holder for running the JAX-WS response handler chain
+        
+        return ic;
+    }
+    
+    protected abstract MessageContext doInvoke(MessageContext request);
     
     /**
      * Performs a one-way invocation of the client.  This is SHOULD NOT be a 
@@ -74,7 +111,30 @@ public interface InvocationController {
      * 
      * @param ic
      */
-    public void invokeOneWay(InvocationContext ic);
+    public void invokeOneWay(InvocationContext ic) {
+        if (log.isDebugEnabled()) {
+            log.debug("Invocation pattern: one-way");
+        }
+        
+        // Check to make sure we at least have a valid InvocationContext
+        // and request MessageContext
+        if (ic == null) {
+            throw ExceptionFactory.makeWebServiceException("ICErr1");
+        }
+        if (ic.getRequestMessageContext() == null) {
+            throw ExceptionFactory.makeWebServiceException("ICErr2");
+        }
+        
+        MessageContext request = ic.getRequestMessageContext();
+        
+        // TODO: Place-holder to run the JAX-WS request handler chain
+        
+        prepareRequest(request);
+        doInvokeOneWay(request);
+        return;
+    }
+    
+    protected abstract void doInvokeOneWay(MessageContext mc);
     
     /**
      * Performs an asynchronous (non-blocking) invocation of the client based 
@@ -86,7 +146,7 @@ public interface InvocationController {
      * @param callback
      * @return
      */
-    public Response invokeAsync(InvocationContext ic);
+    public abstract Response invokeAsync(InvocationContext ic);
     
     /**
      * Performs an asynchronous (non-blocking) invocation of the client based 
@@ -97,5 +157,47 @@ public interface InvocationController {
      * @param ic
      * @return
      */
-    public Future<?> invokeAsync(InvocationContext ic, AsyncHandler asyncHandler);
+    public Future<?> invokeAsync(InvocationContext ic, AsyncHandler asyncHandler) {
+        if (log.isDebugEnabled()) {
+            log.debug("Invocation pattern: asynchronous(callback)");
+        }
+        
+        // Check to make sure we at least have a valid InvocationContext
+        // and request MessageContext
+        if (ic == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr1"));
+        }
+        if (ic.getRequestMessageContext() == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr2"));
+        }
+        
+        MessageContext request = ic.getRequestMessageContext();
+
+        // TODO: Place-holder for running the JAX-WS request handler chain
+        
+        prepareRequest(request);
+        Future<?> future = doInvokeAsync(request, asyncHandler);
+        return future;        
+    }
+    
+    public abstract Future<?> doInvokeAsync(MessageContext mc, AsyncHandler asyncHandler);
+    
+    /**
+     * Abstract method that must be implemented by whoever is providing
+     * the specific client binding.  Once this is called, everything that
+     * is needed to invoke the operation must be available in the 
+     * MessageContext.
+     * @param mc
+     */
+    protected abstract void prepareRequest(MessageContext mc);
+    
+    /**
+     * Abstract method that must be implemented by whoever is providing
+     * the specific client binding.  This is called after the response has 
+     * come back and allows the client binding to put whatever info it has
+     * in the response MessageContext.
+     * @param mc
+     */
+    protected abstract void prepareResponse(MessageContext mc);
+    
 }

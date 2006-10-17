@@ -40,6 +40,8 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.AbstractContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.AxisCallback;
@@ -74,7 +76,7 @@ import org.apache.commons.logging.LogFactory;
  * For more information on how to invoke this class, please see the 
  * InvocationController interface comments.
  */
-public class AxisInvocationController implements InvocationController {
+public class AxisInvocationController extends InvocationController {
     
     private static Log log = LogFactory.getLog(AxisInvocationController.class);
     
@@ -82,24 +84,7 @@ public class AxisInvocationController implements InvocationController {
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.core.controller.InvocationController#invoke(org.apache.axis2.jaxws.core.InvocationContext)
      */
-    public InvocationContext invoke(InvocationContext ic) {
-        if (log.isDebugEnabled()) {
-            log.debug("Invocation pattern: synchronous");
-        }
-        
-        // Check to make sure we at least have a valid InvocationContext
-        // and request MessageContext
-        if (ic == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr1"));
-        }
-        if (ic.getRequestMessageContext() == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr2"));
-        }
-        
-        // Get the request MessageContext
-        MessageContext requestMsgCtx = ic.getRequestMessageContext();
-        MessageContext responseMsgCtx = null;
-        
+    public MessageContext doInvoke(MessageContext request) {
         // We need the qname of the operation being invoked to know which 
         // AxisOperation the OperationClient should be based on.
         // Note that the OperationDesc is only set through use of the Proxy. Dispatch
@@ -114,14 +99,292 @@ public class AxisInvocationController implements InvocationController {
         //       the anonymous AxisOperation on that service.  
         //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
         //       i.e the OperationDesc.axisOperation == null
-        QName operationName = getOperationNameToUse(requestMsgCtx, ServiceClient.ANON_OUT_IN_OP);
+        QName operationName = getOperationNameToUse(request, ServiceClient.ANON_OUT_IN_OP);
 
         // TODO: Will the ServiceClient stick around on the InvocationContext
         // or will we need some other mechanism of creating this?
         // Try to create an OperationClient from the passed in ServiceClient
+        InvocationContext ic = request.getInvocationContext();
         ServiceClient svcClient = ic.getServiceClient();
         OperationClient opClient = createOperationClient(svcClient, operationName);
         
+        initOperationClient(opClient, request);
+        
+        org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
+        org.apache.axis2.context.MessageContext axisResponseMsgCtx = null;
+        
+        MessageContext response = null;
+        
+        try
+        {
+          //This assumes that we are on the ultimate execution thread
+          ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+          opClient.execute(true);
+        }
+        catch (AxisFault e)
+        {
+          ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+          throw ExceptionFactory.makeWebServiceException(e);
+        }
+        ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+        
+        try {
+            // Collect the response MessageContext and envelope
+            axisResponseMsgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            response = new MessageContext(axisResponseMsgCtx);
+        
+            // This assumes that we are on the ultimate execution thread
+            ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
+        } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+        
+        return response;
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeOneWay(org.apache.axis2.jaxws.core.InvocationContext)
+     */
+    public void doInvokeOneWay(MessageContext request) {
+        // We need the qname of the operation being invoked to know which 
+        // AxisOperation the OperationClient should be based on.
+        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
+        // clients do not use operations, so the operationDesc will be null.  In this
+        // case an anonymous AxisService with anoymouns AxisOperations for the supported
+        // MEPs will be created; and it is that anonymous operation name which needs to
+        // be specified
+        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
+        //       If ServiceDesc.axisService is null, then we created an Annon Service and operations in 
+        //       ServiceDelegate.getServiceClient(), and that is what the service client points to.
+        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
+        //       the anonymous AxisOperation on that service.  
+        //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
+        //       i.e the OperationDesc.axisOperation == null
+        QName operationName = getOperationNameToUse(request, ServiceClient.ANON_OUT_ONLY_OP);
+
+        InvocationContext ic = request.getInvocationContext();
+        ServiceClient svcClient = ic.getServiceClient();
+        OperationClient opClient = createOperationClient(svcClient, operationName);
+        
+        initOperationClient(opClient, request);
+        
+        org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
+
+        //This assumes that we are on the ultimate execution thread
+        try
+        {
+          ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+          opClient.execute(true);
+        }
+        catch (AxisFault e)
+        {
+          ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+          throw ExceptionFactory.makeWebServiceException(e);
+        }
+        ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+        
+        return;
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext, javax.xml.ws.AsyncHandler)
+     */
+    public Future<?> doInvokeAsync(MessageContext request, AsyncHandler callback) {
+        // We need the qname of the operation being invoked to know which 
+        // AxisOperation the OperationClient should be based on.
+        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
+        // clients do not use operations, so the operationDesc will be null.  In this
+        // case an anonymous AxisService with anoymouns AxisOperations for the supported
+        // MEPs will be created; and it is that anonymous operation name which needs to
+        // be specified
+        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
+        //       If ServiceDesc.axisService is null, then we created an Annon Service and operations in 
+        //       ServiceDelegate.getServiceClient(), and that is what the service client points to.
+        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
+        //       the anonymous AxisOperation on that service.  
+        //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
+        //       i.e the OperationDesc.axisOperation == null
+        QName operationName = getOperationNameToUse(request, ServiceClient.ANON_OUT_IN_OP);
+
+        // TODO: Will the ServiceClient stick around on the InvocationContext
+        // or will we need some other mechanism of creating this?
+        // Try to create an OperationClient from the passed in ServiceClient
+        InvocationContext ic = request.getInvocationContext();
+        ServiceClient svcClient = ic.getServiceClient();
+        OperationClient opClient = createOperationClient(svcClient, operationName);
+        
+        initOperationClient(opClient, request);
+        
+        org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
+        
+        // Setup the client so that it knows whether the underlying call to
+        // Axis2 knows whether or not to start a listening port for an
+        // asynchronous response.
+        Boolean useAsyncMep = (Boolean) request.getProperties().get(Constants.USE_ASYNC_MEP);
+        if((useAsyncMep != null && useAsyncMep.booleanValue()) 
+                || opClient.getOptions().isUseSeparateListener()) {
+            opClient.getOptions().setUseSeparateListener(true);
+            opClient.getOptions().setTransportInProtocol("http");
+            // Setup the response callback receiver to receive the async response
+            // This logic is based on org.apache.axis2.client.ServiceClient.sendReceiveNonBlocking(...)
+            AxisOperation op = opClient.getOperationContext().getAxisOperation();
+            MessageReceiver messageReceiver = op.getMessageReceiver();
+            if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver))
+                op.setMessageReceiver(new CallbackReceiver());
+        }
+        
+        // There should be an AsyncListener that is configured and set on the
+        // InvocationContext.  We must get this and use it to wait for the 
+        // async response to come back.  The AxisCallback that is set on the 
+        // AsyncListener is the callback that Axis2 will call when the response
+        // has arrived.
+        AsyncListener listener = ic.getAsyncListener();
+        AxisCallback axisCallback = new AxisCallback();
+        listener.setAxisCallback(axisCallback);
+        listener.setInvocationContext(ic);
+        
+        // Once the AsyncListener is configured, we must include that in an 
+        // AsyncListenerWrapper.  The wrapper is what will handle the lifecycle 
+        // of the listener and determine when it's started and stopped.
+        AsyncListenerWrapper<?> wrapper = new AsyncListenerWrapper<Object>(listener);
+
+        // Inside of the wrapper we must set the callback that the JAX-WS
+        // client programmer provided.  This is the user object that we 
+        // must call back on once we've done everything we need to do at
+        // the JAX-WS layer.
+        if(callback != null){
+            wrapper.setAsyncHandler(callback);
+        }
+        else {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr4"));
+        }
+
+        opClient.setCallback(axisCallback);
+        try
+        {
+          ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+          opClient.execute(false);
+        }
+        catch (AxisFault e)
+        {
+          ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+          throw ExceptionFactory.makeWebServiceException(e);
+        }
+        ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+
+        // Now that the request has been sent, start the listener thread so that it can
+        // catch the async response.
+        // TODO: Need to determine whether this should be done BEFORE or AFTER
+        // we send the request.  My guess is before though.
+        try {
+            // TODO:Need to figure out where we get the Executor from
+            // Can't be from the MessageContext, but should maybe be 
+            // set somewhere accessible.
+            // FIXME: This should NOT be an ExecutorService, but should just
+            // be a plain old Executor.
+            ExecutorService exec = (ExecutorService) ic.getExecutor();
+            Future<?> future = exec.submit(wrapper);
+            future.get();
+            //TODO temp fix to resolve async callback hang.
+            exec.shutdown();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw ExceptionFactory.makeWebServiceException(e);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+        
+        return wrapper;
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext)
+     */
+    public Response invokeAsync(InvocationContext ic) {
+        if (log.isDebugEnabled()) {
+            log.debug("Invocation pattern: async (polling)");
+        }
+        
+        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("AsyncPollingNotSupported"));
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.core.controller.InvocationController#prepareRequest(org.apache.axis2.jaxws.core.MessageContext)
+     */
+    protected void prepareRequest(MessageContext requestMsgCtx) {
+        try {
+            if (requestMsgCtx == null) {
+                //throw an exception
+            }
+
+            // The MessageContext will contain a Message object with the
+            // contents that need to be sent.  We need to get those contents
+            // in a form that Axis2 can consume them, an AXIOM SOAPEnvelope.
+            Message requestMsg = requestMsgCtx.getMessage();
+            SOAPEnvelope requestOM = (SOAPEnvelope) requestMsg.getAsOMElement();
+            
+            org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
+                requestMsgCtx.getAxisMessageContext();
+            axisRequestMsgCtx.setEnvelope(requestOM);
+            
+            // For now, just take all of the properties that were in the 
+            // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
+            axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
+                Boolean.TRUE);
+            Map props = axisRequestMsgCtx.getOptions().getProperties();
+            props.putAll(requestMsgCtx.getProperties());
+            
+            axisRequestMsgCtx.getOptions().setProperties(props);
+            if (log.isDebugEnabled()) {
+                log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
+            }
+        } catch (MessageException e) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("prepareRequestFail"), e);
+        } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("prepareRequestFail"), e);
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.core.controller.InvocationController#prepareResponse(org.apache.axis2.jaxws.core.MessageContext)
+     */
+    protected void prepareResponse(MessageContext responseMsgCtx) {
+        org.apache.axis2.context.MessageContext axisResponseMsgCtx = responseMsgCtx.getAxisMessageContext();
+        
+        //FIXME: This should be revisited when we re-work the MTOM support.
+        //This destroys performance by forcing a double pass through the message.
+        //If attachments are found, we must find all of the OMText nodes and 
+        //replace them with <xop:include> elements so they can be processed
+        //correctly by JAXB.
+        if (axisResponseMsgCtx.getProperty(MTOMConstants.ATTACHMENTS) != null) { 
+            Message response = responseMsgCtx.getMessage();
+            response.setMTOMEnabled(true);
+            
+            ArrayList<OMText> binaryNodes = AttachmentUtils.findBinaryNodes(
+                    axisResponseMsgCtx.getEnvelope());
+            if (binaryNodes != null) {
+                Iterator<OMText> itr = binaryNodes.iterator();
+                while (itr.hasNext()) {
+                    OMText node = itr.next();
+                    OMElement xop = AttachmentUtils.makeXopElement(node);
+                    node.getParent().addChild(xop);
+                    node.detach();
+                    
+                    Attachment a = new AttachmentImpl((DataHandler) node.getDataHandler(), 
+                            node.getContentID());
+                    response.addAttachment(a);
+                }
+            }
+        }
+    }
+    
+    private void initOperationClient(OperationClient opClient, MessageContext requestMsgCtx) {
         setupProperties(requestMsgCtx, opClient.getOptions());
         
         if (opClient != null) {
@@ -139,398 +402,23 @@ public class AxisInvocationController implements InvocationController {
             // Use the OperationClient to send the request and put the contents
             // of the response in the response MessageContext.
             try {
-                // The MessageContext will contain a Message object with the
-                // contents that need to be sent.  We need to get those contents
-                // in a form that Axis2 can consume them, an AXIOM SOAPEnvelope.
-                Message requestMsg = requestMsgCtx.getMessage();
-                SOAPEnvelope requestOM = (SOAPEnvelope) requestMsg.getAsOMElement();
-                
-                org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
-                    requestMsgCtx.getAxisMessageContext();
-                axisRequestMsgCtx.setEnvelope(requestOM);
-                
-                // For now, just take all of the properties that were in the 
-                // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
-                axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
-                    Boolean.TRUE);
-                Map props = axisRequestMsgCtx.getOptions().getProperties();
-                props.putAll(requestMsgCtx.getProperties());
-                
-                axisRequestMsgCtx.getOptions().setProperties(props);
-                if (log.isDebugEnabled()) {
-                    log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
-                }
-                
+                //setupRequestMessageContext(requestMsgCtx);
+                org.apache.axis2.context.MessageContext axisRequestMsgCtx = requestMsgCtx.getAxisMessageContext();
+
                 // Setting the ServiceContext will create the association between 
                 // the OperationClient it's MessageContexts and the 
                 // AxisService/AxisOperation that they are tied to.
-                axisRequestMsgCtx.setServiceContext(svcClient.getServiceContext());
-
+                OperationContext opContext = opClient.getOperationContext();
+                ServiceContext svcContext = opContext.getServiceContext();
+                axisRequestMsgCtx.setServiceContext(svcContext);
+                
                 // Set the Axis2 request MessageContext
                 opClient.addMessageContext(axisRequestMsgCtx);
-
-                try
-                {
-                  //This assumes that we are on the ultimate execution thread
-                  ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                  opClient.execute(true);
-                }
-                catch (AxisFault e)
-                {
-                  ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                  throw e;
-                }
-                ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                
-                // Collect the response MessageContext and envelope
-                org.apache.axis2.context.MessageContext axisResponseMsgCtx = 
-                    opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                
-                //This assumes that we are on the ultimate execution thread
-                ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
-                
-                SOAPEnvelope rspEnvelope = axisResponseMsgCtx.getEnvelope();
-                Message responseMsg = null;
-                if (rspEnvelope != null) {
-                    responseMsg = createMessageFromOM(rspEnvelope);
-                }
-                
-                // Setup the response MessageContext
-                responseMsgCtx = new MessageContext(axisResponseMsgCtx);
-                responseMsgCtx.setMessage(responseMsg);
-                
-                //FIXME: This should be revisited when we re-work the MTOM support.
-                //This destroys performance by forcing a double pass through the message.
-                //If attachments are found, we must find all of the OMText nodes and 
-                //replace them with <xop:include> elements so they can be processed
-                //correctly by JAXB.
-                if (axisResponseMsgCtx.getProperty(MTOMConstants.ATTACHMENTS) != null) { 
-                    Message response = responseMsgCtx.getMessage();
-                    response.setMTOMEnabled(true);
-                    
-                    ArrayList<OMText> binaryNodes = AttachmentUtils.findBinaryNodes(
-                            axisResponseMsgCtx.getEnvelope());
-                    if (binaryNodes != null) {
-                        Iterator<OMText> itr = binaryNodes.iterator();
-                        while (itr.hasNext()) {
-                            OMText node = itr.next();
-                            OMElement xop = AttachmentUtils.makeXopElement(node);
-                            node.getParent().addChild(xop);
-                            node.detach();
-                            
-                            Attachment a = new AttachmentImpl((DataHandler) node.getDataHandler(), 
-                                    node.getContentID());
-                            response.addAttachment(a);
-                        }
-                    }
-                }
-            } catch (AxisFault e) {
-                throw ExceptionFactory.makeWebServiceException(e);
-            } catch (MessageException e) { 
-                throw ExceptionFactory.makeWebServiceException(e);
             }
-            
-            // Set the response MessageContext on the InvocationContext
-            ic.setResponseMessageContext(responseMsgCtx);
-        }
-
-        return ic;
-    }
-    
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeOneWay(org.apache.axis2.jaxws.core.InvocationContext)
-     */
-    public void invokeOneWay(InvocationContext ic) {
-        if (log.isDebugEnabled()) {
-            log.debug("Invocation pattern: one-way");
-        }
-        
-        // Check to make sure we at least have a valid InvocationContext
-        // and request MessageContext
-        if (ic == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot invoke; InvocationContext was null");
-        }
-        if (ic.getRequestMessageContext() == null) {
-            throw ExceptionFactory.makeWebServiceException("Cannot invoke; request MessageContext was null");
-        }
-        
-        // Setup the MessageContext for the response
-        MessageContext requestMsgCtx = ic.getRequestMessageContext();
-        
-        //TODO: Need to figure out whether or not we need to create the response
-        //MessageContext here and whether or not handlers need to be run for 
-        //one-way invocations.
-        MessageContext responseMsgCtx = new MessageContext();
-        ic.setResponseMessageContext(responseMsgCtx);
-        
-        // Try to create an OperationClient from the passed in ServiceClient
-        ServiceClient svcClient = ic.getServiceClient();
-
-        // We need the qname of the operation being invoked to know which 
-        // AxisOperation the OperationClient should be based on.
-        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
-        // clients do not use operations, so the operationDesc will be null.  In this
-        // case an anonymous AxisService with anoymouns AxisOperations for the supported
-        // MEPs will be created; and it is that anonymous operation name which needs to
-        // be specified
-        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
-        //       If ServiceDesc.axisService is null, then we created an Annon Service and operations in 
-        //       ServiceDelegate.getServiceClient(), and that is what the service client points to.
-        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
-        //       the anonymous AxisOperation on that service.  
-        //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
-        //       i.e the OperationDesc.axisOperation == null
-        QName operationName = getOperationNameToUse(requestMsgCtx, ServiceClient.ANON_OUT_ONLY_OP);
-
-        OperationClient opClient = createOperationClient(svcClient, operationName);
-        
-        setupProperties(requestMsgCtx, opClient.getOptions());
-        
-        if (opClient != null) {
-            // Get the target endpoint address and setup the TO endpoint 
-            // reference.  This tells us where the request is going.
-            String targetUrl = (String) requestMsgCtx.getProperties().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
-            EndpointReference toEPR = new EndpointReference(targetUrl);
-            opClient.getOptions().setTo(toEPR);
-            
-            // Get the SOAP Action (if needed)
-            String soapAction = configureSOAPAction(requestMsgCtx);
-            opClient.getOptions().setAction(soapAction);
-            
-            // Use the OperationClient to send the request.
-            Message responseMsg = null;
-            org.apache.axis2.context.MessageContext axisResponseMsgCtx = null;
-            try {
-                // We need to prepare the contents of the Message from the request 
-                // MessageContext to be sent
-                Message requestMsg = requestMsgCtx.getMessage();
-                SOAPEnvelope requestOM = (SOAPEnvelope) requestMsg.getAsOMElement();
-                
-                org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
-                    requestMsgCtx.getAxisMessageContext();
-                
-                // For now, just take all of the properties that were in the 
-                // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
-                axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
-                    Boolean.TRUE);
-                Map props = axisRequestMsgCtx.getOptions().getProperties();
-                props.putAll(requestMsgCtx.getProperties());
-                axisRequestMsgCtx.getOptions().setProperties(props);
-                if (log.isDebugEnabled()) {
-                    log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
-                }
-                
-                axisRequestMsgCtx.setEnvelope(requestOM);
-                
-                // Setting the ServiceContext will create the association between 
-                // the OperationClient it's MessageContexts and the 
-                // AxisService/AxisOperation that they are tied to.
-                axisRequestMsgCtx.setServiceContext(svcClient.getServiceContext());
-                opClient.addMessageContext(axisRequestMsgCtx);
-
-                //This assumes that we are on the ultimate execution thread
-                try
-                {
-                  ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                  opClient.execute(true);
-                }
-                catch (AxisFault e)
-                {
-                  ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                  throw e;
-                }
-                ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-            } catch (AxisFault e) {
-                throw ExceptionFactory.makeWebServiceException(e);
-            } catch (MessageException e) {
-                throw ExceptionFactory.makeWebServiceException(e);
+            catch (Exception e) {
+                //TODO: Do something
             }
         }
-        
-        return;
-    }
-    
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext, javax.xml.ws.AsyncHandler)
-     */
-    public Future<?> invokeAsync(InvocationContext ic, AsyncHandler callback) {
-        if (log.isDebugEnabled()) {
-            log.debug("Invocation pattern: async (callback)");
-        }
-
-        // Check to make sure we at least have a valid InvocationContext
-        // and request MessageContext
-        if (ic == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr1"));
-        }
-        if (ic.getRequestMessageContext() == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr3"));
-        }
-        
-        // Setup the MessageContext for the response
-        MessageContext requestMsgCtx = ic.getRequestMessageContext();
-        
-        ServiceClient svcClient = ic.getServiceClient();
-        // We need the qname of the operation being invoked to know which 
-        // AxisOperation the OperationClient should be based on.
-        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
-        // clients do not use operations, so the operationDesc will be null.  In this
-        // case an anonymous AxisService with anoymouns AxisOperations for the supported
-        // MEPs will be created; and it is that anonymous operation name which needs to
-        // be specified
-        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
-        //       If ServiceDesc.axisService is null, then we created an Annon Service and operations in 
-        //       ServiceDelegate.getServiceClient(), and that is what the service client points to.
-        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
-        //       the anonymous AxisOperation on that service.  
-        //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
-        //       i.e the OperationDesc.axisOperation == null
-        QName operationName = getOperationNameToUse(requestMsgCtx, ServiceClient.ANON_OUT_IN_OP);
-
-        OperationClient opClient = createOperationClient(svcClient, operationName);
-        
-        setupProperties(requestMsgCtx, opClient.getOptions());
-        
-        if (opClient != null) {
-            // Get the target endpoint address and setup the TO endpoint 
-            // reference.  This tells us where the request is going.
-            String targetUrl = (String) requestMsgCtx.getProperties().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
-            EndpointReference toEPR = new EndpointReference(targetUrl);
-            opClient.getOptions().setTo(toEPR);
-            
-            // Get the SOAP Action (if needed)
-            String soapAction = configureSOAPAction(requestMsgCtx);
-            opClient.getOptions().setAction(soapAction);
-            
-            // Setup the client so that it knows whether the underlying call to
-            // Axis2 knows whether or not to start a listening port for an
-            // asynchronous response.
-            Boolean useAsyncMep = (Boolean) requestMsgCtx.getProperties().get(Constants.USE_ASYNC_MEP);
-            if((useAsyncMep != null && useAsyncMep.booleanValue()) 
-                    || opClient.getOptions().isUseSeparateListener()) {
-                opClient.getOptions().setUseSeparateListener(true);
-                opClient.getOptions().setTransportInProtocol("http");
-                // Setup the response callback receiver to receive the async response
-                // This logic is based on org.apache.axis2.client.ServiceClient.sendReceiveNonBlocking(...)
-                AxisOperation op = opClient.getOperationContext().getAxisOperation();
-                MessageReceiver messageReceiver = op.getMessageReceiver();
-                if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver))
-                    op.setMessageReceiver(new CallbackReceiver());
-            }
-            
-            // There should be an AsyncListener that is configured and set on the
-            // InvocationContext.  We must get this and use it to wait for the 
-            // async response to come back.  The AxisCallback that is set on the 
-            // AsyncListener is the callback that Axis2 will call when the response
-            // has arrived.
-            AsyncListener listener = ic.getAsyncListener();
-            AxisCallback axisCallback = new AxisCallback();
-            listener.setAxisCallback(axisCallback);
-            listener.setInvocationContext(ic);
-            
-            // Once the AsyncListener is configured, we must include that in an 
-            // AsyncListenerWrapper.  The wrapper is what will handle the lifecycle 
-            // of the listener and determine when it's started and stopped.
-            AsyncListenerWrapper<?> wrapper = new AsyncListenerWrapper<Object>(listener);
-
-            // Inside of the wrapper we must set the callback that the JAX-WS
-            // client programmer provided.  This is the user object that we 
-            // must call back on once we've done everything we need to do at
-            // the JAX-WS layer.
-            if(callback != null){
-                wrapper.setAsyncHandler(callback);
-            }
-            else {
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr4"));
-            }
-            
-            try {
-                // Get the request message from the MessageContext and send it
-                // using the OperationClient API.
-                Message requestMsg = requestMsgCtx.getMessage();
-                SOAPEnvelope requestOM = (SOAPEnvelope) requestMsg.getAsOMElement();
-                
-                // The envelope must be set on the Axis2 MessageContext as a
-                // OM-based SOAPEnvelope
-                org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
-                    requestMsgCtx.getAxisMessageContext();
-                axisRequestMsgCtx.setEnvelope(requestOM);
-                
-                // For now, just take all of the properties that were in the 
-                // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
-                axisRequestMsgCtx.setProperty(AbstractContext.COPY_PROPERTIES,
-                    Boolean.TRUE);
-                Map props = axisRequestMsgCtx.getOptions().getProperties();
-                props.putAll(requestMsgCtx.getProperties());
-                axisRequestMsgCtx.getOptions().setProperties(props);
-                if (log.isDebugEnabled()) {
-                    log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
-                }
-                
-                // Setting the ServiceContext will create the association between 
-                // the OperationClient it's MessageContexts and the 
-                // AxisService/AxisOperation that they are tied to.
-                axisRequestMsgCtx.setServiceContext(svcClient.getServiceContext());
-                opClient.addMessageContext(axisRequestMsgCtx);
-                opClient.setCallback(axisCallback);
-                try
-                {
-                  ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                  opClient.execute(false);
-                }
-                catch (AxisFault e)
-                {
-                  ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-                  throw e;
-                }
-                ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-            } catch (AxisFault e) {
-                throw ExceptionFactory.makeWebServiceException(e);
-            } catch (MessageException e) {
-                throw ExceptionFactory.makeWebServiceException(e);
-            }
-            
-            // Now that the request has been sent, start the listener thread so that it can
-            // catch the async response.
-            // TODO: Need to determine whether this should be done BEFORE or AFTER
-            // we send the request.  My guess is before though.
-            try {
-                // TODO:Need to figure out where we get the Executor from
-                // Can't be from the MessageContext, but should maybe be 
-                // set somewhere accessible.
-                // FIXME: This should NOT be an ExecutorService, but should just
-                // be a plain old Executor.
-                ExecutorService exec = (ExecutorService) ic.getExecutor();
-                Future<?> future = exec.submit(wrapper);
-                future.get();
-                //TODO temp fix to resolve async callback hang.
-                exec.shutdown();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                throw ExceptionFactory.makeWebServiceException(e);
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-                throw ExceptionFactory.makeWebServiceException(e);
-            }
-            
-            return wrapper;
-        }
-        
-        return null;
-    }
-    
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext)
-     */
-    public Response invokeAsync(InvocationContext ic) {
-        if (log.isDebugEnabled()) {
-            log.debug("Invocation pattern: async (polling)");
-        }
-        
-        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("AsyncPollingNotSupported"));
     }
     
     /**

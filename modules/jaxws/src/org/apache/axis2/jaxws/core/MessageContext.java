@@ -45,6 +45,7 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
  */
 public class MessageContext {
 
+    private InvocationContext invocationCtx;
     private org.apache.axis2.context.MessageContext axisMsgCtx;
     private Map<String, Object> properties;
     private ServiceDescription serviceDesc;
@@ -77,6 +78,14 @@ public class MessageContext {
             message = newMessage;
         }
 
+    }
+    
+    public InvocationContext getInvocationContext() {
+        return invocationCtx;
+    }
+    
+    public void setInvocationContext(InvocationContext ic) {
+        invocationCtx = ic;
     }
     
     public Map<String, Object> getProperties() {   
