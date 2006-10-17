@@ -209,6 +209,9 @@ public class CodeGenerationUtility {
             int opindex = 0;
             Map typeMappedClassMap = new HashMap();
             String mappedclass = null;
+            Set objins = new HashSet();
+            Set objouts = new HashSet();
+            Set objfaults = new HashSet();
             while (operations.hasNext()) {
                 
                 // get the basic operation information
@@ -253,15 +256,24 @@ public class CodeGenerationUtility {
                     // concrete mappings, just save the mapped class name(s)
                     if (inmsg != null) {
                         mappedclass = mapMessage(inmsg, elementMap);
+                        objins.add(mappedclass);
                     }
                     if (outmsg != null) {
                         mappedclass = mapMessage(outmsg, elementMap);
+                        objouts.add(mappedclass);
                     }
                     
+                }
+                
+                // always handle faults as wrapped
+                for (Iterator iter = op.getFaultMessages().iterator(); iter.hasNext();) {
+                    mappedclass = mapMessage((AxisMessage)iter.next(), elementMap);
+                    objfaults.add(mappedclass);
                 }
             }
             
             // add type usage information as service parameter
+            List details = new ArrayList();
             Element bindinit = doc.createElement("initialize-binding");
             if (!typeMappedClassMap.isEmpty()) {
                 for (Iterator iter = typeMappedClassMap.keySet().iterator(); iter.hasNext();) {
@@ -279,7 +291,28 @@ public class CodeGenerationUtility {
                 }
             }
             bindinit.setAttribute("bound-class", mappedclass);
-            codeGenConfig.getAxisService().addParameter(new Parameter(Constants.DATABINDING_SERVICE_DETAILS, bindinit));
+            details.add(bindinit);
+            
+            // add details for all objects used as inputs/outputs/faults
+            for (Iterator iter = objins.iterator(); iter.hasNext();) {
+                String classname = (String)iter.next();
+                Element detail = doc.createElement("object-input");
+                detail.setAttribute("type", classname);
+                details.add(detail);
+            }
+            for (Iterator iter = objouts.iterator(); iter.hasNext();) {
+                String classname = (String)iter.next();
+                Element detail = doc.createElement("object-output");
+                detail.setAttribute("type", classname);
+                details.add(detail);
+            }
+            for (Iterator iter = objfaults.iterator(); iter.hasNext();) {
+                String classname = (String)iter.next();
+                Element detail = doc.createElement("object-fault");
+                detail.setAttribute("type", classname);
+                details.add(detail);
+            }
+            codeGenConfig.getAxisService().addParameter(new Parameter(Constants.DATABINDING_SERVICE_DETAILS, details));
             
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);

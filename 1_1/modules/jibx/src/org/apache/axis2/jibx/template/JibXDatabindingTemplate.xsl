@@ -21,39 +21,6 @@
         </xsl:for-each>
         };
       </xsl:if>
-  
-      <xsl:variable name="firstType"><xsl:value-of select="param[1]/@type"/></xsl:variable>
-  
-      <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
-        <xsl:if test="@type!=''">
-  
-            private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, org.apache.axiom.soap.SOAPFactory factory, boolean optimizeContent) {
-                if (param instanceof org.jibx.runtime.IMarshallable){
-                    if (bindingFactory == null) {
-                        throw new RuntimeException("Could not find JiBX binding information for <xsl:value-of select="$firstType"/>, JiBX binding unusable");
-                    }
-                    org.jibx.runtime.IMarshallable marshallable =
-                        (org.jibx.runtime.IMarshallable)param;
-                    int index = marshallable.JiBX_getIndex();
-                    org.apache.axis2.jibx.JiBXDataSource source =
-                        new org.apache.axis2.jibx.JiBXDataSource(marshallable, bindingFactory);
-                    org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], null);
-                    return factory.createOMElement(source, bindingFactory.getElementNames()[index], namespace);
-                } else {
-                    throw new RuntimeException("No JiBX &lt;mapping> defined for class <xsl:value-of select="@type"/>");
-                }
-            }
-
-            private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent) {
-                org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
-                if (param != null){
-                    envelope.getBody().addChild(toOM(param, factory, optimizeContent));
-                }
-                return envelope;
-            }
-
-        </xsl:if>
-      </xsl:for-each>
 
         /**
         *  get the default envelope
@@ -67,13 +34,7 @@
             java.lang.Class type,
             java.util.Map extraNamespaces) {
             try {
-                if (bindingFactory == null) {
-                    throw new RuntimeException("Could not find JiBX binding information for com.sosnoski.seismic.jibxsoap.Query, JiBX binding unusable");
-                }
-                org.jibx.runtime.impl.UnmarshallingContext ctx =
-                    (org.jibx.runtime.impl.UnmarshallingContext)bindingFactory.createUnmarshallingContext();
-                org.jibx.runtime.IXMLReader reader = new org.jibx.runtime.impl.StAXReaderWrapper(param.getXMLStreamReaderWithoutCaching(), "SOAP-message", true);
-                ctx.setDocument(reader);
+                org.jibx.runtime.impl.UnmarshallingContext ctx = getNewUnmarshalContext(param);
                 return ctx.unmarshalElement(type);
             } catch (Exception e) {
                  throw new RuntimeException(e);
@@ -92,6 +53,65 @@
         </xsl:when>
       </xsl:choose>
     </xsl:if>
+    
+    <xsl:choose>
+      <xsl:when test="$context='message-receiver'">
+        <xsl:apply-templates select="object-output"/>
+        <xsl:apply-templates select="object-fault"/>
+      </xsl:when>
+      <xsl:when test="$context='interface-implementation'">
+        <xsl:apply-templates select="object-input"/>
+      </xsl:when>
+    </xsl:choose>
+    
+  </xsl:template>
+  
+  
+  <!--
+  toOM AND toEnvelope METHOD GENERATION
+  -->
+  <xsl:template match="object-input|object-output">
+
+        private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, org.apache.axiom.soap.SOAPFactory factory, boolean optimizeContent) {
+            <xsl:call-template name="toOM-method-body"/>
+        }
+        <xsl:call-template name="toEnvelope-method"/>
+  </xsl:template>
+  
+  <xsl:template match="object-fault">
+
+        private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, boolean optimizeContent) {
+            org.apache.axiom.om.OMFactory factory = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
+            <xsl:call-template name="toOM-method-body"/>
+        }
+  </xsl:template>
+  
+  <xsl:template name="toOM-method-body">
+            if (param instanceof org.jibx.runtime.IMarshallable){
+                if (bindingFactory == null) {
+                    throw new RuntimeException(bindingErrorMessage);
+                }
+                org.jibx.runtime.IMarshallable marshallable =
+                    (org.jibx.runtime.IMarshallable)param;
+                int index = marshallable.JiBX_getIndex();
+                org.apache.axis2.jibx.JiBXDataSource source =
+                    new org.apache.axis2.jibx.JiBXDataSource(marshallable, bindingFactory);
+                org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], null);
+                return factory.createOMElement(source, bindingFactory.getElementNames()[index], namespace);
+            } else {
+                throw new RuntimeException("No JiBX &lt;mapping> defined for class <xsl:value-of select="@type"/>");
+            }
+  </xsl:template>
+  
+  <xsl:template name="toEnvelope-method">
+        
+        private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, <xsl:value-of select="@type"/> param, boolean optimizeContent) {
+            org.apache.axiom.soap.SOAPEnvelope envelope = factory.getDefaultEnvelope();
+            if (param != null){
+                envelope.getBody().addChild(toOM(param, factory, optimizeContent));
+            }
+            return envelope;
+        }
 
   </xsl:template>
   

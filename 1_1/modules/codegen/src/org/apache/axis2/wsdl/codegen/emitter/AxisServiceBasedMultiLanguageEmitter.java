@@ -1143,7 +1143,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // finish with any extra information from service and operations
         Parameter details = axisService.getParameter(Constants.DATABINDING_SERVICE_DETAILS);
         if (details != null) {
-            rootElement.appendChild(doc.importNode((Element)details.getValue(), true));
+            Object value = details.getValue();
+            if (value instanceof Element) {
+                rootElement.appendChild(doc.importNode((Element)value, true));
+            } else if (value instanceof List) {
+                for (Iterator iter = ((List)value).iterator(); iter.hasNext();) {
+                    rootElement.appendChild(doc.importNode((Element)iter.next(), true));
+                }
+            }
         }
         for (Iterator operationsIterator = axisService.getOperations(); operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
