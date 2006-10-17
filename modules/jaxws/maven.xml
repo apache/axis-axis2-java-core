@@ -79,12 +79,12 @@
 			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl"/>
 		</java>
     	<ant:echo>Generating java from AddNumbers.wsdl</ant:echo>
-    	    	    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    	    		<jvmarg line="${maven.junit.jvmargs}"/>
-    	    	    	    <classpath refid="maven.dependency.classpath"/>
-    	    	    	    <classpath location="${compiled.classes.dir}"/>
-    	   	    	    	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
-    	     	    	</java>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
+    	</java>
     	<ant:echo>Generating java from jaxbsource</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
     	    <jvmarg line="${maven.junit.jvmargs}"/>
@@ -144,6 +144,17 @@
         <!-- ================================================================ -->
         <!--- Provider endpoint Service Samples -->
         <!-- ================================================================ -->
+		<ant:copy toDir="target/test-classes/services/BasicAuthSecurityService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/security/server/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/security/server">
+				<ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+    			<ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
 		<ant:copy toDir="target/test-classes/services/StringProviderService/">
 			<ant:fileset dir="target/test-classes">
 				<ant:include name="org/apache/axis2/jaxws/provider/string/**"/>

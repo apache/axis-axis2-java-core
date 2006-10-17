@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.core.controller;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -61,6 +63,8 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.impl.AttachmentImpl;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -504,6 +508,44 @@ public class AxisInvocationController extends InvocationController {
         Message msg = mc.getMessage();
         if (msg.isMTOMEnabled()) {
             ops.setProperty(Configuration.ENABLE_MTOM, "true");
+        }
+        
+        // Check to see if BASIC_AUTH is enabled.  If so, make sure
+        // the properties are setup correctly.
+        if (properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&
+            properties.containsKey(BindingProvider.PASSWORD_PROPERTY)) {
+       
+            String userId = (String) properties.get(BindingProvider.USERNAME_PROPERTY);
+            if (userId == null || userId == "") {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("checkUserName"));
+            }
+   
+            String password = (String)properties.get(BindingProvider.PASSWORD_PROPERTY);
+            if (password == null || password == "") {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("checkPassword"));
+            }
+       
+            URL url = null;
+            try {
+                url = new URL((String)mc.getProperties().get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY));
+            }
+            catch (MalformedURLException e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+                
+            HttpTransportProperties.Authenticator basicAuthentication = new HttpTransportProperties.Authenticator();
+            basicAuthentication.setUsername(userId);
+            basicAuthentication.setPassword(password);
+            basicAuthentication.setHost(url.getHost());
+            basicAuthentication.setPort(url.getPort());
+       
+            ops.setProperty(HTTPConstants.AUTHENTICATE, basicAuthentication);
+        }
+        else if((!properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&
+            properties.containsKey(BindingProvider.PASSWORD_PROPERTY)) || 
+            (properties.containsKey(BindingProvider.USERNAME_PROPERTY) &&
+            !properties.containsKey(BindingProvider.PASSWORD_PROPERTY))){
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("checkUsernameAndPassword"));
         }
     }
     
