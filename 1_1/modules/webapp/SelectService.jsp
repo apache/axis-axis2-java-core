@@ -4,46 +4,46 @@
                  java.util.HashMap,
                  java.util.Iterator"%>
   <%
-           /*
-* Copyright 2004,2005 The Apache Software Foundation.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*
-*
-*/
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *
+ */
 %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 
   <%
-      String action = "";
-      String buttonName = "";
-      String status = (String) request.getSession().getAttribute(Constants.SELECT_SERVICE_TYPE);
+      String action ="";
+      String buttonName="" ;
+      String status = (String)request.getSession().getAttribute(Constants.SELECT_SERVICE_TYPE);
       String heading = "";
       String disc = "";
-      if (status != null && status.equals("MODULE")) {
+      if(status != null && status.equals("MODULE")) {
           action = "listOperations";
           buttonName = " View Operations";
           heading = "Select a service to view operation specific chains";
           disc = "Select an Axis service from the combo and click on the 'View Operations' button to view operation specific Chains.";
-      } else if (status != null && status.equals("VIEW")) {
+      } else if(status != null && status.equals("VIEW")){
           buttonName = " View ";
           action = "viewServiceHandlers";
           heading = "Select a service to view service handlers";
           disc = "Select an Axis service from the combo and click on the 'View' button to view service handlers.";
-      } else if (status != null && status.equals("SERVICE_PARAMETER")) {
+      } else if (status != null && status.equals("SERVICE_PARAMETER")){
           buttonName = " Edit Parameters ";
-          action = Constants.EDIT_SERVICE_PARA;
+          action = Constants.EDIR_SERVICE_PARA;
           heading = "Select a Service to Edit Parameters";
           disc = "Select an Axis service from the combo and click on the 'Edit Parameters' button to edit parameters.";
       }

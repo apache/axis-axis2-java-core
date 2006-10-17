@@ -33,7 +33,7 @@
 <%@ page import="java.lang.Throwable" %>
 
 <%
-    /*
+   /*
     * Copyright 2002,2004 The Apache Software Foundation.
     *
     * Licensed under the Apache License, Version 2.0 (the "License");
