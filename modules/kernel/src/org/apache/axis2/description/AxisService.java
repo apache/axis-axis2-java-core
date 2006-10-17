@@ -1221,8 +1221,132 @@ public class AxisService extends AxisDescription {
     }
 
     /**
+     * messageReceiverClassMap will hold the MessageReceivers for given meps. Key will be the
+     * mep and value will be the instance of the MessageReceiver class.
+     * Ex:
+     * Map mrMap = new HashMap();
+     * mrMap.put("http://www.w3.org/2004/08/wsdl/in-only",
+     *           RPCInOnlyMessageReceiver.class.newInstance());
+     * mrMap.put("http://www.w3.org/2004/08/wsdl/in-out",
+     *           RPCMessageReceiver.class.newInstance());
+     *
+     * @param implClass
+     * @param axisConfiguration
+     * @param messageReceiverClassMap
+     * @param targetNamespace
+     * @param schemaNamespace
+     * @return
+     * @throws AxisFault
+     */
+
+    public static AxisService createService(String implClass,
+                                            AxisConfiguration axisConfiguration,
+                                            Map messageReceiverClassMap,
+                                            String targetNamespace,
+                                            String schemaNamespace) throws AxisFault{
+        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
+        OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
+        parameter.setParameterElement(paraElement);
+        AxisService axisService = new AxisService();
+        axisService.setUseDefaultChains(false);
+        axisService.addParameter(parameter);
+
+        if (schemaNamespace == null) {
+            schemaNamespace = axisService.getSchematargetNamespace();
+        }
+
+        int index = implClass.lastIndexOf(".");
+        String serviceName;
+        if (index > 0) {
+            serviceName = implClass.substring(index + 1, implClass.length());
+        } else {
+            serviceName = implClass;
+        }
+
+        axisService.setName(serviceName);
+        axisService.setClassLoader(axisConfiguration.getServiceClassLoader());
+
+        ClassLoader serviceClassLoader = axisService.getClassLoader();
+        SchemaGenerator schemaGenerator;
+        ArrayList excludeOpeartion = new ArrayList();
+
+
+        NamespaceMap map = new NamespaceMap();
+        map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
+                Java2WSDLConstants.AXIS2_XSD);
+        map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
+                Java2WSDLConstants.URI_2001_SCHEMA_XSD);
+        axisService.setNameSpacesMap(map);
+
+
+        try {
+            schemaGenerator = new SchemaGenerator(serviceClassLoader,
+                    implClass, schemaNamespace,
+                    axisService.getSchematargetNamespacePrefix());
+            schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
+            axisService.setElementFormDefault(false);
+            excludeOpeartion.add("init");
+            excludeOpeartion.add("setOperationContext");
+            excludeOpeartion.add("destroy");
+            excludeOpeartion.add("startUp");
+            schemaGenerator.setExcludeMethods(excludeOpeartion);
+            axisService.addSchema(schemaGenerator.generateSchema());
+            axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+            if (targetNamespace != null && !"".equals(targetNamespace)) {
+                axisService.setTargetNamespace(targetNamespace);
+            }
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+
+        JMethod[] method = schemaGenerator.getMethods();
+        TypeTable table = schemaGenerator.getTypeTable();
+
+        PhasesInfo pinfo = axisConfiguration.getPhasesInfo();
+
+        for (int i = 0; i < method.length; i++) {
+            JMethod jmethod = method[i];
+            if (!jmethod.isPublic()) {
+                // no need to expose , private and protected methods
+                continue;
+            } else if (excludeOpeartion.contains(jmethod.getSimpleName())) {
+                continue;
+            }
+            AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
+            String mep = operation.getMessageExchangePattern();
+            MessageReceiver mr;
+            if (messageReceiverClassMap != null) {
+
+                if (messageReceiverClassMap.get(mep) != null) {
+                    Object obj = messageReceiverClassMap.get(mep);
+                    if (obj instanceof MessageReceiver) {
+                        mr = (MessageReceiver)obj;
+                        operation.setMessageReceiver(mr);
+                    }else {
+                        log.error("Object is not an instance of MessageReceiver, thus, default MessageReceiver has been set");
+                        mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
+                        operation.setMessageReceiver(mr);
+                    }
+                }else {
+                    log.error("Required MessageReceiver couldn't be found, thus, default MessageReceiver has been used");
+                    mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
+                    operation.setMessageReceiver(mr);
+                }
+            } else {
+                log.error("MessageRecevierClassMap couldn't be found, thus, default MessageReceiver has been used");
+                mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
+                operation.setMessageReceiver(mr);
+            }
+            pinfo.setOperationPhases(operation);
+            axisService.addOperation(operation);
+        }
+        return axisService;
+
+    }
+
+    /**
      * To create a service for a given Java class with user defined schema and target
-     * namespaces
+     * namespaces. This method should be used iff, the operations in the service class is homogeneous.
      *
      * @param implClass            : full name of the class
      * @param axisConfig           : current AxisConfgiuration
