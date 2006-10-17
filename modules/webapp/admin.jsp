@@ -20,7 +20,8 @@
 %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <h1>Welcome to Axis2 Web Admin Module !!</h1>
-<p>The Axis2 administration system can be used
+<p>You are now logged into the Axis2 administration console from inside
+the console you will be able to
     <ul>
         <li>to check on the health of your Axis2 deployment.</li>
         <li>to change any parameters at run time.</li>
