@@ -157,18 +157,31 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
 
-                //p2n mapping. This will be an element that maps pkg names to a namespace
+                //package to namespace mapping. This will be an element that maps pkg names to a namespace
                 //when this is doing AxisService.getSchematargetNamespace will be overridden
-                //This will be <p2n>pkgName,namespace</p2n>
-                Iterator p2nIterator = schemaElement.getChildrenWithName(new QName(P2N));
-                if (p2nIterator != null) {
+                //This will be <mapping/>  with @namespace and @package
+                Iterator mappingIterator = schemaElement.getChildrenWithName(new QName(MAPPING));
+                if (mappingIterator != null) {
                     Map pkg2nsMap = new Hashtable();
-                    while(p2nIterator.hasNext()) {
-                        OMElement p2nElement = (OMElement)p2nIterator.next();
-                        String p2nText = p2nElement.getText();
-                        if (p2nText != null) {
-                            pkg2nsMap.put(p2nText.substring(0, p2nText.indexOf(COMMA)).trim(),
-                                        p2nText.substring(p2nText.indexOf(COMMA) + 1, p2nText.length()).trim());
+                    while (mappingIterator.hasNext()) {
+                        OMElement mappingElement = (OMElement) mappingIterator.next();
+                        OMAttribute namespaceAttribute =
+                                mappingElement.getAttribute(new QName(ATTRIBUTE_NAMESPACE));
+                        OMAttribute packageAttribute =
+                                mappingElement.getAttribute(new QName(ATTRIBUTE_PACKAGE));
+                        if (namespaceAttribute != null && packageAttribute != null) {
+                            String namespaceAttributeValue = namespaceAttribute.getAttributeValue();
+                            String packageAttributeValue = packageAttribute.getAttributeValue();
+                            if (namespaceAttributeValue != null && packageAttributeValue != null) {
+                                pkg2nsMap.put(packageAttributeValue.trim(),
+                                              namespaceAttributeValue.trim());
+                            } else {
+                                log.warn(
+                                        "Either value of @namespce or @packagename not available. Thus, generated will be selected.");
+                            }
+                        } else {
+                            log.warn(
+                                    "Either @namespce or @packagename not available. Thus, generated will be selected.");
                         }
                     }
                     service.setP2nMap(pkg2nsMap);
@@ -350,7 +363,7 @@ public class ServiceBuilder extends DescriptionBuilder {
     /**
      * To get the methods which dose not use RPC* Message Recievers
      *
-     * @return
+     * @return ArrayList
      */
     private ArrayList getNonPRCMethods(AxisService axisService) {
         ArrayList excludeOperations = new ArrayList();
