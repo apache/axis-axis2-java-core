@@ -65,17 +65,17 @@
     <!--- Version Sample -->
     <!-- ================================================================ -->
     <goal name="version">
-        <jar destfile="version/version.jar">
+        <mkdir dir="target/version" />
+        <jar destfile="target/version/version.jar">
             <fileset dir="target/classes">
                 <include name="sample/axisversion/**"/>
             </fileset>
-            <fileset dir="src/sample/axisversion/">
-                <include name="META-INF/**"/>
+            <fileset dir="version/src/sample/axisversion/">
+                <include name="META-INF/services.xml"/>
             </fileset>
         </jar>
-        <copy file="version/version.jar"
+        <copy file="target/version/version.jar"
               tofile="target/toWar/services/version.aar"/>
-        <delete file="version/version.jar"/>
     </goal>
     <!-- ================================================================ -->
     <!--- User Guide Sample -->
@@ -141,7 +141,8 @@
     <!-- ================================================================ -->
 
     <goal name="amazonQS">
-        <jar destfile="amazonqs/amazonQS.jar">
+        <mkdir dir="target/amazonqs" />
+        <jar destfile="target/amazonqs/amazonQS.jar">
             <fileset dir="target/classes">
                 <include name="sample/amazon/amazonSimpleQueueService/**"/>
                 <include name="sample/amazon/common/**"/>
@@ -155,7 +156,8 @@
     <!-- ================================================================ -->
 
     <goal name="googleSearch">
-        <jar destfile="googlesearch/googleSearch.jar">
+        <mkdir dir="target/googlesearch" />
+        <jar destfile="target/googlesearch/googleSearch.jar">
             <fileset dir="target/classes">
                 <include name="sample/google/search/**"/>
                 <include name="sample/google/common/**"/>
@@ -164,11 +166,11 @@
     </goal>
 
     <!-- ================================================================ -->
-    <!--- Yahoo Search Sample (REST)-->
     <!-- ================================================================ -->
 
     <goal name="yahooRESTSearch">
-        <jar destfile="yahoorestsearch/yahooRESTSearch.jar">
+        <mkdir dir="target/yahoorestsearch" />
+        <jar destfile="target/yahoorestsearch/yahooRESTSearch.jar">
             <fileset dir="target/classes">
                 <include name="sample/yahooservices/RESTSearch/**"/>
             </fileset>
@@ -180,7 +182,8 @@
     <!-- ================================================================ -->
 
     <goal name="googleSpellcheck">
-        <jar destfile="googlespellcheck/googleSpellcheck.jar">
+        <mkdir dir="target/googlespellcheck" />
+        <jar destfile="target/googlespellcheck/googleSpellcheck.jar">
             <fileset dir="target/classes">
                 <include name="sample/google/spellcheck/**"/>
                 <include name="sample/google/common/**"/>
@@ -193,25 +196,21 @@
     <!-- ================================================================ -->
 
     <goal name="mtomSample">
-        <mkdir dir="target/mtomSample/META-INF"/>
-        <ant:copy todir="target/mtomSample/META-INF">
-            <ant:fileset dir="src/sample/mtom/filetransfer/service/META-INF/">
-                <ant:include name="services.xml"/>
-            </ant:fileset>
-        </ant:copy>
-        <jar destfile="mtomsample/mtomSample.aar">
-            <fileset dir="src/sample/mtom/filetransfer/service/">
-                <include name="META-INF/**"/>
+        <mkdir dir="target/mtomsample" />
+        <jar destfile="target/mtomsample/mtomSample.aar">
+            <fileset dir="mtomsample/src/sample/mtom/filetransfer/service/">
+                <include name="META-INF/services.xml"/>
             </fileset>
             <fileset dir="target/classes">
                 <include name="sample/mtom/filetransfer/service/**/*.class"/>
             </fileset>
         </jar>
-        <jar destfile="mtomsample/mtomClient.jar">
+        <jar destfile="target/mtomsample/mtomClient.jar">
             <fileset dir="target/classes">
                 <include name="sample/mtom/filetransfer/client/**/*.class"/>
             </fileset>
         </jar>
+
     </goal>
 
     <!-- ================================================================ -->
@@ -219,7 +218,7 @@
     <!-- ================================================================ -->
 
     <goal name="groovy">
-        <mkdir dir="target/samples"/>
+        <mkdir dir="target/groovy"/>
         <ant:copy file="groovy/src/sample/groovy/GroovyRcv.groovy"
                   tofile="target/classes/sample/groovy/GroovyRcv.groovy"/>
         <mkdir dir="target/classes/sample/groovy/lib"/>
@@ -239,7 +238,7 @@
             <ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-${groovy.all.version}.jar"
                       tofile="target/classes/sample/groovy/lib/groovy-all-${groovy.all.version}.jar"/>
         </j:if>
-        <jar destfile="groovy/groovyService.aar">
+        <jar destfile="target/groovy/groovyService.aar">
             <fileset dir="target/classes/sample/groovy">
             </fileset>
         </jar>
@@ -326,20 +325,21 @@
     <!--- ServiceGroupContext Calculator Sample -->
     <!-- ================================================================ -->
     <goal name="sgccalculator">
-        <jar destfile="sgccalculator/SGCCalculator.aar">
+        <mkdir dir="target/sgccalculator"/>
+        <jar destfile="target/sgccalculator/SGCCalculator.aar">
             <fileset dir="target/classes">
                 <include name="sample/sgccalculator/**"/>
             </fileset>
             <fileset dir="sgccalculator/src/sample/sgccalculator/">
-                <include name="META-INF/**"/>
+                <include name="META-INF/services.xml"/>
             </fileset>
         </jar>
-        <jar destfile="sgccalculator/SGCCalculator.jar">
+        <jar destfile="target/sgccalculator/SGCCalculator.jar">
             <fileset dir="target/classes">
                 <include name="sample/sgccalculator/**"/>
             </fileset>
             <fileset dir="sgccalculator/src/sample/sgccalculator/">
-                <include name="META-INF/**"/>
+                <include name="META-INF/services.xml"/>
             </fileset>
         </jar>
 
