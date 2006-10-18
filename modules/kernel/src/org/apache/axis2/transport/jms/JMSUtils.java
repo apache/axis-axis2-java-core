@@ -373,7 +373,7 @@ public class JMSUtils {
                 Parameter operationParam = msgContext.getAxisService().
                     getParameter(JMSConstants.OPERATION_PARAM);
                 QName operationQName = (operationParam != null ?
-                    (QName) operationParam.getValue() : JMSConstants.DEFAULT_OPERATION);
+                    getQName(operationParam.getValue()) : JMSConstants.DEFAULT_OPERATION);
 
                 AxisOperation operation = msgContext.getAxisService().getOperation(operationQName);
                 if (operation != null) {
@@ -387,7 +387,7 @@ public class JMSUtils {
                 Parameter wrapperParam = msgContext.getAxisService().
                     getParameter(JMSConstants.WRAPPER_PARAM);
                 QName wrapperQName = (wrapperParam != null ?
-                    (QName) wrapperParam.getValue() : JMSConstants.DEFAULT_WRAPPER);
+                    getQName(wrapperParam.getValue()) : JMSConstants.DEFAULT_WRAPPER);
 
                 OMElement wrapper = soapFactory.createOMElement(wrapperQName, null);
 
@@ -442,6 +442,22 @@ public class JMSUtils {
                 "SOAP message");
         }
         return envelope;
+    }
+
+    private static QName getQName(Object obj) {
+        String value;
+        if (obj instanceof QName) {
+            return (QName) obj;
+        } else {
+            value = obj.toString();
+        }
+        int open = value.indexOf('{');
+        int close = value.indexOf('}');
+        if (close > open && open > -1 && value.length() > close) {
+            return new QName(value.substring(open+1, close-open), value.substring(close+1));
+        } else {
+            return new QName(value);
+        }
     }
 
     private static void handleException(String s) {
