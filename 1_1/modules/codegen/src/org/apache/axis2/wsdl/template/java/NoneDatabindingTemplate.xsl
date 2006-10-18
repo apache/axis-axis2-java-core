@@ -12,7 +12,7 @@
         return param;
         }
 
-        private  org.apache.axiom.om.OMElement  toOM(org.apache.axiom.om.OMElement param){
+        private  org.apache.axiom.om.OMElement  toOM(org.apache.axiom.om.OMElement param, boolean optimizeContent){
         return param;
         }
 
