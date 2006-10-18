@@ -45,6 +45,23 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
  * to an SEI-based (aka Endpoint-based or Java-based) enpdoint; Provider-based
  * endpoint, which are not operation based and do not have an associated SEI,
  * will not have an an EndpointInterfaceDescription class and sub-hierachy.
+ * 
+ * <pre>
+ * <b>EndpointInterfaceDescription details</b>
+ * 
+ *     CORRESPONDS TO:      An SEI (on both Client and Server)      
+ *         
+ *     AXIS2 DELEGATE:      none
+ *     
+ *     CHILDREN:            1..n OperationDescription
+ *     
+ *     ANNOTATIONS:
+ *         SOAPBinding [181]
+ *     
+ *     WSDL ELEMENTS:
+ *         portType
+ *         
+ *  </pre>       
  */
 
 /*

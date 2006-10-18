@@ -19,28 +19,31 @@
 package org.apache.axis2.jaxws.description;
 
 /**
+ * A FaultDescription corresponds to a fault that can be thrown from an operation.  NOTE this it not 
+ * implemented yet!
  * 
+ * FaultDescriptons contain information that is only relevent for and SEI-based service, i.e. one that is invoked via specific
+ * methods.  This class does not exist for Provider-based services (i.e. those that specify WebServiceProvider)
+ * 
+ * <pre>
+ * <b>OperationDescription details</b>
+ * 
+ *     CORRESPONDS TO:      An exception thrown by an operation on an SEI (on both Client and Server)      
+ *         
+ *     AXIS2 DELEGATE:      None
+ *     
+ *     CHILDREN:            None
+ *                          None
+ *     
+ *     ANNOTATIONS:
+ *         WebFault [224]
+ *     
+ *     WSDL ELEMENTS:
+ *         fault message
+ *         
+ *  </pre>       
  */
-/*
-Workign-design information.
-
-Java Name: Exception class name
-
-Exception Holder Type
-Exception Holder Held Type
-
-Axis2 Delegate: TBD
-
-JSR-181 Annotations: TBD
-
-WSDL Elements: TBD
-
-JAX-WS Annotations:
-@WebFault(name, targetNamespace, faultBean)
-
-Properties available to JAXWS runtime: TBD
-
- */
+// TODO: This class is not implemented yet or used from OperationDescription
 public class FaultDescription {
 
 }

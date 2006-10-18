@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description;
 import javax.xml.namespace.QName;
 
 /**
- * 
+ * Utilities used throughout the Description package.
  */
 public class DescriptionUtils {
     

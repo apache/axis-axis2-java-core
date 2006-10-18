@@ -22,7 +22,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -39,47 +38,37 @@ import org.apache.axis2.description.AxisOperation;
 
 /**
  * An OperationDescripton corresponds to a method on an SEI.  That SEI could be explicit
- * (i.e. @WebService.endpointInterface=sei.class) or implicit (i.e. public methods on the service implementation
+ * (i.e. WebService.endpointInterface=sei.class) or implicit (i.e. public methods on the service implementation
  * are the contract and thus the implicit SEI).  Note that while OperationDescriptions are created on both the client
  * and service side, implicit SEIs will only occur on the service side.
  * 
  * OperationDescriptons contain information that is only relevent for and SEI-based service, i.e. one that is invoked via specific
- * methods.  This class does not exist for Provider-based services (i.e. those that specify @WebServiceProvider)
+ * methods.  This class does not exist for Provider-based services (i.e. those that specify WebServiceProvider)
+ * 
+ * <pre>
+ * <b>OperationDescription details</b>
+ * 
+ *     CORRESPONDS TO:      A single operation on an SEI (on both Client and Server)      
+ *         
+ *     AXIS2 DELEGATE:      AxisOperation
+ *     
+ *     CHILDREN:            0..n ParameterDescription
+ *                          0..n FaultDescription (Note: Not fully implemented)
+ *     
+ *     ANNOTATIONS:
+ *         WebMethod [181]
+ *         SOAPBinding [181]
+ *         Oneway [181]
+ *         WebResult [181]
+ *         RequestWrapper [224]
+ *         ResponseWrapper [224]
+ *     
+ *     WSDL ELEMENTS:
+ *         operation
+ *         
+ *  </pre>       
  */
-/*
-Java Name: Method name from SEI
 
-Axis2 Delegate: AxisOperation
-
-JSR-181 Annotations: 
-@WebMethod
-- operationName
-- action
-- exclude
-@Oneway So basically even if an operation has a return parameter it could be one way and in this case should we set the AxisOperatio mep to oneway?[NT]
-TBD
-
-WSDL Elements
-<portType  <operation
-
-JAX-WS Annotations
-@RequestWrapper
-- localName
-- targetNamespace
-- className
-@ResponseWrapper
-- localName
-- targetNamespace
-- className
-TBD
-
-Properties available to JAXWS runtime: 
-isWrapper()
-String getRequestWrapper JAXB Class
-String getResponseWrapper JAXB Class
-TBD
-
- */
 // TODO: Axis2 does not support overloaded operations, although EndpointInterfaceDescription.addOperation() does support overloading
 //       of methods represented by OperationDescription classes.  However, the AxisOperation contained in an OperationDescription
 //       does NOT support overloaded methods.
@@ -119,7 +108,7 @@ public class OperationDescription {
     private String              responseWrapperClassName;
     
     // ANNOTATION: @SOAPBinding
-    // Note this is the Method-level annotation.  See EndpointInterfaceDescription for the Method-level annotation
+    // Note this is the Method-level annotation.  See EndpointInterfaceDescription for the Type-level annotation
     // Also note this annotation is only allowed on methods if SOAPBinding.Style is DOCUMENT and if the method-level
     // annotation is absent, the behavior defined on the Type is used.
     // per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
@@ -158,15 +147,16 @@ public class OperationDescription {
     private String              webResultPartName;
     // Default value per JSR-181 MR Sec 4.5.1, pg 23
     public static final String  WebResult_TargetNamespace_DEFAULT = "";
-    // ANNOTATION @WebFault
-    private WebFault[]			webFaultAnnotations;
-    private String[]			webFaultNames;
-    private String[]			webExceptionNames;  // the fully-qualified names of declared exceptions with WebFault annotations
     private String              webResultTargetNamespace;
     // Default value per JSR-181 MR sec 4.5, pg 24
     public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
     private Boolean             webResultHeader;
-    
+
+    // ANNOTATION @WebFault
+    private WebFault[]          webFaultAnnotations;
+    private String[]            webFaultNames;
+    private String[]            webExceptionNames;  // the fully-qualified names of declared exceptions with WebFault annotations
+
     OperationDescription(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
         parentEndpointInterfaceDescription = parent;

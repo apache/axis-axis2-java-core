@@ -30,26 +30,33 @@ import javax.jws.soap.SOAPBinding;
 import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 
 /**
+ * A ParameterDescripton corresponds to parameter to a method on an SEI. That
+ * SEI could be explicit (i.e. WebService.endpointInterface=sei.class) or
+ * implicit (i.e. public methods on the service implementation are the contract
+ * and thus the implicit SEI).
  * 
- */
-/*
-Java Name: Parameter Name
-
-Java Signature Parameter Type:  Could be a holder class
-Java Signature ParameterHeldType if the Signature Parameter  Type is a holder class, then this is the held type
-
-Axis2 Delegate: TBD
-
-JSR-181 Annotations: 
-@WebParam(name, targetNamespace, mode, header, partName) [Input, Output]
-TBD
-
-WSDL Elements: TBD
-
-JAX-WS Annotations: TBD
-
-Properties available to JAXWS runtime: TBD
-
+ * ParameterDescriptons contain information that is only relevent for and
+ * SEI-based service, i.e. one that is invoked via specific methods. This class
+ * does not exist for Provider-based services (i.e. those that specify
+ * WebServiceProvider)
+ * 
+ * <pre>
+ *  <b>ParameternDescription details</b>
+ *  
+ *      CORRESPONDS TO:      A parameter to a method on an SEI (on both Client and Server)      
+ *          
+ *      AXIS2 DELEGATE:      None
+ *      
+ *      CHILDREN:            None
+ *      
+ *      ANNOTATIONS:
+ *          WebParam [181]
+ *      
+ *      WSDL ELEMENTS:
+ *          message parts
+ *          
+ * </pre>
+ * 
  */
 public class ParameterDescription {
     private OperationDescription parentOperationDescription;

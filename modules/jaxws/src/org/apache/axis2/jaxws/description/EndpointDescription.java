@@ -60,29 +60,27 @@ import org.apache.commons.logging.LogFactory;
  * Provider-based and SEI-based (aka Endpoint-based or Java-based) enpdoints.
  * SEI-based endpoints (whether they have an explicit or implcit SEI) will have
  * addtional metadata information in an EndpointInterfaceDescription class and
- * sub-hierachy; Provider-based endpoitns to not have such a hierachy.
- */
-
-/*
-Working-design information.
-
-Java Name: none [client]; Endpoint implementation class [server]
-
-Axis2 Delegate: AxisService
-
-JSR-181 Annotations: TBD
-
-WSDL Elements
-<port
-
-JAX-WS Annotations: 
-@ServiceMode (value) [Server, jaxws.Provider?]
-@WebServiceProvider(wsdllocation, serviceName, portName, targetNamespace) [Server, jaxws.Provider]
-@BindingType(value) [Server, endpoint impl]
-TBD
-
-Properties available to JAXWS runtime: TBD
-
+ * sub-hierachy; Provider-based endpoitns do not have such a hierachy.
+ * 
+ * <pre>
+ * <b>EndpointDescription details</b>
+ * 
+ *     CORRESPONDS TO:      The endpoint (both Client and Server)      
+ *         
+ *     AXIS2 DELEGATE:      AxisService
+ *     
+ *     CHILDREN:            0..1 EndpointInterfaceDescription
+ *     
+ *     ANNOTATIONS:
+ *         WebService [181]
+ *         WebServiceProvider [224]
+ *             ServicMode [224]
+ *         BindingType [224]   
+ *     
+ *     WSDL ELEMENTS:
+ *         port
+ *         
+ *  </pre>       
  */
 /*
  * TODO: EndpointDescription should be created via AxisService objects and not directly from WSDL
