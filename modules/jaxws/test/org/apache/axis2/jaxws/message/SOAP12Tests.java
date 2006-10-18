@@ -94,7 +94,7 @@ public class SOAP12Tests extends TestCase {
         
         // To check that the output is correct, get the String contents of the 
         // reader
-        Reader2Writer r2w = new Reader2Writer(om.getXMLStreamReaderWithoutCaching());
+        Reader2Writer r2w = new Reader2Writer(om.getXMLStreamReader());
         String newText = r2w.getAsString();
         System.out.println(newText);
         assertTrue(newText.contains(sampleText));

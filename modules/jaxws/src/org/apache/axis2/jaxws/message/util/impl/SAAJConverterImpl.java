@@ -94,7 +94,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 			// We don't know if there is a real OM tree or just a backing XMLStreamReader.
 			// The best way to walk the data is to get the XMLStreamReader and use this 
 			// to build the SOAPElements
-			XMLStreamReader reader = omEnvelope.getXMLStreamReaderWithoutCaching();
+			XMLStreamReader reader= omEnvelope.getXMLStreamReader();
 			
 			NameCreator nc = new NameCreator(soapEnvelope);
 			buildSOAPTree(nc, soapEnvelope, null, reader, false);

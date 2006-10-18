@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPBody;
@@ -264,7 +265,31 @@ class XMLSpineImpl implements XMLSpine {
 	}
 
 	public OMElement getAsOMElement() throws MessageException {
-		throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("NeverCalled", "XMLSpineImpl.getAsOMElement()"), null);
+	    if (headerBlocks != null) {        
+	        for (int i=0; i<headerBlocks.size(); i++) {                   
+	            Block b = (Block) headerBlocks.get(i);                   
+	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);                  
+	            root.getHeader().addChild(e);                   
+	        }               
+	        headerBlocks.clear();               
+	    }            
+	    if (bodyBlocks != null) {
+	        for (int i=0; i<bodyBlocks.size(); i++) {                   
+	            Block b = (Block) bodyBlocks.get(i);                  
+	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);                  
+	            root.getBody().addChild(e);                  
+	        }               
+	        bodyBlocks.clear();               
+	    }
+	    if (detailBlocks != null) {
+	        for (int i=0; i<detailBlocks.size(); i++) {                   
+	            Block b = (Block) detailBlocks.get(i);                  
+	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);                  
+	            root.getBody().getFault().getDetail().addChild(e);                  
+	        }               
+	        bodyBlocks.clear();  
+	    }
+	    return root;
 	}
 	
 	

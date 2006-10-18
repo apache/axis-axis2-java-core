@@ -16,17 +16,24 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
+import java.io.OutputStream;
+import java.io.Writer;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.MTOMXMLStreamWriter;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
@@ -191,6 +198,47 @@ public abstract class BlockImpl implements Block {
 		return newReader;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.apache.axiom.om.OMDataSource#getReader()
+	 */
+	public XMLStreamReader getReader() throws XMLStreamException {
+		try {
+			return getXMLStreamReader(true);
+		} catch (MessageException e) {
+			throw ExceptionFactory.makeMessageInternalException(null, e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axiom.om.OMDataSource#serialize(java.io.OutputStream, org.apache.axiom.om.OMOutputFormat)
+	 */
+	public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
+		MTOMXMLStreamWriter writer = new MTOMXMLStreamWriter(output, format);
+        serialize(writer);
+        writer.flush();	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axiom.om.OMDataSource#serialize(java.io.Writer, org.apache.axiom.om.OMOutputFormat)
+	 */
+	public void serialize(Writer writerTarget, OMOutputFormat format) throws XMLStreamException {
+		MTOMXMLStreamWriter writer = new MTOMXMLStreamWriter(StAXUtils.createXMLStreamWriter(writerTarget));
+        writer.setOutputFormat(format);
+        serialize(writer);
+        writer.flush();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.apache.axiom.om.OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
+	 */
+	public void serialize(XMLStreamWriter writer) throws XMLStreamException {
+		try {
+			outputTo(writer, true);
+		} catch (MessageException e) {
+			throw ExceptionFactory.makeMessageInternalException(null, e);
+		}
+	}
+
 	public OMElement getOMElement() throws XMLStreamException, MessageException {
 		OMElement newOMElement = null;
 		boolean consume =true;  // get the OM consumes the message

@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -143,18 +144,24 @@ public class MessageTests extends TestCase {
 		// Add the block to the message as normal body content.
 		m.setBodyBlock(0, block);
 		
-		// Assuming no handlers are installed, the next thing that will happen
-		// is a XMLStreamReader will be requested...to go to OM.   At this point the
-		// block should be consumed.
-		OMElement om = m.getAsOMElement();
-		
-		// The block should not be consumed yet...because the message has not been read
-		assertTrue(!block.isConsumed());
-		
-		// To check that the output is correct, get the String contents of the 
-		// reader
-		Reader2Writer r2w = new Reader2Writer(om.getXMLStreamReaderWithoutCaching());
-		String newText = r2w.getAsString();
+		// On an outbound flow, we need to convert the Message 
+        // to an OMElement, specifically an OM SOAPEnvelope, 
+        // so we can set it on the Axis2 MessageContext
+        org.apache.axiom.soap.SOAPEnvelope env = 
+            (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        
+        // PERFORMANCE CHECK:
+        // The element in the body should be an OMSourcedElement
+        OMElement o = env.getBody().getFirstElement();
+        assertTrue(o instanceof OMSourcedElementImpl);
+        assertTrue(((OMSourcedElementImpl)o).isExpanded() == false);
+        
+        // Serialize the Envelope using the same mechanism as the 
+        // HTTP client.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        env.serializeAndConsume(baos, new OMOutputFormat());
+        
+		String newText = baos.toString();
 		System.out.println(newText);
 		assertTrue(newText.contains(sampleText));
 		assertTrue(newText.contains("soap"));
@@ -200,17 +207,20 @@ public class MessageTests extends TestCase {
 		
 		// After the handler processing the message is obtained as an OM
 		OMElement om = m.getAsOMElement();
-		
+		        
+        // Serialize the Envelope using the same mechanism as the 
+        // HTTP client.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        om.serializeAndConsume(baos, new OMOutputFormat());
+        
 		// To check that the output is correct, get the String contents of the 
 		// reader
-		Reader2Writer r2w = new Reader2Writer(om.getXMLStreamReaderWithoutCaching());
-		String newText = r2w.getAsString();
+        String newText = baos.toString();
 		System.out.println(newText);
 		assertTrue(newText.contains(sampleText));
 		assertTrue(newText.contains("soap"));
 		assertTrue(newText.contains("Envelope"));
 		assertTrue(newText.contains("Body"));
-		
 		
 	}
 	
@@ -446,6 +456,65 @@ public class MessageTests extends TestCase {
         // so we can set it on the Axis2 MessageContext
         org.apache.axiom.soap.SOAPEnvelope env = 
             (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        
+        // Serialize the Envelope using the same mechanism as the 
+        // HTTP client.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        env.serializeAndConsume(baos, new OMOutputFormat());
+        
+        // To check that the output is correct, get the String contents of the 
+        // reader
+        String newText = baos.toString();
+        System.out.println(newText);
+        assertTrue(newText.contains(sampleJAXBText));
+        assertTrue(newText.contains("soap"));
+        assertTrue(newText.contains("Envelope"));
+        assertTrue(newText.contains("Body"));
+    }
+    
+    /**
+     * Same as JAXBOutputflow, but has an additional check
+     * to make sure that the JAXB serialization is deferrred
+     * until the actual serialization of the message.
+     * @throws Exception
+     */
+    public void testJAXBOutflowPerf() throws Exception {
+        // Create a SOAP 1.1 Message
+        MessageFactory mf = (MessageFactory)
+            FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.create(Protocol.soap11);
+        
+        // Get the BlockFactory
+        JAXBBlockFactory bf = (JAXBBlockFactory)
+            FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        
+        // Create the JAX-B object
+        ObjectFactory of = new ObjectFactory();
+        EchoStringResponse obj = of.createEchoStringResponse();
+        obj.setEchoStringReturn("sample return value");
+        
+        // Create the JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("test");
+        
+        
+        // Create a JAXBBlock using the Echo object as the content.  This simulates
+        // what occurs on the outbound JAX-WS Dispatch<Object> client
+        Block block = bf.createFrom(obj, jbc, null);
+        
+        // Add the block to the message as normal body content.
+        m.setBodyBlock(0, block);
+        
+        // On an outbound flow, we need to convert the Message 
+        // to an OMElement, specifically an OM SOAPEnvelope, 
+        // so we can set it on the Axis2 MessageContext
+        org.apache.axiom.soap.SOAPEnvelope env = 
+            (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        
+        // PERFORMANCE CHECK:
+        // The element in the body should be an OMSourcedElement
+        OMElement o = env.getBody().getFirstElement();
+        assertTrue(o instanceof OMSourcedElementImpl);
+        assertTrue(((OMSourcedElementImpl)o).isExpanded() == false);
         
         // Serialize the Envelope using the same mechanism as the 
         // HTTP client.

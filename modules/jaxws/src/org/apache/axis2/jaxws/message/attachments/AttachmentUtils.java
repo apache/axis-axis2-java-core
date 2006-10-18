@@ -45,7 +45,7 @@ public class AttachmentUtils {
      * @param env
      * @return
      */
-    public static ArrayList<OMElement> findXopElements(SOAPEnvelope env) {
+    public static ArrayList<OMElement> findXopElements(OMElement env) {
         ArrayList<OMElement> xops = new ArrayList<OMElement>();
         findXopElements(env, xops);
         return xops;

@@ -87,13 +87,8 @@ public class XMLPartImpl extends  XMLPartBase {
 
 	@Override
 	protected OMElement _convertSpine2OM(XMLSpine spine) throws MessageException {
-		// Get an XMLStreamReader that consumes the spine object
-		XMLStreamReader reader = spine.getXMLStreamReader(true);
-		// Get a SOAP OM Builder.  Passing null causes the version to be automatically triggered
-		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);  
-		// Create and return the OM Envelope
-		org.apache.axiom.soap.SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
-        
+		
+		OMElement omEnvelope = spine.getAsOMElement();
         // If we have MTOM attachments, we need to replace the <xop:include>
         // elements with OMText binary nodes.
         Message msg = getParent();

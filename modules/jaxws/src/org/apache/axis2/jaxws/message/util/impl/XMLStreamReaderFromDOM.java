@@ -88,7 +88,7 @@ public class XMLStreamReaderFromDOM implements XMLStreamReader {
 	 */
 	public int next() throws XMLStreamException {
 		if (!hasNext()) {
-			throw new XMLStreamException(Messages.getMessage("XMLSRErr"));
+			throw new XMLStreamException(Messages.getMessage("XMLSRErr2"));
 		}
 		getNext();
 		cursor = nextCursor;

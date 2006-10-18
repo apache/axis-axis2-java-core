@@ -33,6 +33,7 @@ import javax.xml.ws.Response;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
@@ -119,19 +120,14 @@ public class AxisInvocationController extends InvocationController {
         
         MessageContext response = null;
         
-        try
-        {
-          //This assumes that we are on the ultimate execution thread
-          ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-          opClient.execute(true);
-        } catch (AxisFault axisFault) {
-        	// TODO MIKE revisit?
-               	// do nothing here.  The exception we get is from the endpoint,
-               	// and will be sitting on the message context.  We need to save it
-               	// to process it through jaxws
+        try {
+            execute(opClient, true, axisRequestMsgCtx);
+        } catch(AxisFault af) {
+            // TODO MIKE revisit?
+            // do nothing here.  The exception we get is from the endpoint,
+            // and will be sitting on the message context.  We need to save it
+            // to process it through jaxws
         }
-
-        ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
         
         try {
             // Collect the response MessageContext and envelope
@@ -176,20 +172,15 @@ public class AxisInvocationController extends InvocationController {
         
         org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
 
-        //This assumes that we are on the ultimate execution thread
-        try
-        {
-          ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-          opClient.execute(true);
-        } catch (AxisFault axisFault) {
-         	// TODO MIKE revisit?
-               	// do nothing here.  The exception we get is from the endpoint,
-               	// and will be sitting on the message context.  We need to save it
-             	// to process it through jaxws
-         }
-
-        ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-        
+        try {
+            execute(opClient, true, axisRequestMsgCtx);
+        } catch(AxisFault af) {
+            // TODO MIKE revisit?
+            // do nothing here.  The exception we get is from the endpoint,
+            // and will be sitting on the message context.  We need to save it
+            // to process it through jaxws
+        }
+                
         return;
     }
     
@@ -268,19 +259,16 @@ public class AxisInvocationController extends InvocationController {
         }
 
         opClient.setCallback(axisCallback);
-        try
-        {
-          ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-          opClient.execute(false);
-          } catch (AxisFault axisFault) {
-               	// TODO MIKE revisit?
-               	// do nothing here.  The exception we get is from the endpoint,
-               	// and will be sitting on the message context.  We need to save it
-               	// to process it through jaxws
-          }
-
-        ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-
+        
+        try {
+            execute(opClient, false, axisRequestMsgCtx);
+        } catch(AxisFault af) {
+            // TODO MIKE revisit?
+            // do nothing here.  The exception we get is from the endpoint,
+            // and will be sitting on the message context.  We need to save it
+            // to process it through jaxws
+        }
+        
         // Now that the request has been sent, start the listener thread so that it can
         // catch the async response.
         // TODO: Need to determine whether this should be done BEFORE or AFTER
@@ -579,5 +567,88 @@ public class AxisInvocationController extends InvocationController {
         else 
             operationName = defaultOpName;
         return operationName;
+    }
+    
+    /**
+     * Executes the OperationClient
+     * @param opClient - Fully configured OperationClient
+     * @param block - Indicates if blocking or non-blocking execute
+     * @param msgContext - Axis2 MessageContext
+     * @throws AxisFault - All exceptions are returned as AxisFaults
+     */
+    private void execute(OperationClient opClient, 
+            boolean block, 
+            org.apache.axis2.context.MessageContext msgContext) throws AxisFault {
+        try {
+            // Pre-Execute logging and setup
+            preExecute(opClient, block, msgContext);
+            
+            // Invoke the OperationClient
+            opClient.execute(block);
+        } catch (Exception e) {
+            // Catch all exceptions (including runtime exceptions) and
+            // throw as AxisFault.
+            throw AxisFault.makeFault(e);
+        } finally {
+            // Post-Execute logging and setup
+            postExecute(opClient, block, msgContext);
+        }
+    }
+    
+    /**
+     * Called by execute(OperationClient) to perform pre-execute
+     * tasks.
+     * @param opClient
+     * @param block - Indicates if blocking or non-blocking execute
+     * @param msgContext - Axis2 MessageContext
+     */
+    private void preExecute(OperationClient opClient, 
+            boolean block,
+            org.apache.axis2.context.MessageContext msgContext) throws AxisFault{
+        // This assumes that we are on the ultimate execution thread
+        ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, msgContext);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Start OperationClient.execute(" + block + ")");
+        }
+    }
+    
+    /**
+     * Called by execute(OperationClient) to perform post-execute
+     * tasks.  Should be a mirror of preExecute
+     * @param opClient
+     * @param block - Indicates if blocking or non-blocking execute
+     * @param msgContext - Axis2 MessageContext
+     */
+    private void postExecute(OperationClient opClient, 
+            boolean block,
+            org.apache.axis2.context.MessageContext msgContext) {
+        if (log.isDebugEnabled()) {
+            log.debug("End OperationClient.execute(" + block + ")");
+        }
+        
+        /* TODO Currently this check causes SOAPMessageProviderTests to fail.
+        if (log.isDebugEnabled()) {
+            // Check for exploded OMSourcedElement
+            OMElement bodyElement = null;
+            if (msgContext.getEnvelope() != null &&
+                msgContext.getEnvelope().getBody() != null) {
+                bodyElement = msgContext.getEnvelope().getBody().getFirstElement();     
+            }
+            
+            boolean expanded = false;
+            if (bodyElement != null && bodyElement instanceof OMSourcedElementImpl) {
+                expanded = ((OMSourcedElementImpl)bodyElement).isExpanded();
+            }
+            // An exploded xml block may indicate a performance problem.  
+            // In general an xml block should remain unexploded unless there is an
+            // outbound handler that touches the block.
+            if (expanded) {
+                log.debug("Developer Debug: Found an expanded xml block:" + bodyElement.getNamespace());
+            }
+        }
+        */
+        // Cleanup context
+        ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID,  msgContext);
     }
 }

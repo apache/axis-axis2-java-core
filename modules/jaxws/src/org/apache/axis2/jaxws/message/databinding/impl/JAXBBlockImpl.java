@@ -139,6 +139,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 			// Use the marshaller to write the object.  
 			JAXBContext jc = (JAXBContext) busContext;
 			Marshaller m = jc.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             
 			// If MTOM is enabled, add in the AttachmentMarshaller.
             if (isMTOMEnabled()) {
@@ -151,8 +152,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 JAXBAttachmentMarshaller am = new JAXBAttachmentMarshaller();
                 am.setMessage(msg);
                 m.setAttachmentMarshaller(am);
-            }
-                        
+            }   
             m.marshal(busObject, writer);
 		} catch(JAXBException je) {
 			// TODO NLS

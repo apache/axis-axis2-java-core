@@ -21,6 +21,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
@@ -45,7 +46,7 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
  * (i.e. the implementation does not need to cache the information)
  *
  */
-public interface Block {
+public interface Block extends OMDataSource {
 
 	/**
 	 * Get a reference to the Business Object represented by this Block

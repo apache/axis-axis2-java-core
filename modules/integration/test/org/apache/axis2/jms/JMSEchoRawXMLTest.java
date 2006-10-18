@@ -77,7 +77,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
+    protected void _setUp() throws Exception {
         // Start ActiveMQ embedded broker
         broker.setUseJmx(false);
         broker.addConnector("tcp://localhost:61616");
@@ -101,7 +101,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         configContext = UtilServer.createClientConfigurationContext();
     }
 
-    protected void tearDown() throws Exception {
+    protected void _tearDown() throws Exception {
         UtilsJMSServer.stop();
         broker.stop();
     }
@@ -118,7 +118,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         return method;
     }
 
-    public void testEchoXMLASync() throws Exception {
+    public void _testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
         Options options = new Options();
         options.setTo(targetEPR);
@@ -159,7 +159,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         }
     }
 
-    public void testEchoXMLSync() throws Exception {
+    public void _testEchoXMLSync() throws Exception {
         OMElement payload = createPayload();
         Options options = new Options();
         options.setTo(targetEPR);
@@ -176,7 +176,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     }
 
-    public void testEchoXMLCompleteSync() throws Exception {
+    public void _testEchoXMLCompleteSync() throws Exception {
         ConfigurationContext configContext = UtilServer.createClientConfigurationContext("target/test-resources/jms-enabled-client-repository");
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -203,7 +203,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     }
     
-    public void testEchoXMLSyncMC() throws Exception {
+    public void _testEchoXMLSyncMC() throws Exception {
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY, Constants.TESTING_REPOSITORY + "/conf/axis2.xml");
 
