@@ -64,7 +64,9 @@ public class InvocationContextImpl implements InvocationContext {
      */
     public void setRequestMessageContext(MessageContext ctx) {
         requestMsgCtx = ctx;
-        requestMsgCtx.setInvocationContext(this);
+        if (ctx != null) {
+            requestMsgCtx.setInvocationContext(this);
+        }
     }
 
     /**
@@ -72,7 +74,9 @@ public class InvocationContextImpl implements InvocationContext {
      */
     public void setResponseMessageContext(MessageContext ctx) {
         responseMsgCtx = ctx;
-        responseMsgCtx.setInvocationContext(this);
+        if (ctx != null) {
+            responseMsgCtx.setInvocationContext(this);    
+        }
     }
 
     /**

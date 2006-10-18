@@ -125,6 +125,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         mc.setOperationDescription(operationDesc);
         methodMarshaller = null;
     }
+
     /*
      * Gets the OperationDescription associated with the request that is currently
      * being processed.
@@ -132,19 +133,17 @@ public class JavaBeanDispatcher extends JavaDispatcher {
      *  Note that this is not done in the EndpointController since operations are only relevant
      *  to Endpoint-based implementation (i.e. not to Proxy-based ones)s
      */
-
     private OperationDescription getOperationDescription(MessageContext mc) {
-    	
-        ServiceDescription sd = mc.getServiceDescription();
+    	ServiceDescription sd = mc.getServiceDescription();
         EndpointDescription[] eds = sd.getEndpointDescriptions();
         EndpointDescription ed = eds[0];
         EndpointInterfaceDescription eid = ed.getEndpointInterfaceDescription();
         
         OperationDescription[] ops = eid.getOperation(mc.getOperationName());
         String methodName = mc.getOperationName().getLocalPart();
-        for(OperationDescription op:ops){
+        for (OperationDescription op:ops) {
         	Method method = op.getSEIMethod();
-        	if(method.getName().equals(methodName)){
+        	if (method.getName().equals(methodName)) {
         		if (log.isDebugEnabled()) {
                     log.debug("wsdl operation: " + op.getName());
                     log.debug("   java method: " + op.getJavaMethodName());
@@ -161,7 +160,6 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         }
         
         return op;        
-        
     }
     
     private ServiceDescription getServiceDescription(MessageContext mc){

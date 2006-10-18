@@ -29,6 +29,7 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
@@ -43,6 +44,7 @@ import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -154,13 +156,17 @@ public class ProviderDispatcher extends JavaDispatcher{
             throw ExceptionFactory.makeWebServiceException(e);
         }
 
-        // Create the response MessageContext from the returned value
-        Message responseMsg = createMessageFromValue(responseParamValue);
-        MessageContext responseMsgCtx = MessageContextUtils.
-            createMessageMessageContext(mc);
-        
-        responseMsgCtx.setMessage(responseMsg);
-        
+        // If we have a one-way operation, then we cannot create a MessageContext 
+        // for the response.  
+        MessageContext responseMsgCtx = null;
+        if (!isOneWay(mc.getAxisMessageContext())) {
+            Message responseMsg = createMessageFromValue(responseParamValue);
+            responseMsgCtx = MessageContextUtils.
+                createMessageMessageContext(mc);
+            
+            responseMsgCtx.setMessage(responseMsg);            
+        }
+                
         return responseMsgCtx;        
     }
 	
@@ -351,5 +357,22 @@ public class ProviderDispatcher extends JavaDispatcher{
         
         return blockFactory;
     }
-
+    
+    /*
+     * Determine if this is a one-way invocation or not.
+     */
+    private boolean isOneWay(org.apache.axis2.context.MessageContext mc) {
+        if (mc != null) {
+            AxisOperation op = mc.getAxisOperation();
+            String mep = op.getMessageExchangePattern();
+            
+            if (mep.equals(WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY) || 
+                mep.equals(WSDL20_2004Constants.MEP_URI_IN_ONLY) || 
+                mep.equals(WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY) || 
+                mep.equals(WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
