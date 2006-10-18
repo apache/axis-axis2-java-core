@@ -1765,7 +1765,14 @@
                                     <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
                                     <xsl:choose>
                                         <xsl:when test="@ours">
-                                            <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                             <xsl:if test="@nillable">
+                                              if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                  <xsl:value-of select="$listName"/>.add(null);
+                                                  reader.next();
+                                              } else {
+                                            </xsl:if>
+                                                <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                            <xsl:if test="@nillable">}</xsl:if>
                                             //loop until we find a start element that is not part of this array
                                             boolean <xsl:value-of select="$loopBoolName"/> = false;
                                             while(!<xsl:value-of select="$loopBoolName"/>){
@@ -1782,7 +1789,14 @@
                                                     <xsl:value-of select="$loopBoolName"/> = true;
                                                 } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
+                                                        <xsl:if test="@nillable">
+                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                              <xsl:value-of select="$listName"/>.add(null);
+                                                              reader.next();
+                                                          } else {
+                                                        </xsl:if>
                                                         <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$basePropertyType"/>.Factory.parse(reader));
+                                                        <xsl:if test="@nillable">}</xsl:if>
                                                     }else{
                                                         <xsl:value-of select="$loopBoolName"/> = true;
                                                     }
@@ -1884,7 +1898,14 @@
                                         </xsl:when>
                                         <!-- End of Array handling of default class - that is the OMElement -->
                                         <xsl:otherwise>
+                                             <xsl:if test="@nillable">
+                                              if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                  <xsl:value-of select="$listName"/>.add(null);
+                                                  reader.next();
+                                              } else {
+                                            </xsl:if>
                                             <xsl:value-of select="$listName"/>.add(reader.getElementText());
+                                            <xsl:if test="@nillable">}</xsl:if>
                                             //loop until we find a start element that is not part of this array
                                             boolean <xsl:value-of select="$loopBoolName"/> = false;
                                             while(!<xsl:value-of select="$loopBoolName"/>){
@@ -1902,7 +1923,14 @@
                                                     <xsl:value-of select="$loopBoolName"/> = true;
                                                 } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
+                                                         <xsl:if test="@nillable">
+                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                              <xsl:value-of select="$listName"/>.add(null);
+                                                              reader.next();
+                                                          } else {
+                                                        </xsl:if>
                                                         <xsl:value-of select="$listName"/>.add(reader.getElementText());
+                                                        <xsl:if test="@nillable">}</xsl:if>
                                                     }else{
                                                         <xsl:value-of select="$loopBoolName"/> = true;
                                                     }
@@ -1919,10 +1947,17 @@
                                     </xsl:choose>
                                 </xsl:when>
                                 <xsl:when test="@ours">
-                                    object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(reader));
+                                    <xsl:if test="@nillable">
+                                      if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                          object.set<xsl:value-of select="$javaName"/>(null);
+                                          reader.next();
+                                      }else{
+                                    </xsl:if>
+                                        object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(reader));
                                     <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                         reader.next();
                                     </xsl:if>
+                                    <xsl:if test="@nillable">}</xsl:if>
                                 </xsl:when>
                                 <!-- start of any handling. Any can also be @default so we need to handle the any case before default! -->
                                 <xsl:when test="@any">
