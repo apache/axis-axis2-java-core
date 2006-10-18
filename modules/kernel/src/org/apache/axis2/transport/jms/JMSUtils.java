@@ -15,14 +15,15 @@
 */
 package org.apache.axis2.transport.jms;
 
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.*;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
@@ -30,6 +31,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -42,6 +44,9 @@ import javax.jms.Message;
 import javax.jms.TextMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.namespace.QName;
+import javax.activation.DataHandler;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -357,21 +362,59 @@ public class JMSUtils {
                 if (builder.getDocumentElement() instanceof SOAPEnvelope) {
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
                 } else {
+                    // this is POX ... mark MC as REST
+                    msgContext.setDoingREST(true);
                     envelope = soapFactory.getDefaultEnvelope();
                     envelope.getBody().addChild(builder.getDocumentElement());
                 }
             } catch (OMException e) {
-                handleException("Unsupported JMS Message format : " + message.getClass(), e);                
-                /*if (message instanceof TextMessage) {
+                log.debug("Non SOAP/XML JMS message received");
 
-                } else if (message instanceof BytesMessage) {
+                Parameter operationParam = msgContext.getAxisService().
+                    getParameter(JMSConstants.OPERATION_PARAM);
+                QName operationQName = (operationParam != null ?
+                    (QName) operationParam.getValue() : JMSConstants.DEFAULT_OPERATION);
 
+                AxisOperation operation = msgContext.getAxisService().getOperation(operationQName);
+                if (operation != null) {
+                    msgContext.setAxisOperation(operation);
                 } else {
-                    log.error("Unsupported JMS Message format : " + message.getJMSType());
+                    handleException("Cannot find operation : " + operationQName + " on the service "
+                        + msgContext.getAxisService());
                 }
-                log.debug("Non SOAP/XML message received");
-                envelope = soapFactory.getDefaultEnvelope();
-                envelope.getBody().addChild(soapFactory.createOMText(null, true));*/
+
+
+                Parameter wrapperParam = msgContext.getAxisService().
+                    getParameter(JMSConstants.WRAPPER_PARAM);
+                QName wrapperQName = (wrapperParam != null ?
+                    (QName) wrapperParam.getValue() : JMSConstants.DEFAULT_WRAPPER);
+
+                OMElement wrapper = soapFactory.createOMElement(wrapperQName, null);
+
+                try {
+                    if (message instanceof TextMessage) {
+                        OMTextImpl textData = (OMTextImpl) soapFactory.createOMText(
+                            ((TextMessage) message).getText());
+                        textData.setType(XMLStreamConstants.CDATA);
+                        wrapper.addChild(textData);
+                    } else if (message instanceof BytesMessage) {
+                        BytesMessage bm = (BytesMessage) message;
+                        byte[] msgBytes = new byte[(int) bm.getBodyLength()];
+                        ((BytesMessage) message).readBytes(msgBytes);
+                        DataHandler dataHandler = new DataHandler(
+                            new ByteArrayDataSource(msgBytes));
+                        OMText textData = soapFactory.createOMText(dataHandler, true);
+                        wrapper.addChild(textData);
+                        msgContext.setDoingMTOM(true);
+                    } else {
+                        handleException("Unsupported JMS Message format : " + message.getJMSType());
+                    }
+                    envelope = soapFactory.getDefaultEnvelope();
+                    envelope.getBody().addChild(wrapper);
+
+                } catch (JMSException j) {
+                    handleException("Error wrapping JMS message into a SOAP envelope ", j);
+                }
             }
         }
 
