@@ -192,7 +192,7 @@
                                     <xsl:when test="@ours">
                                        AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(ret_val<xsl:value-of select="$position"/>, env, NULL );
                                     </xsl:when>
-                                    <xsl:otherwise>ret_val;</xsl:otherwise>
+                                    <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
                                     </xsl:choose>
                               return ret_node;
                            </xsl:for-each>
