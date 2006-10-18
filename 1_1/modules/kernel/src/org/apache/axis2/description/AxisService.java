@@ -43,6 +43,8 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.apache.ws.commons.schema.utils.NamespacePrefixList;
+import org.apache.ws.commons.schema.utils.NodeNamespaceContext;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
@@ -528,7 +530,14 @@ public class AxisService extends AxisDescription {
 
     private XmlSchema addNameSpaces(int i) {
         XmlSchema schema = (XmlSchema) schemaList.get(i);
-        schema.setNamespaceContext(nameSpacesMap);
+        NamespaceMap map = (NamespaceMap) nameSpacesMap.clone();
+        NamespacePrefixList namespaceContext = schema.getNamespaceContext();
+        String prefixes[] = namespaceContext.getDeclaredPrefixes();
+        for (int j = 0; j < prefixes.length; j++) {
+            String prefix = prefixes[j];
+            map.add(prefix, namespaceContext.getNamespaceURI(prefix));
+        }
+        schema.setNamespaceContext(map);
         return schema;
     }
 
@@ -957,7 +966,6 @@ public class AxisService extends AxisDescription {
                 addSchemaNameSpace(schema.getTargetNamespace());
             }
         }
-
     }
 
     public void addSchema(Collection schemas) {
