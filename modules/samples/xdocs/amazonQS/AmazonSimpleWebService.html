@@ -19,7 +19,7 @@
 <p>  The users who need to get the web services out of this queue need to be registered with the amazon.com, as a developer. (For this particular example a key has been obtained from Amazon and via property file it has called to OMElement). Once being registered, a subscription Id will be given. This key has to be used with your code to get the required web services. 
 
 
- The key that is being obtained, should be incorporated to the key.properties file, which is located at ${user.dir}\modules\samples\properties</p>
+ The key that is being obtained, should be incorporated to the key.properties file, which is located at ${AXIS2_HOME}\samples\amazonQS\src\sample\amazon\common\conf</p>
 <p>  Registration can be done at <a href="http://www.amazon.com/gp/aws/registration/registration-form.html" target="_blank">http://www.amazon.com/gp/aws/registration/registration-form.html</a></p>
 <p>  There are seven services available for this queue from Amazon. Create Queue, Configure Queue, List My Queues, En-queue, Read and De-queue. For this example Create Queue, En-queue, Read and List My Queues have been implemented. </p>
 <p>  En-queue operation has not been implemented. This operation has left out for users to implement. It is expected that once the user has implemented this operation, the fundamental perspective of the Axis2-M2 over Web Services is dealt with perfectly.</p>
@@ -50,8 +50,8 @@
 All the web services are available as rpc-literal encoded style. Thus, OMElemnts adheres to this requirement.</p>
 <p class="style3">Running the Samples</p>
 <ol>
-  <li> <em>IN operations </em>&ndash; Go to ${user.dir}/modules/samples and type &ldquo;ant amazonIn&rdquo;</li>
-  <li> <em>OUT operations</em> &ndash; Go to ${user.dir}/modules/samples and type &ldquo;ant amazonOut&rdquo;</li>
+  <li> <em>IN operations </em>&ndash; Go to ${AXIS2_HOME}/samples/amazonQS and type &ldquo;ant cq&rdquo;</li>
+  <li> <em>OUT operations</em> &ndash; Go to ${AXIS2_HOME}/samples/amazonQS and type &ldquo;ant rq&rdquo;</li>
 </ol>
 <p>GUI for IN operations is popped by Running RunGUICQ class and OUT operations is popped by running RunGUIRQ class.</p>
 <p class="style3">  Handling the GUI Components</p>
