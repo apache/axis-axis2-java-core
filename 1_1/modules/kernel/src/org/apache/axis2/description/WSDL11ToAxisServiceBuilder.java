@@ -1,5 +1,4 @@
 package org.apache.axis2.description;
-
 import com.ibm.wsdl.extensions.soap.SOAPConstants;
 import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.AxisFault;
@@ -22,12 +21,35 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingFault;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Fault;
+import javax.wsdl.Import;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.Types;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.soap.*;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPHeader;
+import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.soap12.SOAP12Body;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
@@ -35,7 +57,13 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -396,9 +424,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     return port;
                 }
 
-                if (extElement instanceof UnknownExtensibilityElement) {
-                    // todo check for a SOAP 1.2 address
-                    // extensibility element here
+                if (extElement instanceof SOAP12Address) {
+                    // SOAP 1.2 address found - return that port and we are done
+                    return port;
                 }
 
             }
@@ -604,12 +632,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         }
                     }
                 }
-
-//                break;
-
-            } else if (extElement instanceof UnknownExtensibilityElement) {
-                if (WSDLConstants.WSDL11Constants.SOAP_12_BODY
-                        .equals(extElement.getElementType())) {
+            } else if (extElement instanceof SOAP12Body) {
+                SOAP12Body soapBody = (SOAP12Body) extElement;
+                List bindingPartsList = soapBody.getParts();
+                if (bindingPartsList != null && !bindingPartsList.isEmpty()) {
+                    // we can process a single part only
+                    processPartsList(bindingPartsList, wsdl4jMessage, inMessage);
+                    // there are no parts named in the binding - process the
+                    // items normally
+                    // by looking at the single message part - or the wrapped
+                    // items if wrapped by us
+                } else {
+                    // for the wrapped types we need to find this from the
+                    // wrapper schema map
                     if (isWrapped) {
                         // The schema for this should be already made ! Find the
                         // QName from
@@ -617,8 +652,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         inMessage
                                 .setElementQName((QName) resolvedRpcWrappedElementMap
                                         .get(wsdl4jOperation.getName()));
-
-                    } else {
+                    } else if (wsdl4jMessage != null) {
                         // pick the first part from the list and take that as
                         // the relevant part
                         // it is somewhat questionnable whether the first part
@@ -635,8 +669,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         }
                     }
                 }
-                // todo - add the code here to process the SOAP 1.2 body
-//                break;
             }
         }
 
@@ -1454,7 +1486,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param wsdl4JDefinition
      */
     private void processImports(Definition wsdl4JDefinition,
-            List processedSchemaNamespaces) {
+            List processedDocuments) {
         Map wsdlImports = wsdl4JDefinition.getImports();
 
         if (null != wsdlImports && !wsdlImports.isEmpty()) {
@@ -1469,26 +1501,28 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         Definition importedDef = wsdlImport.getDefinition();
 
                         if (importedDef != null) {
-                            // stop recursive imports!
-                            if (processedSchemaNamespaces.contains(importedDef
-                                    .getTargetNamespace())) {
-                                return;
-                            } else {
-                                processedSchemaNamespaces.add(importedDef
-                                        .getTargetNamespace());
+                            String key = importedDef.getDocumentBaseURI();
+                            if (key == null) {
+                                key = importedDef.getTargetNamespace();
                             }
-                            processImports(importedDef,
-                                    processedSchemaNamespaces);
+                            // stop recursive imports!
+                            if (processedDocuments.contains(key)) {
+                                return;
+                            }
+                            processedDocuments.add(key);
+
+                           processImports(importedDef,
+                                    processedDocuments);
 
                             // copy ns
                             Map namespaces = importedDef.getNamespaces();
                             Iterator keys = namespaces.keySet().iterator();
                             while (keys.hasNext()) {
-                                Object key = keys.next();
+                                Object key2 = keys.next();
                                 if (!wsdl4jDefinition.getNamespaces()
-                                        .containsValue(namespaces.get(key))) {
-                                    wsdl4jDefinition.getNamespaces().put(key,
-                                            namespaces.get(key));
+                                        .containsValue(namespaces.get(key2))) {
+                                    wsdl4jDefinition.getNamespaces().put(key2,
+                                            namespaces.get(key2));
                                 }
                             }
 
