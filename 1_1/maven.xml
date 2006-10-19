@@ -698,11 +698,7 @@
             </ant:fileset>
         </ant:copy>
     	
-    	<!-- copy the build-war.xml  -->
-    	<!--ant:copy toDir="${std.bin.temp.dir}/webapp">
-    	    <ant:include name="modules/webapp/conf/build-war.xml"/>
-    	</ant:copy--> 
-    	
+
     	<!--********************** creating the lib ********************** -->
         <!-- Copy the 3rd party libs -->
         <ant:copy toDir="${std.bin.temp.dir}/lib">
@@ -750,10 +746,6 @@
 			</ant:copy>
 		</j:if>
 
-        <!-- Copy addressing mar to the classpath (Samples need this)>
-        <ant:copy toDir="${std.bin.temp.dir}/lib">
-            <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
-        </ant:copy-->
 
     	<!--********************** creating the samples ********************** -->
         <!-- TODO :Copy the samples.. after samples module refactoring -->
@@ -764,8 +756,18 @@
             <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
         </ant:copy>
         <ant:mkdir dir="${std.bin.temp.dir}/samples/FaultHandling" />
-        <ant:copy todir="${std.bin.temp.dir}/samples/FaultHandling">
-            <ant:fileset dir="modules/samples/FaultHandling"/>
+        <ant:copy todir="${std.bin.temp.dir}/samples/">
+            <ant:fileset dir="modules/samples/">
+                <ant:include name="yahoorestsearch"/>
+                <ant:include name="googlespellcheck"/>
+                <ant:include name="FaultHandling"/>
+                <ant:include name="mtomsample"/>
+                <ant:include name="version"/>
+                <ant:include name="jms"/>
+                <ant:include name="sessions"/>
+                <ant:include name="servicelifecycle"/>
+                <ant:include name="pojo"/>
+            </ant:fileset>
         </ant:copy>
 
         <ant:delete file="${std.bin.temp.dir}/samples/groovyService.aar"/>
