@@ -16,6 +16,7 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
@@ -85,6 +86,12 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 * generates an empty implementation of the service
 	 */
 	private Button serverSideCheckBoxButton;
+	
+	/**
+	 * Checkbox to enable client side code generation. If enabled,
+	 * generates an empty implementation of the service
+	 */
+	private Button clientSideCheckBoxButton;
 
 	/**
 	 * Checkbox to enable the generation of test case classes for the generated
@@ -331,9 +338,11 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		// URLProcessor
 		packageText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
+				handleCustomPackageNameModifyEvent();
 				settings.put(PREF_PACKAGE_NAME, packageText.getText());
 			}
 		});
+		
 		
 		// generate test case option
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -362,12 +371,32 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		fillLabel.setLayoutData(gd);
 
 		//cleint side label 
+//		gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.horizontalSpan = 3;
+//		Label lblClientside = new Label(container, SWT.NONE);
+//		lblClientside.setText(CodegenWizardPlugin
+//				.getResourceString("page2.clientside.caption"));
+//		lblClientside.setLayoutData(gd);
+		
+		//cleint side label 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
-		Label lblClientside = new Label(container, SWT.NONE);
-		lblClientside.setText(CodegenWizardPlugin
+		clientSideCheckBoxButton = new Button(container, SWT.CHECK);
+		clientSideCheckBoxButton.setLayoutData(gd);
+		clientSideCheckBoxButton.setText(CodegenWizardPlugin
 				.getResourceString("page2.clientside.caption"));
-		lblClientside.setLayoutData(gd);
+		clientSideCheckBoxButton.setSelection(settings
+				.getBoolean(PREF_CHECK_GENERATE_CLIENTSIDE));
+		clientSideCheckBoxButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				handleClientsideSelection();
+				settings.put(PREF_CHECK_GENERATE_CLIENTSIDE,
+						clientSideCheckBoxButton.getSelection());
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
 
 		//client side buttons
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -473,24 +502,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		// generate all
-		generateAllCheckBoxButton = new Button(container, SWT.CHECK);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		generateAllCheckBoxButton.setLayoutData(gd);
-		generateAllCheckBoxButton.setSelection(settings
-				.getBoolean(PREF_GEN_ALL));
-		generateAllCheckBoxButton.setText(CodegenWizardPlugin
-				.getResourceString("page2.genAll.caption"));
-		generateAllCheckBoxButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				settings.put(PREF_GEN_ALL, generateAllCheckBoxButton
-						.getSelection());
-			}
 
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
 
 		//the server side interface option
 		generateServerSideInterfaceCheckBoxButton = new Button(container, SWT.CHECK);
@@ -517,6 +529,32 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		gd.horizontalSpan = 3;
 		Label fillLabel2 = new Label(container, SWT.HORIZONTAL | SWT.SEPARATOR);
 		fillLabel2.setLayoutData(gd);
+		
+		// generate all
+		generateAllCheckBoxButton = new Button(container, SWT.CHECK);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		generateAllCheckBoxButton.setLayoutData(gd);
+		generateAllCheckBoxButton.setSelection(settings
+				.getBoolean(PREF_GEN_ALL));
+		generateAllCheckBoxButton.setText(CodegenWizardPlugin
+				.getResourceString("page2.genAll.caption"));
+		generateAllCheckBoxButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				settings.put(PREF_GEN_ALL, generateAllCheckBoxButton
+						.getSelection());
+				handleGenerateAllSelection();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		//filling label 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		Label fillLabel3 = new Label(container, SWT.HORIZONTAL | SWT.SEPARATOR);
+		fillLabel3.setLayoutData(gd);
 
 		//		 Databinding
 		label = new Label(container, SWT.NULL);
@@ -677,6 +715,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 		try {
 			String lname = getCodegenWizard().getWSDLname();
 			if (!"".equals(lname.trim())) {
+				
 				reader.readWSDL(lname);
 
 				// enable the combo's
@@ -715,10 +754,15 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 				//populate the namespacess
 			    loadNamespaces(reader.getDefinitionNamespaceMap());
 			}
-		} catch (Exception e) {
+		} catch (WSDLException e) {
 			// disable the combo's
 			setComboBoxEnable(false);
-
+			updateStatus(CodegenWizardPlugin
+					.getResourceString("page2.wsdlInvalid.message"));
+		}
+		catch (Exception e) {
+			// disable the combo's
+			setComboBoxEnable(false);
 			updateStatus(CodegenWizardPlugin
 					.getResourceString("page2.wsdlNotFound.message"));
 		}
@@ -820,18 +864,122 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 */
 	private void handleServersideSelection() {
 		if (this.serverSideCheckBoxButton.getSelection()) {
+			settings.put(PREF_CHECK_GENERATE_SERVERSIDE, serverSideCheckBoxButton
+					.getSelection());
 			this.serverXMLCheckBoxButton.setEnabled(true);
-			this.generateAllCheckBoxButton.setEnabled(true);
+			//this.generateAllCheckBoxButton.setEnabled(true);
 			this.generateServerSideInterfaceCheckBoxButton.setEnabled(true);
-		} else {
-			//added this to increase the UI features (this will deselct all the selected features)
-			this.serverXMLCheckBoxButton.setSelection(false);
-			this.generateAllCheckBoxButton.setSelection(false);
-			this.generateServerSideInterfaceCheckBoxButton.setSelection(false);
+			if(clientSideCheckBoxButton.getSelection()==true 
+					|| generateAllCheckBoxButton.getSelection() == true){
+				uncheckClientSide();
+				uncheckGenerateAll();
+				serverSideCheckBoxButton.setSelection(true);
+				settings.put(PREF_CHECK_GENERATE_SERVERSIDE, serverSideCheckBoxButton
+						.getSelection());
+			}
+			this.syncAndAsyncRadioButton.setSelection(false);
+			this.asyncOnlyRadioButton.setSelection(false);
+			this.syncOnlyRadioButton.setSelection(false);
 			//earlier existing code (This only set focus false)
+			this.syncAndAsyncRadioButton.setEnabled(false);
+			this.asyncOnlyRadioButton.setEnabled(false);
+			this.syncOnlyRadioButton.setEnabled(false);
+			this.testCaseCheckBoxButton.setEnabled(false);
+			this.testCaseCheckBoxButton.setSelection(false);
+
+		} 
+			else {
+//			//added this to increase the UI features (this will deselct all the selected features)
+//			this.serverXMLCheckBoxButton.setSelection(false);
+//			//this.generateAllCheckBoxButton.setSelection(false);
+//			this.generateServerSideInterfaceCheckBoxButton.setSelection(false);
+//			//earlier existing code (This only set focus false)
+//			this.serverXMLCheckBoxButton.setEnabled(false);
+//			//this.generateAllCheckBoxButton.setEnabled(false);
+//			this.generateServerSideInterfaceCheckBoxButton.setEnabled(false);
+			if(clientSideCheckBoxButton.getSelection()==false 
+					&& generateAllCheckBoxButton.getSelection() == false){
+				serverSideCheckBoxButton.setSelection(true);
+				settings.put(PREF_CHECK_GENERATE_SERVERSIDE, serverSideCheckBoxButton
+						.getSelection());
+			}
+		}
+	}
+	
+	/**
+	 * Validates the status of the client-side checkbox, and enables/disables
+	 * the generation checkbox for XML configuration file
+	 */
+	private void handleClientsideSelection() {
+		if (this.clientSideCheckBoxButton.getSelection()) {
+			this.syncAndAsyncRadioButton.setSelection(true);
+			this.syncAndAsyncRadioButton.setEnabled(true);
+			this.asyncOnlyRadioButton.setEnabled(true);
+			this.syncOnlyRadioButton.setEnabled(true);
+			if(serverSideCheckBoxButton.getSelection()==true 
+					|| generateAllCheckBoxButton.getSelection() == true){
+				clientSideCheckBoxButton.setSelection(true);
+				settings.put(PREF_CHECK_GENERATE_CLIENTSIDE, clientSideCheckBoxButton
+						.getSelection());
+				uncheckServerSide();
+				uncheckGenerateAll();
+			}
 			this.serverXMLCheckBoxButton.setEnabled(false);
-			this.generateAllCheckBoxButton.setEnabled(false);
+			this.serverXMLCheckBoxButton.setSelection(false);
 			this.generateServerSideInterfaceCheckBoxButton.setEnabled(false);
+			this.generateServerSideInterfaceCheckBoxButton.setSelection(false);
+			this.testCaseCheckBoxButton.setEnabled(true);
+		}
+		else {
+			//added this to increase the UI features (this will deselct all the selected features)
+//			this.syncAndAsyncRadioButton.setSelection(false);
+//			this.asyncOnlyRadioButton.setSelection(false);
+//			this.syncOnlyRadioButton.setSelection(false);
+			//earlier existing code (This only set focus false)
+//			this.syncAndAsyncRadioButton.setEnabled(false);
+//			this.asyncOnlyRadioButton.setEnabled(false);
+//			this.syncOnlyRadioButton.setEnabled(false);
+			if(serverSideCheckBoxButton.getSelection()==false 
+					&& generateAllCheckBoxButton.getSelection() == false){
+				clientSideCheckBoxButton.setSelection(true);
+				settings.put(PREF_CHECK_GENERATE_CLIENTSIDE, clientSideCheckBoxButton
+						.getSelection());
+			}
+		}
+	}
+	
+	private void handleGenerateAllSelection() {
+		if (this.generateAllCheckBoxButton.getSelection()) {
+			settings.put(PREF_GEN_ALL, generateAllCheckBoxButton
+					.getSelection());
+			if(serverSideCheckBoxButton.getSelection()==true 
+					|| clientSideCheckBoxButton.getSelection() == true){
+				this.serverSideCheckBoxButton.setSelection(false);
+				settings.put(PREF_CHECK_GENERATE_SERVERSIDE, serverSideCheckBoxButton.getSelection());
+				uncheckServerSide();
+				uncheckClientSide();
+			}
+			this.syncAndAsyncRadioButton.setSelection(false);
+			this.asyncOnlyRadioButton.setSelection(false);
+			this.syncOnlyRadioButton.setSelection(false);
+			//earlier existing code (This only set focus false)
+			this.syncAndAsyncRadioButton.setEnabled(false);
+			this.asyncOnlyRadioButton.setEnabled(false);
+			this.syncOnlyRadioButton.setEnabled(false);
+			
+			this.serverXMLCheckBoxButton.setEnabled(false);
+			this.serverXMLCheckBoxButton.setSelection(false);
+			this.generateServerSideInterfaceCheckBoxButton.setEnabled(false);
+			this.generateServerSideInterfaceCheckBoxButton.setSelection(false);
+			this.testCaseCheckBoxButton.setEnabled(true);
+		}
+		else{
+			if(serverSideCheckBoxButton.getSelection()==false 
+					|| clientSideCheckBoxButton.getSelection() == false){
+				generateAllCheckBoxButton.setSelection(true);
+				settings.put(PREF_GEN_ALL, generateAllCheckBoxButton
+						.getSelection());
+			}
 		}
 	}
 
@@ -1027,6 +1175,9 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         this.syncAndAsyncRadioButton.setEnabled(false);
         this.syncAndAsyncRadioButton.setSelection(true);
         this.packageText.setEnabled(false);
+        this.clientSideCheckBoxButton.setEnabled(false);
+        this.clientSideCheckBoxButton.setSelection(true);
+        this.generateAllCheckBoxButton.setEnabled(false);
 	}
 	
 	private void enableControls(){
@@ -1042,6 +1193,8 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
         this.asyncOnlyRadioButton.setEnabled(true);
         this.syncAndAsyncRadioButton.setEnabled(true);
         this.packageText.setEnabled(true);
+        this.clientSideCheckBoxButton.setEnabled(true);
+        this.generateAllCheckBoxButton.setEnabled(true);
 	}
 	
 	/**
@@ -1049,5 +1202,33 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	 */
 	public String getPackageFromNamespace(String namespace){
 		return  URLProcessor.makePackageName(namespace);
+	}
+	
+	private void handleCustomPackageNameModifyEvent() {
+	// This method is add as a tempory fix for the Axis2-1368 
+	// TODO fix this permanantly.	
+	String text = this.packageText.getText();
+	if ((text == null) || (text.trim().equals(""))|| (text.endsWith(".")) || (text.startsWith("."))) {
+		updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+				.getResourceString("page2.pachage.error.nolocation"));
+		return;
+	}
+		updateStatus(null);
+	}
+	
+	private void uncheckServerSide(){
+		this.serverSideCheckBoxButton.setSelection(false);
+		settings.put(PREF_CHECK_GENERATE_SERVERSIDE, serverSideCheckBoxButton.getSelection());
+	}
+	
+	private void uncheckClientSide(){
+		this.clientSideCheckBoxButton.setSelection(false);
+		settings.put(PREF_CHECK_GENERATE_CLIENTSIDE, clientSideCheckBoxButton.getSelection());
+	}
+	
+	private void uncheckGenerateAll(){
+		this.generateAllCheckBoxButton.setSelection(false);
+		settings.put(PREF_GEN_ALL, generateAllCheckBoxButton.getSelection());
+
 	}
 }

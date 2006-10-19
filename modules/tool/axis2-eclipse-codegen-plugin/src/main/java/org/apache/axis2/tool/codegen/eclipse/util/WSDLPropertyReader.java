@@ -21,6 +21,7 @@ import org.apache.axis2.util.URLProcessor;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -44,7 +45,7 @@ import java.util.Map;
 public class WSDLPropertyReader {
     private Definition wsdlDefinition = null;
     
-	public void readWSDL(String filepath) throws Exception{
+	public void readWSDL(String filepath) throws WSDLException {
 		WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
 		wsdlDefinition = reader.readWSDL(filepath); 
 	}

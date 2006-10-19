@@ -19,6 +19,7 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 import java.io.File;
 
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
+import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -27,6 +28,10 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GCData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -71,6 +76,8 @@ public class OutputPage extends AbstractWizardPage {
 	
 	private Label jarFileNameLabel;
 	
+	private String axis2LibsLocation = null;
+	
 
 	/**
 	 * 
@@ -92,6 +99,7 @@ public class OutputPage extends AbstractWizardPage {
 		settings.put(PREF_CHECK_JAR_CREATION, false);
 		settings.put(PREF_CHECK_AXIS_PLUGIN_LIB_COPY, false);
 		workspaceSaveOption = false;
+		jarFileCopyOption = false;
 	}
 
 	/*
@@ -113,7 +121,7 @@ public class OutputPage extends AbstractWizardPage {
 		Label selectLabel = new Label(container, SWT.NULL);
 		selectLabel
 				.setText(CodegenWizardPlugin
-						.getResourceString("select the location where to put the output"));
+						.getResourceString("page3.result.decs"));
 		selectLabel.setLayoutData(gd);
 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -186,11 +194,13 @@ public class OutputPage extends AbstractWizardPage {
 				.getResourceString("page3.copypluginlib.caption"));
 		copyPluginLibButton.setToolTipText(CodegenWizardPlugin
 				.getResourceString("page3.copypluginlib.caption"));
+		settings.put(PREF_CHECK_AXIS_PLUGIN_LIB_COPY,false);
 		copyPluginLibButton.setSelection(settings.getBoolean(PREF_CHECK_AXIS_PLUGIN_LIB_COPY));
 		copyPluginLibButton.setLayoutData(gd);
 		copyPluginLibButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleCopyPluginLibsCheckBox();
+				settings.put(PREF_CHECK_AXIS_PLUGIN_LIB_COPY, copyPluginLibButton.getSelection());
 			}
 		});
 		
@@ -213,10 +223,13 @@ public class OutputPage extends AbstractWizardPage {
 				.getResourceString("page3.addaxislib.caption"));
 		copyLibButton.setToolTipText(CodegenWizardPlugin
 				.getResourceString("page3.addaxislib.desc"));
+		settings.put(PREF_CHECK_AXIS_LIB_COPY,false);
+		copyLibButton.setSelection(settings.getBoolean(PREF_CHECK_AXIS_LIB_COPY));
 		copyLibButton.setLayoutData(gd);
 		copyLibButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handlejarCheckBox();
+				settings.put(PREF_CHECK_AXIS_LIB_COPY, copyLibButton.getSelection());
 			}
 		});
 		
@@ -229,6 +242,7 @@ public class OutputPage extends AbstractWizardPage {
 		
 		axisHomeLocation = new Text(container, SWT.BORDER);
 		axisHomeLocation.setLayoutData(gd);
+		settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, "");
 		axisHomeLocation.setText(settings.get(PREF_AXIS_HOME_OUTPUT_LOCATION));
 		axisHomeLocation.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -275,10 +289,13 @@ public class OutputPage extends AbstractWizardPage {
 				.getResourceString("page3.jarcreation.caption"));
 		jarCreationButton.setToolTipText(CodegenWizardPlugin
 				.getResourceString("page3.jarcreation.desc"));
+		settings.put(PREF_CHECK_JAR_CREATION,false);
+		jarCreationButton.setSelection(settings.getBoolean(PREF_CHECK_JAR_CREATION));
 		jarCreationButton.setLayoutData(gd);
 		jarCreationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handlejarCreationCheckBox();
+//				settings.put(PREF_CHECK_JAR_CREATION, jarCreationButton.getSelection());
 			}
 		});
 		
@@ -294,7 +311,7 @@ public class OutputPage extends AbstractWizardPage {
 		jarFileNameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				settings.put(PREF_JAR_FILE_NAME, jarFileNameText.getText());
-				handleAxisHomeModifyEvent();
+//				handleAxisHomeModifyEvent();
 			}
 		});
 		
@@ -311,7 +328,10 @@ public class OutputPage extends AbstractWizardPage {
 				.setText(CodegenWizardPlugin
 						.getResourceString("page3.hint.caption"));
 		hintLabel.setLayoutData(gd);
-		
+		hintLabel.setFont(new Font(new Device() {
+				public int internal_new_GC(GCData data) {return 0;}
+				public void internal_dispose_GC(int handle, GCData data) {}
+												},"hintFont",8,SWT.NORMAL));
 		
 		disableControls();
 		
@@ -343,19 +363,32 @@ public class OutputPage extends AbstractWizardPage {
 	}
 	
 	public boolean getAxis2PluginLibCopyCheckBoxSelection(){
-		return settings.getBoolean(PREF_CHECK_AXIS_PLUGIN_LIB_COPY);
+//		return settings.getBoolean(PREF_CHECK_AXIS_PLUGIN_LIB_COPY);
+		return this.copyPluginLibButton.getSelection();
 	}
 	
 	public boolean getAxisLibCopyCheckBoxSelection(){
-		return settings.getBoolean(PREF_CHECK_AXIS_LIB_COPY);
+//		return settings.getBoolean(PREF_CHECK_AXIS_LIB_COPY);
+		return this.copyLibButton.getSelection();
 	}
 	
 	public boolean getCreateJarCheckBoxSelection(){
-		return settings.getBoolean(PREF_CHECK_JAR_CREATION);
+//		return settings.getBoolean(PREF_CHECK_JAR_CREATION);
+		return jarCreationButton.getSelection();
+		
+	}
+	
+	public String getAxisJarsLocation(){
+		return this.axis2LibsLocation;
+		
 	}
 	
 	public boolean oktoLoadLibs(){
-		return jarFileCopyOption;
+		return this.jarFileCopyOption;
+	}
+	
+	public void setJarFileName(String jarFileName){
+		this.jarFileNameText.setText(jarFileName);
 	}
 	
 	/**
@@ -382,6 +415,16 @@ public class OutputPage extends AbstractWizardPage {
 		}
 		updateStatus(null);
 	}
+	
+//	private void handleJarNameModifyEvent() {
+//		String text = this.jarFileNameText.getText();
+//		if ((text == null) || (text.trim().equals(""))) {
+//			updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+//					.getResourceString("page3.error.nolocation"));
+//			return;
+//		}
+//		updateStatus(null);
+//	}
 
 	private void handleCheckboxSelection() {
 		if (workspaceProjectOptionsButton.getSelection()) {
@@ -415,22 +458,31 @@ public class OutputPage extends AbstractWizardPage {
 	}
 	
 	private void handlejarCreationCheckBox() {
-		if(jarCreationButton.getSelection()){
+		if(jarCreationButton.getSelection()== true){
 			settings.put(PREF_CHECK_JAR_CREATION, true);
 		}else{
 			settings.put(PREF_CHECK_JAR_CREATION, false);
+			this.jarFileNameText.setText("");
 		}
 	}
 	
 	private void disableControls(){
+		this.axisHomeLocation.setText("Unpacked Axis2 binary home Or Axis2 source Location");
 		this.axisHomeBrowseButton.setEnabled(false);
 		this.axisHomeLocation.setEnabled(false);
+		this.jarCreationButton.setSelection(false);
 		this.jarCreationButton.setEnabled(false);
 		this.axisHomeLabel.setEnabled(false);
+		this.axisLoadLibResultsLabel.setText("");
 		this.axisLoadLibResultsLabel.setEnabled(false);
 		this.axisLoadLibsButton.setEnabled(false);
 		this.jarFileNameLabel.setEnabled(false);
+		this.jarFileNameText.setText("");
 		this.jarFileNameText.setEnabled(false);
+		settings.put(PREF_CHECK_JAR_CREATION, false);
+		jarFileCopyOption = false;
+		Color color = getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		axisLoadLibResultsLabel.setBackground(color);
 	}
 	
 	private void enableControls(){
@@ -445,26 +497,50 @@ public class OutputPage extends AbstractWizardPage {
 	}
 	
 	private void handleAxisHomeBrowse() {
+		    this.axisHomeLocation.setText("unpacked Axis2 binary home Or Axis2 source Location");
 			DirectoryDialog dialog = new DirectoryDialog(this.getShell());
 			String returnString = dialog.open();
 			if (returnString != null) {
 				axisHomeLocation.setText(returnString);
-				settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, returnString);
+				settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, axisHomeLocation.getText());
 			}
 	}
 	
 	private void handleLoadLibsBrowse() {
-		String axis_home = settings.get(PREF_AXIS_HOME_OUTPUT_LOCATION);
-		String axis_target_lib=axis_home+"/target/lib";
-
-		File axis_libs_directory = new File(axis_target_lib);
-		 if (axis_libs_directory.isDirectory()) {
-			 axisLoadLibResultsLabel.setText("Axis libs loadded successfully !!");
-			 jarFileCopyOption =true;
-		 }else{
-			 axisLoadLibResultsLabel.setText("Axis libs are not available, try maven goal create-lib !!");
+		if(axisHomeLocation.getText().equals("")){
+			 axisLoadLibResultsLabel.setText(CodegenWizardPlugin
+						.getResourceString("page3.loadlib.fail.caption"));
 			 jarFileCopyOption=false;
-		 }
+		}else{
+			settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, axisHomeLocation.getText());
+			String axis_home = settings.get(PREF_AXIS_HOME_OUTPUT_LOCATION);
+			String axis_target_lib=axis_home+File.separator+UIConstants.TARGET+File.separator+UIConstants.LIB;
+			String axis_std_lib_directory=axis_home+File.separator+UIConstants.LIB;
+
+			File axis_target_libs_directory = new File(axis_target_lib);
+			File axis_libs_directory = new File(axis_std_lib_directory);
+			 if (axis_libs_directory.isDirectory() || axis_target_libs_directory.isDirectory()) {
+				 axisLoadLibResultsLabel.setText(CodegenWizardPlugin
+							.getResourceString("page3.loadlib.success.caption"));
+				if(axis_libs_directory.isDirectory()){
+					axis2LibsLocation=axis_std_lib_directory;
+				}
+				else if(axis_target_libs_directory.isDirectory()){
+					axis2LibsLocation=axis_target_lib;
+				}
+				 jarFileCopyOption =true;
+				 Color color = getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+				 axisLoadLibResultsLabel.setBackground(color);
+			 }else{
+			     axisLoadLibResultsLabel.setText(CodegenWizardPlugin
+							.getResourceString("page3.loadlib.fail.caption"));
+			     Color color = getShell().getDisplay().getSystemColor(SWT.COLOR_RED);
+			     axisLoadLibResultsLabel.setBackground(color);
+			     updateStatus(org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin
+						.getResourceString("page3.loadlib.fail.message"));
+			     jarFileCopyOption=false;
+			 }
+		}
 	}
 
 	

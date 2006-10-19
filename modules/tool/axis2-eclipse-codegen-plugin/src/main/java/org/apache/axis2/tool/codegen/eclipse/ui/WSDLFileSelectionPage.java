@@ -23,6 +23,9 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GCData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -68,15 +71,9 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
         container.setLayout(layout);
         layout.numColumns = 3;
         //layout.verticalSpacing = 9;
-
-      
+     
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 3;
-        Label label = new Label(container, SWT.NULL);
-        label.setText(CodegenWizardPlugin
-                .getResourceString("page1.discription.label"));
-        label.setLayoutData(gd);
-        
+       
         gd = new GridData(GridData.FILL_HORIZONTAL);
         Label labelFile = new Label(container, SWT.NULL);
         labelFile.setText(CodegenWizardPlugin
@@ -84,7 +81,7 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
         
         fileText = new Text(container, SWT.BORDER | SWT.SINGLE);
         fileText.setLayoutData(gd);
-        fileText.setText(settings.get(PREF_WSDL_LOCATION));
+	    fileText.setText(settings.get(PREF_WSDL_LOCATION));
         fileText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 settings.put(PREF_WSDL_LOCATION, fileText.getText());
@@ -100,6 +97,21 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
                 handleBrowse();
             }
         });
+        
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan=3;
+        Label fillLabel = new Label(container, SWT.NULL);
+        fillLabel.setLayoutData(gd);
+        
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan=3;
+        Label hintLabel = new Label(container, SWT.NULL);
+        hintLabel.setText(CodegenWizardPlugin.getResourceString("page1.hint.desc"));
+        hintLabel.setLayoutData(gd);
+        hintLabel.setFont(new Font(new Device() {
+			public int internal_new_GC(GCData data) {return 0;}
+			public void internal_dispose_GC(int handle, GCData data) {}
+											},"hintFont",8,SWT.NORMAL));
         
         setPageComplete(false);
         setControl(container);
@@ -140,13 +152,13 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
      *  
      */
     private void handleBrowse() {
+	    fileText.setText("enter a valid *.wsdl/*.xml service description file");
         FileDialog fileDialog = new FileDialog(this.getShell());
-        fileDialog.setFilterExtensions(new String[] { "*.wsdl" });
+        fileDialog.setFilterExtensions(new String[] { "*.wsdl" ,"*.xml"});
         String fileName = fileDialog.open();
         if (fileName != null) {
             fileText.setText(fileName);
         }
-
     }
 
     

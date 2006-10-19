@@ -91,7 +91,7 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 		Label selectLabel = new Label(container, SWT.NULL);
 		selectLabel
 				.setText(CodegenWizardPlugin
-						.getResourceString("select the location where to put the output"));
+						.getResourceString("Select the location where to put the output"));
 		selectLabel.setLayoutData(gd);
 
 		gd = new GridData(GridData.FILL_HORIZONTAL);

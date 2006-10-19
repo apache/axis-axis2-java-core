@@ -261,8 +261,9 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                  
                  //Add the libraries on the plugin lib directory to the created project lib
                  if (outputPage.getAxisLibCopyCheckBoxSelection() && outputPage.oktoLoadLibs()){
-                	 String libDirectory = outputPage.getAxisHomeLocation()+File.separator+
-                	 					   UIConstants.TARGET+File.separator+UIConstants.LIB;
+//                	 String libDirectory = outputPage.getAxisHomeLocation()+File.separator+
+//                	 					   UIConstants.TARGET+File.separator+UIConstants.LIB;
+                	 String libDirectory = outputPage.getAxisJarsLocation();
                 	 addLibsToProjectLib(libDirectory, outputPage.getOutputLocation());
                  }
                  
@@ -291,6 +292,7 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                 	 if (!outputPage.getJarFilename().equals("")){
                 		 jarFileName=outputPage.getJarFilename();
                 	 }
+                	 outputPage.setJarFileName(jarFileName);
                 	 jarFileWriter.writeJarFile(new File(projectLib), jarFileName, tempClassFile);
                 	 
                 	 //Delete the temp folders
