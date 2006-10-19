@@ -55,7 +55,7 @@ echo Using AXIS2_HOME:   %AXIS2_HOME%
 echo Using JAVA_HOME:    %JAVA_HOME%
 set _RUNJAVA="%JAVA_HOME%\bin\java"
 
-%_RUNJAVA% %JAVA_OPTS% -cp %AXIS2_CLASS_PATH% org.apache.axis2.transport.SimpleAxisServer  -repo $AXIS2_HOME\repository -conf $AXIS2_HOME\conf\axis2.xml %*
+%_RUNJAVA% %JAVA_OPTS% -cp %AXIS2_CLASS_PATH% org.apache.axis2.transport.SimpleAxis2Server  -repo $AXIS2_HOME\repository -conf $AXIS2_HOME\conf\axis2.xml %*
 endlocal
 :end
 
