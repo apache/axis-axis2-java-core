@@ -963,7 +963,7 @@ public class AxisService extends AxisDescription {
         if (schema != null) {
             schemaList.add(schema);
             if (schema.getTargetNamespace() != null) {
-                addSchemaNameSpace(schema.getTargetNamespace());
+//                addSchemaNameSpace(schema.getTargetNamespace());
             }
         }
     }
@@ -973,7 +973,7 @@ public class AxisService extends AxisDescription {
         while (iterator.hasNext()) {
             XmlSchema schema = (XmlSchema) iterator.next();
             schemaList.add(schema);
-            addSchemaNameSpace(schema.getTargetNamespace());
+//            addSchemaNameSpace(schema.getTargetNamespace());
         }
     }
 
