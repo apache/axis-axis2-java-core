@@ -9,4 +9,4 @@ done
 export AXIS2_CLASSPATH
 
 echo the classpath $AXIS2_CLASSPATH
-java -classpath $AXIS2_CLASSPATH org.apache.axis2.transport.SimpleAxisServer -repo $AXIS2_HOME/repository -conf $AXIS2_HOME/conf/axis2.xml $*
+java -classpath $AXIS2_CLASSPATH org.apache.axis2.transport.SimpleAxis2Server -repo $AXIS2_HOME/repository -conf $AXIS2_HOME/conf/axis2.xml $*
