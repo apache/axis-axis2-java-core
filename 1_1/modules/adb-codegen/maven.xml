@@ -18,7 +18,7 @@
     </preGoal>
 
 <!-- run the schema compiler -->
-    <postGoal name="test:compile">
+    <preGoal name="test:compile">
         <!--<j:if test="context.getVariable('maven.test.skip') != 'true'}">-->
 
         <j:set var="compiled.classes.dir" value="target/classes"/>
@@ -165,5 +165,5 @@
         <ant:path id="schema.generated.classes.dir" location="${schema.generated.classes.dir}"/>
         <maven:addPath id="maven.dependency.classpath" refid="schema.generated.classes.dir"/>
         <!--</j:if>-->
-    </postGoal>
+    </preGoal>
 </project>
