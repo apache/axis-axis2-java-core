@@ -33,6 +33,7 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 
@@ -119,7 +120,7 @@ public class AddressingOutHandler extends AddressingHandler {
     }
 
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,
-                                  MessageContext msgCtxt, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) {
+                                  MessageContext msgCtxt, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) throws AxisFault {
         String action = messageContextOptions.getAction();
         
         if(log.isTraceEnabled()){
@@ -134,16 +135,36 @@ public class AddressingOutHandler extends AddressingHandler {
             }
         }
         
+        // Use the correct fault action for the selected namespace
         if (Final.WSA_FAULT_ACTION.equals(action) || Submission.WSA_FAULT_ACTION.equals(action)) {
             action = isFinalAddressingNamespace ? Final.WSA_FAULT_ACTION : Submission.WSA_FAULT_ACTION;
         }
         else if (!isFinalAddressingNamespace && Final.WSA_SOAP_FAULT_ACTION.equals(action)) {
             action = Submission.WSA_FAULT_ACTION;
         }
-        
-        if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
-                addressingNamespaceObject, replaceHeaders)) {
-            processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
+
+        // If we need to add a wsa:Action header
+        if(!isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
+                addressingNamespaceObject, replaceHeaders)){
+            if(log.isTraceEnabled()){
+                log.trace("processWSAAction: No existing wsa:Action header found");
+            }
+            // If we don't have an action to add,
+            if(action == null || "".equals(action)){
+                if(log.isTraceEnabled()){
+                    log.trace("processWSAAction: No action to add to header");
+                }
+                // Fault unless validation has been explictily turned off
+                if(!Utils.isExplicitlyTrue(msgCtxt, AddressingConstants.DISABLE_OUTBOUND_ADDRESSING_VALIDATION)){
+                    throw new AxisFault("Unable to determine wsa:Action for outbound message");
+                }
+            }else{
+                if(log.isTraceEnabled()){
+                    log.trace("processWSAAction: Adding action to header: "+action);
+                }
+                // Otherwise just add the header
+                processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
+            }
         }
     }
 

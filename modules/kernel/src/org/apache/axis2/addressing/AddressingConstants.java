@@ -70,6 +70,15 @@ public interface AddressingConstants {
     public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
     
     public static final String ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS = "addMustUnderstandToAddressingHeaders";
+    
+    /**
+     * This property, if set to Boolean.TRUE, will mean that the addressing handler allows partially
+     * ws-addressed messages to be sent even if they are then invalid rather than throwing a fault.
+     * 
+     * It is not clear how necessary this property is and it may be removed before the next release if
+     * it is not seen to be necessary - davidillsley@apache.org
+     */
+    public static final String DISABLE_OUTBOUND_ADDRESSING_VALIDATION = "disableAddressingOutboundValidation";
 
     public static final String WSAW_ANONYMOUS_PARAMETER_NAME = "wsawAnonymous";
     
