@@ -40,8 +40,7 @@ public class RahasSAMLTokenCertForHoKV1205Test extends TestClient {
         try {
             OMElement rstElem =
                     TrustUtil.createRequestSecurityTokenElement(RahasConstants.VERSION_05_12);
-            OMElement reqTypeElem =
-                    TrustUtil.createRequestTypeElement(RahasConstants.VERSION_05_12,
+            TrustUtil.createRequestTypeElement(RahasConstants.VERSION_05_12,
                                                        rstElem,
                                                        RahasConstants.REQ_TYPE_ISSUE);
             OMElement tokenTypeElem =
