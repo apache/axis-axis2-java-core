@@ -22,8 +22,8 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
@@ -35,51 +35,51 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
+
 public class GroovyReceiver
-    extends AbstractInOutSyncMessageReceiver
-    implements MessageReceiver {
+        extends AbstractInOutSyncMessageReceiver
+        implements MessageReceiver {
 
     public void invokeBusinessLogic(
-        MessageContext inMessage,
-        MessageContext outMessage)
-        throws AxisFault {
+            MessageContext inMessage,
+            MessageContext outMessage)
+            throws AxisFault {
         try {
             AxisService service =
-                inMessage
-                    .getOperationContext()
-                    .getServiceContext()
-                    .getAxisService();
+                    inMessage
+                            .getOperationContext()
+                            .getServiceContext()
+                            .getAxisService();
             Parameter implInfoParam = service.getParameter("GroovyClass");
             if (implInfoParam == null) {
                 throw new AxisFault(
-                    Messages.getMessage("paramIsNotSpecified", "ServiceClass"));
+                        Messages.getMessage("paramIsNotSpecified", "ServiceClass"));
             }
             InputStream groovyFileStream =
-                service.getClassLoader().getResourceAsStream(
-                    implInfoParam.getValue().toString());
+                    service.getClassLoader().getResourceAsStream(
+                            implInfoParam.getValue().toString());
 
             if (groovyFileStream == null) {
                 throw new AxisFault(
-                    Messages.getMessage("groovyUnableToLoad", implInfoParam.getValue().toString()));
+                        Messages.getMessage("groovyUnableToLoad", implInfoParam.getValue().toString()));
             }
 
             //look at the method name. if available this should be a groovy method
             AxisOperation op =
-                inMessage.getOperationContext().getAxisOperation();
+                    inMessage.getOperationContext().getAxisOperation();
             if (op == null) {
                 throw new AxisFault(
-                    Messages.getMessage("notFound", "Operation"));
+                        Messages.getMessage("notFound", "Operation"));
             }
             String methodName = op.getName().getLocalPart();
             OMElement firstChild =
-                (OMElement) inMessage.getEnvelope().getBody().getFirstOMChild();
+                    (OMElement) inMessage.getEnvelope().getBody().getFirstOMChild();
             inMessage.getEnvelope().build();
             StringWriter writer = new StringWriter();
             firstChild.build();
@@ -90,24 +90,24 @@ public class GroovyReceiver
                 GroovyClassLoader loader = new GroovyClassLoader();
                 Class groovyClass = loader.parseClass(groovyFileStream);
                 GroovyObject groovyObject =
-                    (GroovyObject) groovyClass.newInstance();
-                Object[] arg = { new StringReader(value) };
+                        (GroovyObject) groovyClass.newInstance();
+                Object[] arg = {new StringReader(value)};
                 Object obj = groovyObject.invokeMethod(methodName, arg);
                 if (obj == null) {
                     throw new AxisFault(Messages.getMessage("groovyNoanswer"));
                 }
 
-                SOAPFactory fac = null;
-                if(inMessage.isSOAP11()){
+                SOAPFactory fac ;
+                if (inMessage.isSOAP11()) {
                     fac = OMAbstractFactory.getSOAP11Factory();
-                }else{
+                } else {
                     fac = OMAbstractFactory.getSOAP12Factory();
                 }
                 SOAPEnvelope envelope = fac.getDefaultEnvelope();
                 OMNamespace ns =
-                    fac.createOMNamespace("http://soapenc/", "res");
+                        fac.createOMNamespace("http://soapenc/", "res");
                 OMElement responseElement =
-                    fac.createOMElement(methodName + "Response", ns);
+                        fac.createOMElement(methodName + "Response", ns);
                 String outMessageString = obj.toString();
                 // System.out.println("outMessageString = " + outMessageString);
                 // responseElement.setText(outMessageString);
@@ -122,12 +122,12 @@ public class GroovyReceiver
 
     private OMElement getpayLoad(String str) throws XMLStreamException {
         XMLStreamReader xmlReader =
-            StAXUtils.createXMLStreamReader(
-                new ByteArrayInputStream(str.getBytes()));
+                StAXUtils.createXMLStreamReader(
+                        new ByteArrayInputStream(str.getBytes()));
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         StAXOMBuilder staxOMBuilder =
-            new StAXOMBuilder(fac, xmlReader);
+                new StAXOMBuilder(fac, xmlReader);
         return staxOMBuilder.getDocumentElement();
     }
 

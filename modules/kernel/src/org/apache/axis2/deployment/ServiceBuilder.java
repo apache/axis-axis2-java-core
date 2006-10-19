@@ -20,10 +20,10 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
@@ -46,14 +46,15 @@ public class ServiceBuilder extends DescriptionBuilder {
     private static final Log log = LogFactory.getLog(ServiceBuilder.class);
     private AxisService service;
 
-    public ServiceBuilder(AxisConfiguration axisConfig, AxisService service) {
+    public ServiceBuilder(ConfigurationContext configCtx, AxisService service) {
         this.service = service;
-        this.axisConfig = axisConfig;
+        this.configCtx = configCtx;
+        this.axisConfig = this.configCtx.getAxisConfiguration();
     }
 
-    public ServiceBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig,
+    public ServiceBuilder(InputStream serviceInputStream, ConfigurationContext configCtx,
                           AxisService service) {
-        super(serviceInputStream, axisConfig);
+        super(serviceInputStream, configCtx);
         this.service = service;
     }
 
@@ -126,8 +127,10 @@ public class ServiceBuilder extends DescriptionBuilder {
                     try {
                         ClassLoader loader = service.getClassLoader();
                         Class serviceLifeCycleClassImpl = Loader.loadClass(loader, className);
+                        ServiceLifeCycle serviceLifeCycle = (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance();
+                        serviceLifeCycle.startUp(configCtx, service);
                         service.setServiceLifeCycle(
-                                (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance());
+                                serviceLifeCycle);
                     } catch (Exception e) {
                         throw new DeploymentException(e.getMessage(), e);
                     }

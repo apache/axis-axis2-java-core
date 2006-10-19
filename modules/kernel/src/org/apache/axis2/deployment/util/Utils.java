@@ -5,6 +5,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
@@ -380,8 +381,9 @@ public class Utils {
      */
 
     public static void deployModuleServices(AxisModule module,
-                                            AxisConfiguration axisConfig) throws AxisFault {
+                                            ConfigurationContext configCtx) throws AxisFault {
         try {
+            AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
             ArchiveReader archiveReader = new ArchiveReader();
             PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
             ClassLoader moduleClassLoader = module.getModuleClassLoader();
@@ -433,7 +435,7 @@ public class Utils {
                     ArrayList serviceList = archiveReader.processServiceGroup(
                             filedata.getAbsolutePath(), filedata,
                             serviceGroup, false, wsdlservice,
-                            axisConfig);
+                            configCtx);
                     for (int j = 0; j < serviceList.size(); j++) {
                         AxisService axisService = (AxisService) serviceList.get(j);
                         serviceGroup.addService(axisService);
