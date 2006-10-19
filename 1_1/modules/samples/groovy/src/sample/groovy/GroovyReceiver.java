@@ -56,7 +56,7 @@ public class GroovyReceiver
                     .getOperationContext()
                     .getServiceContext()
                     .getAxisService();
-            Parameter implInfoParam = service.getParameter("ServiceClass");
+            Parameter implInfoParam = service.getParameter("GroovyClass");
             if (implInfoParam == null) {
                 throw new AxisFault(
                     Messages.getMessage("paramIsNotSpecified", "ServiceClass"));

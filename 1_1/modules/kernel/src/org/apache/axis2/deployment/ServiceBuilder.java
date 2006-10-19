@@ -112,12 +112,10 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             } else {
                 if (service.getTargetNamespace() == null ||
-                    "".equals(service.getTargetNamespace())) {
+                        "".equals(service.getTargetNamespace())) {
                     service.setTargetNamespace(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
                 }
             }
-
-
 
             //Processing service lifecycle attribute
             OMAttribute serviceLifeCycleClass = service_element.
@@ -174,7 +172,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                             String packageAttributeValue = packageAttribute.getAttributeValue();
                             if (namespaceAttributeValue != null && packageAttributeValue != null) {
                                 pkg2nsMap.put(packageAttributeValue.trim(),
-                                              namespaceAttributeValue.trim());
+                                        namespaceAttributeValue.trim());
                             } else {
                                 log.warn(
                                         "Either value of @namespce or @packagename not available. Thus, generated will be selected.");
@@ -235,7 +233,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY,
-                                         policyRefElements, service.getPolicyInclude());
+                        policyRefElements, service.getPolicyInclude());
             }
 
             //processing service scope
@@ -297,14 +295,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                             }
                         }
                     } catch (Exception e) {
-                        /**
-                         * I have log here if some error occurs , since service impl
-                         * class can alos be non-Java class , so in that case
-                         * it is not possible to generate schema, so no pint of throwing that
-                         * error ,  I know we have to handle this , until that I have
-                         * to log this
-                         */
-                        log.error(Messages.getMessage("errorinschemagen", e.getMessage()), e);
+                        throw new DeploymentException(
+                                Messages.getMessage("errorinschemagen", e.getMessage()), e);
                     }
                 }
             }
@@ -349,9 +341,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                         .getMessageReceiver().getClass().getName();
                 if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
                         .equals(messageReceiverClass)
-                      || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
+                        || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
                         .equals(messageReceiverClass)
-                      || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                        || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
                         .equals(messageReceiverClass))) {
                     return false;
                 }
@@ -379,9 +371,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                         .getMessageReceiver().getClass().getName();
                 if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
                         .equals(messageReceiverClass)
-                      || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
+                        || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
                         .equals(messageReceiverClass)
-                      || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                        || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
                         .equals(messageReceiverClass))) {
                     excludeOperations.add(axisOperation.getName().getLocalPart());
                 }
@@ -530,11 +522,11 @@ public class ServiceBuilder extends DescriptionBuilder {
                 op_descrip.setName(new QName(opname));
                 String MEP = op_descrip.getMessageExchangePattern();
                 if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage inaxisMessage = op_descrip
                             .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                     if (inaxisMessage != null) {
@@ -543,11 +535,11 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
 
                 if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                    WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                        WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage outAxisMessage = op_descrip
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                     if (outAxisMessage != null) {
@@ -583,7 +575,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             if (receiverElement != null) {
                 MessageReceiver messageReceiver = loadMessageReceiver(service.getClassLoader(),
-                                                                      receiverElement);
+                        receiverElement);
 
                 op_descrip.setMessageReceiver(messageReceiver);
             } else {
