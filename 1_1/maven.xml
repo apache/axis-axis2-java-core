@@ -37,10 +37,10 @@
      |
      | dist-docs
      |		Creates the docs distribution
-     | 
+     |
      | dist-min-bin
      |      Creates the minimal binary distribution
-     | 
+     |
      | release
      |      Creates the complete release (dist-bin, dist-src, dist-docs, dist-min-bin)
      | war
@@ -62,22 +62,22 @@
     <j:set var="dist.dir" value="target/dist"/>
 
     <tstamp>
-         <format property="release_date" pattern="MMMM d, yyyy" locale="en"/>
+        <format property="release_date" pattern="MMMM d, yyyy" locale="en"/>
     </tstamp>
-    
+
     <!-- Test for >= JDK 1.5 to determine whether to include modules that require it -->
-    
+
     <ant:echo>${ant.java.version}</ant:echo>
-    
+
     <j:if test="${ant.java.version == '1.5'}">
         <ant:echo>
             JDK ${ant.java.version} detected, including the following modules:
-             ${maven.multiproject.includes.requiresJDK15}
+            ${maven.multiproject.includes.requiresJDK15}
         </ant:echo>
         <j:set var="maven.multiproject.includes"
-            value="${maven.multiproject.includes},${maven.multiproject.includes.requiresJDK15}"/>
+               value="${maven.multiproject.includes},${maven.multiproject.includes.requiresJDK15}"/>
     </j:if>
-   
+
     <j:set var="modules" value="*"/>
 
     <preGoal name="modules:reactor:init">
@@ -410,10 +410,11 @@
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
         </ant:copy>
-        
-         <!-- Copy the adb  codegen jar -->
+
+        <!-- Copy the adb  codegen jar -->
         <ant:copy toDir="target/temp/war/lib">
-            <ant:fileset file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
+            <ant:fileset
+                    file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy the java2wsdl jar -->
@@ -430,13 +431,13 @@
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
         </ant:copy>
-	
-	<!-- Copy the spring jar -->
+
+        <!-- Copy the spring jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/spring/target/axis2-spring-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-	<!-- Copy the spring jar -->
+        <!-- Copy the spring jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
         </ant:copy>
@@ -446,12 +447,12 @@
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-		<!-- Copy items that depend on JDK1.5  -->
-		<j:if test="${ant.java.version == '1.5'}">
-			
-			<ant:copy toDir="target/temp/war/lib">
-				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
-			</ant:copy>
+        <!-- Copy items that depend on JDK1.5  -->
+        <j:if test="${ant.java.version == '1.5'}">
+
+            <ant:copy toDir="target/temp/war/lib">
+                <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
+            </ant:copy>
         </j:if>
 
         <!-- Copy the soapmonitor jar - the servlet classes -->
@@ -470,17 +471,18 @@
             <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
         </ant:copy>
 
-		<echo file="target/temp/war/toWEB-INF/modules/modules.list" append="false">addressing-${addressing_version}.mar
-		soapmonitor-${soapmonitor_version}.mar
-		</echo>
+        <echo file="target/temp/war/toWEB-INF/modules/modules.list" append="false">
+            addressing-${addressing_version}.mar
+            soapmonitor-${soapmonitor_version}.mar
+        </echo>
 
         <!-- copy the sample services -->
         <ant:copy toDir="target/temp/war/toWEB-INF/services">
             <ant:fileset file="modules/samples/target/toWar/services/version.aar"/>
         </ant:copy>
 
-		<echo file="target/temp/war/toWEB-INF/services/services.list" append="false">version.aar
-		</echo>
+        <echo file="target/temp/war/toWEB-INF/services/services.list" append="false">version.aar
+        </echo>
 
         <!-- copy the axis2.xml into conf directoy -->
         <ant:copy toDir="target/temp/war/toWEB-INF/conf">
@@ -564,10 +566,11 @@
         <ant:echo>+----------------------------------------------</ant:echo>
 
         <ant:mkdir dir="target/dist"/>
-    	
-    	<ant:property name="min.bin.temp.dir" value="target/temp/min/bin/axis2-min-${pom.currentVersion}-bin"/>
-    	 <ant:mkdir dir="${min.bin.temp.dir}/lib"/>
-    	
+
+        <ant:property name="min.bin.temp.dir"
+                      value="target/temp/min/bin/axis2-min-${pom.currentVersion}-bin"/>
+        <ant:mkdir dir="${min.bin.temp.dir}/lib"/>
+
         <!-- Copy the 3rd party libs -->
         <ant:copy toDir="${min.bin.temp.dir}/lib">
             <ant:fileset dir="${min_dep_cache}"/>
@@ -603,7 +606,7 @@
         <ant:copy toDir="${min.bin.temp.dir}/lib">
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
         </ant:copy>
-        
+
         <!-- Copy the release documents -->
         <macros:copy-release-docs toDir="${min.bin.temp.dir}"
                                   readmeFile="release-docs/readme-files/README-min-bin.txt"/>
@@ -620,101 +623,103 @@
         <ant:echo>+----------------------------------------------</ant:echo>
 
         <ant:property name="std.bin.temp.dir" value="target/temp/main/axis2-${pom.currentVersion}"/>
-    	
-    	<ant:mkdir dir="${std.bin.temp.dir}/repository"/>
+
+        <ant:mkdir dir="${std.bin.temp.dir}/repository"/>
         <ant:mkdir dir="${std.bin.temp.dir}/repository/modules"/>
         <ant:mkdir dir="${std.bin.temp.dir}/repository/services"/>
-    	<ant:mkdir dir="${std.bin.temp.dir}/bin"/>
+        <ant:mkdir dir="${std.bin.temp.dir}/bin"/>
         <ant:mkdir dir="${std.bin.temp.dir}/conf"/>
         <ant:mkdir dir="${std.bin.temp.dir}/webapp"/>
-    	<ant:mkdir dir="${std.bin.temp.dir}/webapp/WEB-INF"/>
-    	<ant:mkdir dir="${std.bin.temp.dir}/webapp/WEB-INF/classes"/>
-    	<ant:mkdir dir="${std.bin.temp.dir}/webapp/axis2-web"/>
+        <ant:mkdir dir="${std.bin.temp.dir}/webapp/WEB-INF"/>
+        <ant:mkdir dir="${std.bin.temp.dir}/webapp/WEB-INF/classes"/>
+        <ant:mkdir dir="${std.bin.temp.dir}/webapp/axis2-web"/>
         <ant:mkdir dir="${std.bin.temp.dir}/lib"/>
         <ant:mkdir dir="${std.bin.temp.dir}/samples"/>
-    	
-    	 <!--********************** creating the repository ********************** -->
-         <!-- copy the soapmonitor mar -->
-         <ant:copy toDir="${std.bin.temp.dir}/repository/modules">
-             <ant:fileset file="modules/soapmonitor/target/soapmonitor-${soapmonitor_version}.mar"/>
-         </ant:copy>
 
-         <!-- copy the addressing mar -->
-         <ant:copy toDir="${std.bin.temp.dir}/repository/modules">
-             <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
-         </ant:copy>
+        <!--********************** creating the repository ********************** -->
+        <!-- copy the soapmonitor mar -->
+        <ant:copy toDir="${std.bin.temp.dir}/repository/modules">
+            <ant:fileset file="modules/soapmonitor/target/soapmonitor-${soapmonitor_version}.mar"/>
+        </ant:copy>
 
- 		 <echo file="${std.bin.temp.dir}/repository/modules/modules.list" append="false">addressing-${addressing_version}.mar
- 		 soapmonitor-${soapmonitor_version}.mar
- 		 </echo>
-    	
+        <!-- copy the addressing mar -->
+        <ant:copy toDir="${std.bin.temp.dir}/repository/modules">
+            <ant:fileset file="modules/addressing/target/addressing-${addressing_version}.mar"/>
+        </ant:copy>
+
+        <echo file="${std.bin.temp.dir}/repository/modules/modules.list" append="false">
+            addressing-${addressing_version}.mar
+            soapmonitor-${soapmonitor_version}.mar
+        </echo>
+
         <!-- copy the sample services -->
-    	<!-- TODO copy other sample-XXX.aar too -->
+        <!-- TODO copy other sample-XXX.aar too -->
         <ant:copy toDir="${std.bin.temp.dir}/repository/services">
             <ant:fileset file="modules/samples/target/toWar/services/version.aar"/>
         </ant:copy>
 
-		<echo file="${std.bin.temp.dir}/repository/services/services.list" append="false">version.aar
-		</echo>
-    	
-   	    <!--********************** creating the bin ********************** -->
+        <echo file="${std.bin.temp.dir}/repository/services/services.list" append="false">
+            version.aar
+        </echo>
+
+        <!--********************** creating the bin ********************** -->
         <!-- Copy bin scripts -->
         <ant:copy todir="${std.bin.temp.dir}/bin">
             <ant:fileset dir="modules/tool/script"/>
         </ant:copy>
 
-    	 <!--********************** creating the conf ********************** -->
-    	<!-- copy the axis2.xml into conf directoy -->
-    	<ant:copy toDir="${std.bin.temp.dir}/conf">
-    	    <ant:fileset file="modules/kernel/conf/axis2.xml"/>
-    	</ant:copy>   	
-    	
-   	    <!--********************** creating the webappp ********************** -->
-       	<!-- copy the web.xml into webapp/WEB-INF directory -->
+        <!--********************** creating the conf ********************** -->
+        <!-- copy the axis2.xml into conf directoy -->
+        <ant:copy toDir="${std.bin.temp.dir}/conf">
+            <ant:fileset file="modules/kernel/conf/axis2.xml"/>
+        </ant:copy>
+
+        <!--********************** creating the webappp ********************** -->
+        <!-- copy the web.xml into webapp/WEB-INF directory -->
         <ant:copy toDir="${std.bin.temp.dir}/webapp/WEB-INF">
             <ant:fileset file="modules/webapp/conf/web.xml"/>
-        </ant:copy>   
-    	
-       	<!-- copy the build.xml into webapp directory -->
+        </ant:copy>
+
+        <!-- copy the build.xml into webapp directory -->
         <ant:copy toDir="${std.bin.temp.dir}/webapp">
             <ant:fileset file="modules/webapp/scripts/build.xml"/>
-        </ant:copy>   
-    	
-    	<!-- copy *.properties to webapp/WEB-INF/classes directory -->
-    	<ant:copy toDir="${std.bin.temp.dir}/webapp/WEB-INF/classes">
-    		<ant:fileset dir="modules/kernel/conf">
-            	<ant:include name="*.properties"/>
-    		</ant:fileset>
-    	</ant:copy> 
-    	
-    	<!-- copy contents of the webapp module to webapp/axis2-web directory -->
+        </ant:copy>
+
+        <!-- copy *.properties to webapp/WEB-INF/classes directory -->
+        <ant:copy toDir="${std.bin.temp.dir}/webapp/WEB-INF/classes">
+            <ant:fileset dir="modules/kernel/conf">
+                <ant:include name="*.properties"/>
+            </ant:fileset>
+        </ant:copy>
+
+        <!-- copy contents of the webapp module to webapp/axis2-web directory -->
         <ant:copy toDir="${std.bin.temp.dir}/webapp/axis2-web">
             <ant:fileset dir="modules/webapp">
                 <ant:exclude name="project.xml"/>
                 <ant:exclude name="**/*.iml"/>
                 <ant:exclude name="**/.*"/>
                 <ant:exclude name="**/conf/**"/>
-            	<ant:exclude name="**/scripts/**"/>
+                <ant:exclude name="**/scripts/**"/>
             </ant:fileset>
         </ant:copy>
-    	
 
-    	<!--********************** creating the lib ********************** -->
+
+        <!--********************** creating the lib ********************** -->
         <!-- Copy the 3rd party libs -->
         <ant:copy toDir="${std.bin.temp.dir}/lib">
             <ant:fileset dir="${min_dep_cache}"/>
             <ant:fileset dir="${std_dep_cache}"/>
         </ant:copy>
 
-    	<!-- Deleting bcel, jaxme, spring jars -->
+        <!-- Deleting bcel, jaxme, spring jars -->
         <ant:delete>
             <fileset dir="${std.bin.temp.dir}/lib">
                 <include name="bcel-${bcel.version}.jar"/>
-            	<include name="spring*.*"/>
-            	<include name="jaxme*.*"/>
+                <include name="spring*.*"/>
+                <include name="jaxme*.*"/>
             </fileset>
         </ant:delete>
-    	
+
         <!-- Delete tesing jars -->
         <echo message="Deleting Unwanted testing jars"/>
         <ant:delete>
@@ -730,24 +735,26 @@
             <ant:fileset file="modules/kernel/target/axis2-kernel-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/adb/target/axis2-adb-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/codegen/target/axis2-codegen-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
+            <ant:fileset
+                    file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
-        	<ant:fileset file="modules/tool/target/axis2-tools-${pom.currentVersion}.jar"/>
-        	<ant:fileset file="modules/spring/target/axis2-spring-${pom.currentVersion}.jar"/>
-        	<ant:fileset file="modules/soapmonitor/target/axis2-soapmonitor-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/tool/target/axis2-tools-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/spring/target/axis2-spring-${pom.currentVersion}.jar"/>
+            <ant:fileset
+                    file="modules/soapmonitor/target/axis2-soapmonitor-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-		<!-- Copy items that depend on JDK1.5  -->
-		<j:if test="${ant.java.version == '1.5'}">
-			<ant:copy toDir="${std.bin.temp.dir}/lib">
-				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
-			</ant:copy>
-		</j:if>
+        <!-- Copy items that depend on JDK1.5  -->
+        <j:if test="${ant.java.version == '1.5'}">
+            <ant:copy toDir="${std.bin.temp.dir}/lib">
+                <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
+            </ant:copy>
+        </j:if>
 
 
-    	<!--********************** creating the samples ********************** -->
+        <!--********************** creating the samples ********************** -->
         <!-- TODO :Copy the samples.. after samples module refactoring -->
         <ant:copy todir="${std.bin.temp.dir}/samples">
             <ant:fileset dir="modules/samples/target/samples"/>
@@ -755,28 +762,29 @@
         <ant:copy todir="${std.bin.temp.dir}/samples/userguide">
             <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
         </ant:copy>
-        <ant:mkdir dir="${std.bin.temp.dir}/samples/FaultHandling" />
+        <ant:mkdir dir="${std.bin.temp.dir}/samples/FaultHandling"/>
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
-                <ant:include name="yahoorestsearch"/>
-                <ant:include name="googlespellcheck"/>
-                <ant:include name="FaultHandling"/>
-                <ant:include name="mtomsample"/>
-                <ant:include name="version"/>
-                <ant:include name="jms"/>
-                <ant:include name="sessions"/>
-                <ant:include name="servicelifecycle"/>
-                <ant:include name="pojo"/>
+                <include name="yahoorestsearch/**/*.*"/>
+                <include name="googlespellcheck/**/*.*"/>
+                <include name="FaultHandling/**/*.*"/>
+                <include name="mtomsample/**/*.*"/>
+                <include name="version/**/*.*"/>
+                <include name="jms/**/*.*"/>
+                <include name="sessions/**/*.*"/>
+                <include name="servicelifecycle/**/*.*"/>
+                <include name="pojo/**/*.*"/>
+                <include name="yahoorestsearch/**/*.*"/>
             </ant:fileset>
         </ant:copy>
 
         <ant:delete file="${std.bin.temp.dir}/samples/groovyService.aar"/>
-    	
-    	
-    	<!--copy NOTICE.txt file-->
-    	<ant:copy toFile="${std.bin.temp.dir}/NOTICE.txt" filtering="on">
-    	    <ant:fileset file="NOTICE.txt"/>
-    	</ant:copy>
+
+
+        <!--copy NOTICE.txt file-->
+        <ant:copy toFile="${std.bin.temp.dir}/NOTICE.txt" filtering="on">
+            <ant:fileset file="NOTICE.txt"/>
+        </ant:copy>
         <!-- Copy the release documents -->
         <macros:copy-release-docs toDir="${std.bin.temp.dir}"
                                   readmeFile="release-docs/readme-files/README-std-bin.txt"/>
@@ -792,9 +800,9 @@
         <ant:echo>+----------------------------------------------</ant:echo>
 
         <ant:property name="src.temp.dir" value="target/temp/src/axis2-${pom.currentVersion}/src"/>
-    	<ant:mkdir dir="target/temp/src"/>
-    	<ant:mkdir dir="target/temp/src/axis2-${pom.currentVersion}"/>
-    	<ant:mkdir dir="${src.temp.dir}"/>
+        <ant:mkdir dir="target/temp/src"/>
+        <ant:mkdir dir="target/temp/src/axis2-${pom.currentVersion}"/>
+        <ant:mkdir dir="${src.temp.dir}"/>
 
         <ant:copy toDir="${src.temp.dir}">
             <ant:fileset dir=".">
@@ -802,7 +810,7 @@
                 <ant:include name="**/modules/java2wsdl/**"/>
                 <ant:include name="**/modules/kernel/**"/>
                 <ant:include name="**/modules/adb/**"/>
-				<ant:include name="**/modules/adb-codegen/**"/> 
+                <ant:include name="**/modules/adb-codegen/**"/>
                 <ant:include name="**/modules/codegen/**"/>
                 <ant:include name="**/modules/webapp/**"/>
                 <ant:include name="**/modules/xmlbeans/**"/>
@@ -811,13 +819,13 @@
                 <ant:include name="**/modules/addressing/**"/>
                 <ant:include name="**/modules/saaj/**"/>
                 <ant:include name="**/modules/samples/**"/>
-				<ant:include name="**/modules/soapmonitor/**"/>
+                <ant:include name="**/modules/soapmonitor/**"/>
                 <ant:include name="**/modules/spring/**"/>
                 <ant:include name="**/modules/tool/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
-            	<ant:exclude name="**/modules/samples/src/sample/eventing/**"/>
+                <ant:exclude name="**/modules/samples/src/sample/eventing/**"/>
                 <ant:exclude name="xdocs/**"/>
                 <ant:exclude name="**/*class*/**"/>
                 <ant:exclude name="**/.svn/**"/>
@@ -860,11 +868,12 @@
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Docs Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
-	
+
         <ant:mkdir dir="target/dist"/>
-    	<ant:property name="docs.temp.dir" value="target/temp/docs/axis2-${pom.currentVersion}/docs"/>
-    	
-    	<ant:mkdir dir="${docs.temp.dir}"/>
+        <ant:property name="docs.temp.dir"
+                      value="target/temp/docs/axis2-${pom.currentVersion}/docs"/>
+
+        <ant:mkdir dir="${docs.temp.dir}"/>
         <ant:mkdir dir="${docs.temp.dir}/xdocs"/>
         <ant:mkdir dir="${docs.temp.dir}/javadocs"/>
 
@@ -947,7 +956,7 @@
             <ant:fileset dir="legal/war">
                 <ant:include name="*.txt"/>
             </ant:fileset>
-	    <ant:fileset dir="legal/std">
+            <ant:fileset dir="legal/std">
                 <ant:include name="*.txt"/>
             </ant:fileset>
             <ant:fileset dir="legal/min">
@@ -1072,13 +1081,13 @@
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
-		<!-- Copy items that depend on JDK1.5  -->
-		<j:if test="${ant.java.version == '1.5'}">
-			<ant:copy toDir="${destdir}">
-				<ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
-			</ant:copy>
-		</j:if>
-		
+        <!-- Copy items that depend on JDK1.5  -->
+        <j:if test="${ant.java.version == '1.5'}">
+            <ant:copy toDir="${destdir}">
+                <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
+            </ant:copy>
+        </j:if>
+
     </goal>
 
     <define:taglib uri="macros">
@@ -1186,6 +1195,5 @@
             </ant:copy>
         </define:tag>
     </define:taglib>
-
 </project>
 
