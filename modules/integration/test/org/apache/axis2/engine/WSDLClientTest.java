@@ -71,7 +71,6 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
             String textValue = response.getFirstElement().getFirstElement().getText();
             assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
         } catch (Exception e) {
-            e.printStackTrace();
             throw new AxisFault(e);
         }
     }
