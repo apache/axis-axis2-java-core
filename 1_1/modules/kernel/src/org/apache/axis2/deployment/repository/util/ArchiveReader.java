@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
@@ -44,11 +45,11 @@ public class ArchiveReader implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(ArchiveReader.class);
 
     public ArrayList buildServiceGroup(InputStream zin, ArchiveFileData currentFile,
-                                        AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
-                                        AxisConfiguration axisConfig)
+                                       AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
+                                       ConfigurationContext configCtx)
             throws XMLStreamException, AxisFault {
 
-        DescriptionBuilder builder = new DescriptionBuilder(zin, axisConfig);
+        DescriptionBuilder builder = new DescriptionBuilder(zin, configCtx);
         OMElement rootElement = builder.buildOM();
         String elementName = rootElement.getLocalName();
 
@@ -71,7 +72,7 @@ public class ArchiveReader implements DeploymentConstants {
             axisService.setParent(axisServiceGroup);
             axisService.setClassLoader(currentFile.getClassLoader());
 
-            ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
+            ServiceBuilder serviceBuilder = new ServiceBuilder(configCtx, axisService);
             AxisService service = serviceBuilder.populateService(rootElement);
 
             ArrayList serviceList = new ArrayList();
@@ -79,7 +80,7 @@ public class ArchiveReader implements DeploymentConstants {
             return serviceList;
         } else if (TAG_SERVICE_GROUP.equals(elementName)) {
             ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, wsdlServices,
-                    axisConfig);
+                    configCtx);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
         throw new AxisFault("Invalid services.xml found");
@@ -92,7 +93,7 @@ public class ArchiveReader implements DeploymentConstants {
      * @param axisServiceGroup
      * @param extractService
      * @param wsdls
-     * @param axisConfig
+     * @param configCtx
      * @return Returns ArrayList.
      * @throws DeploymentException
      */
@@ -100,7 +101,7 @@ public class ArchiveReader implements DeploymentConstants {
                                          AxisServiceGroup axisServiceGroup,
                                          boolean extractService,
                                          HashMap wsdls,
-                                         AxisConfiguration axisConfig)
+                                         ConfigurationContext configCtx)
             throws AxisFault {
         // get attribute values
         if (!extractService) {
@@ -114,7 +115,7 @@ public class ArchiveReader implements DeploymentConstants {
                     if (entry.getName().equalsIgnoreCase(SERVICES_XML)) {
                         axisServiceGroup.setServiceGroupName(
                                 DescriptionBuilder.getShortFileName(currentFile.getName()));
-                        return buildServiceGroup(zin, currentFile, axisServiceGroup, wsdls, axisConfig);
+                        return buildServiceGroup(zin, currentFile, axisServiceGroup, wsdls, configCtx);
                     }
                 }
                 throw new DeploymentException(
@@ -148,7 +149,7 @@ public class ArchiveReader implements DeploymentConstants {
                 try {
                     in = new FileInputStream(file);
                     axisServiceGroup.setServiceGroupName(currentFile.getName());
-                    return buildServiceGroup(in, currentFile, axisServiceGroup, wsdls, axisConfig);
+                    return buildServiceGroup(in, currentFile, axisServiceGroup, wsdls, configCtx);
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND, e.getMessage()));
@@ -359,6 +360,7 @@ public class ArchiveReader implements DeploymentConstants {
             }
         }
     }
+
     public void readModuleArchive(ArchiveFileData archiveFile,
                                   AxisModule module, boolean explodedDir,
                                   AxisConfiguration axisConfig)

@@ -70,7 +70,7 @@ public class ConfigurationContextFactory {
         init(configContext);
         axisConfigurator.engageGlobalModules();
         axisConfigurator.loadServices();
-        addModuleService(axisConfig);
+        addModuleService(configContext);
         initApplicationScopeServices(configContext);
         axisConfig.setStart(true);
         return configContext;
@@ -89,13 +89,14 @@ public class ConfigurationContextFactory {
         }
     }
 
-    public static void addModuleService(AxisConfiguration axisConfig) throws AxisFault {
+    public static void addModuleService(ConfigurationContext configCtx) throws AxisFault {
+        AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
         HashMap modules = axisConfig.getModules();
         if (modules != null && modules.size() > 0) {
             Iterator mpduleItr = modules.values().iterator();
             while (mpduleItr.hasNext()) {
                 AxisModule axisModule = (AxisModule) mpduleItr.next();
-                Utils.deployModuleServices(axisModule, axisConfig);
+                Utils.deployModuleServices(axisModule, configCtx);
             }
         }
     }

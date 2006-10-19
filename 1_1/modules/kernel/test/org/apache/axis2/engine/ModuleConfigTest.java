@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.description.AxisOperation;
@@ -61,14 +62,15 @@ public class ModuleConfigTest extends TestCase {
 
     public void testModuleConfigAtService() {
         try {
-            ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, axis2xml).getAxisConfiguration();
+            ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, axis2xml);
+            ar = configurationContext.getAxisConfiguration();
 
 
             AxisService service = new AxisService();
             service.setName("testService");
             ar.addService(service);
             InputStream in = new FileInputStream(repo + "/service1.xml");
-            ServiceBuilder sbuilder = new ServiceBuilder(in, new AxisConfiguration(), service);
+            ServiceBuilder sbuilder = new ServiceBuilder(in, configurationContext, service);
             sbuilder.populateService(sbuilder.buildOM());
 
             ModuleConfiguration moduleConfiguration = service.getModuleConfig(new QName("Servie_module"));

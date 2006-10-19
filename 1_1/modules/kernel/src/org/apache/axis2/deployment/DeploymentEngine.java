@@ -32,7 +32,6 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -220,7 +219,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 throw new DeploymentException(
                         Messages.getMessage(DeploymentErrorMsgs.SERVICE_XML_NOT_FOUND, servicesURL.toString()));
             }
-            DescriptionBuilder builder = new DescriptionBuilder(servicexmlStream, axisConfig);
+            DescriptionBuilder builder = new DescriptionBuilder(servicexmlStream, configContext);
             OMElement rootElement = builder.buildOM();
             String elementName = rootElement.getLocalName();
 
@@ -244,7 +243,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 axisService.setParent(serviceGroup);
                 axisService.setClassLoader(serviceClassLoader);
 
-                ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
+                ServiceBuilder serviceBuilder = new ServiceBuilder(configContext, axisService);
                 AxisService service = serviceBuilder.populateService(rootElement);
 
                 ArrayList serviceList = new ArrayList();
@@ -252,7 +251,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 return serviceList;
             } else if (TAG_SERVICE_GROUP.equals(elementName)) {
                 ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, new HashMap(),
-                        axisConfig);
+                        configContext);
                 ArrayList servicList = groupBuilder.populateServiceGroup(serviceGroup);
                 Iterator serviceIterator = servicList.iterator();
                 while (serviceIterator.hasNext()) {
@@ -340,7 +339,6 @@ public class DeploymentEngine implements DeploymentConstants {
             throws AxisFault {
         fillServiceGroup(serviceGroup, serviceList, serviceLocation, axisConfig);
         axisConfig.addServiceGroup(serviceGroup);
-        startUpService(serviceGroup);
         if (currentArchiveFile != null) {
             addAsWebResources(currentArchiveFile.getFile(),
                     serviceGroup.getServiceGroupName(), serviceGroup);
@@ -419,25 +417,6 @@ public class DeploymentEngine implements DeploymentConstants {
                                         opDesc.getName().getLocalPart(), moduleName.getLocalPart()));
                     }
                 }
-            }
-        }
-    }
-
-    /**
-     * When user adds the "load-on-startup" parameter into services.xml ,
-     * Axis2 will call following method using Java reflection.
-     * If user has DB initialization , Thread creation then he can do that at this point.
-     * Public void startUp(ConfigurationContext) {}
-     *
-     * @param serviceGroup
-     */
-    private void startUpService(AxisServiceGroup serviceGroup) {
-        Iterator services = serviceGroup.getServices();
-        while (services.hasNext()) {
-            AxisService axisService = (AxisService) services.next();
-            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
-            if (serviceLifeCycle != null) {
-                serviceLifeCycle.startUp(configContext, axisService);
             }
         }
     }
@@ -533,7 +512,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 ArrayList serviceList = archiveReader.processServiceGroup(
                                         currentArchiveFile.getAbsolutePath(), currentArchiveFile,
                                         sericeGroup, explodedDir, wsdlservice,
-                                        axisConfig);
+                                        configContext);
                                 addServiceGroup(sericeGroup, serviceList, currentArchiveFile.getFile().toURL(), currentArchiveFile);
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
                                         currentArchiveFile.getName()));
@@ -981,11 +960,12 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public static AxisService buildService(InputStream serviceInputStream,
                                            ClassLoader classLoader,
-                                           AxisConfiguration axisConfig)
+                                           ConfigurationContext configCtx)
             throws DeploymentException {
         AxisService axisService = new AxisService();
         try {
 
+            AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
             Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
             boolean antiJARLocking = true;
             if (parahotupdate != null) {
@@ -999,7 +979,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     DeploymentConstants.TYPE_SERVICE, "", antiJARLocking);
             currentArchiveFile.setClassLoader(classLoader);
 
-            ServiceBuilder builder = new ServiceBuilder(serviceInputStream, axisConfig,
+            ServiceBuilder builder = new ServiceBuilder(serviceInputStream, configCtx,
                     axisService);
 
             builder.populateService(builder.buildOM());
@@ -1015,16 +995,16 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * To build a AxisServiceGroup for a given services.xml
      * You have to add the created group into AxisConfig
-     * @param servicesxml : inpupstream create using services.xml
-     * @param classLoader : corresponding class loader to load the class
+     *
+     * @param servicesxml      : inpupstream create using services.xml
+     * @param classLoader      : corresponding class loader to load the class
      * @param serviceGroupName : name of the service group
-     * @param axisConfig : 
      * @throws AxisFault
      */
     public static AxisServiceGroup buildServiceGroup(InputStream servicesxml,
                                                      ClassLoader classLoader,
                                                      String serviceGroupName,
-                                                     AxisConfiguration axisConfig,
+                                                     ConfigurationContext configCtx,
                                                      ArchiveReader archiveReader,
                                                      HashMap wsdlServices) throws AxisFault {
         ArchiveFileData currentArchiveFile = new ArchiveFileData(
@@ -1033,10 +1013,11 @@ public class DeploymentEngine implements DeploymentConstants {
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         serviceGroup.setServiceGroupClassLoader(classLoader);
         serviceGroup.setServiceGroupName(serviceGroupName);
+        AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
         try {
             ArrayList serviceList = archiveReader.buildServiceGroup(servicesxml,
                     currentArchiveFile, serviceGroup,
-                    wsdlServices, axisConfig);
+                    wsdlServices, configCtx);
             fillServiceGroup(serviceGroup, serviceList, null, axisConfig);
             return serviceGroup;
         } catch (XMLStreamException e) {

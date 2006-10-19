@@ -288,7 +288,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 }
                 AxisServiceGroup serviceGroup = DeploymentEngine.buildServiceGroup(servicexml,
                         Thread.currentThread().getContextClassLoader(),
-                        "annonServiceGroup", axisConfig,
+                        "annonServiceGroup", configContext,
                         archiveReader, wsdlServices);
                 axisConfig.addServiceGroup(serviceGroup);
             }
