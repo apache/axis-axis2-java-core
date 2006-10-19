@@ -44,7 +44,6 @@ import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
-import org.apache.ws.commons.schema.utils.NodeNamespaceContext;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
@@ -963,7 +962,7 @@ public class AxisService extends AxisDescription {
         if (schema != null) {
             schemaList.add(schema);
             if (schema.getTargetNamespace() != null) {
-//                addSchemaNameSpace(schema.getTargetNamespace());
+                addSchemaNameSpace(schema);
             }
         }
     }
@@ -973,7 +972,7 @@ public class AxisService extends AxisDescription {
         while (iterator.hasNext()) {
             XmlSchema schema = (XmlSchema) iterator.next();
             schemaList.add(schema);
-//            addSchemaNameSpace(schema.getTargetNamespace());
+            addSchemaNameSpace(schema);
         }
     }
 
@@ -1234,9 +1233,9 @@ public class AxisService extends AxisDescription {
      * Ex:
      * Map mrMap = new HashMap();
      * mrMap.put("http://www.w3.org/2004/08/wsdl/in-only",
-     *           RPCInOnlyMessageReceiver.class.newInstance());
+     * RPCInOnlyMessageReceiver.class.newInstance());
      * mrMap.put("http://www.w3.org/2004/08/wsdl/in-out",
-     *           RPCMessageReceiver.class.newInstance());
+     * RPCMessageReceiver.class.newInstance());
      *
      * @param implClass
      * @param axisConfiguration
@@ -1251,7 +1250,7 @@ public class AxisService extends AxisDescription {
                                             AxisConfiguration axisConfiguration,
                                             Map messageReceiverClassMap,
                                             String targetNamespace,
-                                            String schemaNamespace) throws AxisFault{
+                                            String schemaNamespace) throws AxisFault {
         Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
         OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
         parameter.setParameterElement(paraElement);
@@ -1328,14 +1327,14 @@ public class AxisService extends AxisDescription {
                 if (messageReceiverClassMap.get(mep) != null) {
                     Object obj = messageReceiverClassMap.get(mep);
                     if (obj instanceof MessageReceiver) {
-                        mr = (MessageReceiver)obj;
+                        mr = (MessageReceiver) obj;
                         operation.setMessageReceiver(mr);
-                    }else {
+                    } else {
                         log.error("Object is not an instance of MessageReceiver, thus, default MessageReceiver has been set");
                         mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
                         operation.setMessageReceiver(mr);
                     }
-                }else {
+                } else {
                     log.error("Required MessageReceiver couldn't be found, thus, default MessageReceiver has been used");
                     mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
                     operation.setMessageReceiver(mr);
@@ -1495,13 +1494,17 @@ public class AxisService extends AxisDescription {
         this.nameSpacesMap = nameSpacesMap;
     }
 
-    private void addSchemaNameSpace(String targetNameSpace) {
+    private void addSchemaNameSpace(XmlSchema schema) {
+        String targetNameSpace = schema.getTargetNamespace();
+        String prefix = schema.getNamespaceContext().getPrefix(targetNameSpace);
+
         boolean found = false;
         if (nameSpacesMap != null && nameSpacesMap.size() > 0) {
             Iterator itr = nameSpacesMap.values().iterator();
+            Set keys = nameSpacesMap.keySet();
             while (itr.hasNext()) {
                 String value = (String) itr.next();
-                if (value.equals(targetNameSpace)) {
+                if (value.equals(targetNameSpace)&&keys.contains(prefix)) {
                     found = true;
                 }
             }
