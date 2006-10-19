@@ -7,6 +7,7 @@ import org.apache.ideaplugin.bean.ServiceObj;
 import org.apache.ideaplugin.frames.table.ArchiveTableModel;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -103,6 +104,7 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
         lblServiceNam.setVisible(false);
         txtServiceName.setVisible(false);
         setSize(getPreferredSize());
+        parent.fc.setFileFilter(new ClassFileFilter());
     }
 
     public void fillBean(ArchiveBean bean) {
@@ -133,6 +135,7 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
             parent.fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int returnVal = parent.fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
+
                 File newfile = parent.fc.getSelectedFile();
                 String newFile = newfile.getPath();
                 int index = newFile.indexOf(file.getAbsolutePath().trim());
@@ -147,9 +150,11 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
                         cindex = newFile.indexOf(ch);
                     }
                     fileName = newFile;
-                    int classIndex = fileName.indexOf(".class");
+                    int classIndex = fileName.lastIndexOf(".");
                     fileName = fileName.substring(0, classIndex);
                     txtClassDir.setText(fileName);
+
+
                 }
             }
         } else if (obj == load) {
@@ -199,9 +204,10 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
                 lblServiceNam.setVisible(true);
                 txtServiceName.setVisible(true);
             } catch (ClassNotFoundException e1) {
-                e1.printStackTrace();
+                JOptionPane.showMessageDialog(parent, "The specified file is not a valid java class",
+                            "Error!", JOptionPane.ERROR_MESSAGE);
             }
-            parent.reShow();
+            parent.repaint();
 
         } else if (obj == butDone) {
 
@@ -295,5 +301,38 @@ public class SelectPanel extends JPanel implements ObjectKeeper, ActionListener 
     public String getLable() {
         return "First select service class and load its method operations";
     }
+
+
+class ClassFileFilter extends FileFilter {
+
+    public boolean accept(File f) {
+        if (f.isDirectory()) {
+            return true;
+        }
+        String extension = getExtension(f);
+        if (extension != null) {
+            return extension.equals("class");
+        }
+
+        return false;
+
+    }
+
+    public String getDescription() {
+        return ".class";
+    }
+
+    private String getExtension(File f) {
+        String ext = null;
+        String s = f.getName();
+        int i = s.lastIndexOf('.');
+
+        if (i > 0 && i < s.length() - 1) {
+            ext = s.substring(i + 1).toLowerCase();
+        }
+        return ext;
+    }
+
+}
 }
 

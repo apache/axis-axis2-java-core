@@ -45,6 +45,7 @@ public class OutPutPane extends JPanel implements ActionListener {
 
     JLabel lblModuleSrc;
     JComboBox cmbModuleSrc;
+    boolean flag = true;
     private CodegenBean cogenbean;
     final JFileChooser fc = new JFileChooser();
 
@@ -83,7 +84,6 @@ public class OutPutPane extends JPanel implements ActionListener {
         radCustomLocation.addActionListener(this);
 
         cmbCurrentProject = new JComboBox();
-        loadCmbCurrentProject();
         cmbCurrentProject.setEnabled(true);
         add(cmbCurrentProject);
 
@@ -92,9 +92,12 @@ public class OutPutPane extends JPanel implements ActionListener {
         add(lblModuleSrc);
 
         cmbModuleSrc = new JComboBox();
-        loadcmbModuleSrcProject();
         cmbModuleSrc.setEnabled(true);
         add(cmbModuleSrc);
+
+
+//        loadCmbCurrentProject();
+//        loadcmbModuleSrcProject();
 
 
         setSize(getPreferredSize());
@@ -102,35 +105,52 @@ public class OutPutPane extends JPanel implements ActionListener {
 
     public void loadCmbCurrentProject() {
         Module modules[] = cogenbean.getModules();
-        int count =-1;
+
         if (modules != null) {
-            for (count = 0; count < modules.length; count++) {
+            for (int count = 0; count < modules.length; count++) {
                 cmbCurrentProject.addItem(modules[count].getName());
             }
         }
 
-        if (count == -1) {
+    }
+
+    public void loadcmbModuleSrcProject() {
+        String module = null;
+        module = (String) cmbCurrentProject.getSelectedItem();
+        int count = 0;
+        if (module != null) {
+            String src[] = cogenbean.getModuleSrc(module);
+            for ( count = 0; count < src.length; count++) {
+                cmbModuleSrc.addItem(src[count]);
+            }
+
+            count = src.length;
+        }
+
+        if (flag)
+        {
+            flag = false;
+
+        if (count == 0) {
             radCurrentProject.setEnabled(false);
+            cmbCurrentProject.setEnabled(false);
+            cmbModuleSrc.setEnabled(false);
+            lblCurrentProject.setEnabled(false);
+            lblModuleSrc.setEnabled(false);
             radCustomLocation.setSelected(true);
             txtoutput.setEnabled(true);
             btwBrowse.setEnabled(true);
         }
         else{
             radCurrentProject.setEnabled(true);
+            cmbCurrentProject.setEnabled(true);
+            cmbModuleSrc.setEnabled(true);
+            lblCurrentProject.setEnabled(true);
+            lblModuleSrc.setEnabled(true);
             radCurrentProject.setSelected(true);
             txtoutput.setEnabled(false);
             btwBrowse.setEnabled(false);
         }
-    }
-
-    public void loadcmbModuleSrcProject() {
-        String module = null;
-        module = (String) cmbCurrentProject.getSelectedItem();
-        if (module != null) {
-            String src[] = cogenbean.getModuleSrc(module);
-            for (int count = 0; count < src.length; count++) {
-                cmbModuleSrc.addItem(src[count]);
-            }
         }
     }
 

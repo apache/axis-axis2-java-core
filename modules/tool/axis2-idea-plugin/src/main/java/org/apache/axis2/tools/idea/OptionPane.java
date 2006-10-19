@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.intellij.openapi.module.Module;
+
 
 public class OptionPane extends JPanel implements ActionListener {
 
@@ -76,13 +78,13 @@ public class OptionPane extends JPanel implements ActionListener {
         Object obj = e.getSource();
 
         if (obj == radDefaultBoth) {
-            BottomPanel.setEnable(true, false, true);
+            BottomPanel.setEnable(true,true, false, true);
         } else if (obj == radDefaultClient) {
-            BottomPanel.setEnable(false, true, true);
+            BottomPanel.setEnable(true,false, true, true);
         } else if (obj == radDefaultServer) {
-            BottomPanel.setEnable(true, false, true);
+            BottomPanel.setEnable(true,true, false, true);
         } else if (obj == radCustom) {
-            BottomPanel.setEnable(true, false, true);
+            BottomPanel.setEnable(true,true, false, true);
         }
 
     }
@@ -123,6 +125,7 @@ public class OptionPane extends JPanel implements ActionListener {
         setDefaultCommonConfigurations();
         codegenBean.setServerSide(false);
         codegenBean.setServerXML(false);
+        codegenBean.setPackageName(codegenBean.packageFromTargetNamespace());
         File temp = codegenBean.getTemp();
         codegenBean.setOutput(temp.getAbsolutePath());
 
@@ -131,7 +134,6 @@ public class OptionPane extends JPanel implements ActionListener {
 
     public void setCodeGenBean(CodegenBean codegenBean) {
         this.codegenBean = codegenBean;
-        codegenBean.readWSDL();
         java.util.List serviceList = new ArrayList();
         java.util.List portList = new ArrayList();
 
@@ -142,6 +144,14 @@ public class OptionPane extends JPanel implements ActionListener {
         }
         if (portList.size() > 0)
             portName = (String) portList.get(0);
+
+        Module modules[] = codegenBean.getModules();
+        if (modules == null){
+            radDefaultBoth.setEnabled(false);
+            radDefaultClient.setEnabled(false);
+            radDefaultServer.setEnabled(false);
+            radCustom.setSelected(true);
+        }
     }
 
 

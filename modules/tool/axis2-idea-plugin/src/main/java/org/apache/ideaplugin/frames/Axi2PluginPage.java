@@ -38,6 +38,7 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
     JButton butCancle;
     JPanel imglbl;
     Project project;
+    Java2CodeFrame win;
 
     public Axi2PluginPage() {
         setBackground(Color.white);
@@ -51,7 +52,7 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         setLayout(customLayout);
         setTitle("Axis2 Plugin");
         cbg = new ButtonGroup();
-        service = new JRadioButton("Create a service archive", false);
+        service = new JRadioButton("Create a service archive", true);
         service.setToolTipText("Hepls package classes, libs and WSDLs to create a archive that can be deployed in Axis2");
         cbg.add(service);
         add(service);
@@ -96,10 +97,12 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
             this.hide();
             setVisible(false);
             if (javawsdl.isSelected()) {
-                Java2CodeFrame win = new Java2CodeFrame();
+
+                win = new Java2CodeFrame();
                 win.setProject(project);
                 win.pack();
                 win.show();
+                
             } else {
                 ServiceArciveFrame window = new ServiceArciveFrame();
                 window.setTitle("Service Archive creation");

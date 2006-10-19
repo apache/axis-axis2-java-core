@@ -125,8 +125,8 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
     }
 
     public String getLable() {
-        return "Welcome to Axis2 service archive generation" +
-                "select service type";
+        return "Welcome to Axis2 service archive generation. " +
+                "Select service type";
     }
 }
 
