@@ -1,12 +1,20 @@
 Sample for Yahoo - Search - REST
 ========================================
 
-Running the Sample:
--------------------
-There are two methods to run the sample
+Introduction
+============
 
-1. Type <ant> command.
+Axis2 client api has facilities to invoke REST interfaces. The api to be used is almost the same
+as we use while invoking with REST.
+Yahoo provides a REST api to call its search service. This sample demonstrates how to call Yahoo search
+service using Axis2 client.
 
-2. Using the scrip files. Use run.sh or run.bat to run the sample pertaining
-to the system you are using.
+Pre-Requisites
+==============
 
+Apache Ant must be installed in the system.
+
+Running The Sample
+==================
+
+Type "ant" to run the graphical user interface for this sample. 
