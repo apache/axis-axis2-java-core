@@ -24,6 +24,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Iterator;
 
 public class RESTSearchModel {
@@ -42,10 +44,10 @@ public class RESTSearchModel {
      */
     private String snippet;
 
-    public String searchYahoo(String query, String format){
+    public String searchYahoo(String query, String format) {
         try {
             snippet = beginHTML;
-            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch";
+            String epr = "http://localhost:8080/WebSearchService/V1/webSearch";
 
             ServiceClient client = new ServiceClient();
             Options options = new Options();
@@ -61,11 +63,13 @@ public class RESTSearchModel {
 
         } catch (Exception e) {
             e.printStackTrace();
+            snippet = "<H2>Error occurred during the invocation to Yahoo search service</H2>" +
+                    "<p>" + e.getMessage() + "</p>" + endHTML;
         }
         return null;
     }
 
-    private static OMElement getPayloadForYahooSearchCall(String queryStr, String formatStr) {
+    private static OMElement getPayloadForYahooSearchCall(String queryStr, String formatStr) throws UnsupportedEncodingException {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMElement rootElement = fac.createOMElement("webSearch", null);
 
@@ -73,15 +77,16 @@ public class RESTSearchModel {
         appId.setText("ApacheRestDemo");
 
         OMElement query = fac.createOMElement("query", null, rootElement);
-        query.setText(queryStr);
+        query.setText(URLEncoder.encode(queryStr, "UTF-8"));
 
-        OMElement format = fac.createOMElement("format", null, rootElement);
-        format.setText(formatStr);
-
+        if (formatStr != null && formatStr.length() != 0) {
+            OMElement format = fac.createOMElement("format", null, rootElement);
+            format.setText(URLEncoder.encode(formatStr, "UTF-8"));
+        }
         return rootElement;
     }
 
-    private void generateSnippet(OMElement response){
+    private void generateSnippet(OMElement response) {
         String title = null;
         String summary = null;
         String clickUrl = null;
@@ -90,13 +95,13 @@ public class RESTSearchModel {
         //get an iterator for Result elements
         Iterator itr = response.getChildElements();
         Iterator innerItr;
-        while(itr.hasNext()){
-            result = (OMElement)itr.next();
+        while (itr.hasNext()) {
+            result = (OMElement) itr.next();
             innerItr = result.getChildElements();
-                title = ((OMElement)innerItr.next()).getText();
-                summary = ((OMElement)innerItr.next()).getText();
-                url = ((OMElement)innerItr.next()).getText();
-                clickUrl= ((OMElement)innerItr.next()).getText();
+            title = ((OMElement) innerItr.next()).getText();
+            summary = ((OMElement) innerItr.next()).getText();
+            url = ((OMElement) innerItr.next()).getText();
+            clickUrl = ((OMElement) innerItr.next()).getText();
             snippet += "<a href=" + clickUrl + ">" + title + "</a>" + "<br>" + summary +
                     "<br>" + url + "<br>" + "<br>";
         }

@@ -766,6 +766,9 @@
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
                 <include name="yahoorestsearch/**/*.*"/>
+                <include name="target/yahoorestsearch/yahooRESTSearch.jar"/>
+
+
                 <include name="googlespellcheck/**/*.*"/>
                 <include name="FaultHandling/**/*.*"/>
                 <include name="mtomsample/**/*.*"/>
