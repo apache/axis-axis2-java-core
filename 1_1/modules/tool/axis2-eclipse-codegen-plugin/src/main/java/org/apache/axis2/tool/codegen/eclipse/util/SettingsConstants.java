@@ -81,6 +81,11 @@ public interface SettingsConstants {
      * A boolean value whether the server-side skeletons are generated or not
      */
     static final String PREF_CHECK_GENERATE_SERVERSIDE = "PREF_CHECK_GENERATE_SERVERSIDE";
+    
+    /**
+     * A boolean value whether the server-side skeletons are generated or not
+     */
+    static final String PREF_CHECK_GENERATE_CLIENTSIDE = "PREF_CHECK_GENERATE_CLIENTSIDE";
 
     /**
      * A boolean value whether the server-side configuration file for Axis2 (server.xml) will be generated or not.
@@ -149,6 +154,8 @@ public interface SettingsConstants {
      static final String PREF_CHECK_JAR_CREATION ="PREF_CHECK_FILE_SYSTEM";
      
      static final String PREF_AXIS_HOME_OUTPUT_LOCATION = "PREF_OUTPUT_LOCATION";
+     
+     static final String PREF_AXIS_LIB_LOCATION = "PREF_OUTPUT_LOCATION";
      
      static final String PREF_JAR_FILE_NAME = "PREF_OUTPUT_LOCATION";
      

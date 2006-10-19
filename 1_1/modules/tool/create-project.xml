@@ -1,8 +1,8 @@
 <project basedir="." default="all">
 
     <property name="src" value="./src"></property>
-    <property name="codegen.src.dir" value="./axis2-eclipse-codegen-plugin/src"></property>
-    <property name="service.src.dir" value="./axis2-eclipse-service-plugin/src"></property>
+    <property name="codegen.src.dir" value="./axis2-eclipse-codegen-plugin/src/main/java"></property>
+    <property name="service.src.dir" value="./axis2-eclipse-service-plugin/src/main/java"></property>
     <property name="output" value="./eclipse_projects"></property>
     <property name="service.output.dir" value="${output}/service-archiver"></property>
     <property name="codegen.output.dir" value="${output}/code-gen"></property>
