@@ -32,6 +32,7 @@ import java.io.StringWriter;
  * Time: 3:38:12 PM
  */
 public class BottomPanel extends JPanel implements ActionListener {
+    public static JButton btnBack;
     public static JButton btnNext;
     public static JButton btnFinish;
     public static JButton btnCancel;
@@ -45,7 +46,12 @@ public class BottomPanel extends JPanel implements ActionListener {
 
         setLayout(customLayout);
 
-        btnNext = new JButton("Next");
+        btnBack = new JButton("< Back");
+        btnBack.setEnabled(true);
+        btnBack.addActionListener(this);
+        add(btnBack);
+
+        btnNext = new JButton("Next >");
         btnNext.addActionListener(this);
         add(btnNext);
 
@@ -61,7 +67,8 @@ public class BottomPanel extends JPanel implements ActionListener {
 
     }
 
-    public static void setEnable(boolean next, boolean finish, boolean cancel) {
+    public static void setEnable(boolean back,boolean next, boolean finish, boolean cancel) {
+        btnBack.setEnabled(back);
         btnNext.setEnabled(next);
         btnFinish.setEnabled(finish);
         btnCancel.setEnabled(cancel);
@@ -255,13 +262,17 @@ class BottomLayout implements LayoutManager {
         Component c;
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 232, insets.top + 10, 80, 24);
+            c.setBounds(insets.left + 152, insets.top + 10, 80, 24);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 312, insets.top + 10, 80, 24);
+            c.setBounds(insets.left + 232, insets.top + 10, 80, 24);
         }
         c = parent.getComponent(2);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 312, insets.top + 10, 80, 24);
+        }
+        c = parent.getComponent(3);
         if (c.isVisible()) {
             c.setBounds(insets.left + 392, insets.top + 10, 80, 24);
         }

@@ -51,8 +51,8 @@ public class ServiceArciveFrame extends JFrame {
 
         topPanel = new ImagePanel();
         getContentPane().add(topPanel);
-        topPanel.setCaptions("Service Type selection", "Welcome to Axis2 service archive generation" +
-                "select service type");
+        topPanel.setCaptions("Service Type selection", "Welcome to Axis2 service archive generation. " +
+                "Select service type");
 
         currentpanle = new FirstFrame(this);
         getContentPane().add(currentpanle);
@@ -68,6 +68,7 @@ public class ServiceArciveFrame extends JFrame {
         bottomPanel.setBounds(insets.left, insets.top + 328, 608, 60);
         setSize(getPreferredSize());
         setResizable(false);
+
     }
 
     public void setEnable(boolean back, boolean next, boolean finish, boolean cancel) {

@@ -61,8 +61,9 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
         btnBrowse.addActionListener(this);
 
 
-        Dimension dim = new Dimension(450, 300);
+        Dimension dim = new Dimension(450, 400);
         setSize(dim);
+        fc.setFileFilter(new WSDLFileFilter());
 
 
     }
@@ -70,19 +71,17 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
         if (obj == btnBrowse) {
-            fc.setFileFilter(new WSDLFileFilter());
+
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
                 txtWSDL.setText(file.getAbsolutePath());
-                BottomPanel.setEnable(true, false, true);
+                BottomPanel.setEnable(false,true, false, true);
                 codegenBean.setWSDLFileName(file.getAbsolutePath());
-            } else {
-                System.out.println("no file");
-            }
+            } 
         } else if (obj == txtWSDL) {
             if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(true, false, true);
+                BottomPanel.setEnable(false,true, false, true);
                 codegenBean.setWSDLFileName(txtWSDL.getText().trim());
             }
 
@@ -94,7 +93,7 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
         Object obj = e.getSource();
         if (obj == txtWSDL) {
             if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(true, false, true);
+                BottomPanel.setEnable(false,true, false, true);
                 codegenBean.setWSDLFileName(txtWSDL.getText().trim());
             }
         }
@@ -107,7 +106,7 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
         Object obj = e.getSource();
         if (obj == txtWSDL) {
             if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(true, false, true);
+                BottomPanel.setEnable(false,true, false, true);
                 codegenBean.setWSDLFileName(txtWSDL.getText().trim());
             }
         }
@@ -117,7 +116,7 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
         Object obj = e.getSource();
         if (obj == txtWSDL) {
             if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(true, false, true);
+                BottomPanel.setEnable(false,true, false, true);
                 codegenBean.setWSDLFileName(txtWSDL.getText().trim());
             }
         }
@@ -127,7 +126,7 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
         Object obj = e.getSource();
         if (obj == txtWSDL) {
             if (txtWSDL.getText() != null && !txtWSDL.getText().trim().equals("")) {
-                BottomPanel.setEnable(true, false, true);
+                BottomPanel.setEnable(false,true, false, true);
                 codegenBean.setWSDLFileName(txtWSDL.getText().trim());
             }
         }

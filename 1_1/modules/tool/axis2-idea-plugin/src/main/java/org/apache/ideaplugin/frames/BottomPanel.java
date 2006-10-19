@@ -104,6 +104,9 @@ public class BottomPanel extends JPanel implements ActionListener {
         } else if (obj == butBack) {
             currentPanel = ((ObjectKeeper) currentPanel).getPrivious();
             parent.Back(currentPanel);
+            if (currentPanel instanceof FirstFrame) {
+                parent.setEnable(false, true, false, true);
+            }
         }
     }
 }

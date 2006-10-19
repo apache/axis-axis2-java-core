@@ -66,6 +66,16 @@ public class CodegenBean {
 
     Project project;
 
+    public boolean isServerSideInterface() {
+        return isServerSideInterface;
+    }
+
+    public void setServerSideInterface(boolean serverSideInterface) {
+        isServerSideInterface = serverSideInterface;
+    }
+
+    private boolean isServerSideInterface = true;
+
 
     public boolean isDefaultClient() {
         return defaultClient;
@@ -198,6 +208,11 @@ public class CodegenBean {
             optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, new CommandLineOption(
                     CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, getStringArray(serviceName)));
         }
+        //server side interface  mapping
+       if (isServerSideInterface){
+	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new CommandLineOption(
+	    		   CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new String[0]));
+       }
         return optionMap;
 
     }
@@ -361,14 +376,12 @@ public class CodegenBean {
 
     private Definition wsdlDefinition = null;
 
-    public void readWSDL() {
+    public void readWSDL() throws WSDLException {
 
-        try {
+
             WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
             wsdlDefinition = reader.readWSDL(WSDLFileName);
-        } catch (WSDLException e) {
-            e.printStackTrace();
-        }
+        
     }
 
     //get the default package derived by the targetNamespace
