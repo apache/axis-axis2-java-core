@@ -47,10 +47,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.namespace.QName;
 import javax.activation.DataHandler;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -349,8 +346,8 @@ public class JMSUtils {
         }
 
         if (builder == null) {
-            XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in,
-                                                                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
+            XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader
+                (in, MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
             // Set the encoding scheme in the message context
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
@@ -359,8 +356,11 @@ public class JMSUtils {
             SOAPFactory soapFactory = new SOAP11Factory();
             builder.setOMBuilderFactory(soapFactory);
             try {
-                if (builder.getDocumentElement() instanceof SOAPEnvelope) {
-                    envelope = (SOAPEnvelope) builder.getDocumentElement();
+                String ns = builder.getDocumentElement().getNamespace().getNamespaceURI();
+                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(ns)) {
+                    envelope = getEnvelope(in, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(ns)) {
+                    envelope = getEnvelope(in, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                 } else {
                     // this is POX ... mark MC as REST
                     msgContext.setDoingREST(true);
@@ -442,6 +442,19 @@ public class JMSUtils {
                 "SOAP message");
         }
         return envelope;
+    }
+
+    private static SOAPEnvelope getEnvelope(InputStream in, String namespace) throws XMLStreamException {
+
+        try {
+            in.reset();
+        } catch (IOException e) {
+            throw new XMLStreamException("Error resetting message input stream", e);
+        }
+        XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader
+            (in, MessageContext.DEFAULT_CHAR_SET_ENCODING);
+        StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, namespace);
+        return (SOAPEnvelope) builder.getDocumentElement();
     }
 
     private static QName getQName(Object obj) {

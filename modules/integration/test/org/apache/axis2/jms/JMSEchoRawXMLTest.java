@@ -77,9 +77,10 @@ public class JMSEchoRawXMLTest extends TestCase {
         super(testName);
     }
 
-    protected void _setUp() throws Exception {
+    protected void setUp() throws Exception {
         // Start ActiveMQ embedded broker
         broker.setUseJmx(false);
+        broker.setPersistent(false);
         broker.addConnector("tcp://localhost:61616");
         broker.start();
 
@@ -101,7 +102,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         configContext = UtilServer.createClientConfigurationContext();
     }
 
-    protected void _tearDown() throws Exception {
+    protected void tearDown() throws Exception {
         UtilsJMSServer.stop();
         broker.stop();
     }
@@ -118,7 +119,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         return method;
     }
 
-    public void _testEchoXMLASync() throws Exception {
+    public void testEchoXMLASync() throws Exception {
         OMElement payload = createPayload();
         Options options = new Options();
         options.setTo(targetEPR);
@@ -159,7 +160,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         }
     }
 
-    public void _testEchoXMLSync() throws Exception {
+    public void testEchoXMLSync() throws Exception {
         OMElement payload = createPayload();
         Options options = new Options();
         options.setTo(targetEPR);
@@ -176,7 +177,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     }
 
-    public void _testEchoXMLCompleteSync() throws Exception {
+    public void testEchoXMLCompleteSync() throws Exception {
         ConfigurationContext configContext = UtilServer.createClientConfigurationContext("target/test-resources/jms-enabled-client-repository");
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -190,9 +191,9 @@ public class JMSEchoRawXMLTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
-        options.setTransportInProtocol(Constants.TRANSPORT_JMS);
-        options.setUseSeparateListener(true);
-        options.setTimeOutInMilliSeconds(60*60*1000);
+        //options.setTransportInProtocol(Constants.TRANSPORT_JMS);
+        //options.setUseSeparateListener(true);
+        options.setTimeOutInMilliSeconds(2*60*1000);
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
@@ -203,7 +204,7 @@ public class JMSEchoRawXMLTest extends TestCase {
 
     }
     
-    public void _testEchoXMLSyncMC() throws Exception {
+    public void testEchoXMLSyncMC() throws Exception {
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY, Constants.TESTING_REPOSITORY + "/conf/axis2.xml");
 
