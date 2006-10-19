@@ -2,6 +2,7 @@ package org.apache.axis2.wsdl.codegen.emitter;
 
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.*;
+import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.Utils;
