@@ -27,13 +27,13 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.util.CommandLineOption;
+import org.apache.axis2.util.CommandLineOptionConstants;
+import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.extension.JiBXExtension;
-import org.apache.axis2.wsdl.util.CommandLineOption;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Java;
