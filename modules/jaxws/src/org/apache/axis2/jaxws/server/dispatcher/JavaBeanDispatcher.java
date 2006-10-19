@@ -85,7 +85,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         }
         
         Message message = null;
-        //No need to create Response Messagecontext if its a one way call.
+        // If the operation is one-way, then we can just return null because
+        // we cannot create a MessageContext for one-way responses.
         if(operationDesc.isOneWay()){
         	message = null;
         }
