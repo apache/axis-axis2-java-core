@@ -25,18 +25,26 @@
      |
      | clean
      |    Deletes the 'target' directory in all projects
-
+     |
      | clean-repo
      |    Deletes the 'target' directory in all projects
      |
+     | dist-bin
+     |		Creates the main binary distribution
+     |
+     | dist-src
+     |		Creates the source distribution
+     |
+     | dist-docs
+     |		Creates the docs distribution
+     | 
+     | dist-min-bin
+     |      Creates the minimal binary distribution
+     | 
+     | release
+     |      Creates the complete release (dist-bin, dist-src, dist-docs, dist-min-bin)
      | war
      |    Build the war
-     |
-     | maven war-withsamples
-     |    build the war with the default samples
-     |
-     | release
-     |      Creates the complete release
    -->
 
 <project default="jar"
@@ -521,7 +529,7 @@
     <!--- Create the Release -->
     <!-- ================================================================ -->
     <goal name="release"
-          prereqs="jar,dist-min-bin,dist-std-bin,dist-src,dist-docs">
+          prereqs="jar,dist-min-bin,dist-bin,dist-src,dist-docs">
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Axis2 Distributions</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
@@ -606,9 +614,9 @@
         <ant:delete dir="target/temp/min/bin"/>
     </goal>
 
-    <goal name="dist-std-bin" prereqs="jar,init-dist,cache-std-deps">
+    <goal name="dist-bin" prereqs="jar,init-dist,cache-std-deps">
         <ant:echo>+----------------------------------------------</ant:echo>
-        <ant:echo>| Creating: Axis2 Standard Binary Distribution</ant:echo>
+        <ant:echo>| Creating: Axis2 Main Binary Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
         <ant:property name="std.bin.temp.dir" value="target/temp/main/axis2-${pom.currentVersion}"/>
@@ -667,6 +675,11 @@
             <ant:fileset file="modules/webapp/conf/web.xml"/>
         </ant:copy>   
     	
+       	<!-- copy the build.xml into webapp directory -->
+        <ant:copy toDir="${std.bin.temp.dir}/webapp">
+            <ant:fileset file="modules/webapp/scripts/build.xml"/>
+        </ant:copy>   
+    	
     	<!-- copy *.properties to webapp/WEB-INF/classes directory -->
     	<ant:copy toDir="${std.bin.temp.dir}/webapp/WEB-INF/classes">
     		<ant:fileset dir="modules/kernel/conf">
@@ -681,6 +694,7 @@
                 <ant:exclude name="**/*.iml"/>
                 <ant:exclude name="**/.*"/>
                 <ant:exclude name="**/conf/**"/>
+            	<ant:exclude name="**/scripts/**"/>
             </ant:fileset>
         </ant:copy>
     	
