@@ -54,7 +54,6 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     /**
      * Return the right properties for the optimization
      * @param propKey
-     * @return
      * @throws IllegalArgumentException
      */
     public Object getProperty(String propKey) throws IllegalArgumentException {

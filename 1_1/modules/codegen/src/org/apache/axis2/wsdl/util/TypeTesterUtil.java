@@ -20,7 +20,6 @@ public class TypeTesterUtil {
     /**
      * Check whether a given classname is primitives
      * @param className
-     * @return
      */
     public static boolean isPrimitive(String className){
 
@@ -40,7 +39,6 @@ public class TypeTesterUtil {
      * the current logic is simple where we look for a
      * '.' inside the classname string
      * @param className
-     * @return
      */
      public static boolean hasPackage(String className){
         return  (className.indexOf('.')!= -1);

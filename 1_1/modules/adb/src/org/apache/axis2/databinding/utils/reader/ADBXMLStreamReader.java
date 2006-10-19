@@ -30,7 +30,6 @@ public interface ADBXMLStreamReader extends XMLStreamReader,Constants {
 
     /**
      * Extra method to query the state of the pullparser
-     * @return
      */
      boolean isDone();
 

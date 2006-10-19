@@ -708,7 +708,6 @@ public class CStructWriter implements BeanWriter {
     /**
      * Keep unimplemented
      * @see org.apache.axis2.schema.writer.BeanWriter#getExtensionMapperPackageName() 
-     * @return
      */
     public String getExtensionMapperPackageName() {
         return null;

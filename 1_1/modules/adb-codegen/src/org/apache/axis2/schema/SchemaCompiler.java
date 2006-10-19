@@ -502,9 +502,8 @@ public class SchemaCompiler {
      * Process and Element
      *
      * @param xsElt
-     * @param isOuter-  We need to know this since the treatment of outer elements is different that
+     * @param isOuter  We need to know this since the treatment of outer elements is different that
      *                     inner elements
-     * @param isArray-  flag saying whether the elements represents an array
      * @throws SchemaCompilationException
      */
     private void processElement(XmlSchemaElement xsElt, boolean isOuter,Map innerElementMap,List localNillableList, XmlSchema parentSchema) throws SchemaCompilationException {
@@ -714,7 +713,6 @@ public class SchemaCompiler {
      *
      * @param schemaTypeName
      * @param currentSchema
-     * @return
      */
     private XmlSchema resolveParentSchema(QName schemaTypeName,XmlSchema currentSchema)
             throws SchemaCompilationException{
@@ -736,7 +734,6 @@ public class SchemaCompiler {
      * Generate a unique type Qname using an element name
      * @param referenceEltQName
      * @param parentSchema
-     * @return
      */
     private QName generateTypeQName(QName referenceEltQName, XmlSchema parentSchema) {
         QName generatedTypeName = new QName(referenceEltQName.getNamespaceURI(),
@@ -772,7 +769,6 @@ public class SchemaCompiler {
     /**
      * Finds whether a given class is already made
      * @param qName
-     * @return
      */
     private boolean isAlreadyProcessed(QName qName){
         return processedTypemap.containsKey(qName)||
@@ -785,7 +781,6 @@ public class SchemaCompiler {
      * A method to pick the ref class name
      * @param name
      * @param isArray
-     * @return
      */
     private String findRefClassName(QName name,boolean isArray){
         String className = null;
@@ -1702,7 +1697,6 @@ public class SchemaCompiler {
     /**
      * Checks whether a given element is a binary element
      * @param elt
-     * @return
      */
     private boolean isBinary(XmlSchemaElement elt) {
         return elt.getSchemaType()!=null &&
@@ -1712,7 +1706,6 @@ public class SchemaCompiler {
     /**
      * Checks whether a given qname is a binary
      * @param qName
-     * @return
      */
     private boolean isBinary(QName qName) {
         return qName!=null &&
@@ -1817,7 +1810,6 @@ public class SchemaCompiler {
      * Also no higher level element will have the maxOccurs greater than one
      *
      * @param particle
-     * @return
      * @throws SchemaCompilationException
      */
     private boolean isArray(XmlSchemaParticle particle) throws SchemaCompilationException {

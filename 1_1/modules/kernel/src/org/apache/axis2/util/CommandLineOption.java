@@ -56,7 +56,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
 
     /**
      * @return Returns the type.
-     * @see <code>CommandLineOptionConstans</code>
+     * @see CommandLineOptionConstants
      */
     public String getOptionType() {
         return type;

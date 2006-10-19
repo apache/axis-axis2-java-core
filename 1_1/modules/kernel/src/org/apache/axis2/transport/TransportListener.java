@@ -42,7 +42,6 @@ public interface TransportListener {
      * Deprecating this method for now and please use getEPRsForServices instead.
      * @param serviceName
      * @param ip
-     * @return
      * @throws AxisFault
      */
     EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault;

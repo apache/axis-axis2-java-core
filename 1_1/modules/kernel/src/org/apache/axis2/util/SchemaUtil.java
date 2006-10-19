@@ -82,7 +82,6 @@ public class SchemaUtil {
      * @param request
      * @param xmlSchemaElement
      * @param soapFactory
-     * @return
      * @throws AxisFault
      */
     public static SOAPEnvelope handleMediaTypeURLEncoded(MessageContext msgCtxt,

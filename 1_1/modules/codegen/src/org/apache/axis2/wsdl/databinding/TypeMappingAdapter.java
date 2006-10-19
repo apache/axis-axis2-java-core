@@ -168,7 +168,6 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     /**
      * @see TypeMapper#getTypeMappingStatus(javax.xml.namespace.QName) 
      * @param qName
-     * @return
      */
     public Object getTypeMappingStatus(QName qName) {
         return this.qName2StatusMap.get(qName);

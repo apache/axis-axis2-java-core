@@ -40,7 +40,6 @@ public class SOAPUtil {
      * @param msgContext
      * @param request
      * @param response
-     * @return
      * @throws AxisFault
      */
     public boolean processPostRequest(MessageContext msgContext,

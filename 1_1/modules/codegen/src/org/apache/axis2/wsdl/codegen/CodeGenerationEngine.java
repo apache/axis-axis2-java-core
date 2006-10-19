@@ -231,7 +231,6 @@ public class CodeGenerationEngine {
     /**
      * Read the WSDL file
      * @param uri
-     * @return
      * @throws WSDLException
      */
     private Definition readInTheWSDLFile(String uri) throws WSDLException {
@@ -284,7 +283,6 @@ public class CodeGenerationEngine {
      * gets a object from the class
      *
      * @param className
-     * @return
      */
     private Object getObjectFromClassName(String className) throws CodeGenerationException {
         try {
@@ -310,7 +308,6 @@ public class CodeGenerationEngine {
      * calculates the base URI
      * Needs improvement but works fine for now ;)
      * @param currentURI
-     * @return
      */
     private String getBaseURI(String currentURI){
         String baseURI;

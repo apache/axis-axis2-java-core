@@ -321,7 +321,6 @@ public class Utils {
      *
      * @param deployingModuleName
      * @param deployedModulename
-     * @return
      * @throws AxisFault
      */
     public static boolean checkVersion(QName deployingModuleName,
