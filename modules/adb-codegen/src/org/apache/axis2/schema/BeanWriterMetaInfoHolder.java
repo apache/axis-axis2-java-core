@@ -103,7 +103,6 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * Gets the parent
-     * @return
      */
     public BeanWriterMetaInfoHolder getParent() {
         return parent;
@@ -265,7 +264,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
 
-    /* Registers a Qname as nillable
+    /** Registers a Qname as nillable
      * The qName better be of an element
      *
      * @param qName
@@ -279,7 +278,6 @@ public class BeanWriterMetaInfoHolder {
     /**
      * Returns whether a QName is nillable or not
      * @param eltQName
-     * @return
      */
     public boolean isNillable(QName eltQName) {
         return nillableQNameList.contains(eltQName);

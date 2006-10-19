@@ -921,7 +921,6 @@ public class DeploymentEngine implements DeploymentConstants {
      *
      * @param modulearchive : Actual module archive file
      * @param config        : AxisConfiguration : for get classloaders etc..
-     * @return
      * @throws org.apache.axis2.deployment.DeploymentException
      *
      */
@@ -1020,7 +1019,6 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param classLoader : corresponding class loader to load the class
      * @param serviceGroupName : name of the service group
      * @param axisConfig : 
-     * @return
      * @throws AxisFault
      */
     public static AxisServiceGroup buildServiceGroup(InputStream servicesxml,

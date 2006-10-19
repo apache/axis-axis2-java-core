@@ -901,7 +901,6 @@ public class JavaBeanWriter implements BeanWriter {
      * Test whether the given class name matches the default
      *
      * @param javaClassNameForElement
-     * @return
      */
     private boolean isDefault(String javaClassNameForElement) {
         return SchemaCompiler.DEFAULT_CLASS_NAME
@@ -1058,8 +1057,6 @@ public class JavaBeanWriter implements BeanWriter {
     /**
      * Get the mapper class name - there is going to be only one
      * mapper class for the whole
-     *
-     * @return
      */
     private String getFullyQualifiedMapperClassName() {
         if (wrapClasses || !writeClasses) {
@@ -1072,8 +1069,6 @@ public class JavaBeanWriter implements BeanWriter {
     /**
      * get the mapper class package name
      * May be ignored by the implementer
-     *
-     * @return
      */
     public String getExtensionMapperPackageName() {
         return mappingClassPackage;
@@ -1094,7 +1089,6 @@ public class JavaBeanWriter implements BeanWriter {
      * the hierarchy of classes
      *
      * @param metainfArray
-     * @return
      */
     public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException {
         //generate the element

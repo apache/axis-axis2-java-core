@@ -42,7 +42,6 @@ public class SimpleElementReaderStateMachine implements States,Constants{
 
     /**
      *
-     * @return
      */
     public String getText() {
         return text;

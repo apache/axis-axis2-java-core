@@ -47,7 +47,6 @@ public class XSLTIncludeResolver implements URIResolver,Constants {
      * Resolves a given href and base combination
      * @param href
      * @param base
-     * @return
      * @throws TransformerException
      */
     public Source resolve(String href, String base) throws TransformerException {

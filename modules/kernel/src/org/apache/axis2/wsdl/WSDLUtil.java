@@ -26,7 +26,6 @@ public class WSDLUtil {
      * returns whether the given mep uri is one of the
      * input meps
      * @param mep
-     * @return
      */
     public static boolean isInputPresentForMEP(String mep) {
         return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(mep) ||
@@ -46,7 +45,6 @@ public class WSDLUtil {
     /**
      * returns whether the given mep URI is one of the output meps
      * @param MEP
-     * @return
      */
     public static boolean isOutputPresentForMEP(String MEP) {
         return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
@@ -76,7 +74,6 @@ public class WSDLUtil {
      * @param opName
      * @param suffix
      * @param partName
-     * @return
      */
     public static QName getPartQName(String opName,
                                      String suffix,

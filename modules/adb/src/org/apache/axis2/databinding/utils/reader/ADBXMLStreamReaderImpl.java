@@ -135,7 +135,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     /**
      *
      * @param key
-     * @return
      * @throws IllegalArgumentException
      */
     public Object getProperty(String key) throws IllegalArgumentException {
@@ -167,7 +166,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     /**
      * todo implement the right contract for this
      *
-     * @return
      * @throws XMLStreamException
      */
     public String getElementText() throws XMLStreamException {
@@ -182,7 +180,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     /**
      * todo implement this
      *
-     * @return
      * @throws XMLStreamException
      */
     public int nextTag() throws XMLStreamException {
@@ -190,7 +187,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     }
 
     /**
-     * @return
      * @throws XMLStreamException
      */
     public boolean hasNext() throws XMLStreamException {
@@ -288,7 +284,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     /**
      * @param i
-     * @return
      */
     public QName getAttributeName(int i) {
         if (state == DELEGATED_STATE) {
@@ -465,7 +460,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     /**
      * @param i
-     * @return
      */
     public String getNamespacePrefix(int i) {
         if (state == DELEGATED_STATE) {
@@ -487,8 +481,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     /**
      * Get the prefix list from the hastable and take that into an array
-     *
-     * @return
      */
     private String[] makePrefixArray() {
         String[] prefixes =
@@ -602,7 +594,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     /**
      * check the validity of this implementation
-     * @return
      */
     public boolean hasText() {
         if (state == DELEGATED_STATE) {
@@ -612,7 +603,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     }
 
     /**
-     * @return
      */
     public Location getLocation() {
         //return a default location
@@ -958,8 +948,6 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     /**
      * are we done ?
-     *
-     * @return
      */
     public boolean isDone() {
         return (state == END_ELEMENT_STATE);

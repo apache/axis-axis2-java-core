@@ -125,7 +125,6 @@ public class TypeMapperExtension implements CodeGenExtension {
 
     /**
      * Build a dom document from the mapping file
-     * @return
      * @throws CodeGenerationException
      */
     private Document buildDocument(CodeGenConfiguration configuration) throws CodeGenerationException {

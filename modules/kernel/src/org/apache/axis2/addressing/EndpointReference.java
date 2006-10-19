@@ -210,8 +210,6 @@ public class EndpointReference implements Serializable {
     }
 
     /**
-     * 
-     * @return
      * @deprecated
      */
     public String getName() {
@@ -315,7 +313,6 @@ public class EndpointReference implements Serializable {
      * @param nsurl
      * @param localName
      * @param prefix
-     * @return
      * @throws AxisFault
      * @deprecated  use {@link org.apache.axis2.addressing.EndpointReferenceHelper#toOM(EndpointReference, QName, String)} instead.
      */

@@ -116,7 +116,6 @@ public interface BeanWriter {
      * and a particular implementation may ignore this
      * @param metainfArray
      * @param namespaceToUse
-     * @return
      */
     public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException;
 }
