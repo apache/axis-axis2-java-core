@@ -1242,7 +1242,6 @@ public class AxisService extends AxisDescription {
      * @param messageReceiverClassMap
      * @param targetNamespace
      * @param schemaNamespace
-     * @return
      * @throws AxisFault
      */
 
@@ -1360,7 +1359,6 @@ public class AxisService extends AxisDescription {
      * @param messageReceiverClass : Message receiver that you want to use
      * @param targetNameSpace      : Service namespace
      * @param schemaNameSpace      : Schema namespace
-     * @return
      * @throws AxisFault
      */
 
