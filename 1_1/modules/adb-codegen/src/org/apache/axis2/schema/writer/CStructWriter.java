@@ -184,7 +184,16 @@ public class CStructWriter implements BeanWriter {
      * @see org.apache.axis2.schema.writer.BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
-        throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.notimplementedxception"));
+        try {
+            //determine the package for this type.
+            QName qName = simpleType.getQName();
+            return process(qName, metainf, typeMap, false);
+
+        } catch (SchemaCompilationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new SchemaCompilationException(e);
+        }
     }
 
     /**
