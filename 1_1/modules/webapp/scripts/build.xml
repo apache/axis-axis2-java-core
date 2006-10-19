@@ -1,0 +1,40 @@
+<project basedir="../" default="create.war">
+	<property name="dist" value="dist" />
+	<property name="temp" value="${dist}/temp" />
+	
+	<target name="init">
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${temp}"/>
+		<copy toDir="${temp}">
+            		<fileset dir="webapp">
+                		<include name="**/**"/>
+            		</fileset>
+            	</copy>
+	</target>
+	<target depends="init" name="prepare.repo">
+		<copy toDir="${temp}/WEB-INF">
+            		<fileset dir="repository">
+                		<include name="**/**"/>
+            		</fileset>
+            	</copy>
+		<!--TODO : *.list-->
+            	<mkdir dir="${temp}/WEB-INF/conf"/>
+            	<copy file="conf/axis2.xml" toDir="${temp}/WEB-INF/conf"/>
+	</target>
+	<target depends="init,prepare.repo" name="create.war">
+		<war destfile="dist/axis2.war"
+			webxml="${temp}/WEB-INF/web.xml">
+			<lib dir="lib">
+				<include name="**" />
+				<exclude name="**servlet**"/>
+				<exclude name="ant*.jar" />
+			</lib>		
+			<webinf dir="${temp}/WEB-INF" />
+			<fileset dir="${temp}">
+				<include name="**/axis2-web/**" />
+			</fileset>
+		</war>
+		<delete dir="${temp}"/>
+	</target>
+</project>
+
