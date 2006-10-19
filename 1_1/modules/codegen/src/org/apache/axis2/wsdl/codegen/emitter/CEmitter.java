@@ -25,6 +25,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.neethi.Policy;
+import org.apache.axiom.om.OMFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -315,12 +316,14 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
      * @return Returns character removed string.
      */
     protected String makeCClassName(String word) {
-        //currently avoid only java key words
+        //currently avoid only java key words and service names with '.' characters
 
         if (JavaUtils.isJavaKeyword(word)) {
             return JavaUtils.makeNonJavaKeyword(word);
         }
-        return word;
+
+        String cClassName = word.replace(".", "_");
+        return cClassName;
     }
 
 

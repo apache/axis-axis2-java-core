@@ -20,6 +20,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.databinding.CDefaultTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
@@ -42,7 +43,15 @@ public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
         //registered for -d none, we have to generate a new type mapper
         //that serves only the default types
         if (mapper ==null){
-            configuration.setTypeMapper(new DefaultTypeMapper());
+            if (configuration.getOutputLanguage() != null &&
+                    !configuration.getOutputLanguage().trim().equals("") &&
+                    configuration.getOutputLanguage().toLowerCase().equals("c")) {
+                configuration.setTypeMapper(new CDefaultTypeMapper());
+
+            }  else {
+                configuration.setTypeMapper(new DefaultTypeMapper());
+            }
+
         }
     }
 }

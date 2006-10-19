@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.wsdl;
+package org.apache.axis2.wsdl.databinding;
 
-public class WSDL2C {
-    public static void main(String[] args) throws Exception {
-        String[] cargs = new String[args.length + 2];
-        System.arraycopy(args, 0, cargs, 0, args.length);
-        System.setProperty("org.apache.adb.properties","/org/apache/axis2/schema/c-schema-compile.properties");
-        cargs[args.length] = "-l";
-        cargs[args.length +1] = "c";
+import javax.xml.namespace.QName;
 
-        WSDL2Code.main(cargs);
+public class CDefaultTypeMapper extends TypeMappingAdapter {
+    private String defaultStructName = "axiom_node_t*";
+    public CDefaultTypeMapper() {
+    }
+
+    /**
+     * Gets the type mapping name.
+     * always returns the default mapping
+     *
+     * @see TypeMapper#getTypeMappingName(javax.xml.namespace.QName)
+     */
+    public String getTypeMappingName(QName qname) {
+
+        if ((qname != null)) {
+            return defaultStructName;
+        }else{
+            return null;
+        }
+
     }
 }
