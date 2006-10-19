@@ -145,7 +145,7 @@
         <!--If you want to give your own host address for EPR generation-->
         <!--uncommet following paramter , and set as you required.-->
         <!--<parameter name="hostname" locked="false">tcp://myApp.com/ws</parameter>-->
-    </transportReceiver>
+    <!-- /transportReceiver -->
 
     <!-- ================================================= -->
     <!-- Transport Outs -->
