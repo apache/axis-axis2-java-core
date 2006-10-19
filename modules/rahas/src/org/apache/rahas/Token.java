@@ -75,9 +75,9 @@ public class Token {
     /**
      * The RequestedAttachedReference element
      * NOTE : The oasis-200401-wss-soap-message-security-1.0 spec allows 
-     * an extensibility mechanism for wsse:SecurityTokenRefence and 
-     * wsse:Refernce. Hence we cannot limit to the 
-     * wsse:SecurityTokenRefence\wsse:Refernce case and only hold the URI and 
+     * an extensibility mechanism for wsse:SecurityTokenReference and 
+     * wsse:Reference. Hence we cannot limit to the 
+     * wsse:SecurityTokenReference\wsse:Reference case and only hold the URI and 
      * the ValueType values.
      */
     private OMElement attachedReference;
@@ -86,8 +86,8 @@ public class Token {
      * The RequestedUnattachedReference element
      * NOTE : The oasis-200401-wss-soap-message-security-1.0 spec allows 
      * an extensibility mechanism for wsse:SecurityTokenRefence and 
-     * wsse:Refernce. Hence we cannot limit to the 
-     * wsse:SecurityTokenRefence\wsse:Refernce case and only hold the URI and 
+     * wsse:Reference. Hence we cannot limit to the 
+     * wsse:SecurityTokenReference\wsse:Reference case and only hold the URI and 
      * the ValueType values.
      */
     private OMElement unattachedReference;

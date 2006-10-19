@@ -19,15 +19,10 @@ package org.apache.rahas;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axis2.databinding.types.URI;
 import org.apache.axis2.security.sc.PWCallback;
-import org.apache.axis2.util.StreamWrapper;
 import org.apache.neethi.Policy;
-import org.apache.rahas.types.RequestSecurityTokenType;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
-import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.secpolicy.Constants;
 import org.opensaml.XML;
 
@@ -66,35 +61,30 @@ public class RahasSAMLTokenCertForHoKTest extends TestClient {
     }
 
     public OMElement getRequest() {
-
-        RequestSecurityTokenType rst = new RequestSecurityTokenType();
         try {
-            rst.setRequestType(new URI(RahasConstants.WST_NS_05_02 + RahasConstants.REQ_TYPE_ISSUE));
-            rst.setTokenType(new URI(RahasConstants.TOK_TYPE_SAML_10));
-            rst.setContext(new URI("http://get.optional.attrs.working"));
+            OMElement rstElem =
+                    TrustUtil.createRequestSecurityTokenElement(RahasConstants.VERSION_05_02);
             
-            Axis2Util.useDOOM(false);
-            StAXOMBuilder builder = new StAXOMBuilder(new StreamWrapper(rst
-                    .getPullParser(new QName(RahasConstants.WST_NS_05_02,
-                            RahasConstants.LocalNames.REQUEST_SECURITY_TOKEN))));
+            TrustUtil.createRequestTypeElement(RahasConstants.VERSION_05_02,
+                                                       rstElem,
+                                                       RahasConstants.REQ_TYPE_ISSUE);
+            OMElement tokenTypeElem =
+                    TrustUtil.createTokenTypeElement(RahasConstants.VERSION_05_02,
+                                                     rstElem);
+            tokenTypeElem.setText(RahasConstants.TOK_TYPE_SAML_10);
 
-            OMElement rstElem = builder.getDocumentElement();
-
-            rstElem.build();
-            
-            //KeySize
+            TrustUtil.createAppliesToElement(rstElem,
+//                    "http://207.200.37.116/Ping/Scenario4", this.getWSANamespace());
+"http://localhost:5555/axis2/services/SecureService", this.getWSANamespace());
+            TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_02,
+                                           rstElem, RahasConstants.KEY_TYPE_PUBLIC_KEY);
             TrustUtil.createKeySizeElement(RahasConstants.VERSION_05_02, rstElem, 256);
 
-            //KeyType
-            TrustUtil.createKeyTypeElement(RahasConstants.VERSION_05_02, rstElem, RahasConstants.KEY_TYPE_PUBLIC_KEY);
-            
-            TrustUtil.createAppliesToElement(rstElem, "http://localhost:5555/axis2/services/SecureService", this.getWSANamespace());
-            
-            rstElem = (OMElement)rstElem.detach();
+
             return rstElem;
-            
+
         } catch (Exception e) {
-            throw  new RuntimeException(e);    
+            throw new RuntimeException(e);
         }
     }
     
