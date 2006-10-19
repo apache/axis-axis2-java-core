@@ -16,10 +16,10 @@
 
 package org.apache.axis2.wsdl;
 
+import org.apache.axis2.util.CommandLineOptionConstants;
+import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.WSDL2JavaOptionsValidator;
 
 public class WSDL2Code {
