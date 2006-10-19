@@ -105,7 +105,7 @@ public class SymmetricBindingBuilder extends BindingBuilder {
                 log.debug("SCT Id : " + tokenId);
             } else if (encryptionToken instanceof X509Token) {
                 tokenId = setupEncryptedKey(rmd, encryptionToken);
-            }
+            } //TODO SAMLToken
             
             if(tokenId == null || tokenId.length() == 0) {
                 throw new RampartException("noSecurityToken");
