@@ -203,7 +203,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * populates a given service This is the only publicly accessible method in
      * this class
      * 
-     * @return
      * @throws AxisFault
      */
     public AxisService populateService() throws AxisFault {
@@ -342,7 +341,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Look for the relevant binding!
      * 
      * @param dif
-     * @return
      * @throws AxisFault
      */
     private Binding findBinding(Definition dif) throws AxisFault {
@@ -882,7 +880,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * 
      * @param wsdl4jOperation
      * @param dif
-     * @return
      * @throws Exception
      */
     private AxisOperation populateOperations(Operation wsdl4jOperation,
@@ -1577,7 +1574,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Read the WSDL file given the inputstream for the WSDL source
      * 
      * @param in
-     * @return
      * @throws WSDLException
      */
     private Definition readInTheWSDLFile(InputStream in) throws WSDLException {
@@ -2006,7 +2002,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Guess the MEP based on the order of messages
      * 
      * @param operation
-     * @return
      * @throws Exception
      */
     private String getMEP(Operation operation) throws Exception {
