@@ -43,7 +43,7 @@
           disc = "Select an Axis service from the combo and click on the 'View' button to view service handlers.";
       } else if (status != null && status.equals("SERVICE_PARAMETER")){
           buttonName = " Edit Parameters ";
-          action = Constants.EDIR_SERVICE_PARA;
+          action = "editServicePara"; // Constants.EDIR_SERVICE_PARA;
           heading = "Select a Service to Edit Parameters";
           disc = "Select an Axis service from the combo and click on the 'Edit Parameters' button to edit parameters.";
       }
