@@ -517,7 +517,8 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_AVAILABLE_MODULES_JSP_NAME, req, res);
     }
 
-    protected void processdisengageModule(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processdisengageModule(HttpServletRequest req, HttpServletResponse res) 
+    													throws IOException, ServletException {
         String type = req.getParameter("type");
         String serviceName = req.getParameter("serviceName");
         String moduleName = req.getParameter("module");
@@ -526,19 +527,23 @@ public class AdminAgent extends AbstractAgent {
         AxisModule module = axisConfiguration.getModule(new QName(moduleName));
         if (type.equals("operation")) {
             if (service.isEngaged(module.getName()) || axisConfiguration.isEngaged(module.getName())) {
-                req.getSession().setAttribute("status", "can not dis-engage module. This module is engaged at the top level");
+                req.getSession().setAttribute("status", "Can not disengage module " + moduleName + 
+                		". This module is engaged at a higher level.");
             } else {
                 String opName = req.getParameter("operation");
                 AxisOperation op = service.getOperation(new QName(opName));
                 op.disengageModule(module);
-                req.getSession().setAttribute("status", "dis-engaged from the operation");
+                req.getSession().setAttribute("status", "Module " + moduleName + " was disengaged from " +
+                		"operation " + opName + " in service " + serviceName + ".");
             }
         } else {
             if (axisConfiguration.isEngaged(module.getName())) {
-                req.getSession().setAttribute("status", "can not dis-engage module. This module is engaged at the top level");
+                req.getSession().setAttribute("status", "Can not disengage module " + moduleName + ". " +
+                		"This module is engaged at a higher level.");
             } else {
                 service.disengageModule(axisConfiguration.getModule(new QName(moduleName)));
-                req.getSession().setAttribute("status", "dis-engaged from the service");
+                req.getSession().setAttribute("status", "Module " + moduleName + " was disengaged from" +
+                		" service " + serviceName + ".");
             }
         }
         renderView("disengage.jsp", req, res);
