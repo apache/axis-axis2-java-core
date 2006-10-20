@@ -159,7 +159,6 @@ public class CustomElementsTest extends AbstractTest {
             returnObject = testCustom(getBookInformation(), MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
             assertTrue(isBookInformationObjectsEquals(returnObject,getBookInformation()));
         } catch (Exception e) {
-            e.printStackTrace();
             fail();
         }
         System.out.println("minOccurs = 0 and nillable false");

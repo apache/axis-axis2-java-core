@@ -156,12 +156,6 @@
             <includes>
                 <include>**/*Test.java</include>
             </includes>
-            <excludes>
-                <exclude>**/*CustomElementsTest*.java</exclude>
-                <exclude>**/*IntElementsTest*.java</exclude>
-                <exclude>**/*StringElementsTest*.java</exclude>
-                <exclude>**/*Abstract*.java</exclude>
-            </excludes>
         </unitTest>
         <resources>
             <resource>

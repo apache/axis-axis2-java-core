@@ -42,7 +42,6 @@ public class IntElementsTest extends AbstractTest {
             returnObject = testIntArray(new int[]{5}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
             assertTrue(Arrays.equals(returnObject, new int[]{5}));
         } catch (Exception e) {
-            e.printStackTrace();
             fail();
         }
         System.out.println("minOccurs = 0 nillable false");
