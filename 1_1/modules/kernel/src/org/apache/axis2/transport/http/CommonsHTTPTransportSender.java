@@ -244,7 +244,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 Object contentTypeObject = msgContext.getProperty(Constants.Configuration.CONTENT_TYPE);
                 if (contentTypeObject != null) {
                     contentType = (String) contentTypeObject;
-                } else if (msgContext.isDoingREST()) {
+                } else if (msgContext.isDoingREST() && !(format.isOptimized())) {
                     contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
                 } else {
                     contentType = format.getContentType();
