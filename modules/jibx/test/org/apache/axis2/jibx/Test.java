@@ -153,8 +153,6 @@ public class Test extends TestCase
              optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
                  new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
                  new String[0]));
-             // force sync only with unwrapping until fixed
-             optionMap.put("s", new CommandLineOption("s", new String[0]));
          }
          
          // binding definition is supplied
