@@ -50,7 +50,10 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
@@ -172,7 +175,7 @@ public class AxisService extends AxisDescription {
     private boolean clientSide = false;
 
     //To keep a ref to ObjectSuppler instance
-    private ObjectSuppler objectSuppler;
+    private ObjectSupplier objectSupplier;
 
     // package to namespace mapping
     private Map p2nMap;
@@ -234,7 +237,7 @@ public class AxisService extends AxisDescription {
         engagedModules = new ArrayList();
         schemaList = new ArrayList();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
-        objectSuppler = new DefaultObjectSuppler();
+        objectSupplier = new DefaultObjectSupplier();
     }
 
     /**
@@ -555,6 +558,7 @@ public class AxisService extends AxisDescription {
             if (wsld4jdefinition != null) {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
+                    setPortAddress(definition);
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
@@ -653,6 +657,7 @@ public class AxisService extends AxisDescription {
             if (wsld4jdefinition != null) {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
+                    setPortAddress(definition);
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
@@ -666,7 +671,24 @@ public class AxisService extends AxisDescription {
             //pick the endpoint and take it as the epr for the WSDL
             getWSDL(out, new String[]{this.endpoint}, "services");
         }
+    }
 
+    private void setPortAddress(Definition definition) throws AxisFault{
+        Iterator serviceItr = definition.getServices().values().iterator();
+        while (serviceItr.hasNext()) {
+            Service serviceElement = (Service) serviceItr.next();
+            Iterator portItr = serviceElement.getPorts().values().iterator();
+            while (portItr.hasNext()) {
+                Port port = (Port) portItr.next();
+                List list = port.getExtensibilityElements();
+                for (int i = 0; i < list.size(); i++) {
+                    Object extensibilityEle = list.get(i);
+                    if(extensibilityEle instanceof SOAPAddress) {
+                        ((SOAPAddress)extensibilityEle).setLocationURI(getEPRs()[0]);
+                    }
+                }
+            }
+        }
     }
 
     private void getWSDL(OutputStream out, String[] serviceURL, String servicePath) throws AxisFault {
@@ -1717,11 +1739,11 @@ public class AxisService extends AxisDescription {
         this.p2nMap = p2nMap;
     }
 
-    public ObjectSuppler getObjectSuppler() {
-        return objectSuppler;
+    public ObjectSupplier getObjectSuppler() {
+        return objectSupplier;
     }
 
-    public void setObjectSuppler(ObjectSuppler objectSuppler) {
-        this.objectSuppler = objectSuppler;
+    public void setObjectSuppler(ObjectSupplier objectSupplier) {
+        this.objectSupplier = objectSupplier;
     }
 }

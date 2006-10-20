@@ -19,7 +19,7 @@ import org.apache.axis2.AxisFault;
 *
 */
 
-public class DefaultObjectSuppler implements ObjectSuppler {
+public class DefaultObjectSupplier implements ObjectSupplier {
 
     public Object getObject(Class clazz) throws AxisFault {
         try {

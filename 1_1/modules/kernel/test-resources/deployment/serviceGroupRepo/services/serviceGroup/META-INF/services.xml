@@ -11,4 +11,5 @@
         <operation name="op2">
         </operation>
     </service>
+    <parameter name="ServiceClass">org.apache.axis2.Echo2</parameter>
 </serviceGroup>

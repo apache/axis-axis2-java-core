@@ -7,7 +7,7 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.DefaultObjectSuppler;
+import org.apache.axis2.engine.DefaultObjectSupplier;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
@@ -95,7 +95,7 @@ public class RPCServiceClient extends ServiceClient {
             response = super.sendReceive(omElement);
         }
         return BeanUtil.deserialize(response, returnTypes,
-                new DefaultObjectSuppler());
+                new DefaultObjectSupplier());
     }
 
     /**

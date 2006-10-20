@@ -25,7 +25,7 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.ObjectSuppler;
+import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
@@ -272,7 +272,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
-            String objectSupplerValue = (String) service.getParameterValue(TAG_OBJECT_SUPPLER);
+            String objectSupplerValue = (String) service.getParameterValue(TAG_OBJECT_SUPPLIER);
             if (objectSupplerValue != null) {
                 loadObjectSupllerClass(objectSupplerValue);
             }
@@ -328,9 +328,9 @@ public class ServiceBuilder extends DescriptionBuilder {
         try {
             ClassLoader loader = service.getClassLoader();
             Class objectSupplerImpl = Loader.loadClass(loader, objectSupplerValue.trim());
-            ObjectSuppler objectSuppler = (ObjectSuppler) objectSupplerImpl.newInstance();
+            ObjectSupplier objectSupplier = (ObjectSupplier) objectSupplerImpl.newInstance();
             service.setObjectSuppler(
-                    objectSuppler);
+                    objectSupplier);
         } catch (Exception e) {
             throw new AxisFault(e);
         }

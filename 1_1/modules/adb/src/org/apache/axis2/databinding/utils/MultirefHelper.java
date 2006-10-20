@@ -22,7 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.ObjectSuppler;
+import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 
 import javax.xml.namespace.QName;
@@ -97,7 +97,7 @@ public class MultirefHelper {
         return new StAXOMBuilder(ele.getXMLStreamReader()).getDocumentElement();
     }
 
-    public Object processRef(Class javatype, String id  , ObjectSuppler objectSuppler) throws AxisFault {
+    public Object processRef(Class javatype, String id  , ObjectSupplier objectSupplier) throws AxisFault {
         if (!filledTable) {
             readallChildElements();
         }
@@ -123,7 +123,7 @@ public class MultirefHelper {
                 objectmap.put(id, valobj);
                 return valobj;
             } else {
-                Object obj = BeanUtil.deserialize(javatype, val, this , objectSuppler);
+                Object obj = BeanUtil.deserialize(javatype, val, this , objectSupplier);
                 objectmap.put(id, obj);
                 return obj;
             }
