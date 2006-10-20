@@ -90,23 +90,23 @@
 		Running the Client.
 	</h2>
 	<p>
-		Deploy the service archive to the Axis2 web application.
+		Deploy the service archive (BankService.aar) to the Axis2 web application.
 	</p>
 	<p>
 		Invoke the <em>example.BankClient</em> class. You may use the command scripts to do so.
 		You need to supply 3 parameters to the command, url, account and amount.
 		<ul>
 			<li>
-					<strong>run http://localhost:8080/axis2/services/BankService 13 400</strong><br/>
-					Throws AccountNotExistFaultMessageException<br/>&nbsp;
+					<strong>ant run -Durl=http://localhost:8080/axis2/services/BankService -Daccount=13 -Damt=400</strong><br/>
+					Throws AccountNotExistFaultMessageException. You will see "Account#13 does not exist"<br/>&nbsp;
 			</li>
 			<li>
-					<strong>run http://localhost:8080/axis2/services/BankService 88 1200</strong><br/>
-					Throws InsufficientFundsFaultMessageException<br/>&nbsp;
+					<strong>ant run -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=1200</strong><br/>
+					Throws InsufficientFundsFaultMessageException. You will see "Account#88 has balance of 1000. It cannot support withdrawal of 1220"<br/>&nbsp;
 			</li>
 			<li>
-					<strong>run http://localhost:8080/axis2/services/BankService 88 400</strong><br/>
-					Succeeds with a balance of 600<br/>&nbsp;
+					<strong>ant run -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=400</strong><br/>
+					Succeeds with a balance of 600. You will see "Balance = 600"<br/>&nbsp;
 			</li>
 		</ul>
 	</p>
