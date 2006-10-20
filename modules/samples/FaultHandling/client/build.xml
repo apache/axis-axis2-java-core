@@ -5,12 +5,12 @@
 	<property name="project.base.dir" value="."/>
 	<property name="parent.dir" value=".."/>
 	
-	<property name="wsdl.uri" value="${parent.dir}\bank.wsdl"/>
+	<property name="wsdl.uri" value="${parent.dir}/bank.wsdl"/>
 	
-	<property name="src" value="${project.base.dir}\src"/>
-	<property name="target" value="${project.base.dir}\target"/>
-	<property name="target.java" value="${target}\src"/>
-	<property name="target.classes" value="${target}\classes"/>
+	<property name="src" value="${project.base.dir}/src"/>
+	<property name="target" value="${project.base.dir}/target"/>
+	<property name="target.java" value="${target}/src"/>
+	<property name="target.classes" value="${target}/classes"/>
 	
 	<target name="check.dependency" unless="env.AXIS2_HOME">
 		<echo message="AXIS2_HOME must be set"/>
@@ -37,7 +37,7 @@
 			<fileset dir="${src}"/>
 		</copy>
 		<ant dir="${target}"/>
-		<copy file="${target}\build\lib\BankService-test-client.aar" todir=".."/>
+		<copy file="${target}\build\lib\BankService-test-client.jar" todir=".."/>
 	</target>
 	
 </project>

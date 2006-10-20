@@ -2,9 +2,6 @@ package example;
 
 import java.rmi.RemoteException;
 
-import example.BankServiceStub.AccountNotExistFaultMessageException;
-import example.BankServiceStub.InsufficientFundFaultMessageException;
-
 public final class BankClient {
 
 	/**
