@@ -6,7 +6,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.util.Loader;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
@@ -15,13 +14,14 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
@@ -277,6 +277,10 @@ public class Utils {
         Collection schemas = schemaGenerator.generateSchema();
         axisService.addSchema(schemas);
         axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+        if (Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE.equals(
+                axisService.getTargetNamespace())) {
+            axisService.setTargetNamespace(schemaGenerator.getTargetNamespace());
+        }
 
         JMethod [] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();
