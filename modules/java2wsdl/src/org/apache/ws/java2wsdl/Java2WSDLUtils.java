@@ -18,18 +18,18 @@ package org.apache.ws.java2wsdl;
  */
 
 public class Java2WSDLUtils {
-    
+
     public static final String HTTP = "http://";
 
     public static final char PACKAGE_CLASS_DELIMITER = '.';
 
     public static final String SCHEMA_NAMESPACE_EXTN = "/xsd";
-    
+
     private static NamespaceGenerator defaultNsGenerator = new DefaultNamespaceGenerator();
 
     /**
      * check the entry for a URL. This is a simple check and need to be improved
-     * 
+     *
      * @param entry
      */
 
@@ -39,14 +39,14 @@ public class Java2WSDLUtils {
 
     /**
      * A method to strip the fully qualified className to a simple classname
-     * 
+     *
      * @param qualifiedName
      */
     public static String getSimpleClassName(String qualifiedName) {
         int index = qualifiedName.lastIndexOf(".");
         if (index > 0) {
             return qualifiedName.substring(index + 1,
-                                           qualifiedName.length());
+                    qualifiedName.length());
         }
         return qualifiedName;
     }
@@ -55,14 +55,14 @@ public class Java2WSDLUtils {
                                                       ClassLoader classLoader) throws Exception {
         return namespaceFromClassName(className, classLoader, defaultNsGenerator);
     }
-    
-    
+
+
     public static StringBuffer namespaceFromClassName(String className,
                                                       ClassLoader classLoader,
                                                       NamespaceGenerator nsGen) throws Exception {
         Class clazz = Class.forName(className,
-                                    true,
-                                    classLoader);
+                true,
+                classLoader);
         Package pkg = clazz.getPackage();
         String name;
 
@@ -77,11 +77,11 @@ public class Java2WSDLUtils {
     public static StringBuffer schemaNamespaceFromClassName(String packageName, ClassLoader loader) throws Exception {
         return schemaNamespaceFromClassName(packageName, loader, defaultNsGenerator);
     }
-    
+
     public static StringBuffer schemaNamespaceFromClassName(String packageName, ClassLoader loader, NamespaceGenerator nsGen) throws Exception {
         StringBuffer stringBuffer = namespaceFromClassName(packageName,
-                                                           loader,
-                                                           nsGen);
+                loader,
+                nsGen);
         if (stringBuffer.length() == 0) {
             stringBuffer.append(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
         }
@@ -89,10 +89,22 @@ public class Java2WSDLUtils {
         return stringBuffer;
     }
 
+    public static StringBuffer targetNamespaceFromClassName(String packageName, ClassLoader loader,
+                                                            NamespaceGenerator nsGen) throws Exception {
+        StringBuffer stringBuffer = namespaceFromClassName(packageName,
+                loader,
+                nsGen);
+        if (stringBuffer.length() == 0) {
+            stringBuffer.append(Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE);
+        }
+        return stringBuffer;
+    }
+
+
     public static String getPackageName(String className, ClassLoader classLoader) throws Exception {
         Class clazz = Class.forName(className,
-                                    true,
-                                    classLoader);
+                true,
+                classLoader);
         Package pkg = clazz.getPackage();
         String name;
 
