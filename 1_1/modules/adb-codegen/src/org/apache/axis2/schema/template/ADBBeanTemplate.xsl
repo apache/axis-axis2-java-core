@@ -1341,13 +1341,16 @@
                         <xsl:when test="(@ours or @default) and @array">
                              if (<xsl:value-of select="$varName"/>!=null) {
                                  for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
-                                    elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
-                                                                          "<xsl:value-of select="$propertyName"/>"));
+
                                     if (<xsl:value-of select="$varName"/>[i] != null){
+                                         elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                          "<xsl:value-of select="$propertyName"/>"));
                                          elementList.add(<xsl:value-of select="$varName"/>[i]);
                                     } else {
                                         <xsl:choose>
                                             <xsl:when test="@nillable">
+                                                elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                          "<xsl:value-of select="$propertyName"/>"));
                                                 elementList.add(null);
                                             </xsl:when>
                                             <xsl:when test="$min=0">
@@ -1363,6 +1366,8 @@
                              } else {
                                  <xsl:choose>
                                     <xsl:when test="@nillable">
+                                        elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                          "<xsl:value-of select="$propertyName"/>"));
                                         elementList.add(<xsl:value-of select="$varName"/>);
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -1385,6 +1390,8 @@
                                           } else {
                                              <xsl:choose>
                                                 <xsl:when test="@nillable">
+                                                    elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                              "<xsl:value-of select="$propertyName"/>"));
                                                     elementList.add(null);
                                                 </xsl:when>
                                                 <xsl:when test="$min=0">
@@ -1408,6 +1415,8 @@
                             } else {
                               <xsl:choose>
                                 <xsl:when test="@nillable">
+                                    elementList.add(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>",
+                                                                              "<xsl:value-of select="$propertyName"/>"));
                                     elementList.add(null);
                                 </xsl:when>
                                 <xsl:otherwise>
