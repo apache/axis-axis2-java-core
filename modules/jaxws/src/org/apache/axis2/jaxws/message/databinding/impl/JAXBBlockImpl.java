@@ -155,7 +155,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             }   
             m.marshal(busObject, writer);
 		} catch(JAXBException je) {
-			// TODO NLS
 			throw ExceptionFactory.makeMessageException(je);
 		}
 	}

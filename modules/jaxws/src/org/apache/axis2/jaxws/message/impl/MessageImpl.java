@@ -17,13 +17,13 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
@@ -46,8 +46,6 @@ import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * MessageImpl
@@ -73,17 +71,7 @@ public class MessageImpl implements Message {
 	 * @param protocol
 	 */
 	MessageImpl(Protocol protocol) throws MessageException, XMLStreamException {
-		super();
-		this.protocol = protocol;
-		if (protocol.equals(Protocol.unknown)) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("ProtocolIsNotKnown"));
-		} else if (protocol.equals(Protocol.rest)) {
-			// TODO Need REST support
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
-		}
-		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
-		xmlPart = factory.create(protocol);
-        xmlPart.setParent(this);
+		createXMLPart(protocol);
 	}
 	
 	/**
@@ -92,10 +80,7 @@ public class MessageImpl implements Message {
 	 * @param root
 	 */
 	MessageImpl(OMElement root) throws MessageException, XMLStreamException  {
-		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
-		xmlPart = factory.createFrom(root);
-		protocol = xmlPart.getProtocol();
-        xmlPart.setParent(this);
+		createXMLPart(root);
 	}
 	
 	/**
@@ -104,11 +89,53 @@ public class MessageImpl implements Message {
 	 * @param root
 	 */
 	MessageImpl(SOAPEnvelope root) throws MessageException, XMLStreamException  {
-		XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
-		xmlPart = factory.createFrom(root);
-		protocol = xmlPart.getProtocol();
-        xmlPart.setParent(this);
+	    createXMLPart(root);
 	}
+    
+    /**
+     * Create a new XMLPart and Protocol from the root
+     * @param root SOAPEnvelope
+     * @throws MessageException
+     * @throws XMLStreamException
+     */
+    private void createXMLPart(SOAPEnvelope root) throws MessageException, XMLStreamException {
+        XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
+        xmlPart = factory.createFrom(root);
+        protocol = xmlPart.getProtocol();
+        xmlPart.setParent(this); 
+    }
+    
+    /**
+     * Create a new XMLPart and Protocol from the root
+     * @param root OMElement
+     * @throws MessageException
+     * @throws XMLStreamException
+     */
+    private void createXMLPart(OMElement root) throws MessageException, XMLStreamException {
+        XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
+        xmlPart = factory.createFrom(root);
+        protocol = xmlPart.getProtocol();
+        xmlPart.setParent(this);
+    }
+    
+    /**
+     * Create a new empty XMLPart from the Protocol
+     * @param protocol
+     * @throws MessageException
+     * @throws XMLStreamException
+     */
+    private void createXMLPart(Protocol protocol) throws MessageException, XMLStreamException {
+        this.protocol = protocol;
+        if (protocol.equals(Protocol.unknown)) {
+            throw ExceptionFactory.makeMessageException(Messages.getMessage("ProtocolIsNotKnown"));
+        } else if (protocol.equals(Protocol.rest)) {
+            // TODO Need REST support
+            throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
+        }
+        XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
+        xmlPart = factory.create(protocol);
+        xmlPart.setParent(this);
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.Message#getAsSOAPMessage()
@@ -154,8 +181,11 @@ public class MessageImpl implements Message {
 			}
 			defaultHeader.addHeader("Content-type", contentType +"; charset=UTF-8");
 			SOAPMessage soapMessage = mf.createMessage(defaultHeader, inStream);
-			
-			return soapMessage;
+            
+            // At this point the XMLPart is still an OMElement.  We need to change it to the new SOAPEnvelope.
+			createXMLPart(soapMessage.getSOAPPart().getEnvelope());
+            
+            return soapMessage;
 		} catch (Exception e) {
 			throw ExceptionFactory.makeMessageException(e);
 		}
@@ -301,12 +331,16 @@ public class MessageImpl implements Message {
 		return xmlPart.getXMLFault();
 	}
 
-	public void setXMLFault(XMLFault xmlfault) {
-		xmlPart.setXMLFault(xmlfault);
+	public void setXMLFault(XMLFault xmlFault) throws MessageException {
+		xmlPart.setXMLFault(xmlFault);
 	}
 
-	public boolean isFault() {
+	public boolean isFault() throws MessageException {
 		return xmlPart.isFault();
 	}
+
+    public String getXMLPartContentType() {
+        return xmlPart.getXMLPartContentType();
+    }
 
 }

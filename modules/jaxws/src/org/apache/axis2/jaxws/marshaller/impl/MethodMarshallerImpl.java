@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -58,10 +57,10 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
-import org.apache.axis2.jaxws.message.impl.XMLFaultConvertor;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
@@ -124,13 +123,13 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 				Block[] blocks = xmlfault.getDetailBlocks();
 				
 				if ((beanclass == null) || (blocks == null)) {
-					exception = createGenericException(xmlfault.getString());
+					exception = createGenericException(xmlfault.getReason().getText());
 				} else {
 					// TODO for now, just use the first block, until we do the resolution mentioned above
 					Object obj = createFaultBusinessObject(beanclass,  blocks[0]);
 					// create the exception we actually want to throw
 					Class exceptionclass = loadClass(className);
-					exception = createCustomException(xmlfault.getString(), exceptionclass, obj);
+					exception = createCustomException(xmlfault.getReason().getText(), exceptionclass, obj);
 				}
 			} catch (Exception e) {
 				// TODO if we have problems creating the exception object, we'll end up here,
@@ -146,7 +145,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalFaultResponse(java.lang.Throwable)
 	 */
 	public Message marshalFaultResponse(Throwable throwable) throws IllegalAccessException, InvocationTargetException, JAXBException, ClassNotFoundException, NoSuchMethodException, MessageException, XMLStreamException {
-		Throwable t = XMLFaultConvertor.getRootCause(throwable);
+		Throwable t = getRootCause(throwable);
 		
 		String faultClazzName = operationDesc.getWebFaultClassName();
 
@@ -156,8 +155,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		if (faultClazzName != null) {
 			Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
 			faultBean = getFaultInfo.invoke(t, null);
-			// TODO more than one detail block is possible..  ?
-			xmlfault = XMLFaultConvertor.createXMLFault(t, null, new Block[]{this.createJAXBBlock(faultBean, this.createJAXBContext(faultClazzName))}, protocol);
+			Block detailBlock = createJAXBBlock(faultBean, this.createJAXBContext(faultClazzName));
+            String text = t.getMessage();
+			xmlfault = new XMLFault(null, // Use the default XMLFaultCode
+                        new XMLFaultReason(text),  // Assumes text is the language supported by the current Locale
+                        new Block[] {detailBlock});
 		}
 		
 		Message message = null;
@@ -828,5 +830,22 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
     
     private static Exception createGenericException(String message) {
     	return ExceptionFactory.makeWebServiceException(message);
+    }
+    
+    private static Throwable getRootCause(Throwable e) {
+        Throwable t = null;
+        
+        if (e != null) {
+            if (e instanceof InvocationTargetException) {
+                t = ((InvocationTargetException) e).getTargetException();
+            } else {
+                t = null;
+            }
+            
+            if (t != null) {
+                e = getRootCause(t);
+            }
+        }
+        return e;
     }
 }

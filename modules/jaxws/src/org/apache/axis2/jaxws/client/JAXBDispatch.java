@@ -26,7 +26,6 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.util.ProtocolUtil;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 public class JAXBDispatch<T> extends BaseDispatch<T> {
@@ -60,7 +59,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             
             // The protocol of the Message that is created should be based
             // on the binding information available.
-            Protocol proto = ProtocolUtil.getProtocolForBinding(port.getBindingID());
+            Protocol proto = Protocol.getProtocolForBinding(port.getBindingID());
             
             MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
             message = mf.create(proto);

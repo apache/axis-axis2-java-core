@@ -107,7 +107,7 @@ public class XMLStreamReaderForXMLSpine extends XMLStreamReaderFilter {
 			QName qName = super.getName();
 			// Insert body blocks after the Body
 			if (qName.getLocalPart().equals(BODY) &&
-				qName.getNamespaceURI().equals(root.getNamespace().getName())) {
+				qName.getNamespaceURI().equals(root.getNamespace().getNamespaceURI())) {
 				if (bodyBlocks != null) {
 					insertBlocks = bodyBlocks;
 					bodyBlocks = null;
@@ -115,14 +115,14 @@ public class XMLStreamReaderForXMLSpine extends XMLStreamReaderFilter {
 			} 
 			// Insert header blocks after the header
 			else if (qName.getLocalPart().equals(HEADER) &&
-					qName.getNamespaceURI().equals(root.getNamespace().getName())) {
+					qName.getNamespaceURI().equals(root.getNamespace().getNamespaceURI())) {
 				if (headerBlocks != null) {
 					insertBlocks = headerBlocks;
 					headerBlocks = null;
 				}
 			}
 			else if (qName.getLocalPart().equals(FAULT) &&
-					qName.getNamespaceURI().equals(root.getNamespace().getName())) {
+					qName.getNamespaceURI().equals(root.getNamespace().getNamespaceURI())) {
 				inFault = true;
 			} 
 			// Insert Detail blocks afger the detail...note that

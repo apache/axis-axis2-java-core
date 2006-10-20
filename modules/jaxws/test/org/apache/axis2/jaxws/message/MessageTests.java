@@ -36,7 +36,6 @@ import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
-import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
@@ -46,7 +45,8 @@ import test.ObjectFactory;
 /**
  * MessageTests
  * Tests to create and validate Message processing
- * These are not client/server tests.
+ * These are not client/server tests.  Instead the tests simulate the processing of a Message during
+ * client/server processing.
  */
 public class MessageTests extends TestCase {
 
@@ -123,7 +123,9 @@ public class MessageTests extends TestCase {
 	
 	/**
 	 * Create a Block representing an XMLString and simulate a 
-	 * normal Dispatch<String> flow
+	 * normal Dispatch<String> flow.
+     * In addition the test makes sure that the XMLString block is not
+     * expanded during this process.  (Expanding the block degrades performance).
 	 * @throws Exception
 	 */
 	public void testStringOutflow() throws Exception {
@@ -144,11 +146,25 @@ public class MessageTests extends TestCase {
 		// Add the block to the message as normal body content.
 		m.setBodyBlock(0, block);
 		
+		// Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SPINE".equals(m.getXMLPartContentType()));
+        
 		// On an outbound flow, we need to convert the Message 
         // to an OMElement, specifically an OM SOAPEnvelope, 
         // so we can set it on the Axis2 MessageContext
         org.apache.axiom.soap.SOAPEnvelope env = 
             (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
         
         // PERFORMANCE CHECK:
         // The element in the body should be an OMSourcedElement
@@ -174,7 +190,7 @@ public class MessageTests extends TestCase {
 
 	/**
 	 * Create a Block representing an XMLString and simulate a 
-	 * normal Dispatch<String> flow with an application handler
+	 * normal Dispatch<String> flow with an application handler.
 	 * @throws Exception
 	 */
 	public void testStringOutflow2() throws Exception {
@@ -197,6 +213,13 @@ public class MessageTests extends TestCase {
 		
 		// If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
 		SOAPEnvelope soapEnvelope = m.getAsSOAPEnvelope();
+        
+		// Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SOAPENVELOPE".equals(m.getXMLPartContentType()));
 		
 		// Normally the handler would not touch the body...but for our scenario, assume that it does.
 		String name = soapEnvelope.getBody().getFirstChild().getLocalName();
@@ -224,7 +247,7 @@ public class MessageTests extends TestCase {
 		
 	}
 	
-	
+    
 	/**
 	 * Create a Block representing an XMLString and simulate a 
 	 * normal Dispatch<String> input flow
@@ -251,6 +274,13 @@ public class MessageTests extends TestCase {
 			FactoryRegistry.getFactory(MessageFactory.class);
 		Message m = mf.createFrom(omElement);
 		
+		// Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
+        
 		// Assuming no handlers are installed, the next thing that will happen
 		// is the proxy code will ask for the business object (String).
 		XMLStringBlockFactory blockFactory = 
@@ -300,9 +330,23 @@ public class MessageTests extends TestCase {
 			FactoryRegistry.getFactory(MessageFactory.class);
 		Message m = mf.createFrom(omElement);
 		
+		// Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
+            
 		// If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
 		SOAPEnvelope soapEnvelope = m.getAsSOAPEnvelope();
 		
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SOAPENVELOPE".equals(m.getXMLPartContentType()));
+        
 		// Normally the handler would not touch the body...but for our scenario, assume that it does.
 		String name = soapEnvelope.getBody().getFirstChild().getLocalName();
 		assertTrue("a".equals(name));
@@ -356,9 +400,23 @@ public class MessageTests extends TestCase {
 			FactoryRegistry.getFactory(MessageFactory.class);
 		Message m = mf.createFrom(omElement);
 		
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
+        
 		// If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
 		SOAPMessage sm = m.getAsSOAPMessage();
 		
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SOAPENVELOPE".equals(m.getXMLPartContentType()));
+        
 		// Normally the handler would not touch the body...but for our scenario, assume that it does.
 		String name = sm.getSOAPBody().getFirstChild().getLocalName();
 		assertTrue("a".equals(name));
@@ -404,6 +462,13 @@ public class MessageTests extends TestCase {
             FactoryRegistry.getFactory(MessageFactory.class);
         Message m = mf.createFrom(omElement);
         
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
+        
         // The next thing that will happen
         // is the proxy code will ask for the business object (String).
         XMLStringBlockFactory blockFactory = 
@@ -443,7 +508,6 @@ public class MessageTests extends TestCase {
         // Create the JAXBContext
         JAXBContext jbc = JAXBContext.newInstance("test");
         
-        
         // Create a JAXBBlock using the Echo object as the content.  This simulates
         // what occurs on the outbound JAX-WS Dispatch<Object> client
         Block block = bf.createFrom(obj, jbc, null);
@@ -451,11 +515,25 @@ public class MessageTests extends TestCase {
         // Add the block to the message as normal body content.
         m.setBodyBlock(0, block);
         
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SPINE".equals(m.getXMLPartContentType()));
+        
         // On an outbound flow, we need to convert the Message 
         // to an OMElement, specifically an OM SOAPEnvelope, 
         // so we can set it on the Axis2 MessageContext
         org.apache.axiom.soap.SOAPEnvelope env = 
             (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
         
         // Serialize the Envelope using the same mechanism as the 
         // HTTP client.
@@ -504,11 +582,25 @@ public class MessageTests extends TestCase {
         // Add the block to the message as normal body content.
         m.setBodyBlock(0, block);
         
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SPINE".equals(m.getXMLPartContentType()));
+        
         // On an outbound flow, we need to convert the Message 
         // to an OMElement, specifically an OM SOAPEnvelope, 
         // so we can set it on the Axis2 MessageContext
         org.apache.axiom.soap.SOAPEnvelope env = 
             (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
         
         // PERFORMANCE CHECK:
         // The element in the body should be an OMSourcedElement
@@ -550,6 +642,13 @@ public class MessageTests extends TestCase {
             FactoryRegistry.getFactory(MessageFactory.class);
         Message m = mf.createFrom(omElement);
         
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "OM".equals(m.getXMLPartContentType()));
+        
         // Get the BlockFactory
         JAXBBlockFactory bf = (JAXBBlockFactory)
             FactoryRegistry.getFactory(JAXBBlockFactory.class);
@@ -561,6 +660,13 @@ public class MessageTests extends TestCase {
         // Get the JAXBBlock that wraps the content
         Block b = m.getBodyBlock(0, jbc, bf);
      
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SPINE".equals(m.getXMLPartContentType()));
+        
         // Get the business object from the block, which should be a 
         // JAX-B object
         Object bo = b.getBusinessObject(true);
@@ -574,6 +680,8 @@ public class MessageTests extends TestCase {
         assertNotNull(esr.getEchoStringReturn());
         assertTrue(esr.getEchoStringReturn().equals("sample return value"));
     }
+    
+    
 	SAAJConverter converter = null;
 	private SAAJConverter getSAAJConverter() {
 		if (converter == null) {

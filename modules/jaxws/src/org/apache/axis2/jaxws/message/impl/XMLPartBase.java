@@ -16,11 +16,9 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -28,19 +26,16 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.impl.llom.SOAPBodyImpl;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
-import org.apache.axis2.namespace.Constants;
 
 /**
  * XMLPartBase class for an XMLPart
@@ -93,9 +88,8 @@ public abstract class XMLPartBase implements XMLPart {
 	static final int OM = 1;
 	static final int SOAPENVELOPE = 2;
 	static final int SPINE = 3;
+    
 	boolean consumed = false;
-    boolean isfault = false;
-    XMLFault xmlfault = null;
     
     Message parent;
 	
@@ -135,20 +129,6 @@ public abstract class XMLPartBase implements XMLPart {
 		} else {
 			throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
 		}
-
-		// TODO MIKE revisit?
-		// It seems we do need this detection (see FaultTests)
-		// I don't really like this here because it seems like it would degrade performance for faults.
-		// It does speed things up during processing though since we just have to check the isfault flag.
-		// For now we won't worry about it.
-		Iterator children = root.getChildElements();
-		while(children.hasNext()) {
-			OMElement firstChild = (OMElement)children.next();
-			if ((firstChild != null) && "Body".equals(firstChild.getLocalName()) && ("http://schemas.xmlsoap.org/soap/envelope/".equals(firstChild.getNamespace().getNamespaceURI()) || "http://www.w3.org/2003/05/soap-envelope".equals(firstChild.getNamespace().getNamespaceURI()))) {
-				isfault = ((SOAPBodyImpl)firstChild).hasFault();
-				break;
-			}
-		}
 	}
 	
 	/**
@@ -177,9 +157,6 @@ public abstract class XMLPartBase implements XMLPart {
 	
 	private OMElement getContentAsOMElement() throws MessageException {
 		
-		if (isfault)
-			return XMLFaultConvertor.toOMElement(xmlfault);
-		
 		OMElement om = null;
 		switch (contentType) {
 		case (OM):
@@ -199,13 +176,6 @@ public abstract class XMLPartBase implements XMLPart {
 	}
 		
 	private SOAPEnvelope getContentAsSOAPEnvelope() throws MessageException {
-		
-		/*
-		 *  TODO do we need something similar here as in getContentAsOMElement?
-		 *  if (isfault)
-		 *  return XMLFaultConvertor.toOMElement(xmlfault);
-		 */
-		
 		SOAPEnvelope se = null;
 		switch (contentType) {
 		case (SOAPENVELOPE):
@@ -244,10 +214,16 @@ public abstract class XMLPartBase implements XMLPart {
 		return spine;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsOMElement()
+	 */
 	public OMElement getAsOMElement() throws MessageException {
 		return getContentAsOMElement();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsSOAPEnvelope()
+	 */
 	public SOAPEnvelope getAsSOAPEnvelope() throws MessageException {
 		return getContentAsSOAPEnvelope();
 	}
@@ -271,11 +247,33 @@ public abstract class XMLPartBase implements XMLPart {
 		return block;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getProtocol()
+	 */
 	public Protocol getProtocol() {
 		return protocol;
 	}
 
-	public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException {
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getXMLPartContentType()
+	 */
+	public String getXMLPartContentType() {
+        switch (contentType) {
+        case OM:
+            return "OM";
+        case SOAPENVELOPE:
+            return "SOAPENVELOPE";
+        case SPINE:
+            return "SPINE";
+        default:
+            return "UNKNOWN";
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.XMLPart#getXMLStreamReader(boolean)
+     */
+    public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException {
 		if (consumed) {
 			throw ExceptionFactory.makeMessageException(Messages.getMessage("XMLPartImplErr1"));
 		}
@@ -294,38 +292,72 @@ public abstract class XMLPartBase implements XMLPart {
 		return reader;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getXMLFault()
+	 */
 	public XMLFault getXMLFault() throws MessageException {
-		/*
-		 * TODO revisit?
-		 * Watch out for infinite recursion here.  At first, I was going to have XMLSpineImpl call
-		 * parent.setXMLFault() to set this.xmlfault, but parent is still null when we get there.
-		 * Instead, I'm doing what you see below.
-		 */
-		if (xmlfault != null)
-			return xmlfault;
-		
-		XMLSpine spine = getContentAsXMLSpine();
-		xmlfault = spine.getXMLFault();
-		
-		return xmlfault;
+        
+        XMLFault xmlFault = null;
+        
+        if (isFault()) {
+            // An XMLFault represents the detail elements as Blocks, so 
+            // it makes sense to convert the representation to a Spine since
+            // that is what we do in other situations where we need a Block.
+            // Of course there is some additional optimization that could be done.
+            // If we can determine that there are no detail elements, then we could
+            // build the fault from an OM or SOAPEnvelope.  
+            XMLSpine spine = getContentAsXMLSpine();
+            xmlFault = spine.getXMLFault();
+        } 
+        return xmlFault;
 	}
 	
-	public void setXMLFault(XMLFault xmlfault) {
-		this.xmlfault = xmlfault;
-		// just to make sure...and as it turns out, this is necessary to set
-		// due to a call into this method from the server where we're not
-		// parsing XML
-		isfault = true;
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#setXMLFault(org.apache.axis2.jaxws.message.XMLFault)
+	 */
+	public void setXMLFault(XMLFault xmlFault) throws MessageException {
+		// Since the XMLFault contains detail Blocks it makes sence to convert
+        // to an XMLSpine first (since that is what we do in the other calls that set Blocks).
+        // Of course if the XMLFault did not have detail Blocks we might be able to 
+        // do this without a transformation of the data.  
+        XMLSpine spine = getContentAsXMLSpine();
+        spine.setXMLFault(xmlFault);
 	}
 
-	public boolean isFault() {
-		return isfault;
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#isFault()
+	 */
+	public boolean isFault() throws MessageException {
+        if (consumed) {
+            throw ExceptionFactory.makeMessageException(Messages.getMessage("XMLPartImplErr1"));
+        }
+
+        try {
+            switch (contentType) {
+            case OM:
+                return XMLFaultUtils.isFault(
+                        (org.apache.axiom.soap.SOAPEnvelope) getContentAsOMElement());
+            case SOAPENVELOPE:
+                return XMLFaultUtils.isFault(getContentAsSOAPEnvelope());
+            case SPINE:
+                return getContentAsXMLSpine().isFault();
+            }
+        } catch (SOAPException se) {
+            throw ExceptionFactory.makeMessageException(se);
+        }
+        return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#isConsumed()
+	 */
 	public boolean isConsumed() {
 		return consumed;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#outputTo(javax.xml.stream.XMLStreamWriter, boolean)
+	 */
 	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
 		if (consumed) {
 			throw ExceptionFactory.makeMessageException(Messages.getMessage("XMLPartImplErr1"));
@@ -345,39 +377,66 @@ public abstract class XMLPartBase implements XMLPart {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#traceString(java.lang.String)
+	 */
 	public String traceString(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+        // TODO
+	    return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getBodyBlock(int, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+	 */
 	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws MessageException {
 		return getContentAsXMLSpine().getBodyBlock(index, context, blockFactory);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getHeaderBlock(java.lang.String, java.lang.String, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+	 */
 	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws MessageException {
 		return getContentAsXMLSpine().getHeaderBlock(namespace, localPart, context, blockFactory);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getNumBodyBlocks()
+	 */
 	public int getNumBodyBlocks() throws MessageException {
 		return getContentAsXMLSpine().getNumBodyBlocks();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getNumHeaderBlocks()
+	 */
 	public int getNumHeaderBlocks() throws MessageException {
 		return getContentAsXMLSpine().getNumHeaderBlocks();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#removeBodyBlock(int)
+	 */
 	public void removeBodyBlock(int index) throws MessageException {
 		getContentAsXMLSpine().removeBodyBlock(index);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#removeHeaderBlock(java.lang.String, java.lang.String)
+	 */
 	public void removeHeaderBlock(String namespace, String localPart) throws MessageException {
 		getContentAsXMLSpine().removeHeaderBlock(namespace, localPart);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#setBodyBlock(int, org.apache.axis2.jaxws.message.Block)
+	 */
 	public void setBodyBlock(int index, Block block) throws MessageException {
 		getContentAsXMLSpine().setBodyBlock(index, block);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#setHeaderBlock(java.lang.String, java.lang.String, org.apache.axis2.jaxws.message.Block)
+	 */
 	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
 		getContentAsXMLSpine().setHeaderBlock(namespace, localPart, block);
 	}

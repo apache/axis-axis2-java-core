@@ -34,7 +34,6 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
-import org.apache.axis2.jaxws.message.util.ProtocolUtil;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,7 +90,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 
                 // The protocol of the Message that is created should be based
                 // on the binding information available.
-                Protocol proto = ProtocolUtil.getProtocolForBinding(port.getBindingID());               
+                Protocol proto = Protocol.getProtocolForBinding(port.getBindingID());               
                 message = mf.create(proto);
                 message.setBodyBlock(0, block);
             } catch (Exception e) {

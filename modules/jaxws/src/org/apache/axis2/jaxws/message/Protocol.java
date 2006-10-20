@@ -16,11 +16,36 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import javax.xml.ws.soap.SOAPBinding;
+
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
+
 /**
  * Protocol
  * Each message has a protocol (soap11, soap12, rest)
  * This enum represents the protocol within the Message sub-component
  */
 public enum Protocol {
-	soap11, soap12, rest, unknown
+	soap11, soap12, rest, unknown;
+    
+    /**
+     * Return the right value for the Protocol based on the binding
+     * URL that was passed in.
+     * 
+     * @param url
+     * @return
+     */
+    public static Protocol getProtocolForBinding(String url) throws MessageException {
+        //TODO: Add support for more URLs as needed.
+        if (url.equals(SOAPBinding.SOAP11HTTP_BINDING)) {
+            return Protocol.soap11;
+        }
+        else if (url.equals(SOAPBinding.SOAP12HTTP_BINDING)) {
+            return Protocol.soap12;
+        }
+        else {
+            throw ExceptionFactory.makeMessageException(Messages.getMessage("protoNotFound00", url));
+        }
+    }
 }

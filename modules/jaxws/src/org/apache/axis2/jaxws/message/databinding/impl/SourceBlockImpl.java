@@ -100,7 +100,6 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 			busObject instanceof JAXBSource) {
 			// Okay, these are supported Source objects
 		} else {
-			// TODO NLS
 			throw ExceptionFactory.makeMessageException(Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
 		}
 	}
@@ -144,8 +143,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 			// Let's use our own DOMReader for now...
 			Element element = null;
 			
-			//TODO busObj can be any of the subclasses of Node -- Document, Elemeent, Entity, Text, ETC.
-			//May need to add code to check for other supported Node type other than Document and Element.
+			// Business Object msut be a Document or Element
 			Node node = ((DOMSource)busObj).getNode();
 			if(node instanceof Document){
 				element = ((Document)node).getDocumentElement();

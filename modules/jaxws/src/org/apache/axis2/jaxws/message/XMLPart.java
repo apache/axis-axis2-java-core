@@ -30,7 +30,7 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
  * The XML portion of a Message
  * 
  * The JAX-WS implementation (proxy, message receiver, etc.) interact with the 
- * Message via Blocks.  A Block is represented in the message as root element tree 
+ * Message via Blocks.  A Block is represented in the message as a root element tree 
  * in either the header, body or fault detail section.  The Blocks can be easily
  * decomposed into business objects (which are needed on the JAX-WS interfaces).
  * 
@@ -44,6 +44,10 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
  * @see org.apache.axis2.jaxws.message.Block
  * @see org.apache.axis2.jaxws.message.impl.XMLPartBase for implementation details
  * 
+ */
+/**
+ * @author scheu
+ *
  */
 public interface XMLPart {
 	
@@ -79,23 +83,26 @@ public interface XMLPart {
 	public boolean isConsumed();
 	
 	/**
-	 * isFault
-	 * Check if the data is part of a fault message
-	 * @return
+	 * Determines whether the XMLPart represents a Fault
+	 * @return true if the message represents a fault
 	 */
-	public boolean isFault();
+	public boolean isFault() throws MessageException;
 	
 	/**
-	 * getXMLFault
-	 * @return the XMLFault object
+	 * If the XMLPart represents a fault, an XMLFault is returned
+     * which describes the fault in a protocol agnostic manner
+	 * @return the XMLFault object or null
+     * @see XMLFault
 	 */
 	public XMLFault getXMLFault() throws MessageException;
 	
 	/**
-	 * setXMLFault
+	 * Change the XMLPart so that it represents the fault described
+     * by XMLFault
 	 * @param xmlfault
+     * @see XMLFault
 	 */
-	public void setXMLFault(XMLFault xmlfault);
+	public void setXMLFault(XMLFault xmlFault) throws MessageException;
 	
     /**
      * getParent
@@ -241,4 +248,14 @@ public interface XMLPart {
 	 */
 	public String traceString(String indent);
     
-}
+    
+    /**
+     * The representation of the XMLPart may be in a number of different forms.  Currently
+     * the forms are UNKNOWN, OM, SOAPENVELOPE, and SPINE.  This method returns a
+     * String containing one of these types.  This method should only be used for trace and
+     * testing purposes.  The consumer of a Message should not make any decisions based on the
+     * representation of the XMLPart
+     * @return String
+     */
+    public String getXMLPartContentType();
+}   

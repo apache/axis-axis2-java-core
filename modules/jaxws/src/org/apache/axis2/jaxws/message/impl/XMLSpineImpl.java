@@ -43,7 +43,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -78,9 +77,6 @@ class XMLSpineImpl implements XMLSpine {
 	private Iterator detailIterator = null;
     private Message parent = null;
     
-    // ideally, this should be set on the parent, but the parent is null when we create an XMLSpineImpl
-    private XMLFault xmlfaultcache = null;
-
 	/**
 	 * Create a lightweight representation of this protocol
 	 * (i.e. the Envelope, Header and Body)
@@ -100,9 +96,9 @@ class XMLSpineImpl implements XMLSpine {
 	public XMLSpineImpl(SOAPEnvelope envelope) throws MessageException {
 		super();
 		init(envelope);
-		if (root.getNamespace().getName().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+		if (root.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
 			protocol = Protocol.soap11;
-		} else if (root.getNamespace().getName().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+		} else if (root.getNamespace().getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
 			protocol = Protocol.soap12;
 		} else {
 			// TODO Support for REST
@@ -130,6 +126,8 @@ class XMLSpineImpl implements XMLSpine {
 
 		
 		SOAPBody body = root.getBody();
+        // TODO if no body then please add one
+        
 		if (!body.hasFault()) {
 			// Normal processing
 			// Only create the first body block, this ensures that the StAX 
@@ -145,9 +143,6 @@ class XMLSpineImpl implements XMLSpine {
 			  detailIterator = detail.getChildren();
 			  advanceIterator(detailIterator, detailBlocks, false);
 			}
-			
-			setXMLFault(XMLFaultConvertor.createXMLFault(fault, detailBlocks));
-			
 		}
 		return;
 	}
@@ -185,7 +180,9 @@ class XMLSpineImpl implements XMLSpine {
 				blocks.add(block);
                 block.setParent(this);
 			} else {
-				System.out.println("NON-ELEMENT FOUND: " +  node.getClass().getName());
+                // TODO LOGGING ?
+				// A Non-element is found, it is probably whitespace text, but since
+                // there is no way to represent this as a block, it is ignored.
 			}
 		}
 	}
@@ -247,13 +244,54 @@ class XMLSpineImpl implements XMLSpine {
 	}
 
 	public XMLFault getXMLFault() throws MessageException {
-		// TODO ideally I'd like to get this from the parent, but the parent is null
-		return xmlfaultcache;
+		if (!isFault()) {
+		    return null;
+        }
+        
+        // Advance through all of the detail blocks
+        int numDetailBlocks = getNumDetailBlocks();
+        
+        Block[] blocks = null;
+        if (numDetailBlocks > 0) {
+            blocks = new Block[numDetailBlocks];
+            blocks = detailBlocks.toArray(blocks);
+        }
+        
+        XMLFault xmlFault = XMLFaultUtils.createXMLFault(root.getBody().getFault(), blocks);
+        return xmlFault;
 	}
+    
+    private int getNumDetailBlocks() throws MessageException {
+        if (detailIterator != null) {
+            advanceIterator(detailIterator, detailBlocks, true);
+        }
+        return detailBlocks.size();
+    }
 	
-	public void setXMLFault(XMLFault xmlfault) {
-		// TODO ideally I'd like to set this on the parent, but the parent is null
-		xmlfaultcache = xmlfault;
+	public void setXMLFault(XMLFault xmlFault) throws MessageException {
+        
+        // Clear out the existing body and detail blocks
+        SOAPBody body = root.getBody();
+        getNumDetailBlocks(); // Forces parse of existing detail blocks
+        getNumBodyBlocks();  // Forces parse over body
+        bodyBlocks.clear();
+        detailBlocks.clear();
+        OMNode child = body.getFirstOMChild();
+        while (child != null) {
+            child.detach();
+            child = body.getFirstOMChild();
+        }
+        
+	    // Add a SOAPFault to the body.  Don't add the detail blocks to the SOAPFault
+        SOAPFault soapFault =XMLFaultUtils.createSOAPFault(xmlFault, body, true);
+        
+        // The spine now owns the Detail Blocks from the XMLFault
+        Block[] blocks = xmlFault.getDetailBlocks();
+        if (blocks != null) {
+            for(int i=0; i<blocks.length; i++) {
+                detailBlocks.add(blocks[i]);
+            }
+        }
 	}
 
 	public boolean isConsumed() {
@@ -396,9 +434,12 @@ class XMLSpineImpl implements XMLSpine {
 		return null;
 	}
 
-	public boolean isFault() {
-		return parent.isFault();
-		//return root.getBody().hasFault();
+	public String getXMLPartContentType() {
+        return "SPINE";
+    }
+
+    public boolean isFault() throws MessageException {
+		return XMLFaultUtils.isFault(root);
 	}
 	
 }

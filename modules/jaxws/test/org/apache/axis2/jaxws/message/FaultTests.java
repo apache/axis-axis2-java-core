@@ -19,7 +19,6 @@ package org.apache.axis2.jaxws.message;
 import java.io.StringReader;
 import java.util.Locale;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
@@ -62,7 +61,7 @@ public class FaultTests extends TestCase {
 		" </soapenv:Header>" +
 		" <soapenv:Body>" +
 		" <soapenv:Fault>" +
-		" <faultcode>Client</faultcode>" +
+		" <faultcode>soapenv:Client</faultcode>" +
 		" <faultstring>" + faultString + "sampleSOAP11FaultEnvelope2</faultstring>" +
 		" <faultactor>http://gizmos.com/order</faultactor>" +
 		" <detail>" +
@@ -129,8 +128,9 @@ public class FaultTests extends TestCase {
 		
 		if (m.isFault()) {
 			XMLFault x = m.getXMLFault();
-			assertEquals(faultString + "sampleSOAP11FaultEnvelope1", x.getString());
-			assertEquals("Server", x.getCode().getLocalPart());
+			assertEquals(faultString + "sampleSOAP11FaultEnvelope1", x.getReason().getText());
+			assertEquals("Server", x.getCode().
+                    toQName("http://schemas.xmlsoap.org/soap/envelope/").getLocalPart());
 		} else {
 			fail("Message should be marked as a fault.");
 		}
@@ -165,8 +165,9 @@ public class FaultTests extends TestCase {
 			
 			if (m.isFault()) {
 				XMLFault x = m.getXMLFault();
-				assertEquals(faultString + "sampleSOAP11FaultEnvelope2", x.getString());
-				assertEquals("Client", x.getCode().getLocalPart());
+				assertEquals(faultString + "sampleSOAP11FaultEnvelope2", x.getReason().getText());
+                assertEquals("Client", x.getCode().
+                        toQName("http://schemas.xmlsoap.org/soap/envelope/").getLocalPart());
 				
 				// drill down to the faultcode text in the detail to make sure it's there and it's set
 				Block[] blocks = x.getDetailBlocks();
@@ -199,7 +200,6 @@ public class FaultTests extends TestCase {
 	 * @throws Exception
 	 */
 
-	/* TODO SOAP12 test fails
 	public void testStringInflow3() throws Exception {
 		
 		try {
@@ -220,8 +220,9 @@ public class FaultTests extends TestCase {
 		
 		if (m.isFault()) {
 			XMLFault x = m.getXMLFault();
-			assertEquals(faultString + "sampleSOAP12FaultEnvelope1", x.getString());
-			assertEquals("soapenv:Server", x.getCode().getLocalPart());
+			assertEquals(faultString + "sampleSOAP12FaultEnvelope1", x.getReason().getText());
+            assertEquals("Receiver", x.getCode().
+                    toQName("http://www.w3.org/2003/05/soap-envelope").getLocalPart());
 		} else {
 			fail("Message should be marked as a fault.");
 		}
@@ -231,7 +232,6 @@ public class FaultTests extends TestCase {
 			fail(e.toString());
 		}
 	}
-	*/
 
 }
 
