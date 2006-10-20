@@ -676,6 +676,12 @@ public class ConverterUtil {
                     Array.setShort(returnArray, i, Short.parseShort(objectList.get(i).toString()));
                 }
             }
+        } else if (byte.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                if (objectList.get(i) != null) {
+                    Array.setByte(returnArray, i, Byte.parseByte(objectList.get(i).toString()));
+                }
+            }
         } else if (long.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
                 if (objectList.get(i) != null) {
