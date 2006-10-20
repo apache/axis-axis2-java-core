@@ -88,7 +88,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         // If the operation is one-way, then we can just return null because
         // we cannot create a MessageContext for one-way responses.
         if(operationDesc.isOneWay()){
-        	message = null;
+        	return null;
         }
         else if (response instanceof Throwable) {
         	message = methodMarshaller.marshalFaultResponse((Throwable)response); 
