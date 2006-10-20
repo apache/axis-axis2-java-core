@@ -5,17 +5,19 @@
 	<property name="project.base.dir" value="."/>
 	<property name="parent.dir" value=".."/>
 	
-	<property name="wsdl.uri" value="${parent.dir}\bank.wsdl"/>
+	<property name="wsdl.uri" value="${parent.dir}/bank.wsdl"/>
 	
-	<property name="src" value="${project.base.dir}\src"/>
-	<property name="target" value="${project.base.dir}\target"/>
+	<property name="src" value="${project.base.dir}/src"/>
+	<property name="target" value="${project.base.dir}/target"/>
 	
 	<target name="check.dependency" unless="env.AXIS2_HOME">
 		<echo message="AXIS2_HOME must be set"/>
 	</target>
 	
 	<target name="gen.skeleton" if="env.AXIS2_HOME" depends="check.dependency">
-		<delete dir="${target}"/>
+
+
+        <delete dir="${target}"/>
 		<mkdir dir="${target}"/>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<arg line="-uri ${wsdl.uri}"/>
