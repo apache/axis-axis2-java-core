@@ -56,12 +56,11 @@ treated as a usual SOAP Message.</p>
 be decided from the client API.<br>
 Set a property in the client api.<br>
 </p>
-<source>
 <pre>...
 Options options = new Options();
 options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 ...</pre>
-</source><a name="sample"></a>
+<a name="sample"></a>
 
 <h3>Sample REST - HTTP POST Client</h3>
 
@@ -72,7 +71,7 @@ demonstrates the usage of the above, using the "echo"operation of the</p>
 <p>of the samples.The class source will be as follows:</p>
 <source><pre>public class RESTClient {
 
-    private static String toEpr = "http://localhost:8080/axis2/rest/MyService";
+    private static String toEpr = "http://localhost:8080/axis2/services/MyService";
     
     public static void main(String[] args) throws AxisFault {
 
@@ -104,7 +103,7 @@ demonstrates the usage of the above, using the "echo"operation of the</p>
                 "http://example1.org/example1", "example1");
         OMElement method = fac.createOMElement("echo", omNs);
         OMElement value = fac.createOMElement("Text", omNs);
-        value.addChild(fac.createOMText(value, "Axis2 Echo String "));
+        value.addChild(fac.createText(value, "Axis2 Echo String "));
         method.addChild(value);
 
         return method;
@@ -121,7 +120,7 @@ are converted in to XML and put in to the SOAP Body.</p>
 <source><pre>http://127.0.0.1:8080/axis2/rest/version/getVersion</pre>
 </source>
 <p>Result can be shown in the browser as follows:</p>
-<img src="images/userguide/http-get-ws.jpg" alt="">
+<img src="images/userguide/http-get-ws.jpg"/><br clear="all"/>
 
 <p>For example, the following request,</p>
 <source><pre>http://127.0.0.1:8080/axis2/rest/version/getVersion</pre>
