@@ -12,7 +12,7 @@ public final class BankClient {
 	public static void main(String[] args) {
 
 		if (args.length != 3) {
-			System.err.println("Usage: BankClient <url> <account> <amount>");
+			System.err.println("Usage: BankClient -Durl=<url> -Daccount=<account> -Damt=<amount>");
 			return;
 		}
 		
