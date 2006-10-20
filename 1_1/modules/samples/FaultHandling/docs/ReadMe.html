@@ -31,7 +31,7 @@
 			<li>Generate the source	for all the server classes in <strong>./service/target/src</strong></li>
 			<li>
 				Generate <em>services.xml</em> and a more complete 
-				<em>BankService.wsdl</em> into the <em>./service//target/resources</em> folder.
+				<em>BankService.wsdl</em> into the <em>./service/target/resources</em> folder.
 			</li>
 			<li>
 				Generate a <em>./service/target/build.xml</em> which can be used to 
@@ -45,28 +45,32 @@
 		
 		<pre>
 	final String account = param0.getAccount();
-	if (account.equals("13")) {
-		final AccountNotExistFault fault = new AccountNotExistFault();
-		fault.setAccount(account);
-		throw new AccountNotExistFaultMessageException("Account does not exist!", fault);
-	}
-	
-	final int amount = param0.getAmount();
-	if (amount > 1000) {
-		final InsufficientFundFault fault = new InsufficientFundFault();
-			fault.setAccount(account);
-			fault.setBalance(1000);
-			fault.setRequestedFund(amount);
-		throw new InsufficientFundFaultMessageException("Insufficient funds", fault);
-	}
-	
-	final WithdrawResponse response = new WithdrawResponse();
-	response.setBalance(1000 - amount);
-	return response;
+        if (account.equals("13")) {
+            final AccountNotExistFault fault = new AccountNotExistFault();
+            fault.setAccount(account);
+            AccountNotExistFaultMessageException messageException = new AccountNotExistFaultMessageException("Account does not exist!");
+            messageException.setFaultMessage(fault);
+            throw messageException;
+        }
+
+        final int amount = param0.getAmount();
+        if (amount > 1000) {
+            final InsufficientFundFault fault = new InsufficientFundFault();
+            fault.setAccount(account);
+            fault.setBalance(1000);
+            fault.setRequestedFund(amount);
+            InsufficientFundFaultMessageException messageException = new InsufficientFundFaultMessageException("Insufficient funds");
+            messageException.setFaultMessage(fault);
+            throw messageException;
+        }
+
+        final WithdrawResponse response = new WithdrawResponse();
+        response.setBalance(1000 - amount);
+        return response;
 		</pre>
 	</p>
 	<p>
-		From a command prompt in the folder of this example, type <strong>ant jar</strong>. This will 
+		From a command prompt in the folder of this sample (samples/FaultHandling), type <strong>ant jar</strong>. This will
 		
 		and create the service archive at <em>./service/target/build/lib/BankService.aar</em>
 		<ul>
