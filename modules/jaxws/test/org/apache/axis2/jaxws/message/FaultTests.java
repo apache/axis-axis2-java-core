@@ -130,7 +130,7 @@ public class FaultTests extends TestCase {
 		if (m.isFault()) {
 			XMLFault x = m.getXMLFault();
 			assertEquals(faultString + "sampleSOAP11FaultEnvelope1", x.getString());
-			assertEquals("soapenv:Server", x.getCode().getLocalPart());
+			assertEquals("Server", x.getCode().getLocalPart());
 		} else {
 			fail("Message should be marked as a fault.");
 		}
