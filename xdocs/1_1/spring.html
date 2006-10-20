@@ -267,7 +267,7 @@ public class TestClient {
           /** Access point inside the servlet container. **/
     private static EndpointReference targetEPR =
         new EndpointReference(
-                "http://localhost:8080/axis2/services/springExample");
+               "http://localhost:8080/axis2/services/SpringAwareService");
 
     /**
      * Simple axis2 client.
@@ -306,11 +306,10 @@ public class TestClient {
     }
 } </pre>
 
-<p>The examples above assumes that the spring framework jar is under WEB-INF/lib. In such a case, 
-the classes shown in this tutorial need to be placed in a JAR under WEB-INF/lib. In this example the
-JAR layout is:</p>
-    <source>
-    <pre>./mySpring.jar
+<p>The examples above assumes that both the spring framework jar and the axis2-spring-*.jar 
+are under WEB-INF/lib. In such a case, the classes shown in this tutorial need to be placed 
+in a JAR under WEB-INF/lib. In this example the JAR layout is:</p>
+    <source><pre>./mySpring.jar
 ./META-INF
 ./META-INF/MANIFEST.MF
 ./spring
@@ -341,7 +340,7 @@ spring-web. Running the client, you should see this output:</p>
 <h3>Spring Inside an AAR</h3>
 
 <p>Frequently Axis2 users wish to run Spring inside the AAR. Here we show you
-how. There are four points to be aware of here:</p>
+how. There are four points to be aware of:</p>
 
 <p>(A) You need to configure Spring to use the Axis2 Service Classloader. See the 
   <a href="#263">Known issues running Spring inside the AAR</a> area. </p>
@@ -352,7 +351,8 @@ how. There are four points to be aware of here:</p>
 SpringAppContextAwareObjectSupplier is the best choice.</p>
 
 <p>(D) The springframework jar and axis2-spring-*.jar will be placed inside
-the AAR under the lib directory.</p>
+the AAR under the lib directory. Please MOVE the axis2-spring-*.jar from WEB-INF/lib to inside 
+the AAR, as shown below - it will NOT work otherwise. </p>
 <ul>
   <li><strong><a name="261"></a>The Spring inside an AAR layout</strong>
 </ul>
@@ -373,92 +373,63 @@ the AAR under the lib directory.</p>
 <ul>
   <li><strong><a name="262"></a>The Spring inside an AAR init class</strong></li>
 </ul>
-    <p>One way to initialize Spring is to use the
-    org.apache.axis2.engine.Service. </p>
-    <p>IMPORTANT: this interface at the time of this writing is being
-    discussed for refactoring. We'll update the Spring documents as soon as
-    possible. Be aware that this interface name perhaps will change, though
-    the functionality will probably be in place, somewhere. The important
-    part for us is the startUp() method and setting Spring to use the Service
-    classloader:</p>
+<p>One way to initialize Spring inside the AAR is to use the 
+org.apache.axis2.engine.ServiceLifeCycle interface. Here we give an example:</p>
     <source><pre>package spring;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.engine.Service;
+import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-public class SpringInit implements Service {
-        
-    private static Log logger = LogFactory
-        .getLog(SpringInit .class);
-
-    // The web service
-    public OMElement springInit(OMElement ignore) {
-
-        return null;
-    }
-
-    public void init(ServiceContext serviceContext) {
-        
-    }
-
-    public void setOperationContext(OperationContext arg0) {
-
-    }
-
-    public void destroy(ServiceContext arg0) {
-
-    }
-
-     /**
-     * this will be called during the deployement time of the service. irrespective
+public class SpringInit implements ServiceLifeCycle {
+	
+    /**
+     * This will be called during the deployement time of the service. 
+     * irrespective
      * of the service scope this method will be called
      */
     public void startUp(ConfigurationContext ignore, AxisService service) {
  
-        ClassLoader classLoader = service.getClassLoader();
-        ClassPathXmlApplicationContext appCtx = new
-        ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"}, false);
-            appCtx.setClassLoader(classLoader);
-            appCtx.refresh();
-        if (logger.isDebugEnabled()) {
-            logger.debug("\n\nstartUp() set spring classloader via axisService.getClassLoader() ... ");
+        try {
+            System.out.println("Starting spring init");
+            ClassLoader classLoader = service.getClassLoader();
+            ClassPathXmlApplicationContext appCtx = new
+            ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"}, false);
+                appCtx.setClassLoader(classLoader);
+                appCtx.refresh();
+            System.out.println("spring loaded");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+    }
+
+    /**
+     * This will be called during the system shut down time. 
+     * irrespective
+     * of the service scope this method will be called
+     */
+    public void shutDown(ConfigurationContext ctxIgnore, AxisService ignore) {
     }
 }</pre>
     </source>
-    <p>Here's the services.xml that now includes SpringInit and the
-    needed load-on-startup parameter. There is also the composite parameter which is needed
-    when loading Spring in the AAR - see the <a href="#263">Known issues running Spring inside the AAR</a>
+    <p>Here's the services.xml that now includes SpringInit and the SpringAwareService 
+    shown above. There is also the composite parameter which is needed when loading 
+    Spring in the AAR - see the <a href="#263">Known issues running Spring inside the AAR</a>
     area. </p>
     <source><pre>&lt;serviceGroup&gt;
-  &lt;service name="SpringInit"&gt;
+  &lt;!-- Invoke SpringInit on server startup and shutdown --&gt;
+  &lt;service name="SpringAwareService" class="spring.SpringInit"&gt;
     &lt;description&gt;
-        This is a spring sample Web Service with two operations.
+         simple spring example - inside the AAR
     &lt;/description&gt;
-    &lt;parameter name="ServiceClass" locked="false"&gt;spring.SpringInit&lt;/parameter&gt;
-    &lt;parameter name="composite" locked="false"&gt;true&lt;/parameter&gt;
-    &lt;parameter name="load-on-startup" locked="false"&gt;true&lt;/parameter&gt;
-    &lt;operation name="springInit"&gt;
+    &lt;!-- need the TCCL param when using spring inside the AAR --&gt;
+    &lt;parameter name="ServiceTCCL" locked="false"&gt;composite&lt;/parameter&gt;
+    &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier&lt;/parameter&gt;
+    &lt;parameter name="SpringBeanName" locked="false"&gt;springAwareService&lt;/parameter&gt;
+    &lt;operation name="getValue"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
-  &lt;/service&gt;
-  &lt;service name="SpringAwareService"&gt;
-     &lt;description&gt;
-         simple spring example
-     &lt;/description&gt;
-     &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier&lt;/parameter&gt;
-     &lt;parameter name="SpringBeanName" locked="false"&gt;springAwareService&lt;/parameter&gt;
-     &lt;operation name="getValue"&gt;
-         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
-     &lt;/operation&gt;
   &lt;/service&gt;
 &lt;/serviceGroup&gt;</pre>
 </source>
@@ -469,7 +440,7 @@ public class SpringInit implements Service {
 </ul>
     <p>The Axis2 classloader strategy by default does not permit Spring to run inside the AAR. To 
     allow Spring to run inside the AAR, the 'composite' parameter is used in the services.xml as 
-    shown in the example above. The behavior of 'composite' was the default in the developement 
+    shown in the example above. The behavior of 'composite' was the default in the development 
     cycle in between 1.0 and 1.1, but it resulted in the JIRA issue AXIS2-1214 - essentially 
     problems with getting an initContext.lookup() handle inside the AAR. Spring users typically 
     have little desire to use initContext.lookup() however, as they get their Datasources via 
@@ -483,7 +454,7 @@ public class SpringInit implements Service {
     <source><pre>
     &lt;bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
                 &lt;property name="mappingLocations"&gt;
-                   &lt;value&gt;classpath*:**/Asset.hbm.xml&lt;/value&gt;
+                   &lt;value&gt;classpath*:**/MyEntity.hbm.xml&lt;/value&gt;
                 &lt;/property&gt;
                 ...
     &lt;/bean&gt; 
