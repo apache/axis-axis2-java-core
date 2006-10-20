@@ -321,9 +321,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         if (JavaUtils.isJavaKeyword(word)) {
             return JavaUtils.makeNonJavaKeyword(word);
         }
-
-        String cClassName = word.replace(".", "_");
-        return cClassName;
+        return word.replace('.', '_');
     }
 
 
