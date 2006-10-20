@@ -28,18 +28,6 @@
         private org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory) {
             return factory.getDefaultEnvelope();
         }
-
-        private java.lang.Object fromOM(
-            org.apache.axiom.om.OMElement param,
-            java.lang.Class type,
-            java.util.Map extraNamespaces) {
-            try {
-                org.jibx.runtime.impl.UnmarshallingContext ctx = getNewUnmarshalContext(param);
-                return ctx.unmarshalElement(type);
-            } catch (Exception e) {
-                 throw new RuntimeException(e);
-            }
-        }
       
     </xsl:if>
     
@@ -49,7 +37,14 @@
           <xsl:apply-templates mode="message-receiver" select="dbmethod"/>
         </xsl:when>
         <xsl:when test="$context='interface-implementation'">
-          <xsl:apply-templates mode="interface-implementation" select="dbmethod"/>
+          <xsl:variable name="isSync"><xsl:value-of select="/class/@isSync"/></xsl:variable>
+          <xsl:if test="$isSync='1'">
+            <xsl:apply-templates mode="interface-implementation" select="dbmethod"><xsl:with-param name="sync">true</xsl:with-param></xsl:apply-templates>
+          </xsl:if>
+          <xsl:variable name="isAsync"><xsl:value-of select="/class/@isAsync"/></xsl:variable>
+          <xsl:if test="$isAsync='1'">
+            <xsl:apply-templates mode="interface-implementation" select="dbmethod"><xsl:with-param name="sync">false</xsl:with-param></xsl:apply-templates>
+          </xsl:if>
         </xsl:when>
       </xsl:choose>
     </xsl:if>
@@ -61,6 +56,7 @@
       </xsl:when>
       <xsl:when test="$context='interface-implementation'">
         <xsl:apply-templates select="object-input"/>
+        <xsl:call-template name="stub-utility-methods"/>
       </xsl:when>
     </xsl:choose>
     
@@ -122,7 +118,10 @@
   
   <!-- Invoked by main template to handle unwrapped method generation for message receiver -->
   <xsl:template match="dbmethod" mode="message-receiver">
-      public org.apache.axiom.soap.SOAPEnvelope <xsl:value-of select="@receiver-name"/>(org.apache.axiom.om.OMElement element, <xsl:value-of select="/*/@skeletonname"/> skel, org.apache.axiom.soap.SOAPFactory factory) throws org.apache.axis2.AxisFault {
+    <xsl:variable name="method-name" select="@method-name"/>
+      public org.apache.axiom.soap.SOAPEnvelope <xsl:value-of select="@receiver-name"/>(org.apache.axiom.om.OMElement element, <xsl:value-of select="/*/@skeletonname"/> skel, org.apache.axiom.soap.SOAPFactory factory) throws org.apache.axis2.AxisFault
+      <xsl:for-each select="/interface/method[@name=$method-name]/fault/param">, <xsl:value-of select="@name"/></xsl:for-each>
+      {
           org.apache.axiom.soap.SOAPEnvelope envelope = null;
           try {
               org.jibx.runtime.impl.UnmarshallingContext uctx = getNewUnmarshalContext(element);
@@ -280,29 +279,57 @@
   CLIENT STUB UNWRAPPED METHOD GENERATION
   -->
   
-  <!-- Invoked by main template to handle unwrapped method generation for client stub -->
+  <!-- Invoked by main template to handle unwrapped method generation for synchronous client stub -->
   <xsl:template match="dbmethod" mode="interface-implementation">
+    <xsl:param name="sync">error</xsl:param>
+    <xsl:variable name="interfaceName"><xsl:value-of select="/class/@interfaceName"/></xsl:variable>
+    <xsl:variable name="package"><xsl:value-of select="/class/@package"/></xsl:variable>
     <xsl:variable name="return-base-type"><xsl:value-of select="out-wrapper/return-element/@java-type"/></xsl:variable>
     <xsl:variable name="return-full-type"><xsl:value-of select="$return-base-type"/><xsl:if test="out-wrapper/return-element/@array='true'">[]</xsl:if></xsl:variable>
     <xsl:variable name="method-name"><xsl:value-of select="@method-name"/></xsl:variable>
     
         /**
-         * Auto generated method signature
+    <xsl:if test="$sync='true'">
+         * Auto generated synchronous call method
          * 
-         * @see com.sosnoski.ws.library.adb.LibraryAdb#getBook
-         * @param param18
-         * 
+         * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#<xsl:value-of select="@method-name"/>
+        <xsl:for-each select="in-wrapper/parameter-element">
+         * @param <xsl:value-of select="@java-name"/></xsl:for-each>
          */
         public <xsl:choose><xsl:when test="out-wrapper/@empty='true'">void</xsl:when><xsl:otherwise><xsl:value-of select="$return-full-type"/></xsl:otherwise></xsl:choose><xsl:text> </xsl:text><xsl:value-of select="@method-name"/>(
-    <xsl:for-each select="in-wrapper/parameter-element">
-      <xsl:if test="position()&gt;1">, </xsl:if><xsl:value-of select="@java-type"/><xsl:if test="@array='true'">[]</xsl:if><xsl:text> </xsl:text><xsl:value-of select="@java-name"/>
-    </xsl:for-each>
-            ) throws java.rmi.RemoteException {
+    </xsl:if>
+    <xsl:if test="$sync='false'">
+         * Auto generated asynchronous call method
+         * 
+         * @see <xsl:value-of select="$package"/>.<xsl:value-of select="$interfaceName"/>#start<xsl:value-of select="@method-name"/>
+        <xsl:for-each select="in-wrapper/parameter-element">
+         * @param <xsl:value-of select="@java-name"/></xsl:for-each>
+    <xsl:if test="$sync='true'">
+      <xsl:for-each select="/class/method[@name=$method-name]/fault/param">
+         * @throws <xsl:value-of select="@name"/>
+      </xsl:for-each>
+    </xsl:if>
+         */
+        public void start<xsl:value-of select="@method-name"/>(
+    </xsl:if>
+        <xsl:for-each select="in-wrapper/parameter-element">
+          <xsl:if test="position()&gt;1">, </xsl:if><xsl:value-of select="@java-type"/><xsl:if test="@array='true'">[]</xsl:if><xsl:text> </xsl:text><xsl:value-of select="@java-name"/>
+        </xsl:for-each>
+    <xsl:if test="$sync='false'">
+        <xsl:if test="in-wrapper/@empty='false'">, </xsl:if>final <xsl:value-of select="/class/@callbackname"/> _callback
+    </xsl:if>
+            ) throws java.rmi.RemoteException
+    <xsl:if test="$sync='true'">
+      <!--add the faults-->
+      <xsl:for-each select="/class/method[@name=$method-name]/fault/param">, <xsl:value-of select="@name"/></xsl:for-each>
+    </xsl:if>
+            {
     <!-- Simple parameter values (those with serializers) can be handled by
       direct conversion to elements. Complex parameter values need to use data
       sources. This code handles both types. -->
             try {
-                javax.xml.namespace.QName opname = _operations[<xsl:apply-templates mode="get-index" select="/class/method[@name=$method-name]"></xsl:apply-templates>].getName();
+                int _opIndex = <xsl:apply-templates mode="get-index" select="/class/method[@name=$method-name]"></xsl:apply-templates>;
+                javax.xml.namespace.QName opname = _operations[_opIndex].getName();
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(opname);
                 _operationClient.getOptions().setAction("<xsl:apply-templates mode="get-action" select="/class/method[@name=$method-name]"></xsl:apply-templates>");
                 _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -315,19 +342,21 @@
                 org.apache.axiom.om.OMElement child;
     <xsl:apply-templates select="in-wrapper/parameter-element" mode="interface-implementation"/>
     
-                // adding SOAP headers
+                // add SOAP headers
                 _serviceClient.addHeadersToEnvelope(env);
-                // create message context with that soap envelope
+                
+                // create message context with that envelope
                 org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
                 _messageContext.setEnvelope(env);
     
-                // add the message contxt to the operation client
+                // add the message context to the operation client
                 _operationClient.addMessageContext(_messageContext);
     
-                // execute the operation client
+    <xsl:if test="$sync='true'">
+               // execute the operation client
                 _operationClient.execute(true);
                 
-    <xsl:if test="out-wrapper/@empty='false'">
+      <xsl:if test="out-wrapper/@empty='false'">
                 org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient
                     .getMessageContext(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 org.apache.axiom.om.OMElement result = _returnMessageContext.getEnvelope().getBody().getFirstElement();
@@ -336,73 +365,66 @@
                     org.jibx.runtime.impl.UnmarshallingContext uctx = getNewUnmarshalContext(result);
                     uctx.parsePastStartTag("<xsl:value-of select='out-wrapper/@ns'/>", "<xsl:value-of select='out-wrapper/@name'/>");
                     int index;
-      <xsl:apply-templates select="out-wrapper/return-element" mode="interface-implementation"/>
+        <xsl:apply-templates select="out-wrapper/return-element" mode="interface-implementation"/>
                     return <xsl:value-of select="out-wrapper/return-element/@java-name"/>;
                 } else {
                     throw new org.apache.axis2.AxisFault("Missing expected result wrapper element {<xsl:value-of select='out-wrapper/@ns'/>}<xsl:value-of select='out-wrapper/@name'/>");
                 }
-    </xsl:if>
-    <xsl:if test="out-wrapper/@empty='false' or count(in-wrapper/parameter-element[@form='simple']) &gt; 0">
-            } catch (org.jibx.runtime.JiBXException e) {
-                throw new org.apache.axis2.AxisFault(e);
-    </xsl:if>
-            } catch (org.apache.axis2.AxisFault f) {
-                org.apache.axiom.om.OMElement faultElt = f.getDetail();
-                if (faultElt != null) {
-                    if (faultExeptionNameMap.containsKey(faultElt.getQName())) {
-                        // make the fault by reflection
-                        try {
-                            java.lang.String exceptionClassName = (java.lang.String)faultExeptionClassNameMap
-                            .get(faultElt.getQName());
-                            java.lang.Class exceptionClass = java.lang.Class
-                            .forName(exceptionClassName);
-                            java.rmi.RemoteException ex = (java.rmi.RemoteException)exceptionClass
-                            .newInstance();
-                            // message class
-                            java.lang.String messageClassName = (java.lang.String)faultMessageMap
-                            .get(faultElt.getQName());
-                            java.lang.Class messageClass = java.lang.Class
-                            .forName(messageClassName);
-                            java.lang.Object messageObject = null;
-                            java.lang.reflect.Method m = exceptionClass.getMethod(
-                                "setFaultMessage",
-                                new java.lang.Class[] { messageClass });
-                            m.invoke(ex, new java.lang.Object[] { messageObject });
-    
-                            throw ex;
-                        } catch (java.lang.ClassCastException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (java.lang.ClassNotFoundException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (java.lang.NoSuchMethodException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (java.lang.reflect.InvocationTargetException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (java.lang.IllegalAccessException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        } catch (java.lang.InstantiationException e) {
-                            // we cannot intantiate the class - throw the original
-                            // Axis fault
-                            throw f;
-                        }
-                    } else {
-                        throw f;
-                    }
-                } else {
-                    throw f;
+      </xsl:if>
+            } catch (Exception e) {
+                Exception outex = convertException(e);
+      <xsl:for-each select="/class/method[@name=$method-name]/fault/param">
+                if (outex instanceof <xsl:value-of select="@name"/>) {
+                    throw (<xsl:value-of select="@name"/>)outex;
                 }
+      </xsl:for-each>
+                // should never happen, but just in case
+                throw new RuntimeException("Unexpected exception type: " +
+                    outex.getClass().getName(), outex);
             }
         }
+    </xsl:if>
+    <xsl:if test="$sync='false'">
+                _operationClient.setCallback(new org.apache.axis2.client.async.Callback() {
+                    public void onComplete(org.apache.axis2.client.async.AsyncResult async) {
+                        try {
+                            org.apache.axiom.om.OMElement result = async.getResponseEnvelope().getBody().getFirstElement();
+                            if (result != null &amp;&amp; "<xsl:value-of select='out-wrapper/@name'/>".equals(result.getLocalName()) &amp;&amp;
+                                "<xsl:value-of select='out-wrapper/@ns'/>".equals(result.getNamespace().getNamespaceURI())) {
+                                org.jibx.runtime.impl.UnmarshallingContext uctx = getNewUnmarshalContext(result);
+                                uctx.parsePastStartTag("<xsl:value-of select='out-wrapper/@ns'/>", "<xsl:value-of select='out-wrapper/@name'/>");
+                                int index;
+      <xsl:apply-templates select="out-wrapper/return-element" mode="interface-implementation"/>
+                                _callback.receiveResult<xsl:value-of select="@method-name"/>(<xsl:value-of select="out-wrapper/return-element/@java-name"/>);
+                            } else {
+                                throw new org.apache.axis2.AxisFault("Missing expected result wrapper element {<xsl:value-of select='out-wrapper/@ns'/>}<xsl:value-of select='out-wrapper/@name'/>");
+                            }
+                        } catch (Exception e) {
+                            onError(e);
+                        }
+                    }
+
+                    public void onError(Exception e) {
+                        _callback.receiveErrorgetBook(e);
+                    }
+                });
+                        
+                org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
+                if ( _operations[_opIndex].getMessageReceiver() == null &amp;&amp; _operationClient.getOptions().isUseSeparateListener()) {
+                    _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
+                    _operations[_opIndex].setMessageReceiver(_callbackReceiver);
+                }
+
+                // execute the operation client
+                _operationClient.execute(false);
+                
+            } catch (Exception e) {
+                Exception outex = convertException(e);
+                throw new RuntimeException("Unexpected exception type: " +
+                    outex.getClass().getName(), outex);
+            }
+        }
+    </xsl:if>
   </xsl:template>
   
   <!-- Invoked to get the operation index number for a method. -->
@@ -499,7 +521,7 @@
   <!-- Convert the current value to an element. -->
   <xsl:template name="serialize-value-to-child">
     <xsl:choose>
-      <xsl:when test="@java-type='java.lang.String' and @serializer=''">
+      <xsl:when test="@java-type='String' and @serializer=''">
         child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
         child.setText(<xsl:call-template name="parameter-or-array-item"/>);
       </xsl:when>
@@ -537,38 +559,120 @@
   
   
   <!--
+  CLIENT STUB SHARED METHOD GENERATION
+  -->
+  <!-- Called by main template to create utility methods -->
+  <xsl:template name="stub-utility-methods">
+        
+        private Exception convertException(Exception ex) throws java.rmi.RemoteException {
+            if (ex instanceof org.apache.axis2.AxisFault) {
+                org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault)ex;
+                org.apache.axiom.om.OMElement faultElt = f.getDetail();
+                if (faultElt != null) {
+                    if (faultExeptionNameMap.containsKey(faultElt.getQName())) {
+                        try {
+                            
+                            // first create the actual exception
+                            String exceptionClassName = (String)faultExeptionClassNameMap.get(faultElt.getQName());
+                            Class exceptionClass = Class.forName(exceptionClassName);
+                            Exception e = (Exception)exceptionClass.newInstance();
+                            
+                            // build the message object from the details
+                            String messageClassName = (String)faultMessageMap.get(faultElt.getQName());
+                            Class messageClass = Class.forName(messageClassName);
+                            Object messageObject = fromOM(faultElt, messageClass, null);
+                            java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+                                new Class[] { messageClass });
+                            m.invoke(e, new Object[] { messageObject });
+                            return e;
+                            
+                        } catch (ClassCastException e) {
+                            // we cannot intantiate the class - throw the original
+                            // Axis fault
+                            throw f;
+                        } catch (ClassNotFoundException e) {
+                            // we cannot intantiate the class - throw the original
+                            // Axis fault
+                            throw f;
+                        } catch (NoSuchMethodException e) {
+                            // we cannot intantiate the class - throw the original
+                            // Axis fault
+                            throw f;
+                        } catch (java.lang.reflect.InvocationTargetException e) {
+                            // we cannot intantiate the class - throw the original
+                            // Axis fault
+                            throw f;
+                        } catch (IllegalAccessException e) {
+                            // we cannot intantiate the class - throw the original
+                            // Axis fault
+                            throw f;
+                        } catch (InstantiationException e) {
+                            // we cannot intantiate the class - throw the original
+                            // Axis fault
+                            throw f;
+                        }
+                    } else {
+                        throw f;
+                    }
+                } else {
+                    throw f;
+                }
+                
+            } else if (ex instanceof RuntimeException) {
+                throw (RuntimeException)ex;
+            } else if (ex instanceof java.rmi.RemoteException) {
+                throw (java.rmi.RemoteException)ex;
+            } else {
+                throw new org.apache.axis2.AxisFault(ex);
+            }
+        }
+    
+  </xsl:template>
+  
+  
+  <!--
   STATIC CODE GENERATION
   -->
   
-  <!-- Called by main template to handle static data structures. -->
+  <!-- Called by main template to handle static binding data and methods. -->
   <xsl:template match="initialize-binding">
       private static final org.jibx.runtime.IBindingFactory bindingFactory;
       private static final String bindingErrorMessage;
     <xsl:apply-templates mode="generate-index-fields" select="abstract-type"/>
-      static {
-          org.jibx.runtime.IBindingFactory factory = null;
-          String message = null;
-          try {
-              factory = org.jibx.runtime.BindingDirectory.getFactory(<xsl:value-of select="@bound-class"/>.class);
-              message = null;
-          } catch (Exception e) { message = e.getMessage(); }
-          bindingFactory = factory;
-          bindingErrorMessage = message;
+        static {
+            org.jibx.runtime.IBindingFactory factory = null;
+            String message = null;
+            try {
+                factory = org.jibx.runtime.BindingDirectory.getFactory(<xsl:value-of select="@bound-class"/>.class);
+                message = null;
+            } catch (Exception e) { message = e.getMessage(); }
+            bindingFactory = factory;
+            bindingErrorMessage = message;
     <xsl:apply-templates mode="set-index-fields" select="abstract-type"/>
-      };
-      
-      private static org.jibx.runtime.impl.UnmarshallingContext getNewUnmarshalContext(org.apache.axiom.om.OMElement param)
-          throws org.jibx.runtime.JiBXException {
-          if (bindingFactory == null) {
-              throw new RuntimeException(bindingErrorMessage);
-          }
-          org.jibx.runtime.impl.UnmarshallingContext ctx =
-              (org.jibx.runtime.impl.UnmarshallingContext)bindingFactory.createUnmarshallingContext();
-          org.jibx.runtime.IXMLReader reader = new org.jibx.runtime.impl.StAXReaderWrapper(param.getXMLStreamReaderWithoutCaching(), "SOAP-message", true);
-          ctx.setDocument(reader);
-          ctx.toTag();
-          return ctx;
-      }
+        };
+        
+        private static org.jibx.runtime.impl.UnmarshallingContext getNewUnmarshalContext(org.apache.axiom.om.OMElement param)
+            throws org.jibx.runtime.JiBXException {
+            if (bindingFactory == null) {
+                throw new RuntimeException(bindingErrorMessage);
+            }
+            org.jibx.runtime.impl.UnmarshallingContext ctx =
+                (org.jibx.runtime.impl.UnmarshallingContext)bindingFactory.createUnmarshallingContext();
+            org.jibx.runtime.IXMLReader reader = new org.jibx.runtime.impl.StAXReaderWrapper(param.getXMLStreamReaderWithoutCaching(), "SOAP-message", true);
+            ctx.setDocument(reader);
+            ctx.toTag();
+            return ctx;
+        }
+        
+        private static Object fromOM(org.apache.axiom.om.OMElement param, Class type,
+            java.util.Map extraNamespaces) {
+            try {
+                org.jibx.runtime.impl.UnmarshallingContext ctx = getNewUnmarshalContext(param);
+                return ctx.unmarshalElement(type);
+            } catch (Exception e) {
+                 throw new RuntimeException(e);
+            }
+        }
   </xsl:template>
   
   <!-- Called by "initialize-binding" template to generate mapped class index fields. -->
@@ -647,7 +751,7 @@
   <!-- Convert the current element into a value. -->
   <xsl:template name="deserialize-element-value">
     <xsl:choose>
-      <xsl:when test="@java-type='java.lang.String' and @deserializer=''">
+      <xsl:when test="@java-type='String' and @deserializer=''">
         uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>")
       </xsl:when>
       <xsl:when test="@form='simple' and @deserializer=''">
