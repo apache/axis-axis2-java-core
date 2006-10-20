@@ -1,4 +1,5 @@
 <head>
+    <title>:: Exception Handling using WSDL Faults ::</title>
 </head>
 
 <body>
@@ -102,7 +103,7 @@
 			</li>
 			<li>
 					<strong>ant run -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=1200</strong><br/>
-					Throws InsufficientFundsFaultMessageException. You will see "Account#88 has balance of 1000. It cannot support withdrawal of 1220"<br/>&nbsp;
+					Throws InsufficientFundsFaultMessageException. You will see "Account#88 has balance of 1000. It cannot support withdrawal of 1200"<br/>&nbsp;
 			</li>
 			<li>
 					<strong>ant run -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=400</strong><br/>
