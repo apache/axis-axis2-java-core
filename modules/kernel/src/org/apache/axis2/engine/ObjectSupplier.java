@@ -19,7 +19,7 @@ import org.apache.axis2.AxisFault;
 *
 */
 
-public interface ObjectSuppler {
+public interface ObjectSupplier {
     /**
      * If someone want to write service impl class with interface
      * being there method parameter , then at the time of deserilization

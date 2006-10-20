@@ -8,7 +8,7 @@ import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.ObjectSuppler;
+import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.util.StreamWrapper;
@@ -96,9 +96,9 @@ public class RPCUtil {
     }
 
     public static Object[] processRequest(OMElement methodElement,
-                                          Method method  , ObjectSuppler objectSuppler) throws AxisFault {
+                                          Method method  , ObjectSupplier objectSupplier) throws AxisFault {
         Class[] parameters = method.getParameterTypes();
-        return BeanUtil.deserialize(methodElement, parameters  , objectSuppler);
+        return BeanUtil.deserialize(methodElement, parameters  , objectSupplier);
     }
 
     public static OMElement getResponseElement(QName resname, Object [] objs, boolean qualified) {

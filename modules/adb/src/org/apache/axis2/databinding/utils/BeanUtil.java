@@ -27,7 +27,7 @@ import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
-import org.apache.axis2.engine.ObjectSuppler;
+import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
 import org.codehaus.jam.*;
 
@@ -175,7 +175,7 @@ public class BeanUtil {
 
     public static Object deserialize(Class beanClass,
                                      OMElement beanElement,
-                                     ObjectSuppler objectSuppler)
+                                     ObjectSupplier objectSupplier)
             throws AxisFault {
         Object beanObj;
         try {
@@ -190,7 +190,7 @@ public class BeanUtil {
                         omElement = (OMElement) objValue;
                         Object obj = deserialize(arrayClassType,
                                 omElement,
-                                objectSuppler);
+                                objectSupplier);
                         if (obj != null) {
                             valueList.add(obj);
                         }
@@ -210,7 +210,7 @@ public class BeanUtil {
                     properties.put(proprty.getName(), proprty);
                 }
 
-                beanObj = objectSuppler.getObject(beanClass);
+                beanObj = objectSupplier.getObject(beanClass);
                 boolean tuched = false;
                 Iterator elements = beanElement.getChildren();
                 while (elements.hasNext()) {
@@ -237,9 +237,9 @@ public class BeanUtil {
                             partObj = SimpleTypeMapper.getArrayList((OMElement)
                                     parts.getParent(), prty.getName());
                         } else if (parameters.isArray()) {
-                            partObj = deserialize(parameters, (OMElement) parts.getParent(), objectSuppler);
+                            partObj = deserialize(parameters, (OMElement) parts.getParent(), objectSupplier);
                         } else {
-                            partObj = deserialize(parameters, parts, objectSuppler);
+                            partObj = deserialize(parameters, parts, objectSupplier);
                         }
                         Object [] parms = new Object[]{partObj};
                         prty.getWriteMethod().invoke(beanObj, parms);
@@ -266,7 +266,7 @@ public class BeanUtil {
     public static Object deserialize(Class beanClass,
                                      OMElement beanElement,
                                      MultirefHelper helper,
-                                     ObjectSuppler objectSuppler) throws AxisFault {
+                                     ObjectSupplier objectSupplier) throws AxisFault {
         Object beanObj;
         try {
             HashMap properties = new HashMap();
@@ -277,7 +277,7 @@ public class BeanUtil {
                 properties.put(proprty.getName(), proprty);
             }
 
-            beanObj = objectSuppler.getObject(beanClass);
+            beanObj = objectSupplier.getObject(beanClass);
             Iterator elements = beanElement.getChildren();
             while (elements.hasNext()) {
                 Object child = elements.next();
@@ -300,12 +300,12 @@ public class BeanUtil {
                         String refId = MultirefHelper.getAttvalue(attr);
                         partObj = helper.getObject(refId);
                         if (partObj == null) {
-                            partObj = helper.processRef(parameters, refId , objectSuppler);
+                            partObj = helper.processRef(parameters, refId , objectSupplier);
                         }
                     } else {
                         partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
                         if (partObj == null) {
-                            partObj = deserialize(parameters, parts, objectSuppler);
+                            partObj = deserialize(parameters, parts, objectSupplier);
                         }
                     }
                     Object [] parms = new Object[]{partObj};
@@ -336,7 +336,7 @@ public class BeanUtil {
      */
     public static Object [] deserialize(OMElement response,
                                         Object [] javaTypes,
-                                        ObjectSuppler objectSuppler) throws AxisFault {
+                                        ObjectSupplier objectSupplier) throws AxisFault {
         /*
          * Take the number of parameters in the method and , only take that much of child elements
          * from the OMElement , other are ignore , as an example
@@ -387,11 +387,11 @@ public class BeanUtil {
             currentLocalName = omElement.getLocalName();
             classType = (Class) javaTypes[count];
             omElement = ProcessElement(classType, omElement, helper, parts,
-                    currentLocalName, retObjs, count, objectSuppler);
+                    currentLocalName, retObjs, count, objectSupplier);
             while (omElement != null) {
                 count ++;
                 omElement = ProcessElement((Class) javaTypes[count], omElement,
-                        helper, parts, omElement.getLocalName(), retObjs, count, objectSuppler);
+                        helper, parts, omElement.getLocalName(), retObjs, count, objectSupplier);
             }
             count ++;
         }
@@ -413,17 +413,17 @@ public class BeanUtil {
                                             String currentLocalName,
                                             Object[] retObjs,
                                             int count,
-                                            ObjectSuppler objectSuppler) throws AxisFault {
+                                            ObjectSupplier objectSupplier) throws AxisFault {
         Object objValue;
         if (classType.isArray()) {
             boolean done = true;
             ArrayList valueList = new ArrayList();
             Class arrayClassType = classType.getComponentType();
             if ("byte".equals(arrayClassType.getName())) {
-                retObjs[count] = processObject(omElement, arrayClassType, helper, true, objectSuppler);
+                retObjs[count] = processObject(omElement, arrayClassType, helper, true, objectSupplier);
                 return null;
             } else {
-                valueList.add(processObject(omElement, arrayClassType, helper, true, objectSuppler));
+                valueList.add(processObject(omElement, arrayClassType, helper, true, objectSupplier));
             }
             while (parts.hasNext()) {
                 objValue = parts.next();
@@ -437,7 +437,7 @@ public class BeanUtil {
                     break;
                 }
                 Object o = processObject(omElement, arrayClassType,
-                        helper, true, objectSuppler);
+                        helper, true, objectSupplier);
                 valueList.add(o);
             }
             retObjs[count] = ConverterUtil.convertToArray(arrayClassType,
@@ -447,7 +447,7 @@ public class BeanUtil {
             }
         } else {
             //handling refs
-            retObjs[count] = processObject(omElement, classType, helper, false, objectSuppler);
+            retObjs[count] = processObject(omElement, classType, helper, false, objectSupplier);
         }
         return null;
     }
@@ -456,7 +456,7 @@ public class BeanUtil {
                                        Class classType,
                                        MultirefHelper helper,
                                        boolean isArrayType,
-                                       ObjectSuppler objectSuppler) throws AxisFault {
+                                       ObjectSupplier objectSupplier) throws AxisFault {
         boolean hasRef = false;
         OMAttribute omatribute = MultirefHelper.processRefAtt(omElement);
         String ref = null;
@@ -479,7 +479,7 @@ public class BeanUtil {
                 if (helper.getObject(ref) != null) {
                     return helper.getObject(ref);
                 } else {
-                    return helper.processRef(classType, ref , objectSuppler);
+                    return helper.processRef(classType, ref , objectSupplier);
                 }
             } else {
                 OMAttribute attribute = omElement.getAttribute(
@@ -497,7 +497,7 @@ public class BeanUtil {
                 } else if (SimpleTypeMapper.isArrayList(classType)) {
                     return SimpleTypeMapper.getArrayList(omElement);
                 } else {
-                    return BeanUtil.deserialize(classType, omElement, objectSuppler);
+                    return BeanUtil.deserialize(classType, omElement, objectSupplier);
                 }
             }
         }

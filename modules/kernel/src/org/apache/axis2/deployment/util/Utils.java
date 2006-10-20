@@ -256,6 +256,9 @@ public class Utils {
                 serviceClass = obj.getClass().getName();
             } else {
                 return;
+                //TODO : Need to fix this
+//                 throw new DeploymentException(
+//                            "ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
             }
 
         }

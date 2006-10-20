@@ -17,8 +17,6 @@
 package org.apache.axis2.rpc;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -39,23 +37,16 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.DefaultObjectSuppler;
+import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.rpc.client.RPCServiceClient;
-import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
@@ -360,7 +351,7 @@ public class MultirefTest extends TestCase {
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement() , new DefaultObjectSuppler());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement() , new DefaultObjectSupplier());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -420,7 +411,7 @@ public class MultirefTest extends TestCase {
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement()  , new DefaultObjectSuppler());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement()  , new DefaultObjectSupplier());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -485,7 +476,7 @@ public class MultirefTest extends TestCase {
         ArrayList args = new ArrayList();
         args.add(boolean.class);
 
-        Object [] resBean = BeanUtil.deserialize(response, args.toArray()  , new DefaultObjectSuppler());
+        Object [] resBean = BeanUtil.deserialize(response, args.toArray()  , new DefaultObjectSupplier());
         assertNotNull(resBean);
         assertEquals(((Boolean) resBean[0]).booleanValue(), true);
     }
@@ -555,7 +546,7 @@ public class MultirefTest extends TestCase {
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
-        Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement()  , new DefaultObjectSuppler());
+        Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement()  , new DefaultObjectSupplier());
         assertNotNull(emp);
     }
 

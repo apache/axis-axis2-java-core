@@ -22,7 +22,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.DefaultObjectSuppler;
+import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.databinding.utils.BeanUtil;
 
 import javax.xml.stream.XMLStreamException;
@@ -123,14 +123,14 @@ public class RPCServiceClass {
     }
 
     public MyBean beanOM(OMElement element, int val) throws AxisFault {
-        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSuppler());
+        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSupplier());
         bean.setAge(val);
         return bean;
     }
 
     public boolean omrefs(OMElement element, OMElement element2) throws AxisFault {
-        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSuppler());
-        MyBean bean2 = (MyBean) BeanUtil.deserialize(MyBean.class, element2 , new DefaultObjectSuppler());
+        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSupplier());
+        MyBean bean2 = (MyBean) BeanUtil.deserialize(MyBean.class, element2 , new DefaultObjectSupplier());
         return bean2 != null && bean != null;
     }
 
@@ -169,7 +169,7 @@ public class RPCServiceClass {
         ArrayList tems = new ArrayList();
         for (int i = 0; i < pss.size(); i++) {
             OMElement omElement = (OMElement) pss.get(i);
-            Person p = (Person) BeanUtil.deserialize(Person.class, omElement  , new DefaultObjectSuppler());
+            Person p = (Person) BeanUtil.deserialize(Person.class, omElement  , new DefaultObjectSupplier());
             tems.add(p);
         }
         com.setPersons(tems);
