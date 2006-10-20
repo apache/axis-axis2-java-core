@@ -69,13 +69,13 @@ goto end
 rem set the classes by looping through the libs
 setlocal EnableDelayedExpansion
 set AXIS2_CLASS_PATH=%AXIS2_HOME%
-FOR %%C in (%AXIS2_HOME%\lib\*.jar) DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;"%%~fC"
-set AXIS2_CLASS_PATH=%AXIS2_HOME%\conf;%AXIS2_CLASS_PATH%
+FOR %%c in ("%AXIS2_HOME%\lib\*.jar") DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;%%c
 
 echo Using JAVA_HOME    %JAVA_HOME%
 echo Using AXIS2_HOME   %AXIS2_HOME%
+
 cd %AXIS2_HOME%
-"%_JAVACMD%" %JAVA_OPTS% -cp %AXIS2_CLASS_PATH% org.apache.axis2.transport.SimpleAxis2Server %AXIS2_CMD_LINE_ARGS%
+"%_JAVACMD%" %JAVA_OPTS% -cp "%AXIS2_CLASS_PATH%" org.apache.axis2.transport.SimpleAxis2Server %AXIS2_CMD_LINE_ARGS%
 goto end
 
 :end
