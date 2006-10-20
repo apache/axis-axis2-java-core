@@ -44,6 +44,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DefaultObjectSuppler;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
@@ -359,7 +360,7 @@ public class MultirefTest extends TestCase {
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement() , new DefaultObjectSuppler());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -419,7 +420,7 @@ public class MultirefTest extends TestCase {
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement()  , new DefaultObjectSuppler());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -484,7 +485,7 @@ public class MultirefTest extends TestCase {
         ArrayList args = new ArrayList();
         args.add(boolean.class);
 
-        Object [] resBean = BeanUtil.deserialize(response, args.toArray());
+        Object [] resBean = BeanUtil.deserialize(response, args.toArray()  , new DefaultObjectSuppler());
         assertNotNull(resBean);
         assertEquals(((Boolean) resBean[0]).booleanValue(), true);
     }
@@ -554,7 +555,7 @@ public class MultirefTest extends TestCase {
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
-        Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement());
+        Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement()  , new DefaultObjectSuppler());
         assertNotNull(emp);
     }
 

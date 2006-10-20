@@ -250,7 +250,8 @@ public class Utils {
                 }
                 if (obj == null) {
                     log.warn("ServiceObjectSupplier implmentation Object could not be found");
-                    return;
+                    throw new DeploymentException(
+                            "ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
                 }
                 serviceClass = obj.getClass().getName();
             } else {

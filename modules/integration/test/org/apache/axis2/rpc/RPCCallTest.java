@@ -36,6 +36,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DefaultObjectSuppler;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
@@ -128,7 +129,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         args.add("159");
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement(), new DefaultObjectSuppler());
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -171,7 +172,8 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class,
+                response.getFirstElement(), new DefaultObjectSuppler());
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);
@@ -202,7 +204,8 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
-        Mail resBean = (Mail) BeanUtil.deserialize(Mail.class, response.getFirstElement());
+        Mail resBean = (Mail) BeanUtil.deserialize(Mail.class, response.getFirstElement(),
+                new DefaultObjectSuppler());
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getBody(), "My Body");

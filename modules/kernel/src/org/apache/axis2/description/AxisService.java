@@ -25,9 +25,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.ServiceLifeCycle;
+import org.apache.axis2.engine.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -173,6 +171,9 @@ public class AxisService extends AxisDescription {
     private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
     private boolean clientSide = false;
 
+    //To keep a ref to ObjectSuppler instance
+    private ObjectSuppler objectSuppler;
+
     // package to namespace mapping
     private Map p2nMap;
 
@@ -233,6 +234,7 @@ public class AxisService extends AxisDescription {
         engagedModules = new ArrayList();
         schemaList = new ArrayList();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
+        objectSuppler = new DefaultObjectSuppler();
     }
 
     /**
@@ -1502,7 +1504,7 @@ public class AxisService extends AxisDescription {
             Set keys = nameSpacesMap.keySet();
             while (itr.hasNext()) {
                 String value = (String) itr.next();
-                if (value.equals(targetNameSpace)&&keys.contains(prefix)) {
+                if (value.equals(targetNameSpace) && keys.contains(prefix)) {
                     found = true;
                 }
             }
@@ -1713,5 +1715,13 @@ public class AxisService extends AxisDescription {
 
     public void setP2nMap(Map p2nMap) {
         this.p2nMap = p2nMap;
+    }
+
+    public ObjectSuppler getObjectSuppler() {
+        return objectSuppler;
+    }
+
+    public void setObjectSuppler(ObjectSuppler objectSuppler) {
+        this.objectSuppler = objectSuppler;
     }
 }

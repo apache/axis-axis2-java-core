@@ -43,7 +43,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
 
             Class ImplClass = obj.getClass();
             DependencyManager.configureBusinessLogicProvider(obj,
-                                                             inMessage.getOperationContext());
+                    inMessage.getOperationContext());
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 
@@ -71,18 +71,19 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                     OMNamespace namespace = methodElement.getNamespace();
                     if (messageNameSpace != null) {
                         if (namespace == null ||
-                            !messageNameSpace.equals(namespace.getNamespaceURI())){
+                                !messageNameSpace.equals(namespace.getNamespaceURI())) {
                             throw new AxisFault("namespace mismatch require " +
-                                                messageNameSpace +
-                                                " found " +
-                                                methodElement.getNamespace().getNamespaceURI());
+                                    messageNameSpace +
+                                    " found " +
+                                    methodElement.getNamespace().getNamespaceURI());
                         }
                     } else if (namespace != null) {
                         throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
-                                            "qualified element. But received a namespace qualified element");
+                                "qualified element. But received a namespace qualified element");
                     }
 
-                    Object[] objectArray = RPCUtil.processRequest(methodElement, method);
+                    Object[] objectArray = RPCUtil.processRequest(methodElement, method,
+                            inMessage.getAxisService().getObjectSuppler());
                     method.invoke(obj, objectArray);
                 }
 
@@ -94,13 +95,13 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             }
             if (msg == null) {
                 msg = "Exception occurred while trying to invoke service method " +
-                      method.getName();
+                        method.getName();
             }
             log.error(msg, e);
             throw new AxisFault(msg);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                         method.getName();
+                    method.getName();
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }

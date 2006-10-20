@@ -25,6 +25,7 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.ObjectSuppler;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
@@ -123,18 +124,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     getAttribute(new QName(TAG_CLASS_NAME));
             if (serviceLifeCycleClass != null) {
                 String className = serviceLifeCycleClass.getAttributeValue();
-                if (className != null) {
-                    try {
-                        ClassLoader loader = service.getClassLoader();
-                        Class serviceLifeCycleClassImpl = Loader.loadClass(loader, className);
-                        ServiceLifeCycle serviceLifeCycle = (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance();
-                        serviceLifeCycle.startUp(configCtx, service);
-                        service.setServiceLifeCycle(
-                                serviceLifeCycle);
-                    } catch (Exception e) {
-                        throw new DeploymentException(e.getMessage(), e);
-                    }
-                }
+                loadServiceLifeCycleClass(className);
             }
             //Setting schema namespece if any
             OMElement schemaElement = service_element.getFirstChildWithName(new QName(SCHEMA));
@@ -282,6 +272,10 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
+            String objectSupplerValue = (String) service.getParameterValue(TAG_OBJECT_SUPPLER);
+            if (objectSupplerValue != null) {
+                loadObjectSupllerClass(objectSupplerValue);
+            }
             if (!service.isUseUserWSDL()) {
                 // Generating schema for the service if the impl class is Java
                 if (!service.isWsdlFound()) {
@@ -328,6 +322,33 @@ public class ServiceBuilder extends DescriptionBuilder {
                             DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()), axisFault);
         }
         return service;
+    }
+
+    private void loadObjectSupllerClass(String objectSupplerValue) throws AxisFault {
+        try {
+            ClassLoader loader = service.getClassLoader();
+            Class objectSupplerImpl = Loader.loadClass(loader, objectSupplerValue.trim());
+            ObjectSuppler objectSuppler = (ObjectSuppler) objectSupplerImpl.newInstance();
+            service.setObjectSuppler(
+                    objectSuppler);
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+    }
+
+    private void loadServiceLifeCycleClass(String className) throws DeploymentException {
+        if (className != null) {
+            try {
+                ClassLoader loader = service.getClassLoader();
+                Class serviceLifeCycleClassImpl = Loader.loadClass(loader, className);
+                ServiceLifeCycle serviceLifeCycle = (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance();
+                serviceLifeCycle.startUp(configCtx, service);
+                service.setServiceLifeCycle(
+                        serviceLifeCycle);
+            } catch (Exception e) {
+                throw new DeploymentException(e.getMessage(), e);
+            }
+        }
     }
 
 

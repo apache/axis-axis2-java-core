@@ -108,7 +108,8 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                                 "qualified element. But received a namespace qualified element");
                     }
 
-                    Object[] objectArray = RPCUtil.processRequest(methodElement, method);
+                    Object[] objectArray = RPCUtil.processRequest(methodElement,
+                            method ,inMessage.getAxisService().getObjectSuppler());
                     resObject = method.invoke(obj, objectArray);
                 }
 
