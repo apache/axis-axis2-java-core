@@ -25,7 +25,6 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,7 +116,7 @@ public class DependencyManager {
      * @param serviceGroupContext
      * @throws AxisFault
      */
-    public static void initService(ServiceGroupContext serviceGroupContext) throws AxisFault {
+    public static void initService(ServiceGroupContext serviceGroupContext) throws AxisFault{
         AxisServiceGroup serviceGroup = serviceGroupContext.getDescription();
         Iterator serviceItr = serviceGroup.getServices();
         while (serviceItr.hasNext()) {
@@ -137,8 +136,6 @@ public class DependencyManager {
                 } catch (Exception e) {
                     new AxisFault(e);
                 }
-            } else {
-                throw new AxisFault(Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
             }
         }
     }
