@@ -517,6 +517,7 @@ public class DeploymentEngine implements DeploymentConstants {
                                 log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
                                         currentArchiveFile.getName()));
                             } catch (DeploymentException de) {
+                                de.printStackTrace();
                                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                                         currentArchiveFile.getName(),
                                         de.getMessage()),
