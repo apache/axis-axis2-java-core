@@ -8,6 +8,7 @@
 		<copy toDir="${temp}">
 			<fileset dir="webapp">
 				<include name="**/**" />
+				<exclude name="**/web.xml"/>
 			</fileset>
 		</copy>
 	</target>
@@ -49,7 +50,7 @@
 	</target>
 	
 	<target depends="init,prepare.repo" name="create.war">
-		<war destfile="dist/axis2.war" webxml="${temp}/WEB-INF/web.xml">
+		<war destfile="dist/axis2.war" webxml="webapp/WEB-INF/web.xml">
 			<lib dir="lib">
 				<include name="**" />
 				<exclude name="**servlet**" />
