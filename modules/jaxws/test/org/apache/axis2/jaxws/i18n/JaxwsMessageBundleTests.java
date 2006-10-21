@@ -38,7 +38,7 @@ public class JaxwsMessageBundleTests extends TestCase {
      * is installed by obtaining a message
      */
     public void testMessages() throws Exception {
-        final String str = "This is a test string 01";
+        final String str = "This string is a test string 01.";
         String tempStr = Messages.getMessage("test01");
         // Check the String for accuracy
         assertTrue(str.equals(tempStr));
