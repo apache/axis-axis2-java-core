@@ -511,15 +511,11 @@ public class SchemaGenerator implements Java2WSDLConstants {
                     //return that mapping
                     return (String) pkg2nsmap.get(packageName);
                 } else {
-                    //return the wsdl types schema namespace as a default
-                    return nsGen.schemaNamespaceFromPackageName(packageName).toString();
+                    return getNsGen().schemaNamespaceFromPackageName(packageName).toString();
                 }
             } else {
                 // if  pkg2nsmap is null and if not default schema ns found for the custom bean
-                if (nsGen == null) {
-                    setNsGen(new DefaultNamespaceGenerator());
-                }
-                return nsGen.schemaNamespaceFromPackageName(packageName).toString();
+                return getNsGen().schemaNamespaceFromPackageName(packageName).toString();
             }
         }
     }
