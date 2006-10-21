@@ -145,8 +145,8 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 String charSetEnc =
                         (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
-                format.setDoOptimize(msgContext.isDoingMTOM());
-                format.setDoingSWA(msgContext.isDoingSwA());
+                format.setDoOptimize(false);
+                format.setDoingSWA(false);
                 format.setCharSetEncoding(charSetEnc);
                 outputMessage.serializeAndConsume(out, format);
                 out.flush();
