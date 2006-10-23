@@ -233,16 +233,25 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
         using the target namespace of the WSDL) will be used. Maps to the -p
         option of the command line tool.</td>
     </tr>
+     <tr>
+      <td>databindingName</td>
+      <td>Data binding framework name. Maps to the -d
+        option of the command line tool. Possible values include "adb", "xmlbeans", "jibx".</td>
+    </tr>
+    <tr>
+      <td>serviceName</td>
+      <td>The name of the service in the case of multiple services. Maps to -sn options of the command line tool.</td>
+    </tr>
+    <tr>
+      <td>portName</td>
+      <td>The name of the port in the presence of multiple ports. Maps to -pn options of the command line tool.</td>
+    </tr>
     <tr>
       <td>asynconly</td>
       <td>Generate code only for async style. When this option is used the
         generated stubs will have only the asynchronous invocation methods.
-        Defaults to false if omitted Only true and false are applicable as
+        Defaults to false if omitted. Only true and false are applicable as
         values. Maps to the -a option of the command line tool.</td>
-    </tr>
-    <tr>
-      <td>testcase</td>
-      <td>Generates a test case.</td>
     </tr>
     <tr>
       <td>synconly</td>
@@ -258,6 +267,10 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
         the command line tool.</td>
     </tr>
     <tr>
+      <td>testcase</td>
+      <td>Generates a test case. Possible values are true and false. Maps to the -t options of the command line tool.</td>
+    </tr>
+    <tr>
       <td>generateservicexml</td>
       <td>Generates server side code (i.e. skeletons). Only true and false
         are applicable as values. Default is false. Maps to the -sd option of
@@ -270,12 +283,9 @@ style="border-collapse: collapse" width="100%" id="AutoNumber2">
         as inner classes.</td>
     </tr>
     <tr>
-      <td>serviceName</td>
-      <td>The name of the service in the case of multiple services.</td>
-    </tr>
-    <tr>
-      <td>portName</td>
-      <td>The name of the port in the presence of multiple ports.</td>
+      <td>generateAllClasses</td>
+      <td>Generates all the classes including client and server side code. Maps to the -g option of
+        the command line tool.</td>
     </tr>
     <tr>
       <td>namespaceToPackages</td>
