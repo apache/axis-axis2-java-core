@@ -272,9 +272,9 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
-            String objectSupplerValue = (String) service.getParameterValue(TAG_OBJECT_SUPPLIER);
-            if (objectSupplerValue != null) {
-                loadObjectSupllerClass(objectSupplerValue);
+            String objectSupplierValue = (String) service.getParameterValue(TAG_OBJECT_SUPPLIER);
+            if (objectSupplierValue != null) {
+                loadObjectSupplierClass(objectSupplierValue);
             }
             if (!service.isUseUserWSDL()) {
                 // Generating schema for the service if the impl class is Java
@@ -324,12 +324,12 @@ public class ServiceBuilder extends DescriptionBuilder {
         return service;
     }
 
-    private void loadObjectSupllerClass(String objectSupplerValue) throws AxisFault {
+    private void loadObjectSupplierClass(String objectSupplierValue) throws AxisFault {
         try {
             ClassLoader loader = service.getClassLoader();
-            Class objectSupplerImpl = Loader.loadClass(loader, objectSupplerValue.trim());
-            ObjectSupplier objectSupplier = (ObjectSupplier) objectSupplerImpl.newInstance();
-            service.setObjectSuppler(
+            Class objectSupplierImpl = Loader.loadClass(loader, objectSupplierValue.trim());
+            ObjectSupplier objectSupplier = (ObjectSupplier) objectSupplierImpl.newInstance();
+            service.setObjectSupplier(
                     objectSupplier);
         } catch (Exception e) {
             throw new AxisFault(e);

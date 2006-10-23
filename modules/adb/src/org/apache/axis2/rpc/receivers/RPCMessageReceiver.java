@@ -119,7 +119,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     }
 
                     Object[] objectArray = RPCUtil.processRequest(methodElement, method ,
-                            inMessage.getAxisService().getObjectSuppler());
+                            inMessage.getAxisService().getObjectSupplier());
                     resObject = method.invoke(obj, objectArray);
                 }
 
