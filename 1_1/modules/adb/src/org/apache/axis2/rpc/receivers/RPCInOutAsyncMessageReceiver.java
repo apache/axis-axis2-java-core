@@ -109,7 +109,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                     }
 
                     Object[] objectArray = RPCUtil.processRequest(methodElement,
-                            method ,inMessage.getAxisService().getObjectSuppler());
+                            method ,inMessage.getAxisService().getObjectSupplier());
                     resObject = method.invoke(obj, objectArray);
                 }
 

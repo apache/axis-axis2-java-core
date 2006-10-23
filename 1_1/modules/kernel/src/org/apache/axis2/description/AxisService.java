@@ -174,7 +174,7 @@ public class AxisService extends AxisDescription {
     private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
     private boolean clientSide = false;
 
-    //To keep a ref to ObjectSuppler instance
+    //To keep a ref to ObjectSupplier instance
     private ObjectSupplier objectSupplier;
 
     // package to namespace mapping
@@ -1739,11 +1739,11 @@ public class AxisService extends AxisDescription {
         this.p2nMap = p2nMap;
     }
 
-    public ObjectSupplier getObjectSuppler() {
+    public ObjectSupplier getObjectSupplier() {
         return objectSupplier;
     }
 
-    public void setObjectSuppler(ObjectSupplier objectSupplier) {
+    public void setObjectSupplier(ObjectSupplier objectSupplier) {
         this.objectSupplier = objectSupplier;
     }
 }

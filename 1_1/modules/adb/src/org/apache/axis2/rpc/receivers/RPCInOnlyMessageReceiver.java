@@ -83,7 +83,7 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                     }
 
                     Object[] objectArray = RPCUtil.processRequest(methodElement, method,
-                            inMessage.getAxisService().getObjectSuppler());
+                            inMessage.getAxisService().getObjectSupplier());
                     method.invoke(obj, objectArray);
                 }
 
