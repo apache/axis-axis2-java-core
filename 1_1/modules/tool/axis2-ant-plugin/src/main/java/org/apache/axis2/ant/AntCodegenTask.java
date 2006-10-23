@@ -16,11 +16,11 @@
 
 package org.apache.axis2.tool.ant;
 
-import org.apache.axis2.util.URLProcessor;
-import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
+import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -33,10 +33,10 @@ import java.util.Map;
 
 public class AntCodegenTask extends Task {
 
-    private String WSDLFileName = null;
+    private String wsdlFileName = null;
     private String output = ".";
-    private String packageName = URLProcessor.DEFAULT_PACKAGE;
     private String language = ConfigPropertyFileLoader.getDefaultLanguage();
+    private String packageName = URLProcessor.DEFAULT_PACKAGE;
     private String databindingName=ConfigPropertyFileLoader.getDefaultDBFrameworkName();
     private String portName=null;
     private String serviceName=null;
@@ -115,7 +115,7 @@ public class AntCodegenTask extends Task {
                 CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
-                        getStringArray(WSDLFileName)));
+                        getStringArray(wsdlFileName)));
         //output location
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
@@ -293,8 +293,8 @@ public class AntCodegenTask extends Task {
         this.unpackClasses = unpackClasses;
     }
 
-    public void setWSDLFileName(String WSDLFileName) {
-        this.WSDLFileName = WSDLFileName;
+    public void setWsdlFileName(String wsdlFileName) {
+        this.wsdlFileName = wsdlFileName;
     }
 
     public void setOutput(String output) {
