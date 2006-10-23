@@ -61,6 +61,7 @@ public class UserInterface extends JPanel implements ActionListener {
     JLabel MTOMSOAPLabel;
     JLabel thresholdLabel;
     JLabel cacheFolderLabel;
+    JLabel bytesLabel;
 
     private boolean cacheEnable = false;
 
@@ -164,6 +165,7 @@ public class UserInterface extends JPanel implements ActionListener {
 
         pane.add(thresholdLabel);
         pane.add(cacheThresholdText);
+        pane.add(bytesLabel);
 
         pane.add(cacheFolderLabel);
         pane.add(cacheFolderText);
@@ -245,6 +247,10 @@ public class UserInterface extends JPanel implements ActionListener {
         cacheThresholdText.setBounds(200, 410, 40, 20);
         cacheThresholdText.setEnabled(false);
 
+        bytesLabel = new JLabel("(in bytes)");
+        bytesLabel.setBounds(250, 410, 100, 20);
+        bytesLabel.setEnabled(false);
+
         cacheFolderLabel = new JLabel("Cache Folder: ");
         cacheFolderLabel.setBounds(50, 440, 150, 20);
         cacheFolderLabel.setEnabled(false);
@@ -277,6 +283,7 @@ public class UserInterface extends JPanel implements ActionListener {
         cacheFolderLabel.setEnabled(cacheEnable);
         cacheFolderText.setEnabled(cacheEnable);
         brwsBut2.setEnabled(cacheEnable);
+        bytesLabel.setEnabled(cacheEnable);
     }
 
     public void switchRadios(JRadioButton me, JRadioButton partner) {
