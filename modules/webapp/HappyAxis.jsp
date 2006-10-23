@@ -144,9 +144,9 @@
             } else {
                 String location = getLocation(out, clazz);
                 if (location == null) {
-                    out.write("Found " + axisOperation + " (" + classname + ")<br>");
+                    out.write("Found " + axisOperation + " (" + classname + ")<br/>");
                 } else {
-                    out.write("Found " + axisOperation + " (" + classname + ") at " + location + "<br>");
+                    out.write("Found " + axisOperation + " (" + classname + ") <br/> &nbsp;&nbsp;at " + location + "<br/>");
                 }
                 return 0;
             }
@@ -370,15 +370,20 @@
             return false;
         }
     }
+    
+    public String getFormatedSystemProperty(String systemProperty){
+    	return  systemProperty.replaceAll(":", ": ");
+    }
 %>
 
 <h1>Axis2 Happiness Page</h1>
 
 <h2>Examining webapp configuration</h2>
 
-<p>
+<blockquote>
 
-<h3>Essential Components</h3>
+<h4>Essential Components</h4>
+
 <%
     int needed = 0,wanted = 0;
 
@@ -407,7 +412,6 @@
             "http://dist.codehaus.org/stax/jars/");
 
 %>
-
 <%
     /*
     * resources on the classpath path
@@ -419,43 +423,41 @@
     */
     /* add more libraries here */
 
-    out.write("<h3>");
-    //is everythng we need here
+    //is everything we need here
     if (needed == 0) {
         //yes, be happy
-        out.write("<i>The core axis2 libraries are present. </i>");
+        out.write("<p><font color='green'><strong>The core axis2 libraries are present.</strong></font></p>");
     } else {
         //no, be very unhappy
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        out.write("<i>"
+        out.write("<font color='red'><i>"
                 + needed
                 + " core axis2 librar"
                 + (needed == 1 ? "y is" : "ies are")
-                + " missing</i>");
+                + " missing</i></font>");
     }
     //now look at wanted stuff
-
-    out.write("</h3>");
 %>
 <p>
     <B><I>Note:</I></B> Even if everything this page probes for is present,
     there is no guarantee your Axis Service will work, because there are many configuration options
     that we do not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
-
+</p>
+</blockquote>
 <h2>Examining Version Service</h2>
 <%
     boolean serviceStatus = invokeTheService();
     if (serviceStatus) {
 %>
-<p>
-    <font color="blue">
+<blockquote>
+    <font color="green"><strong>
         Found Axis2 default Version service and Axis2 is working
-        properly.Now you can drop a service archive in axis2/WEB-INF/services.
-
+        properly.</strong></font>
+    <p>Now you can drop a service archive in axis2/WEB-INF/services.
         Following output was produced while invoking Axis2 version service
-        <br>
-        <%= value%></font>
-</p>
+        </p>
+        <p><%= value%></p>
+</blockquote>
 
 <%
 } else {
@@ -474,13 +476,14 @@
     }
 %>
 <h2>Examining Application Server</h2>
+<blockquote>
 <table>
     <tr><td>Servlet version</td><td><%=getServletVersion()%></td></tr>
     <tr><td>Platform</td>
         <td><%=getServletConfig().getServletContext().getServerInfo()%></td>
     </tr>
 </table>
-
+</blockquote>
 <h2>Examining System Properties</h2>
 <%
     /**
@@ -493,12 +496,12 @@
     }
     if (e != null) {
         out.write("<pre>");
-        out.write("<table>");
+        out.write("<table cellpadding='5px' cellspacing='0px' style='border: .5px blue solid;'>");
         for (; e.hasMoreElements();) {
             out.write("<tr>");
             String key = (String) e.nextElement();
-            out.write("<td><strong>" + key + "</strong></td>");
-            out.write("<td>" + System.getProperty(key) + "</td>");
+            out.write("<th style='border: .5px #A3BBFF solid;'>" + key + "</th>");
+            out.write("<td style='border: .5px #A3BBFF solid;'>" + getFormatedSystemProperty(System.getProperty(key)) + "&nbsp;</td>");
             out.write("<tr>");
         }
         out.write("</table>");
