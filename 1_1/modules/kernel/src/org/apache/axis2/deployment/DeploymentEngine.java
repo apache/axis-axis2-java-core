@@ -79,6 +79,11 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private RepositoryListener repoListener;
 
+    private String servicesDirPath = null;
+    private File servicesDir = null;
+    private String modulesDirPath = null;
+    private File modulesDir = null;
+
     public void loadServices() {
         repoListener.checkServices();
         if (hotDeployment) {
@@ -92,11 +97,11 @@ public class DeploymentEngine implements DeploymentConstants {
             throw new DeploymentException(
                     Messages.getMessage("cannotfindrepo", repoDir));
         }
+        setDeploymentFeatures();
         prepareRepository(repoDir);
         // setting the CLs
         setClassLoaders(repoDir);
-        setDeploymentFeatures();
-        repoListener = new RepositoryListener(repoDir, this);
+        repoListener = new RepositoryListener(this, false);
         org.apache.axis2.util.Utils.calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
         try {
             try {
@@ -112,7 +117,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void loadFromClassPath() throws DeploymentException {
         //loading modules from the classpath
-        new RepositoryListener(this);
+        new RepositoryListener(this, true);
         org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
                 axisConfig.getModules(), axisConfig);
         validateSystemPredefinedPhases();
@@ -779,21 +784,16 @@ public class DeploymentEngine implements DeploymentConstants {
                 Utils.getClassLoader(Thread.currentThread().getContextClassLoader(), axis2repoURI);
 
         axisConfig.setSystemClassLoader(sysClassLoader);
-        File axis2repo = new File(axis2repoURI);
-        File services = new File(axis2repo, DIRECTORY_SERVICES);
-
-        if (services.exists()) {
+        if (servicesDir.exists()) {
             axisConfig.setServiceClassLoader(
-                    Utils.getClassLoader(axisConfig.getSystemClassLoader(), services));
+                    Utils.getClassLoader(axisConfig.getSystemClassLoader(), servicesDir));
         } else {
             axisConfig.setServiceClassLoader(axisConfig.getSystemClassLoader());
         }
 
-        File modules = new File(axis2repo, DIRECTORY_MODULES);
-
-        if (modules.exists()) {
+        if (modulesDir.exists()) {
             axisConfig.setModuleClassLoader(Utils.getClassLoader(axisConfig.getSystemClassLoader(),
-                    modules));
+                    modulesDir));
         } else {
             axisConfig.setModuleClassLoader(axisConfig.getSystemClassLoader());
         }
@@ -831,6 +831,17 @@ public class DeploymentEngine implements DeploymentConstants {
                 antiJARLocking = true;
             }
         }
+        String serviceDirPara = (String)
+                axisConfig.getParameterValue(DeploymentConstants.SERVICE_PATH);
+        if (serviceDirPara != null) {
+            servicesDirPath = serviceDirPara;
+        }
+
+        String moduleDirPara = (String)
+                axisConfig.getParameterValue(DeploymentConstants.MODULE_PATH);
+        if (moduleDirPara != null) {
+            modulesDirPath = moduleDirPara;
+        }
     }
 
     /**
@@ -841,12 +852,20 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void prepareRepository(String repositoryName) {
         File repository = new File(repositoryName);
-        File services = new File(repository, DIRECTORY_SERVICES);
-        if (!services.exists()) {
+        if (servicesDirPath != null) {
+            servicesDir = new File(servicesDirPath);
+        } else {
+            servicesDir = new File(repository, DeploymentConstants.SERVICE_PATH);
+        }
+        if (!servicesDir.exists()) {
             log.info(Messages.getMessage("noservicedirfound"));
         }
-        File modules = new File(repository, DIRECTORY_MODULES);
-        if (!modules.exists()) {
+        if (modulesDirPath != null) {
+            modulesDir = new File(modulesDirPath);
+        } else {
+            modulesDir = new File(repository, DeploymentConstants.MODULE_PATH);
+        }
+        if (!modulesDir.exists()) {
             log.info(Messages.getMessage("nomoduledirfound"));
         }
     }
@@ -1024,5 +1043,13 @@ public class DeploymentEngine implements DeploymentConstants {
         } catch (XMLStreamException e) {
             throw new AxisFault(e);
         }
+    }
+
+    public File getServicesDir() {
+        return servicesDir;
+    }
+
+    public File getModulesDir() {
+        return modulesDir;
     }
 }

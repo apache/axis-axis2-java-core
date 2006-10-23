@@ -20,15 +20,11 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.util.Loader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
-import java.net.URLDecoder;
+
 public class RepositoryListener implements DeploymentConstants {
-    private static final Log log = LogFactory.getLog(RepositoryListener.class);
     private DeploymentEngine deploymentEngine;
-    private File rootDir;
 
     /**
      * The parent directory of the modules and services directories
@@ -44,21 +40,16 @@ public class RepositoryListener implements DeploymentConstants {
      * First, it initializes the system, by loading all the modules in the /modules directory
      * and then creates a WSInfoList to store information about available modules and services.
      *
-     * @param folderName       path to parent directory that the listener should listen to
      * @param deploymentEngine reference to engine registry for updates
      */
-    public RepositoryListener(String folderName, DeploymentEngine deploymentEngine) {
-        rootDir = new File(folderName);
-        wsInfoList = new WSInfoList(deploymentEngine);
-        this.deploymentEngine = deploymentEngine;
-        init();
-        loadClassPathModules();
-    }
 
     //The constructor , which loads modules from class path
-    public RepositoryListener(DeploymentEngine deploymentEngine) {
+    public RepositoryListener(DeploymentEngine deploymentEngine, boolean isClasspath) {
         this.deploymentEngine = deploymentEngine;
         wsInfoList = new WSInfoList(deploymentEngine);
+        if (!isClasspath) {
+            init();
+        }
         loadClassPathModules();
     }
 
@@ -66,7 +57,7 @@ public class RepositoryListener implements DeploymentConstants {
      * Finds a list of modules in the folder and adds to wsInfoList.
      */
     public void checkModules() {
-        File root = new File(rootDir, MODULE_PATH);
+        File root = deploymentEngine.getModulesDir();
         File[] files = root.listFiles();
 
         if (files != null) {
@@ -172,7 +163,7 @@ public class RepositoryListener implements DeploymentConstants {
      * WSInfolist class.
      */
     private void findServicesInDirectory() {
-        File root = new File(rootDir, SERVICE_PATH);
+        File root = deploymentEngine.getServicesDir();
         File[] files = root.listFiles();
 
         if (files != null && files.length > 0) {
