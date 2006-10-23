@@ -30,7 +30,7 @@ public interface DeploymentConstants {
     public static String MODULE_PATH = "modules";
 
     int TYPE_SERVICE = 0;                // is it a service
-    int TYPE_DEFAULT= -1;                // is it a service
+    int TYPE_DEFAULT = -1;                // is it a service
     int TYPE_MODULE = 1;                // is it a module
 
     String TAG_AXISCONFIG = "axisconfig";
@@ -56,7 +56,7 @@ public interface DeploymentConstants {
     String TAG_ORDER = "order";           // to resolve the order tag
     String TAG_OPERATION = "operation";       // operation start tag
     String TAG_OBJECT_SUPPLIER = "ObjectSupplier";       // operation start tag
-    String TAG_EXCLUDE_OPERATIONS="excludeOperations";
+    String TAG_EXCLUDE_OPERATIONS = "excludeOperations";
     String TAG_MESSAGE_RECEIVER = "messageReceiver";
     String TAG_MESSAGE_RECEIVERS = "messageReceivers";
     String TAG_TRANSPORTS = "transports";
@@ -99,7 +99,6 @@ public interface DeploymentConstants {
     String ATTRIBUTE_LOCKED = "locked";
 
     String PROPERTY_TEMP_DIR = "java.io.tmpdir";
-    String DIRECTORY_MODULES = "modules";
     String DIRECTORY_CONF = "conf";
     String DIRECTORY_AXIS2_HOME = ".axis2";
     String RESOURCE_MODULES = "modules/";
@@ -113,7 +112,6 @@ public interface DeploymentConstants {
             "org/apache/axis2/deployment/axis2_default.xml";
     String AXIS2_REPO = "repository";
     String AXIS2_CONFIGURATION_XML = "axis2.xml";
-    String DIRECTORY_SERVICES = "services";
     String BOOLEAN_TRUE = "true";
     String BOOLEAN_FALSE = "false";
     char SEPARATOR_DOT = '.';
