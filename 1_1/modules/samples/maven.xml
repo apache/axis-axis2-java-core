@@ -17,7 +17,6 @@
             <pathelement location="googlesearch/src"/>
             <pathelement location="groovy/src"/>
             <pathelement location="mtomsample/src"/>
-            <pathelement location="security/src"/>
             <pathelement location="sgccalculator/src"/>
             <pathelement location="version/src"/>
             <pathelement location="yahoorestsearch/src"/>
