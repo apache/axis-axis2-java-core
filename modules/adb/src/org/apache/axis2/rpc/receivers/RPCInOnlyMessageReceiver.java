@@ -42,8 +42,6 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             Object obj = getTheImplementationObject(inMessage);
 
             Class ImplClass = obj.getClass();
-            DependencyManager.configureBusinessLogicProvider(obj,
-                    inMessage.getOperationContext());
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
 

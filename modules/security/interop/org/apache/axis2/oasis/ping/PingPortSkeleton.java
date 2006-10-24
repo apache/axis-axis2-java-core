@@ -34,13 +34,6 @@ import java.util.Vector;
  * Auto generated java skeleton for the service by the Axis code generator
  */
 public class PingPortSkeleton{
-
-    private MessageContext mc;
-
-    public void setOperationContext(OperationContext oc) throws AxisFault {
-        mc = oc.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-    }
-
     /**
      * Auto generated method signature
      *
@@ -49,8 +42,9 @@ public class PingPortSkeleton{
     public PingResponseDocument Ping
             (PingDocument param0) {
         Vector results = null;
+        MessageContext msgCtx = MessageContext.getCurrentMessageContext();
         if ((results =
-                (Vector) mc.getProperty(WSHandlerConstants.RECV_RESULTS))
+                (Vector) msgCtx.getProperty(WSHandlerConstants.RECV_RESULTS))
                 == null) {
             System.out.println("No security results!!");
             throw new RuntimeException("No security results!!");
