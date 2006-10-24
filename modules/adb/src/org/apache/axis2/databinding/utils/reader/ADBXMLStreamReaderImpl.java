@@ -934,7 +934,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //the thing as a bean and try generating events from it
             childReader = new WrappingXMLStreamReader
                     (BeanUtil.getPullParser(propertyValue,
-                            propertyQName));
+                            propertyQName, null));
             //we cannot register the namespace context here
         }
 

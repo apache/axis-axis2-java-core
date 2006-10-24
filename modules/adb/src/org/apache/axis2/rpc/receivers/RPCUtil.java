@@ -12,6 +12,7 @@ import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.util.StreamWrapper;
+import org.apache.ws.java2wsdl.utils.TypeTable;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -42,7 +43,9 @@ public class RPCUtil {
                                        OMElement bodyContent,
                                        OMNamespace ns,
                                        SOAPEnvelope envelope,
-                                       Method method, boolean qualified) {
+                                       Method method,
+                                       boolean qualified ,
+                                       TypeTable typeTable) {
         if (resObject != null) {
             //simple type
             if (resObject instanceof OMElement) {
@@ -80,7 +83,7 @@ public class RPCUtil {
                     returnWrapper = new QName(RETURN_WRAPPER);
                 }
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
-                        returnWrapper);
+                        returnWrapper , typeTable);
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
                                 OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
