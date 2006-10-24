@@ -24,6 +24,9 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GCData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -188,6 +191,10 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
 				.setText(CodegenWizardPlugin
 						.getResourceString("page4.hint.caption"));
 		hintLabel.setLayoutData(gd);
+		hintLabel.setFont(new Font(new Device() {
+			public int internal_new_GC(GCData data) {return 0;}
+			public void internal_dispose_GC(int handle, GCData data) {}
+											},"hintFont",8,SWT.NORMAL));
         
         setPageComplete(false);
         
