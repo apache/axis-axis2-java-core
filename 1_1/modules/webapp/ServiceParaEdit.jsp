@@ -105,6 +105,10 @@
                </tr>
                  </table>
                  <%
+             } else {
+            	%>
+            	<p><%=request.getAttribute("status")%></p>
+            	<%
              }
 
        %>
