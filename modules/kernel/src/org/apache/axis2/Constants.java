@@ -216,6 +216,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String ADDRESSING_ACTION = "WS-Addressing:Action";
     public static final String HTTP_FRONTEND_HOST_URL = "httpFrontendHostUrl";
+    public static final String DEFAULT_REST_PATH = "rest";
 
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
@@ -229,7 +230,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String HTTP_METHOD_GET = "GET";
         public static final String HTTP_METHOD = "HTTP_METHOD";
         public static final String HTTP_METHOD_POST = "POST";
-        
+
         public static final String ENABLE_SWA = "enableSwA";
 
         public static final String CONTENT_TYPE = "ContentType";
@@ -268,7 +269,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          * Field CHARACTER_SET_ENCODING
          */
         public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
-          
+
         /**
          * If this is set to a Boolean 'true' value, the replyTo value will not be replaced in
          * an OutIn invocation. This is useful for modules that hope to get the reply message in 

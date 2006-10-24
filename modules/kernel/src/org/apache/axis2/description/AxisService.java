@@ -552,6 +552,13 @@ public class AxisService extends AxisDescription {
         return null;
     }
 
+    /**
+     *
+     * @param out
+     * @param requestIP
+     * @param servicePath
+     * @throws AxisFault
+     */
     public void printWSDL(OutputStream out, String requestIP, String servicePath) throws AxisFault {
         if (isUseUserWSDL()) {
             Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
@@ -646,7 +653,7 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * Print the WSDL with a default URL
+     * Print the WSDL with a default URL. This will be called only during codegen time.
      *
      * @param out
      * @throws AxisFault
