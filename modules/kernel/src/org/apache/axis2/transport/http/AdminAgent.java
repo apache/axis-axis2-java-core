@@ -189,53 +189,51 @@ public class AdminAgent extends AbstractAgent {
         }
     }
 
-    protected void processEditServicePara(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        if (req.getParameter("changePara") != null) {
-            String serviceName = req.getParameter("axisService");
-            AxisService service = configContext.getAxisConfiguration().getService(serviceName);
+    protected void processEditServicePara(HttpServletRequest req, HttpServletResponse res)
+    throws IOException, ServletException {
+    	String serviceName = req.getParameter("axisService");
+    	if (req.getParameter("changePara") != null) {
+    		AxisService service = configContext.getAxisConfiguration().getService(serviceName);
+    		if (service != null) {
+    			ArrayList service_para = service.getParameters();
 
-            if (service != null) {
-                ArrayList service_para = service.getParameters();
+    			for (int i = 0; i < service_para.size(); i++) {
+    				Parameter parameter = (Parameter) service_para.get(i);
+    				String para = req.getParameter(serviceName + "_" + parameter.getName());
+    				service.addParameter(new Parameter(parameter.getName(), para));
+    			}
 
-                for (int i = 0; i < service_para.size(); i++) {
-                    Parameter parameter = (Parameter) service_para.get(i);
-                    String para = req.getParameter(serviceName + "_" + parameter.getName());
+    			for (Iterator iterator = service.getOperations(); iterator.hasNext();) {
+    				AxisOperation axisOperation = (AxisOperation) iterator.next();
+    				String op_name = axisOperation.getName().getLocalPart();
+    				ArrayList operation_para = axisOperation.getParameters();
 
-                    service.addParameter(new Parameter(parameter.getName(), para));
-                }
+    				for (int i = 0; i < operation_para.size(); i++) {
+    					Parameter parameter = (Parameter) operation_para.get(i);
+    					String para = req.getParameter(op_name + "_" + parameter.getName());
 
-                for (Iterator iterator = service.getOperations(); iterator.hasNext();) {
-                    AxisOperation axisOperation = (AxisOperation) iterator.next();
-                    String op_name = axisOperation.getName().getLocalPart();
-                    ArrayList operation_para = axisOperation.getParameters();
+    					axisOperation.addParameter(new Parameter(parameter.getName(), para));
+    				}
+    			}
+    		}
+    		res.setContentType("text/html");
+    		req.setAttribute("status", "Parameters Changed Successfully.");
+    		req.getSession().removeAttribute(Constants.SERVICE);
+    	} else {
+    		AxisService serviceTemp =
+    			configContext.getAxisConfiguration().getServiceForActivation(serviceName);
+    		if (serviceTemp.isActive()) {
 
-                    for (int i = 0; i < operation_para.size(); i++) {
-                        Parameter parameter = (Parameter) operation_para.get(i);
-                        String para = req.getParameter(op_name + "_" + parameter.getName());
-
-                        axisOperation.addParameter(new Parameter(parameter.getName(), para));
-                    }
-                }
-            }
-
-            OutputStream out = res.getOutputStream();
-            res.setContentType("text/html");
-            out.write(getBasicHTML("Parameters Changed Successfully").getBytes());
-            out.flush();
-            out.close();
-            req.getSession().removeAttribute(Constants.SERVICE);
-
-            return;
-        } else {
-            String service = req.getParameter("axisService");
-
-            if (service != null) {
-                req.getSession().setAttribute(
-                        Constants.SERVICE, configContext.getAxisConfiguration().getService(service));
-            }
-        }
-
-        renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
+    			if (serviceName != null) {
+    				req.getSession().setAttribute(Constants.SERVICE,
+    						configContext.getAxisConfiguration().getService(serviceName));
+    			}
+    		} else {
+    			req.setAttribute("status", "Service " + serviceName + " is not an active service" +
+    			". \n Only parameters of active services can be edited.");
+    		}
+    	}
+    	renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
     }
 
     private String getBasicHTML(String s) {
