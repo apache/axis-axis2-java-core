@@ -23,11 +23,8 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.modules.PolicyExtension;
-
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
-
-import org.apache.ws.security.policy1.extension.WSSCodegenPolicyExtension;
 
 public class Rampart implements Module, ModulePolicyExtension  {
 
@@ -45,7 +42,7 @@ public class Rampart implements Module, ModulePolicyExtension  {
     }
 
     public PolicyExtension getPolicyExtension() {
-        return new WSSCodegenPolicyExtension();
+        throw new UnsupportedOperationException("TODO");
     }
 
     public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault {
