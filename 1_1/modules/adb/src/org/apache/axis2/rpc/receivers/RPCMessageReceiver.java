@@ -30,7 +30,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -38,8 +37,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
@@ -103,20 +102,20 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     if (messageNameSpace != null) {
                         if (namespace == null) {
                             throw new AxisFault("namespace mismatch require " +
-                                                messageNameSpace +
-                                                " found none");
+                                    messageNameSpace +
+                                    " found none");
                         }
                         if (!messageNameSpace.equals(namespace.getNamespaceURI())) {
                             throw new AxisFault("namespace mismatch require " +
-                                                messageNameSpace +
-                                                " found " + methodElement.getNamespace().getNamespaceURI());
+                                    messageNameSpace +
+                                    " found " + methodElement.getNamespace().getNamespaceURI());
                         }
                     } else if (namespace != null) {
                         throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
-                                            "qualified element. But received a namespace qualified element");
+                                "qualified element. But received a namespace qualified element");
                     }
 
-                    Object[] objectArray = RPCUtil.processRequest(methodElement, method ,
+                    Object[] objectArray = RPCUtil.processRequest(methodElement, method,
                             inMessage.getAxisService().getObjectSupplier());
                     resObject = method.invoke(obj, objectArray);
                 }
@@ -133,16 +132,16 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             }
 
             OMNamespace ns = fac.createOMNamespace(messageNameSpace,
-                                                   service.getSchematargetNamespacePrefix());
+                    service.getSchematargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
 
             if (resObject instanceof Object[]) {
                 QName resName = new QName(service.getSchematargetNamespace(),
-                                          method.getName() + "Response",
-                                          service.getSchematargetNamespacePrefix());
+                        method.getName() + "Response",
+                        service.getSchematargetNamespacePrefix());
                 OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                                                                 (Object[]) resObject, service.isElementFormDefault());
+                        (Object[]) resObject, service.isElementFormDefault());
                 envelope.getBody().addChild(bodyChild);
             } else {
                 if (resObject.getClass().isArray()) {
@@ -159,14 +158,21 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                     }
 
                     QName resName = new QName(service.getSchematargetNamespace(),
-                                              method.getName() + "Response",
-                                              service.getSchematargetNamespacePrefix());
+                            method.getName() + "Response",
+                            service.getSchematargetNamespacePrefix());
                     OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
-                                                                             objArray, service.isElementFormDefault());
+                            objArray, service.isElementFormDefault());
                     envelope.getBody().addChild(bodyChild);
                 } else {
-                    RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                                            envelope, method, service.isElementFormDefault());
+                    if (service.isElementFormDefault()) {
+                        RPCUtil.processResponse(fac, resObject, bodyContent, ns,
+                                envelope, method, service.isElementFormDefault(),
+                                service.getTypeTable());
+                    } else {
+                        RPCUtil.processResponse(fac, resObject, bodyContent, ns,
+                                envelope, method, service.isElementFormDefault(),
+                                null);
+                    }
                 }
             }
             outMessage.setEnvelope(envelope);
@@ -177,13 +183,13 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
             }
             if (msg == null) {
                 msg = "Exception occurred while trying to invoke service method " +
-                      method.getName();
+                        method.getName();
             }
             log.error(msg, e);
             throw new AxisFault(msg);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                         method.getName();
+                    method.getName();
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }

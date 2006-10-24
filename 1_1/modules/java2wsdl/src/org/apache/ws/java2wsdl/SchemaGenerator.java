@@ -396,12 +396,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
         return complexType;
     }
 
-
-    private String formGlobalElementName(String typeName) {
-        String firstChar = typeName.substring(0, 1);
-        return typeName.replaceFirst(firstChar, firstChar.toLowerCase());
-    }
-
     private XmlSchema getXmlSchema(String targetNamespace) {
         XmlSchema xmlSchema;
 

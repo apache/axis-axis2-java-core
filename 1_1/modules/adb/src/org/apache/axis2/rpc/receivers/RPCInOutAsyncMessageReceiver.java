@@ -25,7 +25,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -107,7 +106,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                     }
 
                     Object[] objectArray = RPCUtil.processRequest(methodElement,
-                            method ,inMessage.getAxisService().getObjectSupplier());
+                            method, inMessage.getAxisService().getObjectSupplier());
                     resObject = method.invoke(obj, objectArray);
                 }
 
@@ -149,8 +148,16 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                             objArray, service.isElementFormDefault());
                     envelope.getBody().addChild(bodyChild);
                 } else {
-                    RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                            envelope, method, service.isElementFormDefault());
+                    if (service.isElementFormDefault()) {
+                        RPCUtil.processResponse(fac, resObject, bodyContent, ns,
+                                envelope, method, service.isElementFormDefault(),
+                                service.getTypeTable());
+                    } else {
+                        RPCUtil.processResponse(fac, resObject, bodyContent, ns,
+                                envelope, method, service.isElementFormDefault(),
+                                null);
+                    }
+
                 }
             }
             outMessage.setEnvelope(envelope);
@@ -161,13 +168,13 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             }
             if (msg == null) {
                 msg = "Exception occurred while trying to invoke service method " +
-                      method.getName();
+                        method.getName();
             }
             log.error(msg, e);
             throw new AxisFault(msg);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +
-                         method.getName();
+                    method.getName();
             log.error(msg, e);
             throw new AxisFault(msg, e);
         }

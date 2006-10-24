@@ -180,6 +180,8 @@ public class AxisService extends AxisDescription {
     // package to namespace mapping
     private Map p2nMap;
 
+    private TypeTable typeTable;
+
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
     }
@@ -680,7 +682,7 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    private void setPortAddress(Definition definition) throws AxisFault{
+    private void setPortAddress(Definition definition) throws AxisFault {
         Iterator serviceItr = definition.getServices().values().iterator();
         while (serviceItr.hasNext()) {
             Service serviceElement = (Service) serviceItr.next();
@@ -690,8 +692,8 @@ public class AxisService extends AxisDescription {
                 List list = port.getExtensibilityElements();
                 for (int i = 0; i < list.size(); i++) {
                     Object extensibilityEle = list.get(i);
-                    if(extensibilityEle instanceof SOAPAddress) {
-                        ((SOAPAddress)extensibilityEle).setLocationURI(getEPRs()[0]);
+                    if (extensibilityEle instanceof SOAPAddress) {
+                        ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
                     }
                 }
             }
@@ -1329,6 +1331,7 @@ public class AxisService extends AxisDescription {
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+            axisService.setTypeTable(schemaGenerator.getTypeTable());
             if (targetNamespace != null && !"".equals(targetNamespace)) {
                 axisService.setTargetNamespace(targetNamespace);
             }
@@ -1446,6 +1449,8 @@ public class AxisService extends AxisDescription {
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+            axisService.setTypeTable(schemaGenerator.getTypeTable());
+            axisService.setTypeTable(schemaGenerator.getTypeTable());
             if (targetNameSpace != null && !"".equals(targetNameSpace)) {
                 axisService.setTargetNamespace(targetNameSpace);
             }
@@ -1752,5 +1757,13 @@ public class AxisService extends AxisDescription {
 
     public void setObjectSupplier(ObjectSupplier objectSupplier) {
         this.objectSupplier = objectSupplier;
+    }
+
+    public TypeTable getTypeTable() {
+        return typeTable;
+    }
+
+    public void setTypeTable(TypeTable typeTable) {
+        this.typeTable = typeTable;
     }
 }

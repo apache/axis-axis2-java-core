@@ -281,6 +281,7 @@ public class Utils {
         Collection schemas = schemaGenerator.generateSchema();
         axisService.addSchema(schemas);
         axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+        axisService.setTypeTable(schemaGenerator.getTypeTable());
         if (Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE.equals(
                 axisService.getTargetNamespace())) {
             axisService.setTargetNamespace(schemaGenerator.getTargetNamespace());
