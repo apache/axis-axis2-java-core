@@ -1092,6 +1092,52 @@
         </j:if>
 
     </goal>
+	
+    <!-- ================================================================ -->
+    <!--- Create Apache Rampart Release Artifacts -->
+    <!-- ================================================================ -->
+    <goal name="rampart-release">
+        <ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>| Creating: Rampart Release</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
+
+        <ant:property name="destdir" value="target/rampart/modules"/>
+        <ant:property name="libdir" value="target/rampart/lib"/>
+        <ant:property name="samplesdir" value="target/rampart/samples"/>
+        <ant:mkdir dir="${destdir}"/>
+        <ant:mkdir dir="${libdir}"/>
+        <ant:mkdir dir="${samplesdir}"/>
+
+        <ant:copy toDir="${destdir}">
+            <ant:fileset file="modules/security/target/rampart-${rampart_version}.mar"/>
+            <ant:fileset file="modules/rahas/target/rahas-${rahas_version}.mar"/>
+            <ant:fileset file="modules/rahas/target/rahas-${rahas_version}.aar"/>
+        </ant:copy>
+
+        <ant:copy toDir="${libdir}">
+            <ant:fileset file="modules/security/target/axis2-security-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/rahas/target/axis2-rahas-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/rahas/target/axis2-secpolicy-${pom.currentVersion}.jar"/>
+        		<ant:fileset file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar"/>
+     		<ant:fileset file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar"/>
+     		<ant:fileset file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar"/>
+     		<ant:fileset file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar"/>
+     		<ant:fileset file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar"/>
+        
+        		<!--copy license files -->
+            <ant:copy toDir="${libdir}">
+                <ant:fileset dir="legal/rampart">
+                    <ant:include name="*.txt"/>
+                </ant:fileset>
+            </ant:copy>
+     		<ant:fileset file="legal/min/axis2-LICENSE.txt"/>
+
+        </ant:copy>
+    	
+        <ant:copy toDir="${samplesdir}">
+            <ant:fileset dir="modules/samples/security/"/>
+        </ant:copy>
+    </goal>
 
     <define:taglib uri="macros">
         <define:tag name="copy-deps">

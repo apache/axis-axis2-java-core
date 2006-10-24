@@ -34,7 +34,7 @@
 
         <!--include the license for jars-->
         <ant:copy toDir="target/temp-mar/lib">
-            <ant:fileset dir="../../legal/security">
+            <ant:fileset dir="../../legal/rampart">
                 <ant:include name="*.txt"/>
             </ant:fileset>
         </ant:copy>
