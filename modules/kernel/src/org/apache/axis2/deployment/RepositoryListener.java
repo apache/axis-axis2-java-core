@@ -22,6 +22,8 @@ import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.util.Loader;
 
 import java.io.File;
+import java.net.URLDecoder;
+
 
 public class RepositoryListener implements DeploymentConstants {
     private DeploymentEngine deploymentEngine;
@@ -129,7 +131,7 @@ public class RepositoryListener implements DeploymentConstants {
                 location = url.toString();
             }
             if (location.startsWith("file")) {
-                java.io.File file = new java.io.File(java.net.URLDecoder.decode(url.getPath()).replace('/',
+                java.io.File file = new java.io.File(URLDecoder.decode(url.getPath()).replace('/',
                         File.separatorChar).replace('|', ':'));
                 return file.getAbsolutePath();
             } else {

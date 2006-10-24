@@ -18,21 +18,17 @@ package org.apache.axis2.integration;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.transport.jms.JMSListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.transport.jms.JMSListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.activemq.broker.BrokerService;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.HashMap;
 
 public class UtilsJMSServer {
     private static JMSListener receiver;
@@ -50,8 +46,6 @@ public class UtilsJMSServer {
 
         receiver.getConfigurationContext().getAxisConfiguration().addService(service);
 
-        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(
-                receiver.getConfigurationContext(), (AxisServiceGroup) service.getParent());
     }
 
     public static synchronized void unDeployService(QName service)
