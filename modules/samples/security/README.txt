@@ -11,3 +11,16 @@ IMPORTANT: Before you try any of the samples makesure you
 2.) Copy the following jars into the AXIS2_HOME/lib directory.
 
 secpolicy.jar
+
+Scenario 4:
+wss4j.jar
+xml-sec-1.3.0.jar
+opensaml-1.1.jar
+bcprov-jdk13-133.jar
+
+Scenario 11:
+axis2-security-1.1-SNAPSHOT.jar
+axis2-rahas-1.1-SNAPSHOT.jar
+
+JDK 1.5 : xalan.jar
+
