@@ -37,6 +37,8 @@ import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -121,6 +123,15 @@ public abstract class BaseDispatch<T> extends BindingProvider
         
         //FIXME: This is temporary until more of the Message model is available
         Message responseMsg = responseMsgCtx.getMessage();
+        try {
+            if (responseMsg.isFault()) {
+                XMLFault fault = responseMsg.getXMLFault();
+                throw ExceptionFactory.makeWebServiceException(fault.getReason().getText());
+            }
+        } catch (MessageException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+        
         Object returnObj = getValueFromMessage(responseMsg);
         
         if (log.isDebugEnabled()) {
