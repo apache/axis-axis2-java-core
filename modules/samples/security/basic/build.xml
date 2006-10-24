@@ -3,6 +3,7 @@
 	<property name="service.repos.dir" value="build/service_repositories"/>
 	<property name="client.repos.dir" value="build/client_repositories"/>
 	<property name="temp.dir" value="build/temp"/>
+	<property name="keys.dir" value="../keys"/>
 	<property name="temp.client.dir" value="build/temp_client"/>
 	
 	<property name="addressing.mar" value="addressing-1.1-SNAPSHOT.mar"/>
@@ -165,8 +166,8 @@
             </javac>
 	   		
 	   		<copy file="sample@{sample.number}/services.xml" tofile="${temp.dir}/META-INF/services.xml" overwrite="true"/>
-	   		<copy file="keys/service.jks" tofile="${temp.dir}/service.jks" overwrite="true"/>
-	   		<copy file="keys/service.properties" tofile="${temp.dir}/service.properties" overwrite="true"/>
+	   		<copy file="${keys.dir}/service.jks" tofile="${temp.dir}/service.jks" overwrite="true"/>
+	   		<copy file="${keys.dir}/service.properties" tofile="${temp.dir}/service.properties" overwrite="true"/>
 
 	   		<jar destfile="${service.repos.dir}/sample@{sample.number}/services/sample@{sample.number}.aar">
 				<fileset dir="${temp.dir}"></fileset>
@@ -218,8 +219,8 @@
                     <exclude name="**/SimpleService.java"/>
             </javac>
 
-	   		<copy file="keys/client.jks" tofile="${temp.client.dir}/client.jks" overwrite="true"/>
-	   		<copy file="keys/client.properties" tofile="${temp.client.dir}/client.properties" overwrite="true"/>
+	   		<copy file="${keys.dir}/client.jks" tofile="${temp.client.dir}/client.jks" overwrite="true"/>
+	   		<copy file="${keys.dir}/client.properties" tofile="${temp.client.dir}/client.properties" overwrite="true"/>
 
 	   		
 	   		<!-- Run client -->
