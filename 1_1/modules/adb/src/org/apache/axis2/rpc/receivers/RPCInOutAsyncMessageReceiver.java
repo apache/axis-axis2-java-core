@@ -69,8 +69,6 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             Object obj = getTheImplementationObject(inMessage);
 
             Class ImplClass = obj.getClass();
-            DependencyManager.configureBusinessLogicProvider(obj,
-                    inMessage.getOperationContext());
 
             AxisOperation op = inMessage.getOperationContext().getAxisOperation();
             AxisService service = inMessage.getAxisService();

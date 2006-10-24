@@ -7,7 +7,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.i18n.Messages;
 
 import java.lang.reflect.Method;
@@ -48,10 +47,10 @@ public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRe
 
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().equals(methodName) &&
-                methods[i].getParameterTypes().length == 1 &&
-                OMElement.class.getName().equals(
-                    methods[i].getParameterTypes()[0].getName()) &&
-                OMElement.class.getName().equals(methods[i].getReturnType().getName())) {
+                    methods[i].getParameterTypes().length == 1 &&
+                    OMElement.class.getName().equals(
+                            methods[i].getParameterTypes()[0].getName()) &&
+                    OMElement.class.getName().equals(methods[i].getReturnType().getName())) {
                 return methods[i];
             }
         }
@@ -61,7 +60,8 @@ public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRe
 
     /**
      * Invokes the bussiness logic invocation on the service implementation class
-     * @param msgContext the incoming message context
+     *
+     * @param msgContext    the incoming message context
      * @param newmsgContext the response message context
      * @throws AxisFault on invalid method (wrong signature) or behaviour (return null)
      */
@@ -75,23 +75,19 @@ public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRe
             // find the WebService method
             Class ImplClass = obj.getClass();
 
-            // Inject the Message Context if it is asked for
-            DependencyManager.configureBusinessLogicProvider(obj,
-                    msgContext.getOperationContext());
-
             AxisOperation opDesc = msgContext.getOperationContext().getAxisOperation();
             Method method = findOperation(opDesc, ImplClass);
 
             if (method != null) {
                 OMElement result = (OMElement) method.invoke(
-                    obj, new Object[] {msgContext.getEnvelope().getBody().getFirstElement()});
+                        obj, new Object[]{msgContext.getEnvelope().getBody().getFirstElement()});
                 SOAPFactory fac = getSOAPFactory(msgContext);
                 SOAPEnvelope envelope = fac.getDefaultEnvelope();
 
                 if (result != null) {
                     AxisService service = msgContext.getAxisService();
                     result.declareNamespace(service.getTargetNamespace(),
-                        service.getTargetNamespacePrefix());
+                            service.getTargetNamespacePrefix());
                     envelope.getBody().addChild(result);
                 }
 
@@ -99,7 +95,7 @@ public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRe
 
             } else {
                 throw new AxisFault(Messages.getMessage("methodDoesNotExistInOut",
-                    opDesc.getName().toString()));
+                        opDesc.getName().toString()));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

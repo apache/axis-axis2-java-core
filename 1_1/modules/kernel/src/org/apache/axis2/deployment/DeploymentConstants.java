@@ -27,7 +27,9 @@ public interface DeploymentConstants {
     public static String SERVICES_XML = "META-INF/services.xml";
     public static String MODULE_XML = "META-INF/module.xml";
     public static String SERVICE_PATH = "services";
+    public static String SERVICE_DIR_PATH = "ServicesDirectory";
     public static String MODULE_PATH = "modules";
+    public static String MODULE_DRI_PATH = "ModulesDirectory";
 
     int TYPE_SERVICE = 0;                // is it a service
     int TYPE_DEFAULT = -1;                // is it a service

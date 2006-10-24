@@ -832,13 +832,13 @@ public class DeploymentEngine implements DeploymentConstants {
             }
         }
         String serviceDirPara = (String)
-                axisConfig.getParameterValue(DeploymentConstants.SERVICE_PATH);
+                axisConfig.getParameterValue(DeploymentConstants.SERVICE_DIR_PATH);
         if (serviceDirPara != null) {
             servicesDirPath = serviceDirPara;
         }
 
         String moduleDirPara = (String)
-                axisConfig.getParameterValue(DeploymentConstants.MODULE_PATH);
+                axisConfig.getParameterValue(DeploymentConstants.MODULE_DRI_PATH);
         if (moduleDirPara != null) {
             modulesDirPath = moduleDirPara;
         }

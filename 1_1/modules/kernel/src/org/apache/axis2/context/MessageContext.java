@@ -43,6 +43,19 @@ import java.util.Map;
  */
 public class MessageContext extends AbstractContext {
 
+    /**
+     * A place to store the current MessageContext
+     */
+    public static ThreadLocal currentMessageContext = new ThreadLocal();
+
+    public static MessageContext getCurrentMessageContext() {
+        return (MessageContext) currentMessageContext.get();
+    }
+
+    public static void setCurrentMessageContext(MessageContext ctx) {
+        currentMessageContext.set(ctx);
+    }
+
     protected Options options;
 
     public final static int IN_FLOW = 1;
@@ -54,7 +67,7 @@ public class MessageContext extends AbstractContext {
     public static final String REMOTE_ADDR = "REMOTE_ADDR";
 
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
-    
+
     public Attachments attachments = new Attachments();
 
     /**
@@ -132,7 +145,7 @@ public class MessageContext extends AbstractContext {
 
     // Are we doing MTOM now?
     private boolean doingMTOM;
-    
+
     // Are we doing SwA now?
     private boolean doingSwA;
 
@@ -627,7 +640,7 @@ public class MessageContext extends AbstractContext {
     public boolean isDoingREST() {
         return doingREST;
     }
-    
+
     /**
      * @return Returns boolean.
      */
@@ -736,7 +749,7 @@ public class MessageContext extends AbstractContext {
     public void setDoingREST(boolean b) {
         doingREST = b;
     }
-    
+
     /**
      * @param b
      */
@@ -1039,42 +1052,40 @@ public class MessageContext extends AbstractContext {
      */
     public boolean isHeaderPresent() {
         OMElement node = this.envelope.getFirstElement();
-        if (node ==null)
-        {
-        	return false;
-        }
-        else if (node.getQName().getLocalPart().equals(SOAPConstants.BODY_LOCAL_NAME)) {
+        if (node == null) {
+            return false;
+        } else if (node.getQName().getLocalPart().equals(SOAPConstants.BODY_LOCAL_NAME)) {
             return false;
         }
         return true;
     }
-    
+
     /**
-	 * Setting of the attachments map should be performed at the receipt of a
-	 * message only. This method is only meant to be used by the Axis2
-	 * internals.
-	 * 
-	 * @param attachments
-	 */
+     * Setting of the attachments map should be performed at the receipt of a
+     * message only. This method is only meant to be used by the Axis2
+     * internals.
+     *
+     * @param attachments
+     */
     public void setAttachmentMap(Attachments attachments) {
-		this.attachments = attachments;
-	}
-    
-    public Attachments getAttachmentMap(){
-    	return attachments;
+        this.attachments = attachments;
     }
 
-	public void addAttachment(String contentID, DataHandler dataHandler) {
-		attachments.addDataHandler(contentID, dataHandler);
-	}
+    public Attachments getAttachmentMap() {
+        return attachments;
+    }
 
-	public String addAttachment(DataHandler dataHandler) {
-		String contentID = UUIDGenerator.getUUID();
-		addAttachment(contentID, dataHandler);
-		return contentID;
-	}
+    public void addAttachment(String contentID, DataHandler dataHandler) {
+        attachments.addDataHandler(contentID, dataHandler);
+    }
 
-	public DataHandler getAttachment(String contentID) {
-		return attachments.getDataHandler(contentID);
-	}
+    public String addAttachment(DataHandler dataHandler) {
+        String contentID = UUIDGenerator.getUUID();
+        addAttachment(contentID, dataHandler);
+        return contentID;
+    }
+
+    public DataHandler getAttachment(String contentID) {
+        return attachments.getDataHandler(contentID);
+    }
 }

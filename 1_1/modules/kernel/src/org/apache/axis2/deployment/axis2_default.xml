@@ -21,9 +21,9 @@
     <parameter name="password" locked="false">axis2</parameter>
 
     <!--To override repository/services you need to uncomment following parameter and value SHOULD be absolute file path.-->
-    <!--<parameter name="services" locked="false">service</parameter>-->
+    <!--<parameter name="ServicesDirectory" locked="false">service</parameter>-->
     <!--To override repository/modules you need to uncomment following parameter and value SHOULD be absolute file path-->
-    <!--<parameter name="modules" locked="false">modules</parameter>-->
+    <!--<parameter name="ModulesDirectory" locked="false">modules</parameter>-->
 
     <!--Following params will set the proper context paths for invocations. All the endpoints will have a commons context-->
     <!--root which can configured using the following contextRoot parameter-->
