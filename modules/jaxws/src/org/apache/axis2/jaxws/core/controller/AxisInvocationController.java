@@ -123,7 +123,7 @@ public class AxisInvocationController extends InvocationController {
         try {
             execute(opClient, true, axisRequestMsgCtx);
         } catch(AxisFault af) {
-            throw ExceptionFactory.makeWebServiceException(af);
+            //throw ExceptionFactory.makeWebServiceException(af);
             // TODO MIKE revisit?
             // do nothing here.  The exception we get is from the endpoint,
             // and will be sitting on the message context.  We need to save it
