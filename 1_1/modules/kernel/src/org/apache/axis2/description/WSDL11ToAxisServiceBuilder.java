@@ -363,7 +363,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (port != null) {
                 copyExtensibleElements(port.getExtensibilityElements(), dif,
                         axisService, PORT);
-                binding = port.getBinding();
+                binding = dif.getBinding(port.getBinding().getQName());
+                if(binding == null) {
+                    binding = port.getBinding();
+                }
             }
         } else {
             log.info("A service element was not found - "
@@ -421,8 +424,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             copyExtensibleElements(binding.getExtensibilityElements(), dif,
                     axisService, BINDING);
 
-            PortType portType = binding.getPortType();
-            processPortType(dif.getPortType(portType.getQName()), dif);
+            PortType portType = dif.getPortType(binding.getPortType().getQName());
+            processPortType(portType, dif);
 
             // String portTypeNs = portType.getQName().getNamespaceURI();
             List list = binding.getBindingOperations();
@@ -455,8 +458,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         .getBindingOutput();
                 Map bindingFaultsMap = wsdl4jBindingOperation
                         .getBindingFaults();
-                Operation wsdl4jOperation = wsdl4jBindingOperation
-                        .getOperation();
+
+                Operation wsdl4jOperation = findOperation(portType, wsdl4jBindingOperation);
+
                 String MEP = operation.getMessageExchangePattern();
 
                 /* Process the binding inputs */
@@ -525,6 +529,21 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
         }
+    }
+
+    private Operation findOperation(PortType portType, BindingOperation wsdl4jBindingOperation) {
+        Operation op = wsdl4jBindingOperation
+                .getOperation();
+        String input = op.getInput().getName();
+        String output = op.getOutput().getName();
+        if(":none".equals(input)) {
+            input = null;
+        }
+        if(":none".equals(output)) {
+            output = null;
+        }
+        Operation op2 = portType.getOperation(op.getName(), input, output);
+        return ((op2 == null) ? op : op2);
     }
 
     /**
