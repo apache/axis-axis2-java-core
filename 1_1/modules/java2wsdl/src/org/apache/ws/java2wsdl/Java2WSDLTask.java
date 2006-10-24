@@ -1,4 +1,9 @@
-package org.apache.ws.java2wsdl;
+package org.apache.ws.java2wsdl; 
+
+import java.util.ArrayList; 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -6,9 +11,6 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
-
-import java.util.HashMap;
-import java.util.Map;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -27,7 +29,10 @@ import java.util.Map;
 */
 
 public class Java2WSDLTask extends Task implements Java2WSDLConstants {
-
+    public static final String OPEN_BRACKET = "[";
+    public static final String CLOSE_BRACKET = "]";
+    public static final String COMMA = ",";
+    
     private String className = null;
     private String outputLocation = null;
     private String targetNamespace = null;
@@ -37,6 +42,49 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
     private String serviceName = null;
     private String outputFileName = null;
     private Path classpath = null;
+    private String style = Java2WSDLConstants.DOCUMENT;
+    private String use = Java2WSDLConstants.LITERAL;
+    private String locationUri = Java2WSDLConstants.DEFAULT_LOCATION_URL;
+    private String attrFormDefault = null;
+    private String elementFormDefault = null;
+    
+    //names of java types not used in the service defn. directly, but for which schema must be generated
+    private String[] extraClasses;
+    
+    //namespace generator classname
+    private String nsGenClassName = null;
+    
+    //package to namespace map
+    private HashMap namespaceMap = new HashMap();
+    
+    //names of java types not used in the service defn. directly, but for which schema must be generated
+    private ArrayList pkg2nsMappings = new ArrayList();
+    
+    private MappingSet mappings = new MappingSet();
+
+    public String getLocationUri() {
+        return locationUri;
+    }
+
+    public void setLocationUri(String locationUri) {
+        this.locationUri = locationUri;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getUse() {
+        return use;
+    }
+
+    public void setUse(String use) {
+        this.use = use;
+    }
 
     /**
      *
@@ -99,6 +147,39 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
         addToOptionMap(optionMap,
                 Java2WSDLConstants.OUTPUT_FILENAME_OPTION,
                 outputFileName);
+        
+        addToOptionMap(optionMap,
+                         Java2WSDLConstants.STYLE_OPTION,
+                         getStyle());
+        
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.USE_OPTION,
+                getUse());
+        
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.LOCATION_OPTION,
+                getLocationUri());
+        
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.ATTR_FORM_DEFAULT_OPTION,
+                getAttrFormDefault());
+        
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.ELEMENT_FORM_DEFAULT_OPTION,
+                getElementFormDefault());
+        
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION,
+                getExtraClasses());
+        
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION,
+                getNsGenClassName());
+        
+        loadPkg2NsMap();
+        addToOptionMap(optionMap,
+                Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION,
+                getPkg2nsMappings());
 
         return optionMap;
     }
@@ -127,6 +208,20 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
         if (value != null) {
             map.put(option,
                     new Java2WSDLCommandLineOption(option, getStringArray(value)));
+        }
+    }
+    
+    private void addToOptionMap(Map map, String option, String[] values) {
+        if (values != null && values.length > 0 ) {
+            map.put(option,
+                    new Java2WSDLCommandLineOption(option, values));
+        }
+    }
+    
+    private void addToOptionMap(Map map, String option, ArrayList values) {
+        if (values != null && !values.isEmpty() ) {
+            map.put(option,
+                    new Java2WSDLCommandLineOption(option, values));
         }
     }
 
@@ -215,6 +310,74 @@ public class Java2WSDLTask extends Task implements Java2WSDLConstants {
      */
     public void setClasspathRef(Reference r) {
         createClasspath().setRefid(r);
+    }
+
+    public String getAttrFormDefault() {
+        return attrFormDefault;
+    }
+
+    public void setAttrFormDefault(String attrFormDefault) {
+        this.attrFormDefault = attrFormDefault;
+    }
+
+    public String getElementFormDefault() {
+        return elementFormDefault;
+    }
+
+    public void setElementFormDefault(String elementFormDefault) {
+        this.elementFormDefault = elementFormDefault;
+    }
+
+    public String[] getExtraClasses() {
+        return extraClasses;
+    }
+
+    public void setExtraClasses(String[] extraClasses) {
+        this.extraClasses = extraClasses;
+    }
+
+    public String getNsGenClassName() {
+        return nsGenClassName;
+    }
+
+    public void setNsGenClassName(String nsGenClassName) {
+        this.nsGenClassName = nsGenClassName;
+    }
+    
+    public void loadPkg2NsMap() {
+        mappings.execute(namespaceMap, true);
+        Iterator packageNames = namespaceMap.keySet().iterator();
+        String packageName = null;
+        while ( packageNames.hasNext() ) {
+            packageName = (String)packageNames.next();
+            pkg2nsMappings.add(OPEN_BRACKET + 
+                                packageName +
+                                COMMA +
+                                namespaceMap.get(packageName) +
+                                CLOSE_BRACKET);
+        }
+    }
+
+    public ArrayList getPkg2nsMappings() {
+        return pkg2nsMappings;
+    }
+
+    public void setPkg2nsMappings(ArrayList pkg2nsMappings) {
+        this.pkg2nsMappings = pkg2nsMappings;
+    }
+    
+    /**
+     * add a mapping of namespaces to packages
+     */
+    public void addMapping(NamespaceMapping mapping) {
+        mappings.addMapping(mapping);
+    }
+
+    /**
+     * add a mapping of namespaces to packages
+     */
+    public void addMappingSet(MappingSet mappingset) {
+        mappings.addMappingSet(mappingset);
     }
 
 }
