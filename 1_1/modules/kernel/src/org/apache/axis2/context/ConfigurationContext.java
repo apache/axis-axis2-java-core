@@ -62,7 +62,7 @@ public class ConfigurationContext extends AbstractContext {
     //To specify url mapping for services
     private String contextRoot = "axis2";
     private String servicePath = "services";
-    private String restPath = "rest";
+    private String restPath = Constants.DEFAULT_REST_PATH;
     //To have your own context path
 
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
