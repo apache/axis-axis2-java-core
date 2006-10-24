@@ -22,7 +22,7 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 <ul>
   <li><a href="#Download_Axis2">Download Axis2</a></li>
   <li><a href="#requirements">System Requirements</a></li>
-  <li><a href="#_Toc96698086">Installing Axis2 in a Servlet Container</a></li>
+  <li><a href="#servlet_container">Installing Axis2 in a Servlet Container</a></li>
   <li><a href="#upload">Uploading Services</a></li>
   <li><a href="#advanced">Advanced</a>
     <ul>
@@ -44,8 +44,8 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 <p>Axis2 is distributed in several convenient distribution packages and can
 be installed either as a standalone server or as part of a J2EE compliant
 servlet container. Axis2 is distributed under the Apache License, version
-2.0. This User's Guide will mainly focus on running Apache Axis2 using the
-Standard Binary Distribution.</p>
+2.0. This Installation Guide will mainly focus on running Apache Axis2 using
+the Standard Binary Distribution.</p>
 
 <p><a href="../download/1_1/download.html">Download</a> distribution packages
 of the latest release -Axis2 is <a href="../index.html">version 1.1</a>.
@@ -65,14 +65,14 @@ href="../modules/index.html">downloaded</a> separately.</p>
 
 <p><a href="../download/1_1/download.html#std-bin">Download</a> Standard
 Binary Distribution</p>
-<a name="war"></a>
+<a name="war1"></a>
 
 <h3>2. WAR (Web Archive) Distribution</h3>
 
 <p>This will be the Web application of Axis2 which can be deployed in most of
 the servlet containers.</p>
 
-<p><a href="../download/1_1/download.html#war">Download</a> WAR
+<p><a href="../download/1_1/download.html#war">Download</a> WAR (Web Archive)
 Distribution</p>
 
 <h3>3. Documents Distribution</h3>
@@ -217,14 +217,15 @@ IDEA.</td>
         href="http://java.sun.com/">http://java.sun.com</a>)</td>
     </tr>
     <tr>
-      <td>Maven</td>
+      <td>Maven
+
+        <p><em>Required only for building Axis2 from Source
+        Distribution</em></p>
+      </td>
       <td>1.0.2 or higher in Maven 1.x series (<a
         href="http://maven.apache.org/maven-1.x/start/download.html">download</a>).
         <strong>Please download maven 1.x version. Axis2 is not compatible
-        with maven2 yet.</strong>
-
-        <p>Required only for building Axis2 from Source Distribution</p>
-      </td>
+        with maven2 yet.</strong></td>
     </tr>
     <tr>
       <td>Memory</td>
@@ -247,12 +248,12 @@ IDEA.</td>
 
 <h2>Standalone Insatallation Using Standard Binary Distribution</h2>
 
-<p>All the required jars required are shipped with the standard binary
+<p>All the required jars are shipped with the standard binary
 distribution.</p>
 
 <p>Installing Axis2 is merely a matter of downloading and extracting the
 Standard Binary Distribution and setting the Java home.</p>
-
+<a name="servlet_container"></a>
 <h2>Installing Axis2 in a Servlet Container</h2>
 
 <p>Which ever the distribution, installing Axis2 in a J2EE compliant servlet
@@ -270,23 +271,23 @@ container is as follows:</p>
     browser to the <strong>http://&lt;host :port&gt;/axis2. </strong>It
     should produce the following page which is the <strong>Axis2 Web
     Application Home Page</strong>.</li>
-</ol>
 
-<p align="center"><strong><img src="images/clip_image006.jpg"
-alt=""></strong></p>
-
-<p></p>
-<ul>
+  <p align="center"><strong><img src="images/clip_image006.jpg"
+  alt=""></strong></p>
   <li>Use the link "Validate" to ensure that everything is fine and smooth.
     If the validation fails then the war has failed to install properly or
     some essential jars are missing. At such a situation the documentation of
     the particular servlet container should be consulted to find the problem.
     The following page is a successful validation. Note the statement core
     Axis2 libraries are present.</li>
-</ul>
+</ol>
 
 <p align="center"><img src="images/happyaxis.jpg"></p>
 <a name="upload"></a>
+
+<p><strong>Note:</strong> For any Application server specific installation
+information please refer <a href="app_server.html">Application Server
+Specific Configuration Guide</a>.</p>
 
 <h2>Uploading Services</h2>
 <ol>
@@ -305,7 +306,7 @@ alt=""></strong></p>
 
   <p>Since Axis2 supports <strong>hot deployment</strong> one can drop the
   service jar directly through the file system to the above mentioned
-  services directory.It will also cause the service to be automatically
+  services directory. It will also cause the service to be automatically
   installed without the container being restarted.</p>
 
   <p>Use the 'Services' link on the Web Application home page to check the
@@ -318,8 +319,8 @@ alt=""></strong></p>
   <p></p>
 
   <p>If the service has deployment time errors it will list those services as
-  faulty services. If you click on the link you can see the your deployment
-  fault error message(s).</p>
+  faulty services. If you click on the link you can see the deployment fault
+  error message(s).</p>
 
   <p align="center"><img src="images/faultservice.jpg" alt=""></p>
 
@@ -342,12 +343,12 @@ alt=""></strong></p>
 
 <h2>Axis2 Source Distribution</h2>
 <a name="_Toc96698083">Using the Source Distribution both brinary files
-(which is downloadable as the </a><a href="std-bin">Standard Binary
+(which is downloadable as the </a><a href="#std-bin">Standard Binary
 Ditribution</a>) and axis2.war file (which is downloadable as the <a
-href="war">WAR distribution</a>) can be built using maven commands.
+href="#war1">WAR distribution</a>) can be built using maven commands.
 
 <p>Required jar files do not come with the distribution and they will also
-have to be built by running the maven command. Before we go any further is is
+have to be built by running the maven command. Before we go any further it is
 necessary to install <a href="http://maven.apache.org/maven-1.x/"
 target="_blank">Maven</aandsettheEnvironment.Thenextsectionwillguideyouhowtodojustthat.></a></p>
 
@@ -394,7 +395,7 @@ target="_blank">here </a>.</p>
 <p><a href="../faq.html#d4">Maven commands that are frequently used</a> in
 Axis2 are listed on the <a href="../faq.html">FAQs</a> page.</p>
 
-<p><a name="_Toc96698085"></a></p>
+<a name="_Toc96698085"></a>
 
 <h3>Building Binaries and WAR File Using the Source Distribution</h3>
 
