@@ -111,55 +111,63 @@ public class AdminAgent extends AbstractAgent {
 
     // supported web operations
 
-    protected void processUpload(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processUpload(HttpServletRequest req, HttpServletResponse res)
+    throws IOException, ServletException {
+    	String hasHotDeployment =
+    		(String) configContext.getAxisConfiguration().getParameterValue("hotdeployment");
+    	String hasHotUpdate =
+    		(String) configContext.getAxisConfiguration().getParameterValue("hotupdate");
+    	req.setAttribute("hotDeployment", (hasHotDeployment.equals("true")) ? "enabled"
+    			: "disabled");
+    	req.setAttribute("hotUpdate", (hasHotUpdate.equals("true")) ? "enabled" : "disabled");
+    	boolean isMultipart = FileUpload.isMultipartContent(req);
+    	if (isMultipart) {
 
-        boolean isMultipart = FileUpload.isMultipartContent(req);
-        if (isMultipart) {
+    		try {
+    			// Create a new file upload handler
+    			DiskFileUpload upload = new DiskFileUpload();
 
-            try {
-                // Create a new file upload handler
-                DiskFileUpload upload = new DiskFileUpload();
+    			List items = upload.parseRequest(req);
 
-                List items = upload.parseRequest(req);
+    			// Process the uploaded items
+    			Iterator iter = items.iterator();
+    			while (iter.hasNext()) {
+    				FileItem item = (FileItem) iter.next();
+    				if (!item.isFormField()) {
 
-                // Process the uploaded items
-                Iterator iter = items.iterator();
-                while (iter.hasNext()) {
-                    FileItem item = (FileItem) iter.next();
+    					String fileName = item.getName();
+    					String fileExtesion = fileName;
+    					fileExtesion = fileExtesion.toLowerCase();
+    					if (!(fileExtesion.endsWith(".jar") || fileExtesion.endsWith(".aar"))) {
+    						req.setAttribute("status", "failure");
+    						req.setAttribute("cause", "Unsupported file type " + fileExtesion);
+    					} else {
 
-                    if (!item.isFormField()) {
+    						String fileNameOnly = "";
+    						if (fileName.indexOf("\\") < 0) {
+    							fileNameOnly =
+    								fileName.substring(fileName.lastIndexOf("/") + 1, fileName
+    										.length());
+    						} else {
+    							fileNameOnly =
+    								fileName.substring(fileName.lastIndexOf("\\") + 1, fileName
+    										.length());
+    						}
 
-                        String fileName = item.getName();
-                        String fileExtesion = fileName;
-                        fileExtesion = fileExtesion.toLowerCase();
-                        if (!(fileExtesion.endsWith(".jar") || fileExtesion.endsWith(".aar"))) {
-                            req.setAttribute("status", "failure");
-                            req.setAttribute("cause", "Unsupported file type " + fileExtesion);
-                        } else {
+    						File uploadedFile = new File(serviceDir, fileNameOnly);
+    						item.write(uploadedFile);
+    						req.setAttribute("status", "success");
+    						req.setAttribute("filename", fileNameOnly);
+    					}
+    				}
+    			}
+    		} catch (Exception e) {
+    			req.setAttribute("status", "failure");
+    			req.setAttribute("cause", e.getMessage());
 
-                            String fileNameOnly = "";
-                            if (fileName.indexOf("\\") < 0) {
-                                fileNameOnly = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.length());
-                            } else {
-                                fileNameOnly = fileName.substring(fileName.lastIndexOf("\\") + 1, fileName.length());
-                            }
-
-
-                            File uploadedFile = new File(serviceDir, fileNameOnly);
-                            item.write(uploadedFile);
-                            req.setAttribute("status", "success");
-                            req.setAttribute("filename", fileNameOnly);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                req.setAttribute("status", "failure");
-                req.setAttribute("cause", e.getMessage());
-
-            }
-        }
-
-        renderView("upload.jsp", req, res);
+    		}
+    	}
+    	renderView("upload.jsp", req, res);
     }
 
 
