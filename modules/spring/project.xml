@@ -71,7 +71,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>springframework</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
             <properties>
@@ -79,7 +79,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>springframework</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
             <properties>
@@ -87,7 +87,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>springframework</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
             <properties>
@@ -95,7 +95,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>springframework</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
             <properties>

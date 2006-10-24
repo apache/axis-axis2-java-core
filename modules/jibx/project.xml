@@ -93,7 +93,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>bcel</groupId>
+            <groupId>org.apache.bcel</groupId>
             <artifactId>bcel</artifactId>
             <version>${bcel.version}</version>
             <properties>
