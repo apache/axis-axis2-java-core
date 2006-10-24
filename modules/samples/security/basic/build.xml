@@ -5,23 +5,22 @@
 	<property name="temp.dir" value="build/temp"/>
 	<property name="temp.client.dir" value="build/temp_client"/>
 	
-	<property name="modules.dir" value="modules"/>
-	<property name="lib.dir" value="lib"/>
-
-	<property name="addressing.mar" value="addressing-SNAPSHOT.mar"/>
-	<property name="rampart.mar" value="rampart-SNAPSHOT.mar"/>	
+	<property name="addressing.mar" value="addressing-1.1-SNAPSHOT.mar"/>
+	<property name="rampart.mar" value="rampart-1.1-SNAPSHOT.mar"/>	
 	
 	<property name="client.port" value="9080"/>
 	<property name="server.port" value="8080"/>
 	
 	<property name="sample.services.url" value="http://localhost:${client.port}/axis2/services"/>
 	
+    <property environment="env"/>
+    	
 	<target name="check.dependency" unless="env.AXIS2_HOME">
         <echo message="AXIS2_HOME must be set"/>
     </target>
 	
 	<!-- Sample Service 01 -->
-	<target name="service.01">
+	<target name="service.01" if="env.AXIS2_HOME" depends="check.dependency">
 		<create.service.repo sample.number="01"/>
 	</target>
 
@@ -139,6 +138,10 @@
 	<macrodef name="create.service.repo">
 	   	<attribute name="sample.number" default="sample"/>
 	   	<sequential>
+	   		
+	   		<property name="modules.dir" value="${env.AXIS2_HOME}/repository/modules/"/>
+	   		<property name="lib.dir" value="${env.AXIS2_HOME}/lib"/>
+	   		
 	   		<mkdir dir="${service.repos.dir}/sample@{sample.number}"/>
 	   		<mkdir dir="${service.repos.dir}/sample@{sample.number}/services"/>
 	   		<mkdir dir="${service.repos.dir}/sample@{sample.number}/modules"/>
@@ -154,7 +157,7 @@
 	   		<!-- Compile service -->
             <javac srcdir="sample@{sample.number}/src" destdir="${temp.dir}">
                     <classpath>
-                            <fileset dir="lib">
+                            <fileset dir="${lib.dir}">
                                     <include name="**/*.jar"/>
                             </fileset>
                     </classpath>
@@ -175,7 +178,7 @@
                     <arg value="${service.repos.dir}/sample@{sample.number}"/>
                     <arg value="-p${server.port}"/>
                     <classpath>
-                            <fileset dir="lib">
+                            <fileset dir="${lib.dir}">
                                     <include name="**/*.jar"/>
                             </fileset>
                     </classpath>
@@ -187,6 +190,10 @@
 	<macrodef name="create.and.run.client">
 	   	<attribute name="sample.number" default="sample"/>
 	   	<sequential>
+	   		
+	   		<property name="modules.dir" value="${env.AXIS2_HOME}/repository/modules/"/>
+	   		<property name="lib.dir" value="${env.AXIS2_HOME}/lib"/>
+	   		
 	   		<!-- Create the client repo -->
 	   		<mkdir dir="${client.repos.dir}/sample@{sample.number}"/>
 	   		<mkdir dir="${client.repos.dir}/sample@{sample.number}/conf"/>
