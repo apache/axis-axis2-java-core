@@ -490,6 +490,7 @@ public class AdminAgent extends AbstractAgent {
 
     protected void processListSingleService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
+    	req.getSession().setAttribute(Constants.IS_FAULTY, ""); //Clearing out any old values.
         String serviceName = req.getParameter("serviceName");
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
