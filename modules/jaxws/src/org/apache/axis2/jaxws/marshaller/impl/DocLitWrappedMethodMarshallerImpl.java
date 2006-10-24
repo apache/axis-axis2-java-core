@@ -18,7 +18,6 @@ package org.apache.axis2.jaxws.marshaller.impl;
 
 import java.util.ArrayList;
 
-import javax.naming.OperationNotSupportedException;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
@@ -77,7 +76,8 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			Object resultObject = findProperty(resultName, bo);
 			return resultObject;
 		}
-		return null;
+        
+		return bo;
 	}
 
 	/* (non-Javadoc)
