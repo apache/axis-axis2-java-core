@@ -123,7 +123,7 @@ public class HandlerFailureTest extends UtilServerBasedTestCase implements TestC
     }
 
     private Handler culprit = new AbstractHandler() {
-        public void invoke(MessageContext msgContext) throws AxisFault {
+        public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
             throw new AxisFault(UtilServer.FAILURE_MESSAGE);
         }
     };

@@ -73,7 +73,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      * @param msgctx
      * @throws org.apache.axis2.AxisFault
      */
-    public void invoke(MessageContext msgctx) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgctx) throws AxisFault {
         AxisService axisService = msgctx.getAxisService();
 
         if (axisService == null) {
@@ -103,5 +103,6 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE));
             }
         }
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
     }
 }

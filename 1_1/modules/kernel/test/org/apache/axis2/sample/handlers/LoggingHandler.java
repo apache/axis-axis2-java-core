@@ -2,6 +2,7 @@ package org.apache.axis2.sample.handlers;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,8 +29,9 @@ public class LoggingHandler extends AbstractHandler {
     
 	private static final Log log = LogFactory.getLog(LoggingHandler.class);
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
         log.info("Incoming message From " + msgContext.getTo().getAddress());
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
     }
 
     public void revoke(MessageContext msgContext) {

@@ -102,7 +102,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
      * @param msgctx
      * @throws org.apache.axis2.AxisFault
      */
-    public void invoke(MessageContext msgctx) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgctx) throws AxisFault {
 
         // first check we can dispatch using the relates to
         if (msgctx.getRelatesTo() != null) {
@@ -129,9 +129,9 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                 }
             }
 
-            return;
+            return InvocationProcessingInstruction.CONTINUE_PROCESSING;
         }
 
-        super.invoke(msgctx);
+        return super.invoke(msgctx);
     }
 }

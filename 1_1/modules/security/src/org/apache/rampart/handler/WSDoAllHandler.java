@@ -21,6 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.security.handler.WSHandler;
 
@@ -67,12 +68,13 @@ public abstract class WSDoAllHandler extends WSHandler implements Handler {
     /* (non-Javadoc)
     * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
     */
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
         //If the security module is not engaged for this service
         //do not do any processing
         if (msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
             this.processMessage(msgContext);
         }
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
     }
 
     /**
