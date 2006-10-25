@@ -690,10 +690,19 @@ public class DeploymentEngine implements DeploymentConstants {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
                     WSInfo wsInfo = (WSInfo) wsToUnDeploy.get(i);
                     if (wsInfo.getType() == TYPE_SERVICE) {
-                        fileName = getAxisServiceName(wsInfo.getFileName());
-                        axisConfig.removeServiceGroup(fileName);
-                        log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                                wsInfo.getFileName()));
+                        if (isHotUpdate()) {
+                            try {
+                                fileName = getAxisServiceName(wsInfo.getFileName());
+                                axisConfig.removeServiceGroup(fileName);
+                                log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
+                                        wsInfo.getFileName()));
+                            } catch (AxisFault axisFault) {
+                                //May be a faulty service
+                                axisConfig.removeFaultyService(wsInfo.getFileName());
+                            }
+                        } else {
+                            axisConfig.removeFaultyService(wsInfo.getFileName());
+                        }
                     }
                 }
             }

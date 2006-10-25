@@ -70,9 +70,13 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
             while (serviceitr.hasNext()) {
                 OMElement service = (OMElement) serviceitr.next();
                 OMAttribute serviceNameatt = service.getAttribute(new QName(ATTRIBUTE_NAME));
+                if (serviceNameatt == null) {
+                    throw new DeploymentException(
+                            Messages.getMessage(DeploymentErrorMsgs.SERVICE_NAME_ERROR));
+                }
                 String serviceName = serviceNameatt.getAttributeValue();
 
-                if (serviceName == null) {
+                if (serviceName == null || "".equals(serviceName)) {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.SERVICE_NAME_ERROR));
                 } else {

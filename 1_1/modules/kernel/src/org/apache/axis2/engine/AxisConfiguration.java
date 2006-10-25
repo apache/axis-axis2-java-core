@@ -57,7 +57,9 @@ public class AxisConfiguration extends AxisDescription {
 
     private final HashMap policySupportedModules = new HashMap();
 
-    /** Stores the QNames of local policy assertions */
+    /**
+     * Stores the QNames of local policy assertions
+     */
     private final ArrayList localPolicyAssertions = new ArrayList();
 
     // to store AxisObserver Objects
@@ -511,6 +513,17 @@ public class AxisConfiguration extends AxisDescription {
         return faultyServices;
     }
 
+    public void removeFaultyService(String key) {
+        Iterator itr = faultyServices.keySet().iterator();
+        while (itr.hasNext()) {
+            String fullFileName = (String) itr.next();
+            if (fullFileName.indexOf(key) > 0) {
+                faultyServices.remove(fullFileName);
+                return;
+            }
+        }
+    }
+
     // to get the out flow correpodning to the global out flow;
     public ArrayList getGlobalOutPhases() {
         return this.outPhases;
@@ -849,15 +862,16 @@ public class AxisConfiguration extends AxisDescription {
      * TargetResolvers, calling each one in turn when
      * resolveTarget is called
      */
-    public TargetResolver getTargetResolverChain(){
-        return new TargetResolver(){
+    public TargetResolver getTargetResolverChain() {
+        return new TargetResolver() {
             public void resolveTarget(MessageContext messageContext) {
                 Iterator iter = targetResolvers.iterator();
-                while(iter.hasNext()){
-                    TargetResolver tr = (TargetResolver)iter.next();
+                while (iter.hasNext()) {
+                    TargetResolver tr = (TargetResolver) iter.next();
                     tr.resolveTarget(messageContext);
                 }
-            }};
+            }
+        };
     }
 
     public void addTargetResolver(TargetResolver tr) {
