@@ -79,9 +79,9 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private RepositoryListener repoListener;
 
-    private String servicesDirPath = null;
+    private String servicesPath = null;
     private File servicesDir = null;
-    private String modulesDirPath = null;
+    private String modulesPath = null;
     private File modulesDir = null;
 
     public void loadServices() {
@@ -132,15 +132,15 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void loadServicesFromUrl(URL repoURL) {
         try {
-            URL servicesDir = new URL(repoURL, DeploymentConstants.SERVICE_PATH);
-            URL filelisturl = new URL(servicesDir, "services/services.list");
+            URL servicesDir = new URL(repoURL, servicesPath == null ? DeploymentConstants.SERVICE_PATH : servicesPath);
+            URL filelisturl = new URL(servicesDir, "services.list");
             ArrayList files = getFileList(filelisturl);
             Iterator fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
                 String fileUrl = (String) fileIterator.next();
                 if (fileUrl.endsWith(".aar")) {
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
-                    URL servicesURL = new URL(servicesDir, "services/" + fileUrl);
+                    URL servicesURL = new URL(servicesDir, fileUrl);
                     ArrayList servicelist = populateService(serviceGroup,
                             servicesURL,
                             fileUrl.substring(0, fileUrl.indexOf(".aar")));
@@ -156,14 +156,14 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void loadRepositoryFromURL(URL repoURL) throws DeploymentException {
         try {
-            URL moduleDir = new URL(repoURL, DeploymentConstants.MODULE_PATH);
-            URL filelisturl = new URL(moduleDir, "modules/modules.list");
+            URL moduleDir = new URL(repoURL, modulesPath == null ? DeploymentConstants.MODULE_PATH : modulesPath);
+            URL filelisturl = new URL(moduleDir, "modules.list");
             ArrayList files = getFileList(filelisturl);
             Iterator fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
                 String fileUrl = (String) fileIterator.next();
                 if (fileUrl.endsWith(".mar")) {
-                    URL moduleurl = new URL(moduleDir, "modules/" + fileUrl);
+                    URL moduleurl = new URL(moduleDir, fileUrl);
                     DeploymentClassLoader deploymentClassLoader =
                             new DeploymentClassLoader(
                                     new URL[]{moduleurl},
@@ -843,13 +843,13 @@ public class DeploymentEngine implements DeploymentConstants {
         String serviceDirPara = (String)
                 axisConfig.getParameterValue(DeploymentConstants.SERVICE_DIR_PATH);
         if (serviceDirPara != null) {
-            servicesDirPath = serviceDirPara;
+            servicesPath = serviceDirPara;
         }
 
         String moduleDirPara = (String)
                 axisConfig.getParameterValue(DeploymentConstants.MODULE_DRI_PATH);
         if (moduleDirPara != null) {
-            modulesDirPath = moduleDirPara;
+            modulesPath = moduleDirPara;
         }
     }
 
@@ -861,10 +861,10 @@ public class DeploymentEngine implements DeploymentConstants {
 
     private void prepareRepository(String repositoryName) {
         File repository = new File(repositoryName);
-        if (servicesDirPath != null) {
-            servicesDir = new File(servicesDirPath);
+        if (servicesPath != null) {
+            servicesDir = new File(servicesPath);
             if(!servicesDir.exists()) {
-                servicesDir = new File(repository, servicesDirPath);
+                servicesDir = new File(repository, servicesPath);
             }
         } else {
             servicesDir = new File(repository, DeploymentConstants.SERVICE_PATH);
@@ -872,10 +872,10 @@ public class DeploymentEngine implements DeploymentConstants {
         if (!servicesDir.exists()) {
             log.info(Messages.getMessage("noservicedirfound"));
         }
-        if (modulesDirPath != null) {
-            modulesDir = new File(modulesDirPath);
+        if (modulesPath != null) {
+            modulesDir = new File(modulesPath);
             if(!modulesDir.exists()) {
-                modulesDir = new File(repository, modulesDirPath);
+                modulesDir = new File(repository, modulesPath);
             }
         } else {
             modulesDir = new File(repository, DeploymentConstants.MODULE_PATH);
