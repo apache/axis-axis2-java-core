@@ -1,5 +1,5 @@
 ======================================================
-Apache Axis2 1.1-RC1 build  (October 9, 2006)
+Apache Axis2 @axisVersion@ build  (@TODAY@)
 
 http://ws.apache.org/axis2
 ------------------------------------------------------
