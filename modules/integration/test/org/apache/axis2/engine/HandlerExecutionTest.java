@@ -496,7 +496,7 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
       this.shouldPause = pause;
     }
     
-    public void invoke(MessageContext msgContext) throws AxisFault
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault
     {
       System.out.println("TestHandler "+handlerName+" invoked");
       if (shouldFail)
@@ -506,6 +506,7 @@ public class HandlerExecutionTest extends UtilServerBasedTestCase implements
         throw new AxisFault("Handler failed");
       }
       testResults.add(handlerName);
+      return InvocationProcessingInstruction.CONTINUE_PROCESSING;      
     }
     
     public void flowComplete(MessageContext msgContext)

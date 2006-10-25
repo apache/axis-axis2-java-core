@@ -197,7 +197,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
       this.shouldPause = pause;
     }
 
-    public void invoke(MessageContext msgContext) throws AxisFault
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault
     {
       System.out.println("TestHandler " + handlerName + " invoked");
       if (shouldFail)
@@ -213,8 +213,9 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
         msgContext.pause();
         shouldPause = false;
         new Worker(msgContext).start();
-        return;
+        return InvocationProcessingInstruction.SUSPEND_PROCESSING;
       }
+      return InvocationProcessingInstruction.CONTINUE_PROCESSING;      
     }
 
     public void flowComplete(MessageContext msgContext)

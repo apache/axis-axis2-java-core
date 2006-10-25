@@ -46,7 +46,7 @@ public class InstanceDispatcher extends AbstractHandler {
      * @param msgContext
      * @throws org.apache.axis2.AxisFault
      */
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
         ServiceContext serviceContext = msgContext.getServiceContext();
 
         if ((msgContext.getOperationContext() != null)
@@ -54,7 +54,7 @@ public class InstanceDispatcher extends AbstractHandler {
             msgContext.setServiceGroupContextId(
                     ((ServiceGroupContext) serviceContext.getParent()).getId());
 
-            return;
+            return InvocationProcessingInstruction.CONTINUE_PROCESSING;
         }
 
         // try to extract sgcId from the message
@@ -67,7 +67,7 @@ public class InstanceDispatcher extends AbstractHandler {
 
         // 1. look up opCtxt using mc.addressingHeaders.relatesTo[0]
         if (axisOperation == null) {
-            return;
+          return InvocationProcessingInstruction.CONTINUE_PROCESSING;
         }
 
         OperationContext operationContext =
@@ -105,6 +105,7 @@ public class InstanceDispatcher extends AbstractHandler {
         if (serviceContext != null) {
             serviceContext.setMyEPR(msgContext.getTo());
         }
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
     }
 
     private void fillContextsFromSessionContext(MessageContext msgContext) throws AxisFault {

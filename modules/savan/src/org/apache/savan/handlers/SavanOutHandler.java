@@ -21,6 +21,7 @@ import java.util.Iterator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +43,7 @@ public class SavanOutHandler extends AbstractHandler {
 
 	Log log = LogFactory.getLog(SavanOutHandler.class);
 	
-	public void invoke(MessageContext msgContext) throws AxisFault {
+	public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
 
 		SavanMessageContext smc = new SavanMessageContext (msgContext);
 		int messagetype = smc.getMessageType();
@@ -80,6 +81,7 @@ public class SavanOutHandler extends AbstractHandler {
 			
 			msgContext.pause();
 		}
+        return InvocationProcessingInstruction.SUSPEND_PROCESSING;
 
 	}
 

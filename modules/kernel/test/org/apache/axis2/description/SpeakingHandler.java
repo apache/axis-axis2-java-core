@@ -19,6 +19,7 @@ package org.apache.axis2.description;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,9 +37,10 @@ public class SpeakingHandler extends AbstractHandler implements Handler {
         return name;
     }
 
-    public void invoke(MessageContext msgContext) throws
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws
             AxisFault {
         log.info("I am " + message + " Handler Running :)");
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
     }
 
     public void revoke(MessageContext msgContext) {

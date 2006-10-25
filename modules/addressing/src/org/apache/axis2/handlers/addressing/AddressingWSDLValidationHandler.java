@@ -21,6 +21,7 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -33,7 +34,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
     /* (non-Javadoc)
      * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
      */
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
     	// If no AxisOperation has been found at the end of the dispatch phase and addressing
         // is in use we should throw an ActionNotSupported Fault
         checkAction(msgContext);
@@ -41,6 +42,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
         checkUsingAddressing(msgContext);
         // Check that if anonymous flag is in effect that the replyto and faultto are valid
         //checkAnonymous(msgContext);
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
     }
     
     /**

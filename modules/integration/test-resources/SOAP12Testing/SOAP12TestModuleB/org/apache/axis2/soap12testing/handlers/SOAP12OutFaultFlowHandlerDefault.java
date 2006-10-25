@@ -17,6 +17,7 @@
 package org.apache.axis2.soap12testing.handlers;
 
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
@@ -30,7 +31,7 @@ public class SOAP12OutFaultFlowHandlerDefault extends AbstractHandler {
 
     }
 
-    public void invoke(MessageContext msgContext) {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) {
         Integer headerBlockPresent = (Integer) msgContext.getOperationContext().getProperty("HEADER_BLOCK_PRESENT");
         if (headerBlockPresent.equals(new Integer(1))) {
             SOAPHeader headerAdd = (SOAPHeader) msgContext.getOperationContext().getProperty("HEADER_BLOCK");
@@ -42,6 +43,7 @@ public class SOAP12OutFaultFlowHandlerDefault extends AbstractHandler {
         } else {
             msgContext.getEnvelope().getHeader().discard();
         }
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
     }
 }
 

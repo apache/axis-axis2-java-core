@@ -32,6 +32,7 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 
@@ -43,12 +44,12 @@ import java.util.Map;
 
 public class AddressingOutHandler extends AddressingHandler {
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
         // it should be able to disable addressing by some one.
         Object property = msgContext.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         if (property != null && JavaUtils.isTrueExplicitly(property)) {
             log.debug("Addressing is disabled .....");
-            return;
+            return InvocationProcessingInstruction.CONTINUE_PROCESSING;
         }
 
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
@@ -117,6 +118,8 @@ public class AddressingOutHandler extends AddressingHandler {
         
         // process mustUnderstand attribute, if required.
         processMustUnderstandProperty(envelope, msgContext, addressingNamespaceObject);
+        
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
     }
 
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,

@@ -488,9 +488,9 @@ public class AxisEngine {
         msgContext.setFLOW(MessageContext.IN_FLOW);
         try
         {
-          invoke(msgContext, IS_INBOUND, NOT_RESUMING_EXECUTION);
+          InvocationProcessingInstruction pi = invoke(msgContext, IS_INBOUND, NOT_RESUMING_EXECUTION);
 
-          if (!msgContext.isPaused())
+          if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
           {
             if (msgContext.isServerSide())
             {
@@ -502,6 +502,21 @@ public class AxisEngine {
               receiver.receive(msgContext);
             }
             flowComplete(msgContext, true);
+          }
+          else if (pi.equals(InvocationProcessingInstruction.SUSPEND_PROCESSING))
+          {
+            return;
+          }
+          else if (pi.equals(InvocationProcessingInstruction.ABORT_PROCESSING))
+          {
+            flowComplete(msgContext, true);
+            return;
+          }
+          else
+          {
+            String errorMsg = "Unrecognized InvocationProcessingInstruction encountered in AxisEngine.receive()";
+            log.error(errorMsg);
+            throw new AxisFault(errorMsg);
           }
         }
         catch (AxisFault e)
@@ -517,20 +532,24 @@ public class AxisEngine {
      * if the msgContext is pauesd then the execution will be breaked
      *
      * @param msgContext
+     * @return An InvocationProcessingInstruction that indicates what 
+     *         the next step in the message processing should be.
      * @throws AxisFault
      */
-    public void invoke(MessageContext msgContext, boolean inbound, boolean resuming) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext, boolean inbound, boolean resuming) throws AxisFault {
         if (msgContext.getCurrentHandlerIndex() == -1) {
             msgContext.setCurrentHandlerIndex(0);
         }
 
+        InvocationProcessingInstruction pi = InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        
         while (msgContext.getCurrentHandlerIndex() < msgContext.getExecutionChain().size()) {
             Handler currentHandler = (Handler) msgContext.getExecutionChain().
                     get(msgContext.getCurrentHandlerIndex());
                         
             try
             {
-              currentHandler.invoke(msgContext);
+              pi = currentHandler.invoke(msgContext);
             }
             catch (AxisFault e)
             {
@@ -574,11 +593,16 @@ public class AxisEngine {
               }
             }
 
-            if (msgContext.isPaused()) {
-                break;
+            if (pi.equals(InvocationProcessingInstruction.SUSPEND_PROCESSING) ||
+                pi.equals(InvocationProcessingInstruction.ABORT_PROCESSING))
+            {
+              break;
             }
+
             msgContext.setCurrentHandlerIndex(msgContext.getCurrentHandlerIndex() + 1);
         }
+        
+        return pi;
     }
 
     private void flowComplete(MessageContext msgContext, boolean inbound) 
@@ -611,14 +635,23 @@ public class AxisEngine {
      * first invoke the phase list and after the message receiver
      *
      * @param msgContext
+     * @return An InvocationProcessingInstruction allowing the invoker to perhaps determine
+     *         whether or not the message processing will ever succeed.
      * @throws AxisFault
      */
-    public void resumeReceive(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction resumeReceive(MessageContext msgContext) throws AxisFault {
+      //REVIEW: This name is a little misleading, as it seems to indicate that there should be a resumeReceiveFault as well, when, in fact, this does both 
+      //REVIEW: Unlike with receive, there is no wrapping try/catch clause which would
+      //fire off the flowComplete on an error, as we have to assume that the
+      //message will be resumed again, but perhaps we need to unwind back to
+      //the point at which the message was resumed and provide another API
+      //to allow the full unwind if the message is going to be discarded.
         //invoke the phases
-        invoke(msgContext, IS_INBOUND, RESUMING_EXECUTION);
+        InvocationProcessingInstruction pi = invoke(msgContext, IS_INBOUND, RESUMING_EXECUTION);
         //invoking the MR
-        if (!msgContext.isPaused())
-        {          
+        
+        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+        {
           if (msgContext.isServerSide())
           {
             // invoke the Message Receivers
@@ -628,6 +661,8 @@ public class AxisEngine {
           }
           flowComplete(msgContext, true);
         }
+        
+        return pi;
     }
 
     /**
@@ -635,18 +670,30 @@ public class AxisEngine {
      * TransportSender at the end
      *
      * @param msgContext
+     * @return An InvocationProcessingInstruction allowing the invoker to perhaps determine
+     *         whether or not the message processing will ever succeed.
+     * @throws AxisFault
      */
-    public void resumeSend(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction resumeSend(MessageContext msgContext) throws AxisFault {
+      //REVIEW: This name is a little misleading, as it seems to indicate that there should be a resumeSendFault as well, when, in fact, this does both 
+      //REVIEW: Unlike with send, there is no wrapping try/catch clause which would
+      //fire off the flowComplete on an error, as we have to assume that the
+      //message will be resumed again, but perhaps we need to unwind back to
+      //the point at which the message was resumed and provide another API
+      //to allow the full unwind if the message is going to be discarded.
         //invoke the phases
-        invoke(msgContext, IS_OUTBOUND, RESUMING_EXECUTION);
-        //Invoking Tarnsport Sender
-        if (!msgContext.isPaused()) {
+        InvocationProcessingInstruction pi = invoke(msgContext, IS_OUTBOUND, RESUMING_EXECUTION);
+        //Invoking Transport Sender
+        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+        {
             // write the Message to the Wire
             TransportOutDescription transportOut = msgContext.getTransportOut();
             TransportSender sender = transportOut.getSender();
             sender.invoke(msgContext);
             flowComplete(msgContext, false);
         }
+        
+        return pi;
     }
 
     /**
@@ -668,28 +715,60 @@ public class AxisEngine {
         // affecting later messages.
         msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
         msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
-        invoke(msgContext, IS_INBOUND, NOT_RESUMING_EXECUTION);
         
-        if (!msgContext.isPaused())
+        try
         {
-          if (msgContext.isServerSide()) {
-            // invoke the Message Receivers
-            checkMustUnderstand(msgContext);
+          InvocationProcessingInstruction pi = invoke(msgContext, IS_INBOUND, NOT_RESUMING_EXECUTION);
 
-            MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+          if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+          {
+            if (msgContext.isServerSide())
+            {
+              // invoke the Message Receivers
+              checkMustUnderstand(msgContext);
+              
+              MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
 
-            receiver.receive(msgContext);
+              receiver.receive(msgContext);
+            }
+            flowComplete(msgContext, true);
           }
+          else if (pi.equals(InvocationProcessingInstruction.SUSPEND_PROCESSING))
+          {
+            return;
+          }
+          else if (pi.equals(InvocationProcessingInstruction.ABORT_PROCESSING))
+          {
+            flowComplete(msgContext, true);
+            return;
+          }
+          else
+          {
+            String errorMsg = "Unrecognized InvocationProcessingInstruction encountered in AxisEngine.receiveFault()";
+            log.error(errorMsg);
+            throw new AxisFault(errorMsg);
+          }
+        }
+        catch (AxisFault e)
+        {
           flowComplete(msgContext, true);
+          throw e;
         }
     }
 
-    public void resume(MessageContext msgctx) throws AxisFault {
+    /**
+     * Resume processing of a message.
+     * @param msgctx
+     * @return An InvocationProcessingInstruction allowing the invoker to perhaps determine
+     *         whether or not the message processing will ever succeed.
+     * @throws AxisFault
+     */
+    public InvocationProcessingInstruction resume(MessageContext msgctx) throws AxisFault {
         msgctx.setPaused(false);
         if (msgctx.getFLOW() == MessageContext.IN_FLOW) {
-            resumeReceive(msgctx);
+            return resumeReceive(msgctx);
         } else {
-            resumeSend(msgctx);
+            return resumeSend(msgctx);
         }
     }
 
@@ -718,10 +797,10 @@ public class AxisEngine {
         msgContext.setFLOW(MessageContext.OUT_FLOW);
         try
         {
-          invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
+          InvocationProcessingInstruction pi = invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
 
-          if (!msgContext.isPaused()) {
-
+          if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+          {
             // write the Message to the Wire
             TransportOutDescription transportOut = msgContext.getTransportOut();
             if(transportOut == null) {
@@ -742,6 +821,21 @@ public class AxisEngine {
             //REVIEW: In the case of the TransportNonBlockingInvocationWorker, does this need to wait until that finishes?
             flowComplete(msgContext, false);
           }
+          else if (pi.equals(InvocationProcessingInstruction.SUSPEND_PROCESSING))
+          {
+            return;
+          }
+          else if (pi.equals(InvocationProcessingInstruction.ABORT_PROCESSING))
+          {
+            flowComplete(msgContext, false);
+            return;
+          }
+          else
+          {
+            String errorMsg = "Unrecognized InvocationProcessingInstruction encountered in AxisEngine.send()";
+            log.error(errorMsg);
+            throw new AxisFault(errorMsg);
+          }
         }
         catch (AxisFault e)
         {
@@ -759,6 +853,8 @@ public class AxisEngine {
     public void sendFault(MessageContext msgContext) throws AxisFault {
         OperationContext opContext = msgContext.getOperationContext();
 
+        //FIXME: If this gets paused in the operation-specific phases, the resume is not going to function correctly as the phases will not have all been set 
+        
         // find and execute the Fault Out Flow Handlers
         if (opContext != null) {
             AxisOperation axisOperation = opContext.getAxisOperation();
@@ -770,22 +866,62 @@ public class AxisEngine {
             outFaultPhases.addAll((ArrayList) faultExecutionChain.clone());
             msgContext.setExecutionChain((ArrayList) outFaultPhases.clone());
             msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
-            invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
+            try
+            {
+              InvocationProcessingInstruction pi = invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
+              
+              if (pi.equals(InvocationProcessingInstruction.SUSPEND_PROCESSING))
+              {
+                log.warn("The resumption of this flow may function incorrectly, as the OutFaultFlow will not be used");
+                return;
+              }
+              else if (pi.equals(InvocationProcessingInstruction.ABORT_PROCESSING))
+              {
+                flowComplete(msgContext, false);
+                return;
+              }
+              else if (!pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+              {
+                String errorMsg = "Unrecognized InvocationProcessingInstruction encountered in AxisEngine.sendFault()";
+                log.error(errorMsg);
+                throw new AxisFault(errorMsg);
+              }
+            }
+            catch (AxisFault e)
+            {
+              flowComplete(msgContext, false);
+              throw e;
+            }
         }
+        
+        msgContext.setExecutionChain((ArrayList) msgContext.getConfigurationContext().getAxisConfiguration().getOutFaultFlow().clone());
+        msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
+        InvocationProcessingInstruction pi = invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
 
-        if (!msgContext.isPaused()) {
-            msgContext.setExecutionChain(
-                    (ArrayList) msgContext.getConfigurationContext()
-                            .getAxisConfiguration().getOutFaultFlow().clone());
-            msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
-            invoke(msgContext, IS_OUTBOUND, NOT_RESUMING_EXECUTION);
+        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+        {
+          // Actually send the SOAP Fault
+          TransportSender sender = msgContext.getTransportOut().getSender();
 
-            // Actually send the SOAP Fault
-            TransportSender sender = msgContext.getTransportOut().getSender();
-
-            sender.invoke(msgContext);
-            flowComplete(msgContext, false);
+          sender.invoke(msgContext);
+          flowComplete(msgContext, false);
         }
+        else if (pi.equals(InvocationProcessingInstruction.SUSPEND_PROCESSING))
+        {
+          return;
+        }
+        else if (pi.equals(InvocationProcessingInstruction.ABORT_PROCESSING))
+        {
+          flowComplete(msgContext, false);
+          return;
+        }
+        else
+        {
+          String errorMsg = "Unrecognized InvocationProcessingInstruction encountered in AxisEngine.sendFault()";
+          log.error(errorMsg);
+          throw new AxisFault(errorMsg);
+        }
+        
     }
 
     private String getSenderFaultCode(OMNamespace soapNamespace) {

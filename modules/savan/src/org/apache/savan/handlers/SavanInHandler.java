@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
@@ -39,7 +40,7 @@ import org.apache.savan.util.ProtocolManager;
  */
 public class SavanInHandler extends AbstractHandler  {
 
-	public void invoke(MessageContext msgContext) throws AxisFault {
+	public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
 		
 		SavanMessageContext smc = new SavanMessageContext (msgContext);
 		
@@ -72,6 +73,7 @@ public class SavanInHandler extends AbstractHandler  {
 		} else if (messageType==SavanConstants.MessageTypes.RENEW_MESSAGE) {
 			processor.renewSubscription(smc);
 		}
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
 	}
 	
 	private void setSubscriberStore (SavanMessageContext smc) throws SavanException {
