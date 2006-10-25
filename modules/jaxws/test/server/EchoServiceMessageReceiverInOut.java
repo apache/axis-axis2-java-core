@@ -26,7 +26,7 @@ import server.EchoServiceSkeleton;
         Object obj = getTheImplementationObject(msgContext);
 
         //Inject the Message Context if it is asked for
-        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext.getOperationContext());
+        org.apache.axis2.engine.DependencyManager.initServiceClass(obj, msgContext.getServiceContext());
 
         EchoServiceSkeleton skel = (EchoServiceSkeleton)obj;
         //Out Envelop
@@ -69,51 +69,51 @@ import server.EchoServiceSkeleton;
             }
         }
          
-        //
-                    private  org.apache.axiom.om.OMElement  toOM(server.EchoString param, boolean optimizeContent){
-                        if (param instanceof org.apache.axis2.databinding.ADBBean){
-                            org.apache.axiom.om.impl.builder.StAXOMBuilder builder
-                                       = new org.apache.axiom.om.impl.builder.StAXOMBuilder
-                            (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
-                               new org.apache.axis2.util.StreamWrapper(param.getPullParser(server.EchoString.MY_QNAME)));
-                            org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
-                            ((org.apache.axiom.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
-                            return documentElement;
-                        }else{
-                           
-                           //todo finish this onece the bean serializer has the necessary methods
-                            return null;
-                        }
-                    }
-
-                    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, server.EchoString param, boolean optimizeContent){
-                        if (param instanceof org.apache.axis2.databinding.ADBBean){
-                            org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new
-                                    org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(server.EchoString.MY_QNAME),
-                                                                                     factory);
-                            return builder.getEnvelope();
-                        }else{
-                           
-                           //todo finish this onece the bean serializer has the necessary methods
-                            return null;
-                        }
-                    }
-                
-                    private  org.apache.axiom.om.OMElement  toOM(server.EchoStringResponse param, boolean optimizeContent){
-                        if (param instanceof org.apache.axis2.databinding.ADBBean){
-                            org.apache.axiom.om.impl.builder.StAXOMBuilder builder
-                                       = new org.apache.axiom.om.impl.builder.StAXOMBuilder
-                            (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
-                               new org.apache.axis2.util.StreamWrapper(param.getPullParser(server.EchoStringResponse.MY_QNAME)));
-                            org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
-                            ((org.apache.axiom.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
-                            return documentElement;
-                        }else{
-                           
-                           //todo finish this onece the bean serializer has the necessary methods
-                            return null;
-                        }
-                    }
+//        //
+//                    private  org.apache.axiom.om.OMElement  toOM(server.EchoString param, boolean optimizeContent){
+//                        if (param instanceof org.apache.axis2.databinding.ADBBean){
+//                            org.apache.axiom.om.impl.builder.StAXOMBuilder builder
+//                                       = new org.apache.axiom.om.impl.builder.StAXOMBuilder
+//                            (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
+//                               new org.apache.axis2.util.StreamWrapper(param.getPullParser(server.EchoString.MY_QNAME)));
+//                            org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
+//                            ((org.apache.axiom.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
+//                            return documentElement;
+//                        }else{
+//
+//                           //todo finish this onece the bean serializer has the necessary methods
+//                            return null;
+//                        }
+//                    }
+//
+//                    private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, server.EchoString param, boolean optimizeContent){
+//                        if (param instanceof org.apache.axis2.databinding.ADBBean){
+//                            org.apache.axis2.databinding.ADBSOAPModelBuilder builder = new
+//                                    org.apache.axis2.databinding.ADBSOAPModelBuilder(param.getPullParser(server.EchoString.MY_QNAME),
+//                                                                                     factory);
+//                            return builder.getEnvelope();
+//                        }else{
+//
+//                           //todo finish this onece the bean serializer has the necessary methods
+//                            return null;
+//                        }
+//                    }
+//
+//                    private  org.apache.axiom.om.OMElement  toOM(server.EchoStringResponse param, boolean optimizeContent){
+//                        if (param instanceof org.apache.axis2.databinding.ADBBean){
+//                            org.apache.axiom.om.impl.builder.StAXOMBuilder builder
+//                                       = new org.apache.axiom.om.impl.builder.StAXOMBuilder
+//                            (org.apache.axiom.om.OMAbstractFactory.getOMFactory(),
+//                               new org.apache.axis2.util.StreamWrapper(param.getPullParser(server.EchoStringResponse.MY_QNAME)));
+//                            org.apache.axiom.om.OMElement documentElement = builder.getDocumentElement();
+//                            ((org.apache.axiom.om.impl.OMNodeEx) documentElement).setParent(null); // remove the parent link
+//                            return documentElement;
+//                        }else{
+//
+//                           //todo finish this onece the bean serializer has the necessary methods
+//                            return null;
+//                        }
+//                    }
 
                     private  org.apache.axiom.soap.SOAPEnvelope toEnvelope(org.apache.axiom.soap.SOAPFactory factory, server.EchoStringResponse param, boolean optimizeContent){
                         if (param instanceof org.apache.axis2.databinding.ADBBean){
