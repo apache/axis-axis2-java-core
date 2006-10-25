@@ -17,7 +17,7 @@ these files to configure rampart.
 
 01.) Rampart Engaged and no configuration
 02.) UsernameToken authentication
-03.) UsernameToken authentication with plain text password
+03.) UsernameToken authentication with a plain text password
 04.) Message integrity and non-repudiation with signature
 05.) Encryption
 06.) Sign and encrypt a messages
