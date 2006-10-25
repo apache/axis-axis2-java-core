@@ -33,9 +33,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.xmlbeans.BindingConfig;
 import org.apache.xmlbeans.Filer;
 import org.apache.xmlbeans.SchemaGlobalElement;
@@ -53,13 +50,14 @@ import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.io.StringWriter;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -400,10 +398,10 @@ public class CodeGenerationUtility {
      *
      * @param schema
      */
-    private static String getSchemaAsString(XmlSchema schema) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        schema.write(baos);
-        return baos.toString();
+    private static String getSchemaAsString(XmlSchema schema) throws IOException {
+        StringWriter writer = new StringWriter();
+        schema.write(writer);
+        return writer.toString();
     }
 
     /**
@@ -491,7 +489,7 @@ public class CodeGenerationUtility {
                     }
                     if (found) {
                         try {
-                            return new InputSource(getSchemaAsStream(schemas[i]));
+                            return new InputSource(getSchemaAsReader(schemas[i]));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -501,7 +499,7 @@ public class CodeGenerationUtility {
                     XmlSchema schema = schemas[i];
                     if (schema.getTargetNamespace() != null && schema.getTargetNamespace().equals(publicId)) {
                         try {
-                            return new InputSource(getSchemaAsStream(schemas[i]));
+                            return new InputSource(getSchemaAsReader(schemas[i]));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -542,11 +540,11 @@ public class CodeGenerationUtility {
          *
          * @param schema
          */
-        private ByteArrayInputStream getSchemaAsStream(XmlSchema schema) throws IOException {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            schema.write(baos);
-            baos.flush();
-            return new ByteArrayInputStream(baos.toByteArray());
+        private StringReader getSchemaAsReader(XmlSchema schema) throws IOException {
+            StringWriter writer = new StringWriter();
+            schema.write(writer);
+            writer.flush();
+            return new StringReader(writer.toString());
         }
     }
 
