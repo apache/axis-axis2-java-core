@@ -1,5 +1,5 @@
 ======================================================
-Apache Rampart-1.1 build  (Month Day, 2006)
+Apache Rampart-1.1-RC1 build  (Month Day, 2006)
 
 http://ws.apache.org/axis2/modules/rampart/
 ------------------------------------------------------
@@ -39,3 +39,4 @@ Jira:
 Thank you for using Apache Rampart!
 
 The Apache Rampart team. 
+
