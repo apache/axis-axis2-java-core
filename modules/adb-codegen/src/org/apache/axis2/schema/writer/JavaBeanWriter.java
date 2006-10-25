@@ -23,6 +23,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
 
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -583,7 +584,7 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
             }
             // add an attribute that says the type is default
-            if (isDefault(javaClassNameForElement)) {
+            if (metainf.getDefaultStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "default", "yes", property);
             }
 
