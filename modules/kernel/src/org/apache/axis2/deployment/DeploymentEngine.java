@@ -863,6 +863,9 @@ public class DeploymentEngine implements DeploymentConstants {
         File repository = new File(repositoryName);
         if (servicesDirPath != null) {
             servicesDir = new File(servicesDirPath);
+            if(!servicesDir.exists()) {
+                servicesDir = new File(repository, servicesDirPath);
+            }
         } else {
             servicesDir = new File(repository, DeploymentConstants.SERVICE_PATH);
         }
@@ -871,6 +874,9 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         if (modulesDirPath != null) {
             modulesDir = new File(modulesDirPath);
+            if(!modulesDir.exists()) {
+                modulesDir = new File(repository, modulesDirPath);
+            }
         } else {
             modulesDir = new File(repository, DeploymentConstants.MODULE_PATH);
         }
