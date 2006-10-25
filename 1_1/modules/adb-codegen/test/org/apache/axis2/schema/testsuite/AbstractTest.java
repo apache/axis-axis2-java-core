@@ -71,6 +71,8 @@ public class AbstractTest  extends TestCase {
             } else {
                 if (object instanceof BookInformation){
                     isContain = isBookInformationObjectsEquals((BookInformation)objectArray[i],(BookInformation)object);
+                } else if (object instanceof OMElement){
+                    isContain = isOMElementsEqual((OMElement)objectArray[i],(OMElement)object);
                 } else {
                     isContain = objectArray[i].equals(object);
                 }

@@ -17,6 +17,7 @@ package org.apache.axis2.schema.testsuite;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import services.echo.types.*;
 
 import javax.xml.stream.XMLInputFactory;
@@ -113,42 +114,51 @@ public class StringElementsTest extends AbstractTest {
 
         String[] returnObject = null;
         OMElement omElement;
+        String omElementString;
 
         switch (type) {
             case MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST : {
                 TestString1 testString = new TestString1();
                 testString.setTestValue(innerString);
                 omElement = testString.getOMElement(TestString1.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-                System.out.println("OMElement " + omElement);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(omElement.toString().getBytes()));
-                returnObject = TestString1.Factory.parse(reader).getTestValue();
+                omElementString = omElement.toStringWithConsume();
+                System.out.println("OMElement ==> " + omElementString);
+                XMLStreamReader xmlReader =
+                        StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+                returnObject = TestString1.Factory.parse(xmlReader).getTestValue();
                 break;
             }
             case MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST : {
                 TestString3 testString = new TestString3();
                 testString.setTestValue(innerString);
                 omElement = testString.getOMElement(TestString3.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-                System.out.println("OMElement " + omElement);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(omElement.toString().getBytes()));
-                returnObject = TestString3.Factory.parse(reader).getTestValue();
+                omElementString = omElement.toStringWithConsume();
+                System.out.println("OMElement ==> " + omElementString);
+                XMLStreamReader xmlReader =
+                        StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+                returnObject = TestString3.Factory.parse(xmlReader).getTestValue();
                 break;
             }
             case MIN_EQUALS_ONE_NILLABLE_TRUE_TEST : {
                 TestString5 testString = new TestString5();
                 testString.setTestValue(innerString);
                 omElement = testString.getOMElement(TestString5.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-                System.out.println("OMElement " + omElement);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(omElement.toString().getBytes()));
-                returnObject = TestString5.Factory.parse(reader).getTestValue();
+                omElementString = omElement.toStringWithConsume();
+                System.out.println("OMElement ==> " + omElementString);
+                XMLStreamReader xmlReader =
+                        StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+                returnObject = TestString5.Factory.parse(xmlReader).getTestValue();
                 break;
             }
             case MIN_EQUALS_ONE_NILLABLE_FALSE_TEST : {
                 TestString7 testString = new TestString7();
                 testString.setTestValue(innerString);
                 omElement = testString.getOMElement(TestString7.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-                System.out.println("OMElement " + omElement);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(omElement.toString().getBytes()));
-                returnObject = TestString7.Factory.parse(reader).getTestValue();
+                omElementString = omElement.toStringWithConsume();
+                System.out.println("OMElement ==> " + omElementString);
+                XMLStreamReader xmlReader =
+                        StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+                returnObject = TestString7.Factory.parse(xmlReader).getTestValue();
                 break;
             }
 
@@ -209,42 +219,51 @@ public class StringElementsTest extends AbstractTest {
 
         String returnObject = null;
         OMElement omElement;
+        String omElementString;
 
         switch (type) {
             case MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST : {
                 TestString2 testString = new TestString2();
                 testString.setTestValue(innerString);
                 omElement = testString.getOMElement(TestString2.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-                System.out.println("OMElement " + omElement);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(omElement.toString().getBytes()));
-                returnObject = TestString2.Factory.parse(reader).getTestValue();
+                omElementString = omElement.toStringWithConsume();
+                System.out.println("OMElement ==> " + omElementString);
+                XMLStreamReader xmlReader =
+                        StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+                returnObject = TestString2.Factory.parse(xmlReader).getTestValue();
                 break;
             }
             case MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST : {
                 TestString4 testString = new TestString4();
                 testString.setTestValue(innerString);
                 omElement = testString.getOMElement(TestString4.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-                System.out.println("OMElement " + omElement);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(omElement.toString().getBytes()));
-                returnObject = TestString4.Factory.parse(reader).getTestValue();
+                omElementString = omElement.toStringWithConsume();
+                System.out.println("OMElement ==> " + omElementString);
+                XMLStreamReader xmlReader =
+                        StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+                returnObject = TestString4.Factory.parse(xmlReader).getTestValue();
                 break;
             }
             case MIN_EQUALS_ONE_NILLABLE_TRUE_TEST : {
                 TestString6 testString = new TestString6();
                 testString.setTestValue(innerString);
                 omElement = testString.getOMElement(TestString6.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-                System.out.println("OMElement " + omElement);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(omElement.toString().getBytes()));
-                returnObject = TestString6.Factory.parse(reader).getTestValue();
+                omElementString = omElement.toStringWithConsume();
+                System.out.println("OMElement ==> " + omElementString);
+                XMLStreamReader xmlReader =
+                        StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+                returnObject = TestString6.Factory.parse(xmlReader).getTestValue();
                 break;
             }
             case MIN_EQUALS_ONE_NILLABLE_FALSE_TEST : {
                 TestString8 testString = new TestString8();
                 testString.setTestValue(innerString);
                 omElement = testString.getOMElement(TestString8.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
-                System.out.println("OMElement " + omElement);
-                XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(omElement.toString().getBytes()));
-                returnObject = TestString8.Factory.parse(reader).getTestValue();
+                omElementString = omElement.toStringWithConsume();
+                System.out.println("OMElement ==> " + omElementString);
+                XMLStreamReader xmlReader =
+                        StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+                returnObject = TestString8.Factory.parse(xmlReader).getTestValue();
                 break;
             }
 

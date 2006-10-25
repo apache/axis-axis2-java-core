@@ -750,7 +750,27 @@
                             if (<xsl:value-of select="$varName"/>!=null){
                                  for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                     if (<xsl:value-of select="$varName"/>[i] != null){
-                                        <xsl:value-of select="$varName"/>[i].serialize(xmlWriter);
+                                           // write null attribute
+                                            java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
+                                            if (! namespace2.equals("")) {
+                                                java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
+
+                                                if (prefix2 == null) {
+                                                    prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+
+                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
+                                                    xmlWriter.writeNamespace(prefix2, namespace2);
+                                                    xmlWriter.setPrefix(prefix2, namespace2);
+
+                                                } else {
+                                                    xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
+                                                }
+
+                                            } else {
+                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
+                                            }
+                                            <xsl:value-of select="$varName"/>[i].serialize(xmlWriter);
+                                            xmlWriter.writeEndElement();
                                     } else {
                                        <xsl:choose>
                                        <xsl:when test="@nillable">
@@ -825,7 +845,27 @@
                         <xsl:when test="@default and not(@array)">
                             <!-- Note - Assumed to be OMElement-->
                             if (<xsl:value-of select="$varName"/>!=null){
+                                // write null attribute
+                                java.lang.String namespace2 = "<xsl:value-of select="$namespace"/>";
+                                if (! namespace2.equals("")) {
+                                    java.lang.String prefix2 = xmlWriter.getPrefix(namespace2);
+
+                                    if (prefix2 == null) {
+                                        prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+
+                                        xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace2);
+                                        xmlWriter.writeNamespace(prefix2, namespace2);
+                                        xmlWriter.setPrefix(prefix2, namespace2);
+
+                                    } else {
+                                        xmlWriter.writeStartElement(namespace2,"<xsl:value-of select="$propertyName"/>");
+                                    }
+
+                                } else {
+                                    xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
+                                }
                                 <xsl:value-of select="$varName"/>.serialize(xmlWriter);
+                                xmlWriter.writeEndElement();
                             } else {
                                 <xsl:choose>
                                  <xsl:when test="@nillable">
@@ -1188,36 +1228,43 @@
                             }
                             <xsl:if test="not($primitive)">
                                           if (<xsl:value-of select="$varName"/>==null){
-                                          // write the nil attribute
-                                          writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                            <xsl:choose>
+                                                <xsl:when test="$nillable">
+                                                     // write the nil attribute
+                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                     throw new RuntimeException("testValue cannot be null !!");
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                          }else{
-                                <xsl:choose>
-                                    <xsl:when test="$propertyType='javax.xml.namespace.QName'">
-                                                   java.lang.String prefix ="";
-                                                    java.lang.String namespaceURI =<xsl:value-of select="$varName"/>.getNamespaceURI();
-                                                    if(namespaceURI !=null){
-                                                       prefix = <xsl:value-of select="$varName"/>.getPrefix();
-                                                       if (prefix == null) {
-                                                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-                                                      }
-                                                     xmlWriter.writeNamespace(prefix,namespaceURI );
-                                                     xmlWriter.writeCharacters(prefix + ":"+ org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                                    } else {
+                                        <xsl:choose>
+                                            <xsl:when test="$propertyType='javax.xml.namespace.QName'">
+                                                           java.lang.String prefix ="";
+                                                            java.lang.String namespaceURI =<xsl:value-of select="$varName"/>.getNamespaceURI();
+                                                            if(namespaceURI !=null){
+                                                               prefix = <xsl:value-of select="$varName"/>.getPrefix();
+                                                               if (prefix == null) {
+                                                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                              }
+                                                             xmlWriter.writeNamespace(prefix,namespaceURI );
+                                                             xmlWriter.writeCharacters(prefix + ":"+ org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                                            } else {
+                                                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                                            }
+                                            </xsl:when>
+                                            <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
+                                                <xsl:value-of select="$varName"/>.serialize(xmlWriter);
+                                            </xsl:when>
+                                            <xsl:otherwise>
                                                        xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                                    }
-                                    </xsl:when>
-                                    <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
-                                        <xsl:value-of select="$varName"/>.serialize(xmlWriter);
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                    </xsl:otherwise>
-                                </xsl:choose>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                          }
                                     </xsl:if>
-                                    <xsl:if test="$primitive">
-                                       xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                  </xsl:if>
+                            <xsl:if test="$primitive">
+                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                            </xsl:if>
                        xmlWriter.writeEndElement();
                     </xsl:otherwise>
                 </xsl:choose>
@@ -1291,7 +1338,6 @@
                parentQName,factory,dataSource);
             </xsl:when>
             <xsl:otherwise>
-               //ignore the QName passed in - we send only OUR QName!
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                MY_QNAME,factory,dataSource);
             </xsl:otherwise>
@@ -1605,7 +1651,15 @@
                          // Skip the element and report the null value.  It cannot have subelements.
                          while (!reader.isEndElement())
                              reader.next();
-                         return null;
+                         <xsl:choose>
+                             <xsl:when test="@type or @anon">
+                                 return null;
+                             </xsl:when>
+                             <xsl:otherwise>
+                                 return object;
+                             </xsl:otherwise>
+                         </xsl:choose>
+
                    }
                 </xsl:if>
                   <xsl:if test="$isType or $anon">
@@ -1820,19 +1874,12 @@
                                         <!-- End of Array handling of ADB classes -->
 
                                         <!--Let's handle xs:any here-->
-                                        <xsl:when test="$shortTypeName='OMElement'">
+                                        <xsl:when test="@any">
                                            boolean <xsl:value-of select="$loopBoolName"/>=false;
 
                                              while (!<xsl:value-of select="$loopBoolName"/>){
                                                  event = reader.getEventType();
                                                  if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
-
-                                                      <!-- if-block that handles nillable -->
-                                                      <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
-                                                              <xsl:value-of select="$listName"/>.add(null);
-                                                          }else{
-                                                      </xsl:if>
 
                                                       // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
                                                       org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/>
@@ -1840,11 +1887,12 @@
                                                               new org.apache.axis2.util.StreamWrapper(reader), reader.getName());
 
                                                        <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
-                                                       <xsl:if test="@nillable">}</xsl:if>
-                                                 } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event){
-                                                     <xsl:value-of select="$loopBoolName"/> = true;
-                                                 }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event){
-                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                        reader.next();
+                                                        if (reader.isEndElement()) {
+                                                            // we have two countinuos end elements
+                                                            loopDone1 = true;
+                                                        }
+
                                                  }else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event){
                                                      <xsl:value-of select="$loopBoolName"/> = true;
                                                  }else{
@@ -1858,6 +1906,53 @@
                                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
                                         </xsl:when>
 
+                                        <!-- End of Array handling of ADB classes -->
+                                        <xsl:when test="@default">
+
+                                             boolean <xsl:value-of select="$loopBoolName"/>=false;
+                                             javax.xml.namespace.QName <xsl:value-of select="$startQname"/> = new javax.xml.namespace.QName(
+                                                    "<xsl:value-of select="$namespace"/>",
+                                                    "<xsl:value-of select="$propertyName"/>");
+
+                                             while (!<xsl:value-of select="$loopBoolName"/>){
+                                                 event = reader.getEventType();
+                                                 if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event
+                                                         &amp;&amp; <xsl:value-of select="$startQname"/>.equals(reader.getName())){
+
+                                                      <!-- if-block that handles nillable -->
+                                                      <xsl:if test="@nillable">
+                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                              <xsl:value-of select="$listName"/>.add(null);
+                                                              reader.next();
+                                                          }else{
+                                                      </xsl:if>
+                                                            // we parse it as an omElement
+                                                            // We need to wrap the reader so that it produces a fake START_DOCUEMENT event
+                                                            // this is needed by the builder classes
+                                                             org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> =
+                                                                 new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
+                                                                     new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
+                                                             <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement().getFirstElement());
+                                                       <xsl:if test="@nillable">}</xsl:if>
+                                                 } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event &amp;&amp;
+                                                            !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else if (javax.xml.stream.XMLStreamConstants.END_ELEMENT == event &amp;&amp;
+                                                           !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event){
+                                                     <xsl:value-of select="$loopBoolName"/> = true;
+                                                 }else{
+                                                     reader.next();
+                                                 }
+
+                                             }
+
+                                             object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                 org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
+                                                     <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+
+                                        </xsl:when>
 
                                         <xsl:otherwise>
                                             <xsl:choose>
@@ -1884,7 +1979,7 @@
                                                          = new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
                                                               new org.apache.axis2.util.StreamWrapper(reader), <xsl:value-of select="$startQname"/>);
 
-                                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement());
+                                                       <xsl:value-of select="$listName"/>.add(<xsl:value-of select="$builderName"/>.getOMElement().getFirstElement());
                                                        <xsl:if test="@nillable">}</xsl:if>
                                                  } else if (javax.xml.stream.XMLStreamConstants.START_ELEMENT == event &amp;&amp;
                                                             !<xsl:value-of select="$startQname"/>.equals(reader.getName())){
@@ -2008,7 +2103,7 @@
                                      org.apache.axis2.databinding.utils.NamedStaxOMBuilder <xsl:value-of select="$builderName"/> =
                                          new org.apache.axis2.databinding.utils.NamedStaxOMBuilder(
                                              new org.apache.axis2.util.StreamWrapper(reader),<xsl:value-of select="$startQname"/>);
-                                     object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$builderName"/>.getOMElement());
+                                     object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$builderName"/>.getOMElement().getFirstElement());
                                      <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
                                          reader.next();
                                      </xsl:if>

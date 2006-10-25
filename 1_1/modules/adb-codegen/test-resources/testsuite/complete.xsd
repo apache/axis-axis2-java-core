@@ -241,65 +241,6 @@
     </element>
 
 
-    <!-- generating elemens for any types -->
-    <element name="testOM1">
-        <complexType>
-            <sequence>
-                <element name="testValue" minOccurs="0" nillable="true" maxOccurs="unbounded"
-                         type="xsd:anyType"/>
-            </sequence>
-        </complexType>
-    </element>
-    <element name="testOM2">
-        <complexType>
-            <sequence>
-                <element name="testValue" minOccurs="0" nillable="true" type="xsd:anyType"/>
-            </sequence>
-        </complexType>
-    </element>
-    <element name="testOM3">
-        <complexType>
-            <sequence>
-                <element name="testValue" minOccurs="0" maxOccurs="unbounded" type="xsd:anyType"/>
-            </sequence>
-        </complexType>
-    </element>
-    <element name="testOM4">
-        <complexType>
-            <sequence>
-                <element name="testValue" minOccurs="0" type="xsd:anyType"/>
-            </sequence>
-        </complexType>
-    </element>
-    <element name="testOM5">
-        <complexType>
-            <sequence>
-                <element name="testValue" nillable="true" maxOccurs="unbounded" type="xsd:anyType"/>
-            </sequence>
-        </complexType>
-    </element>
-    <element name="testOM6">
-        <complexType>
-            <sequence>
-                <element name="testValue" nillable="true" type="xsd:anyType"/>
-            </sequence>
-        </complexType>
-    </element>
-    <element name="testOM7">
-        <complexType>
-            <sequence>
-                <element name="testValue" maxOccurs="unbounded" type="xsd:anyType"/>
-            </sequence>
-        </complexType>
-    </element>
-    <element name="testOM8">
-        <complexType>
-            <sequence>
-                <element name="testValue" type="xsd:anyType"/>
-            </sequence>
-        </complexType>
-    </element>
-
     <!-- generating elemens for any elements -->
     <element name="testAny1">
         <complexType>
@@ -326,6 +267,38 @@
         <complexType>
             <sequence>
                 <any/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <!-- test string variables -->
+    <element name="OuterTestString1" type="xsd:string" nillable="true"/>
+    <element name="OuterTestString2" type="xsd:string"/>
+
+    <!-- test primitive variables -->
+    <element name="OuterTestInt1" type="xsd:int" nillable="true"/>
+    <element name="OuterTestInt2" type="xsd:int"/>
+
+    <!-- test xsd:any variables -->
+    <element name="OuterTestAnyType1" type="xsd:anyType" nillable="true"/>
+    <element name="OuterTestAnyType2" type="xsd:anyType"/>
+
+    <!-- test xsd:any variables -->
+    <element name="OuterTestBookInformation1" type="tns:BookInformation" nillable="true"/>
+    <element name="OuterTestBookInformation2" type="tns:BookInformation"/>
+
+    <!-- complext elements -->
+    <element name="OuterTestComplex1" nillable="true">
+        <complexType>
+            <sequence>
+                <element name="testValue" type="xsd:string"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="OuterTestComplex2">
+        <complexType>
+            <sequence>
+                <element name="testValue" type="xsd:string"/>
             </sequence>
         </complexType>
     </element>
