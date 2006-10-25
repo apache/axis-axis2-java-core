@@ -117,6 +117,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 	public Message marshalResponse(Object returnObject, Object[] holderObjects)throws ClassNotFoundException, JAXBException, MessageException, JAXBWrapperException, XMLStreamException, InstantiationException, IllegalAccessException {
 		Class wrapperClazz = null;
 		String wrapperClazzName = operationDesc.getResponseWrapperClassName();
+		String wrapperXMLElementName = operationDesc.getRequestWrapperLocalName();
 		String wrapperTNS = operationDesc.getResponseWrapperTargetNamespace();
 		String webResult = operationDesc.getWebResultName();
 		//TODO Move this to Operation Description.
@@ -159,7 +160,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
         Object wrapper = wrapperTool.wrap(wrapperClazz, 
         		wrapperClazzName, mps);
         
-		Message message = createMessage(wrapper, wrapperClazz, wrapperClazzName, wrapperTNS);
+		Message message = createMessage(wrapper, wrapperClazz, wrapperXMLElementName, wrapperTNS);
 		return message;
 		
 	}

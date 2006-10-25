@@ -27,6 +27,7 @@ import javax.xml.ws.Holder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.DocLitBareMethodMarshaller;
@@ -67,7 +68,8 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		int index =0;
 		//Remove everything except holders from method parameters and input arguments.
 		for(MethodParameter mp: mps){
-			if(!mp.isHolder()){
+			ParameterDescription pd = mp.getParameterDescription();
+			if(!pd.isHolderType()){
 				holdermps.remove(mp);
 				holderArgs.remove(mp.getValue());
 			}
@@ -121,8 +123,8 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
             log.debug("reading input method parameters");
         }
 		for(MethodParameter mp:mps){
-			
-			if(mp.isHolder()){
+			ParameterDescription pd = mp.getParameterDescription();
+			if(pd.isHolderType()){
 	        	Object holderObject = mp.getValue();
 	        	objectList.add(holderObject);
 	        }
@@ -152,7 +154,8 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		
 		//Remove everything except holders
 		for(MethodParameter mp: mps){
-			if(!mp.isHolder()){
+			ParameterDescription pd = mp.getParameterDescription();
+			if(!pd.isHolderType()){
 				holdersNreturnObject.remove(mp);
 			}
 		}
@@ -169,7 +172,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		}
 		else if(holdersNreturnObject.size() == 0 && !wrapperClazz.getName().equals("void")){
 			//No holders but a return type example --> public ReturnType someMethod()
-			MethodParameter mp = new MethodParameter(wrapperClazzName,returnObject,null, wrapperClazz, wrapperClazz, false, wrapperTNS, false);
+			MethodParameter mp = new MethodParameter(wrapperClazzName,wrapperTNS, wrapperClazz, returnObject);
 			holdersNreturnObject.add(mp);
 			message = createMessage(holdersNreturnObject);
 			
@@ -184,7 +187,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 			//Note that SEI implementation will wrap return type in a holder if method has a return type and input param as holder.
 			//WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject property, if wsdl schema forces a holder and a return type.
 			
-			MethodParameter mp = new MethodParameter(wrapperClazzName,returnObject,null, wrapperClazz, wrapperClazz, false, wrapperTNS, false);
+			MethodParameter mp = new MethodParameter(wrapperClazzName,wrapperTNS, wrapperClazz, returnObject);
 			holdersNreturnObject.add(mp);
 			message = createMessage(holdersNreturnObject);
 			
@@ -206,7 +209,8 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		if(mps.size()> SIZE){
 			int numberOfBodyPart =0;
 			for(MethodParameter mp:mps){
-				if(!mp.isHeader()){
+				ParameterDescription pd = mp.getParameterDescription();
+				if(!pd.getWebParamHeader()){
 					numberOfBodyPart++;
 				}
 			}

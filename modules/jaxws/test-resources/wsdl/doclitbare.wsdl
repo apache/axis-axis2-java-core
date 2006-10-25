@@ -117,7 +117,7 @@
 		</wsdl:operation>
 		
 		<wsdl:operation name="twoWaySimple">
-			<soap:operation soapAction="http://doclitbare.sample.test.org/twoWaySimple" />
+			<soap:operation soapAction="twoWaySimple" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>

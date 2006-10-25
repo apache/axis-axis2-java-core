@@ -18,6 +18,8 @@ package org.apache.axis2.jaxws.marshaller;
 
 import javax.jws.WebParam.Mode;
 
+import org.apache.axis2.jaxws.description.ParameterDescription;
+
 
 /**
  * Stores Method Parameter as Name and Value. Method Parameter can be an input Method Parameter or output Method parameter.
@@ -25,67 +27,60 @@ import javax.jws.WebParam.Mode;
  * output Method Parameter is a return parameter from a java Method.
  */
 public class MethodParameter {
+	private ParameterDescription 	parameterDescription = null;
+	private String 					webResultName = null;
+	private String 					webResultTNS = null;
+	private Class 					webResultType = null;
+	private boolean 				isWebResult = false;
+	private Object 					value = null;
 	
-	private String name = null;
-	private Object value = null;
-	private Mode mode = null;
-	private Class type = null;
-	private Class actualType = null; //If parameter is a GenericType, this property stores the actual Type
-	private boolean isHolder = false;
-	private String targetNamespace = null;
-	private boolean isHeader = false;
-	
-	public MethodParameter(String name, Object value, Mode mode) {
+	public MethodParameter(ParameterDescription parameterDescription, Object value){
 		super();
-		this.name = name;
+		this.parameterDescription = parameterDescription;
 		this.value = value;
-		this.mode = mode;
 	}
-	public MethodParameter(String name, Object value, Mode mode, Class type, Class actualType, boolean isHolder, String targetNamespace, boolean isHeader) {
-		this(name,value,mode);
-		this.type = type;
-		this.isHolder = isHolder;
-		this.actualType = actualType;
-		this.targetNamespace = targetNamespace;
-		this.isHeader = isHeader;
+	
+	public MethodParameter(String webResultName, String webResultTNS, Class webResultType, Object value) {
+		super();
+		this.parameterDescription = null;
+		this.webResultName = webResultName;
+		this.webResultTNS = webResultTNS;
+		this.webResultType = webResultType;
+		this.value = value;
+		this.isWebResult = true;
 	}
-	public String getName() {
-		return name;
+
+	public ParameterDescription getParameterDescription() {
+		return parameterDescription;
+	}
+	public void setParameterDescription(ParameterDescription parameterDescription) {
+		this.parameterDescription = parameterDescription;
+	}
+	public String getWebResultName() {
+		return webResultName;
+	}
+	public void setWebResultName(String webResultName) {
+		this.webResultName = webResultName;
+	}
+	public boolean isWebResult() {
+		return isWebResult;
+	}
+	public void setWebResult(boolean isWebResult) {
+		this.isWebResult = isWebResult;
 	}
 	public Object getValue() {
 		return value;
 	}
-	public Mode getMode() {
-		return mode;
+	public String getWebResultTNS() {
+		return webResultTNS;
 	}
-	public Class getType() {
-		return type;
+	public void setWebResultTNS(String webResultTNS) {
+		this.webResultTNS = webResultTNS;
 	}
-	public void setType(Class type) {
-		this.type = type;
+	public Class getWebResultType() {
+		return webResultType;
 	}
-	public Class getActualType() {
-		return this.actualType;
-	}
-	public void setActualType(Class actualType) {
-		this.actualType = actualType;
-	}
-	public boolean isHolder() {
-		return isHolder;
-	}
-	public void setHolder(boolean isHolder) {
-		this.isHolder = isHolder;
-	}
-	public String getTargetNamespace() {
-		return targetNamespace;
-	}
-	public void setTargetNamespace(String targetNamespace) {
-		this.targetNamespace = targetNamespace;
-	}
-	public boolean isHeader() {
-		return isHeader;
-	}
-	public void setHeader(boolean isHeader) {
-		this.isHeader = isHeader;
+	public void setWebResultType(Class webResultType) {
+		this.webResultType = webResultType;
 	}
 }

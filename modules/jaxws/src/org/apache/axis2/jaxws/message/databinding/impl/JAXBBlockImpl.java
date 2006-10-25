@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
@@ -40,6 +41,7 @@ import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
 import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentUnmarshaller;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,6 +90,8 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 			JAXBContext jc = (JAXBContext) busContext;
             Unmarshaller u = jc.createUnmarshaller();
             
+             BlockContext blockContext = getBlockContext();
+            
             // If MTOM is enabled, add in the AttachmentUnmarshaller
             if (isMTOMEnabled()) {
                 if (log.isDebugEnabled()) 
@@ -100,10 +104,20 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 aum.setMessage(msg);
                 u.setAttachmentUnmarshaller(aum);
             }
-			
-			Object jaxb = u.unmarshal(reader);
-			setQName(getQName(jaxb, jc));
-			return jaxb;
+            //Read block context and determine if a declaredType is defined. If yes, then create JAXBElement and use that to create JAXB Object.
+            Class declaredType = null;
+			if(blockContext !=null){
+				declaredType = blockContext.getDeclareType();
+			}
+			if(declaredType == null){
+				Object jaxb = u.unmarshal(reader);
+				setQName(getQName(jaxb, jc));
+				return jaxb;
+			}else{
+				JAXBElement jaxbElement = u.unmarshal(reader, declaredType);
+				Object jaxb = jaxbElement.getValue();
+				return jaxb;
+			}
 		} catch(JAXBException je) {
 			throw ExceptionFactory.makeMessageException(je);
 		}

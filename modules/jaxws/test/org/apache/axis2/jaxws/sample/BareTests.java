@@ -22,11 +22,10 @@ public class BareTests extends TestCase {
 			BareDocLitService service = new BareDocLitService();
 			DocLitBarePortType proxy = service.getBareDocLitPort();
 			 BindingProvider p = (BindingProvider) proxy;
-			 p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://localhost:7777/axis2/services/BareDocLitService");
-	            /*p.getRequestContext().put(
-	                    BindingProvider.SOAPACTION_URI_PROPERTY, new Boolean(true));
 	            p.getRequestContext().put(
-	                    BindingProvider.SOAPACTION_URI_PROPERTY, "twoWaySimple");*/
+	                    BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+	            p.getRequestContext().put(
+	                    BindingProvider.SOAPACTION_URI_PROPERTY, "twoWaySimple");
 			String response = proxy.twoWaySimple(10);
 			System.out.println("Sync Response =" + response);
 			System.out.println("------------------------------");

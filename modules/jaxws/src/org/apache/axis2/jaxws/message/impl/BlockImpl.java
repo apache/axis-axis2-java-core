@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLPart;
+import org.apache.axis2.jaxws.message.databinding.impl.BlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
@@ -65,6 +66,7 @@ public abstract class BlockImpl implements Block {
 	private BlockFactory factory;
 	private boolean consumed = false;
     private XMLPart parent;
+    private BlockContext blockContext;
 	
 	/**
 	 * A Block has the following components
@@ -99,6 +101,14 @@ public abstract class BlockImpl implements Block {
 	 */
 	public BlockFactory getBlockFactory() {
 		return factory;
+	}
+	
+	public BlockContext getBlockContext() {
+		return blockContext;
+	}
+
+	public void setBlockContext(BlockContext blockContext) {
+		this.blockContext = blockContext;
 	}
 
 	/* (non-Javadoc)

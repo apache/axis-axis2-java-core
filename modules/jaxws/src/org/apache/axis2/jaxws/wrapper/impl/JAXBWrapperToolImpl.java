@@ -36,6 +36,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
@@ -123,7 +124,13 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 		ArrayList<String> nameList = new ArrayList<String>();
 		Map<String, Object> objectList = new WeakHashMap<String, Object>();
 		for(MethodParameter mp:mps){
-			String name = mp.getName();
+			ParameterDescription pd = mp.getParameterDescription();
+			String name = null;
+			if(!mp.isWebResult()){
+				name = pd.getWebParamName();
+			}else{
+				name = mp.getWebResultName();
+			}
 			Object object = mp.getValue();
 			
 			nameList.add(name);
