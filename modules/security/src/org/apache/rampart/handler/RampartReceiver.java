@@ -25,6 +25,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.rampart.RampartEngine;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.util.Axis2Util;
@@ -62,10 +63,10 @@ public class RampartReceiver implements Handler {
         this.handlerDesc = handlerdesc;
     }
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
         
         if (!msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
-            return;
+          return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
         }
         
         RampartEngine engine = new RampartEngine();
@@ -89,7 +90,7 @@ public class RampartReceiver implements Handler {
         }
         
         if(wsResult == null) {
-            return;
+          return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
         }
         
         Vector results = null;
@@ -123,6 +124,7 @@ public class RampartReceiver implements Handler {
         }
 
         headerBlock.setProcessed();
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
 
     }
 

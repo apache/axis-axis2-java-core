@@ -28,6 +28,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
@@ -71,7 +72,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
      * @param msgContext
      * @throws AxisFault
      */
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
 
         // Check for the REST behaviour, if you desire rest beahaviour
         // put a <parameter name="doREST" value="true"/> at the axis2.xml
@@ -117,6 +118,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
             msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
                     Constants.VALUE_TRUE);
         }
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
     }
 
     protected abstract OutputStream openTheConnection(EndpointReference epr, MessageContext msgctx)

@@ -19,6 +19,7 @@ package org.apache.axis2.handlers.soapmonitor;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.soapmonitor.servlet.SOAPMonitorConstants;
 import org.apache.axis2.soapmonitor.servlet.SOAPMonitorService;
@@ -51,7 +52,7 @@ public class SOAPMonitorHandler extends AbstractHandler {
     /**
      * Process and SOAP message
      */
-    public void invoke(MessageContext messageContext) throws AxisFault {
+    public InvocationProcessingInstruction invoke(MessageContext messageContext) throws AxisFault {
 
         EndpointReference ref = null;
 
@@ -102,6 +103,7 @@ public class SOAPMonitorHandler extends AbstractHandler {
         if ((id != null) && (soap != null)) {
             SOAPMonitorService.publishMessage(id, type, target, soap);
         }
+        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
     }
 
     /**

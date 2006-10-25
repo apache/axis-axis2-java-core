@@ -350,13 +350,17 @@ public class Phase implements Handler {
      * invokes all the handlers in this Phase
      *
      * @param msgctx
+     * @return An InvocationProcessingInstruction that indicates what
+     *         the next step in the message processing should be.
      * @throws org.apache.axis2.AxisFault
      */
-    public final void invoke(MessageContext msgctx) throws AxisFault {
+    public final InvocationProcessingInstruction invoke(MessageContext msgctx) throws AxisFault {
         boolean isDebugEnabled = log.isDebugEnabled();
         if (isDebugEnabled) {
             log.debug("Checking pre-condition for Phase \"" + phaseName + "\"");
         }
+        
+        InvocationProcessingInstruction pi = InvocationProcessingInstruction.CONTINUE_PROCESSING;
 
         int currentIndex = msgctx.getCurrentPhaseIndex();
 
@@ -374,10 +378,11 @@ public class Phase implements Handler {
             if (isDebugEnabled) {
                 log.debug("Invoking Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
             }
-            handler.invoke(msgctx);
+            pi = handler.invoke(msgctx);
 
-            if (msgctx.isPaused()) {
-                return;
+            if (!pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+            {
+              return pi;
             }
 
             currentIndex++;
@@ -390,6 +395,7 @@ public class Phase implements Handler {
 
         msgctx.setCurrentPhaseIndex(0);
         checkPostConditions(msgctx);
+        return pi;
     }
 
     public String toString() {

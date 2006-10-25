@@ -51,9 +51,11 @@ public interface Handler {
      *
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.
+     * @return An InvocationProcessingInstruction that indicates what
+     *         the next step in the message processing should be.
      * @throws AxisFault if the handler encounters an error
      */
-    public void invoke(MessageContext msgContext) throws AxisFault;
+    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault;
 
     /**
      * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler.
