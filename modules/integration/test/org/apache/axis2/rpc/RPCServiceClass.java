@@ -123,14 +123,14 @@ public class RPCServiceClass {
     }
 
     public MyBean beanOM(OMElement element, int val) throws AxisFault {
-        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSupplier());
+        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSupplier(), null);
         bean.setAge(val);
         return bean;
     }
 
     public boolean omrefs(OMElement element, OMElement element2) throws AxisFault {
-        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSupplier());
-        MyBean bean2 = (MyBean) BeanUtil.deserialize(MyBean.class, element2 , new DefaultObjectSupplier());
+        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSupplier(), null);
+        MyBean bean2 = (MyBean) BeanUtil.deserialize(MyBean.class, element2 , new DefaultObjectSupplier(), null);
         return bean2 != null && bean != null;
     }
 
@@ -169,7 +169,7 @@ public class RPCServiceClass {
         ArrayList tems = new ArrayList();
         for (int i = 0; i < pss.size(); i++) {
             OMElement omElement = (OMElement) pss.get(i);
-            Person p = (Person) BeanUtil.deserialize(Person.class, omElement  , new DefaultObjectSupplier());
+            Person p = (Person) BeanUtil.deserialize(Person.class, omElement  , new DefaultObjectSupplier(), null);
             tems.add(p);
         }
         com.setPersons(tems);
