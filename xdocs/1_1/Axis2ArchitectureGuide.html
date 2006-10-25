@@ -137,7 +137,7 @@ identified requirements:</p>
 <p>Apart from the above functionalities, performance in terms of memory and
 speed is a major consideration for Axis2. Axis2 Core Architecture is built on
 three specifications- WSDL, SOAP and WS-Addressing. Other specifications like
-JAX-RP, SAAJ &amp; WS-Policy are layered on top of the Core Architecture.</p>
+JAX-RPC, SAAJ &amp; WS-Policy are layered on top of the Core Architecture.</p>
 
 <h2><a name="thearchi">Axis2 Architecture</a></h2>
 Axis2 architecture lays out some principals to preserve the uniformity. They
@@ -167,7 +167,7 @@ modules/architecture.</p>
     is the most important and most complex task. The efficiency of this is
     the single most important factor that decides the performance. It makes
     sense to delegate this task to a separate sub-project itself, under Web
-    service project, allowing that sub-project (AXIOM) to provide a simple
+    services project, allowing that sub-project (AXIOM) to provide a simple
     API for SOAP and XML info-set while hiding the complexities of the
     efficient XML processing within the implementation.</p>
   </li>
@@ -186,7 +186,7 @@ modules/architecture.</p>
   <li><p><a href="#bmTransports">Transports</a>- Axis2 define a transport
     framework that enables the user to use different transports. The
     transports fit into specific places in the SOAP processing model. The
-    implementation provides a few common transports and the user may write
+    implementation provides a few common transports and the user may write or plug-in
     new ones if and when it is needed.</p>
   </li>
 </ul>
