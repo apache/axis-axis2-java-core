@@ -1239,6 +1239,10 @@
             <property name="modules" value="*"/>
         </define:tag>
         <define:tag name="copy-release-docs">
+
+            <filter token="axisVersion" value="${pom.currentVersion}"/>
+            <filter token="TODAY" value="${TODAY}"/>
+
             <ant:copy toFile="${toDir}/README.txt" filtering="on">
                 <ant:fileset file="${readmeFile}"/>
             </ant:copy>
@@ -1250,5 +1254,6 @@
             </ant:copy>
         </define:tag>
     </define:taglib>
+
 </project>
 
