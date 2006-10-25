@@ -72,6 +72,12 @@ public class BeanUtil {
             } else {
                 throw new AxisFault("No service class found , exception from JAM");
             }
+            QName elemntNameSpace = null;
+            if (typeTable != null) {
+                QName qNamefortheType = typeTable.getQNamefortheType(beanObject.getClass().getName());
+                elemntNameSpace = new QName(qNamefortheType.getNamespaceURI(),
+                        "elementName");
+            }
 
             // properties from JAM
             JProperty properties [] = jClass.getDeclaredProperties();
@@ -99,8 +105,9 @@ public class BeanUtil {
                 if (SimpleTypeMapper.isSimpleType(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             null);
-                    if (typeTable != null) {
-                        object.add(typeTable.getQNamefortheType(ptype.getName()));
+                    if (elemntNameSpace != null) {
+                        object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                propDesc.getName(), elemntNameSpace.getPrefix()));
                     } else {
                         object.add(new QName(beanName.getNamespaceURI(),
                                 propDesc.getName(), beanName.getPrefix()));
@@ -112,8 +119,9 @@ public class BeanUtil {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
-                            if (typeTable != null) {
-                                object.add(typeTable.getQNamefortheType(ptype.getName()));
+                            if (elemntNameSpace != null) {
+                                object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                        propDesc.getName(), elemntNameSpace.getPrefix()));
                             } else {
                                 object.add(new QName(beanName.getNamespaceURI(),
                                         propDesc.getName(), beanName.getPrefix()));
@@ -123,8 +131,9 @@ public class BeanUtil {
                     } else {
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
-                            if (typeTable != null) {
-                                object.add(typeTable.getQNamefortheType(ptype.getName()));
+                            if (elemntNameSpace != null) {
+                                object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                        propDesc.getName(), elemntNameSpace.getPrefix()));
                             } else {
                                 object.add(new QName(beanName.getNamespaceURI(),
                                         propDesc.getName(), beanName.getPrefix()));
@@ -144,16 +153,18 @@ public class BeanUtil {
                         for (int j = 0; j < objList.size(); j++) {
                             Object o = objList.get(j);
                             if (SimpleTypeMapper.isSimpleType(o)) {
-                                if (typeTable != null) {
-                                    object.add(typeTable.getQNamefortheType(ptype.getName()));
+                                if (elemntNameSpace != null) {
+                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                            propDesc.getName(), elemntNameSpace.getPrefix()));
                                 } else {
                                     object.add(new QName(beanName.getNamespaceURI(),
                                             propDesc.getName(), beanName.getPrefix()));
                                 }
                                 object.add(o);
                             } else {
-                                if (typeTable != null) {
-                                    object.add(typeTable.getQNamefortheType(ptype.getName()));
+                                if (elemntNameSpace != null) {
+                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                            propDesc.getName(), elemntNameSpace.getPrefix()));
                                 } else {
                                     object.add(new QName(beanName.getNamespaceURI(),
                                             propDesc.getName(), beanName.getPrefix()));
@@ -165,7 +176,9 @@ public class BeanUtil {
                     }
                 } else {
                     if (typeTable != null) {
-                        object.add(typeTable.getQNamefortheType(ptype.getName()));
+                        QName qNamefortheType = typeTable.getQNamefortheType(ptype.getName());
+                        object.add(new QName(qNamefortheType.getNamespaceURI(),
+                                propDesc.getName(), qNamefortheType.getPrefix()));
                     } else {
                         object.add(new QName(beanName.getNamespaceURI(),
                                 propDesc.getName(), beanName.getPrefix()));
@@ -198,7 +211,7 @@ public class BeanUtil {
             className = className.substring(className.lastIndexOf('.') + 1,
                     className.length());
         }
-        return getPullParser(beanObject, new QName(className) , null);
+        return getPullParser(beanObject, new QName(className), null);
     }
 
     public static Object deserialize(Class beanClass,
