@@ -577,19 +577,22 @@ public class AxisService extends AxisDescription {
                 printWSDLError(out);
             }
         } else {
-            String[] eprArray = getEPRs();
+            String[] eprArray = getEPRs(requestIP);
             getWSDL(out, eprArray, servicePath);
         }
     }
 
     public String[] getEPRs() throws AxisFault {
-        //TODO: Chinthaka Handle the REST EPRs
         String requestIP;
         try {
             requestIP = HttpUtils.getIpAddress();
         } catch (SocketException e) {
             throw new AxisFault("Cannot get local IP address", e);
         }
+        return getEPRs(requestIP);
+    }
+
+    private String[] getEPRs(String requestIP) throws AxisFault {
         AxisConfiguration axisConfig = getAxisConfiguration();
         ArrayList eprList = new ArrayList();
         if (enableAllTransports) {
