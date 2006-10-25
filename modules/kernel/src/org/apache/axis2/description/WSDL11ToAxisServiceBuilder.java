@@ -534,13 +534,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private Operation findOperation(PortType portType, BindingOperation wsdl4jBindingOperation) {
         Operation op = wsdl4jBindingOperation
                 .getOperation();
-        String input = op.getInput().getName();
-        String output = op.getOutput().getName();
-        if(":none".equals(input)) {
-            input = null;
+        String input = null;
+        if(op != null && op.getInput() != null) {
+            input = op.getInput().getName();
+            if(":none".equals(input)) {
+                input = null;
+            }
         }
-        if(":none".equals(output)) {
-            output = null;
+        String output = null;
+        if(op != null && op.getOutput() != null) {
+            output = op.getOutput().getName();
+            if(":none".equals(output)) {
+                output = null;
+            }
         }
         Operation op2 = portType.getOperation(op.getName(), input, output);
         return ((op2 == null) ? op : op2);
