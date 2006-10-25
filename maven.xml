@@ -1094,17 +1094,35 @@
     </goal>
 	
     <!-- ================================================================ -->
-    <!--- Create Apache Rampart Release Artifacts -->
+    <!--- Create Apache Rampart Release Artifacts                         -->
     <!-- ================================================================ -->
     <goal name="rampart-release">
+    	
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Rampart Release</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:property name="destdir" value="target/rampart"/>
-        <ant:property name="moddir" value="target/rampart/modules"/>
-        <ant:property name="libdir" value="target/rampart/lib"/>
-        <ant:property name="samplesdir" value="target/rampart/samples"/>
+		<ant:mkdir dir="target/dist/rampart/" />
+
+        <attainGoal name="rampart-dist-bin"/>
+    	
+        <attainGoal name="rampart-dist-src"/>
+    	
+        <!--<attainGoal name="rampart-dist-doc"/> -->
+    </goal>
+	
+    <!-- ================================================================ -->
+    <!--- Rampart Binary Distro                                           -->
+    <!-- ================================================================ -->
+	<goal name="rampart-dist-bin">
+
+		<ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>| Creating: Rampart Binary Distribution</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
+
+        <ant:property name="moddir" value="target/temp-rampart-bin/rampart-${rampart_version}/modules"/>
+        <ant:property name="libdir" value="target/temp-rampart-bin/rampart-${rampart_version}/lib"/>
+        <ant:property name="samplesdir" value="target/temp-rampart-bin/rampart-${rampart_version}/samples"/>
         <ant:mkdir dir="${moddir}"/>
         <ant:mkdir dir="${libdir}"/>
         <ant:mkdir dir="${samplesdir}"/>
@@ -1142,9 +1160,76 @@
         <ant:copy toDir="${destdir}">
             <ant:fileset dir="modules/security/release-docs"/>
         </ant:copy>
-    	
-    </goal>
+		
+        <ant:zip file="target/dist/rampart/rampart-${rampart_version}.zip">
+            <ant:fileset dir="target/temp-rampart-bin/"/>
+        </ant:zip>
+        <ant:delete dir="target/temp-rampart-bin"/>
+	</goal>
+	
+    <!-- ================================================================ -->
+    <!--- Rampart Source Distro                                           -->
+    <!-- ================================================================ -->
+	<goal name="rampart-dist-src">
+        
+        <ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>| Creating: Rampart Source Distribution</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
 
+		<mkdir dir="target/temp-rampart-src"/>
+
+        <ant:mkdir dir="target/temp-rampart-src/rampart-src-${rampart_version}/rampart/src"/>
+        <ant:mkdir dir="target/temp-rampart-src/rampart-src-${rampart_version}/rahas/src"/>
+        <ant:mkdir dir="target/temp-rampart-src/rampart-src-${rampart_version}/secpolicy/src"/>
+
+        <ant:copy toDir="target/temp-rampart-src/rampart-src-${rampart_version}/rampart/">
+            <ant:fileset dir="modules/security">
+                <ant:include name="src/**"/>
+                <ant:exclude name="**/target/**"/>
+                <ant:exclude name="**/*class*/**"/>
+                <ant:exclude name="**/.svn/**"/>
+                <ant:exclude name="**/bin/**"/>
+                <ant:exclude name="**/*.log"/>
+                <ant:exclude name=".*"/>
+                <ant:exclude name="**/*.license"/>
+                <ant:exclude name="**/*.iml"/>
+            </ant:fileset>
+        	</ant:copy>
+        <ant:copy toDir="target/temp-rampart-src/rampart-src-${rampart_version}/rahas/">
+            <ant:fileset dir="modules/rahas">
+                <ant:include name="src/**"/>
+                <ant:exclude name="**/target/**"/>
+                <ant:exclude name="**/*class*/**"/>
+                <ant:exclude name="**/.svn/**"/>
+                <ant:exclude name="**/bin/**"/>
+                <ant:exclude name="**/*.log"/>
+                <ant:exclude name=".*"/>
+                <ant:exclude name="**/*.license"/>
+                <ant:exclude name="**/*.iml"/>
+            </ant:fileset>
+        	</ant:copy>
+        <ant:copy toDir="target/temp-rampart-src/rampart-src-${rampart_version}/secpolicy/">
+            <ant:fileset dir="modules/secpolicy">
+                <ant:include name="src/**"/>
+                <ant:exclude name="**/target/**"/>
+                <ant:exclude name="**/*class*/**"/>
+                <ant:exclude name="**/.svn/**"/>
+                <ant:exclude name="**/bin/**"/>
+                <ant:exclude name="**/*.log"/>
+                <ant:exclude name=".*"/>
+                <ant:exclude name="**/*.license"/>
+                <ant:exclude name="**/*.iml"/>
+            </ant:fileset>
+        </ant:copy>
+
+		<!-- TODO: Create and copy release documents :release-notes.html, README.txt, LICENCE.txt -->
+
+        <ant:zip file="target/dist/rampart/rampart-${rampart_version}-src.zip">
+            <ant:fileset dir="target/temp-rampart-src/"/>
+        </ant:zip>
+        <ant:delete dir="target/temp-rampart-src"/>
+    </goal>
+	
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
             <!--
