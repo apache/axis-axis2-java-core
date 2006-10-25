@@ -1096,7 +1096,7 @@
     <!-- ================================================================ -->
     <!--- Create Apache Rampart Release Artifacts                         -->
     <!-- ================================================================ -->
-    <goal name="rampart-release">
+    <goal name="rampart-release" prereqs="jar">
     	
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Rampart Release</ant:echo>
