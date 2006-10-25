@@ -1890,7 +1890,7 @@
                                                         reader.next();
                                                         if (reader.isEndElement()) {
                                                             // we have two countinuos end elements
-                                                            loopDone1 = true;
+                                                           <xsl:value-of select="$loopBoolName"/> = true;
                                                         }
 
                                                  }else if (javax.xml.stream.XMLStreamConstants.END_DOCUMENT == event){

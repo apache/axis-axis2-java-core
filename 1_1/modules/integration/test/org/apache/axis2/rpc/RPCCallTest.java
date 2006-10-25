@@ -129,7 +129,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
         args.add("159");
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement(), new DefaultObjectSupplier());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement(), new DefaultObjectSupplier(), null);
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -173,7 +173,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class,
-                response.getFirstElement(), new DefaultObjectSupplier());
+                response.getFirstElement(), new DefaultObjectSupplier(), null);
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 100);
@@ -205,7 +205,7 @@ public class RPCCallTest extends UtilServerBasedTestCase {
 
         OMElement response = sender.invokeBlocking(operationName, args.toArray());
         Mail resBean = (Mail) BeanUtil.deserialize(Mail.class, response.getFirstElement(),
-                new DefaultObjectSupplier());
+                new DefaultObjectSupplier(), null);
 //        MyBean resBean =(MyBean) new  BeanSerializer(MyBean.class,response).deserilze();
         assertNotNull(resBean);
         assertEquals(resBean.getBody(), "My Body");

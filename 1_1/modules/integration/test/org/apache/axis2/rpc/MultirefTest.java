@@ -351,7 +351,7 @@ public class MultirefTest extends TestCase {
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement() , new DefaultObjectSupplier());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement() , new DefaultObjectSupplier(), null);
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -411,7 +411,7 @@ public class MultirefTest extends TestCase {
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement()  , new DefaultObjectSupplier());
+        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement()  , new DefaultObjectSupplier(), null);
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -546,7 +546,7 @@ public class MultirefTest extends TestCase {
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
-        Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement()  , new DefaultObjectSupplier());
+        Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement()  , new DefaultObjectSupplier(), null);
         assertNotNull(emp);
     }
 

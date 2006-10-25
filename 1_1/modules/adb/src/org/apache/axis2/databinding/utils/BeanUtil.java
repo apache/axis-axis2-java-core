@@ -216,7 +216,8 @@ public class BeanUtil {
 
     public static Object deserialize(Class beanClass,
                                      OMElement beanElement,
-                                     ObjectSupplier objectSupplier)
+                                     ObjectSupplier objectSupplier,
+                                     String arrayLocalName)
             throws AxisFault {
         Object beanObj;
         try {
@@ -229,9 +230,12 @@ public class BeanUtil {
                     Object objValue = parts.next();
                     if (objValue instanceof OMElement) {
                         omElement = (OMElement) objValue;
+                        if (!arrayLocalName.equals(omElement.getLocalName())) {
+                            continue;
+                        }
                         Object obj = deserialize(arrayClassType,
                                 omElement,
-                                objectSupplier);
+                                objectSupplier, null);
                         if (obj != null) {
                             valueList.add(obj);
                         }
@@ -278,9 +282,10 @@ public class BeanUtil {
                             partObj = SimpleTypeMapper.getArrayList((OMElement)
                                     parts.getParent(), prty.getName());
                         } else if (parameters.isArray()) {
-                            partObj = deserialize(parameters, (OMElement) parts.getParent(), objectSupplier);
+                            partObj = deserialize(parameters, (OMElement) parts.getParent(),
+                                    objectSupplier, prty.getName());
                         } else {
-                            partObj = deserialize(parameters, parts, objectSupplier);
+                            partObj = deserialize(parameters, parts, objectSupplier, null);
                         }
                         Object [] parms = new Object[]{partObj};
                         prty.getWriteMethod().invoke(beanObj, parms);
@@ -346,7 +351,7 @@ public class BeanUtil {
                     } else {
                         partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
                         if (partObj == null) {
-                            partObj = deserialize(parameters, parts, objectSupplier);
+                            partObj = deserialize(parameters, parts, objectSupplier, null);
                         }
                     }
                     Object [] parms = new Object[]{partObj};
@@ -538,7 +543,7 @@ public class BeanUtil {
                 } else if (SimpleTypeMapper.isArrayList(classType)) {
                     return SimpleTypeMapper.getArrayList(omElement);
                 } else {
-                    return BeanUtil.deserialize(classType, omElement, objectSupplier);
+                    return BeanUtil.deserialize(classType, omElement, objectSupplier, null);
                 }
             }
         }
