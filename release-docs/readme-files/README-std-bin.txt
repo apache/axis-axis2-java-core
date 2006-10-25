@@ -1,6 +1,6 @@
 ======================================================
 Apache Axis2 @axisVersion@ build (@TODAY@)
-Standard Binary Release
+Binary Release
 
 http://ws.apache.org/axis2
 ------------------------------------------------------
@@ -22,11 +22,10 @@ The lib directory contains;
 
 5. All 3rd party distributable dependencies of the above jars
 
-The modules directory contains the deployable addressing
-module(addressing.mar)
+The repository/modules directory contains the deployable addressing
+module (addressing-@axisVersion@.mar)
 
-The samples directory contains all the Axis2 module samples
-& service samples.
+The samples directory contains all the Axis2 samples which demonstrates some of the key features of Axis2.
 
-(Please note that this does not include the other WS-* implementation modules, like WS-Security, that are being developed
+(Please note that this release does not include the other WS-* implementation modules, like WS-Security, that are being developed
  within Axis2. Those can be downloaded from http://ws.apache.org/axis2/modules/)

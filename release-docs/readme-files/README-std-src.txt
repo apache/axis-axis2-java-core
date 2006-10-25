@@ -1,6 +1,6 @@
 ======================================================
 Apache Axis2 @axisVersion@ build (@TODAY@)
-Standard Source Release
+Source Release
 
 http://ws.apache.org/axis2
 ------------------------------------------------------
