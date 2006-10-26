@@ -36,6 +36,9 @@ public class ImagePanel extends JPanel {
         ImageLayout customLayout = new ImageLayout();
         setLayout(customLayout);
 
+        java.net.URL resource = ImagePanel.class.getResource("/icons/asf-feather.png");
+        apachelogo = new ImageIcon(resource);
+
         lblImage = new JLabel(apachelogo);
         add(lblImage);
         lblImage.setBackground(Color.white);

@@ -1,13 +1,18 @@
 package org.apache.axis2.tools.idea;
 
 import org.apache.axis2.tools.bean.CodegenBean;
+import org.apache.axis2.util.URLProcessor;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import javax.swing.border.BevelBorder;
 import javax.xml.namespace.QName;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Collection;
 
 import com.intellij.openapi.module.Module;
 /*
@@ -64,6 +69,12 @@ public class SecondFrame extends JPanel implements ActionListener {
     ButtonGroup buttonGroup;
 
     ButtonGroup generationType;
+
+    PackageNameTableModel model;
+
+    JLabel lblPackageMapping;
+
+    JTable table;
 
     CodegenBean codegenBean;
     java.util.List serviceNameList;
@@ -170,7 +181,17 @@ public class SecondFrame extends JPanel implements ActionListener {
         all.addActionListener(this);
         add(all);
 
-        Dimension dim = new Dimension(450, 350);
+        JSeparator packageSep = new JSeparator(JSeparator.HORIZONTAL);
+        add(packageSep);
+
+        lblPackageMapping = new JLabel("Namespace to Package Mapping");
+        add(lblPackageMapping);
+
+        model = new PackageNameTableModel(new Object [1][2]);
+        table = new JTable(model);
+        add(new JScrollPane(table));
+
+        Dimension dim = new Dimension(450, 600);
         setSize(dim);
     }
 
@@ -181,6 +202,8 @@ public class SecondFrame extends JPanel implements ActionListener {
     }
 
     public void setStatus(){
+        loadNamespaces(codegenBean.getDefinitionNamespaceMap());
+        table.updateUI();
         txtPacakgeName.setText(codegenBean.packageFromTargetNamespace());
         cmbServiceName.removeAllItems();
         serviceNameList = codegenBean.getServiceList();
@@ -190,6 +213,34 @@ public class SecondFrame extends JPanel implements ActionListener {
         }
         cmbServiceName.setSelectedIndex(0);
     }
+
+    /**
+	 * Loads the namespaces
+	 * @param namespaceMap
+	 */
+	private void loadNamespaces(Collection namespaceMap){
+		Iterator namespaces = namespaceMap.iterator();
+        Object tableData [][] = new Object[namespaceMap.size()][2];
+        int i = 0;
+        while(namespaces.hasNext()){
+
+           String namespace = (String)namespaces.next();
+           tableData[i][0] = namespace;
+           tableData[i][1] = getPackageFromNamespace(namespace);
+           i++;
+        }
+
+        model.setTableData(tableData);
+
+
+    }
+
+    /**
+	 * get the package derived by  Namespace
+	 */
+	public String getPackageFromNamespace(String namespace){
+		return  URLProcessor.makePackageName(namespace);
+	}
 
     public void fillBean() {
         int index = cmbLan.getSelectedIndex();
@@ -253,7 +304,26 @@ public class SecondFrame extends JPanel implements ActionListener {
         codegenBean.setPackageName(txtPacakgeName.getText());
         codegenBean.setServiceName(cmbServiceName.getSelectedItem().toString());
         codegenBean.setServiceName(cmbPortName.getSelectedItem().toString());
+        codegenBean.setNamespace2packageList(getNs2PkgMapping());
     }
+
+    /**
+	 * get the package to namespace mappings
+	 * @return
+	 */
+	public String getNs2PkgMapping(){
+		String returnList="";
+		String packageValue;
+		for (int i=0;i<table.getRowCount();i++){
+			packageValue = (String)table.getValueAt(i,1);
+				returnList = returnList +
+				             ("".equals(returnList)?"":",") +
+				             (String)table.getValueAt(i,0)+ "=" + packageValue;
+
+
+		}
+		return "".equals(returnList)?null:returnList;
+	}
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -338,7 +408,7 @@ class SecondFrameLayout implements LayoutManager {
 
         Insets insets = parent.getInsets();
         dim.width = 575 + insets.left + insets.right;
-        dim.height = 500 + insets.top + insets.bottom;
+        dim.height = 600 + insets.top + insets.bottom;
 
         return dim;
     }
@@ -471,6 +541,23 @@ class SecondFrameLayout implements LayoutManager {
         c = parent.getComponent(21);
         if (c.isVisible()) {
             c.setBounds(insets.left + 8, insets.top + 310, 200, 24);
+        }
+
+        // JSeperator
+
+        c = parent.getComponent(22);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 337, 530, 2);
+        }
+
+        c = parent.getComponent(23);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 340, 250, 24);
+        }
+
+        c = parent.getComponent(24);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 8, insets.top + 370, 522, 85);
         }
 
 

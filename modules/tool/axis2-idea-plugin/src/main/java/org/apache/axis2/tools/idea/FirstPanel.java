@@ -61,7 +61,7 @@ public class FirstPanel extends JPanel implements ActionListener, MouseListener 
         btnBrowse.addActionListener(this);
 
 
-        Dimension dim = new Dimension(450, 400);
+        Dimension dim = new Dimension(450, 600);
         setSize(dim);
         fc.setFileFilter(new WSDLFileFilter());
 
@@ -181,7 +181,7 @@ class FirstPanelLayout implements LayoutManager {
 
         Insets insets = parent.getInsets();
         dim.width = 541 + insets.left + insets.right;
-        dim.height = 300 + insets.top + insets.bottom;
+        dim.height = 600 + insets.top + insets.bottom;
 
         return dim;
     }

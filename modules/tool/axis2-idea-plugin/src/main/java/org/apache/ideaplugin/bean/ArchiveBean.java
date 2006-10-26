@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -32,17 +33,66 @@ public class ArchiveBean {
 
     private boolean singleService = false;
     private boolean generetServiceDesc = false;
-    private File classLocation;
+    private ArrayList classLocation = new ArrayList();
+    private File classLoc;
     private ClassLoader classLoader;
     private String ServiceXML;
 
     public String fileSeparator = System.getProperty("file.separator");
 
-    private ArrayList libs;
-    private ArrayList wsdls;
+    private ArrayList libs = new ArrayList();
+    private ArrayList tempLibs = new ArrayList();
+    private ArrayList tempWsdls = new ArrayList();
+
+
+    private ArrayList wsdls = new ArrayList();
 
     private String outPath;
     private String archiveName;
+    private ArrayList servicelsit = new ArrayList();
+
+
+    public ArrayList getTempWsdls() {
+        return tempWsdls;
+    }
+
+    public void setTempWsdls(ArrayList tempWsdls) {
+        this.tempWsdls = tempWsdls;
+    }
+
+    public ArrayList getTempLibs() {
+        return tempLibs;
+    }
+
+    public void setTempLibs(ArrayList tempLibs) {
+        this.tempLibs = tempLibs;
+    }
+
+    public File getClassLoc() {
+        return classLoc;
+    }
+
+    public void setClassLoc(File classLoc) {
+        this.classLoc = classLoc;
+    }
+
+    public ArrayList getServicelsit() {
+        return servicelsit;
+    }
+
+    public void addToServicelsit(ServiceObj service) {
+        for (int count =0;count<servicelsit.size();count++)
+        {
+            if (((ServiceObj)servicelsit.get(count)).getServiceName().equalsIgnoreCase(service.getServiceName()))
+            {
+                servicelsit.remove(count);
+                servicelsit.add(service);
+                return;
+            }
+
+        }
+        servicelsit.add(service);
+    }
 
     public boolean isSingleService() {
         return singleService;
@@ -60,12 +110,12 @@ public class ArchiveBean {
         this.generetServiceDesc = generetServiceDesc;
     }
 
-    public File getClassLocation() {
+    public ArrayList getClassLocation() {
         return classLocation;
     }
 
-    public void setClassLocation(File classLocation) {
-        this.classLocation = classLocation;
+    public void addClassLocation(File classLocation) {
+        this.classLocation.add(classLocation);
     }
 
     public String getServiceXML() {
@@ -80,16 +130,16 @@ public class ArchiveBean {
         return libs;
     }
 
-    public void setLibs(ArrayList libs) {
-        this.libs = libs;
+    public void addLibs(ArrayList libs) {
+        this.libs.addAll(libs);
     }
 
     public ArrayList getWsdls() {
         return wsdls;
     }
 
-    public void setWsdls(ArrayList wsdls) {
-        this.wsdls = wsdls;
+    public void addWsdls(ArrayList wsdls) {
+        this.wsdls.addAll(wsdls);
     }
 
     public String getOutPath() {
@@ -108,14 +158,13 @@ public class ArchiveBean {
         this.archiveName = archiveName;
     }
 
-    public void finsh() {
+    public void finsh() throws Exception {
         //Creating out File
         try {
             File outFile = new File(getOutPath());
-            File tempfile = new File(outFile, "temp");
-            if (!tempfile.exists()) {
-                tempfile.mkdirs();
-            }
+            String time = Calendar.getInstance().getTime().toString().replace(':', '-');
+            File tempfile = new File(outFile, "temp-" + time);
+            tempfile.mkdir();
             //creating META-INF
             File metainf = new File(tempfile, "META-INF");
             if (!metainf.exists()) {
@@ -131,19 +180,24 @@ public class ArchiveBean {
 
             //Coping class files
             FileCopier fc = new FileCopier();
-            fc.copyFiles(getClassLocation(), tempfile, null);
+            for (int count=0;count<classLocation.size();count++)
+            fc.copyFiles((File)classLocation.get(count), tempfile, null);
 
             // Coping wsdl files
             File lib = new File(tempfile, "lib");
             if (!lib.exists()) {
                 lib.mkdir();
             }
+            if (libs!=null)
+            {
             for (int i = 0; i < libs.size(); i++) {
                 String libname = (String) libs.get(i);
                 fc.copyFiles(new File(libname), lib, null);
             }
+            }
 
             //coping wsdl files
+            if (wsdls!=null)
             for (int i = 0; i < wsdls.size(); i++) {
                 String libname = (String) wsdls.get(i);
                 fc.copyFiles(new File(libname), metainf, null);
@@ -158,12 +212,9 @@ public class ArchiveBean {
             //craeting the jar file
             deleteDir(tempfile);
 //
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 

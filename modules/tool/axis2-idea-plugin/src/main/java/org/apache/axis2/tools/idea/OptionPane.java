@@ -198,7 +198,7 @@ public class OptionPane extends JPanel implements ActionListener {
 
             Insets insets = parent.getInsets();
             dim.width = 565 + insets.left + insets.right;
-            dim.height = 300 + insets.top + insets.bottom;
+            dim.height = 600 + insets.top + insets.bottom;
 
             return dim;
         }

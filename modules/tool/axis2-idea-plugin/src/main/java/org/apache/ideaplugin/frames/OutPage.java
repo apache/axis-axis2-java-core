@@ -46,7 +46,6 @@ public class OutPage extends JPanel implements ObjectKeeper, ActionListener {
     public OutPage(ServiceArciveFrame parent) {
         this.parent = parent;
         OutPageLayout customLayout = new OutPageLayout();
-
         setFont(new Font("Helvetica", Font.PLAIN, 12));
         setLayout(customLayout);
 
@@ -56,7 +55,7 @@ public class OutPage extends JPanel implements ObjectKeeper, ActionListener {
         txtoutput = new JTextField(".");
         add(txtoutput);
 
-        butselect = new JButton("Select");
+        butselect = new JButton("Browse...");
         butselect.addActionListener(this);
         add(butselect);
 
@@ -157,7 +156,7 @@ class OutPageLayout implements LayoutManager {
         }
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 488, insets.top + 16, 72, 24);
+            c.setBounds(insets.left + 488, insets.top + 16, 90, 24);
         }
         c = parent.getComponent(3);
         if (c.isVisible()) {

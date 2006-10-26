@@ -60,7 +60,7 @@ public class XMLSelectionPage extends JPanel implements ObjectKeeper, ActionList
         txtService = new JTextField("");
         add(txtService);
 
-        butSelect = new JButton("Select");
+        butSelect = new JButton("Browse...");
         butSelect.addActionListener(this);
         add(butSelect);
 
@@ -70,23 +70,24 @@ public class XMLSelectionPage extends JPanel implements ObjectKeeper, ActionList
         txtclass = new JTextField("");
         add(txtclass);
 
-        bustSelectclss = new JButton("Select");
+        bustSelectclss = new JButton("Browse...");
         bustSelectclss.addActionListener(this);
         add(bustSelectclss);
 
         selectxml.setBounds(insets.left + 16, insets.top + 16, 168, 24);
         txtService.setBounds(insets.left + 192, insets.top + 16, 288, 24);
-        butSelect.setBounds(insets.left + 488, insets.top + 16, 72, 24);
+        butSelect.setBounds(insets.left + 488, insets.top + 16, 90, 24);
 
         selctclass.setBounds(insets.left + 16, insets.top + 45, 168, 24);
         txtclass.setBounds(insets.left + 192, insets.top + 45, 288, 24);
-        bustSelectclss.setBounds(insets.left + 488, insets.top + 45, 72, 24);
+        bustSelectclss.setBounds(insets.left + 488, insets.top + 45, 90, 24);
 
         setSize(getPreferredSize());
     }
 
     public void fillBean(ArchiveBean bean) {
-        bean.setClassLocation(file);
+        bean.addClassLocation(file);
+        bean.setClassLoc(file);
         bean.setServiceXML(value);
     }
 
@@ -104,9 +105,18 @@ public class XMLSelectionPage extends JPanel implements ObjectKeeper, ActionList
     }
 
     public JPanel getNext() {
+
+        ResourceChooser resourceChooser = new ResourceChooser(parent);
+        parent.setEnable(true,true,false,true);
+        resourceChooser.setPrivious(this);
+        return resourceChooser;
+
+
+        /*
         DescriptorFile disfile = new DescriptorFile(parent, value);
         disfile.setPrivious(this);
         return disfile;
+        */
     }
 
     //to keep a refernce to previous panel
@@ -126,9 +136,10 @@ public class XMLSelectionPage extends JPanel implements ObjectKeeper, ActionList
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 file = parent.fc.getSelectedFile();
                 txtclass.setText(file.getAbsolutePath());
+                if ((new File(txtService.getText())).isFile())
                 parent.setEnable(false, true, false, true);
             } else {
-                txtclass.setText("No File");
+                txtclass.setText("");
                 parent.setEnable(true, false, false, true);
             }
 
@@ -153,9 +164,10 @@ public class XMLSelectionPage extends JPanel implements ObjectKeeper, ActionList
                 } catch (IOException e1) {
                 }
                 txtService.setText(file.getAbsolutePath());
+                if ((new File(txtclass.getText())).isDirectory())
                 parent.setEnable(false, true, false, true);
             } else {
-                txtService.setText("No File");
+                txtService.setText("");
                 parent.setEnable(true, false, false, true);
             }
 

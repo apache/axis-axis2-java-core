@@ -91,6 +91,7 @@ public class FirstFrame extends JPanel implements ObjectKeeper {
     public JPanel getNext() {
         boolean singleservice = radioSingle.isSelected();
         boolean generateXML = radioGenerate.isSelected();
+        
         if (singleservice && generateXML) {
             parent.singleService = true;
             parent.generateServiceXML = true;
