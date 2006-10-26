@@ -297,6 +297,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         elt1.setMaxOccurs(Long.MAX_VALUE);
                         elt1.setMinOccurs(1);
                     }
+                    if (String.class.getName().equals(propertyName)) {
+                        elt1.setNillable(true);
+                    }
                 } else {
                     if (isArryType) {
                         generateSchema(property.getType().getArrayComponentType());
@@ -311,6 +314,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         elt1.setMaxOccurs(Long.MAX_VALUE);
                         elt1.setMinOccurs(1);
                     }
+                    elt1.setNillable(true);
 
                     if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
                             contains(typeTable.getComplexSchemaType(propertyName).getNamespaceURI())) {
@@ -373,8 +377,8 @@ public class SchemaGenerator implements Java2WSDLConstants {
         if (isArray) {
             elt1.setMaxOccurs(Long.MAX_VALUE);
             elt1.setMinOccurs(1);
-            elt1.setNillable(true);
         }
+        elt1.setNillable(true);
     }
 
     private XmlSchemaComplexType createSchemaTypeForMethodPart(String localPartName) {

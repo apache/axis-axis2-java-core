@@ -141,9 +141,14 @@ public class RPCUtil {
                                        MessageContext outMessage
     ) throws Exception {
         if (resObject == null) {
-            QName resName = new QName(service.getSchematargetNamespace(),
-                    RETURN_WRAPPER,
-                    service.getSchematargetNamespacePrefix());
+            QName resName;
+            if (service.isElementFormDefault()) {
+                resName = new QName(service.getSchematargetNamespace(),
+                        RETURN_WRAPPER,
+                        service.getSchematargetNamespacePrefix());
+            } else {
+                resName = new QName(RETURN_WRAPPER);
+            }
             XMLStreamReader xr = new NullXMLStreamReader(resName);
             StreamWrapper parser = new StreamWrapper(xr);
             StAXOMBuilder stAXOMBuilder =

@@ -86,7 +86,7 @@ public class RPCServiceClient extends ServiceClient {
      * @throws AxisFault
      */
 
-    public Object[]  invokeBlocking(QName opName, Object [] args, Object [] returnTypes) throws AxisFault {
+    public Object[]  invokeBlocking(QName opName, Object [] args, Class [] returnTypes) throws AxisFault {
         OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null);
         OMElement response;
         if (notNullService) {
