@@ -142,14 +142,17 @@ public class RPCUtil {
     ) throws Exception {
         if (resObject == null) {
             QName resName = new QName(service.getSchematargetNamespace(),
-                    method.getName() + "Response",
+                    RETURN_WRAPPER,
                     service.getSchematargetNamespacePrefix());
             XMLStreamReader xr = new NullXMLStreamReader(resName);
             StreamWrapper parser = new StreamWrapper(xr);
             StAXOMBuilder stAXOMBuilder =
                     OMXMLBuilderFactory.createStAXOMBuilder(
                             OMAbstractFactory.getSOAP11Factory(), parser);
-            OMElement bodyChild = stAXOMBuilder.getDocumentElement();
+            ns = fac.createOMNamespace(service.getSchematargetNamespace(),
+                    service.getSchematargetNamespacePrefix());
+            OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
+            bodyChild.addChild(stAXOMBuilder.getDocumentElement());
             envelope.getBody().addChild(bodyChild);
         } else {
             if (resObject instanceof Object[]) {
