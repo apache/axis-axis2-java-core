@@ -52,7 +52,7 @@
 			<copy file="${dependencies.dir}/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${dependencies.dir}/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${dependencies.dir}/axis2-rahas-${pom.currentVersion}.jar" todir="target/temp-mar/lib"/>
-
+			<copy file="${dependencies.dir}/axis2-secpolicy-${pom.currentVersion}.jar" todir="target/temp-mar/lib"/>
         </j:if>
 		<j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
 			<copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/temp-mar/lib"/>
@@ -64,7 +64,7 @@
 			<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${maven.repo.local}/org.apache.axis2/jars/axis2-rahas-${pom.currentVersion}.jar" todir="target/temp-mar/lib"/>
-
+			<copy file="${maven.repo.local}/org.apache.axis2/jars/axis2-secpolicy-${pom.currentVersion}.jar" todir="target/temp-mar/lib"/>
         </j:if>
 		
         <copy file="src/META-INF/module.xml"
