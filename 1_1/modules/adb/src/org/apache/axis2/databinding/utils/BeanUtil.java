@@ -25,6 +25,7 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.engine.ObjectSupplier;
@@ -73,6 +74,13 @@ public class BeanUtil {
                 throw new AxisFault("No service class found , exception from JAM");
             }
             QName elemntNameSpace = null;
+            if (typeTable == null) {
+                MessageContext currentMessageContext = MessageContext.getCurrentMessageContext();
+                if (currentMessageContext != null) {
+                    typeTable = currentMessageContext.
+                            getAxisService().getTypeTable();
+                }
+            }
             if (typeTable != null) {
                 QName qNamefortheType = typeTable.getQNamefortheType(beanObject.getClass().getName());
                 elemntNameSpace = new QName(qNamefortheType.getNamespaceURI(),
