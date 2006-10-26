@@ -27,6 +27,15 @@ these files to configure rampart.
 10.) MTOM Optimizing base64 content in the secured message
 11.) Dynamic configuration : Get rid of the config files ... let's use code!
 
+You can use the ant build script provided here to run these samples.
+
+Exmaple: Running sample - 01
+    - Start two shell instnaces and change to the directory where this file is
+    - To start the service: 
+      $ ant service.01
+    - To run client: 
+      $ ant client.01
+
 --------------------------------------------------------------------------------
 NOTE: To view the messages exchanged
     - Change the "client.port" property in the "build.xml" to an available port
