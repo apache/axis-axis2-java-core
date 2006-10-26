@@ -19,7 +19,6 @@ package userguide.loggingmodule;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,9 +33,9 @@ public class LogHandler extends AbstractHandler implements Handler {
         return name;
     }
 
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         log.info(msgContext.getEnvelope().toString());
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
+        return InvocationResponse.CONTINUE;        
     }
 
     public void revoke(MessageContext msgContext) {

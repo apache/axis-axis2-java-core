@@ -48,9 +48,9 @@ public class SpeakingHandler1 extends AbstractHandler implements Handler {
         return name;
     }
 
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         log.info("I am " + message + " Handler Running :)");
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
+        return InvocationResponse.CONTINUE;        
     }
 
     public void revoke(MessageContext msgContext) {
