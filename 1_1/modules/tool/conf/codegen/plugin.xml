@@ -20,127 +20,61 @@
       <library name="lib/ant-1.6.5.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-api-1.1.1.jar">
-         <export name="*"/>
-      </library>
       <library name="lib/axiom-api-SNAPSHOT.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/axiom-dom-1.1.1.jar">
          <export name="*"/>
       </library>
       <library name="lib/axiom-dom-SNAPSHOT.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-impl-1.1.1.jar">
-         <export name="*"/>
-      </library>
       <library name="lib/axiom-impl-SNAPSHOT.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-rahas-SNAPSHOT.jar">
+      <library name="lib/axis2-adb-1.1-RC1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-SNAPSHOT.jar">
+      <library name="lib/axis2-adb-codegen-1.1-RC1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/commons-codec-1.3.jar">
+      <library name="lib/axis2-codegen-1.1-RC1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/commons-discovery-0.2.jar">
+      <library name="lib/axis2-java2wsdl-1.1-RC1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/commons-fileupload-1.0.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/commons-fileupload-1.1.1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/commons-httpclient-3.0.1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/commons-httpclient-3.0.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/commons-io-1.2.jar">
+      <library name="lib/axis2-kernel-1.1-RC1.jar">
          <export name="*"/>
       </library>
       <library name="lib/commons-logging-1.1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/jakarta-httpcore-4.0-alpha2.jar">
+      <library name="lib/jakarta-oro-2.0.8.jar">
          <export name="*"/>
       </library>
-      <library name="lib/junit-3.8.1.jar">
+      <library name="lib/jalopy-1.0b11.jar">
          <export name="*"/>
       </library>
-      <library name="lib/junit-3.8.2.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/log4j-1.2.13.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/mail-1.4.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/maven-itest-plugin-1.0.jar">
+      <library name="lib/log4j-1.2.8.jar">
          <export name="*"/>
       </library>
       <library name="lib/neethi-SNAPSHOT.jar">
          <export name="*"/>
       </library>
-      <library name="lib/opensaml-1.1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/servletapi-2.3.jar">
-         <export name="*"/>
-      </library>
       <library name="lib/stax-api-1.0.1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/stax-api-1.0.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/woden-SNAPSHOT.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/wsdl4j-1.5.2.jar">
          <export name="*"/>
       </library>
       <library name="lib/wsdl4j-1.6.1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/wss4j-SNAPSHOT.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/wstx-asl-2.9.3.jar">
-         <export name="*"/>
-      </library>
       <library name="lib/wstx-asl-3.0.1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/xbean-2.1.0.jar">
          <export name="*"/>
       </library>
       <library name="lib/xbean-2.2.0.jar">
          <export name="*"/>
       </library>
-      <library name="lib/xml-apis-1.3.02.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/xml-apis-1.3.03.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/XmlSchema-1.1.jar">
-         <export name="*"/>
-      </library>
       <library name="lib/XmlSchema-SNAPSHOT.jar">
          <export name="*"/>
       </library>
-      <library name="lib/xmlsec-1.3.0.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/xmlunit-1.0.jar">
+      <library name="lib/axis2-xmlbeans-1.1-RC1.jar">
          <export name="*"/>
       </library>
    </runtime>

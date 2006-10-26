@@ -141,10 +141,12 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 3;
         gd.verticalSpan = 7;
-        javaClasspathList = new List(container,SWT.READ_ONLY | SWT.BORDER);
+        javaClasspathList = new List(container,SWT.READ_ONLY | SWT.BORDER| SWT.V_SCROLL);
         javaClasspathList.setLayoutData(gd);
         javaClasspathList.setItems(settings.getArray(JAVA_CLASS_PATH_ENTRIES));
         container.redraw();
+
+
         gd = new GridData(GridData.FILL_HORIZONTAL);
         Button tryLoadButton = new Button(container,SWT.PUSH);
         tryLoadButton.setLayoutData(gd);
@@ -166,9 +168,9 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         			}
         			
         		}else{
-        			updateStatus(null);
         			updateStatusTextField(true,CodegenWizardPlugin
 			                .getResourceString("page4.successLoading.label"));
+        			updateStatus(null);
         		}
         	}
         });
@@ -191,18 +193,17 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
 				.setText(CodegenWizardPlugin
 						.getResourceString("page4.hint.caption"));
 		hintLabel.setLayoutData(gd);
-		hintLabel.setFont(new Font(new Device() {
-			public int internal_new_GC(GCData data) {return 0;}
-			public void internal_dispose_GC(int handle, GCData data) {}
-											},"hintFont",8,SWT.NORMAL));
+//		hintLabel.setFont(new Font(new Device() {
+//			public int internal_new_GC(GCData data) {return 0;}
+//			public void internal_dispose_GC(int handle, GCData data) {}
+//											},"hintFont",8,SWT.NORMAL));
         
         setPageComplete(false);
+        setControl(container);
         
         if (restoredFromPreviousSettings){
             handleClassNameTextChange();
         }
-        javaClasspathList.redraw();
-        setControl(container);
 
     }
 
@@ -217,13 +218,8 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         if (dirName != null) {
         	javaClasspathList.add(dirName);
         	updateListEntries();
-            javaClasspathList.redraw();
-            container.redraw();
         }
-        container.redraw();
         updateStatusTextField(false,"");
-        javaClasspathList.redraw();
-        container.redraw();
     }
     
     
@@ -238,8 +234,6 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         }
         updateListEntries();
         updateStatusTextField(false,"");
-        javaClasspathList.redraw();
-        container.redraw();
     }
     
    
@@ -256,9 +250,6 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         	updateListEntries();
         }
         updateStatusTextField(false,"");
-        javaClasspathList.redraw();
-        container.redraw();
-
     }
     
     private void updateStatusTextField(boolean success,String text){
@@ -270,8 +261,6 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
     
     private void updateListEntries(){
     	settings.put(JAVA_CLASS_PATH_ENTRIES,javaClasspathList.getItems());
-        javaClasspathList.redraw();
-        container.redraw();
     }
     /**
      * 

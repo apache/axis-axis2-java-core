@@ -184,7 +184,7 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 			public void modifyText(ModifyEvent e) {
 				settings.put(PREF_JAVA_SERVICE_NAME,
 						serviceNameText.getText());
-				// dialogChanged();
+				dialogChanged();
 			}
 		});
 
@@ -212,5 +212,21 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 	public String getServiceName() {
 		return this.serviceNameText.getText();
 	}
+
+    /**
+     * Handle the dialog change event. Basically evaluates the file name and
+     * sets the error message accordingly
+     */
+    private void dialogChanged() {
+        String fileName = getServiceName();
+
+        if (fileName.length() == 0) {
+            updateStatus(CodegenWizardPlugin
+                    .getResourceString("page5.error.filemissingerror"));
+            return;
+	}
+        // update the status
+        updateStatus(null);
+    }
 
 }

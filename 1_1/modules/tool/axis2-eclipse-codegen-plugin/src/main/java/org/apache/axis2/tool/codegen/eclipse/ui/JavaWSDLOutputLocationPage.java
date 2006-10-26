@@ -207,6 +207,8 @@ public class JavaWSDLOutputLocationPage extends AbstractWizardPage {
 			updateStatus("Input a file name");
 		} else if (outFileName.matches("\\W")) {
 			updateStatus("Input a valid file name");
+		} else if (!(outFileName.endsWith(".wsdl") || outFileName.endsWith(".xml")) ) {
+			updateStatus("Input a valid file name , Example : services.wsdl or services.xml");
 		} else {
 			updateStatus(null);
 		}

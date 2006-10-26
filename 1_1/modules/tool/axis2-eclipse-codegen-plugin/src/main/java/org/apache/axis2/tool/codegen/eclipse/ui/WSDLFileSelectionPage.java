@@ -108,10 +108,10 @@ public class WSDLFileSelectionPage extends AbstractWizardPage {
         Label hintLabel = new Label(container, SWT.NULL);
         hintLabel.setText(CodegenWizardPlugin.getResourceString("page1.hint.desc"));
         hintLabel.setLayoutData(gd);
-        hintLabel.setFont(new Font(new Device() {
-			public int internal_new_GC(GCData data) {return 0;}
-			public void internal_dispose_GC(int handle, GCData data) {}
-											},"hintFont",8,SWT.NORMAL));
+//        hintLabel.setFont(new Font(new Device() {
+//			public int internal_new_GC(GCData data) {return 0;}
+//			public void internal_dispose_GC(int handle, GCData data) {}
+//											},"hintFont",6,SWT.NORMAL));
         
         setPageComplete(false);
         setControl(container);

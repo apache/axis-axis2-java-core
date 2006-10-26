@@ -328,10 +328,10 @@ public class OutputPage extends AbstractWizardPage {
 				.setText(CodegenWizardPlugin
 						.getResourceString("page3.hint.caption"));
 		hintLabel.setLayoutData(gd);
-		hintLabel.setFont(new Font(new Device() {
-				public int internal_new_GC(GCData data) {return 0;}
-				public void internal_dispose_GC(int handle, GCData data) {}
-												},"hintFont",8,SWT.NORMAL));
+//		hintLabel.setFont(new Font(new Device() {
+//				public int internal_new_GC(GCData data) {return 0;}
+//				public void internal_dispose_GC(int handle, GCData data) {}
+//												},"hintFont",8,SWT.NORMAL));
 		
 		disableControls();
 		
@@ -464,10 +464,13 @@ public class OutputPage extends AbstractWizardPage {
 			settings.put(PREF_CHECK_JAR_CREATION, false);
 			this.jarFileNameText.setText("");
 		}
+		if(jarFileNameLabel.equals("")){
+			updateStatus("Please enter a valid name to the jar file");
+		}
 	}
 	
 	private void disableControls(){
-		this.axisHomeLocation.setText("Unpacked Axis2 binary home Or Axis2 source Location");
+		this.axisHomeLocation.setText("Unpacked Axis2 binary home Or Axis2 source location");
 		this.axisHomeBrowseButton.setEnabled(false);
 		this.axisHomeLocation.setEnabled(false);
 		this.jarCreationButton.setSelection(false);
@@ -494,6 +497,13 @@ public class OutputPage extends AbstractWizardPage {
 		this.axisLoadLibsButton.setEnabled(true);
 		this.jarFileNameLabel.setEnabled(true);
 		this.jarFileNameText.setEnabled(true);
+		if (axisLoadLibResultsLabel.getText().equals("")){
+			updateStatus("Please enter a valid path to the Axis2 libs and then try to load the libraries using the check libs button");
+		}
+	     axisLoadLibResultsLabel.setText(CodegenWizardPlugin
+					.getResourceString("page3.loadlib.fail.caption"));
+	     Color color = getShell().getDisplay().getSystemColor(SWT.COLOR_RED);
+	     axisLoadLibResultsLabel.setBackground(color);
 	}
 	
 	private void handleAxisHomeBrowse() {
@@ -511,6 +521,9 @@ public class OutputPage extends AbstractWizardPage {
 			 axisLoadLibResultsLabel.setText(CodegenWizardPlugin
 						.getResourceString("page3.loadlib.fail.caption"));
 			 jarFileCopyOption=false;
+		     if (axisLoadLibResultsLabel.getText().equals("")){
+					updateStatus("Please enter a valid path to the Axis2 libs and then try to load the libraries using the check libs button");
+		     }
 		}else{
 			settings.put(PREF_AXIS_HOME_OUTPUT_LOCATION, axisHomeLocation.getText());
 			String axis_home = settings.get(PREF_AXIS_HOME_OUTPUT_LOCATION);
