@@ -73,7 +73,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      * @param msgctx
      * @throws org.apache.axis2.AxisFault
      */
-    public InvocationProcessingInstruction invoke(MessageContext msgctx) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
         AxisService axisService = msgctx.getAxisService();
 
         if (axisService == null) {
@@ -104,6 +104,6 @@ public abstract class AbstractDispatcher extends AbstractHandler {
             }
         }
         
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        return InvocationResponse.CONTINUE;
     }
 }

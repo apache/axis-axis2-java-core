@@ -28,7 +28,6 @@ import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.util.JavaUtils;
 
 import org.apache.commons.logging.Log;
@@ -46,14 +45,14 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
 
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // if another handler has already processed the addressing headers, do not do anything here.
         if (JavaUtils.isTrueExplicitly(msgContext.getProperty(IS_ADDR_INFO_ALREADY_PROCESSED))) {
             if(log.isDebugEnabled()) {
                 log.debug("Another handler has processed the addressing headers. Nothing to do here.");
             }
 
-            return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+            return InvocationResponse.CONTINUE;
         }
         
         // check whether someone has explicitly set which addressing handler should run.
@@ -66,7 +65,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
                 log.debug("This addressing handler does not match the specified namespace, " + namespace);
             }
 
-            return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+            return InvocationResponse.CONTINUE;
         }
 
         SOAPHeader header = null;
@@ -77,7 +76,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
         // if there are not headers put a flag to disable addressing temporary
         if (header == null) {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-            return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+            return InvocationResponse.CONTINUE;
         }
 
 		if(log.isDebugEnabled()) {
@@ -102,7 +101,7 @@ public abstract class AddressingInHandler extends AddressingHandler implements A
 			}
         }
         
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        return InvocationResponse.CONTINUE;
     }
 
     protected Options extractAddressingInformation(SOAPHeader header, MessageContext messageContext,

@@ -192,14 +192,14 @@ public class EnginePausingTest extends TestCase {
             init(new HandlerDescription("handler" + index));
         }
 
-        public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+        public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
             if (pause) {
                 msgContext.pause();
                 pause = false;
-                return InvocationProcessingInstruction.SUSPEND_PROCESSING;
+                return InvocationResponse.SUSPEND;
                 } else {
                 executedHandlers.add(index);
-                return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+                return InvocationResponse.CONTINUE;
                 }
         }
 

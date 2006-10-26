@@ -23,7 +23,6 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
@@ -45,7 +44,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
      * @param msgContext the message context to be sent
      * @throws AxisFault on exception
      */
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 
         log.debug("JMSSender invoke()");
 
@@ -68,7 +67,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             }
             else {
                 //Don't send the message.
-                return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+                return InvocationResponse.CONTINUE;
             }
         }
         else if (msgContext.isServerSide()){
@@ -173,7 +172,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                 } catch (JMSException e) {} // ignore
             }
         }
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        return InvocationResponse.CONTINUE;
     }
 
     public void cleanup(MessageContext msgContext) throws AxisFault {

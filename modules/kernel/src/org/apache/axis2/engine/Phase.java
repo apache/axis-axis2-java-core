@@ -350,14 +350,14 @@ public class Phase implements Handler {
      * invokes all the handlers in this Phase
      *
      * @param msgctx
-     * @return An InvocationProcessingInstruction that indicates what 
+     * @return An InvocationResponse that indicates what 
      *         the next step in the message processing should be.
      * @throws org.apache.axis2.AxisFault
      */
-    public final InvocationProcessingInstruction invoke(MessageContext msgctx) throws AxisFault {
+    public final InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
         boolean isDebugEnabled = log.isDebugEnabled();
 
-        InvocationProcessingInstruction pi = InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        InvocationResponse pi = InvocationResponse.CONTINUE;
           
         if (isDebugEnabled) {
             log.debug("Checking pre-condition for Phase \"" + phaseName + "\"");
@@ -381,7 +381,7 @@ public class Phase implements Handler {
             }
             pi = handler.invoke(msgctx);
 
-            if (!pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING)){
+            if (!pi.equals(InvocationResponse.CONTINUE)){
                 return pi;
             }
 

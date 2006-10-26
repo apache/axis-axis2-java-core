@@ -21,7 +21,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.rampart.MessageBuilder;
 import org.apache.rampart.RampartException;
 import org.apache.ws.secpolicy.WSSPolicyException;
@@ -49,10 +48,10 @@ public class RampartSender implements Handler {
         this.handlerDesc = handlerdesc;
     }
 
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         
         if (!msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
-          return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+          return InvocationResponse.CONTINUE;
         }
         
         MessageBuilder builder = new MessageBuilder();
@@ -65,7 +64,7 @@ public class RampartSender implements Handler {
         } catch (RampartException e) {
             throw new AxisFault(e.getMessage(), e);
         }
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
+        return InvocationResponse.CONTINUE;        
     }
 
     public void flowComplete(MessageContext msgContext)

@@ -57,11 +57,11 @@ public interface Handler {
      *
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.
-     * @return An InvocationProcessingInstruction that indicates what 
+     * @return An InvocationResponse that indicates what 
      *         the next step in the message processing should be.
      * @throws AxisFault if the handler encounters an error
      */
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault;
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault;
 
     /**
      * This method will be called on each registered handler that had its
@@ -96,4 +96,34 @@ public interface Handler {
      * @return Returns Parameter.
      */
     public Parameter getParameter(String name);
+    
+    /**
+     * This type encapsulates an enumeration of possible message processing
+     * instruction values that may be returned by a handler/phase within the
+     * runtime.  The returned instruction will determine the next step in
+     * the processing.
+     */
+    public class InvocationResponse
+    {
+      public static InvocationResponse CONTINUE = new InvocationResponse(0);
+      public static InvocationResponse SUSPEND = new InvocationResponse(1);
+      public static InvocationResponse ABORT = new InvocationResponse(2);
+
+      private int instructionID;
+        
+      private InvocationResponse(int instructionID)
+      {
+        this.instructionID = instructionID;
+      }
+        
+      public boolean equals(InvocationResponse instruction)
+      {
+        return this.instructionID == instruction.instructionID;
+      }
+        
+      public int hashCode()
+      {
+        return instructionID;
+      }
+    }
 }

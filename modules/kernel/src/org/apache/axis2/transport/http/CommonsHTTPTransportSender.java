@@ -30,7 +30,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
@@ -137,7 +136,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     }
 
 
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         try {
             OMOutputFormat format = new OMOutputFormat();
             String charSetEnc =
@@ -228,7 +227,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             throw new AxisFault(e);
         }
         
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        return InvocationResponse.CONTINUE;
     }
 
     private void sendUsingOutputStream(MessageContext msgContext,

@@ -11,7 +11,6 @@ import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 
 import javax.xml.namespace.QName;
@@ -41,7 +40,7 @@ public class FaultHandler extends AbstractHandler {
     public static final String ERR_HANDLING_WITH_MSG_CTXT = "ErrorHandlingWithParamsSetToMsgCtxt";
     public static final String ERR_HANDLING_WITH_AXIS_FAULT = "ErrorHandlingWithParamsSetToAxisFault";
 
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // this handler will be used to check the fault handling of Axis2.
         // this will create some dummy faults and send
 
@@ -78,6 +77,6 @@ public class FaultHandler extends AbstractHandler {
             throw new AxisFault(new QName(M_FAULT_EXCEPTION), FAULT_REASON, null, null, detailEntry);
         }
 
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        return InvocationResponse.CONTINUE;
     }
 }
