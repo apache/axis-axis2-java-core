@@ -138,6 +138,7 @@ public class DeploymentEngine implements DeploymentConstants {
             Iterator fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
                 String fileUrl = (String) fileIterator.next();
+                fileUrl = fileUrl.trim();
                 if (fileUrl.endsWith(".aar")) {
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
                     URL servicesURL = new URL(servicesDir, fileUrl);
@@ -162,6 +163,7 @@ public class DeploymentEngine implements DeploymentConstants {
             Iterator fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
                 String fileUrl = (String) fileIterator.next();
+                fileUrl = fileUrl.trim();
                 if (fileUrl.endsWith(".mar")) {
                     URL moduleurl = new URL(moduleDir, fileUrl);
                     DeploymentClassLoader deploymentClassLoader =
