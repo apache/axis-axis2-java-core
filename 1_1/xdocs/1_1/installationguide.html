@@ -22,7 +22,10 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 <ul>
   <li><a href="#Download_Axis2">Download Axis2</a></li>
   <li><a href="#requirements">System Requirements</a></li>
-  <li><a href="#servlet_container">Installing Axis2 in a Servlet Container</a></li>
+  <li><a href="#standalone">Standalone Insatallation Using Standard Binary Distribution</a></li>
+  <li><a href="#build_war">Building WAR File Using Standard Binary Distribution</a></li>
+  <li><a href="#servlet_container">Installing Axis2 in a Servlet
+  Container</a></li>
   <li><a href="#upload">Uploading Services</a></li>
   <li><a href="#advanced">Advanced</a>
     <ul>
@@ -217,7 +220,7 @@ IDEA.</td>
         href="http://java.sun.com/">http://java.sun.com</a>)</td>
     </tr>
     <tr>
-      <td>Maven
+      <td><strong>Build Tool</strong>- Maven
 
         <p><em>Required only for building Axis2 from Source
         Distribution</em></p>
@@ -226,6 +229,11 @@ IDEA.</td>
         href="http://maven.apache.org/maven-1.x/start/download.html">download</a>).
         <strong>Please download maven 1.x version. Axis2 is not compatible
         with maven2 yet.</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Build Tool</strong>- Ant</td>
+      <td>Version 1.6.5 (<a
+        href="http://ant.apache.org/bindownload.cgi">download</a>).</td>
     </tr>
     <tr>
       <td>Memory</td>
@@ -245,14 +253,32 @@ IDEA.</td>
     </tr>
   </tbody>
 </table>
-
+<a name="standalone"></a>
 <h2>Standalone Insatallation Using Standard Binary Distribution</h2>
 
 <p>All the required jars are shipped with the standard binary
 distribution.</p>
 
-<p>Installing Axis2 is merely a matter of downloading and extracting the
-Standard Binary Distribution and setting the Java home.</p>
+<p>Installing Axis2 is merely a matter of <a
+href="../download/1_1/download.html#std-bin">downloading</a> and extracting
+the Standard Binary Distribution and setting the Java home.</p>
+<a name="build_war"></a>
+<h2>Building the WAR File  Using Standard Binary Distribution</h2>
+
+<p>The following examples will run you through on how to build the axis2.war
+file which is required to install Apache Axis2 in a J2EE compliant servlet
+container.</p>
+<ol>
+  <li><a href="../download/1_1/download.html#std-bin">Download</a> Standard
+    Binary Distribution and extract it to your machine</li>
+  <li>Locate to the following directory in your AXIS home -- /webapps (i.e:-
+    AXIS_HOME/webapps)</li>
+  <li>There is a build.xml file, which can be used to build axis2.war</li>
+  <li>Run the following ant target inorder to build axis2.war using <code>ant
+    create.war</code></li>
+  <li>You can find the generated axis2.war inside dist directory
+    (AXIS_HOME/dist)</li>
+</ol>
 <a name="servlet_container"></a>
 <h2>Installing Axis2 in a Servlet Container</h2>
 
@@ -260,7 +286,8 @@ Standard Binary Distribution and setting the Java home.</p>
 container is as follows:</p>
 <ol>
   <li><a href="../download/1_1/download.html#war">Download</a> Axis2 WAR
-    file. The WAR file can also be <a href="#war">built using the Source
+    file. (This guide also gives you instructions on how to build axis2.war
+    using either the <a href="#build_war">Standard Binary Distribution</a> or <a href="#war">Source
     Distribution</a>.</li>
   <li>Drop the war in the webapps folder of the servlet container. Most
     servlet containers will automatically install war. (some servlet
@@ -394,7 +421,6 @@ target="_blank">here </a>.</p>
 
 <p><a href="../faq.html#d4">Maven commands that are frequently used</a> in
 Axis2 are listed on the <a href="../faq.html">FAQs</a> page.</p>
-
 <a name="_Toc96698085"></a>
 
 <h3>Building Binaries and WAR File Using the Source Distribution</h3>
