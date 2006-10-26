@@ -17,7 +17,6 @@ package org.apache.axis2.rpc.receivers;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
@@ -31,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -120,47 +118,8 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                     service.getSchematargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
-
-            if (resObject instanceof Object[]) {
-                QName resName = new QName(service.getSchematargetNamespace(),
-                        method.getName() + "Response",
-                        service.getSchematargetNamespacePrefix());
-                OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                        (Object[]) resObject, service.isElementFormDefault());
-                envelope.getBody().addChild(bodyChild);
-            } else {
-                if (resObject.getClass().isArray()) {
-                    int length = Array.getLength(resObject);
-                    Object objArray [];
-                    if (resObject instanceof byte[]) {
-                        objArray = new Object[1];
-                        objArray[0] = Base64.encode((byte[]) resObject);
-                    } else {
-                        objArray = new Object[length];
-                        for (int i = 0; i < length; i++) {
-                            objArray[i] = Array.get(resObject, i);
-                        }
-                    }
-                    QName resName = new QName(service.getSchematargetNamespace(),
-                            method.getName() + "Response",
-                            service.getSchematargetNamespacePrefix());
-                    OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
-                            objArray, service.isElementFormDefault());
-                    envelope.getBody().addChild(bodyChild);
-                } else {
-                    if (service.isElementFormDefault()) {
-                        RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                                envelope, method, service.isElementFormDefault(),
-                                service.getTypeTable());
-                    } else {
-                        RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                                envelope, method, service.isElementFormDefault(),
-                                null);
-                    }
-
-                }
-            }
-            outMessage.setEnvelope(envelope);
+            RPCUtil.processResponse(resObject, service,
+                    method, envelope, fac, ns, bodyContent, outMessage);
         } catch (InvocationTargetException e) {
             String msg = null;
             if (e.getCause() != null) {

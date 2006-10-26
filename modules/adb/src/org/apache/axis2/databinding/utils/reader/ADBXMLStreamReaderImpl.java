@@ -5,6 +5,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.databinding.ADBBean;
 import org.apache.axis2.databinding.utils.BeanUtil;
+import org.apache.ws.java2wsdl.utils.TypeTable;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;
@@ -43,23 +44,22 @@ import java.util.Map;
  * 4. QName name/String name  - ADBBean value
  * 5. QName name/String name  - Java bean
  * 5. QName name/String name  - Datahandler
- *
+ * <p/>
  * As for the attributes, these are the possible combinations in the
  * array
  * 1. String name/QName name - String value
  * 2. OMAttributeKey - OMAttribute
- *
+ * <p/>
  * Note that certain array methods have  been deliberately removed to avoid
  * complications. The generated code will take the trouble to lay the
  * elements of the array in the correct order
- *
+ * <p/>
  * <p/>
  * Hence there will be a parser impl that knows how to handle these types, and
  * this parent parser will always delegate these tasks to the child pullparasers
  * in effect this is one huge state machine that has only a few states and delegates
  * things down to the child parsers whenever possible
  * <p/>
- *
  */
 public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
@@ -88,6 +88,12 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     //initialized at zero
     private int currentPropertyIndex = 0;
 
+    //To keep element formdefault qualified or not
+    private boolean qualified = false;
+
+    //to keep the current types which are in AxisService
+    private TypeTable typeTable = null;
+
 
     /*
      * we need to pass in a namespace context since when delegated, we've no
@@ -102,8 +108,16 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         this.properties = properties;
         this.elementQName = adbBeansQName;
         this.attributes = attributes;
+    }
 
-
+    public ADBXMLStreamReaderImpl(QName adbBeansQName,
+                                  Object[] properties,
+                                  Object[] attributes,
+                                  TypeTable typeTable,
+                                  boolean qualified) {
+        this(adbBeansQName, properties, attributes);
+        this.qualified = qualified;
+        this.typeTable = typeTable;
     }
 
     /**
@@ -133,26 +147,25 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     }
 
     /**
-     *
      * @param key
      * @throws IllegalArgumentException
      */
     public Object getProperty(String key) throws IllegalArgumentException {
         if (state == START_ELEMENT_STATE || state == END_ELEMENT_STATE) {
-            if (OPTIMIZATION_ENABLED.equals(key)){
+            if (OPTIMIZATION_ENABLED.equals(key)) {
                 return Boolean.TRUE;
-            }else{
+            } else {
                 return null;
             }
-        }else if (state==TEXT_STATE){
-            if (IS_BINARY.equals(key)){
+        } else if (state == TEXT_STATE) {
+            if (IS_BINARY.equals(key)) {
                 return Boolean.FALSE;
-            }else{
+            } else {
                 return null;
             }
-        }else if (state==DELEGATED_STATE){
+        } else if (state == DELEGATED_STATE) {
             return childReader.getProperty(key);
-        }else{
+        } else {
             return null;
         }
 
@@ -191,14 +204,14 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
      */
     public boolean hasNext() throws XMLStreamException {
         if (state == DELEGATED_STATE) {
-            if (childReader.isDone()){
+            if (childReader.isDone()) {
                 //the child reader is done. We shouldn't be getting the
                 //hasnext result from the child pullparser then
                 return true;
-            }else{
+            } else {
                 return childReader.hasNext();
             }
-        } else  {
+        } else {
             return (state == START_ELEMENT_STATE
                     || state == TEXT_STATE);
 
@@ -279,7 +292,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public int getAttributeCount() {
         return (state == DELEGATED_STATE) ?
                 childReader.getAttributeCount() :
-                ((attributes != null)&&(state==START_ELEMENT_STATE) ? attributes.length / 2 : 0);
+                ((attributes != null) && (state == START_ELEMENT_STATE) ? attributes.length / 2 : 0);
     }
 
     /**
@@ -288,7 +301,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public QName getAttributeName(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getAttributeName(i);
-        } else if (state==START_ELEMENT_STATE) {
+        } else if (state == START_ELEMENT_STATE) {
             if (attributes == null) {
                 return null;
             } else {
@@ -310,7 +323,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                         }
                         OMAttribute att = (OMAttribute) omAttribObj;
                         return att.getQName();
-                    } else if (attribPointer instanceof OMAttribKey){
+                    } else if (attribPointer instanceof OMAttribKey) {
                         Object omAttribObj = attributes[(i * 2) + 1];
                         if (omAttribObj == null ||
                                 !(omAttribObj instanceof OMAttribute)) {
@@ -331,7 +344,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                     }
                 }
             }
-        }else{
+        } else {
             throw new IllegalStateException();//as per the api contract
         }
 
@@ -340,14 +353,14 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getAttributeNamespace(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getAttributeNamespace(i);
-        } else if (state==START_ELEMENT_STATE) {
+        } else if (state == START_ELEMENT_STATE) {
             QName name = getAttributeName(i);
             if (name == null) {
                 return null;
             } else {
                 return name.getNamespaceURI();
             }
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -355,14 +368,14 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getAttributeLocalName(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getAttributeLocalName(i);
-        } else if (state==START_ELEMENT_STATE) {
+        } else if (state == START_ELEMENT_STATE) {
             QName name = getAttributeName(i);
             if (name == null) {
                 return null;
             } else {
                 return name.getLocalPart();
             }
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -370,14 +383,14 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getAttributePrefix(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getAttributePrefix(i);
-        } else if (state==START_ELEMENT_STATE) {
+        } else if (state == START_ELEMENT_STATE) {
             QName name = getAttributeName(i);
             if (name == null) {
                 return null;
             } else {
                 return name.getPrefix();
             }
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -389,7 +402,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getAttributeValue(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getAttributeValue(i);
-        } else if (state ==START_ELEMENT_STATE){
+        } else if (state == START_ELEMENT_STATE) {
             if (attributes == null) {
                 return null;
             } else {
@@ -412,7 +425,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                         }
                         OMAttribute att = (OMAttribute) omAttribObj;
                         return att.getAttributeValue();
-                    } else if (attribPointer instanceof OMAttribKey){
+                    } else if (attribPointer instanceof OMAttribKey) {
                         if (omAttribObj == null ||
                                 !(omAttribObj instanceof OMAttribute)) {
                             // wrong object set to have in the attrib array -
@@ -432,7 +445,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                     }
                 }
             }
-        }else{
+        } else {
             throw new IllegalStateException();
         }
 
@@ -464,7 +477,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getNamespacePrefix(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getNamespacePrefix(i);
-        } else if (state!=TEXT_STATE) {
+        } else if (state != TEXT_STATE) {
             //order the prefixes
             String[] prefixes = makePrefixArray();
             if ((i >= prefixes.length) || (i < 0)) {
@@ -473,7 +486,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                 return prefixes[i];
             }
 
-        }else{
+        } else {
             throw new IllegalStateException();
         }
 
@@ -493,11 +506,11 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getNamespaceURI(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getNamespaceURI(i);
-        } else if (state!=TEXT_STATE) {
+        } else if (state != TEXT_STATE) {
             String namespacePrefix = getNamespacePrefix(i);
             return namespacePrefix == null ? null :
                     (String) declaredNamespaceMap.get(namespacePrefix);
-        }else{
+        } else {
             throw new IllegalStateException();
         }
 
@@ -531,9 +544,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getText() {
         if (state == DELEGATED_STATE) {
             return childReader.getText();
-        } else if (state==TEXT_STATE) {
-            return (String)properties[currentPropertyIndex-1];
-        }else{
+        } else if (state == TEXT_STATE) {
+            return (String) properties[currentPropertyIndex - 1];
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -541,10 +554,10 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public char[] getTextCharacters() {
         if (state == DELEGATED_STATE) {
             return childReader.getTextCharacters();
-        }else if (state==TEXT_STATE) {
-            return properties[currentPropertyIndex-1]==null?new char[0]:
-                    ((String)properties[currentPropertyIndex-1]).toCharArray();
-        }else{
+        } else if (state == TEXT_STATE) {
+            return properties[currentPropertyIndex - 1] == null ? new char[0] :
+                    ((String) properties[currentPropertyIndex - 1]).toCharArray();
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -553,10 +566,10 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             throws XMLStreamException {
         if (state == DELEGATED_STATE) {
             return childReader.getTextCharacters(i, chars, i1, i2);
-        }else if (state==TEXT_STATE) {
+        } else if (state == TEXT_STATE) {
             //todo  - implement this
             return 0;
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -564,9 +577,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public int getTextStart() {
         if (state == DELEGATED_STATE) {
             return childReader.getTextStart();
-        } else if (state==TEXT_STATE) {
+        } else if (state == TEXT_STATE) {
             return 0;//assume text always starts at 0
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -574,9 +587,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public int getTextLength() {
         if (state == DELEGATED_STATE) {
             return childReader.getTextLength();
-        } else if (state==TEXT_STATE) {
+        } else if (state == TEXT_STATE) {
             return 0;//assume text always starts at 0
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -606,7 +619,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
      */
     public Location getLocation() {
         //return a default location
-        return new Location(){
+        return new Location() {
             public int getLineNumber() {
                 return 0;
             }
@@ -632,9 +645,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public QName getName() {
         if (state == DELEGATED_STATE) {
             return childReader.getName();
-        } else if (state!=TEXT_STATE) {
+        } else if (state != TEXT_STATE) {
             return elementQName;
-        }else{
+        } else {
             throw new IllegalStateException();
         }
 
@@ -643,9 +656,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getLocalName() {
         if (state == DELEGATED_STATE) {
             return childReader.getLocalName();
-        } else if (state!=TEXT_STATE) {
+        } else if (state != TEXT_STATE) {
             return elementQName.getLocalPart();
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -662,9 +675,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getNamespaceURI() {
         if (state == DELEGATED_STATE) {
             return childReader.getNamespaceURI();
-        } else if (state==TEXT_STATE) {
+        } else if (state == TEXT_STATE) {
             return null;
-        }else{
+        } else {
             return elementQName.getNamespaceURI();
         }
     }
@@ -672,11 +685,11 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public String getPrefix() {
         if (state == DELEGATED_STATE) {
             return childReader.getPrefix();
-        } else if (state==TEXT_STATE) {
+        } else if (state == TEXT_STATE) {
             return null;
-        }else{
+        } else {
             String prefix = elementQName.getPrefix();
-            return "".equals(prefix) ? null : prefix ;
+            return "".equals(prefix) ? null : prefix;
         }
     }
 
@@ -771,7 +784,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     /**
      * By far this should be the most important method in this class
-     * this method changes the state of the parser 
+     * this method changes the state of the parser
      */
     public int next() throws XMLStreamException {
         int returnEvent = -1; //invalid state is the default state
@@ -836,7 +849,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         //move to the next property depending on the current property
         //index
         Object propPointer = properties[currentPropertyIndex];
-        QName propertyQName=null;
+        QName propertyQName = null;
         boolean textFound = false;
         if (propPointer == null) {
             throw new XMLStreamException("property key cannot be null!");
@@ -844,9 +857,9 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             // propPointer being a String has a special case
             // that is it can be a the special constant ELEMENT_TEXT that
             // says this text event
-            if (ELEMENT_TEXT.equals(propPointer)){
+            if (ELEMENT_TEXT.equals(propPointer)) {
                 textFound = true;
-            }else{
+            } else {
                 propertyQName = new QName((String) propPointer);
             }
         } else if (propPointer instanceof QName) {
@@ -864,14 +877,14 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         //ok! we got the key. Now look at the value
         Object propertyValue = properties[currentPropertyIndex + 1];
         //cater for the special case now
-        if (textFound){
+        if (textFound) {
             //no delegation here - make the parser null and immediately
             //return with the event characters
             childReader = null;
             state = TEXT_STATE;
             currentPropertyIndex = currentPropertyIndex + 2;
             return CHARACTERS;
-        }else if (propertyValue == null) {
+        } else if (propertyValue == null) {
             //if the value is null we delegate the work to a nullable
             // parser
             childReader = new NullXMLStreamReader(propertyQName);
@@ -881,7 +894,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //we've a special pullparser for a datahandler!
         } else if (propertyValue instanceof DataHandler) {
             childReader = new ADBDataHandlerStreamReader(propertyQName,
-                    (DataHandler)propertyValue);
+                    (DataHandler) propertyValue);
             childReader.addNamespaceContext(this.namespaceContext);
             childReader.init();
 
@@ -889,20 +902,20 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //strings are handled by the NameValuePairStreamReader
             childReader =
                     new NameValuePairStreamReader(propertyQName,
-                            (String)propertyValue);
+                            (String) propertyValue);
             childReader.addNamespaceContext(this.namespaceContext);
             childReader.init();
         } else if (propertyValue instanceof String[]) {
             //string[] are handled by the  NameValueArrayStreamReader
             //if the array is empty - skip it
-            if (((String[])propertyValue).length==0){
+            if (((String[]) propertyValue).length == 0) {
                 //advance the index
                 currentPropertyIndex = currentPropertyIndex + 2;
                 return processProperties();
-            }else{
+            } else {
                 childReader =
                         new NameValueArrayStreamReader(propertyQName,
-                                (String[])propertyValue);
+                                (String[]) propertyValue);
                 childReader.addNamespaceContext(this.namespaceContext);
                 childReader.init();
             }
@@ -934,7 +947,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //the thing as a bean and try generating events from it
             childReader = new WrappingXMLStreamReader
                     (BeanUtil.getPullParser(propertyValue,
-                            propertyQName, null));
+                            propertyQName, typeTable, qualified));
             //we cannot register the namespace context here
         }
 
