@@ -168,7 +168,7 @@ modules/architecture.</p>
     the single most important factor that decides the performance. It makes
     sense to delegate this task to a separate sub-project itself, under Web
     services project, allowing that sub-project (AXIOM) to provide a simple
-    API for SOAP and XML info-set while hiding the complexities of the
+    API for SOAP and XML info-set. And it will hide the complexities of the
     efficient XML processing within the implementation.</p>
   </li>
   <li><a href="#bmSOAPPM">SOAP Processing Model</a>- This controls the
@@ -181,10 +181,10 @@ modules/architecture.</p>
   </li>
   <li><a href="#bmClientAPI">Client API</a>- This provides a convenient API
     for users to communicate with Web services using Axis2. There are set of
-    classes to interact with IN-OUT and IN-Only style Message Exchange
-    Patterns (MEPs) where those can be used to construct any other MEP.</li>
+    classes to interact with IN-OUT and IN-Only style <a href="http://www.w3.org/2002/ws/cg/2/07/meps.html">Message Exchange
+    Patterns (MEPs)</a> where those can be used to construct any other MEP. (Please note that even if client api has in-built support for the above named MEPs, it does not, in any means, limit Axis2's flexibility to support custom MEPs.)</li>
   <li><p><a href="#bmTransports">Transports</a>- Axis2 define a transport
-    framework that enables the user to use different transports. The
+    framework that enables the user to use multiple different transports. The
     transports fit into specific places in the SOAP processing model. The
     implementation provides a few common transports and the user may write or plug-in
     new ones if and when it is needed.</p>
@@ -195,7 +195,7 @@ modules/architecture.</p>
 <h3>Other Modules:</h3>
 <ul>
   <li><a href="#bmWSDL">Code Generation</a>- Axis2 provides a code generation
-    tool that will generate server side and client side code along with a
+    tool that will generate server side and client side code along with descriptors and a
     test case. The generated code would simplify the service deployment and
     the service invocation. This would increase usability of Axis2.</li>
   <li><p><a href="#bmDB">Data Binding</a>- The basic client API of Axis2 lets
@@ -244,7 +244,7 @@ it would be looked up in the Operation Context etc, up the hierarchy. The
 Search is first done up the hierarchy, and if starting point is a Context
 then it is search in the Description hierarchy as well.</p>
 
-<p>This allows the user to declare and override values. Result being a very
+<p>This allows the user to declare and override values, result being a very
 flexible configuration model. The flexibility could be the <em>Achilles</em>
 heel for the system as the search is expensive, specially for something that
 does not exist. Yet in the final analysis developers believe that the
@@ -261,7 +261,7 @@ flexibility would serve better in this instant.</p>
     <tr>
       <td width="112"><p>Configuration Context</p>
       </td>
-      <td width="371"><p>Holds the run time status. A deep copy of this would
+      <td width="371"><p>Holds the Axis2's run time status. A deep copy of this would
         essentially make a copy of Axis2.</p>
       </td>
       <td width="103"><p>Axis Configuration</p>
@@ -290,7 +290,7 @@ flexibility would serve better in this instant.</p>
       </td>
       <td width="371"><p>This context is available throughout the usage of
         the respective service. This can be used to share information between
-        several MEPs of the same service, within a single interaction.</p>
+        several MEPs of the same service, within a single interaction. Life cycle depends on the scope of the service.</p>
       </td>
       <td width="103"><p>AxisService</p>
       </td>
@@ -302,7 +302,7 @@ flexibility would serve better in this instant.</p>
       <td width="112"><p>Operation Context</p>
       </td>
       <td width="371"><p>Holds the information about the current MEP
-        instance, maintain the Messages in the current MEP etc.</p>
+        instance, maintain the messages in the current MEP etc.</p>
       </td>
       <td width="103"><p>AxisOperation</p>
       </td>
@@ -319,8 +319,7 @@ flexibility would serve better in this instant.</p>
       </td>
       <td width="103"><p>AxisMessage</p>
       </td>
-      <td width="336"><p>Do not hold any information as yet, but can be used
-        as a future extension point.</p>
+      <td width="336"><p>Hold message level static information like schema of the particular message.</p>
       </td>
     </tr>
   </tbody>
