@@ -34,6 +34,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.JavaUtils;
@@ -481,9 +482,9 @@ public class AxisEngine {
         // affecting later messages.
         msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
         msgContext.setFLOW(MessageContext.IN_FLOW);
-        InvocationProcessingInstruction pi = invoke(msgContext);
+        InvocationResponse pi = invoke(msgContext);
 
-        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+        if (pi.equals(InvocationResponse.CONTINUE))
         {
           if (msgContext.isServerSide()) {
 
@@ -503,24 +504,24 @@ public class AxisEngine {
      * if the msgContext is pauesd then the execution will be breaked
      *
      * @param msgContext
-     * @return An InvocationProcessingInstruction that indicates what
+     * @return An InvocationResponse that indicates what
      *         the next step in the message processing should be.
      * @throws AxisFault
      */
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         if (msgContext.getCurrentHandlerIndex() == -1) {
             msgContext.setCurrentHandlerIndex(0);
         }
 
-        InvocationProcessingInstruction pi = InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        InvocationResponse pi = InvocationResponse.CONTINUE;
 
         while (msgContext.getCurrentHandlerIndex() < msgContext.getExecutionChain().size()) {
             Handler currentHandler = (Handler) msgContext.getExecutionChain().
                     get(msgContext.getCurrentHandlerIndex());
             pi = currentHandler.invoke(msgContext);
 
-            if (pi.equals(InvocationProcessingInstruction.SUSPEND_PROCESSING) ||
-                pi.equals(InvocationProcessingInstruction.ABORT_PROCESSING))
+            if (pi.equals(InvocationResponse.SUSPEND) ||
+                pi.equals(InvocationResponse.ABORT))
             {
               break;
             }
@@ -535,15 +536,15 @@ public class AxisEngine {
      * first invoke the phase list and after the message receiver
      *
      * @param msgContext
-     * @return An InvocationProcessingInstruction allowing the invoker to perhaps determine
+     * @return An InvocationResponse allowing the invoker to perhaps determine
      *         whether or not the message processing will ever succeed.
      * @throws AxisFault
      */
-    public InvocationProcessingInstruction resumeReceive(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse resumeReceive(MessageContext msgContext) throws AxisFault {
         //invoke the phases
-        InvocationProcessingInstruction pi = invoke(msgContext);
+        InvocationResponse pi = invoke(msgContext);
         
-        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+        if (pi.equals(InvocationResponse.CONTINUE))
         {
           //invoking the MR
           if (msgContext.isServerSide()) {
@@ -561,14 +562,14 @@ public class AxisEngine {
      * TransportSender at the end
      *
      * @param msgContext
-     * @return An InvocationProcessingInstruction allowing the invoker to perhaps determine
+     * @return An InvocationResponse allowing the invoker to perhaps determine
      *         whether or not the message processing will ever succeed.
      */
-    public InvocationProcessingInstruction resumeSend(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse resumeSend(MessageContext msgContext) throws AxisFault {
         //invoke the phases
-        InvocationProcessingInstruction pi = invoke(msgContext);
+        InvocationResponse pi = invoke(msgContext);
         //Invoking Tarnsport Sender
-        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING)) {
+        if (pi.equals(InvocationResponse.CONTINUE)) {
             // write the Message to the Wire
             TransportOutDescription transportOut = msgContext.getTransportOut();
             TransportSender sender = transportOut.getSender();
@@ -597,9 +598,9 @@ public class AxisEngine {
         // affecting later messages.
         msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
         msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
-        InvocationProcessingInstruction pi = invoke(msgContext);
+        InvocationResponse pi = invoke(msgContext);
         
-        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING))
+        if (pi.equals(InvocationResponse.CONTINUE))
         {
           if (msgContext.isServerSide()) {
 
@@ -616,11 +617,11 @@ public class AxisEngine {
     /**
      * Resume processing of a message.
      * @param msgctx
-     * @return An InvocationProcessingInstruction allowing the invoker to perhaps determine
+     * @return An InvocationResponse allowing the invoker to perhaps determine
      *         whether or not the message processing will ever succeed.
      * @throws AxisFault
      */
-    public InvocationProcessingInstruction resume(MessageContext msgctx) throws AxisFault {
+    public InvocationResponse resume(MessageContext msgctx) throws AxisFault {
         msgctx.setPaused(false);
         if (msgctx.getFLOW() == MessageContext.IN_FLOW) {
             return resumeReceive(msgctx);
@@ -652,9 +653,9 @@ public class AxisEngine {
                 .getAxisConfiguration().getGlobalOutPhases().clone());
         msgContext.setExecutionChain(outPhases);
         msgContext.setFLOW(MessageContext.OUT_FLOW);
-        InvocationProcessingInstruction pi = invoke(msgContext);
+        InvocationResponse pi = invoke(msgContext);
 
-        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING)) {
+        if (pi.equals(InvocationResponse.CONTINUE)) {
 
             // write the Message to the Wire
             TransportOutDescription transportOut = msgContext.getTransportOut();
@@ -685,7 +686,7 @@ public class AxisEngine {
     public void sendFault(MessageContext msgContext) throws AxisFault {
         OperationContext opContext = msgContext.getOperationContext();
 
-        InvocationProcessingInstruction pi = InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        InvocationResponse pi = InvocationResponse.CONTINUE;
         
         // find and execute the Fault Out Flow Handlers
         if (opContext != null) {
@@ -701,7 +702,7 @@ public class AxisEngine {
             pi = invoke(msgContext);
         }
 
-        if (pi.equals(InvocationProcessingInstruction.CONTINUE_PROCESSING)) {
+        if (pi.equals(InvocationResponse.CONTINUE)) {
             msgContext.setExecutionChain(
                     (ArrayList) msgContext.getConfigurationContext()
                             .getAxisConfiguration().getOutFaultFlow().clone());

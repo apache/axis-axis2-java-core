@@ -26,7 +26,6 @@ import org.apache.axis2.description.Parameter;
  * Interface Handler
  */
 public interface Handler {
-
     /**
      * Since this might change the whole behavior of Axis2 handlers, and since this is still under discussion 
      * (http://marc.theaimsgroup.com/?l=axis-dev&m=114504084929285&w=2) implementation of this method is deferred.
@@ -51,11 +50,11 @@ public interface Handler {
      *
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.
-     * @return An InvocationProcessingInstruction that indicates what
+     * @return An InvocationResponse that indicates what
      *         the next step in the message processing should be.
      * @throws AxisFault if the handler encounters an error
      */
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault;
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault;
 
     /**
      * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler.
@@ -78,4 +77,35 @@ public interface Handler {
      * @return Returns Parameter.
      */
     public Parameter getParameter(String name);
+    
+    /**
+     * This type encapsulates an enumeration of possible message processing
+     * instruction values that may be returned by a handler/phase within the
+     * runtime.  The returned instruction will determine the next step in
+     * the processing.
+     */
+    public class InvocationResponse
+    {
+      public static InvocationResponse CONTINUE = new InvocationResponse(0);
+      public static InvocationResponse SUSPEND = new InvocationResponse(1);
+      public static InvocationResponse ABORT = new InvocationResponse(2);
+
+      private int instructionID;
+        
+      private InvocationResponse(int instructionID)
+      {
+        this.instructionID = instructionID;
+      }
+        
+      public boolean equals(InvocationResponse instruction)
+      {
+        return this.instructionID == instruction.instructionID;
+      }
+        
+      public int hashCode()
+      {
+        return instructionID;
+      }
+    }
+    
 }

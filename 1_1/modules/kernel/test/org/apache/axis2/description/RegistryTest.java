@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
-import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 
 import javax.xml.namespace.QName;
@@ -84,8 +83,8 @@ public class RegistryTest extends AbstractTestCase {
         Handler handler = new AbstractHandler() {
             private static final long serialVersionUID = 196289132377245632L;
 
-			public InvocationProcessingInstruction invoke(MessageContext msgContext)  {
-                return InvocationProcessingInstruction.CONTINUE_PROCESSING;        
+			public InvocationResponse invoke(MessageContext msgContext)  {
+                return InvocationResponse.CONTINUE;        
             }
         };
         handler.init(new HandlerDescription());

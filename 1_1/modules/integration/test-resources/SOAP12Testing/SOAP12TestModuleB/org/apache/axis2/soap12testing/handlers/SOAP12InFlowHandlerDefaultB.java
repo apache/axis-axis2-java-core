@@ -18,7 +18,6 @@ package org.apache.axis2.soap12testing.handlers;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.InvocationProcessingInstruction;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
@@ -52,7 +51,7 @@ public class SOAP12InFlowHandlerDefaultB extends AbstractHandler implements Head
 
     }
 
-    public InvocationProcessingInstruction invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         SOAPEnvelope envelope = msgContext.getEnvelope();
         SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
         SOAPHeader headerAdd = factory.createSOAPHeader(envelope);
@@ -157,7 +156,7 @@ public class SOAP12InFlowHandlerDefaultB extends AbstractHandler implements Head
             headerBlockPresent = new Integer(0);
             msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent);
         }
-        return InvocationProcessingInstruction.CONTINUE_PROCESSING;
+        return InvocationResponse.CONTINUE;
     }
 }
 
