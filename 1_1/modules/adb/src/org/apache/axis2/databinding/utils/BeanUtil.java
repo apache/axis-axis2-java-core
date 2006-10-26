@@ -25,7 +25,6 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl;
 import org.apache.axis2.engine.ObjectSupplier;
@@ -57,7 +56,7 @@ public class BeanUtil {
      */
     public static XMLStreamReader getPullParser(Object beanObject,
                                                 QName beanName,
-                                                TypeTable typeTable) {
+                                                TypeTable typeTable, boolean qualified) {
         try {
             JamServiceFactory factory = JamServiceFactory.getInstance();
             JamServiceParams jam_service_parms = factory.createServiceParams();
@@ -74,14 +73,7 @@ public class BeanUtil {
                 throw new AxisFault("No service class found , exception from JAM");
             }
             QName elemntNameSpace = null;
-            if (typeTable == null) {
-                MessageContext currentMessageContext = MessageContext.getCurrentMessageContext();
-                if (currentMessageContext != null) {
-                    typeTable = currentMessageContext.
-                            getAxisService().getTypeTable();
-                }
-            }
-            if (typeTable != null) {
+            if (typeTable != null && qualified) {
                 QName qNamefortheType = typeTable.getQNamefortheType(beanObject.getClass().getName());
                 elemntNameSpace = new QName(qNamefortheType.getNamespaceURI(),
                         "elementName");
@@ -196,7 +188,7 @@ public class BeanUtil {
                     object.add(value);
                 }
             }
-            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null);
+            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null, typeTable,qualified);
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         } catch (java.beans.IntrospectionException e) {
@@ -219,7 +211,7 @@ public class BeanUtil {
             className = className.substring(className.lastIndexOf('.') + 1,
                     className.length());
         }
-        return getPullParser(beanObject, new QName(className), null);
+        return getPullParser(beanObject, new QName(className), null, false);
     }
 
     public static Object deserialize(Class beanClass,
@@ -557,7 +549,11 @@ public class BeanUtil {
         }
     }
 
-    public static OMElement getOMElement(QName opName, Object [] args, QName partName) {
+    public static OMElement getOMElement(QName opName,
+                                         Object [] args,
+                                         QName partName,
+                                         boolean qualifed,
+                                         TypeTable typeTable) {
         ArrayList objects;
         objects = new ArrayList();
         int argCount = 0;
@@ -636,7 +632,7 @@ public class BeanUtil {
             argCount ++;
         }
 
-        XMLStreamReader xr = new ADBXMLStreamReaderImpl(opName, objects.toArray(), null);
+        XMLStreamReader xr = new ADBXMLStreamReaderImpl(opName, objects.toArray(), null, typeTable, qualifed);
 
         StreamWrapper parser = new StreamWrapper(xr);
         StAXOMBuilder stAXOMBuilder =

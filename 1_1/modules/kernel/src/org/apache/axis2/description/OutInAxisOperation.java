@@ -268,7 +268,7 @@ class OutInAxisOperationClient implements OperationClient {
              * response message.
              */
             Boolean useCustomListener = (Boolean) options.getProperty(Constants.Configuration.USE_CUSTOM_LISTENER);
-            if (useCustomListener==null || useCustomListener.booleanValue()==false) {
+            if (useCustomListener==null || !useCustomListener.booleanValue()) {
 
                 EndpointReference replyToFromTransport = mc.getConfigurationContext().getListenerManager().
                 getEPRforService(sc.getAxisService().getName(), axisOp.getName().getLocalPart(), mc
