@@ -132,13 +132,16 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void loadServicesFromUrl(URL repoURL) {
         try {
-            URL servicesDir = new URL(repoURL, servicesPath == null ? DeploymentConstants.SERVICE_PATH : servicesPath);
+            String path = servicesPath == null ? DeploymentConstants.SERVICE_PATH : servicesPath;
+            if(!path.endsWith("/")) {
+                path = path + "/";
+            }
+            URL servicesDir = new URL(repoURL, path);
             URL filelisturl = new URL(servicesDir, "services.list");
             ArrayList files = getFileList(filelisturl);
             Iterator fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
                 String fileUrl = (String) fileIterator.next();
-                fileUrl = fileUrl.trim();
                 if (fileUrl.endsWith(".aar")) {
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
                     URL servicesURL = new URL(servicesDir, fileUrl);
@@ -157,13 +160,16 @@ public class DeploymentEngine implements DeploymentConstants {
 
     public void loadRepositoryFromURL(URL repoURL) throws DeploymentException {
         try {
-            URL moduleDir = new URL(repoURL, modulesPath == null ? DeploymentConstants.MODULE_PATH : modulesPath);
+            String path = modulesPath == null ? DeploymentConstants.MODULE_PATH : modulesPath;
+            if(!path.endsWith("/")) {
+                path = path + "/";
+            }            
+            URL moduleDir = new URL(repoURL, path);
             URL filelisturl = new URL(moduleDir, "modules.list");
             ArrayList files = getFileList(filelisturl);
             Iterator fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
                 String fileUrl = (String) fileIterator.next();
-                fileUrl = fileUrl.trim();
                 if (fileUrl.endsWith(".mar")) {
                     URL moduleurl = new URL(moduleDir, fileUrl);
                     DeploymentClassLoader deploymentClassLoader =
@@ -181,6 +187,9 @@ public class DeploymentEngine implements DeploymentConstants {
                     addNewModule(module);
                 }
             }
+            org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
+                    axisConfig.getModules(), axisConfig);
+            validateSystemPredefinedPhases();
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
         } catch (IOException e) {
@@ -900,7 +909,10 @@ public class DeploymentEngine implements DeploymentConstants {
             input = new BufferedReader(new InputStreamReader(in));
             String line;
             while ((line = input.readLine()) != null) {
-                fileList.add(line);
+                line = line.trim();
+                if(line.length() > 0) {
+                    fileList.add(line);
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
