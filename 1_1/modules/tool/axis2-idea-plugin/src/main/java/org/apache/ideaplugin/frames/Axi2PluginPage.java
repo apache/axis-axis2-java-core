@@ -64,7 +64,6 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
 
         butOK = new JButton("OK");
         butOK.addActionListener(this);
-        //setResizable(false);
         add(butOK);
 
         butCancle = new JButton("Cancel");
@@ -99,12 +98,16 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
             if (javawsdl.isSelected()) {
 
                 win = new Java2CodeFrame();
+                win.setResizable(false);
+                win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 win.setProject(project);
                 win.pack();
                 win.show();
                 
             } else {
                 ServiceArciveFrame window = new ServiceArciveFrame();
+                window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                window.setResizable(false);
                 window.setTitle("Service Archive creation");
                 window.show();
             }

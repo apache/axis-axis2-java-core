@@ -51,7 +51,6 @@ public class Java2CodeFrame extends JFrame {
     OptionPane optionPane;
     private int panleID = 0;
     private ClassLoader classLoader;
-    Axi2PluginPage pluginPage;
 
     // To keep the value of wsdl wizzard
     private CodegenBean codegenBean;
@@ -92,10 +91,9 @@ public class Java2CodeFrame extends JFrame {
         outputpane.setVisible(false);
         getContentPane().add(outputpane);
 
-        Dimension dim = new Dimension(450, 400);
+        Dimension dim = new Dimension(450, 600);
         setSize(dim);
         setBounds(200, 200, dim.width, dim.height);
-        this.setResizable(false);
     }
 
     public void setProject(Project project) {
@@ -126,7 +124,7 @@ public class Java2CodeFrame extends JFrame {
             copyDirectory(new File(temp + File.separator + "resources"), new File(output + File.separator + ".." + File.separator + "resources"));
 
         } catch (Exception e1) {
-            e1.printStackTrace();
+            throw e1;
         }
         finally {
 
@@ -143,7 +141,7 @@ public class Java2CodeFrame extends JFrame {
             codegenBean.generate();
 
         } catch (Exception e1) {
-            e1.printStackTrace();
+            throw e1;
         }
         
     }
@@ -196,7 +194,7 @@ public class Java2CodeFrame extends JFrame {
             String wsdl = codegenBean.getWSDLFileName();
             final String name = wsdl.substring(wsdl.lastIndexOf(File.separatorChar) + 1, wsdl.lastIndexOf(".")) + "-stub.jar";
             System.out.println(name);
-            File lib = new File(codegenBean.getActiveProject().getProjectFile().getParent().getPath() + File.separator + "lib");
+            final File lib = new File(codegenBean.getActiveProject().getProjectFile().getParent().getPath() + File.separator + "lib");
             if (!lib.isDirectory()) {
                 lib.mkdir();
             }
@@ -207,18 +205,22 @@ public class Java2CodeFrame extends JFrame {
             final LibraryTable table = (LibraryTable) project.getComponent(LibraryTable.class);
 
 
-            String url = VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, lib.getAbsolutePath() + File.separator + name) + JarFileSystem.JAR_SEPARATOR;
 
-            final VirtualFile jarVirtualFile = VirtualFileManager.getInstance().findFileByUrl(url);
 
             ApplicationManager.getApplication().runWriteAction(new
                     Runnable() {
                         public void run() {
-                            Library myLibrary = table.createLibrary(name);
 
+                            String url = VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, lib.getAbsolutePath() + File.separator + name) + JarFileSystem.JAR_SEPARATOR;
+
+
+
+                            VirtualFile jarVirtualFile = VirtualFileManager.getInstance().findFileByUrl(url);
+                            Library myLibrary = table.createLibrary(name);
                             Library.ModifiableModel libraryModel = myLibrary.getModifiableModel();
                             libraryModel.addRoot(jarVirtualFile, OrderRootType.CLASSES);
                             libraryModel.commit();
+
 
                         }
                     });
@@ -271,6 +273,15 @@ public class Java2CodeFrame extends JFrame {
                 break;
             }
             case 3: {
+                String result;
+                if (this.optionPane.radCustom.isSelected() && (result = validatePackageNames()) != null)
+                {
+                    JOptionPane.showMessageDialog(this, "The package name " + result + " is not a valid package name",
+                                "Error!!!", JOptionPane.INFORMATION_MESSAGE);
+                    panleID--;
+                    break;
+                }
+
                 panel_3.setCaptions("  Output"
                         , "  set the output project for the generated code");
                 this.secondPanel.setVisible(false);
@@ -283,6 +294,30 @@ public class Java2CodeFrame extends JFrame {
                 break;
             }
         }
+    }
+
+    public String validatePackageNames(){
+        if (!validatePackageName(this.secondPanel.txtPacakgeName.getText()))
+        return this.secondPanel.txtPacakgeName.getText();
+
+        for(int count=0;count<this.secondPanel.table.getRowCount();count++){
+            if(!validatePackageName((String)this.secondPanel.table.getValueAt(count,1)))
+            return (String)this.secondPanel.table.getValueAt(count,1);
+        }
+        return null;
+    }
+
+    public boolean validatePackageName(String name){
+        if (name.trim().equalsIgnoreCase(""))
+        return false;
+        String[] parts = new String[10];
+         parts = name.split("\\.");
+        for(int count=0;count<parts.length;count++)
+        {
+            if (parts[count].trim().equalsIgnoreCase(""))
+            return false;
+        }
+        return true;
     }
 
     public void backButtonImpl(){
@@ -381,7 +416,7 @@ class windowLayout implements LayoutManager {
 
         Insets insets = parent.getInsets();
         dim.width = 550 + insets.left + insets.right;
-        dim.height = 460 + insets.top + insets.bottom;
+        dim.height = 600 + insets.top + insets.bottom;
 
         return dim;
     }
@@ -400,23 +435,23 @@ class windowLayout implements LayoutManager {
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 550, 340);
+            c.setBounds(insets.left, insets.top + 80, 600, 480);
         }
         c = parent.getComponent(3);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 550, 330);
+            c.setBounds(insets.left, insets.top + 80, 600, 480);
         }
         c = parent.getComponent(4);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 550, 330);
+            c.setBounds(insets.left, insets.top + 80, 600, 480);
         }
         c = parent.getComponent(5);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 80, 550, 330);
+            c.setBounds(insets.left, insets.top + 80, 600, 480);
         }
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 415, 550, 50);
+            c.setBounds(insets.left, insets.top + 550, 600, 50);
         }
     }
 }

@@ -45,6 +45,8 @@ public class Axis2IdeaPlugin implements ApplicationComponent, Configurable {
 
         if (form == null) {
             form = new Axi2PluginPage();
+            form.setResizable(false);
+            form.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         }
         if (myIcon == null) {
             java.net.URL resource = Axis2IdeaPlugin.class.getResource("/icons/icon.png");

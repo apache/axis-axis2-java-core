@@ -202,7 +202,7 @@ class OutPutPaneLayout implements LayoutManager {
 
         Insets insets = parent.getInsets();
         dim.width = 611 + insets.left + insets.right;
-        dim.height = 57 + insets.top + insets.bottom;
+        dim.height = 600 + insets.top + insets.bottom;
 
         return dim;
     }

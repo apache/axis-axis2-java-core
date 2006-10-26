@@ -68,14 +68,15 @@ public class ServiceArciveFrame extends JFrame {
         bottomPanel.setBounds(insets.left, insets.top + 328, 608, 60);
         setSize(getPreferredSize());
         setResizable(false);
+        
 
     }
 
     public void setEnable(boolean back, boolean next, boolean finish, boolean cancel) {
         if (currentpanle instanceof FirstFrame) {
-            bottomPanel.setEnable(false, next, finish, cancel);
+            bottomPanel.setEnable(back, next, finish, cancel);
         } else {
-            bottomPanel.setEnable(true, next, finish, cancel);
+            bottomPanel.setEnable(back, next, finish, cancel);
         }
 
     }
@@ -90,7 +91,7 @@ public class ServiceArciveFrame extends JFrame {
         getContentPane().add(current);
         current.setBounds(insets.left, insets.top + 80, 608, 260);
         currentpanle = current;
-        setEnable(true, false, false, true);
+        
         reShow();
     }
 
