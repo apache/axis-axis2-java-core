@@ -26,6 +26,7 @@ import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -115,7 +116,8 @@ public class MTOMSerializationTests extends TestCase {
         ImageDepot imageDepot = new ObjectFactory().createImageDepot();
         imageDepot.setImageData(dataHandler);
         
-        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        //JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        JAXBBlockContext context = new JAXBBlockContext(SendImage.class, false);
         
         //Create a request bean with imagedepot bean as value
         ObjectFactory factory = new ObjectFactory();
@@ -123,7 +125,7 @@ public class MTOMSerializationTests extends TestCase {
         request.setInput(imageDepot);
         
         BlockFactory blkFactory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-        Block block = blkFactory.createFrom(request, jbc, null);
+        Block block = blkFactory.createFrom(request, context, null);
         
         MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
         Message msg = msgFactory.create(Protocol.soap11);

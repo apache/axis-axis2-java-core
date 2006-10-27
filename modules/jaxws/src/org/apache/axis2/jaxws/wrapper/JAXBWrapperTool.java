@@ -20,7 +20,6 @@ package org.apache.axis2.jaxws.wrapper;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.axis2.jaxws.marshaller.MethodParameter;

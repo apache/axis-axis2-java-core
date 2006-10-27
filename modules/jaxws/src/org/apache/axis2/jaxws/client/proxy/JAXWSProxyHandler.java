@@ -162,6 +162,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		if (log.isDebugEnabled()) {
             log.debug("Attempting to Invoke SEI Method "+ method.getName());
         }
+		
 		initialize();
 		InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
 		MessageContext requestContext = createRequest(method, args);
@@ -282,6 +283,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		    if (log.isDebugEnabled()) {
 		        log.debug("Message Converted to response Throwable.  Throwing back to client.");
 		    }
+		    
 		    throw (Throwable)object;
 		}
 		Object object = methodMarshaller.demarshalResponse(responseMsg, args);

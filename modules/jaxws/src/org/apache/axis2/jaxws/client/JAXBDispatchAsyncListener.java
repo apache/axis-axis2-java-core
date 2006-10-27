@@ -24,6 +24,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
@@ -55,8 +56,8 @@ public class JAXBDispatchAsyncListener extends AsyncListener {
         Message message = mc.getMessage();
         try {
             JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            
-            Block block = message.getBodyBlock(0, jaxbContext, factory);
+            JAXBBlockContext context = new JAXBBlockContext(null, false, jaxbContext);
+            Block block = message.getBodyBlock(0, context, factory);
             value = block.getBusinessObject(true);
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

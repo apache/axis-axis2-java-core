@@ -27,5 +27,4 @@ package org.apache.axis2.jaxws.message.factory;
  * 
  */
 public interface JAXBBlockFactory extends BlockFactory {
- // TODO The factory should expose methods to get the default JAXBContext, JAXBInspector, Marshaller, Unmarshaller, etc.
 }

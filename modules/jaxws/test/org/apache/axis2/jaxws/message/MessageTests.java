@@ -19,7 +19,6 @@ package org.apache.axis2.jaxws.message;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
@@ -32,6 +31,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
@@ -39,6 +39,7 @@ import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
+import test.EchoString;
 import test.EchoStringResponse;
 import test.ObjectFactory;
 
@@ -506,11 +507,11 @@ public class MessageTests extends TestCase {
         obj.setEchoStringReturn("sample return value");
         
         // Create the JAXBContext
-        JAXBContext jbc = JAXBContext.newInstance("test");
+        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class, false);
         
         // Create a JAXBBlock using the Echo object as the content.  This simulates
         // what occurs on the outbound JAX-WS Dispatch<Object> client
-        Block block = bf.createFrom(obj, jbc, null);
+        Block block = bf.createFrom(obj, context, null);
         
         // Add the block to the message as normal body content.
         m.setBodyBlock(0, block);
@@ -572,12 +573,11 @@ public class MessageTests extends TestCase {
         obj.setEchoStringReturn("sample return value");
         
         // Create the JAXBContext
-        JAXBContext jbc = JAXBContext.newInstance("test");
-        
-        
+        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class, false);
+       
         // Create a JAXBBlock using the Echo object as the content.  This simulates
         // what occurs on the outbound JAX-WS Dispatch<Object> client
-        Block block = bf.createFrom(obj, jbc, null);
+        Block block = bf.createFrom(obj, context, null);
         
         // Add the block to the message as normal body content.
         m.setBodyBlock(0, block);
@@ -655,10 +655,10 @@ public class MessageTests extends TestCase {
         
         // Create the JAXBContext instance that will be used
         // to deserialize the JAX-B object content in the message.
-        JAXBContext jbc = JAXBContext.newInstance("test");
+        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class, false);
         
         // Get the JAXBBlock that wraps the content
-        Block b = m.getBodyBlock(0, jbc, bf);
+        Block b = m.getBodyBlock(0, context, bf);
      
         // Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.

@@ -23,7 +23,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.jaxws.message.databinding.impl.BlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
 /**
@@ -140,19 +139,4 @@ public interface Block extends OMDataSource {
      * Set the XMLPart that will contain this Block.
      */
     public void setParent(XMLPart p);
-    /**
-     * @returns the Block Context, BlockContext stores the context information of the Block. Example, this holds something that the Block would need in order to 
-     * serialize or deserialize correctly.
-     * 
-     */
-    public BlockContext getBlockContext(); 
-
-    /**
-     * sets the block context, BlockContext stores the context information of the Block. Example, this holds something that the Block would need in order to 
-     * serialize or deserialize correctly further example is JAXBBlock store the declared Type that it can later use to unmarshal a Message if it holds
-     * a primitive type.
-     * @param blockContext
-     */
-	public void setBlockContext(BlockContext blockContext); 
-	
 }

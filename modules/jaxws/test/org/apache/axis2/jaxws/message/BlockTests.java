@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
@@ -45,6 +44,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -325,13 +325,14 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("test");
-        JAXBIntrospector jbi = jbc.createJAXBIntrospector();
+        JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
+       
+        JAXBIntrospector jbi = context.getIntrospector();
         QName expectedQName = jbi.getElementName(jaxb);
         
 		// Create a Block using the sample string as the content.  This simulates
 		// what occurs on the outbound JAX-WS dispatch<JAXB> client
-		Block block = f.createFrom(jaxb, jbc, null);
+		Block block = f.createFrom(jaxb, context, null);
 		
 		// JAXB objects set the qname from their internal data
 		assertTrue(block.isQNameAvailable());
@@ -373,13 +374,14 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("test");
-        JAXBIntrospector jbi = jbc.createJAXBIntrospector();
+        JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
+        
+        JAXBIntrospector jbi = context.getIntrospector();
         QName expectedQName = jbi.getElementName(jaxb);
         
 		// Create a Block using the sample string as the content.  This simulates
 		// what occurs with an outbound JAX-WS JAXB parameter
-		Block block = f.createFrom(jaxb, jbc, expectedQName);
+		Block block = f.createFrom(jaxb, context, expectedQName);
 		
 		// We did pass in a qname, so the following should return false
 		assertTrue(block.isQNameAvailable());
@@ -421,20 +423,20 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("test");
+        JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
 		
 		// On inbound, there will already be a XMLStreamReader (probably from OM)
 		// which represents the message.  We will simulate this with inflow.
         StringWriter sw = new StringWriter();
         XMLStreamWriter writer = outputFactory.createXMLStreamWriter(sw);
-        jbc.createMarshaller().marshal(jaxb, writer);
+        context.getMarshaller().marshal(jaxb, writer);
         writer.flush();
         sw.flush();
 		StringReader sr = new StringReader(sw.toString());
 		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
 		
 		// Create a Block from the inflow.  
-		Block block = f.createFrom(inflow, jbc, null);
+		Block block = f.createFrom(inflow, context, null);
 		
 		// We didn't pass in a qname, so the following should return false
 		assertTrue(!block.isQNameAvailable());
@@ -466,22 +468,23 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("test");
-        JAXBIntrospector jbi = jbc.createJAXBIntrospector();
+        JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
+
+        JAXBIntrospector jbi = context.getIntrospector();
         QName expectedQName = jbi.getElementName(jaxb);
 		
 		// On inbound, there will already be a XMLStreamReader (probably from OM)
 		// which represents the message.  We will simulate this with inflow.
         StringWriter sw = new StringWriter();
         XMLStreamWriter writer = outputFactory.createXMLStreamWriter(sw);
-        jbc.createMarshaller().marshal(jaxb, writer);
+        context.getMarshaller().marshal(jaxb, writer);
         writer.flush();
         sw.flush();
 		StringReader sr = new StringReader(sw.toString());
 		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
 		
 		// Create a Block from the inflow.  
-		Block block = f.createFrom(inflow, jbc, null);
+		Block block = f.createFrom(inflow, context, null);
 		
 		// We didn't pass in a qname, so the following should return false
 		assertTrue(!block.isQNameAvailable());
@@ -519,22 +522,23 @@ public class BlockTests extends TestCase {
         ObjectFactory factory = new ObjectFactory();
         EchoString jaxb = factory.createEchoString(); 
         jaxb.setInput("Hello World");
-        JAXBContext jbc = JAXBContext.newInstance("test");
-        JAXBIntrospector jbi = jbc.createJAXBIntrospector();
+        JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
+        
+        JAXBIntrospector jbi = context.getIntrospector();
         QName expectedQName = jbi.getElementName(jaxb);
 		
 		// On inbound, there will already be a XMLStreamReader (probably from OM)
 		// which represents the message.  We will simulate this with inflow.
         StringWriter sw = new StringWriter();
         XMLStreamWriter writer = outputFactory.createXMLStreamWriter(sw);
-        jbc.createMarshaller().marshal(jaxb, writer);
+        context.getMarshaller().marshal(jaxb, writer);
         writer.flush();
         sw.flush();
 		StringReader sr = new StringReader(sw.toString());
 		XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
 		
 		// Create a Block from the inflow.  
-		Block block = f.createFrom(inflow, jbc, expectedQName);
+		Block block = f.createFrom(inflow, context, expectedQName);
 		
 		// We passed in a qname, so the following should return false
 		assertTrue(block.isQNameAvailable());
@@ -916,8 +920,9 @@ public class BlockTests extends TestCase {
 	        ObjectFactory factory = new ObjectFactory();
 	        EchoString jaxb = factory.createEchoString(); 
 	        jaxb.setInput("Hello World");
-	        JAXBContext jbc = JAXBContext.newInstance("test");
-	        JAXBSource src = new JAXBSource(jbc.createMarshaller(), jaxb);
+	        JAXBContext context = JAXBContext.newInstance("test");
+	       
+	        JAXBSource src = new JAXBSource(context.createMarshaller(), jaxb);
 	        BlockFactory f = (SourceBlockFactory)
 				FactoryRegistry.getFactory(SourceBlockFactory.class);
 	        
@@ -952,11 +957,12 @@ public class BlockTests extends TestCase {
             FactoryRegistry.getFactory(SourceBlockFactory.class);
         //Create a JAXBSource
         
-        JAXBContext jbc = JAXBContext.newInstance("test");
-        Unmarshaller u = jbc.createUnmarshaller();
+        JAXBContext context = JAXBContext.newInstance("test");
+        
+        Unmarshaller u = context.createUnmarshaller();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(echoSample.getBytes());
         EchoString jaxb = (EchoString)u.unmarshal(inputStream);
-        JAXBSource src = new JAXBSource(jbc.createMarshaller(), jaxb);
+        JAXBSource src = new JAXBSource(context.createMarshaller(), jaxb);
         
         // Create a Block using the sample string as the content.  This simulates
         // what occurs on the outbound JAX-WS dispatch<Source> client

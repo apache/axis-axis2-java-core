@@ -16,11 +16,17 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 
@@ -41,15 +47,37 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(org.apache.axiom.om.OMElement, java.lang.Object, javax.xml.namespace.QName)
 	 */
-	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException {
-		return new JAXBBlockImpl(omElement, context, qName, this);
+	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException, MessageException {
+		// The context for a JAXBFactory must be non-null and should be a JAXBBlockContext.
+		if (context == null) {
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", "null"), null);
+		} else if (context instanceof JAXBBlockContext) {
+			;
+		} else {
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName()), null);
+		}
+		return new JAXBBlockImpl(omElement, (JAXBBlockContext) context, qName, this);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(java.lang.Object, java.lang.Object, javax.xml.namespace.QName)
 	 */
-	public Block createFrom(Object businessObject, Object context, QName qName) {
-		return new JAXBBlockImpl(businessObject, context, qName, this);
+	public Block createFrom(Object businessObject, Object context, QName qName) throws MessageException {
+		
+		// The context for a JAXBFactory must be non-null and should be a JAXBBlockContext.
+		// For legacy reasons, a JAXBContext is also supported (and wrapped into a JAXBBlockContext)
+		if (context == null) {
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", "null"), null);
+		} else if (context instanceof JAXBBlockContext) {
+			;
+		} else {
+			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName()), null);
+		}
+		try {
+			return new JAXBBlockImpl(businessObject, (JAXBBlockContext) context, qName, this);
+		} catch (JAXBException e) {
+			throw ExceptionFactory.makeMessageException(e);
+		}
 	}
 
 }

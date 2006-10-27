@@ -178,7 +178,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	   try{
            ByteArrayOutputStream out = new ByteArrayOutputStream();
            Result result = new StreamResult(out);
-           Transformer transformer =  TransformerFactory.newInstance().newTransformer();
+           Transformer transformer = TransformerFactory.newInstance().newTransformer();
            transformer.transform(src, result); 
 	       ByteArrayInputStream bytes = new ByteArrayInputStream(out.toByteArray());
 	       return inputFactory.createXMLStreamReader(bytes);

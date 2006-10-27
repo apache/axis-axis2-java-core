@@ -128,13 +128,15 @@ public class AxisInvocationController extends InvocationController {
             // do nothing here.  The exception we get is from the endpoint,
             // and will be sitting on the message context.  We need to save it
             // to process it through jaxws
+        	System.out.println("Swallowed Exception =" + af);
+        	af.printStackTrace(System.out);
         }
         
         try {
             // Collect the response MessageContext and envelope
             axisResponseMsgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             response = new MessageContext(axisResponseMsgCtx);
-        
+         
             // This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
         } catch (AxisFault e) {
@@ -180,6 +182,8 @@ public class AxisInvocationController extends InvocationController {
             // do nothing here.  The exception we get is from the endpoint,
             // and will be sitting on the message context.  We need to save it
             // to process it through jaxws
+        	System.out.println("Swallowed Exception =" + af);
+        	af.printStackTrace(System.out);
         }
                 
         return;
@@ -268,6 +272,8 @@ public class AxisInvocationController extends InvocationController {
             // do nothing here.  The exception we get is from the endpoint,
             // and will be sitting on the message context.  We need to save it
             // to process it through jaxws
+        	System.out.println("Swallowed Exception =" + af);
+        	af.printStackTrace(System.out);
         }
         
         // Now that the request has been sent, start the listener thread so that it can

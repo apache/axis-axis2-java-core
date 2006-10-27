@@ -46,8 +46,9 @@ public interface BlockFactory {
 	 * @param context Associated Context or null
 	 * @param QName if known...if null the Block will determine the QName
 	 * @throws XMLStreamException
+	 * @throws MessageException
 	 */
-	public Block createFrom(XMLStreamReader reader, Object context, QName qName) throws XMLStreamException;
+	public Block createFrom(XMLStreamReader reader, Object context, QName qName) throws XMLStreamException, MessageException;
 	
 	/**
 	 * createBlock from XMLStreamReader
@@ -55,8 +56,9 @@ public interface BlockFactory {
 	 * @param context Associated Context or null
 	 * @param QName if known...if null the Block will determine the QName
 	 * @throws XMLStreamException
+	 * @throws MessageException
 	 */
-	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException;
+	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException, MessageException;
 	
 	/**
 	 * createBlock from another Block
@@ -67,6 +69,7 @@ public interface BlockFactory {
 	 * @param other Block
 	 * @param context Associated Context or null
 	 * @throws XMLStreamException
+	 * @throws MessageException
 	 */
 	public Block createFrom(Block other, Object context) throws XMLStreamException, MessageException;
 	
@@ -75,6 +78,8 @@ public interface BlockFactory {
 	 * @param businessObject
 	 * @param context Associated Context or null
 	 * @param QName if known...if null the Block will determine the QName
+	 * @throws XMLStreamException
+	 * @throws MessageException
 	 */
 	public Block createFrom(Object businessObject, Object context, QName qName) throws MessageException;
 }

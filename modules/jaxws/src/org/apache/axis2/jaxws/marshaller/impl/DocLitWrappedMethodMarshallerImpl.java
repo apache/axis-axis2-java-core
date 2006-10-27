@@ -192,6 +192,9 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		return message;
 	}
 
-
-	
+	private Class loadClass(String className)throws ClassNotFoundException{
+		// TODO J2W AccessController Needed
+		// Don't make this public, its a security exposure
+		return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+	}
 }

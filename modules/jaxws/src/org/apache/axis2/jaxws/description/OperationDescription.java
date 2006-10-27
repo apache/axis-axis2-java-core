@@ -551,13 +551,13 @@ public class OperationDescription {
     
     public String getWebFaultClassName() {
     	// TODO will need to pass in the exception class to compare with the names???
-    	return getWebFaultClassNames()[0];
+    	return getWebFaultClassNames().length== 0 ? null:getWebFaultClassNames()[0];
     }
     
     public String getWebExceptionClassName() {
     	// TODO will need to pass in the fault detail child element name (as a string) to
     	// compare with the WebFault of the declared exceptions
-    	return getWebExceptionClassNames()[0];
+    	return getWebExceptionClassNames().length== 0 ? null:getWebExceptionClassNames()[0];
     }
     // ===========================================
     // ANNOTATION: WebParam

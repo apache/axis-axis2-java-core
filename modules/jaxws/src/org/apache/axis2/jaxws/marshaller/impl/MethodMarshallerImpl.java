@@ -30,7 +30,6 @@ import java.util.concurrent.Future;
 
 import javax.jws.WebParam.Mode;
 import javax.management.openmbean.SimpleType;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
@@ -52,6 +51,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.marshaller.ClassUtils;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Block;
@@ -60,7 +60,7 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
-import org.apache.axis2.jaxws.message.databinding.impl.BlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
@@ -114,29 +114,31 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		Exception exception = null;
 		String className = operationDesc.getWebExceptionClassName();
 		String jaxbClassName = operationDesc.getWebFaultClassName();
-		if(className == null || (className != null && className.length()==0)){
-			// TODO do something here, like throw an exception?
-		}
-		else{
+		
 			try {
-				XMLFault xmlfault = message.getXMLFault();
-				Class beanclass = loadClass(jaxbClassName);
-				Block[] blocks = xmlfault.getDetailBlocks();
-				
-				if ((beanclass == null) || (blocks == null)) {
-					exception = createGenericException(xmlfault.getReason().getText());
-				} else {
-					// TODO for now, just use the first block, until we do the resolution mentioned above
-					Object obj = createFaultBusinessObject(beanclass,  blocks[0]);
-					// create the exception we actually want to throw
-					Class exceptionclass = loadClass(className);
-					exception = createCustomException(xmlfault.getReason().getText(), exceptionclass, obj);
-				}
-			} catch (Exception e) {
-				// TODO if we have problems creating the exception object, we'll end up here,
-				// where we should return at least a meaningfull exception to the user
-				exception = ExceptionFactory.makeWebServiceException(e.toString());
+			XMLFault xmlfault = message.getXMLFault();
+			Class beanclass = (jaxbClassName == null || jaxbClassName.length() ==0 || className == null || className.length() == 0)
+				? null : loadClass(jaxbClassName);
+			Block[] blocks = xmlfault.getDetailBlocks();
+
+			if ((beanclass == null) || (blocks == null)) {
+				exception = createGenericException(xmlfault.getReason()
+						.getText());
+			} else {
+				// TODO for now, just use the first block, until we do the
+				// resolution mentioned above
+				Object obj = createFaultBusinessObject(beanclass, blocks[0]);
+				// create the exception we actually want to throw
+				Class exceptionclass = loadClass(className);
+				exception = createCustomException(xmlfault.getReason()
+						.getText(), exceptionclass, obj);
 			}
+		} catch (Exception e) {
+			// TODO if we have problems creating the exception object, we'll end
+			// up here,
+			// where we should return at least a meaningfull exception to the
+			// user
+			exception = ExceptionFactory.makeWebServiceException(e.toString());
 		}
 
 		return exception;
@@ -146,7 +148,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalFaultResponse(java.lang.Throwable)
 	 */
 	public Message marshalFaultResponse(Throwable throwable) throws IllegalAccessException, InvocationTargetException, JAXBException, ClassNotFoundException, NoSuchMethodException, MessageException, XMLStreamException {
-		Throwable t = getRootCause(throwable);
+		Throwable t = ClassUtils.getRootCause(throwable);
 		
 		String faultClazzName = operationDesc.getWebFaultClassName();
 
@@ -156,7 +158,9 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		if (faultClazzName != null) {
 			Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
 			faultBean = getFaultInfo.invoke(t, null);
-			Block detailBlock = createJAXBBlock(faultBean, this.createJAXBContext(faultClazzName));
+			Class faultClazz = loadClass(faultClazzName);
+			JAXBBlockContext context = createJAXBBlockContext(faultClazz);
+			Block detailBlock = createJAXBBlock(faultBean, context);
             String text = t.getMessage();
 			xmlfault = new XMLFault(null, // Use the default XMLFaultCode
                         new XMLFaultReason(text),  // Assumes text is the language supported by the current Locale
@@ -377,24 +381,24 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return methodName.endsWith("Async") && (returnType.isAssignableFrom(Response.class) || returnType.isAssignableFrom(Future.class));
 	}
 	
-	protected boolean isXmlRootElementDefined(Class jaxbClass){
-		XmlRootElement root = (XmlRootElement) jaxbClass.getAnnotation(XmlRootElement.class);
-		return root !=null;
-	}
+	
 	
 	protected <T> ArrayList<T> toArrayList(T[] objects){
 		return (objects!=null)? new ArrayList<T>(Arrays.asList(objects)):new ArrayList<T>();
 	}
 	
-	protected Block createJAXBBlock(Object jaxbObject, JAXBContext context) throws MessageException{
+	protected Block createJAXBBlock(Object jaxbObject, JAXBBlockContext context) throws MessageException{
 		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 		return factory.createFrom(jaxbObject,context,null);
 		
 	}
 	
-	protected Block createJAXBBlock(String name, Object jaxbObject, JAXBContext context, String targetNamespace) throws MessageException{
+	protected Block createJAXBBlock(String name, 
+			Object jaxbObject, 
+			JAXBBlockContext context, 
+			String targetNamespace) throws MessageException, JAXBException {
 		
-		JAXBIntrospector introspector = context.createJAXBIntrospector();
+		JAXBIntrospector introspector = context.getIntrospector();
 		if(introspector.isElement(jaxbObject)){
 			return createJAXBBlock(jaxbObject, context);
 		}
@@ -417,7 +421,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		
 	}
 	
-	protected Block createJAXBBlock(OMElement om, JAXBContext context)throws javax.xml.stream.XMLStreamException{
+	protected Block createJAXBBlock(OMElement om, JAXBBlockContext context)throws  XMLStreamException, MessageException {
 		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 		return factory.createFrom(om,context,null);
 		
@@ -437,19 +441,13 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return null;
 	}
 	
-	protected JAXBContext createJAXBContext(String wrapperClazzName) throws ClassNotFoundException, JAXBException {
-		Class wrapperClazz = loadClass(wrapperClazzName);
-		return createJAXBContext(wrapperClazz);
-        
-    }
 	
-	protected JAXBContext createJAXBContext(Class wrapperClazz) throws JAXBException{
-		return JAXBContext.newInstance(new Class[]{wrapperClazz});
-	}
-	
-	protected Class loadClass(String className)throws ClassNotFoundException{
+	private Class loadClass(String className)throws ClassNotFoundException{
+		// TODO J2W AccessController Needed
+		// Don't make this public, its a security exposure
 		return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
 	}
+	
 	/**
 	 * In this method I am trying get the return type of the method.
 	 * if SEI method is Async pooling implmentation then return type is actual type in Generic Response, example Response<ClassName>.
@@ -574,11 +572,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		        }
 				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr2"));
 			}
-			JAXBContext ctx = createJAXBContext(objectType);
+			JAXBBlockContext ctx = createJAXBBlockContext(objectType);
 			if (log.isDebugEnabled()) {
 	            log.debug("Attempting to create Block");
 	        }
-			if(isXmlRootElementDefined(objectType)){
+			if(ClassUtils.isXmlRootElementDefined(objectType)){
 				block = createJAXBBlock(object, ctx);
 			}
 			else{
@@ -606,11 +604,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	
 	protected Message createMessage(Object jaxbObject, Class jaxbClazz, String jaxbClassName, String targetNamespace)throws JAXBException, MessageException, XMLStreamException{
 		Block bodyBlock = null;
-		JAXBContext ctx = createJAXBContext(jaxbClazz);
+		JAXBBlockContext ctx = createJAXBBlockContext(jaxbClazz);
 		if (log.isDebugEnabled()) {
             log.debug("Attempting to create Block");
         }
-		if(isXmlRootElementDefined(jaxbClazz)){
+		if(ClassUtils.isXmlRootElementDefined(jaxbClazz)){
 			bodyBlock = createJAXBBlock(jaxbObject, ctx);
 		}
 		else{
@@ -641,49 +639,50 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	}
 	
 	protected Object createBOFromHeaderBlock(Class jaxbClazz, Message message, String targetNamespace, String localPart) throws JAXBException, MessageException, XMLStreamException{
-		JAXBContext ctx = createJAXBContext(jaxbClazz);
+		
+		JAXBBlockContext blockContext = createJAXBBlockContext(jaxbClazz);
 		
 		// Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
         // out of the Message
         JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class); 
-        Block block = message.getHeaderBlock(targetNamespace, localPart, ctx, factory);
-        return createBusinessObject(jaxbClazz, block);
+        Block block = message.getHeaderBlock(targetNamespace, localPart, blockContext, factory);
+        return block.getBusinessObject(true);
 	}
 	
 	protected Object createBOFromBodyBlock(Class jaxbClazz, Message message) throws JAXBException, MessageException, XMLStreamException{
 		return createBusinessObject(jaxbClazz, message);
 	}
+
 	
 	protected Object createBusinessObject(Class jaxbClazz, Message message) throws JAXBException, MessageException, XMLStreamException{
-		JAXBContext ctx = createJAXBContext(jaxbClazz);
+		JAXBBlockContext blockContext = createJAXBBlockContext(jaxbClazz);
 		
 		// Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
         // out of the Message
         JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
         
-        Block block = message.getBodyBlock(0, ctx, factory);
-        return createBusinessObject(jaxbClazz, block);
+        Block block = message.getBodyBlock(0, blockContext, factory);
+        return block.getBusinessObject(true);
 	}
 	
-	protected Object createBusinessObject(Class jaxbClazz, Block block)
-			throws JAXBException, MessageException, XMLStreamException {
-		if (jaxbClazz.isPrimitive() || isSimpleType(jaxbClazz)
-				|| !isXmlRootElementDefined(jaxbClazz)) {
-			BlockContext bc = new BlockContext();
-			bc.setDeclareType(jaxbClazz);
-			block.setBlockContext(bc);
-		}
-		return block.getBusinessObject(true);
+	private JAXBBlockContext createJAXBBlockContext(Class jaxbClazz) throws JAXBException, MessageException {
+		// Primitives, simpleTypes and classes without a root element must be represented as a JAXBElement
+		boolean useJAXBElement = !ClassUtils.isXmlRootElementDefined(jaxbClazz);
+			
+		JAXBBlockContext blockContext = new JAXBBlockContext(jaxbClazz, useJAXBElement);
+		
+		return blockContext;
 	}
 
 	protected Object createFaultBusinessObject(Class jaxbClazz, Block block)
 			throws JAXBException, MessageException, XMLStreamException {
-		JAXBContext ctx = createJAXBContext(jaxbClazz);
+		JAXBBlockContext blockContext = createJAXBBlockContext(jaxbClazz);
+		
 		OMElement om = block.getOMElement();
 
 		XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
 
-		Unmarshaller u = ctx.createUnmarshaller();
+		Unmarshaller u = blockContext.getUnmarshaller();
 		Reader inputReader = new InputStreamReader(new ByteArrayInputStream(om
 				.toString().getBytes()));
 		XMLStreamReader sr = xmlFactory.createXMLStreamReader(inputReader);
@@ -765,15 +764,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		
 	}
 	
-	protected boolean isSimpleType(Class clazz) {
-		String[] allOpenTypes = SimpleType.ALLOWED_CLASSNAMES;
-		for (String openType : allOpenTypes) {
-			if (clazz.getName().equals(openType)) {
-				return true;
-			}
-		}
-		return false;
-			}
+	
 	
 	protected Object findProperty(String propertyName, Object jaxbObject)throws JAXBWrapperException{
 		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
@@ -809,20 +800,4 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
     	return ExceptionFactory.makeWebServiceException(message);
     }
     
-    private static Throwable getRootCause(Throwable e) {
-        Throwable t = null;
-        
-        if (e != null) {
-            if (e instanceof InvocationTargetException) {
-                t = ((InvocationTargetException) e).getTargetException();
-            } else {
-                t = null;
-            }
-            
-            if (t != null) {
-                e = getRootCause(t);
-            }
-        }
-        return e;
-    }
 }

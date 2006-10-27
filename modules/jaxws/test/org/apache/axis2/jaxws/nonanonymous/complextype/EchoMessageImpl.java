@@ -25,7 +25,7 @@ public class EchoMessageImpl implements EchoMessagePortType {
 	 */
 	public String echoMessage(String request) {
 		String response = null;
-
+		System.out.println("echoMessage received: " + request);
         response = request.replaceAll("Server", "Client");
         return response;
 

@@ -34,7 +34,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLPart;
-import org.apache.axis2.jaxws.message.databinding.impl.BlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
@@ -66,7 +65,6 @@ public abstract class BlockImpl implements Block {
 	private BlockFactory factory;
 	private boolean consumed = false;
     private XMLPart parent;
-    private BlockContext blockContext;
 	
 	/**
 	 * A Block has the following components
@@ -101,14 +99,6 @@ public abstract class BlockImpl implements Block {
 	 */
 	public BlockFactory getBlockFactory() {
 		return factory;
-	}
-	
-	public BlockContext getBlockContext() {
-		return blockContext;
-	}
-
-	public void setBlockContext(BlockContext blockContext) {
-		this.blockContext = blockContext;
 	}
 
 	/* (non-Javadoc)
@@ -285,6 +275,11 @@ public abstract class BlockImpl implements Block {
 			busObject = null;
 			busContext = null;
 			omElement = null;
+			// Create an exception so that we can print a stack trace.
+			//Exception e = new RuntimeException();
+			//System.out.println("consumed block " + this.getClass() + " at ");
+			//e.printStackTrace(System.out);
+			
 		} else {
 			consumed = false;
 		}
