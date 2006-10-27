@@ -16,6 +16,9 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
+import java.util.Iterator;
+
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -25,12 +28,14 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 
 /**
  * MessageFactoryImpl
@@ -73,10 +78,16 @@ public class MessageFactoryImpl implements MessageFactory {
 	 */
 	public Message createFrom(SOAPMessage message) throws XMLStreamException, MessageException {
 		try {
+            // Create a Message with an XMLPart from the SOAPEnvelope
 			Message m = new MessageImpl(message.getSOAPPart().getEnvelope());
 			if (message.countAttachments() > 0) {
-				throw ExceptionFactory.makeMessageException(Messages.getMessage("AttachmentsNotSupported"));
-			}
+                Iterator it = message.getAttachments();
+                while (it.hasNext()) {
+                    AttachmentPart ap = (AttachmentPart) it.next();
+                    Attachment a = MessageUtils.createAttachment(ap, m);
+                    m.addAttachment(a);
+                }
+            }
 			return m;
 		} catch (Exception e) {
 			throw ExceptionFactory.makeMessageException(e);

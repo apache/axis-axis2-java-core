@@ -58,8 +58,15 @@ import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
 import org.apache.axis2.proxy.ProxyNonWrappedTests;
 import org.apache.axis2.proxy.ProxyTests;
+import org.apache.log4j.BasicConfigurator;
 
 public class JAXWSTest extends TestCase {
+    
+    static {
+        // Enable debug
+        //BasicConfigurator.configure();
+    }
+    
     /**
      * suite
      * @return

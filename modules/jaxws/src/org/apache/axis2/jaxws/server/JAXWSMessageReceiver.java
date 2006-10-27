@@ -17,17 +17,6 @@
 
 package org.apache.axis2.jaxws.server;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.Iterator;
-
-import javax.activation.DataHandler;
-
-import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
@@ -42,10 +31,8 @@ import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
-import org.apache.axis2.jaxws.message.impl.AttachmentImpl;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004Constants;
@@ -101,38 +88,6 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
           	
             MessageContext requestMsgCtx = new MessageContext(axisRequestMsgCtx);
             
-            //FIXME: This should be revisited when we re-work the MTOM support.
-            //This destroys performance by forcing a double pass through the message.
-            //If attachments are found on the MessageContext, then that means
-            //the inbound message has more than just the normal XML payload
-            Attachments as = (Attachments) axisRequestMsgCtx.getProperty(MTOMConstants.ATTACHMENTS); 
-            if (as != null) { 
-                Message request = requestMsgCtx.getMessage();
-                request.setMTOMEnabled(true);
-                
-                //Walk the tree and find all of the optimized binary nodes.
-                ArrayList<OMText> binaryNodes = AttachmentUtils.findBinaryNodes(
-                        axisRequestMsgCtx.getEnvelope());
-                if (binaryNodes != null) {
-                    //Replace each of the nodes with it's corresponding <xop:include>
-                    //element, so JAXB can process it correctly.
-                    Iterator<OMText> itr = binaryNodes.iterator();
-                    while (itr.hasNext()) {
-                        OMText node = itr.next();
-                        OMElement xop = AttachmentUtils.makeXopElement(node);
-                        node.getParent().addChild(xop);
-                        node.detach();
-                        
-                        //We have to add the individual attachments in their raw
-                        //binary form, so we can access them later.
-                        Attachment a = new AttachmentImpl((DataHandler) node.getDataHandler(), 
-                                node.getContentID());
-                        request.addAttachment(a);
-                    }
-                }
-            }
-            
-
             InvocationContext ic = new InvocationContextImpl();            
             ic.setRequestMessageContext(requestMsgCtx);
             
@@ -152,16 +107,9 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
                 // MessageContext.
                 MessageContext responseMsgCtx = ic.getResponseMessageContext();
                 org.apache.axis2.context.MessageContext axisResponseMsgCtx = 
-                    responseMsgCtx.getAxisMessageContext();                
+                    responseMsgCtx.getAxisMessageContext(); 
                 
-                Message responseMsg = responseMsgCtx.getMessage();
-                SOAPEnvelope responseEnv = (SOAPEnvelope) responseMsg.getAsOMElement();
-                axisResponseMsgCtx.setEnvelope(responseEnv);
-                
-                if (responseMsg.isMTOMEnabled()) {
-                    Options opts = axisResponseMsgCtx.getOptions();
-                    opts.setProperty(Configuration.ENABLE_MTOM, "true");                    
-                }
+                MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(), axisResponseMsgCtx);
                 
                 OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
                 opCtx.addMessageContext(axisResponseMsgCtx);

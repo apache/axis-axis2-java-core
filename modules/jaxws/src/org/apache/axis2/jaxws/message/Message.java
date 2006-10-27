@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message;
 
 import java.util.List;
 
+import javax.activation.DataHandler;
 import javax.xml.soap.SOAPMessage;
 
 /**
@@ -52,6 +53,16 @@ public interface Message extends XMLPart {
      * @param Attachment - the content to add
      */
 	public void addAttachment(Attachment a);
+    
+    /**
+     * Create an Attachment.
+     * After the Attachment is created, it must be added with addAttachment()
+     * @param dh DataHandler (type of Attachment is inferred from dh.getContentType)
+     * @param id String which is the Attachment id
+     * @return Attachment
+     * @see addAttachment(Attachment)
+     */
+    public Attachment createAttachment(DataHandler dh, String id);
     
     /**
 	 * Get the list of attachments for the message

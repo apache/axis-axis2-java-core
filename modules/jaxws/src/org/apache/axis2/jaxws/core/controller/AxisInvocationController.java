@@ -33,11 +33,9 @@ import javax.xml.ws.Response;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -61,7 +59,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.impl.AttachmentImpl;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -139,7 +137,7 @@ public class AxisInvocationController extends InvocationController {
          
             // This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
-        } catch (AxisFault e) {
+        } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
         
@@ -324,15 +322,16 @@ public class AxisInvocationController extends InvocationController {
                 //throw an exception
             }
 
+            org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
+                requestMsgCtx.getAxisMessageContext();
+            
             // The MessageContext will contain a Message object with the
             // contents that need to be sent.  We need to get those contents
             // in a form that Axis2 can consume them, an AXIOM SOAPEnvelope.
-            Message requestMsg = requestMsgCtx.getMessage();
-            SOAPEnvelope requestOM = (SOAPEnvelope) requestMsg.getAsOMElement();
-            
-            org.apache.axis2.context.MessageContext axisRequestMsgCtx = 
-                requestMsgCtx.getAxisMessageContext();
-            axisRequestMsgCtx.setEnvelope(requestOM);
+            MessageUtils.putMessageOnMessageContext(
+                    requestMsgCtx.getMessage(),  // JAX-WS Message
+                    axisRequestMsgCtx // Axis 2 MessageContext
+                    );
             
             // For now, just take all of the properties that were in the 
             // JAX-WS MessageContext, and set them on the Axis2 MessageContext.
@@ -357,33 +356,7 @@ public class AxisInvocationController extends InvocationController {
      * @see org.apache.axis2.jaxws.core.controller.InvocationController#prepareResponse(org.apache.axis2.jaxws.core.MessageContext)
      */
     protected void prepareResponse(MessageContext responseMsgCtx) {
-        org.apache.axis2.context.MessageContext axisResponseMsgCtx = responseMsgCtx.getAxisMessageContext();
         
-        //FIXME: This should be revisited when we re-work the MTOM support.
-        //This destroys performance by forcing a double pass through the message.
-        //If attachments are found, we must find all of the OMText nodes and 
-        //replace them with <xop:include> elements so they can be processed
-        //correctly by JAXB.
-        if (axisResponseMsgCtx.getProperty(MTOMConstants.ATTACHMENTS) != null) { 
-            Message response = responseMsgCtx.getMessage();
-            response.setMTOMEnabled(true);
-            
-            ArrayList<OMText> binaryNodes = AttachmentUtils.findBinaryNodes(
-                    axisResponseMsgCtx.getEnvelope());
-            if (binaryNodes != null) {
-                Iterator<OMText> itr = binaryNodes.iterator();
-                while (itr.hasNext()) {
-                    OMText node = itr.next();
-                    OMElement xop = AttachmentUtils.makeXopElement(node);
-                    node.getParent().addChild(xop);
-                    node.detach();
-                    
-                    Attachment a = new AttachmentImpl((DataHandler) node.getDataHandler(), 
-                            node.getContentID());
-                    response.addAttachment(a);
-                }
-            }
-        }
     }
     
     private void initOperationClient(OperationClient opClient, MessageContext requestMsgCtx) {

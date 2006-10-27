@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.core.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.util.Utils;
 
 /**
@@ -50,6 +51,8 @@ public class MessageContextUtils {
             
             return newMC;
         } catch (AxisFault e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        } catch (MessageException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }

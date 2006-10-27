@@ -24,6 +24,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This code is designed to implement the pluggability
  * feature and is designed to both compile and run on JDK version 1.1 and
@@ -38,11 +42,12 @@ class FactoryFinder {
     /**
      * Set to true for debugging.
      */
+    private static final Log log = LogFactory.getLog(FactoryFinder.class);
     private static final boolean debug = false;
 
     private static void debugPrintln(String msg) {
-        if (debug) {
-            System.err.println("JAXWS: " + msg);
+        if (debug && log.isDebugEnabled()) {
+            log.debug("Factory Finder:" + msg);
         }
     }
 

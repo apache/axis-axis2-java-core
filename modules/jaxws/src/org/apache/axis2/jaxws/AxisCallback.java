@@ -18,7 +18,6 @@
 package org.apache.axis2.jaxws;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -27,6 +26,8 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The AxisCallback is the touch point for asynchronous invocations 
@@ -40,6 +41,8 @@ import org.apache.axis2.util.ThreadContextMigratorUtil;
  */
 public class AxisCallback extends Callback {
 
+    private static final Log log = LogFactory.getLog(AxisCallback.class);
+    
     private MessageContext responseMsgCtx;
     private Exception e = null;
     
@@ -48,20 +51,20 @@ public class AxisCallback extends Callback {
      * ready to send the async response back to the client.
      */
     public void onComplete(AsyncResult result) {
-        org.apache.axis2.context.MessageContext axisMsgCtx = 
-            result.getResponseMessageContext();
-        responseMsgCtx = new MessageContext(axisMsgCtx);
-        
         try {
+            org.apache.axis2.context.MessageContext axisMsgCtx = 
+                result.getResponseMessageContext();
+            responseMsgCtx = new MessageContext(axisMsgCtx);
             //REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
             // TODO: Remove workaround for WS-Addressing running in thin client (non-server) environment
             try {
                 ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisMsgCtx);
             }
             catch (Throwable t) {
-                // TODO: Remove writes to stdout
-                System.out.println("JAX-WS AxisCallback caught throwable from ThreadContextMigratorUtil " + t);
-                System.out.println("...caused by " + t.getCause());
+                if (log.isDebugEnabled()) {
+                    log.debug("JAX-WS AxisCallback caught throwable from ThreadContextMigratorUtil " + t);
+                    log.debug("...caused by " + t.getCause());
+                }
                 t.printStackTrace();
             }
           

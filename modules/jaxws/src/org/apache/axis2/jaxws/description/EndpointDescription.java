@@ -48,6 +48,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -90,6 +91,7 @@ import org.apache.commons.logging.LogFactory;
  * somehow from an AxisService/AxisPort combination, and not directly from the WSDL.
  */
 public class EndpointDescription {
+    
     private ServiceDescription parentServiceDescription;
     private AxisService axisService;
 
@@ -193,16 +195,18 @@ public class EndpointDescription {
         } catch (DeploymentException e) {
             // TODO RAS
             // TODO NLS
-            // TODO: Remove this println
-            System.out.println("Caught exception in ServiceDescription.ServiceDescription: " + e);
-            e.printStackTrace();
+            if (log.isDebugEnabled()) {
+                log.debug("Caught exception in ServiceDescription.ServiceDescription: " + e);
+                log.debug("Exception:", e);
+            }
 //            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
         } catch (Exception e) {
             // TODO RAS
             // TODO NLS
-            // TODO: Remove this println
-            System.out.println("Caught exception in ServiceDescription.ServiceDescription: " + e);
-            e.printStackTrace();
+            if (log.isDebugEnabled()) {
+                log.debug("Caught exception in ServiceDescription.ServiceDescription: " + e);
+                log.debug("Exception:", e);
+            }
 //            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
         }
     }

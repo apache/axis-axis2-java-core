@@ -22,14 +22,12 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service.Mode;
 
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 
 /**
  * The <code>org.apache.axis2.jaxws.core.MessageContext</code> is
@@ -59,25 +57,11 @@ public class MessageContext {
         properties = new HashMap<String, Object>();
     }
     
-    public MessageContext(org.apache.axis2.context.MessageContext mc) {
+    public MessageContext(org.apache.axis2.context.MessageContext mc) throws MessageException {
         axisMsgCtx = mc;
         properties = new HashMap<String, Object>();
         
-        //If the Axis2 MessageContext that was passed in already had a SOAPEnvelope
-        //set on it, grab that and create a JAX-WS Message out of it.
-        SOAPEnvelope soapEnv = mc.getEnvelope();
-        if (soapEnv != null) {
-            MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
-            Message newMessage = null;
-            try {
-                newMessage = msgFactory.createFrom(soapEnv);
-            } catch (Exception e) {
-                throw ExceptionFactory.makeWebServiceException("Could not create new Message");
-            }
-            
-            message = newMessage;
-        }
-
+        message = MessageUtils.getMessageFromMessageContext(mc);
     }
     
     public InvocationContext getInvocationContext() {

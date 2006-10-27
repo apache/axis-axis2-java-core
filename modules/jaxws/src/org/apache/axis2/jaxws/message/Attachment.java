@@ -17,32 +17,71 @@
 package org.apache.axis2.jaxws.message;
 
 import javax.activation.DataHandler;
+import javax.xml.soap.MimeHeaders;
 
 /**
  * Attachment
  * 
- * Used for attaching documents to a Message.  Each Attachment must have a 
- * uniquie identifier or "contentID".  The actual content of the attachment
- * is stored in a <link>javax.activation.DataHandler</link>.
+ * This class is very similar to the SAAJ concept of Attachment.
+ * An Attachment has a content and mimeheaders.
+ * 
+ * The most important mimeheaders are the ContentType and ContentId.
+ * The content is stored with a DataHandler
+ * 
+ * @see javax.xml.soap.AttachmentPart
  */
 public interface Attachment {
     
     /**
-     * Gets the MIME type for the content of the attachment.
+     * Gets the MIME content type of the attachment.
      * @return contentType
      */
     public String getContentType();
     
     /**
-     * Gets the contendID that identifies this attachment.
+     * Set the MIME content type of the attachment
+     * @param contentType
+     */
+    public void setContentType(String contentType);
+    
+    /**
+     * Gets the MIME content id that identifies this attachment.
      * @return contentID
      */
     public String getContentID();
     
     /**
-     * Gets the actual content of the attachment in a DataHandler form.
-     * @return content
+     * Set the MIME content id that identifies this attachment
+     * @param contentID
+     */
+    public void setContentID(String contentID);
+    
+    /**
+     * Gets the DataHandler of the attachment in a DataHandler form.
+     * @return DataHandler
      */
     public DataHandler getDataHandler();
     
+    /**
+     * Sets the DataHandler of the attachment
+     * @param DataHandler
+     */
+    public void setDataHandler(DataHandler dh);
+    
+    /**
+     * @return get the MimeHeaders
+     */
+    public MimeHeaders getMimeHeaders();
+    
+    /**
+     * Set the MimeHeaders
+     * @param mh MimeHeaders
+     */
+    public void setMimeHeaders(MimeHeaders mhs);
+    
+    // Common Header keys
+    public final static String CONTENT_ID         = "Content-Id";
+    public final static String CONTENT_TYPE       = "Content-Type";
+    public final static String CONTENT_LOCATION   = "Content-Location";
+    public final static String CONTENT_LENGTH     = "Content-Length";
 }

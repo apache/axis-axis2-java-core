@@ -172,23 +172,32 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     
     private Class getBlockFactory(Object o) {
         if (o instanceof String) {
-            System.out.println(">> returning XMLStringBlockFactory");
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning XMLStringBlockFactory");
+            }
             return XMLStringBlockFactory.class;
         }
         else if (Source.class.isAssignableFrom(o.getClass())) {
-            System.out.println(">> returning SourceBlockFactory");
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning SourceBlockFactory");
+            }
             return SourceBlockFactory.class;
         }
         else if (SOAPMessage.class.isAssignableFrom(o.getClass())) {
-            System.out.println(">> returning SOAPMessageFactory");
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning SOAPMessageFactory");
+            }
             return SOAPEnvelopeBlockFactory.class;
         } 
         else if (SOAPEnvelope.class.isAssignableFrom(o.getClass())) {
-            System.out.println(">> returning SOAPEnvelope");
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning SOAPEnvelope");
+            }
             return SOAPEnvelopeBlockFactory.class;
         }
-        
-        System.out.println(">> ERROR: Factory not found");
+        if (log.isDebugEnabled()) {
+            log.debug(">> ERROR: Factory not found");
+        }
         return null;
     }
 }

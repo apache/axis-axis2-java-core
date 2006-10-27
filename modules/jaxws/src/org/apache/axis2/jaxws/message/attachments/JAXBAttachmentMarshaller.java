@@ -21,7 +21,6 @@ import javax.xml.bind.attachment.AttachmentMarshaller;
 
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.impl.AttachmentImpl;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,7 +65,7 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
             log.debug("Adding MTOM/XOP attachment for element: " + localPart + "{" + namespace + "}");
         
         String cid = UUIDGenerator.getUUID();
-        Attachment a = new AttachmentImpl(data, cid);
+        Attachment a = message.createAttachment(data, cid);
         message.addAttachment(a);
         return cid;
     }

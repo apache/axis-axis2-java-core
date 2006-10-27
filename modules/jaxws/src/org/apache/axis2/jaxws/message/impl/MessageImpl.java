@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.activation.DataHandler;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPEnvelope;
@@ -51,6 +52,10 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
  * MessageImpl
  * A Message is an XML part + Attachments.
  * Most of the implementation delegates to the XMLPart implementation.
+ */
+/**
+ * @author scheu
+ *
  */
 public class MessageImpl implements Message {
 
@@ -307,15 +312,21 @@ public class MessageImpl implements Message {
         attachments.add(data);
     }
     
-    //FIXME: This doesn't make much sense, but has to be here because Message extends
-    //XMLPart.  
-    public Message getParent() {
-        throw new UnsupportedOperationException();
+    
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.Message#createAttachment(javax.activation.DataHandler, java.lang.String)
+     */
+    public Attachment createAttachment(DataHandler dh, String id) {
+        return new AttachmentImpl(dh, id);
     }
 
-    //FIXME: This doesn't make much sense, but has to be here because Message extends
-    //XMLPart.  
+    public Message getParent() {
+        return null;
+    }
+
     public void setParent(Message msg) { 
+        // A Message does not have a parent
         throw new UnsupportedOperationException();
     }
 
