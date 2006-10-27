@@ -1,6 +1,9 @@
 Sample for Amazon Simple Queuing Service
 ========================================
 
+Introduction:
+-------------
+
 Running the Sample:
 -------------------
 There are two methods to run the sample
