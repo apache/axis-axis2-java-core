@@ -1,4 +1,4 @@
-<wsp:Policy wsu:Id="SigOnly" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+<wsp:Policy wsu:Id="SigEncr" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
 	<wsp:ExactlyOne>
 		<wsp:All>
 			<sp:AsymmetricBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
@@ -44,11 +44,14 @@
 			<sp:SignedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
 				<sp:Body/>
 			</sp:SignedParts>
+			<sp:EncryptedParts xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+				<sp:Body/>
+			</sp:EncryptedParts>
 
 			<ramp:RampartConfig xmlns:ramp="http://ws.apache.org/rampart/policy"> 
 				<ramp:user>client</ramp:user>
 				<ramp:encryptionUser>service</ramp:encryptionUser>
-				<ramp:passwordCallbackClass>org.apache.rampart.samples.policy.sample02.PWCBHandler</ramp:passwordCallbackClass>
+				<ramp:passwordCallbackClass>org.apache.rampart.samples.policy.sample03.PWCBHandler</ramp:passwordCallbackClass>
 				
 				<ramp:signatureCrypto>
 					<ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
@@ -57,6 +60,13 @@
 						<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.password">apache</ramp:property>
 					</ramp:crypto>
 				</ramp:signatureCrypto>
+				<ramp:encryptionCypto>
+					<ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
+						<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.type">JKS</ramp:property>
+						<ramp:property name="org.apache.ws.security.crypto.merlin.file">client.jks</ramp:property>
+						<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.password">apache</ramp:property>
+					</ramp:crypto>
+				</ramp:encryptionCypto>
 			</ramp:RampartConfig>
 
 		</wsp:All>
