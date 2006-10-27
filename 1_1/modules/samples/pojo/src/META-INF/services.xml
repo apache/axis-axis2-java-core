@@ -1,0 +1,11 @@
+<service name="AddressBookService" scope="application">
+    <parameter name="ServiceClass" locked="false">address_book_service.AddressBookService</parameter>
+    <operation name="addEntry">
+        <actionMapping>urn:addEntry</actionMapping>
+        <messageReceiver class="org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"/>
+    </operation>
+    <operation name="findEntry">
+        <actionMapping>urn:findEntry</actionMapping>
+        <messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
+    </operation>
+</service>

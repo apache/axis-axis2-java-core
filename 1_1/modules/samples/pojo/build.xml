@@ -1,0 +1,48 @@
+<project basedir="." default="build">
+
+	<property environment="env" />
+
+	<property name="dest.dir" value="target" />
+
+	<property name="dest.dir.classes" value="${dest.dir}/classes" />
+
+	<property name="dest.dir.lib" value="${dest.dir}/lib" />
+
+	<path id="build.class.path">
+		<fileset dir="${env.AXIS2_HOME}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete dir="${dest.dir}" />
+	</target>
+
+	<target name="prepare" depends="clean">
+
+		<mkdir dir="${dest.dir}" />
+
+		<mkdir dir="${dest.dir.classes}" />
+
+		<mkdir dir="${dest.dir.classes}/META-INF" />
+
+	</target>
+
+	<target name="build" depends="prepare">
+
+		<mkdir dir="${dest.dir}" />
+
+		<mkdir dir="${dest.dir.classes}" />
+		<mkdir dir="${dest.dir.classes}/META-INF" />
+
+		<copy file="src/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
+
+		<javac srcdir="src" destdir="${dest.dir.classes}" includes="address_book_service/**,address_book_entry/**">
+			<classpath refid="build.class.path" />
+		</javac>
+
+		<jar basedir="${dest.dir.classes}" destfile="${dest.dir}/AddressBookService.aar" />
+
+	</target>
+
+</project>
