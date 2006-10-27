@@ -1,4 +1,4 @@
-<!-- services.xml of sample-1 : No Security-->
+<!-- services.xml of sample-1 : UsernameToken-->
 <service>
 	<operation name="echo">
 		<messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
