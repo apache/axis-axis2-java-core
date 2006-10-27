@@ -157,7 +157,7 @@ public class LibraryLifeCycle implements ServiceLifeCycle {
                 if (obj instanceof OMElement) {
                     OMElement omElement = (OMElement) obj;
                     users.addUser((User) BeanUtil.deserialize(User.class, omElement,
-                            new DefaultObjectSupplier(), LibraryConstants.USER_LIST));
+                            new DefaultObjectSupplier(), "user"));
                 }
 
             }
