@@ -101,8 +101,8 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
 		});
 		autoGenerateWSDLCheckButton.setToolTipText(ServiceArchiver.getResourceString("page5.autogen.tooltip"));
 		////////////////////////////////////////
-		// Disable the automatic generation box
-		autoGenerateWSDLCheckButton.setEnabled(false);
+		// enable the automatic generation box
+		autoGenerateWSDLCheckButton.setEnabled(true);
 		///////////////////////////////////////
 		
 		//add an empty lable
@@ -115,8 +115,8 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
 		skipWSDLCheckButton.setLayoutData(gd);
 		skipWSDLCheckButton.setSelection(settings.getBoolean(PREF_CHECK_SKIP_WSDL));
 		////////////////////////////////////////
-		// Disable the skip check box
-		skipWSDLCheckButton.setEnabled(false);
+		// enable the skip check box
+		skipWSDLCheckButton.setEnabled(true);
 		///////////////////////////////////////
 		skipWSDLCheckButton.addSelectionListener(new SelectionListener(){
 		    public void widgetSelected(SelectionEvent e){
