@@ -155,7 +155,7 @@ are as follows:
 core modules which collectively make up the core architecture of Axis2, and
 non-core/other modules are layered on top of this core
 modules/architecture.</p>
-<a name="bmother"></a>
+<a name="bmcore"></a>
 
 <h3>Core Modules:</h3>
 <ul>
@@ -190,7 +190,7 @@ modules/architecture.</p>
     new ones if and when it is needed.</p>
   </li>
 </ul>
-<a name="bmcore"></a>
+<a name="bmother"></a>
 
 <h3>Other Modules:</h3>
 <ul>
@@ -328,7 +328,7 @@ flexibility would serve better in this instant.</p>
 
 <h2>XML Processing Model</h2>
 
-<p>Please refer to the <a href="OMTutorial.html">OM Tutorial</a></p>
+<p>As we mentioned above, XML processing model of Axis2 has becomes a separate sub-project, called <a href="http://ws.apache.org/commons/axiom/index.html">Apache Axiom</a>, in Apache Web services project. Please refer to the <a href="OMTutorial.html">OM Tutorial</a> for more information. </p>
 
 <h2><a name="bmSOAPPM">SOAP Processing Model</a></h2>
 
@@ -380,13 +380,13 @@ areas for 'User Phases' which can be defined by the user.</p>
 <p>Axis2 has some inbuilt handlers that run in inbuilt phases and they create
 the default configuration for the Axis2. We will be looking more in to how to
 extend the default processing Model in the next section.</p>
-There are four special handlers defined in Axis2.
+There are three special handlers defined in Axis2.
 <ol>
   <li>Dispatchers - Finds the service and the operation the SOAP message is
     directed to. Dispatchers always run on the <em>In-Pipe</em> and inside
     the Dispatch phase. The in-built dispatchers dispatch to a particular
     operation depending on various conditions like WS-Addressing information,
-    URI information, SOAP action information, etc.,</li>
+    URI information, SOAP action information, etc. (See <a href="http://www.wso2.net/tutorials/axis2/java/2006/06/18/operation-service-message-is-destined-to">here</a> for more information on Dispatching)</li>
 </ol>
 <ul>
   <li><a name="mr">Message Receiver - Consume the SOAP Message and hands that
