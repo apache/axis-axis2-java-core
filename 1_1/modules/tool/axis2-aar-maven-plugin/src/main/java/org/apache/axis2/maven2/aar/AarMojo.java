@@ -38,7 +38,6 @@ import org.codehaus.plexus.archiver.jar.ManifestException;
  */
 public class AarMojo extends AbstractAarMojo
 {
-
     /**
      * The directory for the generated aar.
      * 

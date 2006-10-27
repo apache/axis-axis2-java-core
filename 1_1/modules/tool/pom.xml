@@ -33,11 +33,19 @@
     This is a set of Maven 2 plugins for working with Axis 2.
   </description>
   <packaging>pom</packaging>
+
+  <scm>
+    <connection>http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_1/modules/tool</connection>
+    <developerConnection>https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_1/modules/tool</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_1/modules/tool</url>
+  </scm>
+
   <modules>
     <module>axis2-aar-maven-plugin</module>
     <module>axis2-java2wsdl-maven-plugin</module>
     <module>axis2-wsdl2code-maven-plugin</module>
   </modules>
+
   <dependencyManagement>
     <dependencies>
       <dependency>

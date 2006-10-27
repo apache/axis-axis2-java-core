@@ -19,6 +19,11 @@
     xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>3</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.axis2</groupId>
   <artifactId>axis2-parent</artifactId>
@@ -66,9 +71,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_1</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_1</url>
   </scm>
 
   <mailingLists>
