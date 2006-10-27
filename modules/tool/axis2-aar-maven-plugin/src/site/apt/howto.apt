@@ -16,7 +16,7 @@ Introduction
    * exploded : package an exploded aar application
 
   Each mode is materialized by a goal. For instance, to generate an exploded
-  sar from the current project, one would type
+  aar from the current project, one would type
 
 +--------
   mvn aar:exploded
