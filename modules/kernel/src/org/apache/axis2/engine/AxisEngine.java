@@ -148,7 +148,7 @@ public class AxisEngine {
         }
 
         MessageContext faultContext = new MessageContext();
-        faultContext.setConfigurationContext(engineContext);
+        faultContext.setConfigurationContext(processingContext.getConfigurationContext());
         faultContext.setSessionContext(processingContext.getSessionContext());
         faultContext.setTransportIn(processingContext.getTransportIn());
         faultContext.setTransportOut(processingContext.getTransportOut());
