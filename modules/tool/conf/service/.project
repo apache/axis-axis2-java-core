@@ -3,7 +3,6 @@
 	<name>Axis-ServiceArchiver</name>
 	<comment></comment>
 	<projects>
-		<project>Axis-CodegenWizard</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

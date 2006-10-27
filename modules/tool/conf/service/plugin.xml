@@ -11,23 +11,30 @@
       <library name="Axis_Service_Archiver.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-codegen-1.0.jar">
+      <library name="lib/axis2-codegen-1.1-RC1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/commons-logging-1.0.4.jar">
+      <library name="lib/axis2-kernel-1.1-RC1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/log4j-1.2.13.jar">
+      <library name="lib/commons-logging-1.1.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/log4j-1.2.8.jar">
+         <export name="*"/>
+      </library>
+      <library name="lib/ant-1.6.5.jar">
          <export name="*"/>
       </library>
    </runtime>
 
    <requires>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.apache.ant"/>
       <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.ide"/>
    </requires>
 
 <extension
