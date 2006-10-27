@@ -204,8 +204,7 @@ strategies.</p>
 <code>echoString</code> operation of the
 <code>Axis2SampleDocLitService</code> that we have already deployed. The code
 is very simple to understand and the explanations are in the form of
-comments. The terms Axis home and Axis repository may be used
-interchangeably.</p>
+comments.</p>
 <pre>     try {<br>            org.apache.axis2.userguide.Axis2SampleDocLitServiceStub stub = new<br>                    org.apache.axis2.userguide.Axis2SampleDocLitServiceStub(null,<br>                    "http://localhost:8080/axis2/services/Axis2SampleDocLitService");<br>            <br>            //Create the request document to be sent.<br>            org.apache.axis2.userguide.xsd.EchoStringParamDocument reqDoc =<br>                    org.apache.axis2.userguide.xsd.EchoStringParamDocument.Factory.newInstance();<br>            reqDoc.setEchoStringParam("Axis2 Echo");<br>            <br>            //invokes the Web service.<br>            org.apache.axis2.userguide.xsd.EchoStringReturnDocument resDoc = stub.echoString(reqDoc);<br>            System.out.println(resDoc.getEchoStringReturn());<br><br>        } catch (java.rmi.RemoteException e) {<br>            e.printStackTrace();<br>        }<br></pre>
 
 <p>First argument of <code>Axis2SampleDocLitPortTypeStub</code> should be the
