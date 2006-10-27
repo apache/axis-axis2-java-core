@@ -268,5 +268,13 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          * Field CHARACTER_SET_ENCODING
          */
         public static final String CHARACTER_SET_ENCODING = "CHARACTER_SET_ENCODING";
+
+        /**
+         * If this is set to a Boolean 'true' value, the replyTo value will not be replaced in
+         * an OutIn invocation. This is useful for modules that hope to get the reply message in 
+         * its own manner.
+         */
+        public static final String USE_CUSTOM_LISTENER = "UseCustomListener";
+
     }
 }

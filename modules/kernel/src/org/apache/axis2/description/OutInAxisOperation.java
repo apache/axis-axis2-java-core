@@ -20,6 +20,7 @@ import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -260,16 +261,27 @@ class OutInAxisOperationClient implements OperationClient {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
             callbackReceiver.addCallback(mc.getMessageID(), callback);
-            EndpointReference replyToFromTransport = mc.getConfigurationContext().getListenerManager().
-                    getEPRforService(sc.getAxisService().getName(), axisOp.getName().getLocalPart(), mc
-                            .getTransportIn().getName()
-                            .getLocalPart());
 
-            if (mc.getReplyTo() == null) {
-                mc.setReplyTo(replyToFromTransport);
-            } else {
-                mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
+            /**
+             * If USE_CUSTOM_LISTENER is set to 'true' the replyTo value will not be replaced and Axis2 will not
+             * start its internal listner. Some other enntity (e.g. a module) should take care of obtaining the 
+             * response message.
+             */
+            Boolean useCustomListener = (Boolean) options.getProperty(Constants.Configuration.USE_CUSTOM_LISTENER);
+            if (useCustomListener==null || !useCustomListener.booleanValue()) {
+
+                EndpointReference replyToFromTransport = mc.getConfigurationContext().getListenerManager().
+                getEPRforService(sc.getAxisService().getName(), axisOp.getName().getLocalPart(), mc
+                        .getTransportIn().getName()
+                        .getLocalPart());
+                
+                if (mc.getReplyTo() == null) {
+                    mc.setReplyTo(replyToFromTransport);
+                } else {
+                    mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
+                }
             }
+
             //if we don't do this , this guy will wait till it gets HTTP 202 in the HTTP case
             mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
             AxisEngine engine = new AxisEngine(cc);
