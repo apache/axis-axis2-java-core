@@ -55,7 +55,7 @@ fine. <a href="installationguide.html" target="_blank">Installation Guide</a>
 gives you step by step instructions on just how to build axis2.war and deploy
 it in your servlet container.</p>
 
-<h2>Creating a new Web Service</h2>
+<h2>Creating a New Web Service</h2>
 
 <p>If you are looking for "How to Write a Web Service Client using Axis2?"
 please go to the <a href="#client">next section</a>. Axis2 provides two ways
@@ -130,10 +130,11 @@ archive with following steps</p>
   <li>Compile the generated code</li>
   <li>Copy <strong>"resources/schemaorg_apache_xmlbeans</strong>" xmlbeans
     classes to your class folder</li>
-  <li>Among the generated files there will be services.xml file, which is the
+  <li>Among the generated files, there will be services.xml file, which is the
     deployment descriptor for Axis2 service.[<a
     href="reference.html#servicedd">learn more about it</a>]. Copy the
     resources/service.xml to META-INF/services.xml</li>
+  <p>(To write your own service.xml file see sub section in <a href="xmlbased-server.html#Step2_:Write_the_services_xml_file">Writing Web Services Using Axis2's Primary APIs</a> section.)</p>
   <li>Create the archive using content of the class folder. Change directory
     to class folder and run <code>jar -cf &lt;service-name&gt;.aar</code> to
     create the archive</li>
