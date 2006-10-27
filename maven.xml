@@ -1134,7 +1134,7 @@
         <ant:copy toDir="${libdir}">
             <ant:fileset file="modules/security/target/axis2-security-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/rahas/target/axis2-rahas-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/rahas/target/axis2-secpolicy-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/secpolicy/target/axis2-secpolicy-${pom.currentVersion}.jar"/>
         		<ant:fileset file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar"/>
      		<ant:fileset file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar"/>
      		<ant:fileset file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar"/>
