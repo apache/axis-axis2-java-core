@@ -1,4 +1,10 @@
 <project basedir="." default="all">
+    
+    <!--Set your elcipse home directory  -->
+    <property name="eclipse.home" value="----PATH TO ECLIPSE HOME----"></property>
+
+    <property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_1.2.0"></property>
+    <property name="service.plugin.version" value="Axis_Service_Archiver_1.0.0"></property>
 
     <property name="src" value="./src"></property>
     <property name="codegen.src.dir" value="./axis2-eclipse-codegen-plugin/src/main/java"></property>
@@ -6,6 +12,9 @@
     <property name="output" value="./eclipse_projects"></property>
     <property name="service.output.dir" value="${output}/service-archiver"></property>
     <property name="codegen.output.dir" value="${output}/code-gen"></property>
+    <property name="plugin.output.dir" value="${output}/plugin"></property>
+    <property name="codegen.plugin.output.dir" value="${plugin.output.dir}/${codegen.plugin.version}"></property>
+    <property name="service.plugin.output.dir" value="${plugin.output.dir}/${service.plugin.version}"></property>
 
     <property name="source.dir.name" value="src"></property>
     <property name="lib.dir.name" value="lib"></property>
@@ -15,16 +24,48 @@
     <property name="codegen.resource.dir" value="./conf/codegen"></property>
     <property name="service.resource.dir" value="./conf/service"></property>
 
-    <property name="codegen.help.resource.file" value="../../xdocs/tools/1_0/eclipse/wsdl2java-plugin.html"></property>
-    <property name="service.help.resource.file" value="../../xdocs/tools/1_0/eclipse/servicearchiver-plugin.html"></property>
+    <property name="codegen.help.resource.file" value="../../xdocs/tools/1_1/eclipse/wsdl2java-plugin.html"></property>
+    <property name="service.help.resource.file" value="../../xdocs/tools/1_1/eclipse/servicearchiver-plugin.html"></property>
     
-     <property name="codegen.help.images.dir" value="../../xdocs/tools/1_0/eclipse/images"></property>
-     <property name="service.help.images.dir" value="../../xdocs/tools/1_0/eclipse/images"></property>
+     <property name="codegen.help.images.dir" value="../../xdocs/tools/1_1/eclipse/images"></property>
+     <property name="service.help.images.dir" value="../../xdocs/tools/1_1/eclipse/images"></property>
 
+     <property name="axis2.lib.dir" value="../../target/lib"></property>
+
+     <!--Codegen wizard libraries -->
+     <fileset id="codegen.libs" dir="${axis2.lib.dir}">
+ 		<include name="activation-1.1.jar" />
+ 		<include name="annogen-0.1.0.jar" />
+		<include name="ant-1.6.5.jar" />
+		<include name="axiom-api-SNAPSHOT.jar" />
+		<include name="axiom-dom-SNAPSHOT.jar" />
+		<include name="axiom-impl-SNAPSHOT.jar" />
+    	<include name="axis2-1.1-SNAPSHOT.jar" />
+		<include name="commons-logging-1.1.jar" />
+		<include name="log4j-1.2.13.jar" />
+		<include name="neethi-SNAPSHOT.jar" />
+		<include name="stax-api-1.0.1.jar" />
+		<include name="wsdl4j-1.6.1.jar" />
+		<include name="wstx-asl-3.0.1.jar" />
+		<include name="xbean-2.2.0.jar" />
+		<include name="XmlSchema-SNAPSHOT.jar" />
+    </fileset>
+
+     <!--Service wizard libraries -->
+     <fileset id="service.libs" dir="${axis2.lib.dir}">
+     	<include name="ant-1.6.5.jar" />
+		<include name="log4j-1.2.13.jar" />
+		<include name="commons-logging-1.1.jar" />
+    	<include name="axis2-1.1-SNAPSHOT.jar" />
+     </fileset>
+	
+	
     <!-- Default target to generate all the services -->
     <target name="all">
         <antcall target="generate-service-project"/>
         <antcall target="generate-codegen-project"/>
+        <antcall target="generate-codegen-plugin"/>
+        <antcall target="generate-service-plugin"/>
     </target>
 
     <!-- init-->
@@ -87,6 +128,138 @@
          </copy>
 
     </target>
+    
+    <!--Generate the codegen plugin -->	
+    <target name="generate-codegen-plugin" depends="init,generate-codegen-project">
+        <mkdir dir="${codegen.plugin.output.dir}"></mkdir>
+        <!-- copy the plugin.xml and help_toc.xml -->
+        <copy todir="${codegen.plugin.output.dir}">
+            <fileset dir="${codegen.output.dir}" >
+		<include name="plugin.xml" />
+		<include name="help_toc.xml" />
+		<include name="build.properties" />
+		<include name="**/ServiceResources.properties" />
+	    </fileset>
+        </copy>
+        <!-- copy the help directory-->
+        <copy todir="${codegen.plugin.output.dir}/help">
+            <fileset dir="${codegen.output.dir}/help" />
+        </copy>
+        <!-- copy the icons directory-->
+        <copy todir="${codegen.plugin.output.dir}/icons">
+            <fileset dir="${codegen.output.dir}/icons" />
+        </copy>
+        <!-- copy the libraries to the plugin-->
+        <copy todir="${codegen.plugin.output.dir}/${lib.dir.name}">
+            <fileset refid="codegen.libs" />
+        </copy>
+        <!-- copy the sources to the plugin-->
+        <copy todir="${codegen.plugin.output.dir}/src">
+	    <fileset dir="${codegen.output.dir}/src" />
+        </copy>
+
+	<!-- compile the plugin java files -->
+	<delete dir="${codegen.plugin.output.dir}/class"></delete>
+ 	<mkdir dir="${codegen.plugin.output.dir}/class"></mkdir>
+	<javac srcdir="${codegen.output.dir}/src" 
+               destdir="${codegen.plugin.output.dir}/class" 
+               includes="org/apache/axis2/**">
+		<classpath>
+     			<fileset dir="${codegen.plugin.output.dir}/lib">
+        			<include name="**/*.jar" />
+     			</fileset>
+       			 <fileset dir="${eclipse.home}/plugins/">
+				<include name="**/*.jar" />
+     			</fileset>
+    		</classpath>	
+	</javac>
+	
+	<!-- create the Axis2CodegenWizard.jar -->
+        <copy todir="${codegen.plugin.output.dir}/class">
+            <fileset dir="${codegen.output.dir}/src" >
+		<include name="**/Codegen.properties" />
+	    </fileset>
+        </copy>
+      
+        <jar destfile="${codegen.plugin.output.dir}/Axis2CodegenWizard.jar" 
+	       basedir="${codegen.plugin.output.dir}/class"
+           includes="org/apache/**"
+          />
+    </target>
+
+    <!--Install the codegen plugin -->
+    <target name="install-codegen-plugin" depends="init,generate-codegen-project,generate-codegen-plugin">
+        <delete dir="${eclipse.home}/plugins/${codegen.plugin.version}"></delete>
+          <copy todir="${eclipse.home}/plugins">
+    		<fileset dir="${plugin.output.dir}"/>
+          </copy>
+    </target>
+
+    <!--Generate the service plugin -->	
+    <target name="generate-service-plugin" depends="init,generate-service-project">
+        <mkdir dir="${service.plugin.output.dir}"></mkdir>
+        <!-- copy the plugin.xml,build.properties and help_toc.xml -->
+        <copy todir="${service.plugin.output.dir}">
+            <fileset dir="${service.output.dir}" >
+		<include name="plugin.xml" />
+		<include name="help_toc.xml" />
+		<include name="build.properties" />
+ 		<include name="**/ServiceResources.properties" />
+	    </fileset>
+        </copy>
+        <!-- copy the help directory-->
+        <copy todir="${service.plugin.output.dir}/help">
+            <fileset dir="${service.output.dir}/help" />
+        </copy>
+        <!-- copy the icons directory-->
+        <copy todir="${service.plugin.output.dir}/icons">
+            <fileset dir="${service.output.dir}/icons" />
+        </copy>
+        <!-- copy the libraries to the plugin-->
+        <copy todir="${service.plugin.output.dir}/${lib.dir.name}">
+            <fileset refid="service.libs" />
+        </copy>
+        <!-- copy the sources to the plugin-->
+        <copy todir="${service.plugin.output.dir}/src">
+	    <fileset dir="${service.output.dir}/src" />
+        </copy>
+
+	<!-- compile the plugin java files -->
+	<delete dir="${service.plugin.output.dir}/class"></delete>
+ 	<mkdir dir="${service.plugin.output.dir}/class"></mkdir>
+	<javac srcdir="${service.output.dir}/src" 
+               destdir="${service.plugin.output.dir}/class" 
+               includes="org/apache/axis2/**">
+		<classpath>
+     			<fileset dir="${service.plugin.output.dir}/lib">
+        			<include name="**/*.jar" />
+     			</fileset>
+       			 <fileset dir="${eclipse.home}/plugins/">
+				<include name="**/*.jar" />
+     			</fileset>
+    		</classpath>	
+	</javac>
+	
+	<!-- create the Axis_Service_Archiver.jar -->
+          <copy todir="${service.plugin.output.dir}/class">
+            <fileset dir="${service.output.dir}/src" >
+                <include name="**/ServiceResources.properties" />
+            </fileset>
+          </copy>
+
+	  <jar destfile="${service.plugin.output.dir}/Axis_Service_Archiver.jar" 
+	       basedir="${service.plugin.output.dir}/class"
+           includes="org/apache/**"
+          />
+    </target>
+
+    <!--Install the service plugin -->
+    <target name="install-service-plugin" depends="init,generate-service-project,generate-service-plugin">
+        <delete dir="${eclipse.home}/plugins/${service.plugin.version}"></delete>
+          <copy todir="${eclipse.home}/plugins">
+                <fileset dir="${plugin.output.dir}"/>
+          </copy>
+    </target>
 
 
     <!-- Clean the directory -->
@@ -95,3 +268,4 @@
     </target>
 
 </project>
+
