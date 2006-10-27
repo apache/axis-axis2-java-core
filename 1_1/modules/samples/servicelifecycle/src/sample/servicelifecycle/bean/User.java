@@ -1,7 +1,4 @@
 package sample.servicelifecycle.bean;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -20,37 +17,29 @@ import org.apache.axiom.om.OMFactory;
 *
 */
 
-public class Book {
+public class User {
+    private String userName;
+    private String passWord;
 
-    private String title;
-    private String author;
-    private String isbn;
-
-    public String getTitle() {
-        return title;
+    public User(String userName, String passWord) {
+        this.userName = userName;
+        this.passWord = passWord;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getPassWord() {
+        return passWord;
     }
 
-    public String getAuthor() {
-        return author;
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public String getUserName() {
+        return userName;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public OMElement serialize(OMFactory fac) {
-        return null;
-    }
 }
