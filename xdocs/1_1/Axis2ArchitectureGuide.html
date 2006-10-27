@@ -400,10 +400,10 @@ There are three special handlers defined in Axis2.
 <h3><a name="incomingsoap">Processing an Incoming SOAP Message</a></h3>
 
 <p>Incoming SOAP Message is always received by a Transport Receiver waiting
-for the SOAP Messages. Once the SOAP Message arrives the transport Headers
+for the SOAP Messages. Once the SOAP Message arrives, the transport Headers
 are parsed and a</p>
 <a href="#messageContext">Message Context</a> is created from the incoming
-SOAP Message. Then the <i>In Pipe</i> is executed with the Message Context.
+SOAP Message. This message context encpsulates all the information, including the SOAP message itself, transport headers, etc., inside it. Then the <i>In Pipe</i> is executed with the Message Context.
 
 <p>Let us see what happens at each phase of the execution. This process may
 happen either in the server or in the Client.</p>
@@ -415,7 +415,7 @@ happen either in the server or in the Client.</p>
   <li><strong>Pre-Dispatch Phase</strong>- The main functionality of the
     handlers in this phase is to populate message context in order to do the
     dispatching. As an example, processing of addressing headers of the SOAP
-    message happen in this phase.Addressing handlers extract information and
+    message, if any, happen in this phase. Addressing handlers extract information and
     put them in to the message context.</li>
   <li><strong>Dispatch Phase</strong> - The Dispatchers run in this phase and
     tries to find the correct service and operation this particular message
@@ -432,7 +432,7 @@ happen either in the server or in the Client.</p>
   <li><strong>Message Processing Phase</strong> - The Business logic of the
     SOAP message is executed here. A <a href="#mr">Message Receiver</a> is
     registered with each Operation. This Message receiver (associated to the
-    particular operation) will executed as the last Handler of this
+    particular operation) will be executed as the last Handler of this
   phase.</li>
 </ol>
 
@@ -444,7 +444,7 @@ handlers to override the mechanics in each of these phases.</p>
 <p><em>Out Pipe</em> is simpler because the service and operation to dispatch
 is known by the time the pipe is executed. The <em>Out Pipe</em> may be
 initiated by the</p>
-<a href="#mr">Message Receiver</a> or the Client API implementation.Phases of
+<a href="#mr">Message Receiver</a> or the Client API implementation. Phases of
 the <em>Out Pipe</em> are described below:
 <ol>
   <li>Message Initialize Phase - First phase of the <em>Out Pipe</em>. Serves
@@ -468,13 +468,12 @@ order. The notion of phases makes it easier to place handlers in between
 other handlers. This enables modification on the default processing behavior.
 SOAP Processing Model can be extended with <a
 href="#extendingwithhandlers">handler</a> or <a
-href="#extendingwithmodules">modules</a>.</p>
-<a name="extendingwithhandlers"></a>
+href="#extendingwithmodules">modules</a>.
 
 <h4>Extending the SOAP Processing Model with Handlers</h4>
-The handlers in a module can specify the phase they need to be placed in.
+<p>The handlers in a module can specify the phase they need to be placed in.
 Furthermore they can specify their location inside a phase by providing phase
-rules. Phase rules will place a handler
+rules. Phase rules will place a handler</p>
 <ol>
   <li>as the first handler in a phase.</li>
   <li>or as the last handler in a phase.</li>
@@ -491,19 +490,19 @@ convenient packaging that includes</p>
 <ul>
   <li>a set of handlers and</li>
   <li>an associated descriptor which includes the phase rules</li>
-</ul>
-. Modules have the concept of being 'available' and 'engaged'. 'Availability'
+</ul> 
+<p>Modules have the concept of being 'available' and 'engaged'. 'Availability'
 means the module is present in the system, but has not been activated, i.e.,
 the handlers included inside the module have not been used in the processing
 mechanism. When a module is 'engaged' it becomes active and the handlers get
 placed in the proper phases. The handlers will act in the same way as
 explained in the previous section. Usually a module will be used to implement
-a WS-* functionality such as WS-Addressing.
+a WS-* functionality such as WS-Addressing.</p>
 
 <p>Apart from the extension mechanism based on the handlers, the WS-*
 specifications may suggest a requirement for adding new operations. For
-example, once a user add a Reliable Messaging capability to a service, the
-"Create Sequence" operation needs to be available to the service end point.
+example, once a user add Reliable Messaging capability to a service, the
+"Create Sequence" operation needs to be available to the service endpoint.
 This can be implemented by letting the modules define the operations. Once
 the module is engaged to a service, the necessary operations will be added to
 that service.</p>
@@ -528,7 +527,7 @@ This model has three entities that provide the configuration.</p>
 provide following information:</p>
 <ol>
   <li>The global parameters</li>
-  <li>Registered transports in and transport outs</li>
+  <li>Registered transport-in and transport-outs</li>
   <li>User defined phase names</li>
   <li>Modules that are engaged globally (to all services)</li>
   <li>Globally defined <a href="#mr">Message Receivers</a></li>
@@ -555,12 +554,12 @@ href="resources/schemas/module.xsd">module.xml</a> file and dependent
 classes. The <em>module.xml</em> file has Module parameters and the
 Operations defined in the module.</p>
 
-<p>When the system is starting up Axis2 ask the deployment model to create a
-Axis Configuration. Deployment Model first finds the axis2.xml file and build
+<p>When the system is starting up, Axis2 asks the deployment model to create an
+Axis Configuration. Deployment Model first finds the axis2.xml file and builds
 the global configuration. Then it checks for the module archives and then for
-the service archives. After that the corresponding services and modules are
+the service archives. After that, the corresponding services and modules are
 added to the Axis Configuration. System will build contexts on top of the
-Axis Configurations. After this Axis2 is ready to send or receive the SOAP
+Axis Configuration. After this, Axis2 is ready to send or receive the SOAP
 messages. Hot deployment is only allowed for services.</p>
 <a name="bmClientAPI"></a>
 
@@ -576,7 +575,7 @@ interaction.</p>
 
 <p>Variations of the three parameters can result in indefinite number of
 scenarios, even though Axis2 is built on a core that support any messaging
-interaction, the developers were compelled to support only two most widely
+interaction, the developers were compelled to provie in-built support for only two most widely
 used Message Exchange Patterns (MEPs).</p>
 
 <p>Two supported MEPs are One-Way and the In-Out (Request-Response) scenarios
@@ -608,7 +607,7 @@ Client API has four ways to configure a given Message Exchange</p>
     and listener transport is same and is a Two-Way transport.</li>
 </ol>
 
-<p>Depending on the values of the above four parameter, Axis2 behave
+<p>Depending on the values of the above four parameters, Axis2 behaves
 differently.</p>
 <a name="bmTransports"></a>
 
@@ -627,7 +626,7 @@ transport).</p>
 <p>At the client side the user is free to specify the transport to be
 used.</p>
 
-<p>Transport Senders and Transport Receivers contains following
+<p>Transport Senders and Transport Receivers contain following
 information.</p>
 <ol>
   <li>Transport Sender for Out Configuration</li>
@@ -641,7 +640,7 @@ Transport sender sends the SOAP message, depending on its configuration.</p>
 <p>Transport receiver waits for the SOAP Messages and for each SOAP Message
 that arrives, it uses the <i>In Pipe</i> to process the SOAP Message.</p>
 
-<p>Axis2 Presently support the following transports:</p>
+<p>Axis2 presently support the following transports:</p>
 <ol>
   <li>HTTP - In HTTP transport the transport listener is a servlet or
     org.apache.axis2.transport.http.SimpleHTTPServer provided by Axis2. The
@@ -724,7 +723,7 @@ data bound object and serialize from data bound object to AXIOM. For example,
 if the WSDL has an operation called "echoString", once the code is generated
 the following methods will be generated inside the relevant classes.</p>
 <pre>public static
-org.apache.axiom.om.OMElementtoOM(org.soapinterop.xsd.EchoStringParamDocument
+org.apache.axiom.om.OMElement toOM(org.soapinterop.xsd.EchoStringParamDocument
 param)// This method will handle the serialization.
 
 public static org.apache.xmlbeans.XmlObject
