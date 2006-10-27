@@ -2055,6 +2055,9 @@
                                       if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
                                           object.set<xsl:value-of select="$javaName"/>(null);
                                           reader.next();
+                                          <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
+                                            reader.next();
+                                          </xsl:if>
                                       }else{
                                     </xsl:if>
                                         object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/>.Factory.parse(reader));
