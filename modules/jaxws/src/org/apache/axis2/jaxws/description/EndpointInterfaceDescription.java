@@ -21,20 +21,20 @@ package org.apache.axis2.jaxws.description;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.jws.soap.SOAPBinding;
-import javax.wsdl.Binding;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  * An EndpointInterfaceDescription corresponds to a particular SEI-based Service
@@ -100,6 +100,9 @@ public class EndpointInterfaceDescription {
     // specify an @WebService.endpointInterface.
     private Class seiClass;
     
+    //Logging setup
+    private static final Log log = LogFactory.getLog(EndpointInterfaceDescription.class);
+    
     // ===========================================
     // ANNOTATION related information
     // ===========================================
@@ -137,15 +140,84 @@ public class EndpointInterfaceDescription {
         parentEndpointDescription = parent;
     }
     
+    /**
+     * Build from AxisService
+     * @param parent
+     */
+    EndpointInterfaceDescription(EndpointDescription parent) {
+        parentEndpointDescription = parent;
+        
+        AxisService axisService = parentEndpointDescription.getAxisService();
+        if (axisService != null) {
+            ArrayList publishedOperations = axisService.getPublishedOperations();
+            Iterator operationsIterator = publishedOperations.iterator();
+            while (operationsIterator.hasNext()) {
+                AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+                addOperation(new OperationDescription(axisOperation, this));
+            }
+        }
+    }
+
+    /**
+     * Build an EndpointInterfaceDescription from a DescriptionBuilderComposite
+     * @param dbc
+     * @param isClass
+     * @param parent
+     */
 	EndpointInterfaceDescription(	DescriptionBuilderComposite dbc, 
 									boolean isClass,
 									EndpointDescription parent){
+		
+		parentEndpointDescription = parent;
+		BasicConfigurator.configure();
+		
 		//TODO: Determine if the isClass parameter is really necessary
 		
-		//Get all the 
+		// Per JSR-181 all methods on the SEI are mapped to operations regardless
+		// of whether they include an @WebMethod annotation.  That annotation may
+		// be present to customize the mapping, but is not required (p14)
+		
+		// TODO:  Testcases that do and do not include @WebMethod anno
+		
+		//We are processing the SEI composite
+		//For every MethodDescriptionComposite in this list, call OperationDescription 
+		//constructor for it, then add this operation
+		
+		//Retrieve the relevent method composites for this dbc (and those in the superclass chain)
+		Iterator<MethodDescriptionComposite> iter = retrieveReleventMethods(dbc);
+		
+		log.debug("EndpointInterfaceDescription: Finished retrieving methods");
+		MethodDescriptionComposite mdc = null;
+		
+		while (iter.hasNext()) {
+			mdc = iter.next();
+			
+			OperationDescription operation = new OperationDescription(mdc, this);
+	
+			//TODO: Do we need to worry about a null AxisOperation at this level?
+			
+			//Add this AxisOperation to the AxisService
+			getEndpointDescription().getAxisService().addOperation(operation.getAxisOperation());
+		
+			log.debug("EID: Just added operation= " +operation.getWebMethodOperationName());
+			addOperation(operation);
+		
+		}
+		
+		log.debug("EndpointInterfaceDescription: Finished Adding operations");
+		
+		//TODO: Need to process the other annotations that can exist, on the server side
+		//      and at the class level.
+		//      They are, as follows: 		
+		//			HandlerChain (181)
+		//			SoapBinding (181)
+		//			WebServiceRefAnnot (List) (JAXWS)
+		//			BindingTypeAnnot (JAXWS Sec. 7.8 -- Used to set either the AS.endpoint, or AS.SoapNSUri)
+		//			WebServiceContextAnnot (JAXWS via injection)
+		
+		BasicConfigurator.resetConfiguration();
 	}
 
-    
     private static Method[] getSEIMethods(Class sei) {
         // Per JSR-181 all methods on the SEI are mapped to operations regardless
         // of whether they include an @WebMethod annotation.  That annotation may
@@ -359,23 +431,6 @@ public class EndpointInterfaceDescription {
         return returnOperation;
     }
     
-    /**
-     * Build from AxisService
-     * @param parent
-     */
-    EndpointInterfaceDescription(EndpointDescription parent) {
-        parentEndpointDescription = parent;
-        
-        AxisService axisService = parentEndpointDescription.getAxisService();
-        if (axisService != null) {
-            ArrayList publishedOperations = axisService.getPublishedOperations();
-            Iterator operationsIterator = publishedOperations.iterator();
-            while (operationsIterator.hasNext()) {
-                AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
-                addOperation(new OperationDescription(axisOperation, this));
-            }
-        }
-    }
     public Class getSEIClass() {
         return seiClass;
     }
@@ -427,4 +482,127 @@ public class EndpointInterfaceDescription {
         }
         return soapParameterStyle;
     }
+    
+    public Iterator<MethodDescriptionComposite> retrieveReleventMethods(DescriptionBuilderComposite dbc) {
+    	//Based on whether this is an implicit SEI, or an actual SEI, Gather up and build a 
+    	//list of MDC's. If this is an actual SEI, then starting with this DBC, build a list of all
+    	//MDC's that are public methods in the chain of extended classes.
+    	//If this is an implicit SEI, then starting with this DBC,
+    	//1. If a false exclude is found, then take only those that have false excludes
+    	//2. Assuming no false excludes, take all public methods that don't have exclude == true
+    	//3. For each super class, if 'WebService' present, take all MDC's according to rules 1&2
+    	//   But, if WebService not present, grab only MDC's that are annotated, hmmmm
+		
+    	if (log.isTraceEnabled()) {
+    		log.trace("retrieveReleventMethods: Enter");
+    	}
+    	
+		ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
+
+    	if (dbc.isInterface()) {
+    	
+    		retrieveList = retrieveSEIMethods(dbc);
+
+    		//Now gather methods off the chain of superclasses, if any
+    		DescriptionBuilderComposite tempDBC = dbc;    		
+			while (!DescriptionUtils.isEmpty(tempDBC.getSuperClassName())) {
+				DescriptionBuilderComposite superDBC = 
+									getEndpointDescription().getServiceDescription().getDBCMap().get(tempDBC.getSuperClassName());
+				retrieveList.addAll(retrieveSEIMethods(superDBC));
+				tempDBC = superDBC;
+			}
+    			
+    	} else {
+       		//this is an implied SEI...rules are more complicated
+    		
+			retrieveList = retrieveImplicitSEIMethods(dbc);
+					
+    		//Now, continue to build this list with relevent methods in the chain of
+			//superclasses. If the logic for processing superclasses is the same as for
+			//the original SEI, then we can combine this code with above code. But, its possible
+			//the logic is different for superclasses...keeping separate for now.
+			DescriptionBuilderComposite tempDBC = dbc;
+			
+			while (!DescriptionUtils.isEmpty(tempDBC.getSuperClassName())) {
+				
+				//verify that this superclass name is not
+				//		java.lang.object, if so, then we're done processing
+				if (DescriptionUtils.javifyClassName(tempDBC.getSuperClassName()).equals(MDQConstants.OBJECT_CLASS_NAME))
+					break;
+				
+				DescriptionBuilderComposite superDBC = 
+									getEndpointDescription().getServiceDescription().getDBCMap().get(tempDBC.getSuperClassName());
+					
+				if (log.isTraceEnabled())
+					log.trace("superclass name for this DBC is:" +tempDBC.getSuperClassName());
+
+				//Verify that we can find the SEI in the composite list
+				if (superDBC == null){
+					throw ExceptionFactory.makeWebServiceException("EndpointInterfaceDescription: cannot find super class that was specified for this class");
+				}
+				
+				if (superDBC.getWebServiceAnnot() != null) {
+					//Now, gather the list of Methods just like we do for the lowest subclass
+					retrieveList.addAll(retrieveImplicitSEIMethods(superDBC));
+				} else {
+					//This superclass does not contain a WebService annotation, add only the
+					//methods that are annotated with WebMethod
+					
+					Iterator<MethodDescriptionComposite> iterMethod = dbc.getMethodDescriptionsList().iterator();
+					
+					while (iterMethod.hasNext()) {
+						MethodDescriptionComposite mdc = iterMethod.next();
+						
+						if (!DescriptionUtils.isExcludeTrue(mdc)) {
+							retrieveList.add(mdc);
+						}
+					}					
+				}
+				tempDBC = superDBC;
+			} //Done with implied SEI's superclasses
+    			
+   		}//Done with implied SEI's
+    	
+    	return retrieveList.iterator();
+    }
+
+    private ArrayList<MethodDescriptionComposite> retrieveImplicitSEIMethods(DescriptionBuilderComposite dbc) {
+		
+    	ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
+
+		retrieveList = DescriptionUtils.getMethodsWithFalseExclusions(dbc);
+		
+		//If this list is empty, then there are no false exclusions, so gather
+		//all composites that don't have exclude == true
+		if (retrieveList == null) {
+			Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
+			
+			while (iter.hasNext()) {
+				MethodDescriptionComposite mdc = iter.next();
+				
+				if (!DescriptionUtils.isExcludeTrue(mdc)) {
+					retrieveList.add(mdc);
+				}
+			}
+		}
+
+		return retrieveList;
+    }
+
+    private ArrayList<MethodDescriptionComposite> retrieveSEIMethods(DescriptionBuilderComposite dbc) {
+		
+    	//Rules for retrieving Methods on an SEI (or a superclass of an SEI) are simple
+    	//Just retrieve all methods regardless of WebMethod annotations
+    	ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
+    	
+    	Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
+    	
+    	while (iter.hasNext()) {
+    		MethodDescriptionComposite mdc = iter.next();    		
+    		retrieveList.add(mdc);
+    	}
+    	
+    	return retrieveList;
+    }
+
 }

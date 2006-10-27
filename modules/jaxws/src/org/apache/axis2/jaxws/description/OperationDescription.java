@@ -22,6 +22,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -34,7 +36,30 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.jaxws.description.builder.HandlerChainAnnot;
+import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
+import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.RequestWrapperAnnot;
+import org.apache.axis2.jaxws.description.builder.ResponseWrapperAnnot;
+import org.apache.axis2.jaxws.description.builder.SoapBindingAnnot;
+import org.apache.axis2.jaxws.description.builder.WebEndpointAnnot;
+import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
+import org.apache.axis2.jaxws.description.builder.WebResultAnnot;
+import org.apache.axis2.jaxws.description.builder.WebServiceContextAnnot;
+import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004Constants;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 
 /**
  * An OperationDescripton corresponds to a method on an SEI.  That SEI could be explicit
@@ -85,6 +110,7 @@ public class OperationDescription {
     private AxisOperation axisOperation;
     private QName operationName;
     private Method seiMethod;
+    private MethodDescriptionComposite methodComposite;
     private ParameterDescription[] parameterDescriptions;
 
     // ===========================================
@@ -165,12 +191,88 @@ public class OperationDescription {
         
         this.operationName = new QName(getWebMethodOperationName());
     }
+    
     OperationDescription(AxisOperation operation, EndpointInterfaceDescription parent) {
         parentEndpointInterfaceDescription = parent;
         axisOperation = operation;
         this.operationName = axisOperation.getName();
     }
 
+    OperationDescription(MethodDescriptionComposite mdc, EndpointInterfaceDescription parent) {
+
+    	parentEndpointInterfaceDescription = parent;
+		methodComposite = mdc;
+		webMethodAnnotation = methodComposite.getWebMethodAnnot();
+
+		AxisOperation axisOperation = null;
+		
+		try {
+			if (isOneWay()) {				
+				axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY);
+			} else {
+				axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT);
+			}
+			//TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
+			//												ROBUST_IN_ONLY
+			//      Determine how these MEP's should be handled, if at all
+					
+		} catch (Exception e) {
+			AxisFault ex = new AxisFault("OperationDescription:cons - unable to build AxisOperation ");
+		}
+		    
+		if (axisOperation != null){
+			
+			axisOperation.setName(determineOperationQName(this.methodComposite));
+			axisOperation.setSoapAction(this.getWebMethodAction());
+
+		
+			//TODO: Determine other axisOperation values that may need to be set
+			//      Currently, the following values are being set on AxisOperation in 
+			//      ServiceBuilder.populateService which we are not setting:
+			//			AxisOperation.setPolicyInclude()
+			//			AxisOperation.setWsamappingList()
+			//			AxisOperation.setOutputAction()
+			//			AxisOperation.addFaultAction()
+			//			AxisOperation.setFaultMessages()
+			
+			// TODO: The WSMToAxisServiceBuilder sets the message receiver, not sure why this is done
+			//       since AxisService.addOperation does this as well by setting it to a default
+			//       MessageReceiver...it appears that this code is also setting it to a default
+			//       receiver..need to understand this
+
+			/*
+			String messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCMessageReceiver";
+			if(wsmOperation.isOneWay()){
+				messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver";
+			}
+			try{
+				MessageReceiver msgReceiver = (MessageReceiver)Class.forName(messageReceiverClass).newInstance();
+				axisOperation.setMessageReceiver(msgReceiver);
+
+			}catch(Exception e){
+			}
+			*/
+
+			parameterDescriptions = createParameterDescriptions();
+			
+			//TODO: Need to process the other annotations that can exist, on the server side
+			//      and at the method level.
+			//      They are, as follows: 		
+			//			WebResultAnnot (181)
+			//			HandlerChain
+			//			SoapBinding (181)
+			//			WebServiceRefAnnot (List) (JAXWS)
+			//			WebServiceContextAnnot (JAXWS via injection)
+			//			RequestWrapper (JAXWS)
+			//			ResponseWrapper (JAXWS)
+			
+//System.out.println("OperationDescription: Finished setting operation");
+			
+		}
+		
+		this.axisOperation = axisOperation;
+    }
+    
     public void setSEIMethod(Method method) {
         if (seiMethod != null) {
             // TODO: This is probably an error, but error processing logic is incorrect
@@ -197,20 +299,41 @@ public class OperationDescription {
     
     // Java-related getters
     public String getJavaMethodName() {
-        String returnString = null;
-        if (seiMethod != null) {
-            returnString = seiMethod.getName();
-        }
+    	String returnString = null;
+    	
+    	if (!isDBC()) {
+    		if (seiMethod != null) {
+                returnString = seiMethod.getName();
+    		}
+    	} else {
+    		if (methodComposite != null) {
+    			returnString = methodComposite.getMethodName();
+    		}
+    	}
+        
         return returnString;
     }
+    
     public String[] getJavaParameters() {
+    	
         ArrayList<String> returnParameters = new ArrayList<String>();
-        if (seiMethod != null) {
-            Class[] paramaters = seiMethod.getParameterTypes();
-            for (Class param:paramaters) {
-                returnParameters.add(param.getName());
+        
+        if (!isDBC()) {
+            if (seiMethod != null) {
+                Class[] paramaters = seiMethod.getParameterTypes();
+                for (Class param:paramaters) {
+                    returnParameters.add(param.getName());
+                }
             }
+	
+        } 
+        /*
+        else {
+        	if (methodComposite != null) {
+        		Class[] parameters = methodComposite.getP
+        	}
         }
+        */
         // TODO: This is different than the rest, which return null instead of an empty array
         return returnParameters.toArray(new String[0]);
     }
@@ -223,21 +346,45 @@ public class OperationDescription {
         return seiMethod;
     }
     
+    public MethodDescriptionComposite getMethodDescriptionComposite() {
+    	return methodComposite;
+    }
+    
     private boolean isWrappedParameters() {
         // TODO: WSDL may need to be considered in this check as well
         return getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
     }
     
     private ParameterDescription[] createParameterDescriptions() {
-       Class[] parameters = seiMethod.getParameterTypes();
-       Type[] paramaterTypes = seiMethod.getGenericParameterTypes();
-       Annotation[][] annotations = seiMethod.getParameterAnnotations();
-       ArrayList<ParameterDescription> buildParameterList = new ArrayList<ParameterDescription>();
-       for(int i = 0; i < parameters.length; i++) {
-           ParameterDescription paramDesc = new ParameterDescription(i, parameters[i], paramaterTypes[i], annotations[i], this);
-           buildParameterList.add(paramDesc);
-       }
-       return buildParameterList.toArray(new ParameterDescription[buildParameterList.size()]);
+    	
+    	ArrayList<ParameterDescription> buildParameterList = new ArrayList<ParameterDescription>();
+	
+    	if (!isDBC()) {
+        	Class[] parameters = seiMethod.getParameterTypes();
+        	Type[] paramaterTypes = seiMethod.getGenericParameterTypes();
+        	Annotation[][] annotations = seiMethod.getParameterAnnotations();
+        	
+        	for(int i = 0; i < parameters.length; i++) {
+        		ParameterDescription paramDesc = new ParameterDescription(i, parameters[i], paramaterTypes[i], annotations[i], this);
+        		buildParameterList.add(paramDesc);
+        	}
+ 	
+    	} else {
+          	ParameterDescriptionComposite pdc = null;
+        	Iterator<ParameterDescriptionComposite> iter = 
+        						methodComposite.getParameterDescriptionCompositeList().iterator();
+        	
+        	for (int i = 0; i < methodComposite.getParameterDescriptionCompositeList().size(); i++) {
+           		ParameterDescription paramDesc = 
+           						new ParameterDescription (	i, 
+           													methodComposite.getParameterDescriptionComposite(i), 
+           													this);
+        		buildParameterList.add(paramDesc);
+    		}
+    	}
+    	
+       	return buildParameterList.toArray(new ParameterDescription[buildParameterList.size()]);
+  	
     }
 
     // =====================================
@@ -251,25 +398,53 @@ public class OperationDescription {
         return new QName(determineOperationName(javaMethod));
     }
     
+    //TODO: For now, we are overriding the above method only because it is static, these should
+    //be combined at some point
+    static QName determineOperationQName(MethodDescriptionComposite mdc) {
+    	return new QName(determineOperationName(mdc));
+    }
+    
+    //TODO: Deprecate this after we use only DBC objects
     private static String determineOperationName(Method javaMethod) {
+    	
+    	String operationName = null;
+    	
+    	WebMethod wmAnnotation = javaMethod.getAnnotation(WebMethod.class);
+    	// Per JSR-181 MR Sec 4.2 "Annotation: javax.jws.WebMethod" pg 17,
+    	// if @WebMethod specifies and operation name, use that.  Otherwise
+    	// default is the Java method name
+    	if (wmAnnotation != null && !DescriptionUtils.isEmpty(wmAnnotation.operationName())) {
+    		operationName = wmAnnotation.operationName();
+    	}
+    	else {
+    		operationName = javaMethod.getName();
+    	}
+    	
+    	return operationName;    
+    }
+
+    //TODO: For now, we are overriding the above method only because it is static, these should
+    //be combined at some point
+    private static String determineOperationName(MethodDescriptionComposite mdc) {
         String operationName = null;
-        WebMethod wmAnnotation = javaMethod.getAnnotation(WebMethod.class);
-        // Per JSR-181 MR Sec 4.2 "Annotation: javax.jws.WebMethod" pg 17,
-        // if @WebMethod specifies and operation name, use that.  Otherwise
-        // default is the Java method name
-        if (wmAnnotation != null && !DescriptionUtils.isEmpty(wmAnnotation.operationName())) {
-            operationName = wmAnnotation.operationName();
-        }
-        else {
-            operationName = javaMethod.getName();
-        }
-        return operationName;
         
+        WebMethod wmAnnotation = mdc.getWebMethodAnnot();
+   		if (wmAnnotation != null && !DescriptionUtils.isEmpty(wmAnnotation.operationName())) {
+			operationName = wmAnnotation.operationName();
+		}
+		else {
+			operationName = mdc.getMethodName();
+		}
+
+    	return operationName;
     }
     
     public String getWebMethodOperationName() {
         if (webMethodOperationName == null) {
-            webMethodOperationName = determineOperationName(seiMethod);
+        	if (!isDBC())
+        		webMethodOperationName = determineOperationName(seiMethod);
+        	else
+                webMethodOperationName = determineOperationName(this.methodComposite); 		
         }
         return webMethodOperationName;
     }
@@ -792,9 +967,18 @@ public class OperationDescription {
     // ANNOTATION: OneWay
     // ===========================================
     Oneway getOnewayAnnotation() {
-        if (onewayAnnotation == null) {
-            onewayAnnotation = seiMethod.getAnnotation(Oneway.class);
-        }
+    	//TODO: Shouldn't really do it this way...if there is not Oneway annotation, 
+    	//      we will always be calling the methods to try to retrieve it, since
+    	//      it will always be null, should consider relying on 'isOneWay'
+    	
+    	if (onewayAnnotation == null) {    		
+    		if (isDBC()) {
+    			if (methodComposite.isOneWay()) {
+    				onewayAnnotation = OneWayAnnot.createOneWayAnnotImpl();
+    			}
+    		} else
+    			onewayAnnotation = seiMethod.getAnnotation(Oneway.class);
+    	}
         return onewayAnnotation;
     }
 
@@ -810,5 +994,12 @@ public class OperationDescription {
             }
         }
         return onewayIsOneway.booleanValue();   
+    }
+    
+    private boolean isDBC() {
+    	if (methodComposite != null)
+    		return true;
+    	else
+    		return false;
     }
 }

@@ -203,10 +203,12 @@ public class DescriptionBuilderComposite {
 		while(iter.hasNext()) {
 			composite = iter.next();
 			
-			if (composite.getMethodName().equals(methodName)){
-				hits++;
-				if (hits == occurence)
-					return composite;
+			if (composite.getMethodName() != null) {
+				if (composite.getMethodName().equals(methodName)){
+					hits++;
+					if (hits == occurence)
+						return composite;
+				}
 			}
 		}
 		
@@ -367,7 +369,7 @@ public class DescriptionBuilderComposite {
 	public void setIsInterface(boolean isInterface){
 		this.isInterface = isInterface;
 	}
-
+	
 	/**
 	 *  @param methodDescription The methodDescription to add to the set.
 	 */

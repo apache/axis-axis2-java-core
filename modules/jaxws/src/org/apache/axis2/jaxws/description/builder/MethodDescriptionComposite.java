@@ -26,6 +26,8 @@ public class MethodDescriptionComposite {
 	private ResponseWrapperAnnot 	responseWrapperAnnot;//TODO EDIT CHECK: only on methods of SEI
 	private List<ParameterDescriptionComposite> parameterDescriptions;//TODO EDIT CHECK: only on methods of SEI
 
+	private ClassLoader				classLoader;
+	
 	/*
 	 * Default Constructor
 	 */
@@ -152,7 +154,7 @@ public class MethodDescriptionComposite {
 	public String[] getExceptions() {
 		return exceptions;
 	}
-
+	
 	/**
 	 * @param methodName The methodName to set.
 	 */
@@ -200,7 +202,7 @@ public class MethodDescriptionComposite {
 	/**
 	 * @param webServiceContextAnnot The webServiceContextAnnot to set.
 	 */
-	private void setWebServiceContextAnnot(WebServiceContextAnnot webServiceContextAnnot) {
+	public void setWebServiceContextAnnot(WebServiceContextAnnot webServiceContextAnnot) {
 		this.webServiceContextAnnot = webServiceContextAnnot;
 	}
 
@@ -244,6 +246,7 @@ public class MethodDescriptionComposite {
 	 *  @param parameterDescription The parameterDescription to add to the set.
 	 */
 	public void addParameterDescriptionComposite(ParameterDescriptionComposite parameterDescription) {
+		parameterDescription.setClassLoader(this.classLoader);
 		parameterDescriptions.add(parameterDescription);
 	}
 	
@@ -268,6 +271,12 @@ public class MethodDescriptionComposite {
 	 */
 	public ParameterDescriptionComposite getParameterDescriptionComposite(int index) {
 		return parameterDescriptions.get(index);
+	}
+
+	/**
+	 */
+	public List<ParameterDescriptionComposite> getParameterDescriptionCompositeList() {
+		return parameterDescriptions;
 	}
 
 	/**

@@ -1,5 +1,4 @@
-/*
- * Copyright 2004,2005 The Apache Software Foundation.
+/* Copyright 2004,2005 The Apache Software Foundation.
  * Copyright 2006 International Business Machines Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,19 +16,22 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.xml.namespace.QName;
+import java.lang.annotation.Annotation;
 
-import org.apache.axis2.wsdl.WSDLConstants;
+public class OneWayAnnot implements javax.jws.Oneway {
 
+		/**
+	     * A OneWayAnnot cannot be instantiated.
+	     */
+		private	OneWayAnnot()
+		{
+		}
+		
+	    public static OneWayAnnot createOneWayAnnotImpl() {
+	        return new OneWayAnnot();
+	    }
 
-public class MDQConstants {
-
-	public static final String WSDL_SERVICE_QNAME = "WSDL_SERVICE_QNAME";
-    public static final String WSDL_PORT = "WSDL_PORT";
-    public static final String WSDL_DEFINITION = WSDLConstants.WSDL_4_J_DEFINITION;
-    public static final String WSDL_LOCATION = "WSDL_LOCATION";
-    public static final String SERVICE_CLASS = "SERVICE_CLASS";
-    public static final String WSDL_PORTTYPE_NAME = "WSDL_PORTTYPE_NAME";
-    
-    public static final String OBJECT_CLASS_NAME = "java.lang.Object";
+	    public Class<Annotation> annotationType(){
+			return Annotation.class;
+		}
 }

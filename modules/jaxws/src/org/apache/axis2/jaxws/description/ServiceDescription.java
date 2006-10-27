@@ -22,16 +22,30 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceException;
+import javax.jws.WebService;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.xml.namespace.QName;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.RobustOutOnlyAxisOperation;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
@@ -160,7 +174,6 @@ public class ServiceDescription {
     ServiceDescription(	
     		HashMap<String, DescriptionBuilderComposite> dbcMap,
     		DescriptionBuilderComposite composite ) {
-    	
     	this.composite = composite;
     	
     	String serviceImplName = this.composite.getClassName();
@@ -191,8 +204,6 @@ public class ServiceDescription {
     	}
 		this.serviceQName = new QName(targetNamespace, serviceName);
 
-        
-    	
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         // it will be set to the annotation value.
         //EndpointDescription endpointDescription = new EndpointDescription(null, this, serviceImplName);
@@ -445,6 +456,7 @@ public class ServiceDescription {
     public WSDLWrapper getWSDLWrapper() {
         return wsdlWrapper;
     }
+    
     public URL getWSDLLocation() {
         return wsdlURL;
     }
@@ -471,6 +483,8 @@ public class ServiceDescription {
     }
     
     public QName getServiceQName() {
+    	//It is assumed that this will always be set in the constructor rather than 
+    	//built up from the class or DBC 
         return serviceQName;
     }
 
@@ -483,12 +497,6 @@ public class ServiceDescription {
     	return dbcMap;
     }
     
-	private AxisService processImplBean(){
-		//Process
-		AxisService axisService = null;
-		return axisService;
-	}
-	
 	private void validateDBCLIntegrity(){
 		
 		//First, check the integrity of this input composite
@@ -511,132 +519,221 @@ public class ServiceDescription {
 		}
 	}
 
+	/*
+	 * Validates the integrity of an impl. class. This should not be called directly for an SEI composite
+	 */
 	public void validateIntegrity() {
-	//TODO: Consider moving this to a utils area, do we really want a public
-	//      method that checks integrity...possibly
-	
-	//TODO: This method will validate the integrity of this object. Basically, if 
-	//consumer set this up improperly, then we should fail fast, should consider placing
-	//this method in a utils class within the 'description' package
-	
-	if (composite.getWebServiceAnnot() != null && composite.getWebServiceProviderAnnot() != null) {
-		throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebService annotation and WebServiceProvider annotation cannot coexist");
-	}
-	
-//	Make sure that we're only validating against WSDL, if there is WSDL...duh
-	if (composite.getWebServiceProviderAnnot() != null ) {
-		//	TODO EDIT CHECK: valid only if is a provider class, what are these?
+		//TODO: Consider moving this to a utils area, do we really want a public
+		//      method that checks integrity...possibly
 		
-	} else if (composite.getWebServiceAnnot() != null) {
-		if (!composite.isInterface()) {
-			// TODO: Validate on the class that this.classModifiers Array does not contain the strings
-			//        FINAL or ABSTRACT, but does contain PUBLIC
-			// TODO: Validate on the class that a public constructor exists
-			// TODO: Validate on the class that a finalize() method does not exist
-			if (!composite.getWebServiceAnnot().wsdlLocation().equals("")) {
-				if (composite.getWsdlDefinition() == null || composite.getWsdlURL() ==  null) {
-					throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: cannot find WSDL Definition pertaining to this WebService annotation");
-				}
-			}
-			
-			//		setWebServiceAnnotDefaults(true=impl); Must happen before we start checking annot
-			if (composite.getWebServiceAnnot().endpointInterface() != null) {
-
-			//			Perform more validation with SEI
-				
-				DescriptionBuilderComposite seic = 
-					dbcMap.get(composite.getWebServiceAnnot().endpointInterface());
-
-				//Verify that we can find the SEI in the composite list
-				if (seic == null){
-					throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: cannot find SEI composite specified by the endpoint interface");
-				}
-			
-				//Verify that the only annotations are WebService and HandlerChain
-				//(per JSR181 Sec. 3.1)
-				if ( composite.getBindingTypeAnnot()!= null 
-					 || composite.getServiceModeAnnot() != null
-					 || composite.getSoapBindingAnnot() != null
-					 || composite.getWebFaultAnnot() != null
-					 || composite.getWebServiceClientAnnot() != null
-					 || composite.getWebServiceContextAnnot()!= null
-					 || composite.getAllWebServiceRefAnnots() != null
-					 ) {
-					throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
-				}
-				
-				//Verify that WebService annotation does not contain a name attribute
-				//(per JSR181 Sec. 3.1)
-				if (composite.getWebServiceAnnot().name() != null) {
-					throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
-				}
-
-				//Verify that that this implementation class implements all methods in the interface
-				validateImplementation(seic);
-				
-			} else {
-				//TODO: Fill out the validation below
-				//'endpoint interface' is null so validate against this class only
-				//			Validate hmmm something
-				//			WSDL Check: ?
-				//		Call ValidateWebMethodAnnots()
-				//			- this method will check that all methods are public - ???
-				//
-			}
-		} else { //this is an interface
-			//TODO:	Validate that the interface is public 
-			
-			if (!composite.getWebServiceAnnot().endpointInterface().equals("")) {
-				throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebService annotation contains a non-empty field for the SEI");
-			}
-			//		Validate (Spec. JAXWS 2.0 Sec.3.4) all WebMethod annots have exclude to 'false' or null 
-			//		Call ValidateWebMethodAnnots()
-			//	
+		//In General, this integrity checker should do gross level checking
+		//It should not be setting spec-defined default values, but can look
+		//at things like empty strings or null values
+		
+		//TODO: This method will validate the integrity of this object. Basically, if 
+		//consumer set this up improperly, then we should fail fast, should consider placing
+		//this method in a utils class within the 'description' package
+		
+		
+		//Verify that WebService and WebServiceProvider are not both specified
+		//per JAXWS - Sec. 7.7
+		if (composite.getWebServiceAnnot() != null && composite.getWebServiceProviderAnnot() != null) {
+			throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebService annotation and WebServiceProvider annotation cannot coexist");
 		}
 		
-		CheckMethodsAgainstWSDL();
-		
-	}
-	//We made it through this round of validation, now set appropriate defaults
-	//within each annotation, Realize that we'll have to do this for the inherited classes
-	//as well.
-	
-	//!!!  TODO: Set Default field values for each annot, as well as, inherited classes
-	//TODO: We shouldn't try to set defaults for all annots...we need to be selective
-	//      based on what is being represented here (i.e. provider vs. impl. vs. SEI)
-	//      So, we may consider doing this at end of individual validation blocks above
-	//setWebServiceAnnotDefaults(true=impl);
-	//setWebMethodAnnotDefaults();
-	//setWebServiceProviderAnnotDefaults();
-	
-	// For each annot that is set within this composite
-	// If it is set, then check that its default values are appropriate, based
-	// on the spec.
+//		Make sure that we're only validating against WSDL, if there is WSDL...duh
+		if (composite.getWebServiceProviderAnnot() != null ) {
+			// TODO: Verify that this Provider based WebService has a method named invoke
+			
+		} else if (composite.getWebServiceAnnot() != null) {
+			
+			if ( composite.getServiceModeAnnot() != null) {
+				throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: ServiceMode annotation can only be specified for WebServiceProvider");
+			}
+			
+			//TODO: hmmm, will we ever actually validate an interface directly...don't think so
+			if (!composite.isInterface()) {
+				// TODO: Validate on the class that this.classModifiers Array does not contain the strings
+				//        FINAL or ABSTRACT, but does contain PUBLIC
+				// TODO: Validate on the class that a public constructor exists
+				// TODO: Validate on the class that a finalize() method does not exist
+				if (!DescriptionUtils.isEmpty(composite.getWebServiceAnnot().wsdlLocation())) {
+					if (composite.getWsdlDefinition() == null || composite.getWsdlURL() == null) {
+						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: cannot find WSDL Definition pertaining to this WebService annotation");
+					}
+				}
+				
+				//		setWebServiceAnnotDefaults(true=impl); Must happen before we start checking annot
+				if (!DescriptionUtils.isEmpty(composite.getWebServiceAnnot().endpointInterface())) {
+					
+					DescriptionBuilderComposite seic = 
+						dbcMap.get(composite.getWebServiceAnnot().endpointInterface());
+					
+					//Verify that we can find the SEI in the composite list
+					if (seic == null){
+						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: cannot find SEI composite specified by the endpoint interface");
+					}
+					
+					//Verify that the only class annotations are WebService and HandlerChain
+					//(per JSR181 Sec. 3.1)
+					if ( composite.getBindingTypeAnnot()!= null 
+							|| composite.getSoapBindingAnnot() != null
+							|| composite.getWebFaultAnnot() != null
+							|| composite.getWebServiceClientAnnot() != null
+							|| composite.getWebServiceContextAnnot()!= null
+							|| composite.getAllWebServiceRefAnnots() != null
+					) {
+						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
+					}
+					
+					//Verify that WebService annotation does not contain a name attribute
+					//(per JSR181 Sec. 3.1)
+					if (composite.getWebServiceAnnot().name() != null) {
+						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
+					}
+					
+					//Verify that that this implementation class implements all methods in the interface
+					validateImplementation(seic);
+					
+					//Verify that this impl. class does not contain any @WebMethod annotations
+					if (webMethodAnnotationsExist()) {
+						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebMethod annotations cannot exist on class when WebService.endpointInterface is set");	
+					}
+					
+					//TODO: validateSEI() ...this should really be done here. No sense in validating
+					//		an interface just because its in the list
+					validateSEI(seic);
+					
+				} else { //this is an implicit SEI (i.e. impl w/out endpointInterface
+					
+					checkImplicitSEIAgainstWSDL();
+					//	TODO:	Call ValidateWebMethodAnnots()
+					//			- this method will check that all methods are public - ???
+					//
+				}
+			} else { //this is an interface...we should not be processing interfaces here
+				throw ExceptionFactory.makeWebServiceException("ValidateIntegrity: Improper usage: cannot invoke this method with an interface");	
+			}
+					
+			//TODO: don't think this is necessary
+			checkMethodsAgainstWSDL();
+		}
 	}
 	
 	private void validateImplementation(DescriptionBuilderComposite seic) {
-		//TODO: Currently, this may be unnecessary per JSR181, sec. 4.1.1, definition
-		//      of endpointInterface attribute
+		/*
+		 *	Verify that an impl class implements all the methods of the SEI. We
+		 *  have to verify this because an impl class is not required to actually use
+		 *  the 'implements' clause. So, if it doesn't, the Java compiler won't 
+		 *	catch it. Don't need to worry about chaining because only one EndpointInterface
+		 *  can be specified, and the SEI cannot specify an EndpointInterface, so the Java
+		 *	compiler will take care of everything else.
+		 */
+		
+		HashMap compositeHashMap = new HashMap();
+		Iterator<MethodDescriptionComposite> compIterator = 
+					composite.getMethodDescriptionsList().iterator();
+
+		while (compIterator.hasNext()) {
+			MethodDescriptionComposite mdc = compIterator.next();
+			compositeHashMap.put(mdc.getMethodName(),mdc);
+		}
+		
+		Iterator<MethodDescriptionComposite> seiIterator = 
+					seic.getMethodDescriptionsList().iterator();
+		
+		while (seiIterator.hasNext()) {
+			MethodDescriptionComposite mdc = seiIterator.next();
+
+			if (compositeHashMap.get(mdc.getMethodName()) == null) {
+				throw ExceptionFactory.makeWebServiceException("ServiceDescription: subclass does not implement method on specified interface");				
+			}
+		}
+		
 	}
 	
-	private void CheckMethodsAgainstWSDL() {		
-
-		if (WebMethodAnnotationsExist()) {
-			if (WebMethodAnnotationsWithFalseExclusions())
-				VerifyFalseExclusionsWithWSDL();
+	/*
+	 * This method verifies that, if there are any WebMethod with exclude == false, then
+	 * make sure that we find all of those methods represented in the wsdl. However, if 
+	 * there are no exclusions == false, or there are no WebMethod annotations, then verify
+	 * that all the public methods are in the wsdl
+	 */
+	private void checkMethodsAgainstWSDL() {	
+//Verify that, for ImplicitSEI, that all methods that should exist(if one false found, then
+//only look for WebMethods w/ False, else take all public methods but ignore those with
+//exclude == true
+		if (webMethodAnnotationsExist()) {
+			if (DescriptionUtils.falseExclusionsExist(composite))
+				verifyFalseExclusionsWithWSDL();
 			else
-				VerifyPublicMethodsWithWSDL();
+				verifyPublicMethodsWithWSDL();
 		} else {
-			VerifyPublicMethodsWithWSDL();
+			verifyPublicMethodsWithWSDL();
 		}
+	}
+	
+	private void checkImplicitSEIAgainstWSDL() {
+		
+		//TODO: If there is a WSDL, then verify that all WebMethods on this class and in the
+		//		superclasses chain are represented in the WSDL...Look at logic below to make
+		//		sure this really happening
+		
+		
+		if (webMethodAnnotationsExist()) {
+			if (DescriptionUtils.falseExclusionsExist(composite))
+				verifyFalseExclusionsWithWSDL();
+			else
+				verifyPublicMethodsWithWSDL();
+		} else {
+			verifyPublicMethodsWithWSDL();
+		}
+		
+	}
+	
+	private void checkSEIAgainstWSDL() {
+		//TODO: Place logic here to verify that each publicMethod with WebMethod annot
+		//      is contained in the WSDL (If there is a WSDL) If we find
+		//	    a WebMethod annotation, use its values for looking in the WSDL
+
+	}
+	
+	private void validateSEI(DescriptionBuilderComposite seic) {
+		
+		//TODO: Validate SEI superclasses -- hmmm, may be doing this below
+		//		
+		
+		if (!seic.getWebServiceAnnot().endpointInterface().equals("")) {
+			throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebService annotation contains a non-empty field for the SEI");
+		}
+
+		checkSEIAgainstWSDL();
+		
+		//TODO: More validation here
+		
+		//TODO: Make sure we don't find any WebMethod annotations with exclude == true 
+		//		anywhere in the superclasses chain
+		
+		//TODO: Check that all WebMethod annotations in the superclass chain are represented in 
+		//		WSDL, assuming there is WSDL
+		
+		
+		//TODO:	Validate that the interface is public 
+		
+		if (!composite.getWebServiceAnnot().endpointInterface().equals("")) {
+			throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebService annotation contains a non-empty field for the SEI");
+		}
+		//		Call ValidateWebMethodAnnots()
+		//
+		
+		//This will perform validation for all methods, regardless of WebMethod annotations
+		//It is called for the SEI, and an impl. class that does not specify an endpointInterface
+		validateMethods();
 	}
 	
 	/**
 	 * @return Returns TRUE if we find just one WebMethod Annotation 
 	 */
-	private boolean WebMethodAnnotationsExist() {
-		
-		
+	private boolean webMethodAnnotationsExist() {
 		MethodDescriptionComposite mdc = null;
 		Iterator<MethodDescriptionComposite> iter = composite.getMethodDescriptionsList().iterator();
 		
@@ -650,12 +747,12 @@ public class ServiceDescription {
 		return false;
 	}
 	
-	private void VerifyFalseExclusionsWithWSDL() {
+	private void verifyFalseExclusionsWithWSDL() {
 		//TODO: Place logic here to verify that each exclude==false WebMethod annot we find
 		//      is contained in the WSDL
 	}
 	
-	private void VerifyPublicMethodsWithWSDL() {
+	private void verifyPublicMethodsWithWSDL() {
 		//TODO: Place logic here to verify that each publicMethod with no WebMethod annot
 		//      is contained in the WSDL
 
@@ -663,24 +760,26 @@ public class ServiceDescription {
 
 	
 	/**
-	 * @return Returns TRUE if we find just one WebMethod Annotation with exclude flag
-	 * set to false
 	 */
-	private boolean WebMethodAnnotationsWithFalseExclusions() {
+	private void validateMethods() {
+		//TODO: Fill this out to validate all MethodDescriptionComposite (and their inclusive
+		//      annotations on this SEI (SEI is assumed here)
+		//check oneway
+		//
 		
-		MethodDescriptionComposite mdc = null;
-		Iterator<MethodDescriptionComposite> iter = composite.getMethodDescriptionsList().iterator();
+		//This could be an SEI, or an impl. class that doesn' specify an EndpointInterface (so, it
+		//is implicitly an SEI...need to consider this
+		//
 		
-		while (iter.hasNext()) {
-			mdc = iter.next();
-
-			WebMethodAnnot wma = mdc.getWebMethodAnnot();
-			if (wma != null) {
-				if (wma.exclude() == false)
-					return true;
-			}
-		}
-		
-		return false;
+		//TODO: Verify that, if this is an interface...that there are no Methods with WebMethod
+		//      annotations that contain exclude == true
+	
+		//TODO: Verify that, if a SOAPBinding annotation exists, that its style be set to
+		//      only DOCUMENT JSR181-Sec 4.7.1
+	
+	}
+	
+	private void validateWSDLOperations() {
+		//Verifies that all operations on the wsdl are found in the impl/sei class
 	}
 }

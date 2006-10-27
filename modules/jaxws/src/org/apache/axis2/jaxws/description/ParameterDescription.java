@@ -27,6 +27,7 @@ import java.lang.reflect.TypeVariable;
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
 
+import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 
 /**
@@ -79,6 +80,7 @@ public class ParameterDescription {
         this.parameterNumber = parameterNumber;
         this.parentOperationDescription = parent;
         this.parameterType = parameterType;
+        
         // The Type argument could be a Type (if the parameter is a Paramaterized Generic) or
         // just a Class (if it is not).  We only need to keep track of Paramaterized Type information. 
         if (ParameterizedType.class.isInstance(parameterGenericType)) {   
@@ -87,6 +89,31 @@ public class ParameterDescription {
         findWebParamAnnotation(parameterAnnotations);
     }
     
+    ParameterDescription(int parameterNumber, ParameterDescriptionComposite pdc, OperationDescription parent) {
+    	this.parameterNumber = parameterNumber;
+    	this.parentOperationDescription = parent;
+    	this.parameterType = pdc.getParameterTypeClass();
+    	
+    	
+        if (ParameterizedType.class.isInstance(pdc.getParameterGenericType())) {   
+            this.parameterGenericType = (ParameterizedType) pdc.getParameterGenericType();
+        }
+
+    	webParamAnnotation = pdc.getWebParamAnnot();
+    	
+    	//TODO: Need to build the schema map. Need to add logic to add this parameter
+    	//	    to the schema map.
+    	
+    	//TODO: Need to consider processing the following JAXWS annotations on this DBC
+    	// webServiceRef is probably only client, so shouldn't be here
+    	//webServiceContextAnnotation = pdc.getWebServiceContextAnnot();
+    	//webServiceRefAnnotation = pdc.getWebServiceRefAnnot();
+    }
+    
+    /*
+     * This grabs the WebParam annotation from the list of annotations for this parameter
+     * This should be DEPRECATED once DBC processing is complete.
+     */
     private void findWebParamAnnotation(Annotation[] annotations) {
         for (Annotation checkAnnotation:annotations) {
             // REVIEW: This may not work with the MDQInput.  From the java.lang.annotation.Annotation interface

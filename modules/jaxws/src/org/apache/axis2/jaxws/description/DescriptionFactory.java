@@ -71,25 +71,10 @@ public class DescriptionFactory {
     		}
     	}
     	
-    	//For each impl class and each SEI, build a ServiceDescription
-    	//TODO: Probably not the best way to process SEI's ...need to look at this
-    	/*
-    	HashMap<String, DescriptionBuilderComposite> seiMap = 
-    		sortedDBCList.getMap(DBCInputListSorter.seiMapKey);
-
-    	for (int i=1; i < sortedDBCList.getImplClassesList().size(); i++ ) {
-    		//process this sei class
-    		
-    		String seiName = sortedDBCList.getSeiClassesList().get(i);
-    		DescriptionBuilderComposite seiComposite = seiMap.get(seiName);
-            
-    		if (seiComposite == null)
-            	throw ExceptionFactory.makeWebServiceException("ServiceDescription.constructor: Can not find DBC represents associated serviceImplName:  " + serviceImplName);
-    		
-    		ServiceDescription serviceDescription = new ServiceDescription( sortedDBCList, seiComposite);
-    	   	serviceDescriptionList.add(serviceDescription);
-    	}
-    	*/  	
+    	//TODO: Process all composites that are WebFaults...current thinking is that
+    	//      since WebFault annotations only exist on exception classes, then they 
+    	//      should be processed by themselves, and at this level
+    	
     	
     	return serviceDescriptionList;
     }
@@ -113,7 +98,7 @@ public class DescriptionFactory {
      * @param serviceImplName 
      * @return List<>
      */ 
-	private static List<DescriptionBuilderComposite> BuildRelevantCompositeList(
+	private static List<DescriptionBuilderComposite> buildRelevantCompositeList(
 				List<DescriptionBuilderComposite> compositeList,
 				String serviceImplName) {
 		

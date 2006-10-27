@@ -82,6 +82,7 @@ import org.apache.commons.logging.LogFactory;
  *         
  *  </pre>       
  */
+
 /*
  * TODO: EndpointDescription should be created via AxisService objects and not directly from WSDL
  * IMPORTANT NOTE: Axis2 currently only supports 1 service and 1 port under that service.  When that is
@@ -216,8 +217,6 @@ public class EndpointDescription {
      *                 since they don't use an SEI
      */
     public EndpointDescription(ServiceDescription parent, String serviceImplName) {
-//TODO: This constructor is similar to the first one, other than it is getting its annotation
-//from the MDQInput List rather than the annotated class.
     	
     	// TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
         // TODO: If there is WSDL, could compare the namespace of the defn against the portQName.namespace
@@ -245,7 +244,10 @@ public class EndpointDescription {
         addToAxisService();	//Add a reference to this EndpointDescription to the AxisService
 
         //TODO: Need to remove operations from AxisService that have 'exclude = true
-        //      then call 'validateOperations' to verify that WSDL and AxisService match up
+        //      then call 'validateOperations' to verify that WSDL and AxisService match up,
+        //      Remember that this will only happen when we generate an AxisService from existing
+        //		WSDL and then need to perform further processing because we have annotations as well
+        //		If there is no WSDL, we would never process the Method to begin with.
         
         buildDescriptionHierachy();
         
@@ -255,10 +257,14 @@ public class EndpointDescription {
         //	addAnonymousAxisOperations();
         
         // This will set the serviceClient field after adding the AxisService 
-        // to the AxisConfig
-        getServiceClient();
+        // to the AxisConfig...probably not necessary on server side
+        //getServiceClient();
         
         // Give the configuration builder a chance to finalize configuration for this service
+        
+        //Supposedly, this call should only be made for the client, comment out
+        //for now. Be careful, this may be needed for finalizing configuration
+/*
         try {
             getServiceDescription().getClientConfigurationFactory().completeAxis2Configuration(axisService);
         } catch (DeploymentException e) {
@@ -276,6 +282,7 @@ public class EndpointDescription {
             e.printStackTrace();
 //            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
         }
+        */
     }
     
     /**
@@ -389,9 +396,11 @@ public class EndpointDescription {
     			}
     			endpointInterfaceDescription = new EndpointInterfaceDescription(seiClass, this);
     		} else {
-    			//we are processing annotations from the class itself
-    			if (DescriptionUtils.isEmpty(seiClassName)){
-    				
+    			//TODO: Determine if we need logic here to determine implied SEI or not. This logic
+    			//		may be handled by EndpointInterfaceDescription
+    			
+    			if (DescriptionUtils.isEmpty(getWebServiceEndpointInterface())) {
+    			    				
     				//TODO: Build the EndpointInterfaceDesc based on the class itself
     				endpointInterfaceDescription = new EndpointInterfaceDescription(composite, true, this);
     				
@@ -403,16 +412,18 @@ public class EndpointDescription {
     							this);
     			}
     		}
+    	} else {
+    		//TODO: process a WebServiceProvider
     	}
     }
-    
     
     public QName getPortQName() {
         if (portQName == null) {
             // The name was not set by the constructors, so get it from the
-            // appropriate annotaion.
+            // appropriate annotation.
             String name = getWebServicePortName();
             String tns = getWebServiceTargetNamespace();
+            
             // TODO: Check for name &/| tns null or empty string and add tests for same
             portQName = new QName(tns, name);
         }
@@ -523,6 +534,11 @@ public class EndpointDescription {
                     + createAxisServiceName());
         }
 
+        //Save the Port Type name
+        Parameter portTypeNameParameter = new Parameter();
+        portTypeNameParameter.setName(MDQConstants.WSDL_PORTTYPE_NAME);
+        portTypeNameParameter.setValue(getWebServiceName());
+        
         // Save the Service QName as a parameter.
         Parameter serviceNameParameter = new Parameter();
         serviceNameParameter.setName(MDQConstants.WSDL_SERVICE_QNAME);
@@ -536,8 +552,14 @@ public class EndpointDescription {
 
         //Save the WSDL Definition
         Parameter wsdlDefParameter = new Parameter();
-        wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);
-        wsdlDefParameter.setValue(getServiceDescription().getWSDLWrapper().getDefinition());
+        wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);       
+        
+        //TODO: At some point this should always return a valid WSDL definition, for now just
+        //  	make sure we don't get an NPE
+        if (getServiceDescription().getWSDLWrapper() != null) 
+            wsdlDefParameter.setValue(getServiceDescription().getWSDLWrapper().getDefinition());
+        else
+            wsdlDefParameter.setValue(getServiceDescription().getWSDLWrapper());
         
         //Save the WSDL Location
         Parameter wsdlLocationParameter = new Parameter();
@@ -547,9 +569,10 @@ public class EndpointDescription {
         //Save the fully qualified class name for the serviceImpl
         Parameter serviceClassNameParameter = new Parameter();
         serviceClassNameParameter.setName(MDQConstants.SERVICE_CLASS);
-        serviceClassNameParameter.setValue(javifyClassName(composite.getClassName()));
+        serviceClassNameParameter.setValue(DescriptionUtils.javifyClassName(composite.getClassName()));
            
-        try {
+         try {        	 
+            axisService.addParameter(portTypeNameParameter);
             axisService.addParameter(serviceNameParameter);
             axisService.addParameter(portParameter);                        
             axisService.addParameter(wsdlDefParameter);
@@ -602,6 +625,9 @@ public class EndpointDescription {
             serviceName = ServiceClient.ANON_SERVICE + this.hashCode() + System.currentTimeMillis();
         }
         axisService = new AxisService(serviceName);
+        
+        //TODO: Set other things on AxisService here, this function may have to be
+        //      moved to after we create all the AxisOperations
     }
     
     private void buildDescriptionHierachy() {
@@ -711,13 +737,6 @@ public class EndpointDescription {
 
         }
         return getServiceDescription().getServiceQName().getLocalPart() + "." + portName;
-    }
-
-    private String javifyClassName(String className) {
-    	if(className.indexOf("/") != -1) {
-    		return className.replaceAll("/", ".");
-    	}
-    	return className;
     }
 
     public boolean isProviderBased() {
@@ -844,6 +863,30 @@ public class EndpointDescription {
         }
         return returnName;
     }
+    
+    /**
+     * Return the name of the class without any package qualifier.
+     * @param theClass
+     * @return the name of the class sans package qualification.
+     */
+    private static String getSimpleJavaClassName(String name) {
+        String returnName = null;
+        
+        if (name != null) {
+            String fqName = name;
+            
+            // We need the "simple name", so strip off any package information from the name
+            int endOfPackageIndex = fqName.lastIndexOf('.');
+            int startOfClassIndex = endOfPackageIndex + 1;
+            returnName = fqName.substring(startOfClassIndex);
+        }
+        else {
+            // TODO: RAS and NLS
+            throw new UnsupportedOperationException("Java class is null");
+        }
+        return returnName;
+    }
+    
     /**
      * Returns the package name from the class.  If no package, then returns null
      * @param theClass
@@ -932,24 +975,38 @@ public class EndpointDescription {
     
     public String getWebServiceName() {
         // TODO: Validation: Not allowed on WebServiceProvider
-        if (webService_Name == null) {
-            if (!isProviderBased()) {
-                if (getWebServiceAnnotation() != null 
-                        && !DescriptionUtils.isEmpty(getWebServiceAnnotation().name())) {
-                    webService_Name = getWebServiceAnnotation().name();
-                }
-                else {
-                    // Default per JSR-181 Sec 4.1, pg 15
-                    webService_Name = getSimpleJavaClassName(implOrSEIClass);
-                }
-            }
-            else {
-                // This element is not valid on a WebServiceProvider annotation
-                // REVIEW: Is this a correct thing to return if this is called against a WebServiceProvier
-                //         which does not support this element?
-                webService_Name = "";
-            }
-        }
+    	
+    	//TODO: Per JSR109 v1.2 Sec. 5.3.2.1
+    	//      If not specified then we can use the default value as specified in JSR 181 
+    	//		(but only if it is unique within the module)...or If the name is 
+    	//		not specified in the Service Implementation Bean then fully 
+    	//		qualified name of the Bean class is used to guarantee uniqueness
+    	//		If the above is not unique then fully qualified name of the
+    	//		Bean class is used to guarantee uniqueness
+    	
+    	if (webService_Name == null) {
+    		if (!isProviderBased()) {
+    			if (getWebServiceAnnotation() != null 
+    					&& !DescriptionUtils.isEmpty(getWebServiceAnnotation().name())) {
+    				webService_Name = getWebServiceAnnotation().name();
+     			}
+    			else {
+    				if (getServiceDescription().isDBCMap()) {
+    					//The name is the simple name of the class or interface
+    					webService_Name = getSimpleJavaClassName(composite.getClassName());
+    				} else {
+    					// Default per JSR-181 Sec 4.1, pg 15
+    					webService_Name = getSimpleJavaClassName(implOrSEIClass);
+    				}
+    			}                	
+    		}
+    		else {
+    			// This element is not valid on a WebServiceProvider annotation
+    			// REVIEW: Is this a correct thing to return if this is called against a WebServiceProvier
+    			//         which does not support this element?
+    			webService_Name = "";
+    		}
+    	}
         return webService_Name;
     }
     

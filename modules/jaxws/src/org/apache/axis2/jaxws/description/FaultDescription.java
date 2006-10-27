@@ -33,7 +33,6 @@ package org.apache.axis2.jaxws.description;
  *     AXIS2 DELEGATE:      None
  *     
  *     CHILDREN:            None
- *                          None
  *     
  *     ANNOTATIONS:
  *         WebFault [224]
