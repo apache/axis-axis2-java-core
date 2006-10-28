@@ -21,27 +21,32 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.context.MessageContext;
 
 /**
- * This class represents the results of an asynchronous invocation. The axis2 engine
- * reports back the results in this object via the callback function.
+ * This class holds the results of an asynchronous invocation. The Axis2
+ * engine returns an instance of this class via the {@link
+ * Callback#onComplete(AsyncResult)} method when the operation completes
+ * successfully.
  */
 public class AsyncResult {
 
     /**
-     * Field result
+     * Message context that supplies the result information.
      */
     private MessageContext result;
 
     /**
-     *
-     * @param result - resulting message context
+     * Constructor.
+     * 
+     * @param result message context providing result information
+     * (<code>null</code> if no response)
      */
     public AsyncResult(MessageContext result) {
         this.result = result;
     }
 
     /**
-     * This will return the message context of the resulting message context
-     * @return SOAPEnvelope
+     * Get the SOAP Envelope for the response message.
+     * 
+     * @return Envelope (<code>null</code> if none)
      */
     public SOAPEnvelope getResponseEnvelope() {
         if (result != null) {
@@ -52,7 +57,9 @@ public class AsyncResult {
     }
 
     /**
-     * @return MessageContext
+     * Get the complete message context for the response.
+     * 
+     * @return context (<code>null</code> if none)
      */
     public MessageContext getResponseMessageContext() {
         return result;
