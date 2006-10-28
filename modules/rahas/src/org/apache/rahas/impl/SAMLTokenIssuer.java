@@ -546,7 +546,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
     *      org.apache.axis2.context.MessageContext)
     */
     public String getResponseAction(RahasData data) throws TrustException {
-        return TrustUtil.getActionValue(data.getVersion(), RahasConstants.RSTR_ACTON_ISSUE);
+        return TrustUtil.getActionValue(data.getVersion(), RahasConstants.RSTR_ACTION_ISSUE);
     }
 
 
