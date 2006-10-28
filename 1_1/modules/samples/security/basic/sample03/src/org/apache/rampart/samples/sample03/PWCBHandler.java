@@ -28,12 +28,14 @@ public class PWCBHandler implements CallbackHandler {
 
     public void handle(Callback[] callbacks) throws IOException,
             UnsupportedCallbackException {
+
         for (int i = 0; i < callbacks.length; i++) {
             
             //When the server side need to authenticate the user
             WSPasswordCallback pwcb = (WSPasswordCallback)callbacks[i];
             if (pwcb.getUsage() == WSPasswordCallback.USERNAME_TOKEN_UNKNOWN) {
                 if(pwcb.getIdentifer().equals("bob") && pwcb.getPassword().equals("bobPW")) {
+                    //If authentication successful, simply return
                     return;
                 } else {
                     throw new UnsupportedCallbackException(callbacks[i], "check failed");

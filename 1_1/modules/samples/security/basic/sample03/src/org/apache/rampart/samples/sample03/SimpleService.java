@@ -30,48 +30,7 @@ import java.util.Vector;
 
 public class SimpleService {
 
-    MessageContext msgCtx;
-
-    public void setOperationContext(OperationContext opContext)  throws AxisFault {
-        this.msgCtx = opContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-    }
-
     public String echo(String arg) {
-        Vector results = null;
-        if ((results = (Vector) msgCtx
-                .getProperty(WSHandlerConstants.RECV_RESULTS)) == null) {
-            System.out.println("No security results!!");
-            throw new RuntimeException("No security results!!");
-        } else {
-            System.out.println("Number of results: " + results.size());
-            for (int i = 0; i < results.size(); i++) {
-                WSHandlerResult rResult = (WSHandlerResult) results.get(i);
-                Vector wsSecEngineResults = rResult.getResults();
-
-                for (int j = 0; j < wsSecEngineResults.size(); j++) {
-                    WSSecurityEngineResult wser = (WSSecurityEngineResult) wsSecEngineResults.get(j);
-                    if (wser.getAction() == WSConstants.UT
-                            && wser.getPrincipal() != null) {
-                        
-                        //Extract the principal
-                        WSUsernameTokenPrincipal principal = (WSUsernameTokenPrincipal)wser.getPrincipal();
-                        
-                        //Get user/pass
-                        String user = principal.getName();
-                        String passwd = principal.getPassword();
-                        
-                        //Authenticate
-                        if("bob".equals(user) && "bobPW".equals(passwd)) {
-                            //Authentication suceessful
-                            return arg;
-                        } else {
-                            throw new RuntimeException("Authentication Faliure!!");
-                        }
-                        
-                    }
-                }
-            }
-
             return arg;
         }
 
