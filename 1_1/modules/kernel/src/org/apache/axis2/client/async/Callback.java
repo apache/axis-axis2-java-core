@@ -17,8 +17,13 @@
 package org.apache.axis2.client.async;
 
 /**
- * This Class is the abstract representation of a callback and is called at the completion of an
- * asynchronous invocation.
+ * Base class for asynchronous client callback handler. The application code
+ * needs to create an instance of this class (actually an instance of a
+ * subclass, since this base class cannot be used directly) and pass it to the
+ * generated startXXX client stub method when initiating an asynchronous
+ * operation. The Axis2 code then calls the appropriate methods of this class
+ * {@link #setComplete(boolean)}, and either {@link #onComplete(AsyncResult)}
+ * or {@link #onError(Exception)} when the operation is completed.
  */
 public abstract class Callback {
 
@@ -28,14 +33,15 @@ public abstract class Callback {
     private boolean complete;
 
     /**
-     * This method is invoked by Axis Engine once the asynchronous operation has completed successfully.
+     * Method is invoked by Axis2 once the asynchronous operation has completed
+     * successfully.
      *
      * @param result
      */
     public abstract void onComplete(AsyncResult result);
 
     /**
-     * This method is called by Axis Engine if the asynchronous operation fails.
+     * Method invoked by Axis2 if the asynchronous operation fails.
      *
      * @param e
      */
@@ -55,16 +61,16 @@ public abstract class Callback {
      *
      * @return boolean
      */
-    public boolean isComplete() {
+    public synchronized boolean isComplete() {
         return complete;
     }
 
     /**
-     * Method setComplete
+     * Method invoked by Axis2 to set the completion state of the operation.
      *
      * @param complete
      */
-    public void setComplete(boolean complete) {
+    public synchronized void setComplete(boolean complete) {
         this.complete = complete;
     }
 }
