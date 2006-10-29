@@ -236,9 +236,7 @@
 	
 	<parameter name="token-canceler-config">
 		<token-canceler-config>
-			<!--<proofToken>EncryptedKey</proofToken>-->
-			<!--<cryptoProperties>sctIssuer.properties</cryptoProperties>-->
-			<!--<addRequestedAttachedRef />-->
+
 		</token-canceler-config>
     </parameter>
 	
