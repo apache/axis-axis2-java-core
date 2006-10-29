@@ -900,18 +900,20 @@
                     line="-J-Dhttp.proxy.port=${maven.proxy.port} -J-Dhttp.proxy.host=${maven.proxy.host}"/>
             <ant:sourcepath>
                 <ant:pathelement location="modules/adb/src"/>
+		<ant:pathelement location="modules/adb-codegen/src"/>
                 <ant:pathelement location="modules/addressing/src"/>
                 <ant:pathelement location="modules/codegen/src"/>
-                <ant:pathelement location="modules/xmlbeans/src"/>
                 <ant:pathelement location="modules/java2wsdl/src"/>
-                <ant:pathelement location="modules/kernel/src"/>
-                <!--ant:pathelement location="modules/jaxws/src"/-->
+		<!-- Cannot run the build in jdk1.4 when jaxbri is included -->
+		<!--ant:pathelement location="modules/jaxbri/src"/-->
                 <ant:pathelement location="modules/jibx/src"/>
-                <!--ant:pathelement location="modules/jaxbri/src"/-->
+                <ant:pathelement location="modules/kernel/src"/>
                 <ant:pathelement location="modules/saaj/src"/>
-                <ant:pathelement location="modules/security/src"/>
-                <ant:pathelement location="modules/spring/src"/>
+		<!-- we are not shipping jaxws with 1.1 -->
+                <!--ant:pathelement location="modules/jaxws/src"/-->                
                 <ant:pathelement location="modules/soapmonitor/src"/>
+                <ant:pathelement location="modules/spring/src"/>
+		<ant:pathelement location="modules/xmlbeans/src"/>
             </ant:sourcepath>
             <ant:classpath>
                 <ant:fileset dir="target/lib">
