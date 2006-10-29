@@ -35,9 +35,10 @@
 
 	<!-- Create Service -->
 	<target name="service">
+
 		<java classname="org.apache.axis2.wsdl.WSDL2Java">
 			<arg value="-uri" />
-			<arg value="resources/MTOMSample.wsdl" />
+			<arg value="${basedir}/resources/MTOMSample.wsdl" />
 			<arg value="-ss" />
 			<arg value="-sd" />
 			<arg value="-p" />
@@ -47,22 +48,22 @@
 			<classpath refid="class.path" />
 		</java>
 		<copy file="${skeleton.path}" tofile="${service.dir}/${skeleton.path}" overwrite="true" />
-		<ant dir="${service.dir}"/>
-		<copy file="${service.dir}/build/lib/MTOMSample.aar" tofile = "${service.dir}/MTOMSample.aar" overwrite="true"/>
+		<ant dir="${service.dir}" />
+		<copy file="${service.dir}/build/lib/MTOMSample.aar" tofile="${service.dir}/MTOMSample.aar" overwrite="true" />
 	</target>
 	<target name="check-parameters">
-	 <condition property="parameters.set">
-			    <and>
-			      <isset property="dest"/>
-			      <isset property="file"/>
-			    </and>
-			  </condition>
+		<condition property="parameters.set">
+			<and>
+				<isset property="dest" />
+				<isset property="file" />
+			</and>
+		</condition>
 		<!-- This is a hack to get a if-else working in ant. Some much more "ANTy" person is welcome to improve this -->
-		<antcall target="print-usage"/>
+		<antcall target="print-usage" />
 	</target>
-	
+
 	<target name="print-usage" unless="parameters.set">
-		<echo message="ant -Dfile &lt;file to be transfered&gt;  -Ddest &lt;name of the destination file&gt;"/>
+		<echo message="ant -Dfile &lt;file to be transfered&gt;  -Ddest &lt;name of the destination file&gt;" />
 	</target>
 
 	<!-- Run Client -->
