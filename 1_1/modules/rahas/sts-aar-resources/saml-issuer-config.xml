@@ -10,7 +10,7 @@
     <cryptoProperties>
        <crypto provider="org.apache.ws.security.components.crypto.Merlin">
             <property name="org.apache.ws.security.crypto.merlin.keystore.type">JKS</property>
-            <property name="org.apache.ws.security.crypto.merlin.file">rahas-sts.jks</property>
+            <property name="org.apache.ws.security.crypto.merlin.file">META-INF/rahas-sts.jks</property>
             <property name="org.apache.ws.security.crypto.merlin.keystore.password">password</property>
         </crypto>
     </cryptoProperties>
