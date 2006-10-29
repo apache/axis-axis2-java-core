@@ -7,8 +7,9 @@
 	<property name="temp.client.dir" value="build/temp_client"/>
 	
 	<property name="addressing.mar" value="addressing-1.1-SNAPSHOT.mar"/>
-	<property name="rampart.mar" value="rampart-1.1-SNAPSHOT.mar"/>	
-	
+	<property name="rampart.mar" value="rampart-1.1-SNAPSHOT.mar"/>
+	<property name="rahas.mar" value="rahas-1.1-SNAPSHOT.mar"/>
+
 	<property name="client.port" value="9080"/>
 	<property name="server.port" value="8080"/>
 	
@@ -150,6 +151,7 @@
 	   		<!-- copy modules -->
 	   		<copy file="${modules.dir}/${addressing.mar}" tofile="${service.repos.dir}/sample@{sample.number}/modules/${addressing.mar}" overwrite="true"/>
 	   		<copy file="${modules.dir}/${rampart.mar}" tofile="${service.repos.dir}/sample@{sample.number}/modules/${rampart.mar}" overwrite="true"/>
+	   		<copy file="${modules.dir}/${rahas.mar}" tofile="${service.repos.dir}/sample@{sample.number}/modules/${rahas.mar}" overwrite="true"/>
 	   		
 	   		<!-- create service -->
 	   		<mkdir dir="${temp.dir}"/>
