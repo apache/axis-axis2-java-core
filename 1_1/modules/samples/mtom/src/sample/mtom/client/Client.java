@@ -76,15 +76,19 @@ public class Client {
 	public static void transferFile(File file, String destination)
 			throws RemoteException {
 		// uncomment the following if you need to capture the messages from
-		// TCPMON. Please look at http://ws.apache.org/commons/tcpmon/tcpmontutorial.html
+		// TCPMON. Please look at
+		// http://ws.apache.org/commons/tcpmon/tcpmontutorial.html
 		// to learn how to setup tcpmon
 		MTOMSampleStub serviceStub = new MTOMSampleStub(
-		// "http://localhost:8081/axis2/services/MTOMSample"
+		 "http://localhost:8080/axis2/rest/MTOMSample"
 		);
 
 		// Enable MTOM in the client side
 		serviceStub._getServiceClient().getOptions().setProperty(
 				Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+
+		serviceStub._getServiceClient().getOptions().setProperty(
+				Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
 		// Uncomment and fill the following if you want to have client side file
 		// caching switched ON.
@@ -104,6 +108,7 @@ public class Client {
 
 		// Creating a javax.activation.FileDataSource from the input file.
 		FileDataSource fileDataSource = new FileDataSource(file);
+
 		// Create a dataHandler using the fileDataSource. Any implementation of
 		// javax.activation.DataSource interface can fit here.
 		DataHandler dataHandler = new DataHandler(fileDataSource);
