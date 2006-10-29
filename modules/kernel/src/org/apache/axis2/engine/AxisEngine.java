@@ -550,11 +550,29 @@ public class AxisEngine {
                         
             try
             {
+              if (!resuming)
+              {
+                if (inbound)
+                {
+                  msgContext.addInboundExecutedPhase(currentHandler);
+                }
+                else
+                {
+                  msgContext.addOutboundExecutedPhase(currentHandler);
+                }
+              }
+              else
+              {
+                /* If we are resuming the flow, we don't want to add the phase 
+                 * again, as it has already been added.
+                 */
+                resuming = false;
+              }
               pi = currentHandler.invoke(msgContext);
             }
             catch (AxisFault e)
             {
-              if (msgContext.getCurrentPhaseIndex() != 0)
+              if (msgContext.getCurrentPhaseIndex() == 0)
               {
                 /* If we got a fault, we still want to add the phase to the
                  list to be executed for flowComplete(...) unless this was
@@ -566,32 +584,14 @@ public class AxisEngine {
                  executed.*/ 
                 if (inbound)
                 {
-                  msgContext.addInboundExecutedPhase(currentHandler);
+                  msgContext.removeFirstInboundExecutedPhase();
                 }
                 else
                 {
-                  msgContext.addOutboundExecutedPhase(currentHandler);
+                  msgContext.removeFirstOutboundExecutedPhase();
                 }
               }
               throw e;
-            }
-              
-            if (resuming)
-            {
-              /*If we are resuming the flow, we don't want to add the phase again, as it has already
-               *been added.*/
-              resuming = false;
-            }
-            else
-            {
-              if (inbound)
-              {
-                msgContext.addInboundExecutedPhase(currentHandler);
-              }
-              else
-              {
-                msgContext.addOutboundExecutedPhase(currentHandler);
-              }
             }
 
             if (pi.equals(InvocationResponse.SUSPEND) ||

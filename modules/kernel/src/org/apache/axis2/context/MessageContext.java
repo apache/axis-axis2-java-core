@@ -264,6 +264,18 @@ public class MessageContext extends AbstractContext {
     }
     
     /**
+     * Remove the first Phase in the collection of executed phases for the
+     * inbound path.
+     */
+    public void removeFirstInboundExecutedPhase()
+    {
+      if (inboundExecutedPhases != null)
+      {
+        inboundExecutedPhases.removeFirst();
+      }
+    }
+    
+    /**
      * Get an iterator over the inbound executed phase list.
      * @return An Iterator over the LIFO data structure.
      */
@@ -291,6 +303,18 @@ public class MessageContext extends AbstractContext {
     public void addOutboundExecutedPhase(Handler phase)
     {
       outboundExecutedPhases.addFirst(phase); 
+    }
+    
+    /**
+     * Remove the first Phase in the collection of executed phases for the
+     * outbound path.
+     */
+    public void removeFirstOutboundExecutedPhase()
+    {
+      if (outboundExecutedPhases != null)
+      {
+        outboundExecutedPhases.removeFirst();
+      }
     }
     
     /**
