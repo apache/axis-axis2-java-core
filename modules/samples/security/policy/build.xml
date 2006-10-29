@@ -10,7 +10,7 @@
 	<property name="rampart.mar" value="rampart-1.1-SNAPSHOT.mar"/>
 	<property name="rahas.mar" value="rahas-1.1-SNAPSHOT.mar"/>
 
-	<property name="client.port" value="9080"/>
+	<property name="client.port" value="8080"/>
 	<property name="server.port" value="8080"/>
 	
 	<property name="sample.services.url" value="http://localhost:${client.port}/axis2/services"/>
