@@ -36,7 +36,7 @@
 		<create.service.repo sample.number="02"/>
 	</target>
 
-	<!-- Sample Client 01 -->
+	<!-- Sample Client 02 -->
 	<target name="client.02" if="env.AXIS2_HOME" depends="check.dependency">
 		<create.and.run.client sample.number="02"/>
 	</target>
@@ -60,77 +60,6 @@
 	<target name="client.04" if="env.AXIS2_HOME" depends="check.dependency">
 		<create.and.run.client sample.number="04"/>
 	</target>
-
-	<!-- Sample Service 05 -->
-	<target name="service.05" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.service.repo sample.number="05"/>
-	</target>
-
-	<!-- Sample Client 05 -->
-	<target name="client.05" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.and.run.client sample.number="05"/>
-	</target>
-	
-	<!-- Sample Service 06 -->
-	<target name="service.06" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.service.repo sample.number="06"/>
-	</target>
-
-	<!-- Sample Client 06 -->
-	<target name="client.06" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.and.run.client sample.number="06"/>
-	</target>
-	
-	<!-- Sample Service 07 -->
-	<target name="service.07" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.service.repo sample.number="07"/>
-	</target>
-
-	<!-- Sample Client 07 -->
-	<target name="client.07" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.and.run.client sample.number="07"/>
-	</target>
-
-	<!-- Sample Service 08 -->
-	<target name="service.08" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.service.repo sample.number="08"/>
-	</target>
-
-	<!-- Sample Client 08 -->
-	<target name="client.08" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.and.run.client sample.number="08"/>
-	</target>
-
-	<!-- Sample Service 09 -->
-	<target name="service.09" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.service.repo sample.number="09"/>
-	</target>
-
-	<!-- Sample Client 09 -->
-	<target name="client.09" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.and.run.client sample.number="09"/>
-	</target>
-
-	<!-- Sample Service 10 -->
-	<target name="service.10" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.service.repo sample.number="10"/>
-	</target>
-
-	<!-- Sample Client 10 -->
-	<target name="client.10" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.and.run.client sample.number="10"/>
-	</target>
-	
-	<!-- Sample Service 11 -->
-	<target name="service.11" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.service.repo sample.number="11"/>
-	</target>
-
-	<!-- Sample Client 11 -->
-	<target name="client.11" if="env.AXIS2_HOME" depends="check.dependency">
-		<create.and.run.client sample.number="11"/>
-	</target>
-	
 	
 	<target name="clean">
 		<delete dir="build" />
