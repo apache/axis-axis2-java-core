@@ -13,7 +13,6 @@
     <preGoal name="java:compile">
         <path id="samples.src.path">
             <pathelement location="amazonqs/src"/>
-            <pathelement location="eventing/src"/>
             <pathelement location="googlesearch/src"/>
             <pathelement location="groovy/src"/>
             <pathelement location="mtomsample/src"/>
