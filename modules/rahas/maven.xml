@@ -46,12 +46,12 @@
             <fileset dir="target/sts/org/apache/rahas/client"/>
         </delete>
     	
-        <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
-		
-        <copy file="test-resources/trust/impl/sct-issuer-config.xml" toFile="target/sts/sct-issuer-config.xml"/>
-        <copy file="test-resources/trust/impl/token-dispatcher-configuration.xml" toFile="target/sts/token-dispatcher-configuration.xml"/>
-        <copy file="test-resources/trust/impl/sctIssuer.properties" toFile="target/sts/sctIssuer.properties"/>
-        <copy file="test-resources/trust/impl/sts.jks" toFile="target/sts/sts.jks"/>
+        <copy file="sts-aar-resources/services.xml" toFile="target/sts/META-INF/services.xml"/>
+        <copy file="sts-aar-resources/sct-issuer-config.xml" toFile="target/sts/META-INF/sct-issuer-config.xml"/>
+        <copy file="sts-aar-resources/saml-issuer-config.xml" toFile="target/sts/META-INF/saml-issuer-config.xml"/>
+        <copy file="sts-aar-resources/token-canceler-config.xml" toFile="target/sts/META-INF/token-canceler-config.xml"/>
+        <copy file="sts-aar-resources/token-dispatcher-configuration.xml" toFile="target/sts/META-INF/token-dispatcher-configuration.xml"/>
+        <copy file="sts-aar-resources/rahas-sts.jks" toFile="target/sts/META-INF/rahas-sts.jks"/>
         
         <jar jarfile="target/rahas-${rahas_version}.aar" basedir="target/sts/">
             <include name="**/*"/>

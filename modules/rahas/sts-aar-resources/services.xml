@@ -16,7 +16,7 @@
 	</operation>
 	
 	<!-- Using the config file -->
-	<parameter name="token-dispatcher-configuration-file">token-dispatcher-configuration.xml</parameter>
+	<parameter name="token-dispatcher-configuration-file">META-INF/token-dispatcher-configuration.xml</parameter>
 	
 	<!-- Configure Rampart to authenticate clients -->
 	<wsp:Policy wsu:Id="SigOnly" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
@@ -32,7 +32,7 @@
 					<ramp:signatureCrypto>
 						<ramp:crypto provider="org.apache.ws.security.components.crypto.Merlin">
 							<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.type">JKS</ramp:property>
-							<ramp:property name="org.apache.ws.security.crypto.merlin.file">rahas-sts.jks</ramp:property>
+							<ramp:property name="org.apache.ws.security.crypto.merlin.file">META-INF/rahas-sts.jks</ramp:property>
 							<ramp:property name="org.apache.ws.security.crypto.merlin.keystore.password">password</ramp:property>
 						</ramp:crypto>
 					</ramp:signatureCrypto>
