@@ -697,25 +697,23 @@
         <ant:copy todir="${std.bin.temp.dir}/samples">
             <ant:fileset dir="modules/samples/target/samples"/>
         </ant:copy>
-        <ant:copy todir="${std.bin.temp.dir}/samples/userguide">
+        <!--ant:copy todir="${std.bin.temp.dir}/samples/userguide">
             <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
-        </ant:copy>
+        </ant:copy-->
         <ant:mkdir dir="${std.bin.temp.dir}/samples/FaultHandling"/>
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
                 <include name="yahoorestsearch/**/*.*"/>
-                <include name="target/yahoorestsearch/yahooRESTSearch.jar"/>
-
-
                 <include name="googlespellcheck/**/*.*"/>
                 <include name="FaultHandling/**/*.*"/>
+                <include name="mtom/**/*.*"/>
                 <include name="mtomsample/**/*.*"/>
+                <include name="soapwithattachments/**/*.*"/>
                 <include name="version/**/*.*"/>
                 <include name="jms/**/*.*"/>
                 <include name="sessions/**/*.*"/>
                 <include name="servicelifecycle/**/*.*"/>
                 <include name="pojo/**/*.*"/>
-                <include name="yahoorestsearch/**/*.*"/>
             </ant:fileset>
         </ant:copy>
 
@@ -766,7 +764,8 @@
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
                 <ant:exclude name="**/target/**"/>
-                <ant:exclude name="**/modules/samples/src/sample/eventing/**"/>
+                <ant:exclude name="**/modules/samples/eventing/**"/>
+                <ant:exclude name="**/modules/samples/security/**"/>
                 <ant:exclude name="xdocs/**"/>
                 <ant:exclude name="**/*class*/**"/>
                 <ant:exclude name="**/.svn/**"/>
