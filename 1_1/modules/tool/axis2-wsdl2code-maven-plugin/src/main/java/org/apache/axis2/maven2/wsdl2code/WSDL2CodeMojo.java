@@ -141,7 +141,7 @@ public class WSDL2CodeMojo extends AbstractMojo
      * Whether to generate a "services.xml" file.
      * @parameter expression="${axis2.wsdl2code.generateServicesXml}" default-value="false"
      */
-    private boolean generateServiceXml;
+    private boolean generateServicesXml;
 
     /**
      * Whether to generate simply all classes. This is only valid in conjunction with
@@ -163,9 +163,14 @@ public class WSDL2CodeMojo extends AbstractMojo
     private boolean generateServerSideInterface  = false;
 
     /**
-     * @parameter
+     * @parameter expression="${axis2.wsdl2code.namespaceToPackages}"
      */
     private String namespaceToPackages = null;
+
+    /**
+     * @parameter
+     */
+    private NamespaceURIMapping[] namespaceURIs;
 
     private static class InheritedArtifact
     {
@@ -277,7 +282,7 @@ public class WSDL2CodeMojo extends AbstractMojo
                             new String[0]));
 
             //services XML generation - effective only when specified as the server side
-            if (generateServiceXml) {
+            if (generateServicesXml) {
                 optionMap.put(
                         CommandLineOptionConstants.WSDL2JavaConstants
                                 .GENERATE_SERVICE_DESCRIPTION_OPTION,
@@ -340,11 +345,38 @@ public class WSDL2CodeMojo extends AbstractMojo
                 CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
-                        new String[]{namespaceToPackages}));
+                        new String[]{getNamespaceToPackagesMap()}));
 
         return optionMap;
     }
 
+    private String getNamespaceToPackagesMap() throws MojoFailureException {
+    	StringBuffer sb = new StringBuffer();
+    	if (namespaceToPackages != null) {
+    		sb.append(namespaceToPackages);
+    	}
+    	if (namespaceURIs != null) {
+    		for (int i = 0;  i < namespaceURIs.length;  i++) {
+    			NamespaceURIMapping mapping = namespaceURIs[i];
+    			String uri = mapping.getUri();
+    			if (uri == null) {
+    				throw new MojoFailureException("A namespace to package mapping requires an uri child element.");
+    			}
+    			String uriPackageName = mapping.getPackageName();
+    			if (uriPackageName != null) {
+    				throw new MojoFailureException("A namespace to package mapping requires a packageName child element.");
+    			}
+    			if(sb.length() > 0) {
+    				sb.append(",");
+    			}
+    			sb.append(uri);
+    			sb.append('=');
+    			sb.append(uriPackageName);
+    		}
+    	}
+    	return sb.toString();
+    }
+    
     /**
      * Utility method to convert a string into a single item string[]
      * @param value
