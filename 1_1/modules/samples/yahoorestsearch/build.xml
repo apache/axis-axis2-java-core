@@ -1,4 +1,4 @@
-<project name="samples" default="run">
+<project name="YahooRestSearchSample" default="run">
     <property environment="env" />
     <property name="axis2.home" value="../../"/>
     <property name="axis2.repo" value="${axis2.home}/repository"/>
