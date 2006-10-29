@@ -35,7 +35,7 @@
 		<create.service.repo sample.number="02"/>
 	</target>
 
-	<!-- Sample Client 01 -->
+	<!-- Sample Client 02 -->
 	<target name="client.02" if="env.AXIS2_HOME" depends="check.dependency">
 		<create.and.run.client sample.number="02"/>
 	</target>
@@ -45,7 +45,7 @@
 		<create.service.repo sample.number="03"/>
 	</target>
 
-	<!-- Sample Client 01 -->
+	<!-- Sample Client 03 -->
 	<target name="client.03" if="env.AXIS2_HOME" depends="check.dependency">
 		<create.and.run.client sample.number="03"/>
 	</target>
