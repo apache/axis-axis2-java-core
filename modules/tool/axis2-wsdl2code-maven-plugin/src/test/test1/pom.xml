@@ -15,7 +15,7 @@
           <generateServerSide>true</generateServerSide>
           <generateServerSideInterface>true</generateServerSideInterface>
           <generateAllClasses>true</generateAllClasses>
-          <generateServiceXml>true</generateServiceXml>
+          <generateServicesXml>true</generateServicesXml>
           <packageName>demo</packageName>
         </configuration>
       </plugin>
