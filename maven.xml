@@ -777,6 +777,7 @@
             </ant:fileset>
         </ant:copy>
         <ant:copy toDir="${src.temp.dir}/etc" overwrite="true" filtering="on" file="etc/project.properties"/>
+	<ant:copy toDir="${src.temp.dir}" overwrite="true" filtering="on" file="NOTICE.txt"/>
 
         <!-- Copy the master maven files for the standard src distro -->
         <ant:copy toFile="${src.temp.dir}/maven.xml">
