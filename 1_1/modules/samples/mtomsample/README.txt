@@ -14,21 +14,15 @@ The option of client side file caching can be used when echoing a larger amount
 of data which could result in memory overflows. 
 
 
-Preconditions:
---------------
-1. Deploy Axis2 web app in a servlet container(Eg: Apache Tomcat).
-2. mtomSample.aar, which is the service required for this sample can be found
-from AXIS2_DIST/samples/mtom folder. Drop it down in the services directory of 
-the Axis2 server's repository.
-[Eg:{$tomcat_home}/web apps/axis2/WEB-INF/services]
-
 
 Running the Sample:
 -------------------
-1. Use <ant mtomSample> command to run the sample at the AXIS2_DIST/samples 
-folder. 
-2. Second way is the script file. Use run.sh or run.bat to run the sample
-pertaining to the operating system you are using.
+1. Use <ant service> command in the AXIS2_DIST/sample/mtomsample/ to build the service.
+2. Drop the mtomSample.aar service to the AXIS2_DIST/repository/services.
+3. run the AXIS2_DIST/bin/axis2server.{sh.bat} to start the standalone axis2 server. 
+(Alternatively you can drop the sample to the services directory of a Axis2 server
+running in a servlet container)
+4. Use <ant client> to build and run the client.
 
 
 UI Configuration:
