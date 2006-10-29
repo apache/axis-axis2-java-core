@@ -22,7 +22,7 @@
 	<property name="client.dir" value="${build.dir}/client" />
 	<property name="service.dir" value="${build.dir}/service" />
 	<property name="client.classes.dir" value="${client.dir}/classes" />
-	<property name="skeleton.path" value="src/sample/mtom/service/MTOMServiceSkeleton.java" />
+	<property name="skeleton.path" value="src/sample/mtom/service/MTOMSampleSkeleton.java" />
 	<property name="client.path" value="src/sample/mtom/client/Client.java" />
 	<!-- USE AXIS2_HOME FOR THIS -->
 	<property name="lib.dir" value="../lib" />
@@ -37,7 +37,7 @@
 	<target name="service">
 		<java classname="org.apache.axis2.wsdl.WSDL2Java">
 			<arg value="-uri" />
-			<arg value="resources/MTOMService.wsdl" />
+			<arg value="resources/MTOMSample.wsdl" />
 			<arg value="-ss" />
 			<arg value="-sd" />
 			<arg value="-p" />
@@ -47,7 +47,8 @@
 			<classpath refid="class.path" />
 		</java>
 		<copy file="${skeleton.path}" tofile="${service.dir}/${skeleton.path}" overwrite="true" />
-		
+		<ant dir="${service.dir}"/>
+		<copy file="${service.dir}/build/lib/MTOMSample.aar" tofile = "${service.dir}/MTOMSample.aar" overwrite="true"/>
 	</target>
 	<target name="check-parameters">
 	 <condition property="parameters.set">
