@@ -14,7 +14,6 @@
         <!-- Create the sts.aar : STATRT -->
 
         <mkdir dir="target/sts"/>
-        <mkdir dir="target/METS-INF"/>
         <mkdir dir="target/sts/lib"/>
         <!-- Copy classes -->
         <copy todir="target/sts">
@@ -43,6 +42,10 @@
         </jar>
 		
 		<delete file="target/sts/META-INF/module.xml"/>
+        <delete includeEmptyDirs="true">
+            <fileset dir="target/sts/org/apache/rahas/client"/>
+        </delete>
+    	
         <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
 		
         <copy file="test-resources/trust/impl/sct-issuer-config.xml" toFile="target/sts/sct-issuer-config.xml"/>
@@ -54,9 +57,10 @@
             <include name="**/*"/>
         </jar>
 
-	<delete includeEmptyDirs="true">
-            <fileset dir="target/sts"/>
+        <delete includeEmptyDirs="true">
+            <fileset dir="target/sts"/> 
         </delete>
+    	
         <!-- Create the sts.aar : END -->
     </postGoal>
 	
