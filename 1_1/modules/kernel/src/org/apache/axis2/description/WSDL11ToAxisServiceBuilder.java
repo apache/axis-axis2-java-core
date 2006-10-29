@@ -31,6 +31,7 @@ import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.wsdl.extensions.soap12.SOAP12Body;
 import javax.wsdl.extensions.soap12.SOAP12Operation;
+import javax.wsdl.extensions.soap12.SOAP12Header;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
@@ -1635,37 +1636,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (wsdl4jElement instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) (wsdl4jElement);
 
-                // look for the SOAP 1.2 stuff here. WSDL4j does not understand
-                // SOAP 1.2 things so we'll have to look at the unknown elements
-                // and
-                // figure out whether they are SOAP 1.2 things
-                if (WSDLConstants.WSDL11Constants.SOAP_12_OPERATION
-                        .equals(unknown.getElementType())) {
-                    Element element = unknown.getElement();
-                    if (description instanceof AxisOperation) {
-                        AxisOperation axisOperation = (AxisOperation) description;
-                        String style = element.getAttribute("style");
-                        if (style != null) {
-                            axisOperation.setStyle(style);
-                        }
-                        axisOperation.setSoapAction(element
-                                .getAttribute("soapAction"));
-                    }
-                } else if (WSDLConstants.WSDL11Constants.SOAP_12_HEADER
-                        .equals(unknown.getElementType())) {
-
-                    // TODO : implement this
-
-                } else if (WSDLConstants.WSDL11Constants.SOAP_12_BINDING
-                        .equals(unknown.getElementType())) {
-                    style = unknown.getElement().getAttribute("style");
-                    axisService.setSoapNsUri(wsdl4jElement.getElementType()
-                            .getNamespaceURI());
-                } else if (WSDLConstants.WSDL11Constants.SOAP_12_ADDRESS
-                        .equals(unknown.getElementType())) {
-                    axisService.setEndpoint(unknown.getElement().getAttribute(
-                            "location"));
-                } else if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
+                if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
                         .getElementType())) {
 
                     Policy policy = (Policy) PolicyUtil
@@ -1713,15 +1684,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         }
                     }
                 } else {
-
                     // Ignore this element - it is a totally unknown element
                     // and we don't care!
+                }
 
-                } // end of SOAP 1.2 processing
-
-                // WSDL4J has all the SOAP 1.1 Items built in. So we can check
-                // the
-                // items directly
+                // WSDL4J has all the SOAP 1.1 and SOAP 1.2 Items built in. So we can check
+                // the items directly
             } else if (wsdl4jElement instanceof SOAP12Address) {
                 SOAP12Address soapAddress = (SOAP12Address) wsdl4jElement;
                 axisService.setEndpoint(soapAddress.getLocationURI());
@@ -1734,10 +1702,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // ones
                 axisService.addSchema(getXMLSchema(schema.getElement(), schema
                         .getDocumentBaseURI()));
-                // wsdl4jDefinition.getDocumentBaseURI()));
-
-            } else if (SOAPConstants.Q_ELEM_SOAP_OPERATION.equals(wsdl4jElement
-                    .getElementType())) {
+            } else if (wsdl4jElement instanceof SOAP12Operation) {
+                SOAP12Operation soapOperation = (SOAP12Operation) wsdl4jElement;
+                if (description instanceof AxisOperation) {
+                    AxisOperation axisOperation = (AxisOperation) description;
+                    if (soapOperation.getStyle() != null) {
+                        axisOperation.setStyle(soapOperation.getStyle());
+                    }
+                    axisOperation.setSoapAction(soapOperation
+                            .getSoapActionURI());
+                }
+            } else if (wsdl4jElement instanceof SOAPOperation) {
                 SOAPOperation soapOperation = (SOAPOperation) wsdl4jElement;
                 if (description instanceof AxisOperation) {
                     AxisOperation axisOperation = (AxisOperation) description;
@@ -1747,8 +1722,41 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     axisOperation.setSoapAction(soapOperation
                             .getSoapActionURI());
                 }
-            } else if (SOAPConstants.Q_ELEM_SOAP_HEADER.equals(wsdl4jElement
-                    .getElementType())) {
+            } else if (wsdl4jElement instanceof SOAP12Header) {
+                SOAP12Header soapHeader = (SOAP12Header) wsdl4jElement;
+                SOAPHeaderMessage headerMessage = new SOAPHeaderMessage();
+                headerMessage.setNamespaceURI(soapHeader.getNamespaceURI());
+                headerMessage.setUse(soapHeader.getUse());
+                Boolean required = soapHeader.getRequired();
+                if (null != required) {
+                    headerMessage.setRequired(required.booleanValue());
+                }
+                if (null != wsdl4jDefinition) {
+                    // find the relevant schema part from the messages
+                    Message msg = wsdl4jDefinition.getMessage(soapHeader
+                            .getMessage());
+                    if (msg == null) {
+                        // todo i18n this
+                        throw new AxisFault("message "
+                                + soapHeader.getMessage()
+                                + " not found in the WSDL ");
+                    }
+                    Part msgPart = msg.getPart(soapHeader.getPart());
+                    if (msgPart == null) {
+                        // todo i18n this
+                        throw new AxisFault("message part "
+                                + soapHeader.getPart()
+                                + " not found in the WSDL ");
+                    }
+                    headerMessage.setElement(msgPart.getElementName());
+                }
+                headerMessage.setMessage(soapHeader.getMessage());
+
+                headerMessage.setPart(soapHeader.getPart());
+                if (description instanceof AxisMessage) {
+                    ((AxisMessage) description).addSoapHeader(headerMessage);
+                }
+            } else if (wsdl4jElement instanceof SOAPHeader) {
                 SOAPHeader soapHeader = (SOAPHeader) wsdl4jElement;
                 SOAPHeaderMessage headerMessage = new SOAPHeaderMessage();
                 headerMessage.setNamespaceURI(soapHeader.getNamespaceURI());
@@ -1782,29 +1790,17 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (description instanceof AxisMessage) {
                     ((AxisMessage) description).addSoapHeader(headerMessage);
                 }
-            } else if (SOAPConstants.Q_ELEM_SOAP_BINDING.equals(wsdl4jElement
-                    .getElementType())) {
+            } else if (wsdl4jElement instanceof SOAPBinding) {
                 SOAPBinding soapBinding = (SOAPBinding) wsdl4jElement;
                 style = soapBinding.getStyle();
                 axisService.setSoapNsUri(soapBinding.getElementType()
                         .getNamespaceURI());
-                // process the SOAP body
             } else if (wsdl4jElement instanceof SOAP12Binding) {
                 SOAP12Binding soapBinding = (SOAP12Binding) wsdl4jElement;
                 style = soapBinding.getStyle();
                 axisService.setSoapNsUri(soapBinding.getElementType()
                         .getNamespaceURI());
-                // process the SOAP body
-            } else if (wsdl4jElement instanceof SOAP12Body) {
-                //TODO Need to fix this
-            } else if (wsdl4jElement instanceof SOAP12Operation) {
-                if (description instanceof AxisOperation) {
-                    String style = ((SOAP12Operation) wsdl4jElement).getStyle();
-                    if (style != null && !"".equals(style))
-                        ((AxisOperation) description).setStyle(
-                                style);
-                }
-            }
+            } 
         }
     }
 
