@@ -38,7 +38,7 @@
  	       		<li>Change any parameters at run time.</li>
  	       		<li>Upload new services into Axis2 [Service hot-deployment].</li>
  	   		</ul>
-	        <font color="orange">Warning: Please note that configuration changes done though the administration console
+	        <font color="orange">Warning: Please note that configuration changes done through the administration console
     	    will be lost when the server is restarted.</font>
     	</td>
         <td valign="top" align="left">
