@@ -8,10 +8,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.util.CommandLineOptionConstants;
+import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.wsdl.util.CommandLineOption;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
