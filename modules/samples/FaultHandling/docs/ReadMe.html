@@ -92,12 +92,21 @@
 </p>
 
 <h2>
-    Running the Client.
+    Deploying the Service
 </h2>
 
 <p>
-    Deploy the service archive (BankService.aar) to the Axis2 web application.
+    Deploy the service archive (BankService.aar) to the Axis2 server and start the server. You need
+    to copy BannkService.aar in to repository/services/ folder. Then go to bin folder and run either
+    of axis2server.bat or axis2server.sh, depending on your platform to startup Axis2 server.
 </p>
+
+<p>With the default configuration, if you go to <a href="http://localhost:8080/axis2/">
+    http://localhost:8080/axis2/</a> you should see BankService was deployed. </p>
+
+<h2>
+    Running the Client.
+</h2>
 
 <p>
     Invoke the <em>example.BankClient</em> class. You may use the command scripts to do so.
