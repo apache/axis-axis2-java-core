@@ -3,46 +3,60 @@
 </head>
 
 <body>
-	<h1>
-		Exception Handling using WSDL Faults
-	</h1>
-	<p>
-		This example show cases how to specify a WSDL fault in order to allow
-		your service to communicate exception pathways to your clients.
-	</p>
-	<p>
-		Before you start you will need to set the <em>AXIS2_HOME</em> environment variable.
-	</p>
-	<h2>
-		Constructing the Service and the Client.
-	</h2>
-	<p>
-		The first step is to generate the service skeleton and other interface classes from the WSDL.
-	</p>
-	<p>
-		Look at <em>bank.wsdl</em>.
-		It defines the interface for our service. Of particular interest are 
-		the <strong>AccountNotExistFault</strong> and <strong>InsufficientFundFault</strong>
-		types defined in the wsdl:types element.
-	</p>
-	<p>
-		From a command prompt in the folder of this example,
-		type <strong>ant generate.service</strong>. This will:
-		<ul>
-			<li>Generate the source	for all the server classes in <strong>./service/target/src</strong></li>
-			<li>
-				Generate <em>services.xml</em> and a more complete 
-				<em>BankService.wsdl</em> into the <em>./service/target/resources</em> folder.
-			</li>
-			<li>
-				Generate a <em>./service/target/build.xml</em> which can be used to 
-				build the service archive using Ant
-			</li>
-		</ul>
-	</p>
-	<p>
-		Open up <em>./service/target/src/example/BankServiceSkeleton.java</em> and 
-		insert the code below into the <strong>#withdraw</strong> method.
+<h1>
+    Exception Handling using WSDL Faults
+</h1>
+
+<p>
+    This example show cases how to specify a WSDL fault in order to allow
+    your service to communicate exception pathways to your clients.
+</p>
+
+<p>
+    Running of this sample assumes that you are running this within the extracted release folder.
+</p>
+
+<h2>
+    Constructing the Service and the Client.
+</h2>
+
+<p>
+    The first step is to generate the service skeleton and other interface classes from the WSDL.
+</p>
+
+<p>
+    Look at <em>bank.wsdl</em>.
+    It defines the interface for our service. Of particular interest are
+    the <strong>AccountNotExistFault</strong> and <strong>InsufficientFundFault</strong>
+    types defined in the wsdl:types element.
+</p>
+
+<p>
+    From a command prompt in the folder of this example,
+    type <strong>ant generate.all</strong> or just <strong> ant</strong>. This will:
+    <ul>
+        <li>Generate the source for all the server classes in <strong>./service/target/src</strong>
+        </li>
+        <li>Generate <em>services.xml</em> and a more complete <em>BankService.wsdl</em> into
+            the <em>./service/target/resources</em> folder.
+        </li>
+        <li>
+            Generate a <em>./service/target/build.xml</em>
+        </li>
+        <li>Copies the pre-populated service skeleton class to the generated code</li>
+        <li>Compile the Java classes for the service</li>
+        <li>Create the service archive and copy it to <em>./BankService.aar</em></li>
+        <li>Generate the stubs (for the client) from the WSDL</li>
+        <li>Compile the client classes</li>
+        <li>Create a Jar of the client classes and copy it to <em>./BankService-test-client.jar</em>
+        </li>
+    </ul>
+</p>
+<p>
+    Open up <em>./service/target/src/example/BankServiceSkeleton.java</em> and
+    you will see the following code fragment inside <strong>#withdraw</strong> method. When
+    generate.service was being executed, Axis2 generates an empty skeleton class and we replace it
+    with a pre-populated skeleton class which has the following code inside it.
 		
 		<pre>
 	final String account = param0.getAccount();
@@ -69,46 +83,43 @@
         response.setBalance(1000 - amount);
         return response;
 		</pre>
-	</p>
-	<p>
-		From a command prompt in the folder of this sample (samples/FaultHandling), type <strong>ant jar</strong>. This will
-		
-		and create the service archive at <em>./service/target/build/lib/BankService.aar</em>
-		<ul>
-			<li>Compile the Java classes for the service</li>
-			<li>Create the service archive and copy it to <em>./BankService.aar</em></li>
-			<li>Generate the stubs (for the client) from the WSDL</li>
-			<li>Compile the client classes</li>
-			<li>Create a Jar of the client classes and copy it to <em>./BankService-test-client.jar</em></li>
-		</ul>
-	</p>
-	<p>
-		Note that the source generated for the client will include the 2 faults and the local Exceptions 
-		through which they will be transmitted.	Note that the Exceptions are generated within the <em>BankStub</em> class.
-	</p>
-	
-	<h2>
-		Running the Client.
-	</h2>
-	<p>
-		Deploy the service archive (BankService.aar) to the Axis2 web application.
-	</p>
-	<p>
-		Invoke the <em>example.BankClient</em> class. You may use the command scripts to do so.
-		You need to supply 3 parameters to the command, url, account and amount.
-		<ul>
-			<li>
-					<strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=13 -Damt=400</strong><br/>
-					Throws AccountNotExistFaultMessageException. You will see "Account#13 does not exist"<br/>&nbsp;
-			</li>
-			<li>
-					<strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=1200</strong><br/>
-					Throws InsufficientFundsFaultMessageException. You will see "Account#88 has balance of 1000. It cannot support withdrawal of 1200"<br/>&nbsp;
-			</li>
-			<li>
-					<strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=400</strong><br/>
-					Succeeds with a balance of 600. You will see "Balance = 600"<br/>&nbsp;
-			</li>
-		</ul>
-	</p>
+</p>
+
+<p>
+    Note that the source generated for the client will include the 2 faults and the local Exceptions
+    through which they will be transmitted. Note that the Exceptions are generated within the <em>BankStub</em>
+    class.
+</p>
+
+<h2>
+    Running the Client.
+</h2>
+
+<p>
+    Deploy the service archive (BankService.aar) to the Axis2 web application.
+</p>
+
+<p>
+    Invoke the <em>example.BankClient</em> class. You may use the command scripts to do so.
+    You need to supply 3 parameters to the command, url, account and amount.
+    <ul>
+        <li>
+            <strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=13
+                -Damt=400</strong><br/>
+            Throws AccountNotExistFaultMessageException. You will see "Account#13 does not
+            exist"<br/>&nbsp;
+        </li>
+        <li>
+            <strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88
+                -Damt=1200</strong><br/>
+            Throws InsufficientFundsFaultMessageException. You will see "Account#88 has balance of
+            1000. It cannot support withdrawal of 1200"<br/>&nbsp;
+        </li>
+        <li>
+            <strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88
+                -Damt=400</strong><br/>
+            Succeeds with a balance of 600. You will see "Balance = 600"<br/>&nbsp;
+        </li>
+    </ul>
+</p>
 </body>
