@@ -527,6 +527,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     AddQNameReference(faultMessage, wsdl4jFault.getMessage());
 
                 }
+                Iterator iterator = operation.getFaultMessages().iterator();
+                while(iterator.hasNext()){
+                    AxisMessage faultMessage = (AxisMessage) iterator.next();
+                    if(faultMessage.getElementQName() == null) {
+                        log.warn("Unable to find a wsdl:binding/wsdl:operation/wsdl:fault for fault named " + faultMessage.getName() + " defined in wsdl:portType/wsdl:operation/@name=" + operation.getName().getLocalPart());
+                    }
+                }
             }
 
         }
