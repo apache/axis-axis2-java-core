@@ -24,7 +24,7 @@ import sample.addressbook.stub.AddressBookServiceStub.FindEntryResponse;
 
 public class AddressBookADBClient {
 
-    private static String URL = "http://127.0.0.1:6060/axis2/services/AddressBookService";
+    private static String URL = "http://127.0.0.1:8080/axis2/services/AddressBookService";
 
     public static void main(String[] args) {
 
