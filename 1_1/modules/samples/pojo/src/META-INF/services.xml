@@ -1,11 +1,13 @@
 <service name="AddressBookService" scope="application">
+    <description>
+        This is sample service 2
+    </description>
+    <messageReceivers>
+        <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only"
+                         class="org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"/>
+        <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
+                         class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
+    </messageReceivers>
     <parameter name="ServiceClass" locked="false">sample.addressbook.service.AddressBookService</parameter>
-    <operation name="addEntry">
-        <actionMapping>urn:addEntry</actionMapping>
-        <messageReceiver class="org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"/>
-    </operation>
-    <operation name="findEntry">
-        <actionMapping>urn:findEntry</actionMapping>
-        <messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
-    </operation>
+
 </service>
