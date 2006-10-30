@@ -25,7 +25,7 @@ import java.util.Map;
 *
 */
 
-public class Java2WSDLBuilder {
+public class Java2WSDLBuilder implements Java2WSDLConstants {
 
     public static final String ALL = "all";
     private OutputStream out;
@@ -51,7 +51,11 @@ public class Java2WSDLBuilder {
     private String nsGenClassName = null;
     private Map pkg2nsMap = null;
 
-    public String getSchemaTargetNamespace() {
+    public String getSchemaTargetNamespace() throws Exception {
+        if ( schemaTargetNamespace == null ) {
+            schemaTargetNamespace =
+                Java2WSDLUtils.schemaNamespaceFromClassName(className, classLoader, resolveNSGen()).toString();
+        }
         return schemaTargetNamespace;
     }
 
@@ -84,6 +88,9 @@ public class Java2WSDLBuilder {
     }
 
     public String getSchemaTargetNamespacePrefix() {
+        if ( schemaTargetNamespacePrefix == null ) {
+            this.schemaTargetNamespacePrefix = SCHEMA_NAMESPACE_PRFIX;
+        }
         return schemaTargetNamespacePrefix;
     }
 
@@ -144,8 +151,8 @@ public class Java2WSDLBuilder {
     public void generateWSDL() throws Exception {
         SchemaGenerator schemaGenerator = new SchemaGenerator(classLoader, 
                                                     className,
-                                                    schemaTargetNamespace, 
-                                                    schemaTargetNamespacePrefix);
+                                                    getSchemaTargetNamespace(), 
+                                                    getSchemaTargetNamespacePrefix());
         ArrayList excludedOperation = new ArrayList();
         excludedOperation.add("init");
         excludedOperation.add("setOperationContext");
@@ -154,7 +161,7 @@ public class Java2WSDLBuilder {
         schemaGenerator.setAttrFormDefault(getAttrFormDefault());
         schemaGenerator.setElementFormDefault(getElementFormDefault());
         schemaGenerator.setExtraClasses(getExtraClasses());
-        schemaGenerator.setNsGenClassName(getNsGenClassName());
+        schemaGenerator.setNsGen(resolveNSGen());
         schemaGenerator.setPkg2nsmap(getPkg2nsMap());
         if ( getPkg2nsMap() != null && !getPkg2nsMap().isEmpty() && 
                 (getPkg2nsMap().containsKey(ALL) || getPkg2nsMap().containsKey(ALL.toUpperCase())) ) {
@@ -172,6 +179,8 @@ public class Java2WSDLBuilder {
                 style,
                 use,
                 locationUri);
+        java2OMBuilder.setSchemaTargetNamespace(getSchemaTargetNamespace());
+        java2OMBuilder.setSchemaTargetNamespacePrefix(getSchemaTargetNamespacePrefix());
         OMElement wsdlElement = java2OMBuilder.generateOM();
         wsdlElement.serialize(out);
         out.flush();
