@@ -78,7 +78,7 @@
 		<wsdl:port name="MTOMSampleSOAP12port_http"
 			binding="tns:MTOMServiceSOAP12Binding">
 			<soap12:address
-				location="http://localhost:8080/axis2/services/MTOMService" />
+				location="http://localhost:8080/axis2/services/MTOMSample" />
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>
