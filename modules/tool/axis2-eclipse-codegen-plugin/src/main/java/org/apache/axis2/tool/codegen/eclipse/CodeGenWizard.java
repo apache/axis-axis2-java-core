@@ -33,7 +33,7 @@ import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.tool.core.SrcCompiler;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
 import org.eclipse.core.resources.IWorkspaceRoot;
