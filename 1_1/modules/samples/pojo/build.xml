@@ -1,15 +1,15 @@
 <project basedir="." default="build">
 
-	<property environment="env" />
-
-	<property name="dest.dir" value="target" />
+	<property name="dest.dir" value="build" />
 
 	<property name="dest.dir.classes" value="${dest.dir}/classes" />
 
 	<property name="dest.dir.lib" value="${dest.dir}/lib" />
 
+	<property name="axis2.home" value="../../../" />
+	
 	<path id="build.class.path">
-		<fileset dir="${env.AXIS2_HOME}/lib">
+		<fileset dir="${axis2.home}">
 			<include name="*.jar" />
 		</fileset>
 	</path>
@@ -37,7 +37,7 @@
 
 		<copy file="src/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
 
-		<javac srcdir="src" destdir="${dest.dir.classes}" includes="address_book_service/**,address_book_entry/**">
+		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample.addressbook.service/**,sample.addressbook.entry/**">
 			<classpath refid="build.class.path" />
 		</javac>
 

@@ -1,9 +1,10 @@
-package address_book_service;
+package sample.addressbook.service;
 
 
 import java.util.HashMap;
 
-import address_book_entry.Entry;
+import sample.addressbook.entry.Entry;
+
 
 
 public class AddressBookService {

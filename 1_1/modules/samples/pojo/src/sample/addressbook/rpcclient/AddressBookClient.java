@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package address_book_client;
+package sample.addressbook.rpcclient;
 
 import javax.xml.namespace.QName;
 
@@ -22,7 +22,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 
-import address_book_entry.Entry;
+import sample.addressbook.entry.Entry;
+
 
 
 public class AddressBookClient {
@@ -79,7 +80,7 @@ public class AddressBookClient {
         String name = "Abby Cadabby";
 
         Object[] opFindEntryArgs = new Object[] { name };
-        Object[] returnTypes = new Object[] { Entry.class };
+        Class[] returnTypes = new Class[] { Entry.class };
 
         
         Object[] response = serviceClient.invokeBlocking(opFindEntry,
