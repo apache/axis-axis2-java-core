@@ -1,23 +1,17 @@
-<project basedir=".">
+<project basedir="." default="generate.service">
 
     <property environment="env"/>
 
-    <target name="check.dependency" unless="env.AXIS2_HOME">
-        <echo message="AXIS2_HOME must be set"/>
-    </target>
-
-    <!-- Generate the service classes from the WSDL. -->
-    <target name="generate.service" if="env.AXIS2_HOME" depends="check.dependency">
-        <ant dir="service"/>
-    </target>
+    <property name="wsdl.uri" value="bank.wsdl"/>
+    <property name="target" value="target"/>
 
     <!-- Build the service, then the client. -->
-    <target name="jar" if="env.AXIS2_HOME" depends="check.dependency">
+    <target name="jar">
         <ant dir="service" target="jar.server"/>
         <ant dir="client"/>
     </target>
 
-    <target name="run">
+    <target name="client">
         <java classname="example.BankClient" fork="true">
             <arg line="${url} ${account} ${amt}"/>
             <classpath>
@@ -27,5 +21,52 @@
                 </fileset>
             </classpath>
         </java>
+    </target>
+
+    <target name="generate.service">
+
+        <delete dir="${target}"/>
+        <mkdir dir="${target}"/>
+        <mkdir dir="${target}/classes"/>
+        
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <arg line="-uri ${wsdl.uri}"/>
+            <arg line="-ss"/>
+            <arg line="-sd"/>
+            <arg line="-o ${target}"/>
+            <!-- Output directory in which to generate files --> <!-- NB it generates to the src folder under this directory!! -->
+            <classpath>
+                <fileset dir="../../lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+
+        <!--copy the already written skeleton class-->
+        <copy file="service/src/example/BankServiceSkeleton.java" todir="${target}/src/example"
+              overwrite="yes"/>
+
+        <!--First let's compile the classes-->
+        <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
+               destdir="${target}/classes" srcdir="${target}/src">
+            <classpath>
+                <fileset dir="../../lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+
+        <!--aar them up -->
+        <copy toDir="${target}/classes/META-INF" failonerror="false">
+            <fileset dir="${target}/resources">
+                <include name="*.xml"/>
+                <include name="*.wsdl"/>
+                <include name="*.xsd"/>
+            </fileset>
+        </copy>
+        <jar destfile="BankService.aar">
+            <fileset excludes="**/Test.class" dir="${target}/classes"/>
+        </jar>
+
     </target>
 </project>
