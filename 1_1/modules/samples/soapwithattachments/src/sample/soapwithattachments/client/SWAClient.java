@@ -92,6 +92,7 @@ public class SWAClient {
 //		options.setAction(Constants.AXIS2_NAMESPACE_URI + "/"
 //				+ operationName.getLocalPart());
 		options.setTo(targetEPR);
+		options.setAction("urn:uploadFile");
 
 		ConfigurationContext configContext = ConfigurationContextFactory
 				.createConfigurationContextFromFileSystem(
@@ -120,6 +121,7 @@ public class SWAClient {
 		idEle.setText(attachmentID);
 		
 		env.getBody().addChild(nameEle);
+		env.getBody().addChild(idEle);
 		mc.setEnvelope(env);
 
 		mepClient.addMessageContext(mc);
