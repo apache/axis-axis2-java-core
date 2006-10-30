@@ -11,14 +11,14 @@
 	<property name="dest.dir.lib" value="${dest.dir}/lib" />
 
 	<path id="runtime.class.path">
-		<fileset dir="${env.AXIS2_HOME}/lib">
+		<fileset dir="../../lib">
 			<include name="*.jar" />
 		</fileset>
 		<fileset dir="${dest.dir.lib}" includes="*.jar" />
 	</path>
 
 	<path id="build.class.path">
-		<fileset dir="${env.AXIS2_HOME}/lib">
+		<fileset dir="../../lib">
 			<include name="*.jar" />
 		</fileset>
 	</path>
