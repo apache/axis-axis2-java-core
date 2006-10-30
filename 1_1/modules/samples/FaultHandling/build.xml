@@ -1,9 +1,10 @@
-<project basedir="." default="generate.service">
+<project basedir="." default="generate.all">
 
     <property environment="env"/>
 
     <property name="wsdl.uri" value="bank.wsdl"/>
-    <property name="target" value="target"/>
+    <property name="service.target" value="target/service"/>
+    <property name="client.target" value="target/client"/>
 
     <!-- Build the service, then the client. -->
     <target name="jar">
@@ -16,24 +17,26 @@
             <arg line="${url} ${account} ${amt}"/>
             <classpath>
                 <pathelement location="BankService-test-client.jar"/>
-                <fileset dir="${env.AXIS2_HOME}\lib">
+                <fileset dir="../../lib">
                     <include name="*.jar"/>
                 </fileset>
             </classpath>
         </java>
     </target>
 
+    <target name="generate.all" depends="generate.service,gen.stub"/>
+
     <target name="generate.service">
 
-        <delete dir="${target}"/>
-        <mkdir dir="${target}"/>
-        <mkdir dir="${target}/classes"/>
-        
+        <delete dir="${service.target}"/>
+        <mkdir dir="${service.target}"/>
+        <mkdir dir="${service.target}/classes"/>
+
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
             <arg line="-uri ${wsdl.uri}"/>
             <arg line="-ss"/>
             <arg line="-sd"/>
-            <arg line="-o ${target}"/>
+            <arg line="-o ${service.target}"/>
             <!-- Output directory in which to generate files --> <!-- NB it generates to the src folder under this directory!! -->
             <classpath>
                 <fileset dir="../../lib">
@@ -43,12 +46,13 @@
         </java>
 
         <!--copy the already written skeleton class-->
-        <copy file="service/src/example/BankServiceSkeleton.java" todir="${target}/src/example"
+        <copy file="service/src/example/BankServiceSkeleton.java"
+              todir="${service.target}/src/example"
               overwrite="yes"/>
 
         <!--First let's compile the classes-->
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
-               destdir="${target}/classes" srcdir="${target}/src">
+               destdir="${service.target}/classes" srcdir="${service.target}/src">
             <classpath>
                 <fileset dir="../../lib">
                     <include name="*.jar"/>
@@ -57,16 +61,57 @@
         </javac>
 
         <!--aar them up -->
-        <copy toDir="${target}/classes/META-INF" failonerror="false">
-            <fileset dir="${target}/resources">
+        <copy toDir="${service.target}/classes/META-INF" failonerror="false">
+            <fileset dir="${service.target}/resources">
                 <include name="*.xml"/>
                 <include name="*.wsdl"/>
                 <include name="*.xsd"/>
             </fileset>
         </copy>
         <jar destfile="BankService.aar">
-            <fileset excludes="**/Test.class" dir="${target}/classes"/>
+            <fileset excludes="**/Test.class" dir="${service.target}/classes"/>
         </jar>
 
     </target>
+
+    <target name="gen.stub">
+        <delete dir="${client.target}"/>
+        <mkdir dir="${client.target}"/>
+        <mkdir dir="${client.target}/classes"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <arg line="-uri ${wsdl.uri}"/>
+            <arg line="-u"/>
+            <arg line="-o ${client.target}"/>
+            <classpath>
+                <fileset dir="../../lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+
+        <copy file="client/src/example/BankClient.java" todir="${client.target}/src/example"/>
+        
+        <!--now compile the stub classes-->
+        <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
+               destdir="${client.target}/classes">
+            <src path="${client.target}/src"/>
+            <classpath>
+                <fileset dir="../../lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+
+        <!--jar the compiled stuff-->
+        <jar destfile="BankService-test-client.jar">
+            <fileset dir="${client.target}/classes">
+                <exclude name="**/META-INF/*.*"/>
+                <exclude name="**/lib/*.*"/>
+                <exclude name="**/*MessageReceiver.class"/>
+                <exclude name="**/*Skeleton.class"/>
+            </fileset>
+        </jar>
+    </target>
+
+
 </project>
