@@ -1053,7 +1053,7 @@ public class SchemaCompiler {
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(restriction.getBaseTypeName())){
                 //pick the relevant basetype from the schema and process it
-                XmlSchemaType type=  parentSchema.getTypeByName(restriction.getBaseTypeName());
+                XmlSchemaType type = getType(parentSchema, restriction.getBaseTypeName());
                 if (type instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
                     if (complexType.getName() != null) {
@@ -1164,7 +1164,7 @@ public class SchemaCompiler {
         	//process the base type if it has not been processed yet
         	if (!isAlreadyProcessed(extension.getBaseTypeName())){
         		//pick the relevant basetype from the schema and process it
-        		XmlSchemaType type=  parentSchema.getTypeByName(extension.getBaseTypeName());
+        		XmlSchemaType type = getType(parentSchema,extension.getBaseTypeName());
         		if (type instanceof XmlSchemaComplexType) {
         			XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
         			if (complexType.getName() != null) {
@@ -1206,7 +1206,7 @@ public class SchemaCompiler {
         	//process the base type if it has not been processed yet
         	if (!isAlreadyProcessed(restriction.getBaseTypeName())){
         		//pick the relevant basetype from the schema and process it
-        		XmlSchemaType type=  parentSchema.getTypeByName(restriction.getBaseTypeName());
+        		XmlSchemaType type = getType(parentSchema,restriction.getBaseTypeName());
         		if (type instanceof XmlSchemaComplexType) {
         			XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
         			if (complexType.getName() != null) {
