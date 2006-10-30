@@ -46,7 +46,8 @@ import org.apache.axis2.wsdl.WSDLConstants;
 
 public class SWAClient {
 
-	private static EndpointReference targetEPR = new EndpointReference("http://localhost:8080/axis2/services/swaSample");
+	private static EndpointReference targetEPR = new EndpointReference(
+			"http://localhost:8080/axis2/services/swaSample");
 
 	public static void main(String[] args) throws Exception {
 		CommandLineOptionParser optionsParser = new CommandLineOptionParser(
@@ -62,7 +63,8 @@ public class SWAClient {
 
 		if ((invalidOptionsList.size() > 0) || (args.length != 4)) {
 			// printUsage();
-			System.out.println("Invalid Parameters.  Usage -file <file to be send> -dest <destination file>");
+			System.out
+					.println("Invalid Parameters.  Usage -file <file to be send> -dest <destination file>");
 			return;
 		}
 
@@ -86,17 +88,17 @@ public class SWAClient {
 		options.setTo(targetEPR);
 		options.setProperty(Constants.Configuration.ENABLE_SWA,
 				Constants.VALUE_TRUE);
-		options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 		options.setSoapVersionURI(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-		options.setTimeOutInMilliSeconds(100000);
-//		options.setAction(Constants.AXIS2_NAMESPACE_URI + "/"
-//				+ operationName.getLocalPart());
+		// Increase the time out when sending large attachments
+		options.setTimeOutInMilliSeconds(10000);
 		options.setTo(targetEPR);
 		options.setAction("urn:uploadFile");
 
+		// assume the use runs this sample at
+		// <axis2home>/samples/soapwithattachments/ dir
 		ConfigurationContext configContext = ConfigurationContextFactory
-				.createConfigurationContextFromFileSystem(
-						"../../repository", null);
+				.createConfigurationContextFromFileSystem("../../repository",
+						null);
 
 		ServiceClient sender = new ServiceClient(configContext, null);
 		sender.setOptions(options);
@@ -110,18 +112,19 @@ public class SWAClient {
 		// javax.activation.DataSource interface can fit here.
 		DataHandler dataHandler = new DataHandler(fileDataSource);
 		String attachmentID = mc.addAttachment(dataHandler);
-		
+
 		SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 		SOAPEnvelope env = fac.getDefaultEnvelope();
-
-		OMNamespace omNs = fac.createOMNamespace("http://service.soapwithattachments.sample/xsd","swa");
+		OMNamespace omNs = fac.createOMNamespace(
+				"http://service.soapwithattachments.sample/xsd", "swa");
+		OMElement uploadFile = fac.createOMElement("uploadFile", omNs);
 		OMElement nameEle = fac.createOMElement("param0", omNs);
 		nameEle.setText(destinationFile);
 		OMElement idEle = fac.createOMElement("param1", omNs);
 		idEle.setText(attachmentID);
-		
-		env.getBody().addChild(nameEle);
-		env.getBody().addChild(idEle);
+		uploadFile.addChild(nameEle);
+		uploadFile.addChild(idEle);
+		env.getBody().addChild(uploadFile);
 		mc.setEnvelope(env);
 
 		mepClient.addMessageContext(mc);

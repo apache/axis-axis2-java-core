@@ -85,6 +85,8 @@ public class Client {
 		// Enable MTOM in the client side
 		serviceStub._getServiceClient().getOptions().setProperty(
 				Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+		//Increase the time out when sending large attachments
+		serviceStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(10000);
 
 		// Uncomment and fill the following if you want to have client side file
 		// caching switched ON.
