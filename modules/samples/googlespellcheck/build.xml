@@ -1,0 +1,61 @@
+<project basedir="." default="run.text_editor">
+
+	<property environment="env" />
+
+	<property name="wsdl.file" value="http://tools.wso2.net:12001/axis2/services/SimplifiedSpellCheck?wsdl" />
+
+	<property name="dest.dir" value="target" />
+
+	<property name="dest.dir.classes" value="${dest.dir}/classes" />
+
+	<property name="dest.dir.lib" value="${dest.dir}/lib" />
+
+	<path id="runtime.class.path">
+		<fileset dir="${env.AXIS2_HOME}/lib">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${dest.dir.lib}" includes="*.jar" />
+	</path>
+
+	<path id="build.class.path">
+		<fileset dir="${env.AXIS2_HOME}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete dir="${dest.dir}" />
+		<delete dir="src/spellcheck_stub" />
+	</target>
+
+	<target name="build.text_editor" depends="clean">
+			
+		<mkdir dir="${dest.dir}" />
+		<mkdir dir="${dest.dir.classes}" />
+		<mkdir dir="${dest.dir.lib}" />
+
+		<java classname="org.apache.axis2.wsdl.WSDL2Java">
+			<arg value="-uri" />
+			<arg value="${wsdl.file}" />
+			<arg value="-p" />
+			<arg value="spellcheck_stub" />
+			<arg value="-o" />
+			<arg value="src" />
+			<arg value="-f"/>
+			<classpath refid="build.class.path" />
+		</java>
+
+		<javac srcdir="src" destdir="${dest.dir.classes}">
+			<classpath refid="build.class.path" />
+		</javac>
+
+		<jar basedir="${dest.dir.classes}" destfile="${dest.dir.lib}/text_editor.jar" />
+	</target>
+
+	<target name="run.text_editor" depends="build.text_editor">
+		<java classname="spellcheck.text_editor.SuggestionForm" fork="true">
+			<classpath refid="runtime.class.path" />
+		</java>
+	</target>
+	
+</project>
