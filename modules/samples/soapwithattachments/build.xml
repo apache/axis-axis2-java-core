@@ -51,6 +51,10 @@
 			</fileset>
 		</jar>
 		<java classname="sample.soapwithattachments.client.SWAClient" classpathref="axis.classpath" fork="true">
+			<arg value="-file" />
+						<arg value="${file}" />
+						<arg value="-dest" />
+						<arg value="${dest}" />
 			<jvmarg value="-Daxis2.repo=${axis2.repo}" />
 		</java>
 	</target>
