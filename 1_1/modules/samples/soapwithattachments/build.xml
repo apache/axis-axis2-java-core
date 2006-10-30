@@ -13,8 +13,8 @@
 
 	<target name="service" depends="compile">
 		<jar destfile="${build.dir}/swaSample.aar">	
-			<fileset dir="src/sample/soapwithattachments/service/">
-				<include name="meta-inf/services.xml" />
+			<fileset dir="resources/">
+				<include name="META-INF/services.xml" />
 			</fileset>
 			<fileset dir="${build.dir}/classes">
 				<include name="sample/soapwithattachments/service/**/*.class" />
