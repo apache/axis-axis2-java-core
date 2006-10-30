@@ -79,4 +79,18 @@ public class BookList {
         }
         return books;
     }
+
+    public BookList copy() {
+        BookList books = new BookList(getListName());
+        Book [] allBooks = getBookList();
+        for (int i = 0; i < allBooks.length; i++) {
+            Book allBook = allBooks[i];
+            Book book = new Book();
+            book.setAuthor(allBook.getAuthor());
+            book.setIsbn(allBook.getIsbn());
+            book.setTitle(allBook.getTitle());
+            books.addBook(book);
+        }
+        return books;
+    }
 }
