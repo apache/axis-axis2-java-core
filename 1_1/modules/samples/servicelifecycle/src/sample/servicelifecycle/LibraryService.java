@@ -50,7 +50,6 @@ public class LibraryService {
         return lendBookList.getBookList();
     }
 
-
     public Book lendBook(String isbn, String userName) throws AxisFault {
         if (isLooged(userName)) {
             Book book = availableBookList.getBook(isbn);
@@ -70,8 +69,9 @@ public class LibraryService {
     }
 
     public void returnBook(Book book) {
-        availableBookList.addBook(book);
-        lendBookList.removeBook(book);
+        Book tempBook =allBookList.getBook(book.getIsbn());
+        availableBookList.addBook(tempBook);
+        lendBookList.removeBook(tempBook);
     }
 
     private boolean isLooged(String userName) {
