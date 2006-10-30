@@ -22,8 +22,9 @@ import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.util.Loader;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
-
 
 public class RepositoryListener implements DeploymentConstants {
     private DeploymentEngine deploymentEngine;
@@ -113,6 +114,29 @@ public class RepositoryListener implements DeploymentConstants {
                 }
             }
         }
+
+        ClassLoader cl = deploymentEngine.getAxisConfig().getModuleClassLoader();
+        while (cl != null) {
+            if (cl instanceof URLClassLoader) {
+                URL[] urls = ((URLClassLoader) cl).getURLs();
+                for (int i = 0; (urls != null) && i < urls.length; i++) {
+                    String path = urls[i].getPath();
+                    //If it is a drive letter, adjust accordingly.
+                    if (path.length() >= 3 && path.charAt(0) == '/' && path.charAt(2) == ':')
+                        path = path.substring(1);
+                    java.io.File file = new java.io.File(URLDecoder.decode(urls[i].getPath()).replace('/',
+                            File.separatorChar).replace('|', ':'));
+                    if (file.isFile()) {
+                        if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
+                            //adding modules in the class path
+                            wsInfoList.addWSInfoItem(file, TYPE_MODULE);
+                        }
+                    }
+                }
+            }
+            cl = cl.getParent();
+        }
+
         deploymentEngine.doDeploy();
     }
 

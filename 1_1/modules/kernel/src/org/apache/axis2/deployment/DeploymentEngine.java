@@ -16,7 +16,6 @@
 
 
 package org.apache.axis2.deployment;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -29,7 +28,13 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -39,7 +44,15 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,7 +61,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 public class DeploymentEngine implements DeploymentConstants {
 
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
@@ -881,7 +893,7 @@ public class DeploymentEngine implements DeploymentConstants {
             servicesDir = new File(repository, DeploymentConstants.SERVICE_PATH);
         }
         if (!servicesDir.exists()) {
-            log.info(Messages.getMessage("noservicedirfound"));
+            log.info(Messages.getMessage("noservicedirfound", getRepositoryPath(repository)));
         }
         if (modulesPath != null) {
             modulesDir = new File(modulesPath);
@@ -892,7 +904,15 @@ public class DeploymentEngine implements DeploymentConstants {
             modulesDir = new File(repository, DeploymentConstants.MODULE_PATH);
         }
         if (!modulesDir.exists()) {
-            log.info(Messages.getMessage("nomoduledirfound"));
+            log.info(Messages.getMessage("nomoduledirfound", getRepositoryPath(repository)));
+        }
+    }
+
+    private String getRepositoryPath(File repository) {
+        try {
+            return repository.getCanonicalPath();
+        } catch (IOException e) {
+            return repository.getAbsolutePath();
         }
     }
 
