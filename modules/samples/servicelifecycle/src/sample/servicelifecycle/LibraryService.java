@@ -68,8 +68,8 @@ public class LibraryService {
         }
     }
 
-    public void returnBook(Book book) {
-        Book tempBook =allBookList.getBook(book.getIsbn());
+    public void returnBook(String isbn) {
+        Book tempBook = allBookList.getBook(isbn);
         availableBookList.addBook(tempBook);
         lendBookList.removeBook(tempBook);
     }

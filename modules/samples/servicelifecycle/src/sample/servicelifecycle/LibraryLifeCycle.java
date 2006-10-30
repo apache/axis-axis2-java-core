@@ -163,7 +163,8 @@ public class LibraryLifeCycle implements ServiceLifeCycle {
             }
         }
         if (fileFound) {
-            service.addParameter(new Parameter(LibraryConstants.AVAILABLE_BOOK, allBookList));
+            availableBookList = allBookList.copy();
+            service.addParameter(new Parameter(LibraryConstants.AVAILABLE_BOOK, availableBookList));
         } else {
             service.addParameter(new Parameter(LibraryConstants.AVAILABLE_BOOK, availableBookList));
         }
