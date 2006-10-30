@@ -29,31 +29,13 @@
       <library name="lib/axiom-impl-SNAPSHOT.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-adb-1.1-RC1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/axis2-adb-codegen-1.1-RC1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/axis2-codegen-1.1-RC1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/axis2-java2wsdl-1.1-RC1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/axis2-kernel-1.1-RC1.jar">
-         <export name="*"/>
-      </library>
       <library name="lib/commons-logging-1.1.jar">
          <export name="*"/>
       </library>
-      <library name="lib/jakarta-oro-2.0.8.jar">
+      <library name="lib/axis2-1.1-SNAPSHOT.jar">
          <export name="*"/>
       </library>
-      <library name="lib/jalopy-1.0b11.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/log4j-1.2.8.jar">
+      <library name="lib/log4j-1.2.13.jar">
          <export name="*"/>
       </library>
       <library name="lib/neethi-SNAPSHOT.jar">
@@ -72,9 +54,6 @@
          <export name="*"/>
       </library>
       <library name="lib/XmlSchema-SNAPSHOT.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/axis2-xmlbeans-1.1-RC1.jar">
          <export name="*"/>
       </library>
    </runtime>
