@@ -180,11 +180,19 @@ public class CodeGenerationUtility {
             cgconfig.putProperty(Constants.PLAIN_BASE_64_PROPERTY_KEY,
                     findPlainBase64Types(sts));
 
+            SchemaTypeSystem internal = XmlBeans.getBuiltinTypeSystem();
+            SchemaType[] schemaTypes = internal.globalTypes();
+            for (int j = 0; j < schemaTypes.length; j++) {
+                mapper.addTypeMappingName(schemaTypes[j].getName(),
+                        schemaTypes[j].getFullJavaName());
+
+            }
+
             //get the schematypes and add the document types to the type mapper
-            SchemaType[] schemaType = sts.documentTypes();
-            for (int j = 0; j < schemaType.length; j++) {
-                mapper.addTypeMappingName(schemaType[j].getDocumentElementName(),
-                        schemaType[j].getFullJavaName());
+            schemaTypes = sts.documentTypes();
+            for (int j = 0; j < schemaTypes.length; j++) {
+                mapper.addTypeMappingName(schemaTypes[j].getDocumentElementName(),
+                        schemaTypes[j].getFullJavaName());
 
             }
 
