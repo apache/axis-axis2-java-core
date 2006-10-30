@@ -35,7 +35,7 @@ public class AddressBookClient {
         Options options = serviceClient.getOptions();
 
         EndpointReference targetEPR = new EndpointReference(
-                "http://127.0.0.1:8080/axis2/services/AdressBookService");
+                "http://127.0.0.1:8080/axis2/services/AddressBookService");
         options.setTo(targetEPR);
 
         // /////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public class AddressBookClient {
          */
 
         // QName of the target method 
-        QName opAddEntry = new QName("http://address_book_service/xsd", "addEntry");
+        QName opAddEntry = new QName("http://service.addressbook.sample/xsd", "addEntry");
 
         /*
          * Constructing a new Entry
@@ -74,7 +74,7 @@ public class AddressBookClient {
          */
         
         // QName of the method to invoke 
-        QName opFindEntry = new QName("http://address_book_service/xsd", "findEntry");
+        QName opFindEntry = new QName("http://service.addressbook.sample/xsd", "findEntry");
 
         //
         String name = "Abby Cadabby";
