@@ -98,15 +98,15 @@
 		You need to supply 3 parameters to the command, url, account and amount.
 		<ul>
 			<li>
-					<strong>ant run -Durl=http://localhost:8080/axis2/services/BankService -Daccount=13 -Damt=400</strong><br/>
+					<strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=13 -Damt=400</strong><br/>
 					Throws AccountNotExistFaultMessageException. You will see "Account#13 does not exist"<br/>&nbsp;
 			</li>
 			<li>
-					<strong>ant run -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=1200</strong><br/>
+					<strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=1200</strong><br/>
 					Throws InsufficientFundsFaultMessageException. You will see "Account#88 has balance of 1000. It cannot support withdrawal of 1200"<br/>&nbsp;
 			</li>
 			<li>
-					<strong>ant run -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=400</strong><br/>
+					<strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88 -Damt=400</strong><br/>
 					Succeeds with a balance of 600. You will see "Balance = 600"<br/>&nbsp;
 			</li>
 		</ul>
