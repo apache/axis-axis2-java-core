@@ -369,7 +369,7 @@
         </jar>
     </goal>
 
-    <goal name="create-lib">
+    <goal name="create-lib" prereqs="jar">
         <macros:copy-deps copyToDir="target/lib" mods="*"/>
     </goal>
 
@@ -434,7 +434,7 @@
             <ant:fileset file="modules/spring/target/axis2-spring-${pom.currentVersion}.jar"/>
         </ant:copy>
 
-        <!-- Copy the spring jar -->
+        <!-- Copy the saaj jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
         </ant:copy>
