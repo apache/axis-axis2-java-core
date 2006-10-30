@@ -24,6 +24,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.transport.mail.Constants;
+import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -139,7 +140,7 @@ public class MailSorter {
         } catch (Exception e) {
             try {
                 if (msgContext != null) {
-                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                    MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
 
                     engine.sendFault(faultContext);
                 }

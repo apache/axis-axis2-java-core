@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.Utils;
 
 /**
@@ -45,7 +46,7 @@ public class MessageContextUtils {
             // There are a number of things that need to be copied over at the
             // Axis2 level.
             org.apache.axis2.context.MessageContext newAxisMC = 
-                Utils.createOutMessageContext(sourceAxisMC);
+                MessageContextBuilder.createOutMessageContext(sourceAxisMC);
             
             MessageContext newMC = new MessageContext(newAxisMC);
             

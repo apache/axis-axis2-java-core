@@ -17,12 +17,12 @@
 
 package org.apache.axis2.transport.mail;
 
-import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.util.MessageContextBuilder;
+
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 
 public class MailWorker implements Runnable {
     private ConfigurationContext configContext = null;
@@ -59,7 +59,7 @@ public class MailWorker implements Runnable {
                 try {
                     if (msgContext != null) {
                         MessageContext faultContext =
-                                engine.createFaultMessageContext(msgContext, e);
+                            MessageContextBuilder.createFaultMessageContext(msgContext, e);
                         engine.sendFault(faultContext);
                     }
                 } catch (Exception e1) {

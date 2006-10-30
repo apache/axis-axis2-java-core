@@ -20,7 +20,7 @@ package org.apache.axis2.receivers;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.MessageContextBuilder;
 
 /**
  * This is the Absract IN-OUT MEP MessageReceiver. The
@@ -31,7 +31,7 @@ public abstract class AbstractInOutSyncMessageReceiver extends AbstractMessageRe
             throws AxisFault;
 
     public final void receive(MessageContext msgContext) throws AxisFault {
-        MessageContext outMsgContext = Utils.createOutMessageContext(msgContext);
+        MessageContext outMsgContext = MessageContextBuilder.createOutMessageContext(msgContext);
         outMsgContext.getOperationContext().addMessageContext(outMsgContext);
 
         ThreadContextDescriptor tc = setThreadContext(msgContext);

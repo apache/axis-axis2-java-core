@@ -17,38 +17,27 @@
 
 package org.apache.axis2.engine;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.*;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPConstants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AddressingConstants.Final;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * There is one engine for the Server and the Client. the send() and receive()
@@ -135,6 +124,8 @@ public class AxisEngine {
      * This method is called to handle any error that occurs at inflow or outflow. But if the
      * method is called twice, it implies that sending the error handling has failed, in which case
      * the method logs the error and exists.
+     * @deprecated (post 1.1 branch)
+     * @see org.apache.axis2.util.MessageContextBuilder.createFaultMessageContext()
      */
     public MessageContext createFaultMessageContext(MessageContext processingContext, Throwable e)
             throws AxisFault {
