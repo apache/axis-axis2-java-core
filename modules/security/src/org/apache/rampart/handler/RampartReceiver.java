@@ -42,7 +42,7 @@ import java.util.Vector;
 
 
 public class RampartReceiver implements Handler {
-
+    
     protected static final WSSecurityEngine secEngine = WSSecurityEngine.getInstance();
     
     private static HandlerDescription EMPTY_HANDLER_METADATA =
@@ -127,6 +127,7 @@ public class RampartReceiver implements Handler {
 
     }
 
+    
     public HandlerDescription getHandlerDesc() {
         return this.handlerDesc;
     }
