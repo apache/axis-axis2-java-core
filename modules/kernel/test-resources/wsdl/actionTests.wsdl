@@ -144,7 +144,7 @@
 		</wsdl:operation>
 	</wsdl:binding>
 	<wsdl:service name="actionTests">
-		<wsdl:port binding="tns:actionTestsWithWSAWActionSOAP"
+		<wsdl:port binding="tns:withSOAPActionBinding"
 			name="actionTestsSOAP">
 			<soap:address location="http://tempuri.org" />
 		</wsdl:port>

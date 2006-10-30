@@ -204,6 +204,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             Binding binding = findBinding(wsdl4jDefinition);
 
+            if(binding.getPortType() == null) {
+                throw new AxisFault("Unable to find wsdl:binding named " + binding.getQName());
+            }
+            
             // create new Schema extensions element for wrapping
             // (if its present)
             Element[] schemaElements = generateWrapperSchema(schemaMap, binding);
