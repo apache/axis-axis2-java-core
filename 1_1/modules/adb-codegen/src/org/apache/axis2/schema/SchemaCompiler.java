@@ -1567,7 +1567,9 @@ public class SchemaCompiler {
                     }
                 }
 
-
+                if(referencedQName == null) {
+                    throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.emptyName"));
+                }
 
                 //register the occurence counts
                 metainfHolder.addMaxOccurs(referencedQName, elt.getMaxOccurs());
