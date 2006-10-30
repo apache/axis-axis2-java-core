@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- $Revision: 1.21 $ $Date: 2004-10-27 20:54:09 +0600 (Wed, 27 Oct 2004) $ -->
-
 <project default="jar"
          xmlns:j="jelly:core"
          xmlns:u="jelly:util"
@@ -12,11 +9,6 @@
 
     <preGoal name="java:compile">
         <path id="samples.src.path">
-            <pathelement location="amazonqs/src"/>
-            <pathelement location="googlesearch/src"/>
-            <pathelement location="groovy/src"/>
-            <pathelement location="mtomsample/src"/>
-            <pathelement location="sgccalculator/src"/>
             <pathelement location="version/src"/>
             <pathelement location="yahoorestsearch/src"/>
         </path>
@@ -46,16 +38,9 @@
             <ant:fileset dir="wsdl"/>
         </copy>
         <attainGoal name="userguide"/>
-        <attainGoal name="amazonQS"/>
-        <attainGoal name="googleSearch"/>
         <attainGoal name="googleSpellcheck"/>
         <attainGoal name="yahooRESTSearch"/>
         <attainGoal name="version"/>
-        <attainGoal name="mtomSample"/>
-        <attainGoal name="groovy"/>
-        <!--        <attainGoal name="securitySample"/> -->
-        <attainGoal name="sgccalculator"/>
-        <!--attainGoal name="eventing"/-->
     </goal>
 
     <!-- ================================================================ -->
@@ -133,38 +118,7 @@
         <ant:copy file="script/userguide/build.xml" tofile="target/samples/userguide/build.xml"/>
 
     </goal>
-    <!-- ================================================================ -->
-    <!--- Amazon Qaueing Service Sample -->
-    <!-- ================================================================ -->
-
-    <goal name="amazonQS">
-        <mkdir dir="target/amazonqs" />
-        <jar destfile="target/amazonqs/amazonQS.jar">
-            <fileset dir="target/classes">
-                <include name="sample/amazon/amazonSimpleQueueService/**"/>
-                <include name="sample/amazon/common/**"/>
-            </fileset>
-        </jar>
-    </goal>
-
-
-    <!-- ================================================================ -->
-    <!--- Google Search Sample -->
-    <!-- ================================================================ -->
-
-    <goal name="googleSearch">
-        <mkdir dir="target/googlesearch" />
-        <jar destfile="target/googlesearch/googleSearch.jar">
-            <fileset dir="target/classes">
-                <include name="sample/google/search/**"/>
-                <include name="sample/google/common/**"/>
-            </fileset>
-        </jar>
-    </goal>
-
-    <!-- ================================================================ -->
-    <!-- ================================================================ -->
-
+ 
     <goal name="yahooRESTSearch">
         <mkdir dir="target/yahoorestsearch" />
         <jar destfile="target/yahoorestsearch/yahooRESTSearch.jar">
@@ -188,58 +142,7 @@
         </jar>
     </goal>
 
-    <!-- ================================================================ -->
-    <!--- MTOM Sample -->
-    <!-- ================================================================ -->
-
-    <goal name="mtomSample">
-        <mkdir dir="target/mtomsample" />
-        <jar destfile="target/mtomsample/mtomSample.aar">
-            <fileset dir="mtomsample/src/sample/mtom/filetransfer/service/">
-                <include name="META-INF/services.xml"/>
-            </fileset>
-            <fileset dir="target/classes">
-                <include name="sample/mtom/filetransfer/service/**/*.class"/>
-            </fileset>
-        </jar>
-        <jar destfile="target/mtomsample/mtomClient.jar">
-            <fileset dir="target/classes">
-                <include name="sample/mtom/filetransfer/client/**/*.class"/>
-            </fileset>
-        </jar>
-
-    </goal>
-
-    <!-- ================================================================ -->
-    <!--- Groovy Service Sample -->
-    <!-- ================================================================ -->
-
-    <goal name="groovy">
-        <mkdir dir="target/groovy"/>
-        <ant:copy file="groovy/src/sample/groovy/GroovyRcv.groovy"
-                  tofile="target/classes/sample/groovy/GroovyRcv.groovy"/>
-        <mkdir dir="target/classes/sample/groovy/lib"/>
-        <mkdir dir="target/classes/sample/groovy/META-INF"/>
-        <mkdir dir="target/classes/sample/groovy/sample"/>
-        <mkdir dir="target/classes/sample/groovy/sample/groovy"/>
-        <ant:copy file="target/classes/sample/groovy/GroovyReceiver.class"
-                  tofile="target/classes/sample/groovy/sample/groovy/GroovyReceiver.class"/>
-        <ant:copy file="groovy/src/sample/groovy/META-INF/services.xml"
-                  tofile="target/classes/sample/groovy/META-INF/services.xml"/>
-        <ant:delete file="target/classes/sample/groovy/GroovyReceiver.class"/>
-        <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('on')}">
-            <ant:copy file="${dependencies.dir}/groovy-all-${groovy.all.version}.jar"
-                      tofile="target/classes/sample/groovy/lib/groovy-all-${groovy.all.version}.jar"/>
-        </j:if>
-        <j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
-            <ant:copy file="${maven.repo.local}/groovy/jars/groovy-all-${groovy.all.version}.jar"
-                      tofile="target/classes/sample/groovy/lib/groovy-all-${groovy.all.version}.jar"/>
-        </j:if>
-        <jar destfile="target/groovy/groovyService.aar">
-            <fileset dir="target/classes/sample/groovy">
-            </fileset>
-        </jar>
-    </goal>
+ 
 
     <!-- ================================================================ -->
     <!--- Security Sample -->
@@ -315,30 +218,6 @@
         <ant:copy file="resources/security/build.xml" tofile="target/samples/security/build.xml"/>
 
         <delete dir="target/security/"/>
-
-    </goal>
-
-    <!-- ================================================================ -->
-    <!--- ServiceGroupContext Calculator Sample -->
-    <!-- ================================================================ -->
-    <goal name="sgccalculator">
-        <mkdir dir="target/sgccalculator"/>
-        <jar destfile="target/sgccalculator/SGCCalculator.aar">
-            <fileset dir="target/classes">
-                <include name="sample/sgccalculator/**"/>
-            </fileset>
-            <fileset dir="sgccalculator/src/sample/sgccalculator/">
-                <include name="META-INF/services.xml"/>
-            </fileset>
-        </jar>
-        <jar destfile="target/sgccalculator/SGCCalculator.jar">
-            <fileset dir="target/classes">
-                <include name="sample/sgccalculator/**"/>
-            </fileset>
-            <fileset dir="sgccalculator/src/sample/sgccalculator/">
-                <include name="META-INF/services.xml"/>
-            </fileset>
-        </jar>
 
     </goal>
 
