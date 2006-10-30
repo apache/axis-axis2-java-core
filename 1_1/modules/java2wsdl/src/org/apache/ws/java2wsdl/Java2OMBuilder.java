@@ -53,7 +53,10 @@ public class Java2OMBuilder implements Java2WSDLConstants {
     private String targetNamespace;
 
     private String targetNamespacePrefix;
-
+    
+    private String schemaTargetNamespace = null;
+    
+    private String schemaTargetNamespacePrefix = null;
 
     private OMNamespace soap;
 
@@ -124,13 +127,14 @@ public class Java2OMBuilder implements Java2WSDLConstants {
         return ele;
     }
 
-    private void generateNamespaces(OMElement defintions) {
-        soap = defintions.declareNamespace(URI_WSDL11_SOAP, SOAP11_PREFIX);
-        tns = defintions.declareNamespace(targetNamespace,
+    private void generateNamespaces(OMElement definitions) {
+        soap = definitions.declareNamespace(URI_WSDL11_SOAP, SOAP11_PREFIX);
+        tns = definitions.declareNamespace(targetNamespace,
                 targetNamespacePrefix);
-        soap12 = defintions.declareNamespace(URI_WSDL12_SOAP, SOAP12_PREFIX);
-        defintions.declareNamespace(HTTP_NAMESPACE, HTTP_PREFIX);
-        defintions.declareNamespace(MIME_NAMESPACE, MIME_PREFIX);
+        soap12 = definitions.declareNamespace(URI_WSDL12_SOAP, SOAP12_PREFIX);
+        definitions.declareNamespace(HTTP_NAMESPACE, HTTP_PREFIX);
+        definitions.declareNamespace(MIME_NAMESPACE, MIME_PREFIX);
+        definitions.declareNamespace(getSchemaTargetNamespace(), getSchemaTargetNamespacePrefix());
     }
 
     private void generateTypes(OMFactory fac, OMElement defintions)
@@ -181,7 +185,8 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     .getSimpleName())) != null) {
                 namespaceURI = messagePartType.getNamespaceURI();
                 // avoid duplicate namespaces
-                if ((namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
+                if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
+                        (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null ) {    
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
@@ -201,7 +206,8 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     .getSimpleName()
                     + RESPONSE)) != null) {
                 namespaceURI = messagePartType.getNamespaceURI();
-                if ((namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
+                if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
+                        (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null ) {  
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
@@ -225,7 +231,8 @@ public class Java2OMBuilder implements Java2WSDLConstants {
             if (jmethod.getExceptionTypes().length > 0) {
                 if ((messagePartType = typeTable.getComplexSchemaType(jmethod.getSimpleName() + "Fault")) != null) {
                     namespaceURI = messagePartType.getNamespaceURI();
-                    if ((namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
+                    if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
+                            (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null ) {  
                         namespacePrefix = generatePrefix();
                         namespaceMap.put(namespaceURI, namespacePrefix);
                     }
@@ -452,6 +459,22 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
     private String generatePrefix() {
         return NAMESPACE_PREFIX + prefixCount++;
+    }
+
+    public String getSchemaTargetNamespace() {
+        return schemaTargetNamespace;
+    }
+
+    public void setSchemaTargetNamespace(String schemaTargetNamespace) {
+        this.schemaTargetNamespace = schemaTargetNamespace;
+    }
+
+    public String getSchemaTargetNamespacePrefix() {
+        return schemaTargetNamespacePrefix;
+    }
+
+    public void setSchemaTargetNamespacePrefix(String schemaTargetNamespacePrefix) {
+        this.schemaTargetNamespacePrefix = schemaTargetNamespacePrefix;
     }
 
 }

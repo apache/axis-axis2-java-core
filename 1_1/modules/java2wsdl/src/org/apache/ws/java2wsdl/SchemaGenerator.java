@@ -67,14 +67,12 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
     private Map pkg2nsmap = null;
 
-    private String nsGenClassName = null;
-
     private NamespaceGenerator nsGen = null;
 
     private String targetNamespace = null;
 
-    public NamespaceGenerator getNsGen() {
-        if (nsGen == null) {
+    public NamespaceGenerator getNsGen() throws Exception {
+        if ( nsGen == null ) {
             nsGen = new DefaultNamespaceGenerator();
         }
         return nsGen;
@@ -94,6 +92,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
         Class clazz = Class.forName(className, true, loader);
         methodTable = new MethodTable(clazz);
 
+        this.targetNamespace = Java2WSDLUtils.targetNamespaceFromClassName(
+                className, loader, getNsGen()).toString();
+        
         if (schematargetNamespace != null
                 && schematargetNamespace.trim().length() != 0) {
             this.schemaTargetNameSpace = schematargetNamespace;
@@ -101,8 +102,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
             this.schemaTargetNameSpace =
                     Java2WSDLUtils.schemaNamespaceFromClassName(className, loader, getNsGen()).toString();
         }
-        this.targetNamespace = Java2WSDLUtils.targetNamespaceFromClassName(
-                className, loader, getNsGen()).toString();
+        
         if (schematargetNamespacePrefix != null
                 && schematargetNamespacePrefix.trim().length() != 0) {
             this.schema_namespace_prefix = schematargetNamespacePrefix;
@@ -247,7 +247,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
     /**
      * @param javaType
      */
-    private QName generateSchema(JClass javaType) {
+    private QName generateSchema(JClass javaType) throws Exception {
         String name = javaType.getQualifiedName();
         QName schemaTypeName = typeTable.getComplexSchemaType(name);
         if (schemaTypeName == null) {
@@ -413,7 +413,15 @@ public class SchemaGenerator implements Java2WSDLConstants {
         XmlSchema xmlSchema;
 
         if ((xmlSchema = (XmlSchema) schemaMap.get(targetNamespace)) == null) {
-            String targetNamespacePrefix = generatePrefix();
+            String targetNamespacePrefix = null;
+            
+            if ( targetNamespace.equals(schemaTargetNameSpace) && 
+                    schema_namespace_prefix != null ) {
+                targetNamespacePrefix = schema_namespace_prefix;
+            }
+            else {
+                targetNamespacePrefix = generatePrefix();
+            }
 
             xmlSchema = new XmlSchema(targetNamespace, xmlSchemaCollection);
             xmlSchema.setAttributeFormDefault(getAttrFormDefaultSetting());
@@ -506,7 +514,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
         this.extraClasses = extraClasses;
     }
 
-    private String resolveSchemaNamespace(String packageName) {
+    private String resolveSchemaNamespace(String packageName) throws Exception {
         //if all types must go into the wsdl types schema namespace
         if (useWSDLTypesNamespace) {
             //return schemaTargetNameSpace;
@@ -533,17 +541,6 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
     public void setUseWSDLTypesNamespace(boolean useWSDLTypesNamespace) {
         this.useWSDLTypesNamespace = useWSDLTypesNamespace;
-    }
-
-    public String getNsGenClassName() {
-        return nsGenClassName;
-    }
-
-    public void setNsGenClassName(String nsGenClassName) throws Exception {
-        this.nsGenClassName = nsGenClassName;
-        if (this.nsGenClassName != null) {
-            setNsGen((NamespaceGenerator) Class.forName(this.nsGenClassName).newInstance());
-        }
     }
 
     public Map getPkg2nsmap() {
