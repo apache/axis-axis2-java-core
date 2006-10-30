@@ -1,4 +1,4 @@
-<project basedir="." default="build">
+<project basedir="." default="build" name="Library">
 
     <property environment="env"/>
     <property name="service-name" value="Library.aar"/>
