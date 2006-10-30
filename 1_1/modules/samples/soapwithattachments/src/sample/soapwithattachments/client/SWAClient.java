@@ -62,7 +62,7 @@ public class SWAClient {
 
 		if ((invalidOptionsList.size() > 0) || (args.length != 4)) {
 			// printUsage();
-			System.out.println("Invalid Parameters.");
+			System.out.println("Invalid Parameters.  Usage -file <file to be send> -dest <destination file>");
 			return;
 		}
 

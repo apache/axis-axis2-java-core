@@ -29,7 +29,22 @@
 			<classpath refid="axis.classpath" />
 		</javac>
 	</target>
-	<target name="client" depends="compile">
+	<target name="check-parameters">
+		<condition property="parameters.set">
+			<and>
+				<isset property="dest" />
+				<isset property="file" />
+			</and>
+		</condition>
+		<!-- This is a hack to get a if-else working in ant. Some much more "ANTy" person is welcome to improve this -->
+		<antcall target="print-usage" />
+	</target>
+
+	<target name="print-usage" unless="parameters.set">
+		<echo message="ant -Dfile &lt;file to be transfered&gt;  -Ddest &lt;name of the destination file&gt;" />
+	</target>
+
+	<target name="client" depends="compile,check-parameters" if="parameters.set">
 		<jar destfile="${build.dir}/swaSampleClient.jar">
 			<fileset dir="${build.dir}/classes">
 				<include name="sample/soapwithattachments/client/**/*.class" />
