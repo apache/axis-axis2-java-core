@@ -23,14 +23,15 @@
     <name>Apache Axis 2 Intellij IDEA Plugin</name>
     <id>axis2-idea-plugin</id>
     <groupId>axis2-tools</groupId>
-    <description>A Intellij IDEA plugin for Service Archive creation and Code Generation</description>
+    <description>A Intellij IDEA plugin for Service Archive creation and Code Generation
+    </description>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
-	    <properties>
+            <properties>
                 <module>true</module>
             </properties>
         </dependency>
@@ -38,7 +39,7 @@
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
             <version>${axiom.version}</version>
-	    <properties>
+            <properties>
                 <module>true</module>
             </properties>
         </dependency>
@@ -78,7 +79,7 @@
         </dependency>
 
 
-	<dependency>
+        <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>openapi</artifactId>
 
@@ -90,7 +91,7 @@
             <version>5.0</version>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
             <version>${wsdl4j.version}</version>
@@ -99,11 +100,11 @@
             </properties>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
-<properties>
+            <properties>
                 <module>true</module>
             </properties>
         </dependency>
@@ -111,38 +112,69 @@
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>${pom.currentVersion}</version>
-<properties>
+            <properties>
                 <module>true</module>
             </properties>
         </dependency>
 
-	<dependency>
-      <groupId>org.apache.axis2</groupId>
-      <artifactId>axis2-codegen</artifactId>
-      <version>${pom.currentVersion}</version>
-<properties>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-codegen</artifactId>
+            <version>${pom.currentVersion}</version>
+            <properties>
                 <module>true</module>
             </properties>
 
-		<dependency>
-      <groupId>org.apache.axis2</groupId>
-      <artifactId>axis2-adb-codegen</artifactId>
-<version>${pom.currentVersion}</version>
-<properties>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-xmlbeans</artifactId>
+            <version>${pom.currentVersion}</version>
+            <properties>
                 <module>true</module>
             </properties>
 
-    </dependency>
-    <dependency>
-      <groupId>org.apache.axis2</groupId>
-      <artifactId>axis2-java2wsdl</artifactId>
-<version>${pom.currentVersion}</version>
-<properties>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.ws.commons.neethi</groupId>
+            <artifactId>neethi</artifactId>
+            <version>${neethi.version}</version>
+            <properties>
                 <module>true</module>
             </properties>
 
-    </dependency>
-    </dependency>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+            <version>${pom.currentVersion}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${pom.currentVersion}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+
+        </dependency>
+
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <version>${xbean.version}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
 
 
         <!--added this to support to keep WSDL information in AxisService-->
@@ -150,7 +182,7 @@
             <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
-	    <properties>
+            <properties>
                 <module>true</module>
             </properties>
         </dependency>
@@ -185,3 +217,4 @@
     </build>
     <reports/>
 </project>
+
