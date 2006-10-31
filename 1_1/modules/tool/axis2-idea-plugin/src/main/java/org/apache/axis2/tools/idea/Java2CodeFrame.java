@@ -307,18 +307,13 @@ public class Java2CodeFrame extends JFrame {
         return null;
     }
 
-    public boolean validatePackageName(String name){
-        if (name.trim().equalsIgnoreCase(""))
-        return false;
-        String[] parts = new String[10];
-         parts = name.split("\\.");
-        for(int count=0;count<parts.length;count++)
-        {
-            if (parts[count].trim().equalsIgnoreCase(""))
-            return false;
-        }
-        return true;
-    }
+     public boolean validatePackageName(String name){
+
+       if(name.matches("[a-z]([a-z0-9_]+\\.?)+[a-z0-9_]"))
+       return true;
+
+       return false;
+   }
 
     public void backButtonImpl(){
         panleID--;
