@@ -707,11 +707,8 @@
                 <include name="googlespellcheck/**/*.*"/>
                 <include name="FaultHandling/**/*.*"/>
                 <include name="mtom/**/*.*"/>
-                <include name="mtomsample/**/*.*"/>
                 <include name="soapwithattachments/**/*.*"/>
                 <include name="version/**/*.*"/>
-                <include name="jms/**/*.*"/>
-                <include name="sessions/**/*.*"/>
                 <include name="servicelifecycle/**/*.*"/>
                 <include name="pojo/**/*.*"/>
             </ant:fileset>
@@ -839,7 +836,7 @@
         <ant:mkdir dir="${std_dep_cache}"/>
         <j:if test="${stdDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${std_dep_cache}"
-                              mods="codegen,jibx,spring,saaj,kernel,adb,java2wsdl"/>
+                              mods="codegen,jibx,spring,saaj,kernel,adb,java2wsdl,webapp"/>
             <property name="stdDeps.uptodate" value="yes"/>
         </j:if>
 
