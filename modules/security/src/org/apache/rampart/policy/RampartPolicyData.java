@@ -16,11 +16,13 @@
 
 package org.apache.rampart.policy;
 
+import org.apache.neethi.Policy;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.secpolicy.model.AlgorithmSuite;
+import org.apache.ws.secpolicy.model.SecureConversationToken;
 import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.Trust10;
@@ -113,6 +115,8 @@ public class RampartPolicyData {
     
     private Wss10 wss10;
     private Wss11 wss11;
+    
+    private Policy issuerPolicy;
     
     /**
      * @return Returns the symmetricBinding.
@@ -372,6 +376,7 @@ public class RampartPolicyData {
      */
     public void setEncryptionToken(Token encryptionToken) {
         this.encryptionToken = encryptionToken;
+        this.extractIssuerPolicy(encryptionToken);
     }
 
     /**
@@ -405,6 +410,7 @@ public class RampartPolicyData {
     public void setProtectionToken(Token protectionToken) {
         this.setEncryptionToken(protectionToken);
         this.setSignatureToken(protectionToken);
+        this.extractIssuerPolicy(protectionToken);
     }
 
     /**
@@ -419,6 +425,7 @@ public class RampartPolicyData {
      */
     public void setSignatureToken(Token signatureToken) {
         this.signatureToken = signatureToken;
+        this.extractIssuerPolicy(signatureToken);
     }
 
     /**
@@ -615,4 +622,13 @@ public class RampartPolicyData {
         this.wss11 = wss11;
     }
     
+    private void extractIssuerPolicy(Token token) {
+        if(token instanceof SecureConversationToken && this.issuerPolicy == null) {
+            this.issuerPolicy = ((SecureConversationToken)token).getBootstrapPolicy();
+        }
+    }
+
+    public Policy getIssuerPolicy() {
+        return issuerPolicy;
+    }
 }

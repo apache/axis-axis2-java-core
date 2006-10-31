@@ -30,7 +30,6 @@ import org.apache.rampart.RampartException;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
@@ -42,8 +41,6 @@ import java.util.Vector;
 
 
 public class RampartReceiver implements Handler {
-    
-    protected static final WSSecurityEngine secEngine = WSSecurityEngine.getInstance();
     
     private static HandlerDescription EMPTY_HANDLER_METADATA =
         new HandlerDescription("deafult Handler");

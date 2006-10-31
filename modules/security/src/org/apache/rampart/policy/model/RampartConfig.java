@@ -83,8 +83,6 @@ public class RampartConfig implements Assertion {
 
     public final static String TOKEN_STORE_CLASS_LN = "tokenStoreClass";
 
-    public final static String TOKEN_ISSUER_POLICY_LN = "tokenIssuerPolicy";
-
     private String user;
 
     private String encryptionUser;
@@ -100,8 +98,6 @@ public class RampartConfig implements Assertion {
     private String timestampTTL = DEFAULT_TIMESTAMP_TTL;
 
     private String tokenStoreClass;
-
-    private Policy tokenIssuerPolicy;
 
     /**
      * @return Returns the tokenStoreClass.
@@ -265,21 +261,6 @@ public class RampartConfig implements Assertion {
      */
     public void setTimestampTTL(String timestampTTL) {
         this.timestampTTL = timestampTTL;
-    }
-
-    /**
-     * @return Returns the tokenIssuerPolicy.
-     */
-    public Policy getTokenIssuerPolicy() {
-        return tokenIssuerPolicy;
-    }
-
-    /**
-     * @param tokenIssuerPolicy
-     *            The tokenIssuerPolicy to set.
-     */
-    public void setTokenIssuerPolicy(Policy tokenIssuerPolicy) {
-        this.tokenIssuerPolicy = tokenIssuerPolicy;
     }
 
 }

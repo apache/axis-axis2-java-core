@@ -349,11 +349,9 @@ public class RampartUtil {
             bsPol.addAssertion(rmd.getPolicyData().getRampartConfig());
             stsPolicy = bsPol;
         } else {
-            //No bootstrap policy
-            //Use issuer policy specified in rampart config
-            log.debug("No bootstrap policy, using issuer" +
-                    " policy specified in rampart config");
-            stsPolicy = rmd.getPolicyData().getRampartConfig().getTokenIssuerPolicy();
+            //No bootstrap policy use issuer policy
+            log.debug("No bootstrap policy, using issuer policy");
+            stsPolicy = rmd.getPolicyData().getIssuerPolicy();
         }
         
         String id = getToken(rmd, rstTemplate,
@@ -385,8 +383,7 @@ public class RampartUtil {
             OMElement rstTemplate = issuedToken.getRstTemplate();
 
             // Get STS policy
-            Policy stsPolicy = rmd.getPolicyData().getRampartConfig()
-                    .getTokenIssuerPolicy();
+            Policy stsPolicy = rmd.getPolicyData().getIssuerPolicy();
 
             String id = getToken(rmd, rstTemplate, issuerEprAddress, action,
                     stsPolicy);
