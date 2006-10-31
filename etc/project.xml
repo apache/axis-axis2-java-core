@@ -91,6 +91,38 @@
             <archive>http://marc.theaimsgroup.com/?l=axis-user&amp;r=1&amp;w=2</archive>
         </mailingList>
     </mailingLists>
+    
+    <dependencies>
+       <dependency>
+        <groupId>maven</groupId>
+        <artifactId>maven-test-plugin</artifactId>
+        <type>plugin</type>
+        <version>${maven.test.plugin.version}</version>
+       </dependency>
+       
+       <dependency>
+        <groupId>maven</groupId>
+        <artifactId>maven-multiproject-plugin</artifactId>
+        <type>plugin</type>
+        <version>${maven.multiproject.plugin.version}</version>
+       </dependency>
+       
+       <dependency>
+        <groupId>maven</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <type>plugin</type>
+        <version>${maven.jar.plugin.version}</version>
+       </dependency>
+       
+       <dependency>
+        <groupId>maven</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <type>plugin</type>
+        <version>${maven.plugin.plugin.version}</version>
+       </dependency>
+    </dependencies>
+    
+    
     <!-- ========== -->
     <!-- Developers -->
     <!-- ========== -->
