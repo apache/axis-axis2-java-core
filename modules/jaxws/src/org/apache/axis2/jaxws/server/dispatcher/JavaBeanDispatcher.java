@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -51,10 +50,9 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     private EndpointDescription endpointDesc = null;
     private OperationDescription operationDesc = null;
     private MethodMarshaller methodMarshaller = null;
-    private Object serviceInstance;
     
-    public JavaBeanDispatcher(Class implClass) {
-        super(implClass);
+    public JavaBeanDispatcher(Class implClass, Object serviceInstance) {
+        super(implClass, serviceInstance);
     }
     
     /*
@@ -73,9 +71,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         Method target = getJavaMethod(mc, serviceImplClass);
 
         //At this point, we have the method that is going to be invoked and
-        //the parameter data to invoke it with, so create an instance and 
+        //the parameter data to invoke it with, so we use the instance and 
         //do the invoke.
-        serviceInstance = createServiceInstance();
         //Passing method input params to grab holder values, if any.
         Object response = null;
         try {

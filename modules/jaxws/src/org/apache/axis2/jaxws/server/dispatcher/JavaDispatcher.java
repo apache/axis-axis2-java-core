@@ -32,9 +32,11 @@ public abstract class JavaDispatcher implements EndpointDispatcher {
     private static final Log log = LogFactory.getLog(JavaDispatcher.class);
     
     protected Class serviceImplClass;
+    protected Object serviceInstance;
     
-    protected JavaDispatcher(Class impl) {
-        serviceImplClass = impl;
+    protected JavaDispatcher(Class impl, Object serviceInstance){
+    	this.serviceImplClass = impl;
+    	this.serviceInstance = serviceInstance;
     }
     
     public abstract MessageContext invoke(MessageContext mc)

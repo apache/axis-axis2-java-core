@@ -16,8 +16,6 @@
  */
 package org.apache.axis2.jaxws.server;
 
-import javax.xml.ws.Provider;
-
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -26,11 +24,15 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
-import org.apache.axis2.jaxws.server.dispatcher.JavaBeanDispatcher;
-import org.apache.axis2.jaxws.server.dispatcher.ProviderDispatcher;
+import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
+import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
+import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+
 
 /**
  * The EndpointController is the server side equivalent to the
@@ -47,7 +49,6 @@ public class EndpointController {
     
     private static final Log log = LogFactory.getLog(EndpointController.class);
 	private static final String PARAM_SERVICE_CLASS = "ServiceClass";
-
     public EndpointController() {}
 
     /**
@@ -57,20 +58,22 @@ public class EndpointController {
      * be stored  
      */
     public InvocationContext invoke(InvocationContext ic) {
-            MessageContext requestMsgCtx = ic.getRequestMessageContext();
+        MessageContext requestMsgCtx = ic.getRequestMessageContext();
 
-            String implClassName = getServiceImplClassName(requestMsgCtx);
+        String implClassName = getServiceImplClassName(requestMsgCtx);
             
-            Class implClass = loadServiceImplClass(implClassName, 
-                    requestMsgCtx.getClassLoader());
+        Class implClass = loadServiceImplClass(implClassName, 
+                 requestMsgCtx.getClassLoader());
             
-            ServiceDescription serviceDesc = getServiceDescription(requestMsgCtx, implClass);
-            requestMsgCtx.setServiceDescription(serviceDesc);
+        ServiceDescription serviceDesc = getServiceDescription(requestMsgCtx, implClass);
+        requestMsgCtx.setServiceDescription(serviceDesc);
 
 		MessageContext responseMsgContext = null;
 		
 		try {
-			EndpointDispatcher dispatcher = getEndpointDispatcher(implClass);
+			EndpointLifecycleManager elm = createEndpointlifecycleManager();
+			Object serviceInstance = elm.createServiceInstance(requestMsgCtx, implClass);
+			EndpointDispatcher dispatcher = getEndpointDispatcher(implClass, serviceInstance);
             
 			responseMsgContext = dispatcher.invoke(requestMsgCtx);
         } catch (Exception e) {
@@ -87,17 +90,9 @@ public class EndpointController {
     /*
 	 * Get the appropriate EndpointDispatcher for a given service endpoint.
 	 */
-	private EndpointDispatcher getEndpointDispatcher(Class serviceImplClass) 
+	private EndpointDispatcher getEndpointDispatcher(Class serviceImplClass, Object serviceInstance) 
         throws Exception {
-        // TODO:  This check should be based on the EndpointDescription processing of annotations
-        //        It is left this way for now because some tests have an @WebService annotation on
-        //        Provider-based endpoints as a pre-existing workaround.
-        if(Provider.class.isAssignableFrom(serviceImplClass)) {
-    		return new ProviderDispatcher(serviceImplClass);
-    	}
-        else {
-            return new JavaBeanDispatcher(serviceImplClass);
-        }
+        return EndpointDispatcherFactory.createEndpointDispatcher(serviceImplClass, serviceInstance);
     }
 	
 	/*
@@ -156,4 +151,10 @@ public class EndpointController {
             return sd;
         }
     }
+    
+   private EndpointLifecycleManager createEndpointlifecycleManager(){
+	  EndpointLifecycleManagerFactory elmf =(EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
+	  return elmf.createEndpointLifecycleManager();
+   }
+  
 }

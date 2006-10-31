@@ -36,6 +36,8 @@ import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
 import org.apache.axis2.jaxws.i18n.JaxwsMessageBundleTests;
+import org.apache.axis2.jaxws.injection.ResourceInjectionTests;
+import org.apache.axis2.jaxws.lifecycle.EndpointLifecycleTests;
 import org.apache.axis2.jaxws.message.BlockTests;
 import org.apache.axis2.jaxws.message.FaultTests;
 import org.apache.axis2.jaxws.message.MessageTests;
@@ -117,6 +119,8 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(NonAnonymousComplexTypeTests.class);
         suite.addTestSuite(AddNumbersTests.class);
         suite.addTestSuite(FaultyWebServiceTests.class);
+        suite.addTestSuite(EndpointLifecycleTests.class);
+        suite.addTestSuite(ResourceInjectionTests.class);
         
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {

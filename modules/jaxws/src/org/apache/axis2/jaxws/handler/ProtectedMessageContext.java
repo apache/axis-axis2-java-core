@@ -17,10 +17,12 @@
 package org.apache.axis2.jaxws.handler;
 
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.message.Message;
 
 /**
  * The <tt>ProtectedMessageContext</tt> is the version of the MessageContext
@@ -32,7 +34,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 public class ProtectedMessageContext implements javax.xml.ws.handler.MessageContext {
     
     private MessageContext msgContext;
-
+    private Map<String, Scope> scope = new Hashtable<String, Scope>();
     public ProtectedMessageContext() {
         //do nothing
     }
@@ -42,11 +44,11 @@ public class ProtectedMessageContext implements javax.xml.ws.handler.MessageCont
     }
     
     public Scope getScope(String s) {
-        return null;
+        return scope.get(s);
     }
 
     public void setScope(String s, Scope scope) {
-        
+        this.scope.put(s, scope);
     }
     
     //--------------------------------------------------
@@ -99,5 +101,12 @@ public class ProtectedMessageContext implements javax.xml.ws.handler.MessageCont
 
     public Collection values() {
         return msgContext.getProperties().values();
+    }
+    
+    protected Message getMessageObject(){
+    	if(this.msgContext!=null){
+    		return this.msgContext.getMessage();
+    	}
+    	return null;
     }
 }

@@ -21,7 +21,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axis2.util.Utils;
 
 /**
  * A utility class for handling some of the common issues related to 

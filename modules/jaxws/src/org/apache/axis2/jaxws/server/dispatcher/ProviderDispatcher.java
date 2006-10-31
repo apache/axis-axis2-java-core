@@ -72,15 +72,15 @@ public class ProviderDispatcher extends JavaDispatcher{
     private Message message = null;
     private Protocol messageProtocol;
 
+	
 	/**
 	 * Constructor
-	 * 
 	 * @param _class
+	 * @param serviceInstance
 	 */
-	public ProviderDispatcher(Class _class) {
-		super(_class);
+	public ProviderDispatcher(Class _class, Object serviceInstance) {
+		super(_class, serviceInstance);
 	}
-    
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.server.EndpointDispatcher#execute()
      */
@@ -259,16 +259,16 @@ public class ProviderDispatcher extends JavaDispatcher{
         
         Provider provider = null;
     	if(clazz == String.class){
-    		provider = (Provider<String>) serviceImplClass.newInstance();
+    		provider = (Provider<String>) serviceInstance;
     	}
         else if(clazz == Source.class){
-    		provider = (Provider<Source>) serviceImplClass.newInstance();
+    		provider = (Provider<Source>) serviceInstance;
     	}
         else if(clazz == SOAPMessage.class){
-    		provider = (Provider<SOAPMessage>) serviceImplClass.newInstance();
+    		provider = (Provider<SOAPMessage>) serviceInstance;
     	}
         else if(clazz == JAXBContext.class){
-    		provider = (Provider<JAXBContext>) serviceImplClass.newInstance();
+    		provider = (Provider<JAXBContext>) serviceInstance;
     	}
     	
         if (provider == null) {
