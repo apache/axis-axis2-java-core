@@ -26,7 +26,7 @@
             <ant:fileset dir="plugin/icons"/>
         </ant:copy>
         <ant:copy todir="target/plugin/axis2-idea-plugin/META-INF">
-            <ant:fileset dir="META-INF"/>
+            <ant:fileset dir="plugin/META-INF"/>
         </ant:copy>
 
 
