@@ -50,6 +50,13 @@ public class AntCodegenTask extends Task {
     private boolean unpackClasses = false;
     private boolean serverSideInterface  = false;
 
+    private String repositoryPath = null;
+    private String externalMapping = null;
+    private String wsdlVersion = null;
+    private String targetSourceFolderLocation = null;
+    private String targetResourcesFolderLocation = null;
+    private boolean unwrap = false;
+
     private String namespaceToPackages = null;
 
     private Path classpath;
@@ -116,6 +123,61 @@ public class AntCodegenTask extends Task {
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                         getStringArray(wsdlFileName)));
+        
+        //WSDL version
+        if (wsdlVersion != null) {
+        optionMap.put(
+                CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
+                        getStringArray(wsdlVersion)));
+        }
+
+        // repository path
+        if (repositoryPath != null) {
+        optionMap.put(
+                CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
+                        getStringArray(repositoryPath)));
+        }
+
+        // external mapping
+        if (externalMapping != null) {
+        optionMap.put(
+                CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
+                        getStringArray(externalMapping)));
+        }
+
+        // target source folder location
+        if (targetSourceFolderLocation != null) {
+        optionMap.put(
+                CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                        getStringArray(targetSourceFolderLocation)));
+        }
+
+        // target source folder location
+        if (targetResourcesFolderLocation != null) {
+        optionMap.put(
+                CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
+                        getStringArray(targetResourcesFolderLocation)));
+        }
+
+        // target source folder location
+        if (unwrap) {
+        optionMap.put(
+                CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                        new String[0]));
+        }
+
         //output location
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
@@ -327,6 +389,30 @@ public class AntCodegenTask extends Task {
 
     public void setGenerateServiceXml(boolean generateServiceXml) {
         this.generateServiceXml = generateServiceXml;
+    }
+
+    public void setRepositoryPath(String repositoryPath) {
+        this.repositoryPath = repositoryPath;
+    }
+
+    public void setExternalMapping(String externalMapping) {
+        this.externalMapping = externalMapping;
+    }
+
+    public void setWsdlVersion(String wsdlVersion) {
+        this.wsdlVersion = wsdlVersion;
+    }
+
+    public void setTargetSourceFolderLocation(String targetSourceFolderLocation) {
+        this.targetSourceFolderLocation = targetSourceFolderLocation;
+    }
+
+    public void setTargetResourcesFolderLocation(String targetResourcesFolderLocation) {
+        this.targetResourcesFolderLocation = targetResourcesFolderLocation;
+    }
+
+    public void setUnwrap(boolean unwrap) {
+        this.unwrap = unwrap;
     }
 
     /**
