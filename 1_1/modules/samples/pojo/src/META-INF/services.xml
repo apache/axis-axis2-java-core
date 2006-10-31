@@ -1,6 +1,6 @@
 <service name="AddressBookService" scope="application">
     <description>
-        This is sample service 2
+        POJO: AddressBook Service
     </description>
     <messageReceivers>
         <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only"
