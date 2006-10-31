@@ -694,9 +694,9 @@
 
         <!--********************** creating the samples ********************** -->
         <!-- TODO :Copy the samples.. after samples module refactoring -->
-        <ant:copy todir="${std.bin.temp.dir}/samples">
+        <!--ant:copy todir="${std.bin.temp.dir}/samples">
             <ant:fileset dir="modules/samples/target/samples"/>
-        </ant:copy>
+        </ant:copy-->
         <!--ant:copy todir="${std.bin.temp.dir}/samples/userguide">
             <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
         </ant:copy-->
