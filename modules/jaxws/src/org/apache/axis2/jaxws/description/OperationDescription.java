@@ -112,6 +112,7 @@ public class OperationDescription {
     private Method seiMethod;
     private MethodDescriptionComposite methodComposite;
     private ParameterDescription[] parameterDescriptions;
+    private FaultDescription[] faultDescriptions;
 
     // ===========================================
     // ANNOTATION related information
@@ -160,8 +161,6 @@ public class OperationDescription {
     private Boolean             webMethodExclude;
     
     // ANNOTATION: @WebParam
-    // TODO: Should WebParam annotation be moved to the ParameterDescription?
-    private WebParam[]          webParamAnnotations;
     private String[]            webParamNames;
     private Mode[]				webParamMode;
     private String[]            webParamTargetNamespace;
@@ -177,11 +176,6 @@ public class OperationDescription {
     // Default value per JSR-181 MR sec 4.5, pg 24
     public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
     private Boolean             webResultHeader;
-
-    // ANNOTATION @WebFault
-    private WebFault[]          webFaultAnnotations;
-    private String[]            webFaultNames;
-    private String[]            webExceptionNames;  // the fully-qualified names of declared exceptions with WebFault annotations
 
     OperationDescription(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
@@ -254,6 +248,7 @@ public class OperationDescription {
 			*/
 
 			parameterDescriptions = createParameterDescriptions();
+            faultDescriptions = createFaultDescriptions();
 			
 			//TODO: Need to process the other annotations that can exist, on the server side
 			//      and at the method level.
@@ -282,6 +277,7 @@ public class OperationDescription {
             seiMethod = method;
             webMethodAnnotation = seiMethod.getAnnotation(WebMethod.class);
             parameterDescriptions = createParameterDescriptions();
+            faultDescriptions = createFaultDescriptions();
         }
     }
 
@@ -387,6 +383,27 @@ public class OperationDescription {
   	
     }
 
+    private FaultDescription[] createFaultDescriptions() {
+        
+        ArrayList<FaultDescription> buildFaultList = new ArrayList<FaultDescription>();
+        
+        if (!isDBC()) {
+            // get exceptions this method "throws"
+            Class[] webFaultClasses = seiMethod.getExceptionTypes();
+
+            for(Class wfClass:webFaultClasses) {
+                for (Annotation anno:wfClass.getAnnotations()) {
+                    if (anno.annotationType() == WebFault.class) {
+                        buildFaultList.add(new FaultDescription(wfClass.getCanonicalName(), ((WebFault)anno).faultBean(), (WebFault)anno, this));
+                    }
+                }
+            }
+        } else {
+            // TODO do I care about methodComposite like the paramDescription does?
+        }
+        return buildFaultList.toArray(new FaultDescription[0]);
+    }
+    
     // =====================================
     // ANNOTATION: WebMethod
     // =====================================
@@ -665,75 +682,27 @@ public class OperationDescription {
      *  several types of exceptions it throws
      *  
      */
-    private WebFault[] getWebResponseFaults() {
-        if (webFaultAnnotations == null) {
-        	Class[] webFaultClasses = seiMethod.getExceptionTypes();
-
-        	ArrayList<WebFault> webFaultList = new ArrayList<WebFault>();
-            for(Class wfClass:webFaultClasses) {
-            	for (Annotation anno:wfClass.getAnnotations()) {
-            		if (anno.annotationType() == WebFault.class) {
-            			webFaultList.add((WebFault)anno);
-            		}
-            	}
-            }
-            webFaultAnnotations = webFaultList.toArray(new WebFault[0]);
-        }
-        return webFaultAnnotations;
-    }
-
-    /*
-     * TODO:  also will need revisited upon the re-working of getResponseFaults()
-     */
-    private String[] getWebFaultClassNames() {
-        if (webFaultNames == null) {
-        	// get exceptions this method "throws"
-        	Class[] webFaultClasses = seiMethod.getExceptionTypes();
-
-        	ArrayList<String> webFaultList = new ArrayList<String>();
-            for(Class wfClass:webFaultClasses) {
-            	for (Annotation anno:wfClass.getAnnotations()) {
-            		if (anno.annotationType() == WebFault.class) {
-            			webFaultList.add(((WebFault)anno).faultBean());
-            		}
-            	}
-            }
-            webFaultNames = webFaultList.toArray(new String[0]);
-        }
-        return webFaultNames;
+    
+    public FaultDescription[] getFaultDescriptions() {
+        return faultDescriptions;
     }
     
-    /*
-     * TODO:  also will need revisited upon the re-working of getResponseFaults()
-     */
-    private String[] getWebExceptionClassNames() {
-        if (webExceptionNames == null) {
-        	// get exceptions this method "throws"
-        	Class[] webFaultClasses = seiMethod.getExceptionTypes();
-
-        	ArrayList<String> webFaultList = new ArrayList<String>();
-            for(Class wfClass:webFaultClasses) {
-            	for (Annotation anno:wfClass.getAnnotations()) {
-            		if (anno.annotationType() == WebFault.class) {
-            			webFaultList.add(wfClass.getCanonicalName());
-            		}
-            	}
-            }
-            webExceptionNames = webFaultList.toArray(new String[0]);
+    public FaultDescription resolveFaultByFaultBeanName(String faultBeanName) {
+        for(FaultDescription fd: faultDescriptions) {
+            if (faultBeanName.equals(fd.getBeanName()))
+                return fd;
         }
-        return webExceptionNames;
+        return null;
     }
     
-    public String getWebFaultClassName() {
-    	// TODO will need to pass in the exception class to compare with the names???
-    	return getWebFaultClassNames().length== 0 ? null:getWebFaultClassNames()[0];
+    public FaultDescription resolveFaultByExceptionName(String exceptionClassName) {
+        for(FaultDescription fd: faultDescriptions) {
+            if (exceptionClassName.equals(fd.getExceptionClassName()))
+                return fd;
+        }
+        return null;
     }
     
-    public String getWebExceptionClassName() {
-    	// TODO will need to pass in the fault detail child element name (as a string) to
-    	// compare with the WebFault of the declared exceptions
-    	return getWebExceptionClassNames().length== 0 ? null:getWebExceptionClassNames()[0];
-    }
     // ===========================================
     // ANNOTATION: WebParam
     // ===========================================
