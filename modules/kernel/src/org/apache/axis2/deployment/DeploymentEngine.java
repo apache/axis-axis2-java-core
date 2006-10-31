@@ -16,6 +16,7 @@
 
 
 package org.apache.axis2.deployment;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -28,13 +29,7 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -44,15 +39,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -61,6 +48,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 public class DeploymentEngine implements DeploymentConstants {
 
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
@@ -145,7 +133,7 @@ public class DeploymentEngine implements DeploymentConstants {
     public void loadServicesFromUrl(URL repoURL) {
         try {
             String path = servicesPath == null ? DeploymentConstants.SERVICE_PATH : servicesPath;
-            if(!path.endsWith("/")) {
+            if (!path.endsWith("/")) {
                 path = path + "/";
             }
             URL servicesDir = new URL(repoURL, path);
@@ -173,9 +161,9 @@ public class DeploymentEngine implements DeploymentConstants {
     public void loadRepositoryFromURL(URL repoURL) throws DeploymentException {
         try {
             String path = modulesPath == null ? DeploymentConstants.MODULE_PATH : modulesPath;
-            if(!path.endsWith("/")) {
+            if (!path.endsWith("/")) {
                 path = path + "/";
-            }            
+            }
             URL moduleDir = new URL(repoURL, path);
             URL filelisturl = new URL(moduleDir, "modules.list");
             ArrayList files = getFileList(filelisturl);
@@ -634,6 +622,19 @@ public class DeploymentEngine implements DeploymentConstants {
                                 PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
                                 e.printStackTrace(error_ptintWriter);
                                 moduleStatus = "Error:\n" + errorWriter.toString();
+                            } catch (Throwable t) {
+                                if (log.isInfoEnabled()) {
+                                    StringWriter sw = new StringWriter();
+                                    PrintWriter pw = new PrintWriter(sw);
+                                    t.printStackTrace(pw);
+                                    log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
+                                            currentArchiveFile.getName(),
+                                            t.getMessage()),
+                                            t);
+                                }
+                                PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
+                                t.printStackTrace(error_ptintWriter);
+                                moduleStatus = "Error:\n" + errorWriter.toString();
                             } finally {
                                 if (moduleStatus.startsWith("Error:")) {
                                     axisConfig.getFaultyModules().put(
@@ -886,7 +887,7 @@ public class DeploymentEngine implements DeploymentConstants {
         File repository = new File(repositoryName);
         if (servicesPath != null) {
             servicesDir = new File(servicesPath);
-            if(!servicesDir.exists()) {
+            if (!servicesDir.exists()) {
                 servicesDir = new File(repository, servicesPath);
             }
         } else {
@@ -897,7 +898,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
         if (modulesPath != null) {
             modulesDir = new File(modulesPath);
-            if(!modulesDir.exists()) {
+            if (!modulesDir.exists()) {
                 modulesDir = new File(repository, modulesPath);
             }
         } else {
@@ -930,7 +931,7 @@ public class DeploymentEngine implements DeploymentConstants {
             String line;
             while ((line = input.readLine()) != null) {
                 line = line.trim();
-                if(line.length() > 0) {
+                if (line.length() > 0) {
                     fileList.add(line);
                 }
             }

@@ -451,6 +451,17 @@ public class Java2OMBuilder implements Java2WSDLConstants {
     }
 
     private void addExtensionElement(OMFactory fac, OMElement element, OMNamespace namespace,
+                                     String name, String att1Name, String att1Value, String att2Name,
+                                     String att2Value , String att3Name,
+                                     String att3Value) {
+        OMElement soapbinding = fac.createOMElement(name, namespace);
+        element.addChild(soapbinding);
+        soapbinding.addAttribute(att1Name, att1Value, null);
+        soapbinding.addAttribute(att2Name, att2Value, null);
+        soapbinding.addAttribute(att3Name, att3Value, null);
+    }
+
+    private void addExtensionElement(OMFactory fac, OMElement element, OMNamespace namespace,
                                      String name, String att1Name, String att1Value) {
         OMElement soapbinding = fac.createOMElement(name, namespace);
         element.addChild(soapbinding);
