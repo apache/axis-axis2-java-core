@@ -53,9 +53,9 @@ public class Java2OMBuilder implements Java2WSDLConstants {
     private String targetNamespace;
 
     private String targetNamespacePrefix;
-    
+
     private String schemaTargetNamespace = null;
-    
+
     private String schemaTargetNamespacePrefix = null;
 
     private OMNamespace soap;
@@ -186,7 +186,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 namespaceURI = messagePartType.getNamespaceURI();
                 // avoid duplicate namespaces
                 if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
-                        (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null ) {    
+                        (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
@@ -207,7 +207,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     + RESPONSE)) != null) {
                 namespaceURI = messagePartType.getNamespaceURI();
                 if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
-                        (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null ) {  
+                        (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
                     namespacePrefix = generatePrefix();
                     namespaceMap.put(namespaceURI, namespacePrefix);
                 }
@@ -232,7 +232,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                 if ((messagePartType = typeTable.getComplexSchemaType(jmethod.getSimpleName() + "Fault")) != null) {
                     namespaceURI = messagePartType.getNamespaceURI();
                     if ((namespacePrefix = (String) messagePartType.getPrefix()) == null &&
-                            (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null ) {  
+                            (namespacePrefix = (String) namespaceMap.get(namespaceURI)) == null) {
                         namespacePrefix = generatePrefix();
                         namespaceMap.put(namespaceURI, namespacePrefix);
                     }
@@ -386,6 +386,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
             if (jmethod.getExceptionTypes().length > 0) {
 
                 OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
+                fault.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName() + "Fault", null);
                 addExtensionElement(fac, fault, soap, SOAP_BODY, SOAP_USE, use,
                         "namespace", targetNamespace);
                 operation.addChild(fault);
@@ -431,9 +432,10 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                         "namespace", targetNamespace);
                 operation.addChild(output);
             }
-             if (jmethod.getExceptionTypes().length > 0) {
+            if (jmethod.getExceptionTypes().length > 0) {
 
                 OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
+                fault.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName() + "Fault", null);
                 addExtensionElement(fac, fault, soap12, SOAP_BODY, SOAP_USE, use,
                         "namespace", targetNamespace);
                 operation.addChild(fault);
@@ -452,7 +454,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
     private void addExtensionElement(OMFactory fac, OMElement element, OMNamespace namespace,
                                      String name, String att1Name, String att1Value, String att2Name,
-                                     String att2Value , String att3Name,
+                                     String att2Value, String att3Name,
                                      String att3Value) {
         OMElement soapbinding = fac.createOMElement(name, namespace);
         element.addChild(soapbinding);
