@@ -23,13 +23,14 @@ Axis2 modules:
 11. saaj
 12. spring
 13. tool
+14. jaxbri
 
-The samples directory contains all the Axis2 module & service samples.
+One can use maven 1.x to create the standard binary distribution out of this, 
+by typing "$maven dist-bin".
 
-One can use maven 1.x to create the standard binary distribution out of this, by typing "$maven dist-bin".
-
-(Please note that this does not include the other WS-* implementation modules, like WS-Security, that are being developed
- within Axis2. Those can be downloaded from http://ws.apache.org/axis2/modules/)
+(Please note that this does not include the other WS-* implementation modules, 
+like WS-Security, that are being developed within Axis2. Those can be downloaded
+ from http://ws.apache.org/axis2/modules/)
  
 
 
