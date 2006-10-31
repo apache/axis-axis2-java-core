@@ -7,10 +7,10 @@
 <body>
 <h1>Axis2 Release Notes - Draft</h1>
 
-<h3>October 9th, 2006</h3>
+<h3>October 31st, 2006</h3>
 
 <p>After nearly two years of development, we are very proud to announce the
-release of Apache Axis2 1.1</p>
+release of Apache Axis2 1.1-RC2</p>
 
 <p><a href="http://ws.apache.org/axis2">http://ws.apache.org/axis2</a></p>
 
@@ -22,7 +22,7 @@ Apache Axis SOAP stack to build on the lessons learnt from Apache Axis.</p>
 the older version. It is carefully designed to support the easy addition of
  plug-in "modules" that extend its functionality for features such as security and reliability.</p> 
 
-<p>A module supporting WS-Security (Apache Rampart), a module supporting WS-Reliable Messaging (Apache Sandesha) and a module supporting WS-Eventing (Savan) will be available after the Axis2 1.1 release.</p-->
+<p>A module supporting WS-Security (Apache Rampart), a module supporting WS-Reliable Messaging (Apache Sandesha) and a module supporting WS-Eventing (Savan) will be available soon after the Axis2 1.1 release.</p-->
 
 <p>Apache Axis2 not only supports SOAP 1.1 and SOAP 1.2, but it also has
 integrated support for the widely popular REST style of Web services: the
@@ -75,15 +75,16 @@ XML object model.</p>
   <li>Axis Data Binding (ADB)</li>
   <li>XMLBeans</li>
   <li>JibX</li>
-  <!--li>JaxMe</li-->
+  <li>JaxMe (Experimental)</li>
+  <li>JaxBRI (Experimental)</li>
 </ul>
 
 <h3>Tools</h3>
 <ul>
   <li>WSDL2Java: Generate Java stubs and skeletons from a WSDL document.</li>
   <li>Java2WSDL: Generate a WSDL document from a Java class.</li>
-  <li>Eclipse Plugin</li>
-  <!--li>Intellij Idea Plugins</li-->
+  <li>Eclipse Plugins</li>
+  <li>Intellij Idea Plugins</li>
   <li>Web application for administering Apache Axis2</li>
 </ul>
 
@@ -94,38 +95,22 @@ XML object model.</p>
 </ul>
 (Apache Axis2 comes built in with a module that supports WS-Addressing.)
 
-<!--h2>Known Issues and Limitations</h2>
+<h3>What's new in Axis2 1.1</h3>
 <ul>
-  <li>Recursive schemas (A includes B which includes A) may cause
-  problems</li>
-  <li>JaxMe data binding support is experimental</li>
-  <li>Axis2-595: Hot redeployment in Apache Tomcat has problems</li>
-  <li>Axis2-666: AddressingSubmissionInHandler does not deserialize EPR
-    extensibility attributes and elements</li>
-  <li>AXIS2-667: Operation dispatch based on message body has a known
-  issue</li>
-  <li>Axis Data Binding (ADB) does not cover all of XML Schema; its an 80-20
-    design point. Unsupported XML Schema features include: 
-    <ol>
-      <li>Simple content extension and restriction</li>
-      <li>Complex content restriction</li>
-      
-    </ol>
-    
-  </li>
-  <li>ADB does not support xsi:type based deserialization at runtime</li>
-  <li>No support yet for unwrapping of doc/lit WSDL files (in stub
-  generation)</li>
+  <li>Better ADB support</li>
+  <li>Complete SOAP with Attachments support +Attachments API </li>
+  <li>Spring Support</li>
+  <li>Better JMS Support</li>
+  <li>New Distribution structure and new samples</li>
+  <li>Numerous bug fixes</li>
+</ul>
+
+<h3>Known Issues and Limitations</h3>
+<ul>
+  <li>Idea plugin shows ramdom bahavior when XMLBeans is used </li>
   <li>No support yet for rpc/encoded style WSDL documents (in stub
   generation)</li>
 </ul>
-<h3>What's new in this release :  TODO</h3>
-<ul>
-  <li>Spring support</li>
-  <li>Complete SOAP with Attachments support</li>
-  <li>Many improvements to ADB</li>
-  <li>Numerous bug fixes</li>
-</ul-->
 
 <p>Thank you for your interest in Axis2.</p>
 <strong><em>-The Axis2 Development Team</em></strong></body>
