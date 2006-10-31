@@ -19,13 +19,22 @@ The lib directory contains;
 8. axis2-tools-@axisVersion@.jar
 9. axis2-xmlbeans-@axisVersion@.jar
 10. axis2-saaj-@axisVersion@.jar
+11. axis2-soapmonitor-1.1-RC2.jar
 
-5. All 3rd party distributable dependencies of the above jars
+and all 3rd party distributable dependencies of the above jars.
 
 The repository/modules directory contains the deployable addressing
-module (addressing-@axisVersion@.mar)
+module.
 
-The samples directory contains all the Axis2 samples which demonstrates some of the key features of Axis2.
+The webapp folder contains a ant build script to generate the axis2.war 
+out of this distribution. (need Ant 1.6.5)
 
-(Please note that this release does not include the other WS-* implementation modules, like WS-Security, that are being developed
- within Axis2. Those can be downloaded from http://ws.apache.org/axis2/modules/)
+The samples directory contains all the Axis2 samples which demonstrates 
+some of the key features of Axis2.
+
+The bin directory contains a set of usefull scripts for the users.
+
+(Please note that this release does not include the other WS-* 
+implementation modules, like WS-Security, that are being developed
+within Axis2. Those can be downloaded from 
+http://ws.apache.org/axis2/modules/)
