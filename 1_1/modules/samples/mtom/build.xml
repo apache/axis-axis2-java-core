@@ -48,11 +48,7 @@
 			<classpath refid="class.path" />
 		</java>
 		<copy file="${skeleton.path}" tofile="${service.dir}/${skeleton.path}" overwrite="true" />
-		<exec executable="ant">
-			<arg value="-f"/>
-			<arg value="${service.dir}/build.xml"/>
-			<env key="AXIS2_HOME" value="../../../../"/>
-		</exec>
+		<ant dir="${service.dir}" />
 		<copy file="${service.dir}/build/lib/MTOMSample.aar" tofile="${service.dir}/MTOMSample.aar" overwrite="true" />
 		<copy file="${service.dir}/MTOMSample.aar" tofile="../../repository/services/sample-mtom.aar" overwrite="true" />
 	</target>

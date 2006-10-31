@@ -9,6 +9,8 @@ AXIS2. In this sample the user can send a file to the service.
 
 Running the Sample:
 -------------------
+1. Please make sure to set the AXIS2_HOME environment variable to point to the 
+AXIS2_DIST.
 1. Use <ant service> command in the AXIS2_DIST/sample/mtom/ to build the service.
 2. Generated service gets copied to the AXIS2_DIST/repository/services automatically.
 Run the AXIS2_DIST/bin/axis2server.{sh.bat} to start the standalone axis2 server. 
