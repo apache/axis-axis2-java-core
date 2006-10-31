@@ -458,6 +458,53 @@ public class Utils {
         }
     }
 
+    /**
+     * Normalize a uri containing ../ and ./ paths.
+     *
+     * @param uri The uri path to normalize
+     * @return The normalized uri
+     */
+    public static String normalize(String uri) {
+        if ("".equals(uri)) {
+            return uri;
+        }
+        int leadingSlashes = 0;
+        for (leadingSlashes = 0 ; leadingSlashes < uri.length()
+                && uri.charAt(leadingSlashes) == '/' ; ++leadingSlashes) {}
+        boolean isDir = (uri.charAt(uri.length() - 1) == '/');
+        StringTokenizer st = new StringTokenizer(uri, "/");
+        LinkedList clean = new LinkedList();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if ("..".equals(token)) {
+                if (! clean.isEmpty() && ! "..".equals(clean.getLast())) {
+                    clean.removeLast();
+                    if (! st.hasMoreTokens()) {
+                        isDir = true;
+                    }
+                } else {
+                    clean.add("..");
+                }
+            } else if (! ".".equals(token) && ! "".equals(token)) {
+                clean.add(token);
+            }
+        }
+        StringBuffer sb = new StringBuffer();
+        while (leadingSlashes-- > 0) {
+            sb.append('/');
+        }
+        for (Iterator it = clean.iterator() ; it.hasNext() ; ) {
+            sb.append(it.next());
+            if (it.hasNext()) {
+                sb.append('/');
+            }
+        }
+        if (isDir && sb.length() > 0 && sb.charAt(sb.length() - 1) != '/') {
+            sb.append('/');
+        }
+        return sb.toString();
+    }
+
     public static String getPath(String parent, String childPath) {
         Stack parentStack = new Stack();
         Stack childStack = new Stack();

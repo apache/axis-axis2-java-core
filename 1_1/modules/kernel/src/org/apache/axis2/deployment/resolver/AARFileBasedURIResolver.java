@@ -82,6 +82,7 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
                 if (baseUri != null && baseUri.length() > 0) {
                     schemaLocation = Utils.getPath(baseUri, schemaLocation);
                 }
+                schemaLocation = Utils.normalize(schemaLocation);
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName().toLowerCase();
                     searchingStr = (DeploymentConstants.META_INF + "/" + schemaLocation).toLowerCase();
