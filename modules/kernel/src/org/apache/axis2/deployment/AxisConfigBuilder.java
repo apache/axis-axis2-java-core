@@ -38,7 +38,12 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+
 import java.io.InputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -329,9 +334,17 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 OMAttribute trsClas = transport.getAttribute(new QName(TAG_CLASS_NAME));
                 if (trsClas != null) {
                     try {
-                        String clasName = trsClas.getAttributeValue();
+                        final String clasName = trsClas.getAttributeValue();
                         Class receiverClass;
-                        receiverClass = Loader.loadClass(clasName); 
+                        try {
+                             receiverClass = (Class) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                        		public Object run() throws ClassNotFoundException {
+                        			return Loader.loadClass(clasName);	
+                        		}
+                        	});  
+                        } catch (PrivilegedActionException e) {
+                            throw (ClassNotFoundException)e.getException();
+                        }
 
                         TransportListener receiver =
                                 (TransportListener) receiverClass.newInstance();

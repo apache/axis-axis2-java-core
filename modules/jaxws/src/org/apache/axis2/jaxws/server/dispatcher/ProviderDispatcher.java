@@ -19,6 +19,8 @@ package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import javax.activation.DataSource;
 import javax.xml.bind.JAXBContext;
@@ -150,7 +152,11 @@ public class ProviderDispatcher extends JavaDispatcher{
         // Invoke the actual Provider.invoke() method
         Object responseParamValue = null;
         try {
-            responseParamValue = providerInstance.invoke(input);
+            responseParamValue = (Object) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
+            	public Object run() {
+            		return providerInstance.invoke(input);
+            	}
+            });
         } catch (Exception e) {
             e.printStackTrace();
             throw ExceptionFactory.makeWebServiceException(e);
