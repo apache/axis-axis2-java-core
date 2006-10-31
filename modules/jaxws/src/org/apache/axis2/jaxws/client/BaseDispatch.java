@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.client;
 
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
@@ -35,11 +36,13 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.handler.PortData;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -134,6 +137,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
         
         Object returnObj = getValueFromMessage(responseMsg);
         
+        //Check to see if we need to maintain session state
+        if (requestMsgCtx.isMaintainSession()) {
+            //TODO: Need to figure out a cleaner way to make this call. 
+            setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
+        }
+        
         if (log.isDebugEnabled()) {
             log.debug("Synchronous invocation completed: BaseDispatch.invoke()");
         }
@@ -171,6 +180,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
        
         // Send the request using the InvocationController
         ic.invokeOneWay(invocationContext);
+        
+        //Check to see if we need to maintain session state
+        if (requestMsgCtx.isMaintainSession()) {
+            //TODO: Need to figure out a cleaner way to make this call. 
+            setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
+        }
        
         if (log.isDebugEnabled()) {
             log.debug("One-way invocation completed: BaseDispatch.invokeOneWay()");
@@ -220,6 +235,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
         
         // Send the request using the InvocationController
         Future<?> asyncResponse = ic.invokeAsync(invocationContext, asynchandler);
+        
+        //Check to see if we need to maintain session state
+        if (requestMsgCtx.isMaintainSession()) {
+            //TODO: Need to figure out a cleaner way to make this call. 
+            setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
+        }
         
         if (log.isDebugEnabled()) {
             log.debug("Asynchronous (callback) invocation sent: BaseDispatch.invokeAsync()");

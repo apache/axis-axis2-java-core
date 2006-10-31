@@ -1,24 +1,27 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.jaxws.client.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.jws.soap.SOAPBinding;
@@ -48,10 +51,9 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-// import com.sun.xml.bind.v2.runtime.reflect.Lister;
 
 /**
  * ProxyHandler is the java.lang.reflect.InvocationHandler implementation.
@@ -188,6 +190,12 @@ public class JAXWSProxyHandler extends BindingProvider implements
 				log.debug("OneWay Call");
 			}
 			controller.invokeOneWay(requestIC);
+			
+            //Check to see if we need to maintain session state
+            if (requestContext.isMaintainSession()) {
+                //TODO: Need to figure out a cleaner way to make this call. 
+                setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
+            }
 		}
 		
 		if(method.getReturnType().isAssignableFrom(Future.class)){
@@ -208,7 +216,16 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			AsyncListener listener = createProxyListener(args);
 			requestIC.setAsyncListener(listener);
 			requestIC.setExecutor(delegate.getExecutor());
-			return controller.invokeAsync(requestIC, asyncHandler);
+				        
+	        Future<?> future = controller.invokeAsync(requestIC, asyncHandler);
+	        
+            //Check to see if we need to maintain session state
+            if (requestContext.isMaintainSession()) {
+                //TODO: Need to figure out a cleaner way to make this call. 
+                setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
+            }
+	        
+	        return future;
 		}
 		
 		if(method.getReturnType().isAssignableFrom(Response.class)){
@@ -218,12 +235,27 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			AsyncListener listener = createProxyListener(args);
 			requestIC.setAsyncListener(listener);
 			requestIC.setExecutor(delegate.getExecutor());
-			return controller.invokeAsync(requestIC);
+	        
+			Response response = controller.invokeAsync(requestIC);
+			
+            //Check to see if we need to maintain session state
+            if (requestContext.isMaintainSession()) {
+                //TODO: Need to figure out a cleaner way to make this call. 
+                setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
+            }
+	        
+	        return response;
 		}
 		
 		if(!operationDesc.isOneWay()){
 			InvocationContext responseIC = controller.invoke(requestIC);
 		
+            //Check to see if we need to maintain session state
+            if (requestContext.isMaintainSession()) {
+                //TODO: Need to figure out a cleaner way to make this call. 
+                setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
+            }
+	        
 			MessageContext responseContext = responseIC.getResponseMessageContext();
 			Object responseObj = createResponse(method, args, responseContext);
 			return responseObj;

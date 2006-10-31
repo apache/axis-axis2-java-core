@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axis2.description.AxisService;
@@ -128,5 +129,20 @@ public class MessageContext {
             return svc.getClassLoader();
         else
             return null;
+    }
+    
+    /**
+     * Used to determine whether or not session state has been enabled.
+     * @return
+     */
+    public boolean isMaintainSession(){
+        boolean maintainSession = false;
+        
+        Boolean value = (Boolean) properties.get(BindingProvider.SESSION_MAINTAIN_PROPERTY);
+        if(value != null && value.booleanValue()){
+            maintainSession = true;
+        }
+
+        return maintainSession;
     }
 }

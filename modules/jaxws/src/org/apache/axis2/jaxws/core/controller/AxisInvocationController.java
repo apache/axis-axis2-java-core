@@ -1,39 +1,36 @@
 /*
- * Copyright 2006 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.jaxws.core.controller;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.addressing.EndpointReference;
@@ -54,10 +51,8 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
-import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -479,6 +474,11 @@ public class AxisInvocationController extends InvocationController {
         Message msg = mc.getMessage();
         if (msg.isMTOMEnabled()) {
             ops.setProperty(Configuration.ENABLE_MTOM, "true");
+        }
+        
+        // Enable session management
+        if(mc.isMaintainSession()){
+            ops.setManageSession(true);
         }
         
         // Check to see if BASIC_AUTH is enabled.  If so, make sure
