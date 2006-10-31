@@ -20,6 +20,7 @@
 				<include name="sample/soapwithattachments/service/**/*.class" />
 			</fileset>
 		</jar>
+		<copy file="${build.dir}/swaSample.aar" tofile="${axis2.home}/repository/services/sample-swa.aar" overwrite="true" />
 	</target>
 
 	<target name="compile">
@@ -52,9 +53,9 @@
 		</jar>
 		<java classname="sample.soapwithattachments.client.SWAClient" classpathref="axis.classpath" fork="true">
 			<arg value="-file" />
-						<arg value="${file}" />
-						<arg value="-dest" />
-						<arg value="${dest}" />
+			<arg value="${file}" />
+			<arg value="-dest" />
+			<arg value="${dest}" />
 			<jvmarg value="-Daxis2.repo=${axis2.repo}" />
 		</java>
 	</target>
