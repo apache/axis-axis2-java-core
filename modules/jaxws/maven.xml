@@ -149,7 +149,7 @@
         <!--</j:if>-->
     </preGoal>
     
-	<preGoal name="test:test">
+	<postGoal name="test:compile">
 		<ant:copy toDir="target/test-classes/services/EchoService/">
 			<ant:fileset dir="target/test-classes">
 				<ant:include name="server/**"/>
@@ -376,7 +376,7 @@
 			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>
-	</preGoal>
+	</postGoal>
 
     <!-- Create the API and Impl jars --> 
     <postGoal name="jar">
