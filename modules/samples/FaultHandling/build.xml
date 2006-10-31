@@ -1,10 +1,10 @@
-<project basedir="." default="generate.all">
+<project basedir="." default="service">
 
     <property environment="env"/>
 
     <property name="wsdl.uri" value="bank.wsdl"/>
-    <property name="service.target" value="target/service"/>
-    <property name="client.target" value="target/client"/>
+    <property name="service.target" value="build/service"/>
+    <property name="client.target" value="build/client"/>
 
     <!-- Build the service, then the client. -->
     <target name="jar">
@@ -12,11 +12,15 @@
         <ant dir="client"/>
     </target>
 
-    <target name="client">
+    <target name="service" depends="generate.service">
+	<copy file="${service.target}/BankService.aar" tofile="../../repository/services/sample-faulthandling.aar" overwrite="true" /> 
+    </target>
+
+    <target name="client" depends="gen.stub">
         <java classname="example.BankClient" fork="true">
             <arg line="${url} ${account} ${amt}"/>
             <classpath>
-                <pathelement location="BankService-test-client.jar"/>
+                <pathelement location="${client.target}/BankService-test-client.jar"/>
                 <fileset dir="../../lib">
                     <include name="*.jar"/>
                 </fileset>
@@ -68,7 +72,7 @@
                 <include name="*.xsd"/>
             </fileset>
         </copy>
-        <jar destfile="BankService.aar">
+        <jar destfile="${service.target}/BankService.aar">
             <fileset excludes="**/Test.class" dir="${service.target}/classes"/>
         </jar>
 
@@ -103,7 +107,7 @@
         </javac>
 
         <!--jar the compiled stuff-->
-        <jar destfile="BankService-test-client.jar">
+        <jar destfile="${client.target}/BankService-test-client.jar">
             <fileset dir="${client.target}/classes">
                 <exclude name="**/META-INF/*.*"/>
                 <exclude name="**/lib/*.*"/>
@@ -113,5 +117,7 @@
         </jar>
     </target>
 
-
+     <target name="clean">
+	<delete dir="build" />
+     </target>
 </project>
