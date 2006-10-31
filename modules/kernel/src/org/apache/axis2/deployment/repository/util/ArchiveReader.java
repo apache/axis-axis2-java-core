@@ -199,7 +199,11 @@ public class ArchiveReader implements DeploymentConstants {
             }
             return axisServiceBuilder.populateService();
         } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault);
+            log.info("Trouble processing wsdl file :" + axisFault.getMessage());
+            if(log.isDebugEnabled()) {
+                log.debug(axisFault);
+            }
+            return null;
         }
     }
 
@@ -285,10 +289,10 @@ public class ArchiveReader implements DeploymentConstants {
                                 new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
                             AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, serviceFile, true, new ByteArrayInputStream(out.toByteArray()));
-                            servicesMap.put(service.getName(), service);
+                            if(service != null) {
+                                servicesMap.put(service.getName(), service);
+                            }
                         }
-
-
                     }
                 }
                 try {
@@ -349,7 +353,9 @@ public class ArchiveReader implements DeploymentConstants {
                     } catch (IOException e) {
                         log.info(e);
                     }
-                    servicesMap.put(service.getName(), service);
+                    if(service != null) {
+                        servicesMap.put(service.getName(), service);
+                    }
                 }
 
                 try {

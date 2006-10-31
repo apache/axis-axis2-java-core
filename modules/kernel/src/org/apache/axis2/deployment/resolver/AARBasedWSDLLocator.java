@@ -78,6 +78,7 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
                 if (parentLocation != null && parentLocation.length() > 0) {
                     importLocation = Utils.getPath(parentLocation, importLocation);
                 }
+                importLocation = Utils.normalize(importLocation);
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName().toLowerCase();
                     searchingStr = (DeploymentConstants.META_INF + "/" + importLocation).toLowerCase();
