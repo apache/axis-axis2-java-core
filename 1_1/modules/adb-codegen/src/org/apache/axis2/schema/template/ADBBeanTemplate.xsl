@@ -2159,6 +2159,13 @@
                                              object.set<xsl:value-of select="$javaName"/>(
                                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(content,namespaceuri));
                                             </xsl:when>
+                                            <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
+                                                org.apache.axiom.om.OMFactory fac = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
+                                                org.apache.axiom.om.OMNamespace omNs = fac.createOMNamespace("<xsl:value-of select="$namespace"/>", "");
+                                                org.apache.axiom.om.OMElement _value<xsl:value-of select="$javaName"/> = fac.createOMElement("<xsl:value-of select="$propertyName"/>", omNs);
+                                                _value<xsl:value-of select="$javaName"/>.addChild(fac.createOMText(_value<xsl:value-of select="$javaName"/>, content));
+                                                object.set<xsl:value-of select="$javaName"/>(_value<xsl:value-of select="$javaName"/>);
+                                            </xsl:when>
                                             <xsl:otherwise>
                                               object.set<xsl:value-of select="$javaName"/>(
                                         org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
@@ -3257,6 +3264,13 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                              }
                                              object.set<xsl:value-of select="$javaName"/>(
                                                   org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(content,namespaceuri));
+                                        </xsl:when>
+                                        <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
+                                            org.apache.axiom.om.OMFactory fac = org.apache.axiom.om.OMAbstractFactory.getOMFactory();
+                                            org.apache.axiom.om.OMNamespace omNs = fac.createOMNamespace("<xsl:value-of select="$namespace"/>", "");
+                                            org.apache.axiom.om.OMElement _value<xsl:value-of select="$javaName"/> = fac.createOMElement("<xsl:value-of select="$propertyName"/>", omNs);
+                                            _value<xsl:value-of select="$javaName"/>.addChild(fac.createOMText(_value<xsl:value-of select="$javaName"/>, content));
+                                            object.set<xsl:value-of select="$javaName"/>(_value<xsl:value-of select="$javaName"/>);
                                         </xsl:when>
                                         <xsl:otherwise>
                                               object.set<xsl:value-of select="$javaName"/>(
