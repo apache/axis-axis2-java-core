@@ -26,7 +26,7 @@ import sample.addressbook.entry.Entry;
 
 
 
-public class AddressBookClient {
+public class AddressBookRPCClient {
 
     public static void main(String[] args1) throws AxisFault {
 
