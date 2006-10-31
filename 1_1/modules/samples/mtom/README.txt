@@ -4,11 +4,8 @@ Sample for MTOM
 Overview:
 ---------
 
-This sample demonstrates the capabilities and power of Soap with Attachment
-support and the Attachmet API of AXIS2. In this sample the user can upload a 
-file to the service. The service is written and deployed as a simple POJO and 
-it uses the Attachment API to retrieve the received attachment. Client is written 
-using Operation Client API of Axis2.
+This sample demonstrates the capabilities and power of MTOM support of 
+AXIS2. In this sample the user can send a file to the service.
 
 Running the Sample:
 -------------------
