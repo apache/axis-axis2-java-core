@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package spellcheck.text_editor;
+package sample.spellcheck.editor;
 
 
 /**
