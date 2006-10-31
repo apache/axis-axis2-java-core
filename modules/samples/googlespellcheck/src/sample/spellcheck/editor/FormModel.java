@@ -14,12 +14,11 @@
 * limitations under the License.
 */
 
-package spellcheck.text_editor;
+package sample.spellcheck.editor;
 
-
-import spellcheck_stub.SimplifiedSpellCheckStub;
-import spellcheck_stub.SimplifiedSpellCheckStub.DoSpellingSuggestions;
-import spellcheck_stub.SimplifiedSpellCheckStub.DoSpellingSuggestionsResponse;
+import sample.spellcheck.stub.SimplifiedSpellCheckStub;
+import sample.spellcheck.stub.SimplifiedSpellCheckStub.DoSpellingSuggestions;
+import sample.spellcheck.stub.SimplifiedSpellCheckStub.DoSpellingSuggestionsResponse;
 
 /**
  * class sample.google.spellcheck.FormModel

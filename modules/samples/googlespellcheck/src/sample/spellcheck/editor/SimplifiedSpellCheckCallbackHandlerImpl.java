@@ -1,7 +1,7 @@
-package spellcheck.text_editor;
+package sample.spellcheck.editor;
 
-import spellcheck_stub.SimplifiedSpellCheckCallbackHandler;
-import spellcheck_stub.SimplifiedSpellCheckStub.DoSpellingSuggestionsResponse;
+import sample.spellcheck.stub.SimplifiedSpellCheckCallbackHandler;
+import sample.spellcheck.stub.SimplifiedSpellCheckStub.DoSpellingSuggestionsResponse;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
