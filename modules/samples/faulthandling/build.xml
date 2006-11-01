@@ -1,4 +1,4 @@
-<project basedir="." default="service">
+<project basedir="." default="generate.service">
 
     <property environment="env"/>
 
@@ -12,11 +12,19 @@
         <ant dir="client"/>
     </target>
 
-    <target name="service" depends="generate.service">
-	<copy file="${service.target}/BankService.aar" tofile="../../repository/services/sample-faulthandling.aar" overwrite="true" /> 
-    </target>
+    <target name="run.client" depends="gen.stub">
 
-    <target name="client" depends="gen.stub">
+        <condition property="params.ok">
+            <and>
+                <isset property="url"/>
+                <isset property="account"/>
+                <isset property="amt"/>
+            </and>
+        </condition>
+
+        <fail message="One of the parameters are not set. Usage: BankClient -Durl=&lt;url&gt; -Daccount=&lt;account&gt; -Damt=&lt;amount&gt;"
+        unless="params.ok"/>
+        
         <java classname="example.BankClient" fork="true">
             <arg line="${url} ${account} ${amt}"/>
             <classpath>
@@ -76,6 +84,9 @@
             <fileset excludes="**/Test.class" dir="${service.target}/classes"/>
         </jar>
 
+        <copy file="${service.target}/BankService.aar" tofile="../../repository/services/sample-faulthandling.aar"
+              overwrite="true"/>
+
     </target>
 
     <target name="gen.stub">
@@ -94,7 +105,7 @@
         </java>
 
         <copy file="client/src/example/BankClient.java" todir="${client.target}/src/example"/>
-        
+
         <!--now compile the stub classes-->
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
                destdir="${client.target}/classes">
@@ -117,7 +128,8 @@
         </jar>
     </target>
 
-     <target name="clean">
-	<delete dir="build" />
-     </target>
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
 </project>
