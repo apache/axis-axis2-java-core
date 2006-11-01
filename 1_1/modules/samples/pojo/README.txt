@@ -1,5 +1,6 @@
 
-This is an example POJO web service. It shows how to expose the methods of a Java class as a web service using Aixs2. 
+This is an example POJO web service. It shows how to expose the methods of a Java class as a web
+service using Aixs2.
 
 To build the sample service you must have ant-1.6.x installed in your system. 
 
@@ -9,21 +10,25 @@ $export AXIS2_HOME=<path to axis2 distribution>
 To build the sample service, type:
 $ant 
 
-This will build the AddressBookService.aar in the build directory and copy it to the <AXIS2_HOME>/repository/services directory.
+This will build the AddressBookService.aar in the build directory and copy it to the
+<AXIS2_HOME>/repository/services directory.
 
-You can start the Axis2 server by running either axis2server.bat (on Windows) or axis2server.sh (on Linux)that are located in <AXIS2_HOME>/bin directory.
+You can start the Axis2 server by running either axis2server.bat (on Windows) or axis2server.sh
+(on Linux)that are located in <AXIS2_HOME>/bin directory.
 
 The WSDL for this service should be viewable at:
 
 http://<yourhost>:<yourport>/axis2/services/AddressBookService?wsdl 
 (e.g. http://localhost:8080/axis2/services/AddressBookService?wsdl)
 
-src/sample/addressbook/rpcclient/AddressBookRPCClient.java is a Client that uses RPCServiceClient to invoke the methods of this web services just like the method invocations of a Java object.
+src/sample/addressbook/rpcclient/AddressBookRPCClient.java is a Client that uses RPCServiceClient
+to invoke the methods of this web services just like the method invocations of a Java object.
 
 To compile and run, type
 $ant rpc.client
 
-src/sample/addressbook/adbclient/AddressBookADBClient is Client that uses a generated stub with ADB to invoke the methods of this web service.
+src/sample/addressbook/adbclient/AddressBookADBClient is Client that uses a generated stub with ADB
+to invoke the methods of this web service.
 
 To generate the stub, compile and run, type
 $ant adb.client -Dwsdl=http://<yourhost>:<yourport>/axis2/services/AdressBookService?wsdl
