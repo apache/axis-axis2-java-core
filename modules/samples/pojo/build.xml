@@ -1,5 +1,5 @@
 
-<project basedir="." default="build">
+<project basedir=".">
 	
 	<property name="dest.dir" value="build" />
 	
@@ -112,9 +112,7 @@
 		
 		<antcall target="adb.client.jar" />
 		
-		<antcall target="adb.client.run">
-			<param name="uri" value="${uri}"/>
-		</antcall>
+		<antcall target="adb.client.run" />
 		
 	</target>
 	
@@ -144,7 +142,6 @@
 	<target name="adb.client.run">
 		<java classname="sample.addressbook.adbclient.AddressBookADBClient">
 			<classpath refid="client.class.path" />
-			<arg value="${uri}" />
 		</java>
 	</target>
 
