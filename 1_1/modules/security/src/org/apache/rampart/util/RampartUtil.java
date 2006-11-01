@@ -297,7 +297,7 @@ public class RampartUtil {
     public static int getTimeToLive(RampartMessageData messageData) {
 
         RampartConfig rampartConfig = messageData.getPolicyData().getRampartConfig();
-        
+        if(rampartConfig != null) {
         String ttl = rampartConfig.getTimestampTTL();
         int ttl_i = 0;
         if (ttl != null) {
@@ -311,6 +311,9 @@ public class RampartUtil {
             ttl_i = messageData.getTimeToLive();
         }
         return ttl_i;
+        } else {
+            return RampartConfig.DEFAULT_TIMESTAMP_TTL;
+        }
     }
     
     /**
