@@ -1,9 +1,13 @@
-The service life cycle sample is to demonstrate usage of service life cycle interface and session
-scoping with a sample on application scope session.  The sample consists of two parts;
+
+Introduction
+============
+
+This sample is to demonstrate usage of service life cycle interface and session scoping with a
+sample on application scope session.  The sample consists of two parts;
    Service and Client
 
-To show usage of service life cycle and session, have chosen a simple library system. Which has few
-basic operation like
+Let's take a library system, which has the following operations, as the scenario for this sample.
+
  - register user
  - login to system
  - view all books
@@ -11,8 +15,10 @@ basic operation like
  - view lend books
  - and lend and return books
 
-Why do we need service life cycle class here ?
+Why Do We Need Service Life Cycle Here?
 ================================================
+
+
 
 Well, at the deployment time we need to initialize the service , reading stuff from somewhere (??) ,
 so at the runtime service impl class access those  data. Forget about the session for a minute ,
@@ -126,4 +132,4 @@ are there in the new instance.
 Running Java client.
 ==================================================
 Open up the LibraryServiceClient java class in your favorite IDE and run the main class. And you can
- comment and un-comment what ever the method you want to invoke.   
+ comment and un-comment what ever the method you want to invoke.
