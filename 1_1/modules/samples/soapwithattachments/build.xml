@@ -12,7 +12,7 @@
 	</path>
 
 	<target name="service" depends="compile">
-		<jar destfile="${build.dir}/swaSample.aar">	
+		<jar destfile="${build.dir}/sample-swa.aar">	
 			<fileset dir="resources/">
 				<include name="META-INF/services.xml" />
 			</fileset>
@@ -20,7 +20,7 @@
 				<include name="sample/soapwithattachments/service/**/*.class" />
 			</fileset>
 		</jar>
-		<copy file="${build.dir}/swaSample.aar" tofile="${axis2.home}/repository/services/sample-swa.aar" overwrite="true" />
+		<copy file="${build.dir}/sample-swa.aar" tofile="${axis2.home}/repository/services/sample-swa.aar" overwrite="true" />
 	</target>
 
 	<target name="compile">

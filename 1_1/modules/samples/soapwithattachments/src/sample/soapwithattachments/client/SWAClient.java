@@ -47,7 +47,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 public class SWAClient {
 
 	private static EndpointReference targetEPR = new EndpointReference(
-			"http://localhost:8080/axis2/services/swaSample");
+			"http://localhost:8080/axis2/services/sample-swa");
 
 	public static void main(String[] args) throws Exception {
 		CommandLineOptionParser optionsParser = new CommandLineOptionParser(
