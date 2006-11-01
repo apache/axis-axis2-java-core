@@ -1,15 +1,21 @@
 <project basedir="." default="all">
-    
+
     <!--Set your elcipse home directory  -->
-    <property environment="env" />
-    <property name="eclipse.home" value="${env.ECLIPSE_HOME}"></property>
+	<property environment="env" />
+	<property name="eclipse.home" value="${env.ECLIPSE_HOME}"></property>
+	
+    <!-- properties file to load the versions of dependencies -->
+    <property file="../../etc/project.properties"/>
     <property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_1.2.0"></property>
     <property name="service.plugin.version" value="Axis_Service_Archiver_1.0.0"></property>
-
+    <property name="codegen.plugin.zip.name" value="axis2-codegen-archive-wizard.zip"></property>
+    <property name="service.plugin.zip.name" value="axis2-service-archive-wizard.zip"></property>
+	
     <property name="src" value="./src"></property>
     <property name="codegen.src.dir" value="./axis2-eclipse-codegen-plugin/src/main/java"></property>
     <property name="service.src.dir" value="./axis2-eclipse-service-plugin/src/main/java"></property>
     <property name="output" value="./eclipse_projects"></property>
+	 <property name="output.target" value="${output}/target"></property>
     <property name="service.output.dir" value="${output}/service-archiver"></property>
     <property name="codegen.output.dir" value="${output}/code-gen"></property>
     <property name="plugin.output.dir" value="${output}/plugin"></property>
@@ -32,31 +38,47 @@
 
      <property name="axis2.lib.dir" value="../../target/lib"></property>
 
+	 <!--Filter tockens for the copy command to filter the versions of external dependencies -->
+     <filter token="axis2_version" value="${axis2_version}" />
+     <filter token="activation.version" value="${activation.version}" />
+     <filter token="annogen.version" value="${annogen.version}" />
+     <filter token="ant.version" value="${ant.version}" />
+     <filter token="axiom.version" value="${axiom.version}" />
+     <filter token="commons.logging.version" value="${commons.logging.version}" />
+     <filter token="neethi.version" value="${neethi.version}" />
+     <filter token="stax.api.version" value="${stax.api.version}" />
+     <filter token="stax.impl.version" value="${stax.impl.version}" />
+     <filter token="xbean.version" value="${xbean.version}" />
+     <filter token="XmlSchema.version" value="${XmlSchema.version}" />
+     <filter token="log4j.version" value="${log4j.version}" />
+     <filter token="wsdl4j.version" value="${wsdl4j.version}" />
+
+
      <!--Codegen wizard libraries -->
      <fileset id="codegen.libs" dir="${axis2.lib.dir}">
- 		<include name="activation-1.1.jar" />
- 		<include name="annogen-0.1.0.jar" />
-		<include name="ant-1.6.5.jar" />
-		<include name="axiom-api-SNAPSHOT.jar" />
-		<include name="axiom-dom-SNAPSHOT.jar" />
-		<include name="axiom-impl-SNAPSHOT.jar" />
-	    	<include name="axis2-1.1-SNAPSHOT.jar" />
-		<include name="commons-logging-1.1.jar" />
-		<include name="log4j-1.2.13.jar" />
-		<include name="neethi-SNAPSHOT.jar" />
-		<include name="stax-api-1.0.1.jar" />
-		<include name="wsdl4j-1.6.1.jar" />
-		<include name="wstx-asl-3.0.1.jar" />
-		<include name="xbean-2.2.0.jar" />
-		<include name="XmlSchema-SNAPSHOT.jar" />
+ 		<include name="activation-${activation.version}.jar" />
+ 		<include name="annogen-${annogen.version}.jar" />
+		<include name="ant-${ant.version}.jar" />
+		<include name="axiom-api-${axiom.version}.jar" />
+		<include name="axiom-dom-${axiom.version}.jar" />
+		<include name="axiom-impl-${axiom.version}.jar" />
+	    <include name="axis2-${axis2_version}.jar" />
+		<include name="commons-logging-${commons.logging.version}.jar" />
+		<include name="log4j-${log4j.version}.jar" />
+		<include name="neethi-${neethi.version}.jar" />
+		<include name="stax-api-${stax.api.version}.jar" />
+		<include name="wsdl4j-${wsdl4j.version}.jar" />
+		<include name="wstx-${stax.impl.version}.jar" />
+		<include name="xbean-${xbean.version}.jar" />
+		<include name="XmlSchema-${XmlSchema.version}.jar" />
     </fileset>
 
      <!--Service wizard libraries -->
      <fileset id="service.libs" dir="${axis2.lib.dir}">
-	     	<include name="ant-1.6.5.jar" />
-		<include name="log4j-1.2.13.jar" />
-		<include name="commons-logging-1.1.jar" />
-	    	<include name="axis2-1.1-SNAPSHOT.jar" />
+	     	<include name="ant-${ant.version}.jar" />
+		<include name="log4j-${log4j.version}.jar" />
+		<include name="commons-logging-${commons.logging.version}.jar" />
+	    	<include name="axis2-${axis2_version}.jar" />
      </fileset>
 	
 	
@@ -82,18 +104,18 @@
             <fileset dir="${service.src.dir}" excludes="**/codegen/**/*.java"/>
         </copy>
 		<!-- Copy the other stuff -->
-        <copy todir="${service.output.dir}">
+        <copy todir="${service.output.dir}" filtering="on">
             <fileset dir="${service.resource.dir}"></fileset>
         </copy>
-	  <!-- create bin directory -->
-	  <mkdir dir="${service.output.dir}/${bin.dir.name}"></mkdir>
-	  <!-- create the help directory -->
-        <mkdir dir="${service.output.dir}/${help.dir.name}"></mkdir>
-	  <!-- copy the help directory -->
+	    <!-- create bin directory -->
+	    <mkdir dir="${service.output.dir}/${bin.dir.name}"></mkdir>
+	    <!-- create the help directory -->
+        	<mkdir dir="${service.output.dir}/${help.dir.name}"></mkdir>
+	    <!-- copy the help directory -->
         <copy todir="${service.output.dir}/${help.dir.name}">
             <fileset file="${service.help.resource.file}"></fileset>
         </copy>
-	 <available property="images.dir" 
+	 	<available property="images.dir" 
 	                    file="${service.help.images.dir}" 
 	                    type="dir" 
 	                    value="${service.help.images.dir}"/>
@@ -110,18 +132,18 @@
             <fileset dir="${codegen.src.dir}" excludes="**/service/**/*.java"/>
         </copy>
         <!-- Copy the other stuff -->
-        <copy todir="${codegen.output.dir}">
+        <copy todir="${codegen.output.dir}" filtering="on" >
             <fileset dir="${codegen.resource.dir}"></fileset>
         </copy>
         <!-- create bin directory -->
-	<mkdir dir="${codegen.output.dir}/${bin.dir.name}"></mkdir>
+	    <mkdir dir="${codegen.output.dir}/${bin.dir.name}"></mkdir>
         <!-- create the help directory -->
         <mkdir dir="${codegen.output.dir}/${help.dir.name}"></mkdir>
-	  <!-- copy the help directory -->
+	    <!-- copy the help directory -->
         <copy todir="${codegen.output.dir}/${help.dir.name}">
             <fileset file="${codegen.help.resource.file}"></fileset>
         </copy>
-          <available property="images.dir" file="${codegen.help.images.dir}" type="dir" value="${codegen.help.images.dir}"/>
+        <available property="images.dir" file="${codegen.help.images.dir}" type="dir" value="${codegen.help.images.dir}"/>
           <copy todir="${codegen.output.dir}/${help.dir.name}/images">
             <fileset dir="${images.dir}"/>
          </copy>
@@ -264,16 +286,66 @@
           </copy>
     </target>
 
-    <!--Relese the plugins -->
+    <!--Relese the plugins (this will install the plugins and build the zip version)-->
     <target name="release-plugins">
+    	<delete dir="${output.target}" />
+    	<mkdir dir="${output.target}" />
+    	<mkdir dir="${output.target}/service/${service.plugin.version}" />
+    	<mkdir dir="${output.target}/codegen/${codegen.plugin.version}" />
+    	
         <antcall target="install-service-plugin"/>
         <antcall target="install-codegen-plugin"/>
+    	
+        <copy todir="${output.target}/service/${service.plugin.version}">
+              <fileset dir="${plugin.output.dir}/${service.plugin.version}"/>
+        </copy>
+        <copy todir="${output.target}/codegen/${codegen.plugin.version}">
+              <fileset dir="${plugin.output.dir}/${codegen.plugin.version}"/>
+        </copy>
+    	
+    	<!--Zip the eclipse plugins to eclipse_plugins/target -->
+    	<zip destfile="${output.target}/${codegen.plugin.zip.name}"
+    	       basedir="${output.target}/codegen"
+    	       update="true"
+    	/>
+    	<zip destfile="${output.target}/${service.plugin.zip.name}"
+    	       basedir="${output.target}/service"
+    	       update="true"
+    	/>
+    	<delete dir="${output.target}/service" />
+    	<delete dir="${output.target}/codegen" />
     </target>
 
 
     <!-- Clean the directory -->
     <target name="clean">
         <delete dir="${output}"></delete>
+    </target>
+
+    <target name="help">
+	    <echo message="****************************************************************************" />
+	    <echo message="**                   Eclipse Plugin Build                                 **" />
+	    <echo message="**  pre-requisit            : env.ECLIPSE_HOME                               **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**  build eclipse projects  : generate-service-project                    **" />
+	    <echo message="**                            generate-codegen-project                    **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**  build eclipse plugins   : generate-service-plugin                     **" />
+	    <echo message="**                            generate-codegen-plugin                     **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**  install plugins         : install-service-plugin                      **" />
+	    <echo message="**                            install-codegen-plugin                      **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**  release eclipse plugins : release-plugins                             **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="**                                                                        **" />
+	    <echo message="****************************************************************************" />
+
     </target>
 
 </project>
