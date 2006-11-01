@@ -243,8 +243,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             return axisService;
         } catch (WSDLException e) {
+            log.error(e);
             throw new AxisFault(e);
         } catch (Exception e) {
+            log.error(e);
             throw new AxisFault(e);
         }
     }
@@ -325,8 +327,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (serviceName != null) {
             service = (Service) services.get(serviceName);
             if (service == null) {
-                throw new AxisFault("Service not found the WSDL "
-                        + serviceName.getLocalPart());
+                throw new AxisFault("Service " + serviceName +  " was not found in the WSDL");
             }
         } else {
             if (services.size() > 0) {
