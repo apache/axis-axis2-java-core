@@ -20,10 +20,10 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-codegen</id>
+    <id>axis2-webapp</id>
     <name>Apache Axis 2.0 - Web Application</name>
     <groupId>org.apache.axis2</groupId>
-    <description>Axis2 Code Web Application module</description>
+    <description>Axis2 Web Application module</description>
 
     <dependencies>
         <dependency>
