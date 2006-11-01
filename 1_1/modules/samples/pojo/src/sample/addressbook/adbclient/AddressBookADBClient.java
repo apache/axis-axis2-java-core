@@ -47,12 +47,12 @@ public class AddressBookADBClient {
             entry.setState("Sesame State");
             entry.setPostalCode("11111");
             
-            addEntry.setEntry(entry);
+            addEntry.setParam0(entry);
             stub.addEntry(addEntry);
             
             FindEntry findEntry = new FindEntry();
             
-            findEntry.setName("Abby Cadabby");
+            findEntry.setParam0("Abby Cadabby");
             
             FindEntryResponse response = stub.findEntry(findEntry);
             Entry responseEntry = response.get_return();
