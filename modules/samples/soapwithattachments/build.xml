@@ -1,4 +1,4 @@
-<project name="SOAPWithAttachmentsSample" default="service">
+<project name="SOAPWithAttachmentsSample" default="generate.service">
 	<property environment="env" />
 	<property name="axis2.home" value="../../" />
 	<property name="axis2.repo" value="${axis2.home}/repository" />
@@ -11,7 +11,7 @@
 		<pathelement location="build/swaSampleClient.jar" />
 	</path>
 
-	<target name="service" depends="compile">
+	<target name="generate.service" depends="compile">
 		<jar destfile="${build.dir}/sample-swa.aar">	
 			<fileset dir="resources/">
 				<include name="META-INF/services.xml" />
@@ -45,7 +45,7 @@
 		<echo message="ant -Dfile &lt;file to be transfered&gt;  -Ddest &lt;name of the destination file&gt;" />
 	</target>
 
-	<target name="client" depends="compile,check-parameters" if="parameters.set">
+	<target name="run.client" depends="compile,check-parameters" if="parameters.set">
 		<jar destfile="${build.dir}/swaSampleClient.jar">
 			<fileset dir="${build.dir}/classes">
 				<include name="sample/soapwithattachments/client/**/*.class" />

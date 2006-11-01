@@ -13,13 +13,9 @@ service using Axis2 client.
 Pre-Requisites
 ==============
 
-None.
+Apache Ant 1.6.2 or later
 
 Running The Sample
 ==================
 
-There are two ways in which you can run this sample.
-
-1. If you have Apache Ant installed in your system, type "ant" from within samples/yahoorestsearch folder.
-	or
-2. Use either run.bat or run.sh (depending on your platform).
+Type "ant" from within samples/yahoorestsearch folder.

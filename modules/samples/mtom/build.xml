@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  -->
-<project basedir="." default="clean">
+<project basedir="." default="generate.service">
 
 	<property environment="env" />
 	<property name="build.dir" value="build" />
@@ -34,7 +34,7 @@
 	</path>
 
 	<!-- Create Service -->
-	<target name="service">
+	<target name="generate.service">
 
 		<java classname="org.apache.axis2.wsdl.WSDL2Java">
 			<arg value="-uri" />
@@ -68,7 +68,7 @@
 	</target>
 
 	<!-- Run Client -->
-	<target name="client" depends="check-parameters" if="parameters.set">
+	<target name="run.client" depends="check-parameters" if="parameters.set">
 		<java classname="org.apache.axis2.wsdl.WSDL2Java">
 			<arg value="-uri" />
 			<arg value="resources/MTOMSample.wsdl" />
