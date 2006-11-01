@@ -31,15 +31,15 @@
 	
 	<target name="service" depends="clean,prepare">
 		
-		<copy file="src/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
+		<copy file="src/sample/axisversion/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
 		
 		<javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/axisversion/**">
 			<classpath refid="build.class.path" />
 		</javac>
 		
-		<jar basedir="${dest.dir.classes}" destfile="${dest.dir}/Version.aar" />
+		<jar basedir="${dest.dir.classes}" destfile="${dest.dir}/version.aar" />
 		
-		<copy file="${dest.dir}/Version.aar" tofile="${repository.path}/Version.aar" overwrite="true" />
+		<copy file="${dest.dir}/version.aar" tofile="${repository.path}/version.aar" overwrite="true" />
 	
 	</target>
 	
