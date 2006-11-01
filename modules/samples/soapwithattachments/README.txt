@@ -1,5 +1,5 @@
-Sample for MTOM
-===============
+Sample for SOAP with Attachments
+================================
 
 Overview:
 ---------
