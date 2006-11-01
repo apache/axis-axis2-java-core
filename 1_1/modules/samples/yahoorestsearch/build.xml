@@ -1,4 +1,4 @@
-<project name="YahooRestSearchSample" default="run">
+<project name="YahooRestSearchSample" default="run.client">
 	<property environment="env" />
 	<property name="axis2.home" value="../../" />
 	<property name="axis2.repo" value="${axis2.home}/repository" />
@@ -21,7 +21,7 @@
 			<fileset dir="${build.dir}/classes" />
 		</jar>
 	</target>
-	<target name="run" depends="compile">
+	<target name="run.client" depends="compile">
 		<java classname="sample.yahooservices.RESTSearch.RESTSearchClient" classpathref="axis.classpath" fork="true">
 			<jvmarg value="-Daxis2.repo=${axis2.repo}" />
 		</java>
