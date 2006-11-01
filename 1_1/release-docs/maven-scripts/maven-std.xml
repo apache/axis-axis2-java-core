@@ -819,7 +819,7 @@
         <ant:mkdir dir="${std_dep_cache}"/>
         <j:if test="${stdDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${std_dep_cache}"
-                              mods="codegen,jibx,spring,saaj,kernel,adb,java2wsdl,webapp"/>
+                              mods="webapp,jibx,spring,saaj,kernel,adb"/>
             <property name="stdDeps.uptodate" value="yes"/>
         </j:if>
 
