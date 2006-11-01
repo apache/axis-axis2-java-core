@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns:mh="http://www.Monson-Haefel.com/jwsbook/BookQuote" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://www.Monson-Haefel.com/jwsbook/BookQuote" name="BookQuote">
+    <types>
+    <xsd:schema elementFormDefault="qualified"
+                targetNamespace="http://www.Monson-Haefel.com/jwsbook/BookQuote/xsd">
+      <xsd:element name="faultElement" type="xsd:string"/>
+    </xsd:schema>
+  </types>
 	<message name="BookQuote_getBookPrice">
 		<part name="isbn" type="xsd:string"/>
 		<part name="number" type="xsd:int"/>
@@ -8,7 +14,7 @@
 		<part name="result" type="xsd:string"/>
 	</message>
 	<message name="InvalidIsbnFault">
-		<part name="message" type="xsd:string"/>
+        <part name="message" element="types:faultElement"/>
 	</message>
 	<portType name="BookQuote">
 		<operation name="getBookPrice">
