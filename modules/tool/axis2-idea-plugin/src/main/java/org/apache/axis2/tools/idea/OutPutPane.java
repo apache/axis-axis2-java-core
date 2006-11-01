@@ -86,6 +86,7 @@ public class OutPutPane extends JPanel implements ActionListener {
         cmbCurrentProject = new JComboBox();
         cmbCurrentProject.setEnabled(true);
         add(cmbCurrentProject);
+        cmbCurrentProject.addActionListener(this);
 
         lblModuleSrc = new JLabel("Select Source Directory");
         lblModuleSrc.setEnabled(true);
@@ -117,6 +118,7 @@ public class OutPutPane extends JPanel implements ActionListener {
     public void loadcmbModuleSrcProject() {
         String module = null;
         module = (String) cmbCurrentProject.getSelectedItem();
+        cmbModuleSrc.removeAllItems();
         int count = 0;
         if (module != null) {
             String src[] = cogenbean.getModuleSrc(module);
@@ -183,6 +185,8 @@ public class OutPutPane extends JPanel implements ActionListener {
             txtoutput.setEnabled(true);
             btwBrowse.setEnabled(true);
         }
+        else if (obj == cmbCurrentProject) {
+            loadcmbModuleSrcProject();
     }
 }
 
@@ -233,7 +237,7 @@ class OutPutPaneLayout implements LayoutManager {
         }
         c = parent.getComponent(7);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 200, insets.top + 70, 250, 24);
+            c.setBounds(insets.left + 200, insets.top + 70, 330, 24);
         }
         c = parent.getComponent(4);
         if (c.isVisible()) {
@@ -248,5 +252,7 @@ class OutPutPaneLayout implements LayoutManager {
             c.setBounds(insets.left + 200, insets.top + 130, 150, 24);
         }
     }
+}
+
 }
 
