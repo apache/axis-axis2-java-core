@@ -49,7 +49,7 @@
 		</java>
 		<copy file="${skeleton.path}" tofile="${service.dir}/${skeleton.path}" overwrite="true" />
 		<antcall target="jar.server"/>
-		<copy file="${service.dir}/sample-mtom.aar" tofile="../../repository/services/sample-mtom.aar" overwrite="true">
+		<copy file="${service.dir}/sample-mtom.aar" tofile="../../repository/services/sample-mtom.aar" overwrite="true"/>
 	</target>
 	<target name="check-parameters">
 		<condition property="parameters.set">
