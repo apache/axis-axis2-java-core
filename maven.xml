@@ -700,12 +700,12 @@
         <!--ant:copy todir="${std.bin.temp.dir}/samples/userguide">
             <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
         </ant:copy-->
-        <ant:mkdir dir="${std.bin.temp.dir}/samples/FaultHandling"/>
+        <ant:mkdir dir="${std.bin.temp.dir}/samples/faulthandling"/>
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
                 <include name="yahoorestsearch/**/*.*"/>
                 <include name="googlespellcheck/**/*.*"/>
-                <include name="FaultHandling/**/*.*"/>
+                <include name="faulthandling/**/*.*"/>
                 <include name="mtom/**/*.*"/>
                 <include name="soapwithattachments/**/*.*"/>
                 <include name="version/**/*.*"/>
