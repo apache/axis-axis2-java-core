@@ -27,6 +27,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.util.AttributeHelper;
+import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
@@ -184,8 +186,8 @@ public class EndpointReferenceHelper {
             if (metaData != null && AddressingConstants.Final.WSA_NAMESPACE.equals(addressingNamespace)) {
                 OMElement metadataE = factory.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, eprElement);
                 for (int i = 0, size = metaData.size(); i < size; i++) {
-                    OMNode omNode = (OMNode) metaData.get(i);
-                    metadataE.addChild(omNode);
+                    OMElement omElement = (OMElement) metaData.get(i);
+                    metadataE.addChild(ElementHelper.importOMElement(omElement, factory));
                 }
             }
 
@@ -194,8 +196,8 @@ public class EndpointReferenceHelper {
                 OMElement refParameterElement = factory.createOMElement(AddressingConstants.EPR_REFERENCE_PARAMETERS, wsaNS, eprElement);
                 Iterator iterator = referenceParameters.values().iterator();
                 while (iterator.hasNext()) {
-                    OMNode omNode = (OMNode) iterator.next();
-                    refParameterElement.addChild(omNode);
+                    OMElement omElement = (OMElement) iterator.next();
+                    refParameterElement.addChild(ElementHelper.importOMElement(omElement, factory));
                 }
             }
             
@@ -203,7 +205,7 @@ public class EndpointReferenceHelper {
             if (attributes != null) {
                 for (int i = 0, size = attributes.size(); i < size; i++) {
                     OMAttribute omAttribute = (OMAttribute) attributes.get(i);
-                    eprElement.addAttribute(omAttribute);
+                    AttributeHelper.importOMAttribute(omAttribute, eprElement);
                 }
             }
             
@@ -211,8 +213,8 @@ public class EndpointReferenceHelper {
             List extensibleElements = epr.getExtensibleElements();
             if (extensibleElements != null) {
                 for (int i = 0, size = extensibleElements.size(); i < size; i++) {
-                    OMNode omNode = (OMNode) extensibleElements.get(i);
-                    eprElement.addChild(omNode);
+                    OMElement omElement = (OMElement) extensibleElements.get(i);
+                    eprElement.addChild(ElementHelper.importOMElement(omElement, factory));
                 }
             }
         } else {

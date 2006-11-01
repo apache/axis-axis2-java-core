@@ -25,7 +25,6 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axis2.context.MessageContext;
 
 import junit.framework.TestCase;
 

@@ -178,14 +178,14 @@ public class AddressingOutHandler extends AddressingHandler {
                 // Add detail as a wsa:FaultDetail header
                 if (!isAddressingHeaderAlreadyAvailable(Final.FAULT_HEADER_DETAIL, envelope, addressingNamespaceObject, replaceHeaders)) {
                     SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
-                    faultDetail.addChild(detailElement);
+                    faultDetail.addChild(ElementHelper.importOMElement(detailElement, envelope.getOMFactory()));
                 }
             }
             else if (!msgContext.isSOAP11()) {
                 // Add detail to the Fault in the SOAP Body
                 SOAPFault fault = envelope.getBody().getFault();
                 if (fault != null && fault.getDetail() != null) {
-                    fault.getDetail().addDetailEntry(detailElement);
+                    fault.getDetail().addDetailEntry(ElementHelper.importOMElement(detailElement, envelope.getOMFactory()));
                 }
             }
         }
