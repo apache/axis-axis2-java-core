@@ -142,7 +142,7 @@ public class ProviderDispatcher extends JavaDispatcher{
         if (log.isDebugEnabled())
             log.debug("Provider Type = " + providerType + "; parameter type = " + requestParamValue);
         
-        Object input = providerType.cast(requestParamValue);
+        final Object input = providerType.cast(requestParamValue);
         if (log.isDebugEnabled()) {
             log.debug("Invoking Provider<" + providerType.getName() + "> with " +
                     "parameter of type " + input.getClass().getName());
