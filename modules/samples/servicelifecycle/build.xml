@@ -11,7 +11,7 @@
               value="${env.CATALINA_HOME}/webapps/axis2/WEB-INF/services"/>
 
     <path id="build.class.path">
-        <fileset dir="${env.AXIS2_HOME}/lib">
+        <fileset dir="../../lib">
             <include name="*.jar"/>
         </fileset>
     </path>
