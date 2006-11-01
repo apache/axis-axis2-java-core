@@ -48,9 +48,8 @@
 			<classpath refid="class.path" />
 		</java>
 		<copy file="${skeleton.path}" tofile="${service.dir}/${skeleton.path}" overwrite="true" />
-		<ant dir="${service.dir}" />
-		<copy file="${service.dir}/build/lib/MTOMSample.aar" tofile="${service.dir}/MTOMSample.aar" overwrite="true" />
-		<copy file="${service.dir}/MTOMSample.aar" tofile="../../repository/services/sample-mtom.aar" overwrite="true" />
+		<antcall target="jar.server"/>
+		<copy file="${service.dir}/sample-mtom.aar" tofile="../../repository/services/sample-mtom.aar" overwrite="true">
 	</target>
 	<target name="check-parameters">
 		<condition property="parameters.set">
@@ -102,7 +101,23 @@
 			</classpath>
 		</java>
 	</target>
+	<target  name="jar.server">
+		<mkdir dir="${service.dir}/classes" />
+		<javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true" 		destdir="${service.dir}/classes" srcdir="${service.dir}/src">
+		<classpath refid="class.path"/>
+		</javac>
 
+		<copy toDir="${service.dir}/classes/META-INF" failonerror="false">
+		<fileset dir="${service.dir}/resources">
+		<include name="*.xml"/>
+		<include name="*.wsdl"/>
+		<include name="*.xsd"/>
+		</fileset>
+		</copy>
+		<jar destfile="${service.dir}/sample-mtom.aar">
+		<fileset excludes="**/Test.class" dir="${service.dir}/classes"/>
+		</jar>
+	</target>
 	<target name="clean">
 		<delete dir="build" />
 	</target>
