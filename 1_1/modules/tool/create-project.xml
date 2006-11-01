@@ -8,8 +8,8 @@
     <property file="../../etc/project.properties"/>
     <property name="codegen.plugin.version" value="Axis2_Codegen_Wizard_1.2.0"></property>
     <property name="service.plugin.version" value="Axis_Service_Archiver_1.0.0"></property>
-    <property name="codegen.plugin.zip.name" value="axis2-codegen-archive-wizard.zip"></property>
-    <property name="service.plugin.zip.name" value="axis2-service-archive-wizard.zip"></property>
+    <property name="codegen.plugin.zip.name" value="axis2-codegen-wizard.zip"></property>
+    <property name="service.plugin.zip.name" value="axis2-service-archiver-wizard.zip"></property>
 	
     <property name="src" value="./src"></property>
     <property name="codegen.src.dir" value="./axis2-eclipse-codegen-plugin/src/main/java"></property>
