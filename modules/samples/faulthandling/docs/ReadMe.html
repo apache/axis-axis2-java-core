@@ -33,56 +33,56 @@
 
 <p>
     From a command prompt in the folder of this example,
-    type <strong>ant generate.all</strong> or just <strong> ant</strong>. This will:
-    <ul>
-        <li>Generate the source for all the server classes in <strong>./service/target/src</strong>
-        </li>
-        <li>Generate <em>services.xml</em> and a more complete <em>BankService.wsdl</em> into
-            the <em>./service/target/resources</em> folder.
-        </li>
-        <li>
-            Generate a <em>./service/target/build.xml</em>
-        </li>
-        <li>Copies the pre-populated service skeleton class to the generated code</li>
-        <li>Compile the Java classes for the service</li>
-        <li>Create the service archive and copy it to <em>./BankService.aar</em></li>
-        <li>Generate the stubs (for the client) from the WSDL</li>
-        <li>Compile the client classes</li>
-        <li>Create a Jar of the client classes and copy it to <em>./BankService-test-client.jar</em>
-        </li>
-    </ul>
+    type <strong>ant generate.service</strong> or just <strong> ant</strong>. This will:
+<ul>
+    <li>Generate the source for all the server classes in <strong>./service/target/src</strong>
+    </li>
+    <li>Generate <em>services.xml</em> and a more complete <em>BankService.wsdl</em> into
+        the <em>./service/target/resources</em> folder.
+    </li>
+    <li>
+        Generate a <em>./service/target/build.xml</em>
+    </li>
+    <li>Copies the pre-populated service skeleton class to the generated code</li>
+    <li>Compile the Java classes for the service</li>
+    <li>Create the service archive and copy it to Axis2 repository (repository/services/) as
+        sample-faulthandling.aar.</li>
+</ul>
 </p>
+
 <p>
     Open up <em>./service/target/src/example/BankServiceSkeleton.java</em> and
     you will see the following code fragment inside <strong>#withdraw</strong> method. When
     generate.service was being executed, Axis2 generates an empty skeleton class and we replace it
     with a pre-populated skeleton class which has the following code inside it.
-		
-		<pre>
-	final String account = param0.getAccount();
+
+    <pre>
+        final String account = param0.getAccount();
         if (account.equals("13")) {
-            final AccountNotExistFault fault = new AccountNotExistFault();
-            fault.setAccount(account);
-            AccountNotExistFaultMessageException messageException = new AccountNotExistFaultMessageException("Account does not exist!");
-            messageException.setFaultMessage(fault);
-            throw messageException;
+        final AccountNotExistFault fault = new AccountNotExistFault();
+        fault.setAccount(account);
+        AccountNotExistFaultMessageException messageException = new AccountNotExistFaultMessageException("Account does
+        not exist!");
+        messageException.setFaultMessage(fault);
+        throw messageException;
         }
 
         final int amount = param0.getAmount();
         if (amount > 1000) {
-            final InsufficientFundFault fault = new InsufficientFundFault();
-            fault.setAccount(account);
-            fault.setBalance(1000);
-            fault.setRequestedFund(amount);
-            InsufficientFundFaultMessageException messageException = new InsufficientFundFaultMessageException("Insufficient funds");
-            messageException.setFaultMessage(fault);
-            throw messageException;
+        final InsufficientFundFault fault = new InsufficientFundFault();
+        fault.setAccount(account);
+        fault.setBalance(1000);
+        fault.setRequestedFund(amount);
+        InsufficientFundFaultMessageException messageException = new InsufficientFundFaultMessageException("Insufficient
+        funds");
+        messageException.setFaultMessage(fault);
+        throw messageException;
         }
 
         final WithdrawResponse response = new WithdrawResponse();
         response.setBalance(1000 - amount);
         return response;
-		</pre>
+    </pre>
 </p>
 
 <p>
@@ -96,9 +96,8 @@
 </h2>
 
 <p>
-    Deploy the service archive (BankService.aar) to the Axis2 server and start the server. You need
-    to copy BannkService.aar in to repository/services/ folder. Then go to bin folder and run either
-    of axis2server.bat or axis2server.sh, depending on your platform to startup Axis2 server.
+    The above step must have already copied your BankService.aar file in to repository/services/ folder. Then go to bin
+    folder and run either of axis2server.bat or axis2server.sh, depending on your platform to startup Axis2 server.
 </p>
 
 <p>With the default configuration, if you go to <a href="http://localhost:8080/axis2/">
@@ -113,21 +112,30 @@
     You need to supply 3 parameters to the command, url, account and amount.
     <ul>
         <li>
-            <strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=13
+            <strong>ant run.client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=13
                 -Damt=400</strong><br/>
             Throws AccountNotExistFaultMessageException. You will see "Account#13 does not
             exist"<br/>&nbsp;
         </li>
         <li>
-            <strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88
+            <strong>ant run.client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88
                 -Damt=1200</strong><br/>
             Throws InsufficientFundsFaultMessageException. You will see "Account#88 has balance of
             1000. It cannot support withdrawal of 1200"<br/>&nbsp;
         </li>
         <li>
-            <strong>ant client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88
+            <strong>ant run.client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=88
                 -Damt=400</strong><br/>
             Succeeds with a balance of 600. You will see "Balance = 600"<br/>&nbsp;
+        </li>
+    </ul>
+
+    When you cal ant run.client with parameters, before running example.BankClient class it does the following as well.
+
+    <ul>
+        <li>Generate the stubs (for the client) from the WSDL</li>
+        <li>Compile the client classes</li>
+        <li>Create a Jar of the client classes and copy it to <em>./BankService-test-client.jar</em>
         </li>
     </ul>
 </p>
