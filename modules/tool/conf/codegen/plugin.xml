@@ -11,49 +11,49 @@
       <library name="Axis2CodegenWizard.jar">
          <export name="*"/>
       </library>
-      <library name="lib/activation-1.1.jar">
+      <library name="lib/activation-@activation.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/annogen-0.1.0.jar">
+      <library name="lib/annogen-@annogen.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/ant-1.6.5.jar">
+      <library name="lib/ant-@ant.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-api-SNAPSHOT.jar">
+      <library name="lib/axiom-api-@axiom.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-dom-SNAPSHOT.jar">
+      <library name="lib/axiom-dom-@axiom.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-impl-SNAPSHOT.jar">
+      <library name="lib/axiom-impl-@axiom.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/commons-logging-1.1.jar">
+      <library name="lib/commons-logging-@commons.logging.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-1.1-SNAPSHOT.jar">
+      <library name="lib/axis2-@axis2_version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/log4j-1.2.13.jar">
+      <library name="lib/log4j-@log4j.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/neethi-SNAPSHOT.jar">
+      <library name="lib/neethi-@neethi.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/stax-api-1.0.1.jar">
+      <library name="lib/stax-api-@stax.api.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/wsdl4j-1.6.1.jar">
+      <library name="lib/wsdl4j-@wsdl4j.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/wstx-asl-3.0.1.jar">
+      <library name="lib/wstx-@stax.impl.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/xbean-2.2.0.jar">
+      <library name="lib/xbean-@xbean.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/XmlSchema-SNAPSHOT.jar">
+      <library name="lib/XmlSchema-@XmlSchema.version@.jar">
          <export name="*"/>
       </library>
    </runtime>
