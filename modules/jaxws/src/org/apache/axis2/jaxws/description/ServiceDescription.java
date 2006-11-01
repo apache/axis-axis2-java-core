@@ -49,6 +49,7 @@ import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -534,7 +535,27 @@ public class ServiceDescription {
 		//consumer set this up improperly, then we should fail fast, should consider placing
 		//this method in a utils class within the 'description' package
 		
-		
+		//Verify that, if this implements a strongly typed provider interface, that it
+		// also contain a WebServiceProvider annotation per JAXWS Sec. 5.1
+		Iterator<String> iter = 
+					composite.getInterfacesList().iterator();
+
+		while (iter.hasNext()) {
+			String interfaceString = iter.next();
+			// REVIEW: These string compares may not be sufficient; they assume, for example Provider<SOAPMessage>.  What about endpoint impls that:
+			//         (1) ... implement Provider<javax.xml.soap.SOAPMessage>
+			//         (2) import wrong.package.SOAPMessage;
+			//             ... implement Provider<SOAPMessage>;
+			if (interfaceString.equals(MDQConstants.PROVIDER_SOURCE)
+					|| interfaceString.equals(MDQConstants.PROVIDER_SOAP)
+					|| interfaceString.equals(MDQConstants.PROVIDER_DATASOURCE)) {
+				//This is a provider based SEI, make sure the annotation exists
+				if (composite.getWebServiceProviderAnnot() == null) {
+					throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: This is a Provider based SEI that does not contain a WebServiceProvider annotation");
+				}
+			}
+		}
+					
 		//Verify that WebService and WebServiceProvider are not both specified
 		//per JAXWS - Sec. 7.7
 		if (composite.getWebServiceAnnot() != null && composite.getWebServiceProviderAnnot() != null) {

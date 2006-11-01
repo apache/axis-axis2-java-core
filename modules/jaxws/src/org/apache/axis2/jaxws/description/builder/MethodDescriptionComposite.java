@@ -13,6 +13,7 @@ public class MethodDescriptionComposite {
 	private String 		methodName;	//a public method name in this class
 	private String 		returnType;	//Methods return type
 	private String[]	exceptions;
+	private	String		declaringClass; //the class/interface that actually declares this method
 
 	boolean	oneWayAnnotated;	
 	private WebMethodAnnot			webMethodAnnot;	
@@ -26,7 +27,6 @@ public class MethodDescriptionComposite {
 	private ResponseWrapperAnnot 	responseWrapperAnnot;//TODO EDIT CHECK: only on methods of SEI
 	private List<ParameterDescriptionComposite> parameterDescriptions;//TODO EDIT CHECK: only on methods of SEI
 
-	private ClassLoader				classLoader;
 	
 	/*
 	 * Default Constructor
@@ -156,6 +156,24 @@ public class MethodDescriptionComposite {
 	}
 	
 	/**
+	 * @return Returns the exceptions.
+	 */
+	public Class[] getExceptionTypes() {
+		//TODO: Implement this...
+		//for each exception in the array, convert it to a class, and return that
+		//If a classloader was not set, then just use the default
+		Class[] classes = new Class[0];
+		return classes;
+	}
+	
+	/**
+	 * @return Returns the fully qualified name of the declaring class.
+	 */
+	public String getDeclaringClass() {
+		return declaringClass;
+	}
+	
+	/**
 	 * @param methodName The methodName to set.
 	 */
 	public void setMethodName(String methodName) {
@@ -246,7 +264,6 @@ public class MethodDescriptionComposite {
 	 *  @param parameterDescription The parameterDescription to add to the set.
 	 */
 	public void addParameterDescriptionComposite(ParameterDescriptionComposite parameterDescription) {
-		parameterDescription.setClassLoader(this.classLoader);
 		parameterDescriptions.add(parameterDescription);
 	}
 	
@@ -284,6 +301,13 @@ public class MethodDescriptionComposite {
 	 */
 	public void setExceptions(String[] exceptions) {
 		this.exceptions = exceptions;
+	}
+	
+	/**
+	 * @param declaringClass The wrapper class to set.
+	 */
+	public void setDeclaringClass(String declaringClass) {
+		this.declaringClass = declaringClass;
 	}
 	
 	/**

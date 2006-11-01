@@ -32,4 +32,8 @@ public class MDQConstants {
     public static final String WSDL_PORTTYPE_NAME = "WSDL_PORTTYPE_NAME";
     
     public static final String OBJECT_CLASS_NAME = "java.lang.Object";
+    
+    public static final String PROVIDER_SOURCE = "Provider<Source>";
+    public static final String PROVIDER_SOAP = "Provider<SOAPMessage>";
+    public static final String PROVIDER_DATASOURCE = "Provider<javax.activation.DataSource>";
 }

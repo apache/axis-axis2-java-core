@@ -25,6 +25,7 @@ import java.util.Iterator;
 
 import javax.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingType;
 
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -99,6 +100,7 @@ public class EndpointInterfaceDescription {
     // This may be an actual Service Endpoint Interface -OR- it may be a service implementation class that did not 
     // specify an @WebService.endpointInterface.
     private Class seiClass;
+    private DescriptionBuilderComposite dbc;
     
     //Logging setup
     private static final Log log = LogFactory.getLog(EndpointInterfaceDescription.class);
@@ -169,6 +171,8 @@ public class EndpointInterfaceDescription {
 									EndpointDescription parent){
 		
 		parentEndpointDescription = parent;
+		this.dbc = dbc;
+		
 		BasicConfigurator.configure();
 		
 		//TODO: Determine if the isClass parameter is really necessary
@@ -192,6 +196,8 @@ public class EndpointInterfaceDescription {
 		while (iter.hasNext()) {
 			mdc = iter.next();
 			
+			//TODO: Verify that this classname is truly always the wrapper class
+			mdc.setDeclaringClass(dbc.getClassName());
 			OperationDescription operation = new OperationDescription(mdc, this);
 	
 			//TODO: Do we need to worry about a null AxisOperation at this level?
@@ -340,7 +346,8 @@ public class EndpointInterfaceDescription {
      * @param javaMethodName String representing a Java Method Name
      * @return
      */
-    // FIXME: This is confusing; some getOperations use the QName from the WSDL or annotation; this one uses the java method name; rename this signature I think; add on that takes a String but does a QName lookup against the WSDL/Annotation
+    // FIXME: This is confusing; some getOperations use the QName from the WSDL or annotation; 
+    // this one uses the java method name; rename this signature I think; add on that takes a String but does a QName lookup against the WSDL/Annotation
     public OperationDescription[] getOperationForJavaMethod(String javaMethodName) {
         if (DescriptionUtils.isEmpty(javaMethodName)) {
             return null;
@@ -434,15 +441,22 @@ public class EndpointInterfaceDescription {
     public Class getSEIClass() {
         return seiClass;
     }
-    // Annotation-realted getters
+    // Annotation-related getters
     
     // ========================================
-    // SOAP Binding annotation realted methods
+    // SOAP Binding annotation related methods
     // ========================================
     SOAPBinding getSoapBinding(){
         // TODO: Test with sei Null, not null, SOAP Binding annotated, not annotated
-        if (soapBindingAnnotation == null && seiClass != null) {
-            soapBindingAnnotation = (SOAPBinding) seiClass.getAnnotation(SOAPBinding.class);
+
+        if (soapBindingAnnotation == null) {
+        	if (dbc != null) {
+        		soapBindingAnnotation = dbc.getSoapBindingAnnot();
+        	} else {
+        		if (seiClass != null) {
+        			soapBindingAnnotation = (SOAPBinding) seiClass.getAnnotation(SOAPBinding.class);       			
+        		}
+        	}
         }
         return soapBindingAnnotation;
     }
@@ -484,15 +498,17 @@ public class EndpointInterfaceDescription {
     }
     
     public Iterator<MethodDescriptionComposite> retrieveReleventMethods(DescriptionBuilderComposite dbc) {
-    	//Based on whether this is an implicit SEI, or an actual SEI, Gather up and build a 
-    	//list of MDC's. If this is an actual SEI, then starting with this DBC, build a list of all
-    	//MDC's that are public methods in the chain of extended classes.
-    	//If this is an implicit SEI, then starting with this DBC,
-    	//1. If a false exclude is found, then take only those that have false excludes
-    	//2. Assuming no false excludes, take all public methods that don't have exclude == true
-    	//3. For each super class, if 'WebService' present, take all MDC's according to rules 1&2
-    	//   But, if WebService not present, grab only MDC's that are annotated, hmmmm
-		
+ 
+    	/*
+    	 * Depending on whether this is an implicit SEI or an actual SEI, Gather up and build a 
+    	 * list of MDC's. If this is an actual SEI, then starting with this DBC, build a list of all
+    	 * MDC's that are public methods in the chain of extended classes.
+    	 * If this is an implicit SEI, then starting with this DBC,
+    	 *  1. If a false exclude is found, then take only those that have false excludes
+    	 *  2. Assuming no false excludes, take all public methods that don't have exclude == true
+    	 *  3. For each super class, if 'WebService' present, take all MDC's according to rules 1&2
+    	 *    But, if WebService not present, grab only MDC's that are annotated.
+		 */
     	if (log.isTraceEnabled()) {
     		log.trace("retrieveReleventMethods: Enter");
     	}
@@ -604,5 +620,4 @@ public class EndpointInterfaceDescription {
     	
     	return retrieveList;
     }
-
 }

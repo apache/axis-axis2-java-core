@@ -782,11 +782,15 @@ public class EndpointDescription {
             else if (getWebServiceProviderAnnotation() != null 
                     && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().serviceName())) {
                 annotation_ServiceName = getWebServiceProviderAnnotation().serviceName();
-            }
+           }
             else {
-                // Default value is the "simple name" of the class or interface + "Service"
+                 // Default value is the "simple name" of the class or interface + "Service"
                 // Per JSR-181 MR Sec 4.1, pg 15
-                annotation_ServiceName = getSimpleJavaClassName(implOrSEIClass) + "Service";
+            	if (getServiceDescription().isDBCMap()) {
+                	annotation_ServiceName = getSimpleJavaClassName(composite.getClassName()) + "Service";
+            	} else {
+                    annotation_ServiceName = getSimpleJavaClassName(implOrSEIClass) + "Service";
+            	}
             }
         }
         return annotation_ServiceName;
@@ -813,8 +817,11 @@ public class EndpointDescription {
                     // Note that this is really the same thing as the call to getWebServiceName() 
                     // in the WebService case; it is done sepertely just to be clear there is no 
                     // name element on the WebServiceProvider annotation
-                    annotation_PortName = getSimpleJavaClassName(implOrSEIClass) + "Port";
-                }
+                	
+                	annotation_PortName = (getServiceDescription().isDBCMap()) ?
+                 			getSimpleJavaClassName(composite.getClassName()) + "Port"
+                 			: getSimpleJavaClassName(implOrSEIClass) + "Port";
+               }
                 else {
                     // This is the @WebService annotation path
                     // Default value is the @WebService.name of the class or interface + "Port"
@@ -840,7 +847,13 @@ public class EndpointDescription {
                 // Default value per JSR-181 MR Sec 4.1 pg 15 defers to "Implementation defined, 
                 // as described in JAX-WS 2.0, section 3.2" which is JAX-WS 2.0 Sec 3.2, pg 29.
                 // FIXME: Hardcoded protocol for namespace
-                annotation_TargetNamespace = makeNamespaceFromPackageName(getJavaPackageName(implOrSEIClass), "http");
+            	if (getServiceDescription().isDBCMap())
+            		annotation_TargetNamespace = 
+            			makeNamespaceFromPackageName(getJavaPackageName(composite.getClassName()), "http");
+            	else
+            		annotation_TargetNamespace = 
+            			makeNamespaceFromPackageName(getJavaPackageName(implOrSEIClass), "http");
+
             }
         }
         return annotation_TargetNamespace;
@@ -849,6 +862,7 @@ public class EndpointDescription {
     
     /**
      * Return the name of the class without any package qualifier.
+     * This method should be DEPRECATED when DBC support is complete
      * @param theClass
      * @return the name of the class sans package qualification.
      */
@@ -893,6 +907,7 @@ public class EndpointDescription {
     
     /**
      * Returns the package name from the class.  If no package, then returns null
+     * This method should be DEPRECATED when DBC support is complete
      * @param theClass
      * @return
      */
@@ -900,6 +915,28 @@ public class EndpointDescription {
         String returnPackage = null;
         if (theClass != null) {
             String fqName = theClass.getName();
+            // Get the package name, if there is one
+            int endOfPackageIndex = fqName.lastIndexOf('.');
+            if (endOfPackageIndex >= 0) {
+                returnPackage = fqName.substring(0, endOfPackageIndex);
+            }
+        }
+        else {
+            // TODO: RAS and NLS
+            throw new UnsupportedOperationException("Java class is null");
+        }
+        return returnPackage;
+    }
+    
+    /**
+     * Returns the package name from the class.  If no package, then returns null
+     * @param theClassName
+     * @return
+     */
+    private static String getJavaPackageName(String theClassName) {
+        String returnPackage = null;
+        if (theClassName != null) {
+            String fqName = theClassName;
             // Get the package name, if there is one
             int endOfPackageIndex = fqName.lastIndexOf('.');
             if (endOfPackageIndex >= 0) {
@@ -1019,8 +1056,15 @@ public class EndpointDescription {
     // ===========================================
     // REVIEW: Should this be returning an enum other than the one defined within the annotation?
     ServiceMode getServiceMode() {
-        if (serviceModeAnnotation == null && implOrSEIClass != null) {
-            serviceModeAnnotation = (ServiceMode) implOrSEIClass.getAnnotation(ServiceMode.class);
+        
+    	if (serviceModeAnnotation == null) {
+        	if (getServiceDescription().isDBCMap()) {
+        		serviceModeAnnotation = composite.getServiceModeAnnot();
+        	} else {	
+        		if (implOrSEIClass != null) {
+        			serviceModeAnnotation = (ServiceMode) implOrSEIClass.getAnnotation(ServiceMode.class);
+        		}
+        	}
         }
         return serviceModeAnnotation;
     }
@@ -1043,9 +1087,15 @@ public class EndpointDescription {
     // ===========================================
 
     BindingType getBindingType() {
-        if (bindingTypeAnnotation == null && implOrSEIClass != null) {
-            bindingTypeAnnotation = (BindingType) implOrSEIClass.getAnnotation(BindingType.class);
-        }
+    	if (bindingTypeAnnotation == null) {
+        	if (getServiceDescription().isDBCMap()) {
+        		bindingTypeAnnotation = composite.getBindingTypeAnnot();
+        	} else {	
+        		if (implOrSEIClass != null) {
+                    bindingTypeAnnotation = (BindingType) implOrSEIClass.getAnnotation(BindingType.class);
+        		}
+        	}
+        }   
         return bindingTypeAnnotation;
     }
     

@@ -82,6 +82,8 @@ public class ParameterDescriptionComposite {
 	 * Do lazy loading
 	 */
 	public Type getParameterGenericType() {
+		
+		//TODO: Determine if this is a parameterized generic type
 		//TODO: Need to set this based on the parameterTypeClass ...hmmm
 		return parameterGenericType;
 	}

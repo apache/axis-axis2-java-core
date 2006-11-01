@@ -196,6 +196,7 @@ public class OperationDescription {
 
     	parentEndpointInterfaceDescription = parent;
 		methodComposite = mdc;
+        this.operationName = new QName(getWebMethodOperationName());
 		webMethodAnnotation = methodComposite.getWebMethodAnnot();
 
 		AxisOperation axisOperation = null;
@@ -323,13 +324,17 @@ public class OperationDescription {
             }
 	
         } 
-        /*
         else {
         	if (methodComposite != null) {
-        		Class[] parameters = methodComposite.getP
+        		
+        		Iterator<ParameterDescriptionComposite> iter = 
+        			methodComposite.getParameterDescriptionCompositeList().iterator();
+        		while (iter.hasNext()) {
+        			returnParameters.add(iter.next().getParameterType());
+        		}
         	}
         }
-        */
+        
         // TODO: This is different than the rest, which return null instead of an empty array
         return returnParameters.toArray(new String[0]);
     }
@@ -461,7 +466,7 @@ public class OperationDescription {
         	if (!isDBC())
         		webMethodOperationName = determineOperationName(seiMethod);
         	else
-                webMethodOperationName = determineOperationName(this.methodComposite); 		
+                webMethodOperationName = determineOperationName(methodComposite); 		
         }
         return webMethodOperationName;
     }
@@ -500,7 +505,11 @@ public class OperationDescription {
     // ==========================================
     RequestWrapper getRequestWrapper() {
         if (requestWrapperAnnotation == null) {
-            requestWrapperAnnotation = seiMethod.getAnnotation(RequestWrapper.class); 
+        	if (!isDBC()) {
+        		requestWrapperAnnotation = seiMethod.getAnnotation(RequestWrapper.class); 
+        	} else {
+        		requestWrapperAnnotation = methodComposite.getRequestWrapperAnnot(); 
+        	}		
         }
         return requestWrapperAnnotation;
     }
@@ -570,10 +579,14 @@ public class OperationDescription {
                 // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.RequestWrapper) in Sec 2.3.1.2 on p. 13
                 // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
                 // implying there IS some sort of default.  We'll try this for now:
-                Class clazz = seiMethod.getDeclaringClass();
-                String packageName = clazz.getPackage().getName();
-                String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
-                requestWrapperClassName = packageName + "." + className;
+            	if (isDBC()) {
+            		requestWrapperClassName = this.methodComposite.getDeclaringClass();	
+            	} else {
+            		Class clazz = seiMethod.getDeclaringClass();
+            		String packageName = clazz.getPackage().getName();
+            		String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
+            		requestWrapperClassName = packageName + "." + className;
+            	}
             }
         }
         return requestWrapperClassName;
@@ -584,7 +597,11 @@ public class OperationDescription {
     // ===========================================
     ResponseWrapper getResponseWrapper() {
         if (responseWrapperAnnotation == null) {
-            responseWrapperAnnotation = seiMethod.getAnnotation(ResponseWrapper.class);
+        	if (!isDBC()) {
+        		responseWrapperAnnotation = seiMethod.getAnnotation(ResponseWrapper.class);
+        	} else {
+            	responseWrapperAnnotation = methodComposite.getResponseWrapperAnnot();      		
+        	}
         }
         return responseWrapperAnnotation;
     }
@@ -655,10 +672,14 @@ public class OperationDescription {
                 // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.ResponseWrapper) in Sec 2.3.1.2 on p. 13
                 // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
                 // implying there IS some sort of default.  We'll try this for now:
-                Class clazz = seiMethod.getDeclaringClass();
-                String packageName = clazz.getPackage().getName();
-                String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
-                responseWrapperClassName = packageName + "." + className;
+            	if (!isDBC()) {
+            		Class clazz = seiMethod.getDeclaringClass();
+            		String packageName = clazz.getPackage().getName();
+            		String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
+            		responseWrapperClassName = packageName + "." + className;
+            	} else {
+            		responseWrapperClassName = methodComposite.getDeclaringClass();
+            	}
             }
         }
         return responseWrapperClassName;
@@ -789,7 +810,12 @@ public class OperationDescription {
     // ===========================================
     WebResult getWebResult() {
         if (webResultAnnotation == null) {
-            webResultAnnotation = seiMethod.getAnnotation(WebResult.class);
+        	if (!isDBC()) {
+        		webResultAnnotation = seiMethod.getAnnotation(WebResult.class);
+        	} else {
+                webResultAnnotation = methodComposite.getWebResultAnnot();
+        	}
+        	
         }
         return webResultAnnotation;
     }
@@ -799,7 +825,19 @@ public class OperationDescription {
     }
 
     public boolean isOperationReturningResult() {
-        return !isOneWay() && (seiMethod.getReturnType() != Void.TYPE);
+    	boolean isResult = false;
+    	if (!isOneWay()) {
+    		if (!isDBC()) {
+    			if (seiMethod.getReturnType() != Void.TYPE) {
+    				isResult = true;
+    			}
+    		} else {
+    			if (!DescriptionUtils.isEmpty(methodComposite.getReturnType()) &&
+    					!methodComposite.getReturnType().equals("void"))
+    				isResult = true;
+    		}
+    	} 
+        return isResult;
     }
 
     public String getWebResultName() {
@@ -888,7 +926,11 @@ public class OperationDescription {
         // TODO: VALIDATION: Only style of DOCUMENT allowed on Method annotation; remember to check the Type's style setting also
         //       JSR-181 Sec 4.7 p. 28
         if (soapBindingAnnotation == null) {
-            soapBindingAnnotation = seiMethod.getAnnotation(SOAPBinding.class);
+        	if (!isDBC()) {
+        		soapBindingAnnotation = seiMethod.getAnnotation(SOAPBinding.class);
+        	} else {
+        		soapBindingAnnotation = methodComposite.getSoapBindingAnnot();
+        	}
         }
         return soapBindingAnnotation;
     }
