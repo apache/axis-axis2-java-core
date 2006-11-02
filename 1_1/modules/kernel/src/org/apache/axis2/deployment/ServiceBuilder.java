@@ -91,9 +91,15 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
             OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
+            
+            // If the service name is explicitly specified in the services.xml
+            // then lets use that as the service name
+            // Refer jira AXIS2-1569
 
             if (serviceNameatt != null) {
-                if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
+                if (!"".equals(serviceNameatt.getAttributeValue().trim())) {                	
+                	// Refer AXIS2-1569
+                	service.setName(serviceNameatt.getAttributeValue());
                     service.setServiceDescription(serviceNameatt.getAttributeValue());
                 }
             }
