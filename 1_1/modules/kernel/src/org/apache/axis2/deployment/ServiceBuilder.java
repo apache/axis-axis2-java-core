@@ -431,13 +431,13 @@ public class ServiceBuilder extends DescriptionBuilder {
             throws DeploymentException {
         while (messages.hasNext()) {
             OMElement messageElement = (OMElement) messages.next();
-            OMAttribute lable = messageElement.getAttribute(new QName(TAG_LABEL));
+            OMAttribute label = messageElement.getAttribute(new QName(TAG_LABEL));
 
-            if (lable == null) {
+            if (label == null) {
                 throw new DeploymentException(Messages.getMessage("messagelabelcannotfound"));
             }
 
-            AxisMessage message = operation.getMessage(lable.getAttributeValue());
+            AxisMessage message = operation.getMessage(label.getAttributeValue());
 
             Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
