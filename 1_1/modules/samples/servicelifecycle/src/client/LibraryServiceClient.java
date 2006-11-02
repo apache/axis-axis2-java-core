@@ -7,6 +7,7 @@ import org.apache.axis2.rpc.client.RPCServiceClient;
 import sample.servicelifecycle.bean.Book;
 
 import javax.xml.namespace.QName;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /*
@@ -28,31 +29,153 @@ import java.util.ArrayList;
 */
 
 public class LibraryServiceClient {
+    private static final String USER_NAME = "-userName";
+    private static final String PASS_WORD = "-passWord";
+    private static final String ISBN = "-isbn";
+
     public static void main(String[] args) throws Exception {
-        String epr = "http://127.0.0.1:8000/axis2/services/Library";
+        LibraryServiceClient client = new LibraryServiceClient();
+        client.runClient();
+    }
+
+    public void runClient() throws Exception {
+        System.out.println("=====Welcome to Libraray client======");
+        System.out.println("                                     ");
+        System.out.println(" To list All books type 1");
+        System.out.println(" To list Available books type 2");
+        System.out.println(" To list Lend books type 3");
+        System.out.println(" To register  4  - -userName -passWord");
+        System.out.println(" To login     5 - -userName -passWord");
+        System.out.println(" To lend a book 6 - -isbn -userName   ");
+        System.out.println(" To return a book 7 - -isbn");
+        System.out.println("                                      ");
+        System.out.println("                                      ");
+        System.out.println("Enter service epr address :          ");
+        String epr = getInput();
         RPCServiceClient rpcClient = new RPCServiceClient();
         Options opts = new Options();
         opts.setTo(new EndpointReference(epr));
         rpcClient.setOptions(opts);
         LibraryServiceClient client = new LibraryServiceClient();
+        while (true) {
+            System.out.println("Type your command here : ");
+            String commandsParms = getInput();
+            if (commandsParms != null) {
+                String[] args = commandsParms.split(" ");
+                String firstarg = args[0];
+                int command = Integer.parseInt(firstarg);
+                switch (command) {
+                    case 1 : {
+                        client.listAllBook(rpcClient);
+                        break;
+                    }
+                    case 2 : {
+                        client.listAvailableBook(rpcClient);
+                        break;
+                    }
+                    case 3 : {
+                        client.listLendBook(rpcClient);
+                        break;
+                    }
+                    case 4 : {
+                        String usreName = null;
+                        String passWord = null;
+                        if (args.length < 5) {
+                            throw new Exception("No enough number of arguments");
+                        }
+                        if (USER_NAME.equals(args[1])) {
+                            usreName = args[2];
+                        } else if (USER_NAME.equals(args[3])) {
+                            usreName = args[4];
+                        }
 
-        //TO list all the books
-        client.listAllBook(rpcClient);
-        //To register for the system
-        System.out.println(client.register("axis2", "abc", rpcClient));
-        //To login to the system
-        System.out.println(client.login("axis2", "abc", rpcClient));
-        //To lend a book
-        client.lendBook("1-56592-229-8", "axis2", rpcClient);
-        // to view the books in the lend section
-        client.listLendBook(rpcClient);
-        //list all the available books
-        client.listAvailableBook(rpcClient);
-        // returinging the book
-        client.returnBook("1-56592-229-8", rpcClient);
-        // view the lend list again
-        client.listLendBook(rpcClient);
+                        if (PASS_WORD.equals(args[1])) {
+                            passWord = args[2];
+                        } else if (PASS_WORD.equals(args[3])) {
+                            passWord = args[4];
+                        }
+                        client.register(usreName, passWord, rpcClient);
+                        break;
+                    }
+                    case 5 : {
+                        String usreName = null;
+                        String passWord = null;
+                        if (args.length < 5) {
+                            throw new Exception("No enough number of arguments");
+                        }
+                        if (USER_NAME.equals(args[1])) {
+                            usreName = args[2];
+                        } else if (USER_NAME.equals(args[3])) {
+                            usreName = args[4];
+                        }
+
+                        if (PASS_WORD.equals(args[1])) {
+                            passWord = args[2];
+                        } else if (PASS_WORD.equals(args[3])) {
+                            passWord = args[4];
+                        }
+                        client.login(usreName, passWord, rpcClient);
+                        break;
+                    }
+                    case 6 : {
+                        String isbn = null;
+                        String userName = null;
+                        if (args.length < 5) {
+                            throw new Exception("No enough number of arguments");
+                        }
+                        if (USER_NAME.equals(args[1])) {
+                            userName = args[2];
+                        } else if (USER_NAME.equals(args[3])) {
+                            userName = args[4];
+                        }
+
+                        if (ISBN.equals(args[1])) {
+                            isbn = args[2];
+                        } else if (ISBN.equals(args[3])) {
+                            isbn = args[4];
+                        }
+                        client.lendBook(isbn, userName, rpcClient);
+                        break;
+                    }
+                    case 7 : {
+                        String isbn = null;
+                        if (args.length < 3) {
+                            throw new Exception("No enough number of arguments");
+                        }
+                        if (ISBN.equals(args[1])) {
+                            isbn = args[2];
+                        }
+                        client.returnBook(isbn, rpcClient);
+                        break;
+                    }
+                    case -1 : {
+                        System.exit(0);
+                    }
+                }
+            }
+        }
+
+        //  System.in.read()
     }
+
+    //
+
+
+    private String getInput() {
+        try {
+            byte b [] = new byte [256];
+            int i = System.in.read(b);
+            String msg = "";
+            if (i != -1) {
+                msg = new String(b).substring(0, i - 1).trim();
+            }
+            return msg;
+        } catch (IOException e) {
+            System.err.println(" occurred while reading in command : " + e);
+            return null;
+        }
+    }
+
 
     public void returnBook(String isbn, RPCServiceClient rpcClient) throws Exception {
         rpcClient.getOptions().setAction("urn:returnBook");
