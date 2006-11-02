@@ -1,4 +1,4 @@
-Sample for Yahoo - Search - REST
+Sample for Google Spell Checker
 ========================================
 
 Introduction
