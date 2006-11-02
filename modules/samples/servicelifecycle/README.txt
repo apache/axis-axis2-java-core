@@ -133,3 +133,11 @@ Running Java client.
 ==================================================
 Open up the LibraryServiceClient java class in your favorite IDE and run the main class. And you can
  comment and un-comment what ever the method you want to invoke.
+
+
+Running Java client. Using Ant
+==================================================
+invoke
+ant run.client
+
+And then follow the instruction as mentioned in the console
