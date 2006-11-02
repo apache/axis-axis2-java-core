@@ -49,8 +49,29 @@
              destfile="${dest.dir}/${service-name}"/>
 
     </target>
+
+    <target name="run.client" depends="prepare">
+        <mkdir dir="${dest.dir}"/>
+        <mkdir dir="${dest.dir.classes}"/>
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="client/**">
+            <classpath>
+                <fileset dir="../../lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+
+        <java classname="client.LibraryServiceClient">
+            <classpath>
+                <pathelement location="${dest.dir.classes}"/>
+                <fileset dir="../../lib">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+	</target>
     <target name="copy.to.tomcat" depends="build">
-        <copy file="${service-name}" todir="${catalina-modules}"/>
+        <copy file="${dest.dir}/${service-name}" todir="${catalina-modules}"/>
     </target>
 
 </project>
