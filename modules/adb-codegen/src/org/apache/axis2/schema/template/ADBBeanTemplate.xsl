@@ -1971,6 +1971,10 @@
                                                         <xsl:value-of select="$listName"/>.add(
                                                                 (javax.activation.DataHandler) reader.getProperty(org.apache.axiom.om.OMConstants.DATA_HANDLER));
                                                     } else {
+                                                        // Step in
+                                                        if (reader.getEventType() == javax.xml.stream.XMLStreamConstants.START_ELEMENT &amp;&amp; <xsl:value-of select="$propQName"/>.equals(reader.getName())) {
+                                                            reader.next();
+                                                        }
                                                         if (reader.getEventType() == javax.xml.stream.XMLStreamConstants.START_ELEMENT &amp;&amp; reader.getName().equals(new javax.xml.namespace.QName(org.apache.axiom.om.impl.MTOMConstants.XOP_NAMESPACE_URI, org.apache.axiom.om.impl.MTOMConstants.XOP_INCLUDE)))
                                                         {
                                                             java.lang.String id = org.apache.axiom.om.util.ElementHelper.getContentID(reader, "UTF-8");
