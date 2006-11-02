@@ -1,4 +1,4 @@
-
+﻿
 Introduction
 ============
 
@@ -50,7 +50,7 @@ there.
 
 Running the client.
 =================================================
-WOW , you  can invoke complete service using REST API . First try to use library system using REST
+WOW , you  can invoke complete service using REST API , but that only work in application servers like tomcat and that will not work in SimpleHttpServer. First try to use library system using REST
 API.
 
 This sample is simple one and will not do complex tasks , so lets try to follow the right way . 
