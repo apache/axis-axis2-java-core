@@ -32,7 +32,7 @@ public class InvalidFaultWsdlTest extends TestCase {
                     "to an element.");
         } catch (Exception e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "No element reference found for the part in fault message"));
+                    "Part 'message' of fault message '{http://www.Monson-Haefel.com/jwsbook/BookQuote}InvalidIsbnFault'"));
         }
     }
 }

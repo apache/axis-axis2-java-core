@@ -327,7 +327,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (serviceName != null) {
             service = (Service) services.get(serviceName);
             if (service == null) {
-                throw new AxisFault("Service " + serviceName +  " was not found in the WSDL");
+                throw new AxisFault("Service " + serviceName + " was not found in the WSDL");
             }
         } else {
             if (services.size() > 0) {
@@ -837,9 +837,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
         QName name = wsdl4jMessagePart.getElementName();
         if (name == null) {
-            String message = "No element reference found for the part in fault message "
-                    + wsdl4jMessage.getQName().getLocalPart() +
-                    ". Fault message part should always be refer to an element.";
+            String message = "Part '" + wsdl4jMessagePart.getName() +
+                    "' of fault message '" + wsdl4jMessage.getQName()
+                    + "' must be defined with 'element=QName' and not 'type=QName'";
             log.error(message);
             throw new AxisFault(message);
 
