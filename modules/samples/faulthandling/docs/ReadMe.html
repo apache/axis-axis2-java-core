@@ -24,11 +24,12 @@ interface for our service. Of particular interest are the
 <strong>InsufficientFundFault</strong> types defined in the wsdl:types
 element.</p>
 
-<p>Using a command prompt in the folder of this example, type <strong>ant
-generate.service</strong> or just <strong> ant</strong>. This will:</p>
+<p>Using a command prompt, got to the folder of this example and type
+<strong>ant generate.service</strong> or just <strong> ant</strong>. This
+will:</p>
 <ul>
   <li>Generate the source for all the service classes in
-    <strong>build/service/src/example</strong></li>
+    <em>build/service/src/example</em></li>
   <li>Generate <em>services.xml</em> and a more complete
     <em>BankService.wsdl</em> into the <em>build/service/resources</em>
     folder.</li>
@@ -37,16 +38,17 @@ generate.service</strong> or just <strong> ant</strong>. This will:</p>
   code</li>
   <li>Compile the Java classes for the service</li>
   <li>Create the service archive and copy it to Axis2 repository
-    (repository/services/) as sample-faulthandling.aar.</li>
+    (<em>repository/services/</em>) as sample-faulthandling.aar.</li>
 </ul>
 
 <p>Open up <em>service/src/example/BankServiceSkeleton.java</em> and you will
 see the following code fragment inside <strong>#withdraw</strong> method.
-When generate.service was being executed, Axis2 generates an <span
-style="color: #FF0000">empty</span> skeleton class
-(build/service/src/example/BankServiceSkeleton.java) and we replace it with a
-pre-populated skeleton class (service/src/example/BankServiceSkeleton.java)
-which has the following code inside it.</p>
+When <strong>generate.service</strong> has been executed, Axis2 generates an
+<span style="color: #FF0000">empty</span> skeleton class
+(<em>build/service/src/example/BankServiceSkeleton.java</em>) which we
+replace with a pre-populated skeleton class
+(<em>service/src/example/BankServiceSkeleton.java</em>) which has the
+following code inside it.</p>
 <pre>        final String account = param0.getAccount();
         if (account.equals("13")) {
         final AccountNotExistFault fault = new AccountNotExistFault();
@@ -75,24 +77,24 @@ which has the following code inside it.</p>
     </pre>
 
 <p>Note that the source generated for the client will include the 2 faults
-and the local Exceptions through which they will be transmitted. Note that
-the Exceptions are generated within the <em>BankStub</em> class.</p>
+and the local Exceptions through which they will be transmitted. Also note
+that the Exceptions are generated within the <em>BankStub</em> class.</p>
 
 <h2>Deploying the Service</h2>
 
 <p>The above step must have already copied your BankService.aar file in to
-repository/services/ folder. Then go to bin folder and run either of
-axis2server.bat or axis2server.sh, depending on your platform to startup
-Axis2 server.</p>
+<em>repository/services/</em> folder. Then go to <em>bin</em> folder and run
+either of axis2server.bat or axis2server.sh, depending on your platform in
+order to startup Axis2 server.</p>
 
 <p>With the default configuration, if you go to <a
 href="http://localhost:8080/axis2/"> http://localhost:8080/axis2/</a> you
-should see BankService was deployed.</p>
+should see <em>BankService</em> was deployed.</p>
 
-<h2>Running the Client.</h2>
+<h2>Running the Client</h2>
 
 <p>Invoke the <em>client/src/example/BankClient</em>.java class. You may use
-the command scripts to do so. You need to supply 3 parameters to the command,
+the command scripts to do so. You need to supply 3 parameters to the command-
 url, account and amount.</p>
 <ul>
   <li><strong>ant run.client
@@ -114,7 +116,8 @@ url, account and amount.</p>
       </li>
 </ul>
 When you call ant run.client with parameters, before running
-client/src/example/BankClient.java class it does the following as well.
+<em>client/src/example/BankClient.java</em> class, it does the following as
+well:
 <ul>
   <li>Generate the stubs (for the client) from the WSDL</li>
   <li>Compile the client classes</li>
