@@ -214,8 +214,14 @@ public class ExceptionFactory {
 		if (t != null) {
 			rootCause = getRootCause(t);
 		}
-		WebServiceException e = new WebServiceException(message, t);
-		if (log.isDebugEnabled()) {
+        
+        WebServiceException e;
+        if (rootCause != null)
+            e = new WebServiceException(rootCause.getMessage(), rootCause);
+        else
+            e = new WebServiceException(message, t);
+		
+        if (log.isDebugEnabled()) {
 			log.debug("Create Exception:", e);
 		}
 		return e;
@@ -310,7 +316,7 @@ public class ExceptionFactory {
     	if (cause == null) {
     		cause = t.getCause();
     	}
-    	return null;
+        return cause;
     }
     
     /**

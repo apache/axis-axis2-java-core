@@ -3,7 +3,10 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import java.net.UnknownHostException;
+
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 
@@ -40,4 +43,39 @@ public class FaultyWebServiceTests extends TestCase {
 		assertEquals("bean custom message", exception.getFaultInfo().getMessage());
 		
 	}
+    
+    public void testFaultyWebService_badEndpoint(){
+        
+        String host = "this.is.a.bad.endpoint.terrible.in.fact";
+        String badEndpoint = "http://" + host;
+        
+        WebServiceException exception = null;
+
+        try{
+            System.out.println("----------------------------------");
+            System.out.println("test: " + getName());
+            FaultyWebServiceService service = new FaultyWebServiceService();
+            FaultyWebServicePortType proxy = service.getFaultyWebServicePort();
+            BindingProvider p = (BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,badEndpoint);
+
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.faultyWebService(10);
+
+        }catch(FaultyWebServiceFault_Exception e) {
+            // shouldn't get this exception
+            fail(e.toString());
+        }catch(WebServiceException e) {
+            exception = e;
+        }catch(Exception e) {
+            fail("This testcase should only produce a WebServiceException.  We got: " + e.toString());
+        }
+        
+        System.out.println("----------------------------------");
+        
+        assertNotNull(exception);
+        assertTrue(exception.getCause() instanceof UnknownHostException);
+        assertEquals(exception.getMessage(), host);
+
+    }
 }

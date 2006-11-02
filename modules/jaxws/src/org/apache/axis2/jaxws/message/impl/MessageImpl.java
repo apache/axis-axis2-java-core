@@ -63,7 +63,8 @@ public class MessageImpl implements Message {
 	XMLPart xmlPart = null; // the representation of the xmlpart
 	List<Attachment> attachments = new ArrayList<Attachment>(); // non-xml parts
     boolean mtomEnabled;
-	
+	Throwable localException = null;
+    
 	// Constants
 	private static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
 	private static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
@@ -353,5 +354,14 @@ public class MessageImpl implements Message {
     public String getXMLPartContentType() {
         return xmlPart.getXMLPartContentType();
     }
+    
+    public Throwable getLocalException() {
+        return localException;
+    }
+
+    public void setLocalException(Throwable t) {
+        localException = t;
+    }
+
 
 }

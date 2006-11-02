@@ -80,5 +80,22 @@ public interface Message extends XMLPart {
     public boolean isMTOMEnabled();
     
     public void setMTOMEnabled(boolean b);
+    
+    /**
+     * The local exception is the Throwable object held on the Message
+     * from a problem that occurred due to something other than the
+     * server.  In other words, no message ever travelled across the wire.
+     * @return the Throwable object or null
+     */
+     public Throwable getLocalException();
+
+    /**
+     * The local exception is the Throwable object held on the Message
+     * from a problem that occurred due to something other than the
+     * server.  In other words, no message ever travelled across the wire.
+     * @param t
+     * @see Throwable
+     */
+    public void setLocalException(Throwable t);
 	
 }

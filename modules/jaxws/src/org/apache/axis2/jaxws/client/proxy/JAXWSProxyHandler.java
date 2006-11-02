@@ -317,7 +317,11 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		    }
 		    
 		    throw (Throwable)object;
+		} else if (responseMsg.getLocalException() != null) {
+		    // use the factory, it'll throw the right thing:
+		    throw ExceptionFactory.makeWebServiceException(responseMsg.getLocalException());
 		}
+
 		Object object = methodMarshaller.demarshalResponse(responseMsg, args);
 		if (log.isDebugEnabled()) {
             log.debug("Message Converted to response Object");

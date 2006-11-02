@@ -113,16 +113,16 @@ public class AxisInvocationController extends InvocationController {
         
         MessageContext response = null;
         
+        AxisFault faultexception = null;  // don't let the keyword "fault" confuse you.  This is an exception class.
         try {
             execute(opClient, true, axisRequestMsgCtx);
         } catch(AxisFault af) {
-            //throw ExceptionFactory.makeWebServiceException(af);
-            // TODO MIKE revisit?
-            // do nothing here.  The exception we get is from the endpoint,
-            // and will be sitting on the message context.  We need to save it
-            // to process it through jaxws
-        	System.out.println("Swallowed Exception =" + af);
-        	af.printStackTrace(System.out);
+            // save the fault in case it didn't come from the endpoint, and thus
+            // there would be no message on the MessageContext
+            faultexception = af;
+            if (log.isDebugEnabled()) {
+                log.debug("AxisFault received from client: " + af.getMessage());
+            }
         }
         
         try {
@@ -130,6 +130,19 @@ public class AxisInvocationController extends InvocationController {
             axisResponseMsgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             response = new MessageContext(axisResponseMsgCtx);
          
+            /*
+             * If the Message object is still null, then it's possible that a
+             * local AxisFault was thrown and we need to save it for later throwing
+             * We do not want to create a message and go through the whole handler or
+             * XMLFault processing because it's unnecessary.
+             */
+            if (response.getMessage() == null && faultexception != null) {
+                MessageFactory factory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+                Message message = factory.create(request.getMessage().getProtocol());
+                message.setLocalException(faultexception);
+                response.setMessage(message);
+            }
+            
             // This assumes that we are on the ultimate execution thread
             ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
         } catch (Exception e) {
