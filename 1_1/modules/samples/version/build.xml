@@ -1,5 +1,5 @@
 
-<project basedir=".">
+<project basedir="." default="generate.service">
 	
 	<property name="dest.dir" value="build" />
 	
@@ -29,7 +29,7 @@
 	
 	</target>
 	
-	<target name="service" depends="clean,prepare">
+	<target name="generate.service" depends="clean,prepare">
 		
 		<copy file="src/sample/axisversion/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
 		
