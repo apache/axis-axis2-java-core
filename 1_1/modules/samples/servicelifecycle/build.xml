@@ -3,6 +3,9 @@
     <property environment="env"/>
     <property name="service-name" value="Library.aar"/>
     <property name="dest.dir" value="target"/>
+    <property name="axis2.home" value="../../" />
+
+	<property name="repository.path" value="${axis2.home}/repository/services" />
 
     <property name="dest.dir.classes" value="${dest.dir}/classes"/>
 
@@ -49,6 +52,28 @@
              destfile="${dest.dir}/${service-name}"/>
 
     </target>
+
+     <target name="generate.service" depends="prepare">
+
+        <mkdir dir="${dest.dir}"/>
+
+        <mkdir dir="${dest.dir.classes}"/>
+        <mkdir dir="${dest.dir.classes}/META-INF"/>
+
+        <copy file="src/META-INF/services.xml"
+              tofile="${dest.dir.classes}/META-INF/services.xml"
+              overwrite="true"/>
+
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**">
+            <classpath refid="build.class.path"/>
+        </javac>
+
+        <jar basedir="${dest.dir.classes}"
+             destfile="${repository.path}/${service-name}"/>
+
+    </target>
+
+
 
     <target name="run.client" depends="prepare">
         <mkdir dir="${dest.dir}"/>
