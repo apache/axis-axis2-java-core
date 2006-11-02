@@ -26,6 +26,7 @@
     <property name="lib.dir.name" value="lib"></property>
     <property name="bin.dir.name" value="bin"></property>
     <property name="help.dir.name" value="help"></property>
+    <property name="icons.dir.name" value="icons"></property>
 
     <property name="codegen.resource.dir" value="./conf/codegen"></property>
     <property name="service.resource.dir" value="./conf/service"></property>
@@ -84,6 +85,7 @@
 	
     <!-- Default target to generate all the services -->
     <target name="all">
+    	<antcall target="clean" />
         <antcall target="generate-service-project"/>
         <antcall target="generate-codegen-project"/>
         <antcall target="generate-codegen-plugin"/>
@@ -97,43 +99,20 @@
         <mkdir dir="${codegen.output.dir}"></mkdir>
     </target>
 
-    <!-- generate the service archiver project -->
-    <target name="generate-service-project" depends="init">
-        <!-- copy the source -->
-        <copy todir="${service.output.dir}">
-            <fileset dir="${service.src.dir}" excludes="**/codegen/**/*.java"/>
-        </copy>
-		<!-- Copy the other stuff -->
-        <copy todir="${service.output.dir}" filtering="on">
-            <fileset dir="${service.resource.dir}"></fileset>
-        </copy>
-	    <!-- create bin directory -->
-	    <mkdir dir="${service.output.dir}/${bin.dir.name}"></mkdir>
-	    <!-- create the help directory -->
-        	<mkdir dir="${service.output.dir}/${help.dir.name}"></mkdir>
-	    <!-- copy the help directory -->
-        <copy todir="${service.output.dir}/${help.dir.name}">
-            <fileset file="${service.help.resource.file}"></fileset>
-        </copy>
-	 	<available property="images.dir" 
-	                    file="${service.help.images.dir}" 
-	                    type="dir" 
-	                    value="${service.help.images.dir}"/>
-         <copy todir="${service.output.dir}/${help.dir.name}/images">
-          <fileset dir="${images.dir}"/>
-         </copy> 
-
-    </target>
-
+  <!-- Codegen Project -->
     <!--generate the codegen project-->
     <target name="generate-codegen-project" depends="init">
         <!-- copy the source  -->
-        <copy todir="${codegen.output.dir}">
+        <copy todir="${codegen.output.dir}/${source.dir.name}">
             <fileset dir="${codegen.src.dir}" excludes="**/service/**/*.java"/>
         </copy>
         <!-- Copy the other stuff -->
         <copy todir="${codegen.output.dir}" filtering="on" >
-            <fileset dir="${codegen.resource.dir}"></fileset>
+            <fileset dir="${codegen.resource.dir}" excludes="**/*.gif"></fileset>
+        </copy>
+        <!-- Copy the icons dir -->
+        <copy todir="${codegen.output.dir}">
+            <fileset dir="${codegen.resource.dir}" includes="**/*.gif"></fileset>
         </copy>
         <!-- create bin directory -->
 	    <mkdir dir="${codegen.output.dir}/${bin.dir.name}"></mkdir>
@@ -142,6 +121,10 @@
 	    <!-- copy the help directory -->
         <copy todir="${codegen.output.dir}/${help.dir.name}">
             <fileset file="${codegen.help.resource.file}"></fileset>
+        </copy>
+        <!-- copy the libraries to the plugin-->
+        <copy todir="${codegen.output.dir}/${lib.dir.name}">
+            <fileset refid="codegen.libs" />
         </copy>
         <available property="images.dir" file="${codegen.help.images.dir}" type="dir" value="${codegen.help.images.dir}"/>
           <copy todir="${codegen.output.dir}/${help.dir.name}/images">
@@ -175,8 +158,8 @@
             <fileset refid="codegen.libs" />
         </copy>
         <!-- copy the sources to the plugin-->
-        <copy todir="${codegen.plugin.output.dir}/src">
-	    <fileset dir="${codegen.output.dir}">
+        <copy todir="${codegen.plugin.output.dir}/${source.dir.name}">
+	    <fileset dir="${codegen.output.dir}/${source.dir.name}">
 		    <include name="org/**" />
             </fileset>
         </copy>
@@ -184,7 +167,7 @@
 	<!-- compile the plugin java files -->
 	<delete dir="${codegen.plugin.output.dir}/class"></delete>
  	<mkdir dir="${codegen.plugin.output.dir}/class"></mkdir>
-	<javac srcdir="${codegen.output.dir}" 
+	<javac srcdir="${codegen.output.dir}/${source.dir.name}" 
                destdir="${codegen.plugin.output.dir}/class" 
                includes="org/apache/axis2/**">
 		<classpath>
@@ -199,7 +182,7 @@
 	
 	<!-- create the Axis2CodegenWizard.jar -->
         <copy todir="${codegen.plugin.output.dir}/class">
-            <fileset dir="${codegen.output.dir}" >
+            <fileset dir="${codegen.output.dir}/${source.dir.name}" >
 		<include name="**/Codegen.properties" />
 	    </fileset>
         </copy>
@@ -217,6 +200,43 @@
     		<fileset dir="${plugin.output.dir}"/>
           </copy>
     </target>
+
+  <!-- Service Archiver Project -->
+	<!-- generate the service archiver project -->
+	<target name="generate-service-project" depends="init">
+	        <!-- copy the source -->
+	        <copy todir="${service.output.dir}/${source.dir.name}">
+	            <fileset dir="${service.src.dir}/" excludes="**/codegen/**/*.java"/>
+	        </copy>
+			<!-- Copy the other stuff -->
+	        <copy todir="${service.output.dir}" filtering="on">
+	            <fileset dir="${service.resource.dir}" excludes="**/*.gif"></fileset>
+	        </copy>
+		    <!-- Copy the icons folder -->
+            <copy todir="${service.output.dir}">
+                 <fileset dir="${service.resource.dir}" includes="**/*.gif" ></fileset>
+            </copy>
+		    <!-- create bin directory -->
+		    <mkdir dir="${service.output.dir}/${bin.dir.name}"></mkdir>
+		    <!-- create the help directory -->
+	        	<mkdir dir="${service.output.dir}/${help.dir.name}"></mkdir>
+		    <!-- copy the help directory -->
+	        <copy todir="${service.output.dir}/${help.dir.name}">
+	            <fileset file="${service.help.resource.file}"></fileset>
+	        </copy>
+	        <!-- copy the libraries to the plugin-->
+	        <copy todir="${service.output.dir}/${lib.dir.name}">
+	            <fileset refid="service.libs" />
+	        </copy>
+		 	<available property="images.dir" 
+		                    file="${service.help.images.dir}" 
+		                    type="dir" 
+		                    value="${service.help.images.dir}"/>
+	         <copy todir="${service.output.dir}/${help.dir.name}/images">
+	          <fileset dir="${images.dir}"/>
+	         </copy> 
+
+	    </target>
 
     <!--Generate the service plugin -->	
     <target name="generate-service-plugin" depends="init,generate-service-project">
@@ -243,8 +263,8 @@
             <fileset refid="service.libs" />
         </copy>
         <!-- copy the sources to the plugin-->
-        <copy todir="${service.plugin.output.dir}/src">
-	    <fileset dir="${service.output.dir}">
+        <copy todir="${service.plugin.output.dir}/${source.dir.name}">
+	    <fileset dir="${service.output.dir}/${source.dir.name}">
 		<include name="org/**" />
 	    </fileset>
         </copy>
@@ -252,7 +272,7 @@
 	<!-- compile the plugin java files -->
 	<delete dir="${service.plugin.output.dir}/class"></delete>
  	<mkdir dir="${service.plugin.output.dir}/class"></mkdir>
-	<javac srcdir="${service.output.dir}" 
+	<javac srcdir="${service.output.dir}/${source.dir.name}" 
                destdir="${service.plugin.output.dir}/class" 
                includes="org/apache/axis2/**">
 		<classpath>
@@ -267,7 +287,7 @@
 	
 	<!-- create the Axis_Service_Archiver.jar -->
           <copy todir="${service.plugin.output.dir}/class">
-            <fileset dir="${service.output.dir}" >
+            <fileset dir="${service.output.dir}/${source.dir.name}" >
                 <include name="**/ServiceResources.properties" />
             </fileset>
           </copy>
@@ -322,6 +342,7 @@
         <delete dir="${output}"></delete>
     </target>
 
+	<!-- help, list of targets -->
     <target name="help">
 	    <echo message="****************************************************************************" />
 	    <echo message="**                   Eclipse Plugin Build                                 **" />
@@ -349,4 +370,6 @@
     </target>
 
 </project>
+
+
 
