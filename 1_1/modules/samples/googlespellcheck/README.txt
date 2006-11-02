@@ -1,16 +1,35 @@
+Sample for Yahoo - Search - REST
+========================================
 
-This example demonstrates the use of asynchronous web method invocations. 
+Introduction
+============
 
-In this sample, the use can continue to type text on the text editor where the text editor does the spell check from a hosted web service. The web method invocation is done in as an asynchronous web method invocation allowing the user to input text continuously. 
+This example demonstrates the use of asynchronous Web method invocations. 
 
-Note that when running the build script, stub is generated for the hosted spell check service at: http://tools.wso2.net:12001/axis2/services/SimplifiedSpellCheck?wsdl
 
-N.B.: This public web service uses Google Web APIs to provide spell check service. In case of a failure SimplifiedSpellCheck echo the sent phrase instead of throwing an error. Therefore if the spell check editor just output in the input words, that is because of this behavior of the SimplifiedSpellCheck service.
+Pre-Requisites
+==============
 
-and the text editor use that stub and the callback handler to provided the required functionality.
+Apache Ant 1.6.2 or later
+
+
+In this sample, the user can continue to type text on the text editor where the text editor does the spell check from a hosted Web service. The Web method invocation is carried out in an asynchronous manner allowing the user to continuously type text without having to stall for the response. 
+
+Note that when running the build script, a stub is generated for the hosted spell check service at: http://tools.wso2.net:12001/axis2/services/SimplifiedSpellCheck?wsdl
+
+N.B.: This public Web service uses Google Web APIs to provide spell check service. In case of a failure SimplifiedSpellCheck echo sends back the phrase (sent for spell check) instead of throwing an error. Therefore, if the spell check editor just outputs the input words/phrase, that is because of this behavior of the SimplifiedSpellCheck service.
+
+
+Running The Sample
+==================
 
 To generate stubs and run the text editor, type
 $ant
+
+
+
+
+
 
 
 
