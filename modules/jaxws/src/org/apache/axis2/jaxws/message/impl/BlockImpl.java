@@ -183,7 +183,11 @@ public abstract class BlockImpl implements Block {
 		}
 		if (omElement != null) {
 			if (consume) {
-				newReader = omElement.getXMLStreamReaderWithoutCaching();
+			    if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
+                    newReader = omElement.getXMLStreamReaderWithoutCaching();
+                } else {
+                    newReader = omElement.getXMLStreamReader();
+                }
 				omElement = null;
 			} else {
 				newReader = omElement.getXMLStreamReader();
