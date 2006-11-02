@@ -23,18 +23,16 @@ The lib directory contains;
 
 and all 3rd party distributable dependencies of the above jars.
 
-The repository/modules directory contains the deployable addressing
-module.
+The repository/modules directory contains the deployable addressing module.
 
-The webapp folder contains a ant build script to generate the axis2.war 
-out of this distribution. (need Ant 1.6.5)
+The webapp folder contains an ant build script to generate the axis2.war out of this distribution.
+(This requires Ant 1.6.5)
 
-The samples directory contains all the Axis2 samples which demonstrates 
-some of the key features of Axis2.
+The samples directory contains all the Axis2 samples which demonstrates some of the key features of
+Axis2.
 
 The bin directory contains a set of usefull scripts for the users.
 
-(Please note that this release does not include the other WS-* 
-implementation modules, like WS-Security, that are being developed
-within Axis2. Those can be downloaded from 
+(Please note that this release does not include the other WS-* implementation modules, like
+WS-Security, that are being developed within Axis2. Those can be downloaded from
 http://ws.apache.org/axis2/modules/)
