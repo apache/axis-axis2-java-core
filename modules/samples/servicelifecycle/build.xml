@@ -41,7 +41,7 @@
               tofile="${dest.dir.classes}/META-INF/services.xml"
               overwrite="true"/>
 
-        <javac srcdir="src" destdir="${dest.dir.classes}" includes="sample/**">
+        <javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**">
             <classpath refid="build.class.path"/>
         </javac>
 
