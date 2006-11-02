@@ -131,6 +131,10 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 XMLFault fault = responseMsg.getXMLFault();
                 throw ExceptionFactory.makeWebServiceException(fault.getReason().getText());
             }
+            else if (responseMsg.getLocalException() != null) {
+                // use the factory, it'll throw the right thing:
+                throw ExceptionFactory.makeWebServiceException(responseMsg.getLocalException());
+            }
         } catch (MessageException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }

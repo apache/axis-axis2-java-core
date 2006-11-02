@@ -34,9 +34,9 @@ public class Constants {
     
     public static final String SCHEMA = "http://www.w3.org/2001/XMLSchema";
     
-    public static final String AXIS2_REPO_PATH = "org.apache.axis2.jaxws.repo.path";
-    public static final String AXIS2_CONFIG_PATH = "org.apache.axis2.jaxws.config.path";
-    public static final String USE_ASYNC_MEP = "org.apache.axis2.jaxws.use.async.mep";
+    public static String AXIS2_REPO_PATH = "org.apache.axis2.jaxws.repo.path";
+    public static String AXIS2_CONFIG_PATH = "org.apache.axis2.jaxws.config.path";
+    public static String USE_ASYNC_MEP = "org.apache.axis2.jaxws.use.async.mep";
     
     public static final String THREAD_CONTEXT_MIGRATOR_LIST_ID = "JAXWS-ThreadContextMigrator-List";
 }

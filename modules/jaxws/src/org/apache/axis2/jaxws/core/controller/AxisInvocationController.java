@@ -233,8 +233,17 @@ public class AxisInvocationController extends InvocationController {
         Boolean useAsyncMep = (Boolean) request.getProperties().get(Constants.USE_ASYNC_MEP);
         if((useAsyncMep != null && useAsyncMep.booleanValue()) 
                 || opClient.getOptions().isUseSeparateListener()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Enabling asynchronous message exchange.  An asynchronous listener will be establish.");
+            }
+
             opClient.getOptions().setUseSeparateListener(true);
             opClient.getOptions().setTransportInProtocol("http");
+
+            //FIXME: This has to be here so the ThreadContextMigrator can pick it up.
+            //This should go away once AXIS2-978 is fixed.
+            axisRequestMsgCtx.getOptions().setUseSeparateListener(true);
+            
             // Setup the response callback receiver to receive the async response
             // This logic is based on org.apache.axis2.client.ServiceClient.sendReceiveNonBlocking(...)
             AxisOperation op = opClient.getOperationContext().getAxisOperation();
@@ -242,6 +251,12 @@ public class AxisInvocationController extends InvocationController {
             if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver))
                 op.setMessageReceiver(new CallbackReceiver());
         }
+        else {
+            if (log.isDebugEnabled()) {
+                log.debug("Asynchronous message exchange not enabled.  The invocation will be synchronous.");
+            }
+        }
+
         
         // There should be an AsyncListener that is configured and set on the
         // InvocationContext.  We must get this and use it to wait for the 
@@ -368,7 +383,10 @@ public class AxisInvocationController extends InvocationController {
     }
     
     private void initOperationClient(OperationClient opClient, MessageContext requestMsgCtx) {
-        setupProperties(requestMsgCtx, opClient.getOptions());
+        org.apache.axis2.context.MessageContext axisRequest = requestMsgCtx.getAxisMessageContext();
+        
+        Options options = opClient.getOptions();
+        setupProperties(requestMsgCtx, options);
         
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
@@ -376,27 +394,24 @@ public class AxisInvocationController extends InvocationController {
             String targetUrl = (String) requestMsgCtx.getProperties().get(
                     BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
             EndpointReference toEPR = new EndpointReference(targetUrl);
-            opClient.getOptions().setTo(toEPR);
+            options.setTo(toEPR);
             
             // Get the SOAP Action (if needed)
             String soapAction = configureSOAPAction(requestMsgCtx);
-            opClient.getOptions().setAction(soapAction);
+            options.setAction(soapAction);
             
             // Use the OperationClient to send the request and put the contents
             // of the response in the response MessageContext.
             try {
-                //setupRequestMessageContext(requestMsgCtx);
-                org.apache.axis2.context.MessageContext axisRequestMsgCtx = requestMsgCtx.getAxisMessageContext();
-
                 // Setting the ServiceContext will create the association between 
                 // the OperationClient it's MessageContexts and the 
                 // AxisService/AxisOperation that they are tied to.
                 OperationContext opContext = opClient.getOperationContext();
                 ServiceContext svcContext = opContext.getServiceContext();
-                axisRequestMsgCtx.setServiceContext(svcContext);
+                axisRequest.setServiceContext(svcContext);
                 
                 // Set the Axis2 request MessageContext
-                opClient.addMessageContext(axisRequestMsgCtx);
+                opClient.addMessageContext(axisRequest);
             }
             catch (Exception e) {
                 //TODO: Do something
