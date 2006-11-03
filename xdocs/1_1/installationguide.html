@@ -153,8 +153,7 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
 
 <h2>Standalone Insatallation Using Standard Binary Distribution</h2>
 
-<p>All the required jars are shipped with the standard binary
-    distribution.</p>
+<p>All the required jars are shipped with the standard binary distribution.</p>
 
 <p>Installing Axis2 is merely a matter of <a
         href="http://ws.apache.org/axis2/download/1_1/download.cgi">downloading</a> and extracting
@@ -162,6 +161,33 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
     Point JAVA_HOME to the location of
     your JDK, eg. C:\Program Files\Java\jdk1.5.0_02 and AXIS2_HOME to the extracted folder of the
     release.</p>
+
+<p>Let's look at the different scripts available inside the bin folder.</p>
+
+<table>
+<tr>
+	<td><b>Script Name</b></td>
+	<td><b>Description</b></td>
+</tr>
+<tr>
+	<td>setenv.bat/sh</td>
+	<td>This will set AXIS2_HOME, AXIS2_CLASSPATH and JAVA_HOME variables for the other scripts to run.</td>
+</tr>
+<tr>
+	<td>axis2.bat/sh</td>
+	<td>This will act like the java command for Axis2. This will set the proper class path, Axis2 repository location and Axis2 confgiuration file (axis2.xml) location for you. <br/>
+	This will enable some one to invoke, say for example, WSDLJava like "sh axis2.sh org.apache.axis2.wsdl.WSDL2Java -uri myService.wsdl". If you use this, you are relieved from setting all the above parameters.</td>
+</tr>
+<tr>
+	<td>axis2server.bat</td>
+	<td>This script will start all the listeners listed in conf/axis2.xml file. For example, if you want to start only SimpleHTTPServer, go to conf/axis2.xml and make sure only SimpleHTTPServer is listed as the transport receiver. Then invoking this script will start SimpleHTTPServer. </td>
+</tr>
+<tr>
+	<td>java2wsdl.bat/sh and wsdl2java.bat/sh</td>
+	<td>The scripts helps you to invoke java2wsdl and wsdl2java tasks, respectively.</td>
+</tr>
+</table>
+
 <a name="build_war"></a>
 
 <h2>Building the WAR File Using Standard Binary Distribution</h2>
