@@ -31,7 +31,7 @@ src/sample/addressbook/adbclient/AddressBookADBClient is Client that uses a gene
 to invoke the methods of this web service.
 
 To generate the stub, compile and run, type
-$ant adb.client -Dwsdl=http://<yourhost>:<yourport>/axis2/services/AdressBookService?wsdl
+$ant adb.client -Dwsdl=http://<yourhost>:<yourport>/axis2/services/AddressBookService?wsdl
 
 
 
