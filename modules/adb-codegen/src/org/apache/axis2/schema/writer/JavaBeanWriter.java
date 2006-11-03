@@ -107,6 +107,9 @@ public class JavaBeanWriter implements BeanWriter {
 
     public void init(CompilerOptions options) throws SchemaCompilationException {
         try {
+	    modelMap = new HashMap();
+	    ns2packageNameMap = new HashMap();	
+
             initWithFile(options.getOutputLocation());
             packageName = options.getPackageName();
             writeClasses = options.isWriteOutput();
