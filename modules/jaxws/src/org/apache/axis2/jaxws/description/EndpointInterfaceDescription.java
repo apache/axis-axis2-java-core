@@ -22,6 +22,34 @@ import java.lang.reflect.Method;
 
 import javax.xml.namespace.QName;
 
+/**
+ * An EndpointInterfaceDescription corresponds to a particular SEI-based Service
+ * Implementation. It can correspond to either either a client to that impl or
+ * the actual service impl.
+ * 
+ * The EndpointInterfaceDescription contains information that is relevant only
+ * to an SEI-based (aka Endpoint-based or Java-based) enpdoint; Provider-based
+ * endpoint, which are not operation based and do not have an associated SEI,
+ * will not have an an EndpointInterfaceDescription class and sub-hierachy.
+ * 
+ * <pre>
+ * <b>EndpointInterfaceDescription details</b>
+ * 
+ *     CORRESPONDS TO:      An SEI (on both Client and Server)      
+ *         
+ *     AXIS2 DELEGATE:      none
+ *     
+ *     CHILDREN:            1..n OperationDescription
+ *     
+ *     ANNOTATIONS:
+ *         SOAPBinding [181]
+ *     
+ *     WSDL ELEMENTS:
+ *         portType
+ *         
+ *  </pre>       
+ */
+
 public interface EndpointInterfaceDescription {
     public abstract EndpointDescription getEndpointDescription();
     
@@ -32,7 +60,8 @@ public interface EndpointInterfaceDescription {
     public abstract OperationDescription[] getOperationForJavaMethod(String javaMethodName);
     
     public abstract Class getSEIClass();
-    
+
+    // TODO: (JLB) These should return a locally defined Enums
     public abstract javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
     public abstract javax.jws.soap.SOAPBinding.Style getSoapBindingStyle();
     public abstract javax.jws.soap.SOAPBinding.Use getSoapBindingUse();

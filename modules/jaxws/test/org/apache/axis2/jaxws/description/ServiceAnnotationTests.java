@@ -3,15 +3,17 @@ package org.apache.axis2.jaxws.description;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceProvider;
 
+import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
+
 import junit.framework.TestCase;
 
 public class ServiceAnnotationTests extends TestCase {
 
     public void testWebServiceDefaults() {
         String className = "WebServiceDefaultTest";
-        EndpointDescriptionImpl testEndpointDesc = getEndpointDesc(WebServiceDefaultTest.class);
-        assertNotNull(testEndpointDesc.getWebServiceAnnotation());
-        assertNull(testEndpointDesc.getWebServiceProviderAnnotation());
+        EndpointDescriptionJava testEndpointDesc = getEndpointDesc(WebServiceDefaultTest.class);
+        assertNotNull(testEndpointDesc.getAnnoWebService());
+        assertNull(testEndpointDesc.getAnnoWebServiceProvider());
         assertEquals(className, testEndpointDesc.getAnnoWebServiceName());
         assertEquals("", testEndpointDesc.getAnnoWebServiceEndpointInterface());
         assertEquals("http://description.jaxws.axis2.apache.org/", testEndpointDesc.getAnnoWebServiceTargetNamespace());
@@ -22,9 +24,9 @@ public class ServiceAnnotationTests extends TestCase {
     
     public void testWebServiceProviderDefaults() {
         String className = "WebServiceProviderDefaultTest";
-        EndpointDescriptionImpl testEndpointDesc = getEndpointDesc(WebServiceProviderDefaultTest.class);
-        assertNull(testEndpointDesc.getWebServiceAnnotation());
-        assertNotNull(testEndpointDesc.getWebServiceProviderAnnotation());
+        EndpointDescriptionJava testEndpointDesc = getEndpointDesc(WebServiceProviderDefaultTest.class);
+        assertNull(testEndpointDesc.getAnnoWebService());
+        assertNotNull(testEndpointDesc.getAnnoWebServiceProvider());
         // name element not allowed on WebServiceProvider
         assertEquals("", testEndpointDesc.getAnnoWebServiceName());
         // EndpointInterface element not allowed on WebServiceProvider
@@ -37,9 +39,9 @@ public class ServiceAnnotationTests extends TestCase {
     
     public void testWebServiceName() {
         String className = "WebServiceName"; 
-        EndpointDescriptionImpl testEndpointDesc = getEndpointDesc(WebServiceName.class);
-        assertNotNull(testEndpointDesc.getWebServiceAnnotation());
-        assertNull(testEndpointDesc.getWebServiceProviderAnnotation());
+        EndpointDescriptionJava testEndpointDesc = getEndpointDesc(WebServiceName.class);
+        assertNotNull(testEndpointDesc.getAnnoWebService());
+        assertNull(testEndpointDesc.getAnnoWebServiceProvider());
         assertEquals("WebServiceNameElement", testEndpointDesc.getAnnoWebServiceName());
         assertEquals("", testEndpointDesc.getAnnoWebServiceEndpointInterface());
         assertEquals("http://description.jaxws.axis2.apache.org/", testEndpointDesc.getAnnoWebServiceTargetNamespace());
@@ -51,9 +53,9 @@ public class ServiceAnnotationTests extends TestCase {
     
     public void testWebServiceNameAndPort() {
         String className = "WebServiceNameAndPort"; 
-        EndpointDescriptionImpl testEndpointDesc = getEndpointDesc(WebServiceNameAndPort.class);
-        assertNotNull(testEndpointDesc.getWebServiceAnnotation());
-        assertNull(testEndpointDesc.getWebServiceProviderAnnotation());
+        EndpointDescriptionJava testEndpointDesc = getEndpointDesc(WebServiceNameAndPort.class);
+        assertNotNull(testEndpointDesc.getAnnoWebService());
+        assertNull(testEndpointDesc.getAnnoWebServiceProvider());
         assertEquals("WebServiceNameAndPortElement", testEndpointDesc.getAnnoWebServiceName());
         assertEquals("", testEndpointDesc.getAnnoWebServiceEndpointInterface());
         assertEquals("http://description.jaxws.axis2.apache.org/", testEndpointDesc.getAnnoWebServiceTargetNamespace());
@@ -65,9 +67,9 @@ public class ServiceAnnotationTests extends TestCase {
     
     public void testWebServiceAll() {
         String className = "WebServiceAll"; 
-        EndpointDescriptionImpl testEndpointDesc = getEndpointDesc(WebServiceAll.class);
-        assertNotNull(testEndpointDesc.getWebServiceAnnotation());
-        assertNull(testEndpointDesc.getWebServiceProviderAnnotation());
+        EndpointDescriptionJava testEndpointDesc = getEndpointDesc(WebServiceAll.class);
+        assertNotNull(testEndpointDesc.getAnnoWebService());
+        assertNull(testEndpointDesc.getAnnoWebServiceProvider());
         assertEquals("WebServiceAllNameElement", testEndpointDesc.getAnnoWebServiceName());
         assertEquals("org.apache.axis2.jaxws.description.MyEndpointInterface", testEndpointDesc.getAnnoWebServiceEndpointInterface());
         assertEquals("http://namespace.target.jaxws.axis2.apache.org/", testEndpointDesc.getAnnoWebServiceTargetNamespace());
@@ -78,9 +80,9 @@ public class ServiceAnnotationTests extends TestCase {
     
     public void testWebServiceProviderAll() {
         String className = "WebServiceProviderAll"; 
-        EndpointDescriptionImpl testEndpointDesc = getEndpointDesc(WebServiceProviderAll.class);
-        assertNull(testEndpointDesc.getWebServiceAnnotation());
-        assertNotNull(testEndpointDesc.getWebServiceProviderAnnotation());
+        EndpointDescriptionJava testEndpointDesc = getEndpointDesc(WebServiceProviderAll.class);
+        assertNull(testEndpointDesc.getAnnoWebService());
+        assertNotNull(testEndpointDesc.getAnnoWebServiceProvider());
         assertEquals("", testEndpointDesc.getAnnoWebServiceName());
         assertEquals("", testEndpointDesc.getAnnoWebServiceEndpointInterface());
         assertEquals("http://namespace.target.jaxws.axis2.apache.org/", testEndpointDesc.getAnnoWebServiceTargetNamespace());
@@ -93,7 +95,7 @@ public class ServiceAnnotationTests extends TestCase {
     /*
      * Method to return the endpoint interface description for a given implementation class.
      */
-    private EndpointDescriptionImpl getEndpointDesc(Class implementationClass) {
+    private EndpointDescriptionJava getEndpointDesc(Class implementationClass) {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
             DescriptionFactory.createServiceDescriptionFromServiceImpl(implementationClass, null);
@@ -105,7 +107,7 @@ public class ServiceAnnotationTests extends TestCase {
         
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
         EndpointDescription testEndpointDesc = endpointDesc[0];
-        return (EndpointDescriptionImpl) testEndpointDesc;
+        return (EndpointDescriptionJava) testEndpointDesc;
     }
 }
 

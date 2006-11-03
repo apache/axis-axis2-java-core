@@ -16,18 +16,16 @@
  */
 
 
-package org.apache.axis2.jaxws.description;
+package org.apache.axis2.jaxws.description.impl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
@@ -39,61 +37,23 @@ import javax.xml.ws.WebFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.jaxws.description.builder.HandlerChainAnnot;
+import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.FaultDescription;
+import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.OperationDescriptionJava;
+import org.apache.axis2.jaxws.description.OperationDescriptionWSDL;
+import org.apache.axis2.jaxws.description.ParameterDescription;
+import org.apache.axis2.jaxws.description.ParameterDescriptionJava;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
-import org.apache.axis2.jaxws.description.builder.RequestWrapperAnnot;
-import org.apache.axis2.jaxws.description.builder.ResponseWrapperAnnot;
-import org.apache.axis2.jaxws.description.builder.SoapBindingAnnot;
-import org.apache.axis2.jaxws.description.builder.WebEndpointAnnot;
-import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
-import org.apache.axis2.jaxws.description.builder.WebResultAnnot;
-import org.apache.axis2.jaxws.description.builder.WebServiceContextAnnot;
-import org.apache.axis2.jaxws.description.builder.WebServiceRefAnnot;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004Constants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 
 /**
- * An OperationDescripton corresponds to a method on an SEI.  That SEI could be explicit
- * (i.e. WebService.endpointInterface=sei.class) or implicit (i.e. public methods on the service implementation
- * are the contract and thus the implicit SEI).  Note that while OperationDescriptions are created on both the client
- * and service side, implicit SEIs will only occur on the service side.
- * 
- * OperationDescriptons contain information that is only relevent for and SEI-based service, i.e. one that is invoked via specific
- * methods.  This class does not exist for Provider-based services (i.e. those that specify WebServiceProvider)
- * 
- * <pre>
- * <b>OperationDescription details</b>
- * 
- *     CORRESPONDS TO:      A single operation on an SEI (on both Client and Server)      
- *         
- *     AXIS2 DELEGATE:      AxisOperation
- *     
- *     CHILDREN:            0..n ParameterDescription
- *                          0..n FaultDescription (Note: Not fully implemented)
- *     
- *     ANNOTATIONS:
- *         WebMethod [181]
- *         SOAPBinding [181]
- *         Oneway [181]
- *         WebResult [181]
- *         RequestWrapper [224]
- *         ResponseWrapper [224]
- *     
- *     WSDL ELEMENTS:
- *         operation
- *         
- *  </pre>       
+ * @see ../OperationDescription
+ *
  */
-
 // TODO: Axis2 does not support overloaded operations, although EndpointInterfaceDescription.addOperation() does support overloading
 //       of methods represented by OperationDescription classes.  However, the AxisOperation contained in an OperationDescription
 //       does NOT support overloaded methods.
@@ -411,7 +371,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // =====================================
     // ANNOTATION: WebMethod
     // =====================================
-    WebMethod getWebMethod() {
+    public WebMethod getAnnoWebMethod() {
         return webMethodAnnotation;
     }
     
@@ -481,8 +441,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     
     public String getAnnoWebMethodAction() {
         if (webMethodAction == null) {
-            if (getWebMethod() != null && !DescriptionUtils.isEmpty(getWebMethod().action())) {
-                webMethodAction = getWebMethod().action();
+            if (getAnnoWebMethod() != null && !DescriptionUtils.isEmpty(getAnnoWebMethod().action())) {
+                webMethodAction = getAnnoWebMethod().action();
             }
             else {
                 webMethodAction = WebMethod_Action_DEFAULT;
@@ -501,8 +461,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             // TODO: Validation: This element is not allowed on endpoint interfaces
             // Unlike the elements with a String value, if the annotation is present, exclude will always 
             // return a usable value since it will default to FALSE if the element is not present.
-            if (getWebMethod() != null) {
-                webMethodExclude = new Boolean(getWebMethod().exclude());
+            if (getAnnoWebMethod() != null) {
+                webMethodExclude = new Boolean(getAnnoWebMethod().exclude());
             }
             else {
                 webMethodExclude = WebMethod_Exclude_DEFAULT;
@@ -515,7 +475,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // ==========================================
     // ANNOTATION: RequestWrapper
     // ==========================================
-    RequestWrapper getRequestWrapper() {
+    public RequestWrapper getAnnoRequestWrapper() {
         if (requestWrapperAnnotation == null) {
             if (!isDBC()) {
                 requestWrapperAnnotation = seiMethod.getAnnotation(RequestWrapper.class); 
@@ -542,9 +502,9 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             return null;
         }
         if (requestWrapperLocalName == null) {
-            if (getRequestWrapper() != null
-                    && !DescriptionUtils.isEmpty(getRequestWrapper().localName())) {
-                requestWrapperLocalName = getRequestWrapper().localName();
+            if (getAnnoRequestWrapper() != null
+                    && !DescriptionUtils.isEmpty(getAnnoRequestWrapper().localName())) {
+                requestWrapperLocalName = getAnnoRequestWrapper().localName();
             } else {
                 // The default value of localName is the value of operationName as
                 // defined in the WebMethod annotation. [JAX-WS Sec. 7.3, p. 80]
@@ -568,8 +528,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             return null;
         }
         if (requestWrapperTargetNamespace == null) {
-            if (getRequestWrapper() != null && !DescriptionUtils.isEmpty(getRequestWrapper().targetNamespace())) {
-                requestWrapperTargetNamespace = getRequestWrapper().targetNamespace();
+            if (getAnnoRequestWrapper() != null && !DescriptionUtils.isEmpty(getAnnoRequestWrapper().targetNamespace())) {
+                requestWrapperTargetNamespace = getAnnoRequestWrapper().targetNamespace();
             }
             else {
                 // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.3, p. 80]
@@ -595,8 +555,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             return null;
         }
         if (requestWrapperClassName == null) {
-            if (getRequestWrapper() != null && !DescriptionUtils.isEmpty(getRequestWrapper().className())) {
-                requestWrapperClassName = getRequestWrapper().className();
+            if (getAnnoRequestWrapper() != null && !DescriptionUtils.isEmpty(getAnnoRequestWrapper().className())) {
+                requestWrapperClassName = getAnnoRequestWrapper().className();
             }
             else {
                 // Not sure what the default value should be (if any).  None is listed in Sec. 7.3 on p. 80 of
@@ -619,7 +579,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // ===========================================
     // ANNOTATION: ResponseWrapper
     // ===========================================
-    ResponseWrapper getResponseWrapper() {
+    public ResponseWrapper getAnnoResponseWrapper() {
         if (responseWrapperAnnotation == null) {
             if (!isDBC()) {
                 responseWrapperAnnotation = seiMethod.getAnnotation(ResponseWrapper.class);
@@ -643,8 +603,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             return null;
         }
         if (responseWrapperLocalName == null) {
-            if (getResponseWrapper() != null && !DescriptionUtils.isEmpty(getResponseWrapper().localName())) {
-                responseWrapperLocalName = getResponseWrapper().localName();
+            if (getAnnoResponseWrapper() != null && !DescriptionUtils.isEmpty(getAnnoResponseWrapper().localName())) {
+                responseWrapperLocalName = getAnnoResponseWrapper().localName();
             }
             else { 
                 // The default value of localName is the value of operationName as 
@@ -670,8 +630,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             return null;
         }
         if (responseWrapperTargetNamespace == null) {
-            if (getResponseWrapper() != null && !DescriptionUtils.isEmpty(getResponseWrapper().targetNamespace())) {
-                responseWrapperTargetNamespace = getResponseWrapper().targetNamespace();
+            if (getAnnoResponseWrapper() != null && !DescriptionUtils.isEmpty(getAnnoResponseWrapper().targetNamespace())) {
+                responseWrapperTargetNamespace = getAnnoResponseWrapper().targetNamespace();
             }
             else {
                 // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.3, p. 80]
@@ -698,8 +658,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             return null;
         }
         if (responseWrapperClassName == null) {
-            if (getResponseWrapper() != null && !DescriptionUtils.isEmpty(getResponseWrapper().className())) {
-                responseWrapperClassName = getResponseWrapper().className();
+            if (getAnnoResponseWrapper() != null && !DescriptionUtils.isEmpty(getAnnoResponseWrapper().className())) {
+                responseWrapperClassName = getAnnoResponseWrapper().className();
             }
             else {
                 // Not sure what the default value should be (if any).  None is listed in Sec. 7.4 on p. 81 of
@@ -1044,7 +1004,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // ===========================================
     // ANNOTATION: OneWay
     // ===========================================
-    Oneway getOnewayAnnotation() {
+    public Oneway getAnnoOneway() {
         //TODO: Shouldn't really do it this way...if there is not Oneway annotation, 
         //      we will always be calling the methods to try to retrieve it, since
         //      it will always be null, should consider relying on 'isOneWay'
@@ -1067,7 +1027,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     
     public boolean isAnnoOneWay() {
         if (onewayIsOneway == null) {
-            if (getOnewayAnnotation() != null) {
+            if (getAnnoOneway() != null) {
                 // The presence of the annotation indicates the method is oneway
                 onewayIsOneway = new Boolean(true);
             }

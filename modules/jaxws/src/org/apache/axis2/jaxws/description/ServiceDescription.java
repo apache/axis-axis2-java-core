@@ -4,6 +4,43 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
+/**
+ * A ServiceDescription corresponds to a Service under which there can be a
+ * collection of enpdoints. In WSDL 1.1 terms, then, a ServiceDescription
+ * corresponds to a wsdl:Service under which there are one or more wsdl:Port
+ * entries. The ServiceDescription is the root of the metdata abstraction
+ * Description hierachy.
+ * 
+ * The Description hierachy is:
+ * <pre>
+ * ServiceDescription
+ *     EndpointDescription[]
+ *         EndpointInterfaceDescription
+ *             OperationDescription[]
+ *                 ParameterDescription[]
+ *                 FaultDescription[]       (Note: Not implemented yet)
+ *
+ * <b>ServiceDescription details</b>
+ * 
+ *     CORRESPONDS TO:      
+ *         On the Client: The JAX-WS Service class or generated subclass.
+ *         
+ *         On the Server: The Service implementation.  Note that there is a 1..1 
+ *         correspondence between a ServiceDescription and EndpointDescription 
+ *         on the server side.
+ *        
+ *     AXIS2 DELEGATE:      None
+ *     
+ *     CHILDREN:            1..n EndpointDescription
+ *     
+ *     ANNOTATIONS:
+ *         None
+ *     
+ *     WSDL ELEMENTS:
+ *         service
+ *         
+ *  </pre>       
+ */
 
 public interface ServiceDescription {
     public enum UpdateType {GET_PORT, ADD_PORT, CREATE_DISPATCH}

@@ -16,10 +16,9 @@
  */
 
 
-package org.apache.axis2.jaxws.description;
+package org.apache.axis2.jaxws.description.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -45,45 +44,20 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
+import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 /**
- * An EndpointDescription corresponds to a particular Service Implementation. It
- * can correspond to either either a client to that impl or the actual service
- * impl.
- * 
- * The EndpointDescription contains information that is relevant to both a
- * Provider-based and SEI-based (aka Endpoint-based or Java-based) enpdoints.
- * SEI-based endpoints (whether they have an explicit or implcit SEI) will have
- * addtional metadata information in an EndpointInterfaceDescription class and
- * sub-hierachy; Provider-based endpoitns do not have such a hierachy.
- * 
- * <pre>
- * <b>EndpointDescription details</b>
- * 
- *     CORRESPONDS TO:      The endpoint (both Client and Server)      
- *         
- *     AXIS2 DELEGATE:      AxisService
- *     
- *     CHILDREN:            0..1 EndpointInterfaceDescription
- *     
- *     ANNOTATIONS:
- *         WebService [181]
- *         WebServiceProvider [224]
- *             ServicMode [224]
- *         BindingType [224]   
- *     
- *     WSDL ELEMENTS:
- *         port
- *         
- *  </pre>       
+ * @see ../EndpointDescription
+ *
  */
-
 /*
  * TODO: EndpointDescription should be created via AxisService objects and not directly from WSDL
  * IMPORTANT NOTE: Axis2 currently only supports 1 service and 1 port under that service.  When that is
@@ -760,13 +734,13 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     
     public String getAnnoWebServiceWSDLLocation() {
         if (annotation_WsdlLocation == null) {
-            if (getWebServiceAnnotation() != null 
-                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().wsdlLocation())) {
-                annotation_WsdlLocation = getWebServiceAnnotation().wsdlLocation();
+            if (getAnnoWebService() != null 
+                    && !DescriptionUtils.isEmpty(getAnnoWebService().wsdlLocation())) {
+                annotation_WsdlLocation = getAnnoWebService().wsdlLocation();
             }
-            else if (getWebServiceProviderAnnotation() != null 
-                    && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().wsdlLocation())) {
-                annotation_WsdlLocation = getWebServiceProviderAnnotation().wsdlLocation();
+            else if (getAnnoWebServiceProvider() != null 
+                    && !DescriptionUtils.isEmpty(getAnnoWebServiceProvider().wsdlLocation())) {
+                annotation_WsdlLocation = getAnnoWebServiceProvider().wsdlLocation();
             }
             else {
                 // There is no default value per JSR-181 MR Sec 4.1 pg 16
@@ -778,13 +752,13 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 
     public String getAnnoWebServiceServiceName() {
         if (annotation_ServiceName == null) {
-            if (getWebServiceAnnotation() != null 
-                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().serviceName())) {
-                annotation_ServiceName = getWebServiceAnnotation().serviceName();
+            if (getAnnoWebService() != null 
+                    && !DescriptionUtils.isEmpty(getAnnoWebService().serviceName())) {
+                annotation_ServiceName = getAnnoWebService().serviceName();
             }
-            else if (getWebServiceProviderAnnotation() != null 
-                    && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().serviceName())) {
-                annotation_ServiceName = getWebServiceProviderAnnotation().serviceName();
+            else if (getAnnoWebServiceProvider() != null 
+                    && !DescriptionUtils.isEmpty(getAnnoWebServiceProvider().serviceName())) {
+                annotation_ServiceName = getAnnoWebServiceProvider().serviceName();
             }
             else {
                 // Default value is the "simple name" of the class or interface + "Service"
@@ -801,13 +775,13 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     
     public String getAnnoWebServicePortName() {
         if (annotation_PortName == null) {
-            if (getWebServiceAnnotation() != null
-                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().portName())) {
-                annotation_PortName = getWebServiceAnnotation().portName();
+            if (getAnnoWebService() != null
+                    && !DescriptionUtils.isEmpty(getAnnoWebService().portName())) {
+                annotation_PortName = getAnnoWebService().portName();
             }
-            else if (getWebServiceProviderAnnotation() != null
-                    && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().portName())) {
-                annotation_PortName = getWebServiceProviderAnnotation().portName();
+            else if (getAnnoWebServiceProvider() != null
+                    && !DescriptionUtils.isEmpty(getAnnoWebServiceProvider().portName())) {
+                annotation_PortName = getAnnoWebServiceProvider().portName();
             }
             else {
                 // Default the value
@@ -838,13 +812,13 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 
     public String getAnnoWebServiceTargetNamespace() {
         if (annotation_TargetNamespace == null) {
-            if (getWebServiceAnnotation() != null 
-                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().targetNamespace())) {
-                annotation_TargetNamespace = getWebServiceAnnotation().targetNamespace();
+            if (getAnnoWebService() != null 
+                    && !DescriptionUtils.isEmpty(getAnnoWebService().targetNamespace())) {
+                annotation_TargetNamespace = getAnnoWebService().targetNamespace();
             }
-            else if (getWebServiceProviderAnnotation() != null
-                    && !DescriptionUtils.isEmpty(getWebServiceProviderAnnotation().targetNamespace())) {
-                annotation_TargetNamespace = getWebServiceProviderAnnotation().targetNamespace();
+            else if (getAnnoWebServiceProvider() != null
+                    && !DescriptionUtils.isEmpty(getAnnoWebServiceProvider().targetNamespace())) {
+                annotation_TargetNamespace = getAnnoWebServiceProvider().targetNamespace();
             }
             else {
                 // Default value per JSR-181 MR Sec 4.1 pg 15 defers to "Implementation defined, 
@@ -988,7 +962,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // ANNOTATION: WebServiceProvider
     // ===========================================
 
-    WebServiceProvider getWebServiceProviderAnnotation() {
+    public WebServiceProvider getAnnoWebServiceProvider() {
         return webServiceProviderAnnotation;
     }
 
@@ -996,16 +970,16 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // ANNOTATION: WebService
     // ===========================================
 
-    WebService getWebServiceAnnotation() {
+    public WebService getAnnoWebService() {
         return webServiceAnnotation;
     }
     
     public String getAnnoWebServiceEndpointInterface() {
         // TODO: Validation: Not allowed on WebServiceProvider
         if (webService_EndpointInterface == null) {
-            if (!isProviderBased() && getWebServiceAnnotation() != null
-                    && !DescriptionUtils.isEmpty(getWebServiceAnnotation().endpointInterface())) {
-                webService_EndpointInterface = getWebServiceAnnotation().endpointInterface();
+            if (!isProviderBased() && getAnnoWebService() != null
+                    && !DescriptionUtils.isEmpty(getAnnoWebService().endpointInterface())) {
+                webService_EndpointInterface = getAnnoWebService().endpointInterface();
             }
             else {
                 // This element is not valid on a WebServiceProvider annotation
@@ -1030,9 +1004,9 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     	
     	if (webService_Name == null) {
     		if (!isProviderBased()) {
-    			if (getWebServiceAnnotation() != null 
-    					&& !DescriptionUtils.isEmpty(getWebServiceAnnotation().name())) {
-    				webService_Name = getWebServiceAnnotation().name();
+    			if (getAnnoWebService() != null 
+    					&& !DescriptionUtils.isEmpty(getAnnoWebService().name())) {
+    				webService_Name = getAnnoWebService().name();
      			}
     			else {
     				if (getServiceDescriptionImpl().isDBCMap()) {
@@ -1057,8 +1031,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // ===========================================
     // ANNOTATION: ServiceMode
     // ===========================================
-    // REVIEW: Should this be returning an enum other than the one defined within the annotation?
-    ServiceMode getAnnoServiceMode() {
+    public ServiceMode getAnnoServiceMode() {
         
     	if (serviceModeAnnotation == null) {
         	if (getServiceDescriptionImpl().isDBCMap()) {
@@ -1094,7 +1067,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // ANNOTATION: BindingType
     // ===========================================
 
-    BindingType getAnnoBindingType() {
+    public BindingType getAnnoBindingType() {
     	if (bindingTypeAnnotation == null) {
         	if (getServiceDescriptionImpl().isDBCMap()) {
         		bindingTypeAnnotation = composite.getBindingTypeAnnot();

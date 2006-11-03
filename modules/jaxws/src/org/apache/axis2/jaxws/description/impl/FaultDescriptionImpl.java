@@ -16,33 +16,17 @@
  */
 
 
-package org.apache.axis2.jaxws.description;
+package org.apache.axis2.jaxws.description.impl;
 
 import javax.xml.ws.WebFault;
 
+import org.apache.axis2.jaxws.description.FaultDescription;
+import org.apache.axis2.jaxws.description.FaultDescriptionJava;
+import org.apache.axis2.jaxws.description.FaultDescriptionWSDL;
+import org.apache.axis2.jaxws.description.OperationDescription;
 /**
- * A FaultDescription corresponds to a fault that can be thrown from an operation.  NOTE this it not 
- * implemented yet!
- * 
- * FaultDescriptons contain information that is only relevent for and SEI-based service, i.e. one that is invoked via specific
- * methods.  This class does not exist for Provider-based services (i.e. those that specify WebServiceProvider)
- * 
- * <pre>
- * <b>OperationDescription details</b>
- * 
- *     CORRESPONDS TO:      An exception thrown by an operation on an SEI (on both Client and Server)      
- *         
- *     AXIS2 DELEGATE:      None
- *     
- *     CHILDREN:            None
- *     
- *     ANNOTATIONS:
- *         WebFault [224]
- *     
- *     WSDL ELEMENTS:
- *         fault message
- *         
- *  </pre>       
+ * @see ../FaultDescription
+ *
  */
 // TODO: This class is not implemented yet or used from OperationDescription
 class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, FaultDescriptionWSDL {

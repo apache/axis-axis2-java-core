@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.ws.axis2.tests.EchoPort;
 import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
 
@@ -308,7 +309,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     public void testSOAPBindingDefault() {
         EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(SOAPBindingDefaultTestImpl.class);
         
-        assertNull(((EndpointInterfaceDescriptionImpl) testEndpointInterfaceDesc).getSoapBinding());
+        assertNull(((EndpointInterfaceDescriptionJava) testEndpointInterfaceDesc).getAnnoSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
         assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
@@ -326,7 +327,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     public void testSOAPBindingDocEncBare() {
         EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(SOAPBindingDocEncBareTestImpl.class);
         
-        assertNotNull(((EndpointInterfaceDescriptionImpl) testEndpointInterfaceDesc).getSoapBinding());
+        assertNotNull(((EndpointInterfaceDescriptionJava) testEndpointInterfaceDesc).getAnnoSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
         assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
@@ -336,7 +337,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // Verify that an impl without the method annotation uses the settings from the type
         EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(SOAPBindingDocEncBareTestImpl.class);
 
-        assertNotNull(((EndpointInterfaceDescriptionImpl) testEndpointInterfaceDesc).getSoapBinding());
+        assertNotNull(((EndpointInterfaceDescriptionJava) testEndpointInterfaceDesc).getAnnoSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
         assertEquals(javax.jws.soap.SOAPBinding.Use.ENCODED, testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.BARE, testEndpointInterfaceDesc.getSoapBindingParameterStyle());
@@ -351,7 +352,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // Verify that the method annotation setting overrides the type annotatino setting
         testEndpointInterfaceDesc = getEndpointInterfaceDesc(SOAPBindingDefaultMethodTestImpl.class);
         
-        assertNull(((EndpointInterfaceDescriptionImpl) testEndpointInterfaceDesc).getSoapBinding());
+        assertNull(((EndpointInterfaceDescriptionJava) testEndpointInterfaceDesc).getAnnoSoapBinding());
         assertEquals(javax.jws.soap.SOAPBinding.Style.DOCUMENT, testEndpointInterfaceDesc.getSoapBindingStyle());
         assertEquals(javax.jws.soap.SOAPBinding.Use.LITERAL, testEndpointInterfaceDesc.getSoapBindingUse());
         assertEquals(javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED, testEndpointInterfaceDesc.getSoapBindingParameterStyle());

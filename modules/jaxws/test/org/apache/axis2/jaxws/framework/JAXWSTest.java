@@ -28,10 +28,10 @@ import org.apache.axis2.jaxws.description.AnnotationProviderImplDescriptionTests
 import org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationServiceImplWithDBCTests;
 import org.apache.axis2.jaxws.description.ServiceAnnotationTests;
-import org.apache.axis2.jaxws.description.ServiceDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderTests;
+import org.apache.axis2.jaxws.description.impl.ServiceDescriptionTests;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;

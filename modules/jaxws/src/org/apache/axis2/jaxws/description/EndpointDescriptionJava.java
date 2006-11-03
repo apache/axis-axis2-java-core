@@ -18,21 +18,29 @@
  */
 package org.apache.axis2.jaxws.description;
 
+import javax.jws.WebService;
+import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceProvider;
 
 /**
  * 
  */
 public interface EndpointDescriptionJava {
 
-    public abstract String getAnnoBindingTypeValue();
+    public WebService getAnnoWebService();
+    public WebServiceProvider getAnnoWebServiceProvider();
+    public String getAnnoWebServiceEndpointInterface();
+    public String getAnnoWebServiceName();
+    public String getAnnoWebServicePortName();
+    public String getAnnoWebServiceServiceName();
+    public String getAnnoWebServiceTargetNamespace();
+    public String getAnnoWebServiceWSDLLocation();
     
-    public abstract Service.Mode getAnnoServiceModeValue();
+    public BindingType getAnnoBindingType();
+    public String getAnnoBindingTypeValue();
     
-    public abstract String getAnnoWebServiceEndpointInterface();
-    public abstract String getAnnoWebServiceName();
-    public abstract String getAnnoWebServicePortName();
-    public abstract String getAnnoWebServiceServiceName();
-    public abstract String getAnnoWebServiceTargetNamespace();
-    public abstract String getAnnoWebServiceWSDLLocation();
+    public ServiceMode getAnnoServiceMode();
+    public Service.Mode getAnnoServiceModeValue();
 }

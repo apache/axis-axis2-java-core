@@ -25,6 +25,37 @@ import javax.xml.ws.Service;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
+/**
+ * An EndpointDescription corresponds to a particular Service Implementation. It
+ * can correspond to either either a client to that impl or the actual service
+ * impl.
+ * 
+ * The EndpointDescription contains information that is relevant to both a
+ * Provider-based and SEI-based (aka Endpoint-based or Java-based) enpdoints.
+ * SEI-based endpoints (whether they have an explicit or implcit SEI) will have
+ * addtional metadata information in an EndpointInterfaceDescription class and
+ * sub-hierachy; Provider-based endpoitns do not have such a hierachy.
+ * 
+ * <pre>
+ * <b>EndpointDescription details</b>
+ * 
+ *     CORRESPONDS TO:      The endpoint (both Client and Server)      
+ *         
+ *     AXIS2 DELEGATE:      AxisService
+ *     
+ *     CHILDREN:            0..1 EndpointInterfaceDescription
+ *     
+ *     ANNOTATIONS:
+ *         WebService [181]
+ *         WebServiceProvider [224]
+ *             ServicMode [224]
+ *         BindingType [224]   
+ *     
+ *     WSDL ELEMENTS:
+ *         port
+ *         
+ *  </pre>       
+ */
 
 public interface EndpointDescription {
 

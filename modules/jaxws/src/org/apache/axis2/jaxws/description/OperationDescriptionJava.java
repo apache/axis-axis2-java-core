@@ -18,17 +18,29 @@
 
 package org.apache.axis2.jaxws.description;
 
+import javax.jws.Oneway;
+import javax.jws.WebMethod;
 import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
 
 public interface OperationDescriptionJava {
     
     public WebResult getAnnoWebResult();
+    public boolean isWebResultAnnotationSpecified();
+    public boolean getAnnoWebResultHeader();
+    public String getAnnoWebResultName();
+    public String getAnnoWebResultPartName();
+    public String getAnnoWebResultTargetNamespace();
+    
+    public RequestWrapper getAnnoRequestWrapper();
     public String getAnnoRequestWrapperClassName();
     public String getAnnoRequestWrapperLocalName();
     public String getAnnoRequestWrapperTargetNamespace();
     
+    public ResponseWrapper getAnnoResponseWrapper();
     public String getAnnoResponseWrapperClassName();
     public String getAnnoResponseWrapperLocalName();
     public String getAnnoResponseWrapperTargetNamespace();
@@ -38,22 +50,20 @@ public interface OperationDescriptionJava {
     public javax.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle();
     public javax.jws.soap.SOAPBinding.Use getAnnoSoapBindingUse();
     
+    public WebMethod getAnnoWebMethod();
     public String getAnnoWebMethodAction();
     public boolean getAnnoWebMethodExclude();
     public String getAnnoWebMethodOperationName();
 
+    // Note that the WebParam annotation is handled by ParameterDescription.  These
+    // WebParam-related methods are simply convenience methods.
     public Mode[] getAnnoWebParamModes();
     public String[] getAnnoWebParamNames();
     public String getAnnoWebParamTargetNamespace(String name);
     public String[] getAnnoWebParamTargetNamespaces();
     public boolean isAnnoWebParamHeader(String name);
     
-    public boolean isWebResultAnnotationSpecified();
-    public boolean getAnnoWebResultHeader();
-    public String getAnnoWebResultName();
-    public String getAnnoWebResultPartName();
-    public String getAnnoWebResultTargetNamespace();
-    
+    public Oneway getAnnoOneway();
     public boolean isAnnoOneWay();
     
 }

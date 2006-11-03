@@ -26,6 +26,8 @@ import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
 
+import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
+
 import junit.framework.TestCase;
 
 public class AnnotationProviderImplDescriptionTests extends TestCase {
@@ -41,7 +43,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals(1, endpointDesc.length);
         
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
-        EndpointDescriptionImpl testEndpointDesc = (EndpointDescriptionImpl) endpointDesc[0];
+        EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava) endpointDesc[0];
         assertNotNull(testEndpointDesc);
         assertEquals(Service.Mode.MESSAGE, testEndpointDesc.getAnnoServiceModeValue());
         assertEquals("http://www.w3.org/2003/05/soap/bindings/HTTP/", testEndpointDesc.getAnnoBindingTypeValue());

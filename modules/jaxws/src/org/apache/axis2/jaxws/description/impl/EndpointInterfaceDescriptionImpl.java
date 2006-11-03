@@ -16,7 +16,7 @@
  */
 
 
-package org.apache.axis2.jaxws.description;
+package org.apache.axis2.jaxws.description.impl;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -29,69 +29,21 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionJava;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionWSDL;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.BasicConfigurator;
 
 /**
- * An EndpointInterfaceDescription corresponds to a particular SEI-based Service
- * Implementation. It can correspond to either either a client to that impl or
- * the actual service impl.
- * 
- * The EndpointInterfaceDescription contains information that is relevant only
- * to an SEI-based (aka Endpoint-based or Java-based) enpdoint; Provider-based
- * endpoint, which are not operation based and do not have an associated SEI,
- * will not have an an EndpointInterfaceDescription class and sub-hierachy.
- * 
- * <pre>
- * <b>EndpointInterfaceDescription details</b>
- * 
- *     CORRESPONDS TO:      An SEI (on both Client and Server)      
- *         
- *     AXIS2 DELEGATE:      none
- *     
- *     CHILDREN:            1..n OperationDescription
- *     
- *     ANNOTATIONS:
- *         SOAPBinding [181]
- *     
- *     WSDL ELEMENTS:
- *         portType
- *         
- *  </pre>       
- */
-
-/*
-Java Name: SEI Class name
-
-Axis2 Delegate: none
-
-JSR-181 Annotations: 
-@WebService Note this can be specified on the endpoint Impl without an SEI
-- name its the PortType Class Name, one you get with getPort() call in Service Delegate [NT]
-- targetNamespace
-- serviceName default is portType+Service. Should we use this if Service.create call does not provide/have ServiceQname?[NT]
-- wsdlLocation if no wsdl location provided the read this annotation. Should this override what is client sets?[NT]
-- endpointInterface Will not be present on interfaces (SEI), so I will use this to figure out if the client Call is Extension of Service or is SEI by looking at this annotation. [NT]
-- portName ok so JSR 181 spec I have does not have this annotation but JAXWS spec I have has this. So if ServiceDelegate.getPort() does not have port name use this annotation and derive portName [NT]
-@SOAPBinding This one is important for Proxy especially. [NT]
-- style: DOCUMENT | RPC tells me if it is doc or rpc[NT]
-- use: LITERAL | ENCODED Always literal for IBM[NT]
-- parameterStyle:  BARE | WRAPPED tells me if the wsdl is wrapped or not wrapped [NT]
-@HandlerChain(file, name)
-TBD
-
-WSDL Elements
-<portType
-<binding used for operation parameter bindings below
-
-Properties available to JAXWS runtime: 
-getHandlerList() returns a live List of handlers which can be modified; this MUST be cloned before being used as an actual handler chain; Note this needs to consider if any @HandlerChain annotations are in the ServiceDescription as well
-TBD
-
+ * @see ../EndpointInterfaceDescription
+ *
  */
 class EndpointInterfaceDescriptionImpl 
 implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, EndpointInterfaceDescriptionWSDL {
@@ -173,7 +125,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         parentEndpointDescription = parent;
         this.dbc = dbc;
         
-        BasicConfigurator.configure();
+//        BasicConfigurator.configure();
         
         //TODO: Determine if the isClass parameter is really necessary
         
@@ -224,7 +176,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         //          BindingTypeAnnot (JAXWS Sec. 7.8 -- Used to set either the AS.endpoint, or AS.SoapNSUri)
         //          WebServiceContextAnnot (JAXWS via injection)
         
-        BasicConfigurator.resetConfiguration();
+//        BasicConfigurator.resetConfiguration();
     }
 
     private static Method[] getSEIMethods(Class sei) {
@@ -451,7 +403,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     // ========================================
     // SOAP Binding annotation realted methods
     // ========================================
-    SOAPBinding getSoapBinding(){
+    public SOAPBinding getAnnoSoapBinding(){
         // TODO: Test with sei Null, not null, SOAP Binding annotated, not annotated
 
         if (soapBindingAnnotation == null) {
@@ -473,8 +425,8 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     
     public javax.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle() {
         if (soapBindingStyle == null) {
-            if (getSoapBinding() != null && getSoapBinding().style() != null) {
-                soapBindingStyle = getSoapBinding().style();
+            if (getAnnoSoapBinding() != null && getAnnoSoapBinding().style() != null) {
+                soapBindingStyle = getAnnoSoapBinding().style();
             }
             else {
                 soapBindingStyle = SOAPBinding_Style_DEFAULT;
@@ -490,8 +442,8 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     
     public javax.jws.soap.SOAPBinding.Use getAnnoSoapBindingUse() {
         if (soapBindingUse == null) {
-            if (getSoapBinding() != null && getSoapBinding().use() != null) {
-                soapBindingUse = getSoapBinding().use();
+            if (getAnnoSoapBinding() != null && getAnnoSoapBinding().use() != null) {
+                soapBindingUse = getAnnoSoapBinding().use();
             }
             else {
                 soapBindingUse = SOAPBinding_Use_DEFAULT;
@@ -506,8 +458,8 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     }
     public javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
         if (soapParameterStyle == null) {
-            if (getSoapBinding() != null && getSoapBinding().parameterStyle() != null) {
-                soapParameterStyle = getSoapBinding().parameterStyle();
+            if (getAnnoSoapBinding() != null && getAnnoSoapBinding().parameterStyle() != null) {
+                soapParameterStyle = getAnnoSoapBinding().parameterStyle();
             }
             else {
                 soapParameterStyle = SOAPBinding_ParameterStyle_DEFAULT;

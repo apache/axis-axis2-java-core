@@ -16,7 +16,7 @@
  */
 
 
-package org.apache.axis2.jaxws.description;
+package org.apache.axis2.jaxws.description.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;

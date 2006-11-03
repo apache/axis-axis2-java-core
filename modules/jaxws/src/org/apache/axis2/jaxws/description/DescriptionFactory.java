@@ -18,20 +18,15 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.jws.WebService;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
 
 /**
  * Creates the JAX-WS metadata descritpion hierachy from some combinations of
@@ -45,38 +40,19 @@ public class DescriptionFactory {
     }
     
     public static ServiceDescription createServiceDescription(URL wsdlURL, QName serviceQName, Class serviceClass) {
-        return new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+        return DescriptionFactoryImpl.createServiceDescription(wsdlURL, serviceQName, serviceClass);
     }
     
     // TODO: Taking an AxisService is only temporary; the AxisService should be created when creating the ServiceDesc
     public static ServiceDescription createServiceDescriptionFromServiceImpl(Class serviceImplClass, AxisService axisService) {
-        return new ServiceDescriptionImpl(serviceImplClass, axisService);
+        return DescriptionFactoryImpl.createServiceDescriptionFromServiceImpl(serviceImplClass, axisService);
     }
     
     //TODO: Determine whether this method is necessary...we may want to always build a 
     //ServiceDescription based on a particular impl class
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap (
     		HashMap<String, DescriptionBuilderComposite> dbcMap) {
-
-    	List<ServiceDescription> serviceDescriptionList = new ArrayList<ServiceDescription>();
-
-    	for (Iterator<DescriptionBuilderComposite> nameIter = dbcMap.values().iterator(); 
-    		nameIter.hasNext();) {
-    		DescriptionBuilderComposite serviceImplComposite = nameIter.next();
-    		if(isImpl(serviceImplComposite)) {
-				// process this impl class
-        		ServiceDescription serviceDescription = new ServiceDescriptionImpl(dbcMap, 
-        				serviceImplComposite);
-        	   	serviceDescriptionList.add(serviceDescription);
-    		}
-    	}
-    	
-    	//TODO: Process all composites that are WebFaults...current thinking is that
-    	//      since WebFault annotations only exist on exception classes, then they 
-    	//      should be processed by themselves, and at this level
-    	
-    	
-    	return serviceDescriptionList;
+    	return DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap);
     }
 
     /**
@@ -87,43 +63,6 @@ public class DescriptionFactory {
      * @return
      */
     public static ServiceDescription updateEndpoint(ServiceDescription serviceDescription, Class sei, QName portQName, ServiceDescription.UpdateType updateType ) {
-        ((ServiceDescriptionImpl)serviceDescription).updateEndpointDescription(sei, portQName, updateType);
-        return serviceDescription;
+        return DescriptionFactoryImpl.updateEndpoint(serviceDescription, sei, portQName, updateType);
     }
-    
-    /**
-     * Builds a list of DescriptionBuilderComposite which is relevant to the particular
-     * class
-     * @param List<> A list of DescriptionBuilderComposite objects
-     * @param serviceImplName 
-     * @return List<>
-     */ 
-	private static List<DescriptionBuilderComposite> buildRelevantCompositeList(
-				List<DescriptionBuilderComposite> compositeList,
-				String serviceImplName) {
-		
-		List<DescriptionBuilderComposite> relevantList = compositeList;
-		
-		//TODO: Find the composite which represents this serviceImplName
-		
-		//TODO: Go through input list to find composites relevant to this one and add
-		//      to 'relevant list'
-		
-		return relevantList;
-	}
-	
-	/**
-	 * This method will be used to determine if a given DBC represents a
-	 * Web service implementation.
-	 * @param dbc - <code>DescriptionBuilderComposite</code>
-	 * @return - <code>boolean</code>
-	 */
-	private static boolean isImpl(DescriptionBuilderComposite dbc) {
-		if(!dbc.isInterface() && (dbc.getWebServiceAnnot() != null || 
-				dbc.getWebServiceProviderAnnot() != null)) {
-			return true;
-		}
-		return false;
-	}
-
 }

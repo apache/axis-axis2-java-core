@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.description;
+package org.apache.axis2.jaxws.description.impl;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,36 +22,26 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.List;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceException;
-import javax.jws.WebService;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.RobustOutOnlyAxisOperation;
-import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.axis2.engine.AbstractDispatcher;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionJava;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
-import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
@@ -59,41 +49,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A ServiceDescription corresponds to a Service under which there can be a
- * collection of enpdoints. In WSDL 1.1 terms, then, a ServiceDescription
- * corresponds to a wsdl:Service under which there are one or more wsdl:Port
- * entries. The ServiceDescription is the root of the metdata abstraction
- * Description hierachy.
- * 
- * The Description hierachy is:
- * <pre>
- * ServiceDescription
- *     EndpointDescription[]
- *         EndpointInterfaceDescription
- *             OperationDescription[]
- *                 ParameterDescription[]
- *                 FaultDescription[]       (Note: Not implemented yet)
- *
- * <b>ServiceDescription details</b>
- * 
- *     CORRESPONDS TO:      
- *         On the Client: The JAX-WS Service class or generated subclass.
- *         
- *         On the Server: The Service implementation.  Note that there is a 1..1 
- *         correspondence between a ServiceDescription and EndpointDescription 
- *         on the server side.
- *        
- *     AXIS2 DELEGATE:      None
- *     
- *     CHILDREN:            1..n EndpointDescription
- *     
- *     ANNOTATIONS:
- *         None
- *     
- *     WSDL ELEMENTS:
- *         service
- *         
- *  </pre>       
+ * @see ../ServiceDescription
  */
 class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWSDL, ServiceDescriptionJava {
     private ClientConfigurationFactory clientConfigFactory;
