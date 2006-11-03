@@ -66,7 +66,8 @@ public class ServiceBuilder extends DescriptionBuilder {
         try {
             // Processing service level parameters
             Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
-            processParameters(itr, service, service.getParent());
+            processParameters(itr, service, service.getParent());            
+            
             // process service description
             OMElement descriptionElement =
                     service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION));
@@ -103,6 +104,14 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service.setServiceDescription(serviceNameatt.getAttributeValue());
                 }
             }
+            
+            // I am delaying the checking of the ServiceClass param until the service name
+            // is processed so that I can throw a more meaningful exception that will help
+            // identify the problem
+            if (service.getParameter("ServiceClass") == null){
+            	throw new DeploymentException("The Service " + service.getName() + " does not specify a Service Class");
+            }
+            
             // Process WS-Addressing flag attribute
             OMAttribute addressingRequiredatt = service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
             if (addressingRequiredatt != null) {
