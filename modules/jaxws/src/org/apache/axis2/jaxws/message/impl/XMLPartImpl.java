@@ -84,32 +84,6 @@ public class XMLPartImpl extends  XMLPartBase {
 	protected OMElement _convertSpine2OM(XMLSpine spine) throws MessageException {
 		
 		OMElement omEnvelope = spine.getAsOMElement();
-        // If we have MTOM attachments, we need to replace the <xop:include>
-        // elements with OMText binary nodes.
-        Message msg = getParent();
-        if (msg.isMTOMEnabled()) {
-            // First find all of the <xop:include> elements
-            ArrayList<OMElement> xops = AttachmentUtils.findXopElements(omEnvelope);
-            
-            if (xops != null) {
-                QName href = new QName("","href");
-                Iterator<OMElement> itr = xops.iterator();
-                while (itr.hasNext()) {
-                    OMElement xop = itr.next();
-                    String cid = xop.getAttributeValue(href);
-                    
-                    // Then find their corresponding Attachment object
-                    Attachment a = msg.getAttachment(cid);
-                    
-                    // Convert the <xop:include> OMElement into an OMText
-                    // binary node and replace it in the tree.                    
-                    OMText binaryNode = AttachmentUtils.makeBinaryOMNode(xop, a);
-                    xop.insertSiblingAfter(binaryNode);
-                    xop.detach();
-                }
-            }
-        }
-        
 		return omEnvelope;
 	}
 

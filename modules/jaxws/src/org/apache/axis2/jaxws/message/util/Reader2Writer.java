@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 
 /**
  * Reader2Writer
@@ -36,7 +37,6 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 public class Reader2Writer {
 
 	private XMLStreamReader reader;
-	private static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 	
 	/**
 	 * Construct from a Reader
@@ -68,7 +68,7 @@ public class Reader2Writer {
 	 */
 	public String getAsString() throws XMLStreamException {
 		StringWriter sw = new StringWriter();
-		XMLStreamWriter writer = outputFactory.createXMLStreamWriter(sw);
+		XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(sw);
 		
 		// Write the reader to the writer
 		outputTo(writer);
@@ -77,6 +77,7 @@ public class Reader2Writer {
 		writer.flush();
 		sw.flush();
 		String str = sw.toString();
+        writer.close();
 		return str;
 	}
 }

@@ -36,6 +36,9 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * XMLPartBase class for an XMLPart
@@ -75,6 +78,8 @@ import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
  */
 public abstract class XMLPartBase implements XMLPart {
 
+	private static Log log = LogFactory.getLog(XMLPartBase.class);
+	
 	Protocol protocol = Protocol.unknown;  // Protocol defaults to unknown
 	
 	// The actual xml representation is always one of the following
@@ -288,7 +293,7 @@ public abstract class XMLPartBase implements XMLPart {
 				reader = omElement.getXMLStreamReader();
 			}
 		}
-		consumed = consume;
+		setConsumed(consume);
 		return reader;
 	}
 
@@ -372,7 +377,7 @@ public abstract class XMLPartBase implements XMLPart {
 				omElement.serialize(writer);
 			}
 		}
-		consumed = consume;
+		setConsumed(consume);
 		return;
 		
 	}
@@ -514,6 +519,18 @@ public abstract class XMLPartBase implements XMLPart {
 		// Default implementation is to simply construct the spine. 
 		// Derived classes may wish to construct a different kind of XMLSpine
 		return new XMLSpineImpl(protocol);
+	}
+	
+	private void setConsumed(boolean consume) { 
+		if (consume) {
+			this.consumed = true;
+			if (log.isDebugEnabled()) {
+				log.debug("The follow stack trace indicates where the Block is consumed");
+				log.debug(MessageUtils.stackToString(new RuntimeException()));
+			}
+		} else {
+			consumed = false;
+		}
 	}
 	
 	

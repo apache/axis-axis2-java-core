@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.message.databinding.XMLStringBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
@@ -37,9 +38,6 @@ import org.apache.axis2.jaxws.message.util.Reader2Writer;
  * Block containing a business object that is a String of xml text
  */
 public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
-
-	protected static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-	protected static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 	
 	/**
 	 * Constructor called from factory
@@ -74,7 +72,7 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
 		// Create an XMLStreamReader from the inputFactory using the String as the sources
 		String str = (String) busObj;
 		StringReader sr = new StringReader(str);
-		return inputFactory.createXMLStreamReader(sr);
+		return StAXUtils.createXMLStreamReader(sr);
 	}
 
 	@Override

@@ -31,11 +31,15 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.marshaller.impl.MethodMarshallerImpl;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * BlockImpl
@@ -55,6 +59,8 @@ import org.apache.axis2.jaxws.message.util.Reader2Writer;
  * This ensures that BlockImpl controls the transformations.
  */
 public abstract class BlockImpl implements Block {
+
+	private static Log log = LogFactory.getLog(BlockImpl.class);
 
 	private Object busObject;
 	private Object busContext;
@@ -279,11 +285,11 @@ public abstract class BlockImpl implements Block {
 			busObject = null;
 			busContext = null;
 			omElement = null;
-			// Create an exception so that we can print a stack trace.
-			//Exception e = new RuntimeException();
-			//System.out.println("consumed block " + this.getClass() + " at ");
-			//e.printStackTrace(System.out);
-			
+			if (log.isDebugEnabled()) {
+				// The following stack trace consumes indicates where the message is consumed
+				log.debug("The follow stack trace indicates where the Block is consumed");
+				log.debug(MessageUtils.stackToString(new RuntimeException()));
+			}
 		} else {
 			consumed = false;
 		}

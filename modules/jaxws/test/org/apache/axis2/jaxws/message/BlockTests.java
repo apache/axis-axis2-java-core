@@ -23,6 +23,7 @@ import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
@@ -45,6 +46,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -327,7 +329,7 @@ public class BlockTests extends TestCase {
         jaxb.setInput("Hello World");
         JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
        
-        JAXBIntrospector jbi = context.getIntrospector();
+        JAXBIntrospector jbi = JAXBUtils.getJAXBIntrospector(context.getJAXBContext());
         QName expectedQName = jbi.getElementName(jaxb);
         
 		// Create a Block using the sample string as the content.  This simulates
@@ -376,7 +378,7 @@ public class BlockTests extends TestCase {
         jaxb.setInput("Hello World");
         JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
         
-        JAXBIntrospector jbi = context.getIntrospector();
+        JAXBIntrospector jbi = JAXBUtils.getJAXBIntrospector(context.getJAXBContext());
         QName expectedQName = jbi.getElementName(jaxb);
         
 		// Create a Block using the sample string as the content.  This simulates
@@ -429,7 +431,9 @@ public class BlockTests extends TestCase {
 		// which represents the message.  We will simulate this with inflow.
         StringWriter sw = new StringWriter();
         XMLStreamWriter writer = outputFactory.createXMLStreamWriter(sw);
-        context.getMarshaller().marshal(jaxb, writer);
+        Marshaller marshaller = JAXBUtils.getJAXBMarshaller(context.getJAXBContext());
+        marshaller.marshal(jaxb, writer);
+        JAXBUtils.releaseJAXBMarshaller(context.getJAXBContext(), marshaller);
         writer.flush();
         sw.flush();
 		StringReader sr = new StringReader(sw.toString());
@@ -470,14 +474,16 @@ public class BlockTests extends TestCase {
         jaxb.setInput("Hello World");
         JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
 
-        JAXBIntrospector jbi = context.getIntrospector();
+        JAXBIntrospector jbi = JAXBUtils.getJAXBIntrospector(context.getJAXBContext());
         QName expectedQName = jbi.getElementName(jaxb);
 		
 		// On inbound, there will already be a XMLStreamReader (probably from OM)
 		// which represents the message.  We will simulate this with inflow.
         StringWriter sw = new StringWriter();
         XMLStreamWriter writer = outputFactory.createXMLStreamWriter(sw);
-        context.getMarshaller().marshal(jaxb, writer);
+        Marshaller marshaller = JAXBUtils.getJAXBMarshaller(context.getJAXBContext());
+        marshaller.marshal(jaxb, writer);
+        JAXBUtils.releaseJAXBMarshaller(context.getJAXBContext(), marshaller);
         writer.flush();
         sw.flush();
 		StringReader sr = new StringReader(sw.toString());
@@ -524,14 +530,16 @@ public class BlockTests extends TestCase {
         jaxb.setInput("Hello World");
         JAXBBlockContext context = new JAXBBlockContext(EchoString.class, false);
         
-        JAXBIntrospector jbi = context.getIntrospector();
+        JAXBIntrospector jbi = JAXBUtils.getJAXBIntrospector(context.getJAXBContext());
         QName expectedQName = jbi.getElementName(jaxb);
 		
 		// On inbound, there will already be a XMLStreamReader (probably from OM)
 		// which represents the message.  We will simulate this with inflow.
         StringWriter sw = new StringWriter();
         XMLStreamWriter writer = outputFactory.createXMLStreamWriter(sw);
-        context.getMarshaller().marshal(jaxb, writer);
+        Marshaller marshaller = JAXBUtils.getJAXBMarshaller(context.getJAXBContext());
+        marshaller.marshal(jaxb, writer);
+        JAXBUtils.releaseJAXBMarshaller(context.getJAXBContext(), marshaller);
         writer.flush();
         sw.flush();
 		StringReader sr = new StringReader(sw.toString());

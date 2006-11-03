@@ -37,7 +37,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.AsyncHandler;
@@ -45,6 +44,7 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.Response;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
@@ -62,6 +62,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
@@ -406,8 +407,10 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			JAXBBlockContext context, 
 			String targetNamespace) throws MessageException, JAXBException {
 		
-		JAXBIntrospector introspector = context.getIntrospector();
-		if(introspector.isElement(jaxbObject)){
+		JAXBIntrospector i  = JAXBUtils.getJAXBIntrospector(context.getJAXBContext());
+		boolean isElement = i.isElement(jaxbObject);
+		JAXBUtils.releaseJAXBIntrospector(context.getJAXBContext(), i);
+		if(isElement){
 			return createJAXBBlock(jaxbObject, context);
 		}
 		else{
@@ -686,17 +689,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			throws JAXBException, MessageException, XMLStreamException {
 		JAXBBlockContext blockContext = createJAXBBlockContext(jaxbClazz);
 		
-		OMElement om = block.getOMElement();
-
-		XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
-
-		Unmarshaller u = blockContext.getUnmarshaller();
-		Reader inputReader = new InputStreamReader(new ByteArrayInputStream(om
-				.toString().getBytes()));
-		XMLStreamReader sr = xmlFactory.createXMLStreamReader(inputReader);
-		JAXBElement o = u.unmarshal(sr, jaxbClazz);
-		return o.getValue();
-
+		// Get a JAXBBlockFactory instance. 
+        JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
+        
+        Block jaxbBlock = factory.createFrom(block, blockContext);
+        return jaxbBlock.getBusinessObject(true); 
 	}
 	protected void createResponseHolders(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message)throws JAXBException, MessageException, XMLStreamException{
 		Object bo = null;

@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
@@ -222,10 +223,34 @@ public class MessageUtils {
         // Enable MTOM Attachments 
         if (message.isMTOMEnabled()) {
             Options opts = msgContext.getOptions();
-            opts.setProperty(Configuration.ENABLE_MTOM, "true");                    
+            opts.setProperty(Configuration.ENABLE_MTOM, "true");
+            // If we have MTOM attachments, we need to replace the <xop:include>
+            // elements with OMText binary nodes.
+            
+            // First find all of the <xop:include> elements
+            ArrayList<OMElement> xops = AttachmentUtils.findXopElements(envelope);
+            
+            if (xops != null) {
+                QName href = new QName("","href");
+                Iterator<OMElement> itr = xops.iterator();
+                while (itr.hasNext()) {
+                    OMElement xop = itr.next();
+                    String cid = xop.getAttributeValue(href);
+                    
+                    // Then find their corresponding Attachment object
+                    Attachment a = message.getAttachment(cid);
+                    
+                    // Convert the <xop:include> OMElement into an OMText
+                    // binary node and replace it in the tree.                    
+                    OMText binaryNode = AttachmentUtils.makeBinaryOMNode(xop, a);
+                    xop.insertSiblingAfter(binaryNode);
+                    xop.detach();
+                }
+            }
+            
         }
         
-        // Add the attachments
+        // Add the remaining attachments
         List attachments = message.getAttachments();
         if (attachments != null && attachments.size() > 0) {
             for (int i=0; i<attachments.size(); i++) {
@@ -236,6 +261,19 @@ public class MessageUtils {
                 }
             }
         }
-       
     }
+    
+    /**
+     * Get a string containing the stack of the specified exception
+     * @param e Throwable
+     * @return String
+     */
+    public static String stackToString(Throwable e){
+        java.io.StringWriter sw= new java.io.StringWriter(); 
+        java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);
+        java.io.PrintWriter pw= new java.io.PrintWriter(bw); 
+        e.printStackTrace(pw);
+        pw.close();
+        return sw.getBuffer().toString();
+      }
 }

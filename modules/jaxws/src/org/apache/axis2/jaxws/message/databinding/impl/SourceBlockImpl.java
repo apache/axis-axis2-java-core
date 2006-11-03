@@ -17,6 +17,7 @@
 package org.apache.axis2.jaxws.message.databinding.impl;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -71,9 +72,6 @@ import java.lang.reflect.Constructor;
  * if a non-consumable request is made.
  */
 public class SourceBlockImpl extends BlockImpl implements SourceBlock {
-
-	private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-	private static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 	
 	private static Class staxSource = null;
 	static {
@@ -161,7 +159,11 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 		} 
 		
 		if(busObj instanceof StreamSource){
-			return inputFactory.createXMLStreamReader((Source) busObj);
+			XMLInputFactory f = StAXUtils.getXMLInputFactory();
+			
+			XMLStreamReader reader = f.createXMLStreamReader((Source) busObj);
+			StAXUtils.releaseXMLInputFactory(f);
+			return reader;
 		}
 		//TODO: For GM we need to only use this approach when absolutely necessary.  
         // For example, we don't want to do this if this is a (1.6) StaxSource or if the installed parser provides 
@@ -181,7 +183,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
            Transformer transformer = TransformerFactory.newInstance().newTransformer();
            transformer.transform(src, result); 
 	       ByteArrayInputStream bytes = new ByteArrayInputStream(out.toByteArray());
-	       return inputFactory.createXMLStreamReader(bytes);
+	       return StAXUtils.createXMLStreamReader(bytes);
 	   }catch(TransformerException e){
 		   throw new XMLStreamException(e);
 	   }

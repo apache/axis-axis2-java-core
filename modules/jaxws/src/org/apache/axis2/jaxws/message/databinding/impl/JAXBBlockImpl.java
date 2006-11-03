@@ -32,6 +32,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -40,6 +41,7 @@ import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
 import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentUnmarshaller;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlock;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import org.apache.commons.logging.Log;
@@ -54,8 +56,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
     private static final Log log = LogFactory.getLog(JAXBBlockImpl.class);
     
-	protected static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-	protected static XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 	/**
 	 * Called by JAXBBlockFactory
 	 * @param busObject
@@ -83,12 +83,11 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
 	@Override
 	protected Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, MessageException {
-		try {
-			// Get the JAXBBlockContext.  All of the necessry information is recorded on it
-			JAXBBlockContext ctx = (JAXBBlockContext) busContext;
-			
+	    // Get the JAXBBlockContext.  All of the necessry information is recorded on it
+        JAXBBlockContext ctx = (JAXBBlockContext) busContext;
+        try {
             // TODO Re-evaluate Unmarshall construction w/ MTOM
-			Unmarshaller u = ctx.getUnmarshaller();
+			Unmarshaller u = JAXBUtils.getJAXBUnmarshaller(ctx.getJAXBContext());
             
             // If MTOM is enabled, add in the AttachmentUnmarshaller
             if (isMTOMEnabled()) {
@@ -98,22 +97,33 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 XMLPart xp = getParent();
                 Message msg = xp.getParent();
                 
+                // TODO Pool ?
                 JAXBAttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller();
                 aum.setMessage(msg);
                 u.setAttachmentUnmarshaller(aum);
             }
+            Object jaxb = null;
             if (!ctx.isUseJAXBElement()){
             	// Normal Unmarshalling
-            	Object jaxb = u.unmarshal(reader);
+            	jaxb = u.unmarshal(reader);
 				setQName(getQName(jaxb, ctx));
-				return jaxb;
 			}else{
 				// Unmarshal as a JAXBElement and then get the value
 				JAXBElement jaxbElement = u.unmarshal(reader, ctx.getType());
-				Object jaxb = jaxbElement.getValue();
-				return jaxb;
+				jaxb = jaxbElement.getValue();
 			}
+            
+            // Successfully unmarshalled the object
+            // TODO remove attachment unmarshaller ?
+            JAXBUtils.releaseJAXBUnmarshaller(ctx.getJAXBContext(), u);
+            return jaxb;
 		} catch(JAXBException je) {
+            if (log.isDebugEnabled()) {
+                try {
+                    log.debug("JAXBContext for unmarshal failure:" + ctx.getJAXBContext());
+                } catch (Exception e) {
+                }
+            }
 			throw ExceptionFactory.makeMessageException(je);
 		}
 	}
@@ -126,7 +136,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 		// The solution is to write out the object and use a reader to read it back in.
 		// First create an XMLStreamWriter backed by a writer
 		StringWriter sw = new StringWriter();
-		XMLStreamWriter writer = outputFactory.createXMLStreamWriter(sw);
+		XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(sw);
 		
 		// Write the business object to the writer
 		_outputFromBO(busObj, busContext, writer);
@@ -135,19 +145,20 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 		writer.flush();
 		sw.flush();
 		String str = sw.toString();
+        writer.close();
 		
 		// Return a reader backed by the string
 		StringReader sr = new StringReader(str);
-		return inputFactory.createXMLStreamReader(sr);
+		return StAXUtils.createXMLStreamReader(sr);
 	}
 
 	@Override
 	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, MessageException {
-		try {
+        JAXBBlockContext ctx = (JAXBBlockContext) busContext;
+        try {
 			// Very easy, use the Context to get the Marshaller.
 			// Use the marshaller to write the object.  
-			JAXBBlockContext ctx = (JAXBBlockContext) busContext;
-			Marshaller m = ctx.getMarshaller();
+			Marshaller m = JAXBUtils.getJAXBMarshaller(ctx.getJAXBContext());
 			
 			// TODO Should MTOM be inside getMarshaller ?
 			// If MTOM is enabled, add in the AttachmentMarshaller.
@@ -158,12 +169,23 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 XMLPart xp = getParent();
                 Message msg = xp.getParent();
                 
+                // Pool
                 JAXBAttachmentMarshaller am = new JAXBAttachmentMarshaller();
                 am.setMessage(msg);
                 m.setAttachmentMarshaller(am);
             }   
             m.marshal(busObject, writer);
+            
+            // Successfully marshalled the data
+            // TODO remove attachment marshaller ?
+            JAXBUtils.releaseJAXBMarshaller(ctx.getJAXBContext(), m);
 		} catch(JAXBException je) {
+            if (log.isDebugEnabled()) {
+                try {
+                    log.debug("JAXBContext for marshal failure:" + ctx.getJAXBContext());
+                } catch (Exception e) {
+                }
+            }
 			throw ExceptionFactory.makeMessageException(je);
 		}
 	}
@@ -175,8 +197,10 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	 * @throws MessageException
 	 */
 	private static QName getQName(Object jaxb, JAXBBlockContext ctx) throws JAXBException {
-		JAXBIntrospector jbi = ctx.getIntrospector();
-		return jbi.getElementName(jaxb);
+		JAXBIntrospector jbi = JAXBUtils.getJAXBIntrospector(ctx.getJAXBContext());
+		QName qName = jbi.getElementName(jaxb);
+		JAXBUtils.releaseJAXBIntrospector(ctx.getJAXBContext(), jbi);
+		return qName;
 	}
     
     private boolean isMTOMEnabled() {

@@ -220,19 +220,39 @@ public class MessageImpl implements Message {
      * @see org.apache.axis2.jaxws.message.Message#getAttachment(java.lang.String)
      */
     public Attachment getAttachment(String cid) {
-        if (attachments != null) {
+       if (attachments != null) {
            Iterator<Attachment> itr = attachments.iterator();
            while (itr.hasNext()) {
                Attachment a = itr.next();
-               if (a.getContentID().equals(cid))
+               if (a.getContentID().equals(cid)) {
                    return a;
+               }
            }
        }
         
        return null;
     }
 
+    
 	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.Message#removeAttachment(java.lang.String)
+	 */
+    public Attachment removeAttachment(String cid) {
+        if (attachments != null) {
+            Iterator<Attachment> itr = attachments.iterator();
+            while (itr.hasNext()) {
+                Attachment a = itr.next();
+                if (a.getContentID().equals(cid)) {
+                   itr.remove();
+                   return a;
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getProtocol()
 	 */
 	public Protocol getProtocol() {

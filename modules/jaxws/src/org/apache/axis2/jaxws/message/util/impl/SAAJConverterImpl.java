@@ -302,7 +302,8 @@ public class SAAJConverterImpl implements SAAJConverter {
 					break;
 				}
 				case XMLStreamReader.END_DOCUMENT: {
-					// Ignore
+					// Close reader and ignore
+                    reader.close();
 					break;
 				}
 				case XMLStreamReader.PROCESSING_INSTRUCTION: {

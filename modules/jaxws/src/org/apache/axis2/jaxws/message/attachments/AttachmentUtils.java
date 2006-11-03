@@ -25,6 +25,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.llom.OMNavigator;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.commons.logging.Log;
@@ -55,14 +56,48 @@ public class AttachmentUtils {
      * A recursive search for all of the <xop:include> elements in the tree.
      */
     private static void findXopElements(OMElement root, ArrayList<OMElement> xops) {
-        Iterator itr = root.getChildElements();
-        if (log.isDebugEnabled())
-            log.debug("[subtree] " + root.getLocalName());
         
+        // Navigator does a traversal that mimics the structure of an xml document. 
+        // Each non-element object is processed once.
+        // Each element object is visited prior to its children and after its children.
+        // 
+        // Suppose you have the following tree (caps are elements, lowers are text)
+        // 
+    	//     A
+    	//    / \
+    	//   B   C
+    	//  /\   /\
+    	//  D e F  g
+    	// 
+        // The traversal is
+    	// is A B D D' e B' C F F' g C' A'
+        // The ' indicates that this is the second time the node is visited (i.e. nav.visited() returns true)
+        
+    	OMNavigator nav = new OMNavigator(root);
+    	
+    	while (nav.isNavigable()) {
+    		OMNode curr = nav.next();
+            
+            // Inspect elements that have been visited. 
+            // It is probably safer to inspect the node when it is visited, because this guarantees that its
+            // children have been processed/expanded.
+    		if (nav.visited() && curr instanceof OMElement) {
+    			OMElement element = (OMElement) curr;
+    			if (element.getQName().equals(XOP_INCLUDE)) {
+    				if (log.isDebugEnabled()) {
+    					log.debug("[XOP_INCLUDE] " + element.getLocalName());
+                    }
+    				xops.add(element);
+    			}
+    		}
+    	}
+    	
+    	/* LEGACY SEARCH CODE
         // If it has no children, then it's a leaf and we need
         // to check if it's an <xop:include> element.  If not, then
         // we need to grab each of the children and continue traversing
         // down the tree.
+        Iterator itr = root.getChildren();
         if (itr == null || !itr.hasNext()) {
             if (log.isDebugEnabled())
                 log.debug("[leaf] " + root.getLocalName());
@@ -77,6 +112,7 @@ public class AttachmentUtils {
                 findXopElements(next, xops);
             }
         }
+       */ 
     }
     
     /**
@@ -95,9 +131,44 @@ public class AttachmentUtils {
      * A recursive search for all of the binary, optimized nodes in a tree.
      */
     private static void findBinaryElements(OMNode node, ArrayList<OMText> attachments) {
-        // If it's an OMText, then it's essentially a leaf and won't
-        // have any children.  If not, then check to see if it's an OMElement
-        // and continue traversing down.
+        
+    	
+        // Navigator does a traversal that mimics the structure of an xml document. 
+        // Each non-element object is processed once.
+        // Each element object is visited prior to its children and after its children.
+        // 
+        // Suppose you have the following tree (caps are elements, lowers are text)
+        // 
+        //     A
+        //    / \
+        //   B   C
+        //  /\   /\
+        //  D e F  g
+        // 
+        // The traversal is
+        // The traversal is
+        // is A B D D' e B' C F F' g C' A'
+        // The ' indicates that this is the second time the node is visited (i.e. nav.isVisited() returns true)
+    	OMNavigator nav = new OMNavigator(node);
+    	
+    	while (nav.isNavigable()) {
+    		OMNode curr = nav.next();
+    		if (curr instanceof OMText) {
+    			// If it's an OMText, see if its optimized and add it to the list
+                if (log.isDebugEnabled())
+                    log.debug("text node found");
+                
+                OMText textNode = (OMText) curr;
+                if (textNode.isOptimized()) {
+                    if (log.isDebugEnabled())
+                        log.debug("optimized text node found");
+                    
+                    attachments.add(textNode);
+                }
+            }
+    	}
+    	
+        /* LEGACY SEARCH CODE
         if (node instanceof OMText) {
             if (log.isDebugEnabled())
                 log.debug("text node found");
@@ -118,6 +189,7 @@ public class AttachmentUtils {
                 findBinaryElements(next, attachments);
             }
         }
+        */
     }
     
     /**

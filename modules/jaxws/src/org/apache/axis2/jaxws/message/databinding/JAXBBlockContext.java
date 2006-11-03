@@ -18,9 +18,6 @@ package org.apache.axis2.jaxws.message.databinding;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 /*
  * A JAXBBlockContext controls access to the JAXB Context/Marshal/Unmarshal code.
@@ -34,7 +31,6 @@ public class JAXBBlockContext {
 	private Class type = null;
 	private JAXBContext jaxbContext = null;
 	private boolean useJAXBElement = false;
-	private JAXBIntrospector introspector = null;
 	
 	/**
 	 * Normal Constructor JAXBBlockContext
@@ -88,82 +84,11 @@ public class JAXBBlockContext {
 	public JAXBContext getJAXBContext() throws JAXBException {
 		if (jaxbContext == null) {	
 			if (!useJAXBElement) {
-				// TODO Need J2W AccessController
-				// TODO Need to cache this
-				jaxbContext = JAXBContext.newInstance(new Class[]{type});
+				jaxbContext = JAXBUtils.getJAXBContext(type);
 			} else {
-				// TODO This may be overkill.
-				jaxbContext = JAXBContext.newInstance(new Class[]{type});
+				jaxbContext = JAXBUtils.getJAXBContext(type);
 			}
 		}
 		return jaxbContext;
-	}
-
-
-
-	/**
-	 * @return Unmarshaller
-	 * @throws JAXBException
-	 */
-	public Unmarshaller getUnmarshaller() throws JAXBException {
-		// TODO A New unmarahller is always created.  We should consider how to recognize if when a marshaller can be reused.
-		
-		Unmarshaller unmarshaller = null;
-		JAXBContext jc = getJAXBContext();
-		if (!useJAXBElement) {
-			// TODO Caching
-			unmarshaller = jc.createUnmarshaller();
-	     } else {
-			// TODO There may be a way to share JAXBElement unmarshallers ?
-			unmarshaller = jc.createUnmarshaller();
-		}
-		// TODO Additional options for unmarshaller ?
-			
-		// TODO Should we set up MTOM Attachment handler here ?
-		
-		return unmarshaller;
-	}
-	
-	/**
-	 * @return Marshaller
-	 * @throws JAXBException
-	 */
-	public Marshaller getMarshaller() throws JAXBException {
-		// TODO A New marahller is always created.  We should consider how to recognize if when a marshaller can be reused.
-		Marshaller marshaller = null;
-		JAXBContext jc = getJAXBContext();
-		if (!useJAXBElement) {
-			// TODO Caching
-			marshaller = jc.createMarshaller();
-		} else {
-			// TODO There may be a way to share these ?
-			marshaller = jc.createMarshaller();
-		}
-		// TODO Additional options for marshaller ?
-		marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE); // No PIs
-
-		// TODO Should we set up MTOM Attachment handler here ?
-		return marshaller;
-	}
-	
-	/**
-	 * @return Intospector
-	 * @throws JAXBException
-	 */
-	public JAXBIntrospector getIntrospector() throws JAXBException {
-		if (introspector == null) {
-			JAXBContext jc = getJAXBContext();
-			if (!useJAXBElement) {
-				// TODO Caching
-				introspector = jc.createJAXBIntrospector();
-			} else {
-				// TODO There may be a way to share these ?
-				introspector = jc.createJAXBIntrospector();
-			}
-			// TODO Additional options for unmarshaller ?
-			
-			// TODO Should we set up MTOM Attachment handler here ?
-		}
-		return introspector;
 	}
 }

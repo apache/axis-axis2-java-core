@@ -77,8 +77,21 @@ public interface Message extends XMLPart {
      */
     public Attachment getAttachment(String cid);
     
+    /** 
+     * Get the attachment and remove it from the Message
+     * @param cid
+     * @return
+     */
+    public Attachment removeAttachment(String cid);
+    
+    /**
+     * @return if this is an MTOM message
+     */
     public boolean isMTOMEnabled();
     
+    /** Indicate whether this is an MTOM message
+     * @param b
+     */
     public void setMTOMEnabled(boolean b);
     
     /**

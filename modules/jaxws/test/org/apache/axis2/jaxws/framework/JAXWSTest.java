@@ -66,7 +66,7 @@ public class JAXWSTest extends TestCase {
     
     static {
         // Enable debug
-        //BasicConfigurator.configure();
+        // BasicConfigurator.configure();
     }
     
     /**
