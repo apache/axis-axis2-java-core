@@ -39,14 +39,14 @@ public class ServiceDescriptionTests extends TestCase {
     public void testNullWSDL() {
 
         QName uniqueQName = new QName(namespaceURI, localPart + "_testNullWSDL");
-        ServiceDescription serviceDescription = new ServiceDescription(null, uniqueQName, javax.xml.ws.Service.class);
+        ServiceDescription serviceDescription = new ServiceDescriptionImpl(null, uniqueQName, javax.xml.ws.Service.class);
         assertNotNull("Service description not created with null WSDL", serviceDescription);
     }
     
     public void testNullServiceName() {
 
         try {
-            ServiceDescription serviceDescription = new ServiceDescription(null, null, javax.xml.ws.Service.class);
+            ServiceDescription serviceDescription = new ServiceDescriptionImpl(null, null, javax.xml.ws.Service.class);
             fail("Exception for null Service Name not thrown.");
         }
         catch (WebServiceException e) {
@@ -58,7 +58,7 @@ public class ServiceDescriptionTests extends TestCase {
     
     public void testInvalidServiceClass() {
         try {
-            ServiceDescription serviceDescription = new ServiceDescription(null, serviceQName, Object.class);
+            ServiceDescription serviceDescription = new ServiceDescriptionImpl(null, serviceQName, Object.class);
             fail("Exception for invalid Service class not thrown.");
         }
         catch (WebServiceException e) {
@@ -70,7 +70,7 @@ public class ServiceDescriptionTests extends TestCase {
     
     public void testNullServiceClass() {
         try {
-            ServiceDescription serviceDescription = new ServiceDescription(null, serviceQName, null);
+            ServiceDescription serviceDescription = new ServiceDescriptionImpl(null, serviceQName, null);
             fail("Exception for invalid Service class not thrown.");
         }
         catch (WebServiceException e) {
@@ -83,7 +83,7 @@ public class ServiceDescriptionTests extends TestCase {
     
     public void testValidServiceSubclass() {
         QName uniqueQName = new QName(namespaceURI, localPart + "_testValidServiceSubclass");
-        ServiceDescription serviceDescription = new ServiceDescription(null, uniqueQName, ServiceSubclass.class);
+        ServiceDescription serviceDescription = new ServiceDescriptionImpl(null, uniqueQName, ServiceSubclass.class);
         assertNotNull("Service description not created with valid Service subclass", serviceDescription);
     }
 }

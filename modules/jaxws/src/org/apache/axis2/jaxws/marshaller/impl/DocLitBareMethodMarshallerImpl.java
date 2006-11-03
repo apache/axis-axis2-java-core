@@ -142,11 +142,11 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 	public Message marshalResponse(Object returnObject, Object[] holderObjects) throws ClassNotFoundException, JAXBException, MessageException, JAXBWrapperException, XMLStreamException, InstantiationException, IllegalAccessException{
 		// Response wrapper is basically the return type. so the return object is a jaxbObject. If there is a holder objects then that is the responsewrapper.
 		Class wrapperClazz = getReturnType();
-		String wrapperClazzName = operationDesc.getWebResultName();
+		String wrapperClazzName = operationDesc.getResultName();
 		if(wrapperClazzName == null || wrapperClazzName.trim().length() == 0){
 			wrapperClazzName = wrapperClazz.getName();
 		}
-		String wrapperTNS = operationDesc.getWebResultTargetNamespace();
+		String wrapperTNS = operationDesc.getResultTargetNamespace();
 		
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		mps = toInputMethodParameters(holderObjects);
@@ -210,7 +210,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 			int numberOfBodyPart =0;
 			for(MethodParameter mp:mps){
 				ParameterDescription pd = mp.getParameterDescription();
-				if(!pd.getWebParamHeader()){
+				if(!pd.isHeader()){
 					numberOfBodyPart++;
 				}
 			}

@@ -45,12 +45,12 @@ public class DescriptionFactory {
     }
     
     public static ServiceDescription createServiceDescription(URL wsdlURL, QName serviceQName, Class serviceClass) {
-        return new ServiceDescription(wsdlURL, serviceQName, serviceClass);
+        return new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
     }
     
     // TODO: Taking an AxisService is only temporary; the AxisService should be created when creating the ServiceDesc
     public static ServiceDescription createServiceDescriptionFromServiceImpl(Class serviceImplClass, AxisService axisService) {
-        return new ServiceDescription(serviceImplClass, axisService);
+        return new ServiceDescriptionImpl(serviceImplClass, axisService);
     }
     
     //TODO: Determine whether this method is necessary...we may want to always build a 
@@ -65,7 +65,7 @@ public class DescriptionFactory {
     		DescriptionBuilderComposite serviceImplComposite = nameIter.next();
     		if(isImpl(serviceImplComposite)) {
 				// process this impl class
-        		ServiceDescription serviceDescription = new ServiceDescription(dbcMap, 
+        		ServiceDescription serviceDescription = new ServiceDescriptionImpl(dbcMap, 
         				serviceImplComposite);
         	   	serviceDescriptionList.add(serviceDescription);
     		}
@@ -87,7 +87,7 @@ public class DescriptionFactory {
      * @return
      */
     public static ServiceDescription updateEndpoint(ServiceDescription serviceDescription, Class sei, QName portQName, ServiceDescription.UpdateType updateType ) {
-        serviceDescription.updateEndpointDescription(sei, portQName, updateType);
+        ((ServiceDescriptionImpl)serviceDescription).updateEndpointDescription(sei, portQName, updateType);
         return serviceDescription;
     }
     

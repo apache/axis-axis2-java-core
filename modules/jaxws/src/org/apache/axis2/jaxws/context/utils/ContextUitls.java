@@ -24,6 +24,7 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 import org.apache.axis2.Constants;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.transport.http.HTTPConstants;
 
@@ -38,7 +39,7 @@ public class ContextUitls {
 		   org.apache.axis2.context.MessageContext axisMsgContext = jaxwsMessageContext.getAxisMessageContext();
 		   //Set wsdl related properties.
 		   ServiceDescription sd = jaxwsMessageContext.getServiceDescription();
-		   WSDLWrapper wsdlWrapper = sd.getWSDLWrapper();
+		   WSDLWrapper wsdlWrapper = ((ServiceDescriptionWSDL) sd).getWSDLWrapper();
 		   if(wsdlWrapper!=null){
 			   soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlWrapper.getDefinition());
 			   soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, Scope.APPLICATION);

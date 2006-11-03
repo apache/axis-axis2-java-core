@@ -44,6 +44,7 @@ import org.apache.axis2.jaxws.client.XMLDispatch;
 import org.apache.axis2.jaxws.client.proxy.JAXWSProxyHandler;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.handler.PortInfoImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -302,7 +303,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * @see javax.xml.ws.spi.ServiceDelegate#getWSDLDocumentLocation()
      */
     public URL getWSDLDocumentLocation() {
-        return serviceDescription.getWSDLLocation();
+        return ((ServiceDescriptionWSDL) serviceDescription).getWSDLLocation();
     }
     
     /*
@@ -390,7 +391,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     
     // TODO: Remove this method and put the WSDLWrapper methods on the ServiceDescriptor directly
     private WSDLWrapper getWSDLWrapper() {
-    	return serviceDescription.getWSDLWrapper();
+    	return ((ServiceDescriptionWSDL) serviceDescription).getWSDLWrapper();
     }
     
     private boolean isServiceDefined(QName serviceName){

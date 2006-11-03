@@ -109,7 +109,7 @@ public class ProviderDispatcher extends JavaDispatcher{
             
             // REVIEW: This assumes there is only one endpoint description on the service.  Is that always the case?
             EndpointDescription endpointDesc = mc.getServiceDescription().getEndpointDescriptions()[0];
-            providerServiceMode = endpointDesc.getServiceModeValue();
+            providerServiceMode = endpointDesc.getServiceMode();
             
             if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
                 // For MESSAGE mode, work with the entire message, Headers and Body

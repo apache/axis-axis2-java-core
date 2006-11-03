@@ -41,16 +41,16 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals(1, endpointDesc.length);
         
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
-        EndpointDescription testEndpointDesc = endpointDesc[0];
+        EndpointDescriptionImpl testEndpointDesc = (EndpointDescriptionImpl) endpointDesc[0];
         assertNotNull(testEndpointDesc);
-        assertEquals(Service.Mode.MESSAGE, testEndpointDesc.getServiceModeValue());
-        assertEquals("http://www.w3.org/2003/05/soap/bindings/HTTP/", testEndpointDesc.getBindingTypeValue());
+        assertEquals(Service.Mode.MESSAGE, testEndpointDesc.getAnnoServiceModeValue());
+        assertEquals("http://www.w3.org/2003/05/soap/bindings/HTTP/", testEndpointDesc.getAnnoBindingTypeValue());
         // The WebServiceProvider annotation specified no values on it.
         // TODO: When the Description package changes to provide default values when no annotation present, this may need to change.
-        assertEquals("", testEndpointDesc.getWebServiceWSDLLocation());
-        assertEquals("BasicProviderTestImplService", testEndpointDesc.getWebServiceServiceName());
-        assertEquals("BasicProviderTestImplPort", testEndpointDesc.getWebServicePortName());
-        assertEquals("http://description.jaxws.axis2.apache.org/", testEndpointDesc.getWebServiceTargetNamespace());
+        assertEquals("", testEndpointDesc.getAnnoWebServiceWSDLLocation());
+        assertEquals("BasicProviderTestImplService", testEndpointDesc.getAnnoWebServiceServiceName());
+        assertEquals("BasicProviderTestImplPort", testEndpointDesc.getAnnoWebServicePortName());
+        assertEquals("http://description.jaxws.axis2.apache.org/", testEndpointDesc.getAnnoWebServiceTargetNamespace());
     }
 
     public void testWebServiceProvider() {
@@ -64,15 +64,15 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals(1, endpointDesc.length);
         
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
-        EndpointDescription testEndpointDesc = endpointDesc[0];
+        EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava) endpointDesc[0];
         assertNotNull(testEndpointDesc);
-        assertEquals(Service.Mode.PAYLOAD, testEndpointDesc.getServiceModeValue());
-        assertEquals("http://www.w3.org/2003/05/soap/bindings/HTTP/", testEndpointDesc.getBindingTypeValue());
+        assertEquals(Service.Mode.PAYLOAD, testEndpointDesc.getAnnoServiceModeValue());
+        assertEquals("http://www.w3.org/2003/05/soap/bindings/HTTP/", testEndpointDesc.getAnnoBindingTypeValue());
 
-        assertEquals("http://wsdl.test", testEndpointDesc.getWebServiceWSDLLocation());
-        assertEquals("ProviderService", testEndpointDesc.getWebServiceServiceName());
-        assertEquals("ProviderServicePort", testEndpointDesc.getWebServicePortName());
-        assertEquals("http://namespace.test", testEndpointDesc.getWebServiceTargetNamespace());
+        assertEquals("http://wsdl.test", testEndpointDesc.getAnnoWebServiceWSDLLocation());
+        assertEquals("ProviderService", testEndpointDesc.getAnnoWebServiceServiceName());
+        assertEquals("ProviderServicePort", testEndpointDesc.getAnnoWebServicePortName());
+        assertEquals("http://namespace.test", testEndpointDesc.getAnnoWebServiceTargetNamespace());
     }
     
     public void testDefaultServiceModeProvider() {
@@ -86,10 +86,10 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals(1, endpointDesc.length);
         
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
-        EndpointDescription testEndpointDesc = endpointDesc[0];
+        EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava) endpointDesc[0];
         // Default ServiceMode is PAYLOAD per JAXWS p. 80
-        assertEquals(Service.Mode.PAYLOAD, testEndpointDesc.getServiceModeValue());
-        assertEquals("", testEndpointDesc.getBindingTypeValue());
+        assertEquals(Service.Mode.PAYLOAD, testEndpointDesc.getAnnoServiceModeValue());
+        assertEquals("", testEndpointDesc.getAnnoBindingTypeValue());
     }
     
     public void testNoServiceModeProvider() {
@@ -103,9 +103,9 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals(1, endpointDesc.length);
         
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
-        EndpointDescription testEndpointDesc = endpointDesc[0];
-        assertEquals(javax.xml.ws.Service.Mode.PAYLOAD, testEndpointDesc.getServiceModeValue());
-        assertEquals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, testEndpointDesc.getBindingTypeValue());
+        EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava) endpointDesc[0];
+        assertEquals(javax.xml.ws.Service.Mode.PAYLOAD, testEndpointDesc.getAnnoServiceModeValue());
+        assertEquals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, testEndpointDesc.getAnnoBindingTypeValue());
     }
     
     public void testNoWebServiceProvider() {
@@ -149,9 +149,9 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         assertEquals(1, endpointDesc.length);
         
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
-        EndpointDescription testEndpointDesc = endpointDesc[0];
-        assertNull(testEndpointDesc.getServiceModeValue());
-        assertEquals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, testEndpointDesc.getBindingTypeValue());
+        EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava) endpointDesc[0];
+        assertNull(testEndpointDesc.getAnnoServiceModeValue());
+        assertEquals(javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, testEndpointDesc.getAnnoBindingTypeValue());
     }
 }
 

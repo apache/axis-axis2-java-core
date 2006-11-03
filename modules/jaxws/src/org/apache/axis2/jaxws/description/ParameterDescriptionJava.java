@@ -15,26 +15,15 @@
  * limitations under the License.
  */
 
-
 package org.apache.axis2.jaxws.description;
+
 import javax.jws.WebParam;
 
-public interface ParameterDescription {
-// TODO: (JLB) Fix this to not be the WebParam mode
-//    public enum Mode{IN, OUT, INOUT};
-    public OperationDescription getOperationDescription();
-    
-    public String getParameterName();
-    public String getTargetNamespace();
-    public String getPartName();
-    
-    public boolean isHolderType();
-    public Class getParameterType();
-    public Class getParameterActualType();
-    
-    public boolean isHeader();
-//  TODO: (JLB) Fix this to not be the WebParam mode
-    public WebParam.Mode getMode();
-
-    
+public interface ParameterDescriptionJava {
+    public WebParam getAnnoWebParam();
+    public boolean getAnnoWebParamHeader();
+    public WebParam.Mode getAnnoWebParamMode();
+    public String getAnnoWebParamName();
+    public String getAnnoWebParamPartName();
+    public String getAnnoWebParamTargetNamespace();
 }

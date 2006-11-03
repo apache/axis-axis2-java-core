@@ -41,6 +41,7 @@ import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
@@ -321,7 +322,6 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		    // use the factory, it'll throw the right thing:
 		    throw ExceptionFactory.makeWebServiceException(responseMsg.getLocalException());
 		}
-
 		Object object = methodMarshaller.demarshalResponse(responseMsg, args);
 		if (log.isDebugEnabled()) {
             log.debug("Message Converted to response Object");
@@ -350,7 +350,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		String soapAddress = null;
 		String soapAction = null;
 		String endPointAddress = port.getEndpointAddress();
-		WSDLWrapper wsdl = delegate.getServiceDescription().getWSDLWrapper();
+		WSDLWrapper wsdl = ((ServiceDescriptionWSDL) delegate.getServiceDescription()).getWSDLWrapper();
 		QName serviceName = delegate.getServiceName();
 		QName portName = port.getPortName();
 		if (wsdl != null) {
@@ -369,7 +369,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	}
 	
 	private boolean isMethodExcluded(){
-		return operationDesc.getWebMethodExclude();
+		return operationDesc.isExcluded();
 	}
 
 	public PortData getPort() {

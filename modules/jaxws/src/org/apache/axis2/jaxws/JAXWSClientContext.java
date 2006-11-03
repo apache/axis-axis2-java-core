@@ -25,6 +25,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
@@ -62,10 +63,10 @@ public class JAXWSClientContext<T> {
         this.serviceDescription = serviceDescription;
     }
     public WSDLWrapper getWsdlContext() {
-		return (serviceDescription != null) ? serviceDescription.getWSDLWrapper() : null;
+		return (serviceDescription != null) ? ((ServiceDescriptionWSDL) serviceDescription).getWSDLWrapper() : null;
 	}
     public URL getWSDLLocation(){
-		return (serviceDescription != null) ? serviceDescription.getWSDLLocation() : null; 	
+		return (serviceDescription != null) ? ((ServiceDescriptionWSDL) serviceDescription).getWSDLLocation() : null; 	
 	}
 	public Class<T> getClazz() {
 		return clazz;

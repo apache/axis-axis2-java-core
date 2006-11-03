@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.DocLitWrappedMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
@@ -64,14 +65,14 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		else{		
 			wrapperClazz = loadClass(className);
 		}
-		String resultName = operationDesc.getWebResultName();
+		String resultName = operationDesc.getResultName();
 		Object bo = createBusinessObject(wrapperClazz, message);
 		createResponseHolders(bo, inputArgs, false);
         // REVIEW: Is the the appropriate logic, to be checking for the existence of the annotation
         //         as the decision point for getting into the property logic?  Note that even if the annotation
         //         is not present, a default result name will be returned.
 		// If the WebResult annotation is present, then look up the result Name
-		if(operationDesc.isWebResultAnnotationSpecified()){
+		if(((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified()){
 		//if ReturnType is not of same type as JAXBBlock business Object then I will look for resultName in Business Object and return that.
 			Object resultObject = findProperty(resultName, bo);
 			return resultObject;
@@ -117,9 +118,10 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 	public Message marshalResponse(Object returnObject, Object[] holderObjects)throws ClassNotFoundException, JAXBException, MessageException, JAXBWrapperException, XMLStreamException, InstantiationException, IllegalAccessException {
 		Class wrapperClazz = null;
 		String wrapperClazzName = operationDesc.getResponseWrapperClassName();
-		String wrapperXMLElementName = operationDesc.getRequestWrapperLocalName();
+        // TODO: (JLB) REVIEW: I changed this from getRequestWrapper to getRewponseWrapper...
+		String wrapperXMLElementName = operationDesc.getResponseWrapperLocalName();
 		String wrapperTNS = operationDesc.getResponseWrapperTargetNamespace();
-		String webResult = operationDesc.getWebResultName();
+		String webResult = operationDesc.getResultName();
 		//TODO Move this to Operation Description.
 		if(wrapperClazzName == null || (wrapperClazzName!=null && wrapperClazzName.length()==0)){
 			wrapperClazz = getReturnType();

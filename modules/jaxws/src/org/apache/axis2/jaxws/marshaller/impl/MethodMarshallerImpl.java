@@ -195,8 +195,8 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		if(webResultValue == null){
 			return mps;
 		}
-		String webResultName = operationDesc.getWebResultName();
-		String webResultTNS = operationDesc.getWebResultTargetNamespace();
+		String webResultName = operationDesc.getResultName();
+		String webResultTNS = operationDesc.getResultTargetNamespace();
 		Class webResultClass = null;
 		if(webResultValue !=null){
 			webResultClass = webResultValue.getClass();
@@ -221,7 +221,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		ArrayList<Object> paramValues = toArrayList(holderObjects);
 		ArrayList<MethodParameter> mps = createMethodParameters(pds.toArray(new ParameterDescription[0]), paramValues);
 		if(webResultObject!=null){
-			MethodParameter outputResult = new MethodParameter(operationDesc.getWebResultName(), operationDesc.getWebResultTargetNamespace(), webResultObject.getClass(), webResultObject);
+			MethodParameter outputResult = new MethodParameter(operationDesc.getResultName(), operationDesc.getResultTargetNamespace(), webResultObject.getClass(), webResultObject);
 			mps.add(outputResult);
 		}
 		return mps;
@@ -233,7 +233,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		if(jaxbObject == null){
 			return mps;
 		}
-        ArrayList<String> webParam = toArrayList(operationDesc.getWebParamNames());
+        ArrayList<String> webParam = toArrayList(operationDesc.getParamNames());
                 
         if (log.isDebugEnabled()) {
             log.debug("Attempting to unwrap object from WrapperClazz");
@@ -289,9 +289,9 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		ArrayList<Object> paramValues = new ArrayList<Object>(); 
 		for (int index = 0; index < paramDescs.length; index++) {
 			ParameterDescription paramDesc = paramDescs[index];
-			String paramName = paramDesc.getWebParamName();
-			String paramTNS = paramDesc.getWebParamTargetNamespace();
-			boolean isHeader = paramDesc.getWebParamHeader();
+			String paramName = paramDesc.getParameterName();
+			String paramTNS = paramDesc.getTargetNamespace();
+			boolean isHeader = paramDesc.isHeader();
 			Class actualType = paramDesc.getParameterActualType();
 			Object bo = null;
 			if(isHeader){
@@ -315,12 +315,12 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		for (Object paramValue : paramValues) {
 			ParameterDescription paramDesc = paramDescs[index];
 			Class paramType = paramDesc.getParameterType();
-			Mode paramMode = paramDesc.getWebParamMode();
+			Mode paramMode = paramDesc.getMode();
 			boolean isHolderType = paramDesc.isHolderType();
 			MethodParameter mp = null;
 			// If call is Async call then lets filter AsyncHandler object name
 			// and value;
-			if (!isParamAsyncHandler(paramDesc.getWebParamName(), paramValue)) {
+			if (!isParamAsyncHandler(paramDesc.getParameterName(), paramValue)) {
 				if (paramType != null) {
 					// Identify Holders and get Holder Values, this if condition
 					// will mostly execute during client side call
@@ -563,10 +563,10 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			if (!mp.isWebResult()) {
 				ParameterDescription pd = mp.getParameterDescription();
 				object = mp.getValue();
-				objectName = pd.getWebParamName();
+				objectName = pd.getParameterName();
 				objectType = pd.getParameterActualType();
-				objectTNS = pd.getWebParamTargetNamespace();
-				isHeader = pd.getWebParamHeader();
+				objectTNS = pd.getTargetNamespace();
+				isHeader = pd.isHeader();
 			} else {
 				object = mp.getValue();
 				objectName = mp.getWebResultName();
@@ -703,12 +703,12 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		int index = 0;
 		for(MethodParameter mp:mps){
 			ParameterDescription pd = mp.getParameterDescription();
-			if (pd.getWebParamHeader() && pd.isHolderType()) {
+			if (pd.isHeader() && pd.isHolderType()) {
 				bo = createBOFromHeaderBlock(pd.getParameterActualType(),
-						message, pd.getWebParamTargetNamespace(), pd
-								.getWebParamName());
+						message, pd.getTargetNamespace(), pd
+								.getParameterName());
 			}
-			else if(!pd.getWebParamHeader() && pd.isHolderType()){
+			else if(!pd.isHeader() && pd.isHolderType()){
 				bo = createBOFromBodyBlock(pd.getParameterActualType(), message);
 			}
 			try{

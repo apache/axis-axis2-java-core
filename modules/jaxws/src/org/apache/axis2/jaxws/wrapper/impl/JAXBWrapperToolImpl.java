@@ -121,7 +121,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 			ParameterDescription pd = mp.getParameterDescription();
 			String name = null;
 			if(!mp.isWebResult()){
-				name = pd.getWebParamName();
+				name = pd.getParameterName();
 			}else{
 				name = mp.getWebResultName();
 			}

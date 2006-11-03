@@ -104,7 +104,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         EndpointInterfaceDescription epInterfaceDesc = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription epDesc = epInterfaceDesc.getEndpointDescription();
         
-        String bindingType = epDesc.getBindingTypeValue();
+        String bindingType = epDesc.getBindingType();
         if (bindingType != null) {
             if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
                 bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
@@ -219,7 +219,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 	        String localPart = opName.getLocalPart();
 	        Method[] methods = serviceImplClass.getMethods();
 	        for (int i = 0; i < methods.length; ++i) {
-	        	String webMethodName = operationDesc.getWebMethodOperationName();
+	        	String webMethodName = operationDesc.getOperationName();
 	            if (localPart.equals(methods[i].getName())){
 	                return methods[i];
 	            }

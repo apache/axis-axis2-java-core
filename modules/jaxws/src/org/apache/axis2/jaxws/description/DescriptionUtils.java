@@ -31,13 +31,13 @@ import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 /**
  * Utilities used throughout the Description package.
  */
-public class DescriptionUtils {
+class DescriptionUtils {
     
-    public static boolean isEmpty(String string) {
+    static boolean isEmpty(String string) {
         return (string == null || "".equals(string));
     }
     
-    public static boolean isEmpty(QName qname) {
+    static boolean isEmpty(QName qname) {
         return qname == null || isEmpty(qname.getLocalPart());
     }
 
@@ -46,7 +46,7 @@ public class DescriptionUtils {
      * @param name
      * @return
      */
-    public static String javaMethodtoClassName(String methodName) {
+    static String javaMethodtoClassName(String methodName) {
         String className = null;
         if(methodName != null){
             StringBuffer buildClassName = new StringBuffer(methodName);
@@ -60,7 +60,7 @@ public class DescriptionUtils {
 	 * @return Returns TRUE if we find just one WebMethod Annotation with exclude flag
 	 * set to false
 	 */
-	public static boolean falseExclusionsExist(DescriptionBuilderComposite dbc) {
+	static boolean falseExclusionsExist(DescriptionBuilderComposite dbc) {
 		
 		MethodDescriptionComposite mdc = null;
 		Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
@@ -83,7 +83,7 @@ public class DescriptionUtils {
 	 * exclude set to FALSE
 	 * @return Returns List<MethodDescriptionComposite> 
 	 */
-	public static ArrayList<MethodDescriptionComposite> getMethodsWithFalseExclusions(DescriptionBuilderComposite dbc) {
+	static ArrayList<MethodDescriptionComposite> getMethodsWithFalseExclusions(DescriptionBuilderComposite dbc) {
 		
 		ArrayList<MethodDescriptionComposite> mdcList = new ArrayList<MethodDescriptionComposite>();
 		Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator(); 
@@ -106,7 +106,7 @@ public class DescriptionUtils {
 	 * Check whether a MethodDescriptionComposite contains a WebMethod annotation with 
 	 * exlude set to true
 	 */
-	public static boolean isExcludeTrue(MethodDescriptionComposite mdc) {
+	static boolean isExcludeTrue(MethodDescriptionComposite mdc) {
 	
 		if (mdc.getWebMethodAnnot() != null) {
 			if (mdc.getWebMethodAnnot().exclude() == true) {
@@ -117,7 +117,7 @@ public class DescriptionUtils {
 		return false;
 	}
 	
-    public static String javifyClassName(String className) {
+    static String javifyClassName(String className) {
     	if(className.indexOf("/") != -1) {
     		return className.replaceAll("/", ".");
     	}

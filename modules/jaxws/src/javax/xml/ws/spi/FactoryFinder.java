@@ -24,7 +24,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
-import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
