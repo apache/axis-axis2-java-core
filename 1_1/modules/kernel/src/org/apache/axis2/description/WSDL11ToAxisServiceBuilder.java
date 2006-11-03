@@ -1606,7 +1606,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (customWSLD4JResolver != null) {
             return reader.readWSDL(customWSLD4JResolver);
         } else {
-            reader.setFeature(JAVAX_WSDL_IMPORT_DOCUMENTS_MODE_KEY, false);
             Document doc;
             try {
                 doc = XMLUtils.newDocument(in);
