@@ -13,6 +13,8 @@ import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceFault_Exception;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceService;
+import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
+import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
 
 
 public class FaultyWebServiceTests extends TestCase {
@@ -78,4 +80,40 @@ public class FaultyWebServiceTests extends TestCase {
         assertEquals(exception.getMessage(), host);
 
     }
+
+    // TODO should also have an invoke oneway bad endpoint test to make sure
+    // we get an exception as indicated in JAXWS 6.4.2.
+
+    
+    public void testFaultyWebService_badEndpoint_oneWay() {
+        
+        String host = "this.is.a.bad.endpoint.terrible.in.fact";
+        String badEndpoint = "http://" + host;
+        
+        WebServiceException exception = null;
+        
+        System.out.println("------------------------------");
+        System.out.println("Test : "+getName());
+        try{
+            
+            DocLitWrapService service = new DocLitWrapService();
+            DocLitWrap proxy = service.getDocLitWrapPort();
+            BindingProvider p = (BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,badEndpoint);
+            proxy.oneWayVoid();
+            
+        }catch(WebServiceException e) {
+            exception = e;
+        }catch(Exception e) {
+            fail("This testcase should only produce a WebServiceException.  We got: " + e.toString());
+        }
+        
+        System.out.println("----------------------------------");
+        
+        assertNotNull(exception);
+        assertTrue(exception.getCause() instanceof UnknownHostException);
+        assertEquals(exception.getMessage(), host);
+        
+    }
+    
 }

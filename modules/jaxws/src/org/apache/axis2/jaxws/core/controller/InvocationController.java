@@ -20,6 +20,7 @@ import java.util.concurrent.Future;
 
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
@@ -134,7 +135,7 @@ public abstract class InvocationController {
         return;
     }
     
-    protected abstract void doInvokeOneWay(MessageContext mc);
+    protected abstract void doInvokeOneWay(MessageContext mc) throws WebServiceException;
     
     /**
      * Performs an asynchronous (non-blocking) invocation of the client based 

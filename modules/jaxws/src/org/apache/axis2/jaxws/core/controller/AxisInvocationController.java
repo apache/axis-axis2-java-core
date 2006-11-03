@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -51,6 +52,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
+import org.apache.axis2.jaxws.marshaller.ClassUtils;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -156,7 +158,7 @@ public class AxisInvocationController extends InvocationController {
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeOneWay(org.apache.axis2.jaxws.core.InvocationContext)
      */
-    public void doInvokeOneWay(MessageContext request) {
+    public void doInvokeOneWay(MessageContext request) throws WebServiceException {
         // We need the qname of the operation being invoked to know which 
         // AxisOperation the OperationClient should be based on.
         // Note that the OperationDesc is only set through use of the Proxy. Dispatch
@@ -184,12 +186,13 @@ public class AxisInvocationController extends InvocationController {
         try {
             execute(opClient, true, axisRequestMsgCtx);
         } catch(AxisFault af) {
-            // TODO MIKE revisit?
-            // do nothing here.  The exception we get is from the endpoint,
-            // and will be sitting on the message context.  We need to save it
-            // to process it through jaxws
-        	System.out.println("Swallowed Exception =" + af);
-        	af.printStackTrace(System.out);
+            // JAXWS 6.4.2 says to throw it...
+            // Whatever exception we get here will not be from the server since a one-way
+            // invocation has no response.  This will always be a SENDER fault
+            if (log.isDebugEnabled()) {
+                log.debug("AxisFault received from client: " + af.getMessage());
+            }
+        	throw ExceptionFactory.makeWebServiceException(ClassUtils.getRootCause(af));
         }
                 
         return;
