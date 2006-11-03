@@ -3,11 +3,14 @@ package org.apache.axis2.deployment.resolver;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.InputSource;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.net.URI;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -29,25 +32,13 @@ import java.util.zip.ZipInputStream;
  */
 public class AARFileBasedURIResolver extends DefaultURIResolver {
 
-    private String aarFileName;
-    private File aarFile;
+    protected static final Log log = LogFactory
+            .getLog(AARFileBasedURIResolver.class);
 
-    public AARFileBasedURIResolver(String aarFileName) {
-        this.aarFileName = aarFileName;
-    }
+    private File aarFile;
+    private URI lastImportLocation;
 
     public AARFileBasedURIResolver(File aarFile) {
-        this.aarFile = aarFile;
-    }
-
-    public AARFileBasedURIResolver() {
-    }
-
-    public void setAarFileName(String aarFileName) {
-        this.aarFileName = aarFileName;
-    }
-
-    public void setAarFileName(File aarFile) {
         this.aarFile = aarFile;
     }
 
@@ -66,26 +57,18 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
                         "Unsupported schema location " + schemaLocation);
             }
 
+            lastImportLocation = URI.create(baseUri).resolve(schemaLocation);
             ZipInputStream zin = null;
             try {
-                if (aarFile != null) {
-                    zin = new ZipInputStream(new FileInputStream(aarFile));
-                } else {
-                    zin = new ZipInputStream(new FileInputStream(aarFileName));
-                }
+                zin = new ZipInputStream(new FileInputStream(aarFile));
 
                 ZipEntry entry;
                 byte[] buf = new byte[1024];
                 int read;
                 ByteArrayOutputStream out;
-                String searchingStr;
-                if (baseUri != null && baseUri.length() > 0) {
-                    schemaLocation = Utils.getPath(baseUri, schemaLocation);
-                }
-                schemaLocation = Utils.normalize(schemaLocation);
+                String searchingStr = lastImportLocation.toString();
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName().toLowerCase();
-                    searchingStr = (DeploymentConstants.META_INF + "/" + schemaLocation).toLowerCase();
                     if (entryName.equalsIgnoreCase(searchingStr)) {
                         out = new ByteArrayOutputStream();
                         while ((read = zin.read(buf)) > 0) {
@@ -103,12 +86,13 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
                 try {
                     if (zin != null) zin.close();
                 } catch (IOException e) {
-                    //log this error
+                    log.debug(e);
                 }
             }
 
         }
 
+        log.info("AARFileBasedURIResolver: Unable to resolve" + lastImportLocation);
         return null;
     }
 }

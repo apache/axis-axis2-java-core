@@ -19,12 +19,14 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.axiom.attachments.utils.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -189,8 +192,14 @@ public class ListingAgent extends AbstractAgent {
                             out.flush();
                             out.close();
                         } else {
-                            //the schema is not found - pump a 404
-                            res.sendError(HttpServletResponse.SC_NOT_FOUND);
+                            InputStream in = axisService.getClassLoader().getResourceAsStream(DeploymentConstants.META_INF + "/" + xsds);
+                            if(in != null) {
+                                out.write(IOUtils.getStreamAsByteArray(in));
+                                out.flush();
+                                out.close();
+                            } else {
+                                res.sendError(HttpServletResponse.SC_NOT_FOUND);
+                            }
                         }
 
                         //multiple schemas are present and the user specified
