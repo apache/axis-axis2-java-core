@@ -10,6 +10,12 @@ Pre-Requisites
 
 None
 
+Before Running The Sample
+=========================
+ * Please create a directory named lib under the directory that contains this file.
+ * Download latest stax-utils jar from https://stax-utils.dev.java.net/servlets/ProjectDocumentList?folderID=1106 and drop that into the new lib directory.
+ * Download latest Castor jar from http://www.castor.org/download.html and drop that into the new lib directory
+
 Running The Sample
 ==================
 
