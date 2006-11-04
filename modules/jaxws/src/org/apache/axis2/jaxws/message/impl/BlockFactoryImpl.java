@@ -57,7 +57,6 @@ public abstract class BlockFactoryImpl implements BlockFactory {
 			qName = other.getQName();
 		}
 		Block newBlock = createFrom(other.getXMLStreamReader(true), context, qName);
-        newBlock.setParent(other.getParent());
         return newBlock;
 	}
 

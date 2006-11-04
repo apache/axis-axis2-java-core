@@ -16,7 +16,13 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
+import java.util.Iterator;
+
+import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
+import javax.xml.soap.Name;
+import javax.xml.soap.Node;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.stream.XMLStreamException;
@@ -81,6 +87,8 @@ public abstract class XMLPartBase implements XMLPart {
 	private static Log log = LogFactory.getLog(XMLPartBase.class);
 	
 	Protocol protocol = Protocol.unknown;  // Protocol defaults to unknown
+    Style style = Style.DOCUMENT;          // Style defaults to document
+    
 	
 	// The actual xml representation is always one of the following
 	//   OM if the content is an OM tree
@@ -214,7 +222,6 @@ public abstract class XMLPartBase implements XMLPart {
 		default:
 			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("XMLPartImplErr2"), null);
 		}
-		spine.setParent(parent);
         setContent(spine, SPINE);
 		return spine;
 	}
@@ -260,6 +267,59 @@ public abstract class XMLPartBase implements XMLPart {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.XMLPart#getStyle()
+	 */
+	public Style getStyle() {
+        return style;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.XMLPart#setStyle(javax.jws.soap.SOAPBinding.Style)
+     */
+    public void setStyle(Style style) throws MessageException {
+        if (this.style != style) {
+            if (contentType == SPINE) {
+                // Must switch to something other than XMLSpine
+                getContentAsOMElement();
+            }
+        }
+        this.style = style;
+    }
+
+    public QName getOperationElement() throws MessageException {
+        try {
+            if (style != Style.RPC) {
+                return null;
+            }
+            switch (contentType) {
+            case OM:
+                return ((org.apache.axiom.soap.SOAPEnvelope) content).getBody().
+                getFirstElement().getQName();
+            case SPINE:
+                return ((XMLSpine) content).getOperationElement();
+            case SOAPENVELOPE:
+                Iterator it =((SOAPEnvelope) content).getBody().getChildElements();
+                while (it.hasNext()) {
+                    Node node = (Node) it.next();
+                    if (node instanceof SOAPElement) {
+                        Name name =((SOAPElement) node).getElementName();
+                        return new QName(name.getURI(), name.getLocalName(), name.getPrefix());
+                    }
+                }
+            }
+            return null;
+        } catch (SOAPException se) {
+            throw ExceptionFactory.makeMessageException(se);
+        }
+    }
+
+    public void setOperationElement(QName operationQName) throws MessageException {
+        if (this.style == Style.RPC) {
+            this.getContentAsXMLSpine().setOperationElement(operationQName);
+        }
+    }
+
+    /* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getXMLPartContentType()
 	 */
 	public String getXMLPartContentType() {
@@ -518,7 +578,7 @@ public abstract class XMLPartBase implements XMLPart {
 	protected XMLSpine _createSpine(Protocol protocol) throws MessageException {
 		// Default implementation is to simply construct the spine. 
 		// Derived classes may wish to construct a different kind of XMLSpine
-		return new XMLSpineImpl(protocol);
+		return new XMLSpineImpl(protocol, getStyle());
 	}
 	
 	private void setConsumed(boolean consume) { 

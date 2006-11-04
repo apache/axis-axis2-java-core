@@ -99,7 +99,7 @@ public class XMLPartImpl extends  XMLPartBase {
 
 	@Override
 	protected XMLSpine _convertOM2Spine(OMElement om) throws MessageException {
-		return new XMLSpineImpl((org.apache.axiom.soap.SOAPEnvelope) om);
+		return new XMLSpineImpl((org.apache.axiom.soap.SOAPEnvelope) om, getStyle());
 	}
 
 	@Override

@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import javax.jws.soap.SOAPBinding.Style;
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -74,6 +76,29 @@ public interface XMLPart {
 	 */
 	public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException;
 	
+    /**
+     * @return the Style (document or rpc)
+     */
+    public Style getStyle();
+    
+    /**
+     * Set the Style. 
+     * @param style Style
+     */
+    public void setStyle(Style style) throws MessageException;
+
+    /**
+     * @return the QName of the operation element if Style.rpc.  Otherwise null
+     */
+    public QName getOperationElement() throws MessageException;
+    
+    /**
+     * Set the operation element qname.  The operation qname is only used if
+     * Style.rpc
+     * @param operationQName
+     */
+    public void setOperationElement(QName operationQName) throws MessageException;
+    
 	/**
 	 * isConsumed
 	 * Return true if the part is consumed.  Once consumed, the information in the 

@@ -20,12 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -47,6 +49,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
@@ -67,6 +70,7 @@ class XMLSpineImpl implements XMLSpine {
 	private static OMBlockFactory obf = (OMBlockFactory) FactoryRegistry.getFactory(OMBlockFactory.class);
 	
 	private Protocol protocol = Protocol.unknown;
+    private Style style = Style.DOCUMENT;
 	private SOAPEnvelope root = null;
 	private SOAPFactory soapFactory = null;
 	private List<Block> headerBlocks = new ArrayList<Block>();
@@ -80,21 +84,27 @@ class XMLSpineImpl implements XMLSpine {
 	/**
 	 * Create a lightweight representation of this protocol
 	 * (i.e. the Envelope, Header and Body)
+     * @param protocol Protocol
+     * @param style Style
+     * @param opQName QName if the Style is RPC
 	 */
-	public XMLSpineImpl(Protocol protocol) {
+	public XMLSpineImpl(Protocol protocol, Style style) {
 		super();
 		this.protocol = protocol;
+        this.style = style;
 		soapFactory = getFactory(protocol);
-		root = createEmptyEnvelope(protocol, soapFactory);
+		root = createEmptyEnvelope(protocol, style, soapFactory);
 	}
 	
 	/**
 	 * Create spine from an existing OM tree
 	 * @param envelope
+     * @param style Style
 	 * @throws MessageException
 	 */
-	public XMLSpineImpl(SOAPEnvelope envelope) throws MessageException {
+	public XMLSpineImpl(SOAPEnvelope envelope, Style style) throws MessageException {
 		super();
+        this.style = style;
 		init(envelope);
 		if (root.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
 			protocol = Protocol.soap11;
@@ -113,6 +123,7 @@ class XMLSpineImpl implements XMLSpine {
 		detailBlocks.clear();
 		bodyIterator = null;
 		detailIterator = null;
+        soapFactory = MessageUtils.getSOAPFactory(root);
 		
 		
 		// If a header block exists, create an OMBlock for each element
@@ -126,13 +137,27 @@ class XMLSpineImpl implements XMLSpine {
 
 		
 		SOAPBody body = root.getBody();
-        // TODO if no body then please add one
+        if (body == null) {
+            // Create the body if one does not exist
+            body = soapFactory.createSOAPBody(root);
+        }
         
 		if (!body.hasFault()) {
 			// Normal processing
 			// Only create the first body block, this ensures that the StAX 
 			// cursor is not advanced beyond the tag of the first element
-			bodyIterator = body.getChildren();
+            if (style == Style.DOCUMENT) {
+                bodyIterator = body.getChildren();
+            } else {
+                // For RPC the blocks are within the operation element
+                OMElement op = body.getFirstElement();
+                if (op == null) {
+                    // Create one
+                    OMNamespace ns = soapFactory.createOMNamespace("", "");
+                    op = soapFactory.createOMElement("PLACEHOLDER_OPERATION", ns, body);
+                }
+                bodyIterator = op.getChildren();
+            }
 			advanceIterator(bodyIterator, bodyBlocks, false);
 		} else {
 			// Process the Fault
@@ -178,7 +203,6 @@ class XMLSpineImpl implements XMLSpine {
 					throw ExceptionFactory.makeMessageException(xse);
 				}
 				blocks.add(block);
-                block.setParent(this);
 			} else {
                 // TODO LOGGING ?
 				// A Non-element is found, it is probably whitespace text, but since
@@ -199,11 +223,17 @@ class XMLSpineImpl implements XMLSpine {
 		}
 		return soapFactory;
 	}
-	private static SOAPEnvelope createEmptyEnvelope(Protocol protocol, SOAPFactory factory) {
+	private static SOAPEnvelope createEmptyEnvelope(Protocol protocol, Style style, SOAPFactory factory) {
 		SOAPEnvelope env = factory.createSOAPEnvelope();
 		// Add an empty body and header
 		factory.createSOAPBody(env);
 		factory.createSOAPHeader(env);
+        
+        // Create a dummy operation element if this is an rpc message
+        if (style == Style.RPC) {
+            OMNamespace ns = factory.createOMNamespace("", "");
+            factory.createOMElement("PLACEHOLDER_OPERATION", ns, env.getBody());
+        }
 
 		return env;
 	}
@@ -298,10 +328,6 @@ class XMLSpineImpl implements XMLSpine {
 		return consumed;
 	}
 
-	public javax.xml.soap.SOAPEnvelope getAsSOAPEnvelope() throws MessageException {
-		throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("NeverCalled", "XMLSpineImpl.getAsSOAPEnvelope()"), null);
-	}
-
 	public OMElement getAsOMElement() throws MessageException {
 	    if (headerBlocks != null) {        
 	        for (int i=0; i<headerBlocks.size(); i++) {                   
@@ -314,8 +340,16 @@ class XMLSpineImpl implements XMLSpine {
 	    if (bodyBlocks != null) {
 	        for (int i=0; i<bodyBlocks.size(); i++) {                   
 	            Block b = (Block) bodyBlocks.get(i);                  
-	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);                  
-	            root.getBody().addChild(e);                  
+	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);
+                
+                // The blocks are directly under the body if DOCUMENT.
+                // The blocks are under the operation element if RPC
+                if (style == Style.DOCUMENT) {
+                    root.getBody().addChild(e);    
+                } else {
+                    root.getBody().getFirstElement().addChild(e);   
+                }
+	                          
 	        }               
 	        bodyBlocks.clear();               
 	    }
@@ -328,12 +362,6 @@ class XMLSpineImpl implements XMLSpine {
 	        bodyBlocks.clear();  
 	    }
 	    return root;
-	}
-	
-	
-
-	public Block getAsBlock(Object context, BlockFactory blockFactory) throws MessageException, XMLStreamException {
-		throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("NeverCalled", "XMLSpineImpl.getAsBlock()"), null);
 	}
 
 	/* (non-Javadoc)
@@ -369,7 +397,6 @@ class XMLSpineImpl implements XMLSpine {
 			advanceIterator(bodyIterator, bodyBlocks, true);
 		}
 		bodyBlocks.add(index, block);
-        block.setParent(this);
 	}
 
 	public void removeBodyBlock(int index) throws MessageException {
@@ -403,7 +430,6 @@ class XMLSpineImpl implements XMLSpine {
 		int index = getHeaderBlockIndex(namespace, localPart);
 		headerBlocks.add(block);
 		//headerBlocks.set(index, block);
-        block.setParent(this);
 	}
 
 	/**
@@ -441,5 +467,29 @@ class XMLSpineImpl implements XMLSpine {
     public boolean isFault() throws MessageException {
 		return XMLFaultUtils.isFault(root);
 	}
-	
+
+    public Style getStyle() {
+        return style;
+    }
+
+    public QName getOperationElement() {
+        if (style == style.DOCUMENT) {
+            return null;
+        } else {
+            return root.getBody().getFirstElement().getQName();
+        }
+    }
+
+    public void setOperationElement(QName operationQName) {
+        if (style == style.RPC) {
+            if (soapFactory == null) {
+                soapFactory = MessageUtils.getSOAPFactory(root);
+            }
+            OMNamespace ns = soapFactory.createOMNamespace(operationQName.getNamespaceURI(), operationQName.getPrefix());
+            OMElement opElement = root.getBody().getFirstElement();
+            opElement.setLocalName(operationQName.getLocalPart());
+            opElement.setNamespace(ns);
+        }
+    }
+    
 }

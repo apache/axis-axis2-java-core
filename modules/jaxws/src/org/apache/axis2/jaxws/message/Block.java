@@ -129,14 +129,4 @@ public interface Block extends OMDataSource {
 	 */
 	public BlockFactory getBlockFactory();
     
-    /**
-     * Get the XMLPart that contains this Block, if it is attached to one at all.
-     * @return XMLPart that the Block is attached to
-     */
-    public XMLPart getParent();
-    
-    /**
-     * Set the XMLPart that will contain this Block.
-     */
-    public void setParent(XMLPart p);
 }

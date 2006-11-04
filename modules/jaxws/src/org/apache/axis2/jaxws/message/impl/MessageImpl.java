@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.activation.DataHandler;
+import javax.jws.soap.SOAPBinding.Style;
+import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPEnvelope;
@@ -381,6 +383,22 @@ public class MessageImpl implements Message {
 
     public void setLocalException(Throwable t) {
         localException = t;
+    }
+
+    public Style getStyle() {
+        return xmlPart.getStyle();
+    }
+
+    public void setStyle(Style style) throws MessageException {
+        xmlPart.setStyle(style);
+    }
+
+    public QName getOperationElement() throws MessageException {
+        return xmlPart.getOperationElement();
+    }
+
+    public void setOperationElement(QName operationQName) throws MessageException {
+        xmlPart.setOperationElement(operationQName);
     }
 
 
