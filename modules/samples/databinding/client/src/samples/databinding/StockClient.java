@@ -17,16 +17,18 @@ package samples.databinding;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.SAXOMBuilder;
 import org.exolab.castor.xml.Marshaller;
-import org.exolab.castor.xml.Unmarshaller;
 import org.exolab.castor.xml.UnmarshalHandler;
+import org.exolab.castor.xml.Unmarshaller;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import samples.databinding.data.GetStockQuote;
 import samples.databinding.data.GetStockQuoteResponse;
 
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+
+import javanet.staxutils.StAXSource;
 public final class StockClient {
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
@@ -50,8 +52,8 @@ public final class StockClient {
                 builder.getRootElement());
 
 
-        javanet.staxutils.StAXSource staxSource =
-                new javanet.staxutils.StAXSource(response.getXMLStreamReader());
+        StAXSource staxSource =
+                new StAXSource(response.getXMLStreamReader());
         Unmarshaller unmarshaller = new Unmarshaller(GetStockQuoteResponse.class);
         UnmarshalHandler unmarshalHandler = unmarshaller.createHandler();
         GetStockQuoteResponse stockQuoteResponse;

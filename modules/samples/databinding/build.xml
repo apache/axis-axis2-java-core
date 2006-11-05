@@ -136,9 +136,10 @@
 
         <!--now compile the stub classes-->
         <javac debug="on" memoryMaximumSize="256m" memoryInitialSize="256m" fork="true"
+               srcdir="${client.target}/src"
+               excludes="**/StockClient2*.*"
                destdir="${client.target}/classes"
                classpathref="axis2.classpath">
-            <src path="${client.target}/src"/>
         </javac>
 
         <!--jar the compiled stuff-->
