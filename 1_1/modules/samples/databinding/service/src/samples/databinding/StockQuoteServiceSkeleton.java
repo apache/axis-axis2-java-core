@@ -55,7 +55,7 @@ public class StockQuoteServiceSkeleton {
         quote.setVolume(5000);
 
         LastTrade lastTrade = new LastTrade();
-        lastTrade.setPrice(234235);
+        lastTrade.setPrice(99.99);
         lastTrade.setDate(Calendar.getInstance().getTimeInMillis());
         quote.setLastTrade(lastTrade);
 
