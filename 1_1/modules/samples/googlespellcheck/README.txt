@@ -1,4 +1,4 @@
-Sample for Google Spell Checker
+Sample: Google Spell Checker
 ========================================
 
 Introduction
@@ -29,7 +29,7 @@ of this behavior of the SimplifiedSpellCheck service.
 Running The Sample
 ==================
 
-To generate stubs and run the text editor, type ant
+To generate stubs and run the text editor, type ant.
 
 
 
