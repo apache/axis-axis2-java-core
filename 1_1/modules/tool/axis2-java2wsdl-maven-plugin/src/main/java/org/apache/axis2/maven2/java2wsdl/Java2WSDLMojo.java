@@ -48,45 +48,45 @@ public class Java2WSDLMojo extends AbstractMojo {
 
     /**
      * Fully qualified name of the class, which is being inspected.
-     * @parameter
+     * @parameter expression="${axis2.java2wsdl.className}"
      * @required
      */
     private String className;
 
     /**
      * Target namespace of the generated WSDL.
-     * @parameter
+     * @parameter expression="${axis2.java2wsdl.targetNamespace}"
      */
     private String targetNamespace;
 
     /**
      * The namespace prefix, which is being used for the WSDL's
      * target namespace.
-     * @parameter
+     * @parameter expression="${axis2.java2wsdl.targetNamespacePrefix}"
      */
     private String targetNamespacePrefix;
 
     /**
      * The generated schemas target namespace.
-     * @parameter
+     * @parameter expression="${axis2.java2wsdl.schemaTargetNamespace}"
      */
     private String schemaTargetNamespace;
 
     /**
      * The generated schemas target namespace prefix.
-     * @parameter
+     * @parameter expression="${axis2.java2wsdl.schemaTargetNamespacePrefix}"
      */
     private String schemaTargetNamespacePrefix;
 
     /**
      * Name of the generated service.
-     * @parameter
+     * @parameter expression="${axis2.java2wsdl.serviceName}"
      */
     private String serviceName;
 
     /**
      * Name of the service file, which is being generated.
-     * @parameter default-value="target/generated-sources/java2wsdl/service.xml"
+     * @parameter expression="${axis2.java2wsdl.outputFileName}" default-value="${project.build.outputDirectory}/generated-resources/java2wsdl/service.xml"
      */
     private String outputFileName;
 
