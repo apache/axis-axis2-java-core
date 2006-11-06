@@ -58,7 +58,7 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
             URL wsdlURL = new URL("http://localhost:" + UtilServer.TESTING_PORT +
                     "/axis2/services/EchoXMLService?wsdl");
             ServiceClient serviceClient = new ServiceClient(null, wsdlURL,
-                    new QName("http://ws.apache.org/axis2", "EchoXMLService"),
+                    new QName("http://engine.axis2.apache.org/xsd", "EchoXMLService"),
                     "EchoXMLServiceSOAP11port_http");
             OMElement payload = TestingUtils.createDummyOMElement("http://engine.axis2.apache.org/xsd");
             String epr = "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/EchoXMLService";
@@ -71,6 +71,7 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
             String textValue = response.getFirstElement().getFirstElement().getText();
             assertEquals(textValue, "Isaac Asimov, The Foundation Trilogy");
         } catch (Exception e) {
+            e.printStackTrace();
             throw new AxisFault(e);
         }
     }

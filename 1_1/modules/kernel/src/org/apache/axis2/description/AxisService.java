@@ -555,7 +555,6 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     *
      * @param out
      * @param requestIP
      * @param servicePath
@@ -1339,6 +1338,9 @@ public class AxisService extends AxisDescription {
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
             axisService.setTypeTable(schemaGenerator.getTypeTable());
+            if (targetNamespace == null) {
+                targetNamespace = schemaGenerator.getSchemaTargetNameSpace();
+            }
             if (targetNamespace != null && !"".equals(targetNamespace)) {
                 axisService.setTargetNamespace(targetNamespace);
             }
@@ -1457,7 +1459,9 @@ public class AxisService extends AxisDescription {
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
             axisService.setTypeTable(schemaGenerator.getTypeTable());
-            axisService.setTypeTable(schemaGenerator.getTypeTable());
+            if (targetNameSpace == null) {
+                targetNameSpace = schemaGenerator.getSchemaTargetNameSpace();
+            }
             if (targetNameSpace != null && !"".equals(targetNameSpace)) {
                 axisService.setTargetNamespace(targetNameSpace);
             }
