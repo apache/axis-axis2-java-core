@@ -589,14 +589,6 @@ public class AxisEngine {
         
     }
 
-    private String getSenderFaultCode(OMNamespace soapNamespace) {
-        return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace.getNamespaceURI())
-                ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":"
-                + SOAP12Constants.FAULT_CODE_SENDER
-                : SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":"
-                + SOAP11Constants.FAULT_CODE_SENDER;
-    }
-
     /**
      * This class is the workhorse for a non-blocking invocation that uses a two
      * way transport.
