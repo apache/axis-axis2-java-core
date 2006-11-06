@@ -1,7 +1,7 @@
 Introduction
 ============
 
-This sample demonstrates how use WSDL2Java generated code with Castor
+This sample demonstrates how to use WSDL2Java generated code with Castor
 
 Running of this sample assumes that you are running this within the extracted release folder.
 
@@ -18,6 +18,9 @@ Before Running The Sample
  new lib directory.
  * Download latest Castor jar from http://www.castor.org/download.html and drop that into the new
  lib directory
+
+ You can achieve all three of the above steps by running "ant download.jars", but it will take some
+ time to download those two jars, using ant.
 
 Running The Sample
 ==================
@@ -46,6 +49,12 @@ Running The Sample
       * Compile the client classes
       * Create a Jar of the client classes and copy it to build/client/StockService-test-client.jar
 
-Advanced Guide
+How It Works
 ==============
-For more details kindly see doc/DataBindingSampleGuide.html
+
+- We code generate code giving -d none to get all the Axis2 APIs with OMElements.
+- We create Castor objects for the schema give in the StockQuoteService.wsdl.
+- Client API and the service uses those castor objects to get/set data.
+- We get StAX events from the castor objects and construct OMElements from them. Those StAX events
+are fed into StAXOMBuilder which can create OM tree from it.
+- Feed those OMElement in to generated code.
