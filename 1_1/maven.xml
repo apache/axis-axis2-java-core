@@ -693,17 +693,13 @@
 
 
         <!--********************** creating the samples ********************** -->
-        <!-- TODO :Copy the samples.. after samples module refactoring -->
-        <!--ant:copy todir="${std.bin.temp.dir}/samples">
-            <ant:fileset dir="modules/samples/target/samples"/>
-        </ant:copy-->
-        <!--ant:copy todir="${std.bin.temp.dir}/samples/userguide">
-            <ant:fileset file="${std.bin.temp.dir}/samples/groovyService.aar"/>
-        </ant:copy-->
+        <!-- If you want to add a new sample, put your content in modules/samples and add an entry below
+        to be copied in to the standard release -->
         <ant:mkdir dir="${std.bin.temp.dir}/samples/faulthandling"/>
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
                 <include name="yahoorestsearch/**/*.*"/>
+                <include name="databinding/**/*.*"/>
                 <include name="googlespellcheck/**/*.*"/>
                 <include name="faulthandling/**/*.*"/>
                 <include name="mtom/**/*.*"/>
@@ -773,8 +769,9 @@
                 <ant:exclude name="**/*.iml"/>
             </ant:fileset>
         </ant:copy>
-        <ant:copy toDir="${src.temp.dir}/etc" overwrite="true" filtering="on" file="etc/project.properties"/>
-	<ant:copy toDir="${src.temp.dir}" overwrite="true" filtering="on" file="NOTICE.txt"/>
+        <ant:copy toDir="${src.temp.dir}/etc" overwrite="true" filtering="on"
+                  file="etc/project.properties"/>
+        <ant:copy toDir="${src.temp.dir}" overwrite="true" filtering="on" file="NOTICE.txt"/>
 
         <!-- Copy the master maven files for the standard src distro -->
         <ant:copy toFile="${src.temp.dir}/maven.xml">
@@ -898,20 +895,20 @@
                     line="-J-Dhttp.proxy.port=${maven.proxy.port} -J-Dhttp.proxy.host=${maven.proxy.host}"/>
             <ant:sourcepath>
                 <ant:pathelement location="modules/adb/src"/>
-		<ant:pathelement location="modules/adb-codegen/src"/>
+                <ant:pathelement location="modules/adb-codegen/src"/>
                 <ant:pathelement location="modules/addressing/src"/>
                 <ant:pathelement location="modules/codegen/src"/>
                 <ant:pathelement location="modules/java2wsdl/src"/>
-		<!-- Cannot run the build in jdk1.4 when jaxbri is included -->
-		<!--ant:pathelement location="modules/jaxbri/src"/-->
+                <!-- Cannot run the build in jdk1.4 when jaxbri is included -->
+                <!--ant:pathelement location="modules/jaxbri/src"/-->
                 <ant:pathelement location="modules/jibx/src"/>
                 <ant:pathelement location="modules/kernel/src"/>
                 <ant:pathelement location="modules/saaj/src"/>
-		<!-- we are not shipping jaxws with 1.1 -->
-                <!--ant:pathelement location="modules/jaxws/src"/-->                
+                <!-- we are not shipping jaxws with 1.1 -->
+                <!--ant:pathelement location="modules/jaxws/src"/-->
                 <ant:pathelement location="modules/soapmonitor/src"/>
                 <ant:pathelement location="modules/spring/src"/>
-		<ant:pathelement location="modules/xmlbeans/src"/>
+                <ant:pathelement location="modules/xmlbeans/src"/>
             </ant:sourcepath>
             <ant:classpath>
                 <ant:fileset dir="target/lib">
@@ -1001,37 +998,39 @@
         </j:if>
 
     </goal>
-	
+
     <!-- ================================================================ -->
     <!--- Create Apache Rampart Release Artifacts                         -->
     <!-- ================================================================ -->
     <goal name="rampart-release" prereqs="jar">
-    	
+
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Rampart Release</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-		<ant:mkdir dir="target/dist/rampart/" />
+        <ant:mkdir dir="target/dist/rampart/"/>
 
         <attainGoal name="rampart-dist-bin"/>
-    	
+
         <attainGoal name="rampart-dist-src"/>
-    	
+
         <!--<attainGoal name="rampart-dist-doc"/> -->
     </goal>
-	
+
     <!-- ================================================================ -->
     <!--- Rampart Binary Distro                                           -->
     <!-- ================================================================ -->
-	<goal name="rampart-dist-bin">
+    <goal name="rampart-dist-bin">
 
-		<ant:echo>+----------------------------------------------</ant:echo>
+        <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Rampart Binary Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-        <ant:property name="moddir" value="target/temp-rampart-bin/rampart-${rampart_version}/modules"/>
+        <ant:property name="moddir"
+                      value="target/temp-rampart-bin/rampart-${rampart_version}/modules"/>
         <ant:property name="libdir" value="target/temp-rampart-bin/rampart-${rampart_version}/lib"/>
-        <ant:property name="samplesdir" value="target/temp-rampart-bin/rampart-${rampart_version}/samples"/>
+        <ant:property name="samplesdir"
+                      value="target/temp-rampart-bin/rampart-${rampart_version}/samples"/>
         <ant:mkdir dir="${moddir}"/>
         <ant:mkdir dir="${libdir}"/>
         <ant:mkdir dir="${samplesdir}"/>
@@ -1046,22 +1045,23 @@
             <ant:fileset file="modules/security/target/axis2-security-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/rahas/target/axis2-rahas-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/secpolicy/target/axis2-secpolicy-${pom.currentVersion}.jar"/>
-        		<ant:fileset file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar"/>
-     		<ant:fileset file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar"/>
-     		<ant:fileset file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar"/>
-     		<ant:fileset file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar"/>
-     		<ant:fileset file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar"/>
-        
-        		<!--copy license files -->
+            <ant:fileset file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar"/>
+            <ant:fileset file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar"/>
+            <ant:fileset file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar"/>
+            <ant:fileset file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar"/>
+            <ant:fileset
+                    file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar"/>
+
+            <!--copy license files -->
             <ant:copy toDir="${libdir}">
                 <ant:fileset dir="legal/rampart">
                     <ant:include name="*.txt"/>
                 </ant:fileset>
             </ant:copy>
-     		<ant:fileset file="LICENSE.txt"/>
+            <ant:fileset file="LICENSE.txt"/>
 
         </ant:copy>
-    	
+
         <ant:copy toDir="${samplesdir}">
             <ant:fileset dir="modules/samples/security/"/>
         </ant:copy>
@@ -1069,23 +1069,23 @@
         <ant:copy toDir="${destdir}">
             <ant:fileset dir="modules/security/release-docs"/>
         </ant:copy>
-		
+
         <ant:zip file="target/dist/rampart/rampart-${rampart_version}.zip">
             <ant:fileset dir="target/temp-rampart-bin/"/>
         </ant:zip>
         <ant:delete dir="target/temp-rampart-bin"/>
-	</goal>
-	
+    </goal>
+
     <!-- ================================================================ -->
     <!--- Rampart Source Distro                                           -->
     <!-- ================================================================ -->
-	<goal name="rampart-dist-src">
-        
+    <goal name="rampart-dist-src">
+
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Rampart Source Distribution</ant:echo>
         <ant:echo>+----------------------------------------------</ant:echo>
 
-		<mkdir dir="target/temp-rampart-src"/>
+        <mkdir dir="target/temp-rampart-src"/>
 
         <ant:mkdir dir="target/temp-rampart-src/rampart-src-${rampart_version}/rampart/src"/>
         <ant:mkdir dir="target/temp-rampart-src/rampart-src-${rampart_version}/rahas/src"/>
@@ -1103,7 +1103,7 @@
                 <ant:exclude name="**/*.license"/>
                 <ant:exclude name="**/*.iml"/>
             </ant:fileset>
-        	</ant:copy>
+        </ant:copy>
         <ant:copy toDir="target/temp-rampart-src/rampart-src-${rampart_version}/rahas/">
             <ant:fileset dir="modules/rahas">
                 <ant:include name="src/**"/>
@@ -1116,7 +1116,7 @@
                 <ant:exclude name="**/*.license"/>
                 <ant:exclude name="**/*.iml"/>
             </ant:fileset>
-        	</ant:copy>
+        </ant:copy>
         <ant:copy toDir="target/temp-rampart-src/rampart-src-${rampart_version}/secpolicy/">
             <ant:fileset dir="modules/secpolicy">
                 <ant:include name="src/**"/>
@@ -1131,14 +1131,14 @@
             </ant:fileset>
         </ant:copy>
 
-		<!-- TODO: Create and copy release documents :release-notes.html, README.txt, LICENCE.txt -->
+        <!-- TODO: Create and copy release documents :release-notes.html, README.txt, LICENCE.txt -->
 
         <ant:zip file="target/dist/rampart/rampart-${rampart_version}-src.zip">
             <ant:fileset dir="target/temp-rampart-src/"/>
         </ant:zip>
         <ant:delete dir="target/temp-rampart-src"/>
     </goal>
-	
+
     <define:taglib uri="macros">
         <define:tag name="copy-deps">
             <!--
