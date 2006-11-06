@@ -5,8 +5,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -20,7 +20,7 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
  * {@link org.apache.axis2.jaxws.impl.AsyncListener} class to provide 
  * proper deserialization into the target format (XML String or Source).
  */
-public class XMLDispatchAsyncListener extends AsyncListener {
+public class XMLDispatchAsyncListener extends AsyncResponse {
 
     private Mode mode;
     private Class type;

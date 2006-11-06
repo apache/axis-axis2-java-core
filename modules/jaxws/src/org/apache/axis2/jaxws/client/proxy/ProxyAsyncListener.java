@@ -16,10 +16,9 @@
  */
 package org.apache.axis2.jaxws.client.proxy;
 
-import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.impl.AsyncListener;
 
 
 /**
@@ -28,7 +27,7 @@ import org.apache.axis2.jaxws.impl.AsyncListener;
  * The Class will return the data type associated with Response<T> Generic Class.
  * Example Response<Float> will return a Float object to client on Response.get() call.
  */
-public class ProxyAsyncListener extends AsyncListener {
+public class ProxyAsyncListener extends AsyncResponse {
 
 	JAXWSProxyHandler handler = null;
 	Object[] inputArgs = null;
@@ -48,23 +47,15 @@ public class ProxyAsyncListener extends AsyncListener {
 		this.inputArgs = inputArgs;
 	}
 
-	/**
-	 * @param cb
-	 */
-	public ProxyAsyncListener(AxisCallback cb) {
-		super(cb);
-		
+	public Object getResponseValueObject(MessageContext mc) {
+	    try{
+	        //I will delegate the request to create respose to proxyHandler 
+            //since it has all the logic written to create response for Sync 
+            //and oneWay.
+	        return handler.createResponse(null,inputArgs, mc);
+	    }
+	    catch (Throwable e) {
+	        throw ExceptionFactory.makeWebServiceException(e);
+	    }
 	}
-	
-	 public Object getResponseValueObject(MessageContext mc){
-		 
-		 try{
-			 //I will delegate the request to create respose to proxyHandler since it has all the logic written to create response for Sync and oneWay.
-			  return handler.createResponse(null,inputArgs, mc);
-		 }catch(Throwable e){
-			throw ExceptionFactory.makeWebServiceException(e);
-		 }
-	 }
-
-	 
 }

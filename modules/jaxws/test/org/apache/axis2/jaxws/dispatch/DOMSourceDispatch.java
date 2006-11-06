@@ -1,20 +1,22 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-package org.apache.axis2.jaxws;
+package org.apache.axis2.jaxws.dispatch;
 
 import java.io.ByteArrayInputStream;
 import java.util.concurrent.Future;
@@ -26,6 +28,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Dispatch;
+import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
@@ -112,7 +115,7 @@ public class DOMSourceDispatch extends TestCase{
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
 
         // Setup the callback for async responses
-        CallbackHandler<Source> callbackHandler = new CallbackHandler<Source>();
+        AsyncCallback<Source> callbackHandler = new AsyncCallback<Source>();
         
         System.out.println(">> Invoking async (callback) Dispatch");
         Future<?> monitor = dispatch.invokeAsync(request, callbackHandler);
@@ -121,6 +124,19 @@ public class DOMSourceDispatch extends TestCase{
             System.out.println(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
+        
+        Source response = callbackHandler.getValue();
+        assertNotNull(response);
+        
+        // Turn the Source into a String so we can check it
+        String responseText = createStringFromSource(response);        
+        System.out.println(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
     }
     
     public void testAsyncCallbackMessageMode() throws Exception {
@@ -137,7 +153,7 @@ public class DOMSourceDispatch extends TestCase{
         DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleSoapMessage);
 
         // Setup the callback for async responses
-        CallbackHandler<Source> callbackHandler = new CallbackHandler<Source>();
+        AsyncCallback<Source> callbackHandler = new AsyncCallback<Source>();
         
         System.out.println(">> Invoking async (callback) Dispatch");
         Future<?> monitor = dispatch.invokeAsync(request, callbackHandler);
@@ -146,7 +162,90 @@ public class DOMSourceDispatch extends TestCase{
             System.out.println(">> Async invocation still not complete");
             Thread.sleep(1000);
         }
+        
+        Source response = callbackHandler.getValue();
+        assertNotNull(response);
+        
+        // Turn the Source into a String so we can check it
+        String responseText = createStringFromSource(response);        
+        System.out.println(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
 	}
+    
+    public void testAsyncPollingPayloadMode() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.PAYLOAD);
+        
+        // Create the DOMSource
+        DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleBodyContent);
+
+        System.out.println(">> Invoking async (polling) Dispatch");
+        Response<Source> asyncResponse = dispatch.invokeAsync(request);
+            
+        while (!asyncResponse.isDone()) {
+            System.out.println(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        Source response = asyncResponse.get();
+        assertNotNull(response);
+        
+        // Turn the Source into a String so we can check it
+        String responseText = createStringFromSource(response);        
+        System.out.println(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(!responseText.contains("soap"));
+        assertTrue(!responseText.contains("Envelope"));
+        assertTrue(!responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+    }
+    
+    public void testAsyncPollingMessageMode() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.MESSAGE);
+        
+        // Create the DOMSource
+        DOMSource request = createDOMSourceFromString(DispatchTestConstants.sampleSoapMessage);
+
+        System.out.println(">> Invoking async (callback) Dispatch");
+        Response<Source> asyncResponse = dispatch.invokeAsync(request);
+            
+        while (!asyncResponse.isDone()) {
+            System.out.println(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        Source response = asyncResponse.get();
+        assertNotNull(response);
+        
+        // Turn the Source into a String so we can check it
+        String responseText = createStringFromSource(response);        
+        System.out.println(responseText);
+        
+        // Check to make sure the content is correct
+        assertTrue(responseText.contains("soap"));
+        assertTrue(responseText.contains("Envelope"));
+        assertTrue(responseText.contains("Body"));
+        assertTrue(responseText.contains("echoStringResponse"));
+    }
     
     public void testOneWayPayloadMode() throws Exception {
         System.out.println("---------------------------------------");

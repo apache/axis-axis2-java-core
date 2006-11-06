@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.client.proxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.jws.soap.SOAPBinding;
@@ -33,6 +32,7 @@ import javax.xml.ws.Response;
 
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -44,7 +44,6 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
@@ -52,7 +51,6 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -214,8 +212,8 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			if(asyncHandler == null){
 				throw ExceptionFactory.makeWebServiceException("AynchHandler null for Async callback, Invalid AsyncHandler callback Object");
 			}
-			AsyncListener listener = createProxyListener(args);
-			requestIC.setAsyncListener(listener);
+			AsyncResponse listener = createProxyListener(args);
+			requestIC.setAsyncResponseListener(listener);
 			requestIC.setExecutor(delegate.getExecutor());
 				        
 	        Future<?> future = controller.invokeAsync(requestIC, asyncHandler);
@@ -233,8 +231,8 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			if(log.isDebugEnabled()){
 				log.debug("Async Polling");
 			}
-			AsyncListener listener = createProxyListener(args);
-			requestIC.setAsyncListener(listener);
+			AsyncResponse listener = createProxyListener(args);
+			requestIC.setAsyncResponseListener(listener);
 			requestIC.setExecutor(delegate.getExecutor());
 	        
 			Response response = controller.invokeAsync(requestIC);
@@ -264,7 +262,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		return null;
 	}
 	
-	private AsyncListener createProxyListener(Object[] args){
+	private AsyncResponse createProxyListener(Object[] args){
 		ProxyAsyncListener listener = new ProxyAsyncListener();
 		listener.setHandler(this);
 		listener.setInputArgs(args);

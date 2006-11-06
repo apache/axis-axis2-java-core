@@ -22,7 +22,7 @@ import java.util.concurrent.Executor;
 import javax.xml.ws.handler.Handler;
 
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.jaxws.impl.AsyncListener;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
 
 /**
  * The <code>InvocationContext</code> encapsulates all of the information 
@@ -47,9 +47,9 @@ public interface InvocationContext {
     
     public void setExecutor(Executor e);
     
-    public AsyncListener getAsyncListener();
+    public AsyncResponse getAsyncResponseListener();
     
-    public void setAsyncListener(AsyncListener al);
+    public void setAsyncResponseListener(AsyncResponse al);
     
     //FIXME: This is temporary.
     public void setServiceClient(ServiceClient client);

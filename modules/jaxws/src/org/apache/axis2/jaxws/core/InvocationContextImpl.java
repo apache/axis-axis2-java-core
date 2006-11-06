@@ -22,6 +22,7 @@ import java.util.concurrent.Executor;
 import javax.xml.ws.handler.Handler;
 
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 
 /**
@@ -35,7 +36,7 @@ public class InvocationContextImpl implements InvocationContext {
     private MessageContext requestMsgCtx;
     private MessageContext responseMsgCtx;
     private Executor executor;
-    private AsyncListener asyncListener;
+    private AsyncResponse asyncResponse;
     
     private ServiceClient serviceClient; //FIXME: This is temporary
     
@@ -101,12 +102,12 @@ public class InvocationContextImpl implements InvocationContext {
         executor = e;
     }
     
-    public AsyncListener getAsyncListener() {
-        return asyncListener;
+    public AsyncResponse getAsyncResponseListener() {
+        return asyncResponse;
     }
     
-    public void setAsyncListener(AsyncListener al) {
-        asyncListener = al;
+    public void setAsyncResponseListener(AsyncResponse ar) {
+        asyncResponse = ar;
     }
     
     // FIXME: This is temporary

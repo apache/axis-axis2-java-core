@@ -24,8 +24,8 @@ import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.handler.PortData;
-import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -56,7 +56,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         type = c;
     }
     
-    public AsyncListener createAsyncListener() {
+    public AsyncResponse createAsyncResponseListener() {
         if (log.isDebugEnabled()) {
             log.debug("Creating new AsyncListener for XMLDispatch");
         }

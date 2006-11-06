@@ -21,7 +21,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.axis2.jaxws.DispatchTestSuite;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationProviderImplDescriptionTests;
@@ -33,6 +32,7 @@ import org.apache.axis2.jaxws.description.WSDLTests;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderTests;
 import org.apache.axis2.jaxws.description.impl.ServiceDescriptionTests;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
+import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
 import org.apache.axis2.jaxws.i18n.JaxwsMessageBundleTests;
@@ -51,6 +51,8 @@ import org.apache.axis2.jaxws.provider.SourceMessageProviderTests;
 import org.apache.axis2.jaxws.provider.SourceProviderTests;
 import org.apache.axis2.jaxws.provider.StringMessageProviderTests;
 import org.apache.axis2.jaxws.provider.StringProviderTests;
+import org.apache.axis2.jaxws.proxy.ProxyNonWrappedTests;
+import org.apache.axis2.jaxws.proxy.ProxyTests;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
 import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
@@ -58,8 +60,6 @@ import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
-import org.apache.axis2.proxy.ProxyNonWrappedTests;
-import org.apache.axis2.proxy.ProxyTests;
 import org.apache.log4j.BasicConfigurator;
 
 public class JAXWSTest extends TestCase {

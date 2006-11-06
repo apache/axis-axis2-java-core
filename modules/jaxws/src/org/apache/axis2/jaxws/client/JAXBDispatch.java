@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.client;
 import javax.xml.bind.JAXBContext;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.impl.AsyncListener;
 import org.apache.axis2.jaxws.marshaller.ClassUtils;
@@ -46,7 +47,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
         jaxbContext = jbc;
     }
     
-    public AsyncListener createAsyncListener() {
+    public AsyncResponse createAsyncResponseListener() {
         JAXBDispatchAsyncListener listener = new JAXBDispatchAsyncListener();
         listener.setJAXBContext(jaxbContext);
         listener.setMode(mode);

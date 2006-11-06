@@ -22,8 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
@@ -43,15 +41,14 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
+import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.impl.AsyncListener;
-import org.apache.axis2.jaxws.impl.AsyncListenerWrapper;
 import org.apache.axis2.jaxws.marshaller.ClassUtils;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -227,68 +224,34 @@ public class AxisInvocationController extends InvocationController {
         OperationClient opClient = createOperationClient(svcClient, operationName);
         
         initOperationClient(opClient, request);
-        
-        org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
-        
+                
         // Setup the client so that it knows whether the underlying call to
         // Axis2 knows whether or not to start a listening port for an
         // asynchronous response.
         Boolean useAsyncMep = (Boolean) request.getProperties().get(Constants.USE_ASYNC_MEP);
         if((useAsyncMep != null && useAsyncMep.booleanValue()) 
                 || opClient.getOptions().isUseSeparateListener()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Enabling asynchronous message exchange.  An asynchronous listener will be establish.");
-            }
-
-            opClient.getOptions().setUseSeparateListener(true);
-            opClient.getOptions().setTransportInProtocol("http");
-
-            //FIXME: This has to be here so the ThreadContextMigrator can pick it up.
-            //This should go away once AXIS2-978 is fixed.
-            axisRequestMsgCtx.getOptions().setUseSeparateListener(true);
-            
-            // Setup the response callback receiver to receive the async response
-            // This logic is based on org.apache.axis2.client.ServiceClient.sendReceiveNonBlocking(...)
-            AxisOperation op = opClient.getOperationContext().getAxisOperation();
-            MessageReceiver messageReceiver = op.getMessageReceiver();
-            if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver))
-                op.setMessageReceiver(new CallbackReceiver());
+            configureAsyncListener(opClient, request.getAxisMessageContext());
         }
-        else {
+		else {
             if (log.isDebugEnabled()) {
                 log.debug("Asynchronous message exchange not enabled.  The invocation will be synchronous.");
             }
         }
-
         
-        // There should be an AsyncListener that is configured and set on the
-        // InvocationContext.  We must get this and use it to wait for the 
-        // async response to come back.  The AxisCallback that is set on the 
-        // AsyncListener is the callback that Axis2 will call when the response
-        // has arrived.
-        AsyncListener listener = ic.getAsyncListener();
-        AxisCallback axisCallback = new AxisCallback();
-        listener.setAxisCallback(axisCallback);
-        listener.setInvocationContext(ic);
         
-        // Once the AsyncListener is configured, we must include that in an 
-        // AsyncListenerWrapper.  The wrapper is what will handle the lifecycle 
-        // of the listener and determine when it's started and stopped.
-        AsyncListenerWrapper<?> wrapper = new AsyncListenerWrapper<Object>(listener);
-
-        // Inside of the wrapper we must set the callback that the JAX-WS
-        // client programmer provided.  This is the user object that we 
-        // must call back on once we've done everything we need to do at
-        // the JAX-WS layer.
+        CallbackFuture cbf = null;
         if(callback != null){
-            wrapper.setAsyncHandler(callback);
+            cbf = new CallbackFuture(ic.getAsyncResponseListener(), 
+                    callback, ic.getExecutor());
         }
         else {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr4"));
         }
 
-        opClient.setCallback(axisCallback);
+        opClient.setCallback(cbf);
         
+        org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
         try {
             execute(opClient, false, axisRequestMsgCtx);
         } catch(AxisFault af) {
@@ -300,42 +263,64 @@ public class AxisInvocationController extends InvocationController {
         	af.printStackTrace(System.out);
         }
         
-        // Now that the request has been sent, start the listener thread so that it can
-        // catch the async response.
-        // TODO: Need to determine whether this should be done BEFORE or AFTER
-        // we send the request.  My guess is before though.
-        try {
-            // TODO:Need to figure out where we get the Executor from
-            // Can't be from the MessageContext, but should maybe be 
-            // set somewhere accessible.
-            // FIXME: This should NOT be an ExecutorService, but should just
-            // be a plain old Executor.
-            ExecutorService exec = (ExecutorService) ic.getExecutor();
-            Future<?> future = exec.submit(wrapper);
-            future.get();
-            //TODO temp fix to resolve async callback hang.
-            exec.shutdown();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            throw ExceptionFactory.makeWebServiceException(e);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-        
-        return wrapper;
+        return cbf.getFutureTask();
     }
     
     /*
      *  (non-Javadoc)
      * @see org.apache.axis2.jaxws.core.controller.InvocationController#invokeAsync(org.apache.axis2.jaxws.core.InvocationContext)
      */
-    public Response invokeAsync(InvocationContext ic) {
-        if (log.isDebugEnabled()) {
-            log.debug("Invocation pattern: async (polling)");
+    public Response doInvokeAsync(MessageContext request) {
+        // We need the qname of the operation being invoked to know which 
+        // AxisOperation the OperationClient should be based on.
+        // Note that the OperationDesc is only set through use of the Proxy. Dispatch
+        // clients do not use operations, so the operationDesc will be null.  In this
+        // case an anonymous AxisService with anoymouns AxisOperations for the supported
+        // MEPs will be created; and it is that anonymous operation name which needs to
+        // be specified
+        // TODO: Fix this logic once AxisService is created via annoations and not just WSDL
+        //       If ServiceDesc.axisService is null, then we created an Annon Service and operations in 
+        //       ServiceDelegate.getServiceClient(), and that is what the service client points to.
+        //       Therefore, we need to use the annonymous operation name in that case, so the anonymous service client will find 
+        //       the anonymous AxisOperation on that service.  
+        //       This means the ServiceDesc was not build with WSDL, and so there are no Axis objects attached to them
+        //       i.e the OperationDesc.axisOperation == null
+        QName operationName = getOperationNameToUse(request, ServiceClient.ANON_OUT_IN_OP);
+
+        // TODO: Will the ServiceClient stick around on the InvocationContext
+        // or will we need some other mechanism of creating this?
+        // Try to create an OperationClient from the passed in ServiceClient
+        InvocationContext ic = request.getInvocationContext();
+        ServiceClient svcClient = ic.getServiceClient();
+        OperationClient opClient = createOperationClient(svcClient, operationName);
+        
+        initOperationClient(opClient, request);
+        
+        // Setup the client so that it knows whether the underlying call to
+        // Axis2 knows whether or not to start a listening port for an
+        // asynchronous response.
+        Boolean useAsyncMep = (Boolean) request.getProperties().get(Constants.USE_ASYNC_MEP);
+        if((useAsyncMep != null && useAsyncMep.booleanValue()) 
+                || opClient.getOptions().isUseSeparateListener()) {
+            configureAsyncListener(opClient, request.getAxisMessageContext());
         }
         
-        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("AsyncPollingNotSupported"));
+        AsyncResponse resp = ic.getAsyncResponseListener(); 
+        opClient.setCallback(resp);
+        
+        org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
+        try {
+            execute(opClient, false, axisRequestMsgCtx);
+        } catch(AxisFault af) {
+            // TODO MIKE revisit?
+            // do nothing here.  The exception we get is from the endpoint,
+            // and will be sitting on the message context.  We need to save it
+            // to process it through jaxws
+            System.out.println("Swallowed Exception =" + af);
+            af.printStackTrace(System.out);
+        }
+        
+        return resp;
     }
     
     /*
@@ -475,6 +460,26 @@ public class AxisInvocationController extends InvocationController {
             //TODO: NLS and ExceptionFactory
             throw ExceptionFactory.makeWebServiceException(e);
         }
+    }
+    
+    private void configureAsyncListener(OperationClient client, org.apache.axis2.context.MessageContext mc) {
+    	if (log.isDebugEnabled()) {
+        	log.debug("Enabling asynchronous message exchange.  An asynchronous listener will be establish.");
+		}
+    
+        client.getOptions().setUseSeparateListener(true);
+        client.getOptions().setTransportInProtocol("http");
+
+        //FIXME: This has to be here so the ThreadContextMigrator can pick it up.
+        //This should go away once AXIS2-978 is fixed.
+        mc.getOptions().setUseSeparateListener(true);
+        
+        // Setup the response callback receiver to receive the async response
+        // This logic is based on org.apache.axis2.client.ServiceClient.sendReceiveNonBlocking(...)
+        AxisOperation op = client.getOperationContext().getAxisOperation();
+        MessageReceiver messageReceiver = op.getMessageReceiver();
+        if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver))
+            op.setMessageReceiver(new CallbackReceiver());
     }
     
     private Message createMessageFromOM(OMElement om) throws MessageException {

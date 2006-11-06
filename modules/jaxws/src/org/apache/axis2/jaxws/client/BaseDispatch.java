@@ -30,6 +30,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -89,7 +90,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
      * 
      * @return a configured AsyncListener instance
      */
-    protected abstract AsyncListener createAsyncListener();
+    protected abstract AsyncResponse createAsyncResponseListener();
     
     public Object invoke(Object obj) throws WebServiceException {
         if (log.isDebugEnabled()) { 
@@ -234,8 +235,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
         invocationContext.setExecutor(e);
         
         // Create the AsyncListener that is to be used by the InvocationController.
-        AsyncListener listener = createAsyncListener();
-        invocationContext.setAsyncListener(listener);
+        AsyncResponse listener = createAsyncResponseListener();
+        invocationContext.setAsyncResponseListener(listener);
         
         // Send the request using the InvocationController
         Future<?> asyncResponse = ic.invokeAsync(invocationContext, asynchandler);
@@ -254,7 +255,58 @@ public abstract class BaseDispatch<T> extends BindingProvider
     }
   
     public Response invokeAsync(Object obj)throws WebServiceException{
-        throw new UnsupportedOperationException("Async (polling) invocations are not yet supported.");
+        if (log.isDebugEnabled()) { 
+            log.debug("Entered asynchronous (polling) invocation: BaseDispatch.invokeAsync()");
+        }
+        
+        // Create the InvocationContext instance for this request/response flow.
+        InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
+        invocationContext.setServiceClient(serviceClient);
+        
+        // Create the MessageContext to hold the actual request message and its
+        // associated properties
+        MessageContext requestMsgCtx = new MessageContext();
+        invocationContext.setRequestMessageContext(requestMsgCtx);
+        
+        Message requestMsg = null;
+        if (isValidInvocationParam(obj)) {
+            requestMsg = createMessageFromValue(obj);
+        }
+        else {
+            throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+        }
+        
+        setupMessageProperties(requestMsg);
+        requestMsgCtx.setMessage(requestMsg);
+        
+        // Copy the properties from the request context into the MessageContext
+        requestMsgCtx.getProperties().putAll(requestContext);
+
+        // Setup the Executor that will be used to drive async responses back to 
+        // the client.
+        // FIXME: We shouldn't be getting this from the ServiceDelegate, rather each 
+        // Dispatch object should have it's own.
+        Executor e = serviceDelegate.getExecutor();
+        invocationContext.setExecutor(e);
+        
+        // Create the AsyncListener that is to be used by the InvocationController.
+        AsyncResponse listener = createAsyncResponseListener();
+        invocationContext.setAsyncResponseListener(listener);
+        
+        // Send the request using the InvocationController
+        Response asyncResponse = ic.invokeAsync(invocationContext);
+        
+        //Check to see if we need to maintain session state
+        if (requestMsgCtx.isMaintainSession()) {
+            //TODO: Need to figure out a cleaner way to make this call. 
+            setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Asynchronous (polling) invocation sent: BaseDispatch.invokeAsync()");
+        }
+        
+        return asyncResponse;
     }
     
     //FIXME: This needs to be moved up to the BindingProvider and should actually
@@ -323,7 +375,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
      * a violation.
      */
     private boolean isValidInvocationParam(Object object){
-    	String bindingId = port.getBindingID();
+        String bindingId = port.getBindingID();
         
         // If no bindingId was found, use the default.
         if (bindingId == null) {
