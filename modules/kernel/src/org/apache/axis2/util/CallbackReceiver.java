@@ -16,17 +16,16 @@
 
 package org.apache.axis2.util;
 
+import java.util.HashMap;
+
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.MessageReceiver;
-
-import java.util.HashMap;
 
 /**
  * This is a MessageReceiver which is used on the client side to accept the
@@ -47,6 +46,9 @@ public class CallbackReceiver implements MessageReceiver {
 
     public void receive(MessageContext messageCtx) throws AxisFault {
         RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
+        if(relatesTO == null){
+            throw new AxisFault("Cannot identify correct Callback object. RelatesTo is null");
+        }
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackStore.get(messageID);
         AsyncResult result = new AsyncResult(messageCtx);
@@ -69,7 +71,7 @@ public class CallbackReceiver implements MessageReceiver {
         	}
             callback.setComplete(true);
         } else {
-            throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
+            throw new AxisFault("The Callback relates to MessageID " + messageID + " is not found");
         }
     }
 
