@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 
 public @interface WebFault {
 
-    public String name();
+    public String name() default "";
 
-    public String targetNamespace();
+    public String targetNamespace() default "";
 
-    public String faultBean();
+    public String faultBean() default "";
 }

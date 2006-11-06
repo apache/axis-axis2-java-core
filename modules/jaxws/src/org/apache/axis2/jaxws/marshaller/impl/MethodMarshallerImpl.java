@@ -73,6 +73,7 @@ import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xerces.xs.datatypes.ObjectList;
 
 public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	private static QName SOAPENV_QNAME = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
@@ -188,10 +189,10 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/*
 	 * Creates method output parameter/return parameter. reads webResult annotation and then matches them with the response/result value of Invoked method
 	 * and creates a name value pair.
-	 * Also hadnles situation where ResponseWrapper is a holder.
+	 * Also handles situation where ResponseWrapper is a holder.
 	 */
 	
-	protected ArrayList<MethodParameter> toOutputMethodParameter(Object webResultValue){
+	protected ArrayList<MethodParameter> createResponseWrapperParameter(Object webResultValue){
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		if(webResultValue == null){
 			return mps;
@@ -207,20 +208,35 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return mps;
 	}
 	
-	protected ArrayList<MethodParameter> toOutputMethodParameter(Object webResultObject, Object[] holderObjects)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
+    protected ArrayList<MethodParameter> createResponseWrapperParameter(Object webResultObject, Object[] holderObjects)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
 		ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
 		ArrayList<ParameterDescription> pds = new ArrayList<ParameterDescription>();
 		pds = toArrayList(paramDescs);
-		// Remove all non holder meta data.
+        
+		// Remove all non holder meta data. Holders cannot be of Mode.IN so we 
+        // don't have to worry about removing params with Mode.IN.
 		for (int index = 0; index < paramDescs.length; index++) {
 			ParameterDescription paramDesc = paramDescs[index];
 			if (!(paramDesc.isHolderType())) {
-				pds.remove(index);
+				pds.remove(paramDesc);
 			}
 		}
 		
-		ArrayList<Object> paramValues = toArrayList(holderObjects);
-		ArrayList<MethodParameter> mps = createMethodParameters(pds.toArray(new ParameterDescription[0]), paramValues);
+		ArrayList<Object> paramValues = new ArrayList<Object>();
+        //ArrayList<Object> paramValues = toArrayList(holderObjects);
+        int index =0;
+        for(ParameterDescription pd :pds){
+            Object value = holderObjects[index];
+                if (value != null && isHolder(value) && 
+                    pd.isHolderType()) {
+                        Object holderValue = getHolderValue(pd.getMode(), value);
+                        value = holderValue;
+                    }
+                    paramValues.add(value);
+                    index++;
+                }
+                ArrayList<MethodParameter> mps = createParameters(pds.toArray(new ParameterDescription[0]), paramValues);
+        
 		if(webResultObject!=null){
 			MethodParameter outputResult = new MethodParameter(operationDesc.getResultName(), operationDesc.getResultTargetNamespace(), webResultObject.getClass(), webResultObject);
 			mps.add(outputResult);
@@ -229,28 +245,10 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		
 	}
 	
-	protected ArrayList<MethodParameter> toInputMethodParameter(Object jaxbObject) throws JAXBWrapperException, IllegalAccessException, InstantiationException, ClassNotFoundException{
-		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
-		if(jaxbObject == null){
-			return mps;
-		}
-        ArrayList<String> webParam = toArrayList(operationDesc.getParamNames());
-                
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to unwrap object from WrapperClazz");
-        }
-        JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-        Object[] objects = wrapperTool.unWrap(jaxbObject, webParam);
-        if (log.isDebugEnabled()) {
-            log.debug("Object unwrapped");
-        }
-        return toInputMethodParameters(objects);
-	}
 	/*
-	 * Creates method input parameters, reads webparam annotation and then matches them to the input parameters that the the invoked method was supplied 
-	 * and creates a name value pair.
+	 * Request Parameter are those where webParam Mode is IN or INOUT
 	 */
-	protected ArrayList<MethodParameter> toInputMethodParameters(Object[] objects)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
+    protected ArrayList<MethodParameter> createRequestWrapperParameters(Object[] objects)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		//Hand no input parameters
 		if(objects == null){
@@ -267,11 +265,26 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 					.getMessage("InvalidWebParams"));
 		}
 		ArrayList<Object> paramValues = new ArrayList<Object>();
-		paramValues = toArrayList(objects);
+		int index =0;
+		//Request Parameters are one that have IN or INOUT parameter mode.
+		for(ParameterDescription pd :paramDescs){
+			if(pd.getMode() == Mode.INOUT || pd.getMode() == Mode.IN){
+				Object value = objects[index];
+				//If paramType is holder then get the holder value, this is done as requestWrapper does not have holder but a actual type of Holder.
+				if (value != null && isHolder(value)
+						&& pd.isHolderType()) {
+					Object holderValue = getHolderValue(pd.getMode(),
+							value);
+					value = holderValue;
+				}
+				paramValues.add(value);
+			}
+			index++;
+		}
 		if (log.isDebugEnabled()) {
 			log.debug("Attempting to create Method Parameters");
 		}
-		mps = createMethodParameters(paramDescs, paramValues);
+		mps = createParameters(paramDescs, paramValues);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Method Parameters created");
@@ -279,8 +292,70 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 					
 		return mps;
 	}
+	protected ArrayList<MethodParameter> createParameterForSEIMethod(Object jaxbObject) throws JAXBWrapperException, IllegalAccessException, InstantiationException, ClassNotFoundException{
+		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
+		if(jaxbObject == null){
+			return mps;
+		}
+		ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
+		
+        ArrayList<String> webParam = new ArrayList<String>();
+       
+        //Get names of all IN and INOUT parameters, those are the ones that have been sent out by client
+        for(ParameterDescription pd : paramDescs){
+        	Mode mode = pd.getMode();
+        	if(mode == Mode.IN || mode == Mode.INOUT){
+        		webParam.add(pd.getParameterName());
+        	}
+        }
+    
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to unwrap object from WrapperClazz");
+        }
+        JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+        Object[] objects = wrapperTool.unWrap(jaxbObject, webParam);
+        if (log.isDebugEnabled()) {
+            log.debug("Object unwrapped");
+        }
+      
+        //Now that Objects with Mode IN and INOUT are unwrapped, let me get all the OUT parameters assign them NULL values,
+        //so we can call the method with right number of parameters. Also lets ensure that we create holders whereever the method
+        //parameter is defined as holder type.
+        ArrayList<Object> objectList = new ArrayList<Object>();
+        int paramIndex = 0;
+        int objectIndex = 0;
+        for(ParameterDescription pd : paramDescs){
+        	Object value = null;
+        	Mode mode = pd.getMode();
+        	
+        	if(mode == Mode.IN || mode == Mode.INOUT){
+        		value = objects[objectIndex];
+        		if (value != null && !isHolder(value)
+        				&& pd.isHolderType()) {
+        			Holder<Object> holder = createHolder(pd.getParameterType(),
+        					value);
+        			value = holder;
+        		}
+        		objectIndex++;
+        	}
+        	
+        	else if(mode == Mode.OUT){
+        		if(value == null && pd.isHolderType()){
+        			Holder<Object> holder = createHolder(pd.getParameterType(),
+        					value);
+        			value = holder;
+        		}
+        		
+        	}
+        	objectList.add(paramIndex, value);
+        	paramIndex++;
+        }
+        
+        return createParameters(paramDescs, objectList);
+        
+	}
 	
-	protected ArrayList<MethodParameter> toInputMethodParameter(Message message)throws IllegalAccessException, InstantiationException, ClassNotFoundException, MessageException, XMLStreamException, JAXBException{
+	protected ArrayList<MethodParameter> createParameterForSEIMethod(Message message)throws IllegalAccessException, InstantiationException, ClassNotFoundException, MessageException, XMLStreamException, JAXBException{
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
  		if(message == null){
  			return null;
@@ -301,13 +376,147 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			else{
 				bo = createBOFromBodyBlock(actualType,message);
 			}
+			
+			if (bo != null && !isHolder(bo)
+					&& paramDesc.isHolderType()) {
+				Holder<Object> holder = createHolder(paramDesc.getParameterType(),
+						bo);
+				bo = holder;
+			}
 			paramValues.add(bo);
 		}
-		mps = createMethodParameters(paramDescs, paramValues);
+		mps = createParameters(paramDescs, paramValues);
 		
 		return mps;
 	}
-	protected ArrayList<MethodParameter> createMethodParameters(
+	/*
+	 * Extract Holder parameter from supplied parameters and add annotation data for these parameters.
+	 */
+
+	protected ArrayList<MethodParameter> extractHolderParameters(Object jaxbObject) throws JAXBWrapperException, IllegalAccessException, InstantiationException, ClassNotFoundException{
+		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
+		if(jaxbObject == null){
+			return mps;
+		}
+		
+        ArrayList<String> webParam = new ArrayList<String>();
+        ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
+        ArrayList<ParameterDescription> paramDescList = new ArrayList<ParameterDescription>();
+		// Remove all non holder meta data. Holders cannot be of Mode.IN so I dont have to worry about removing params with Mode.IN.
+		for (int index = 0; index < paramDescs.length; index++) {
+			ParameterDescription paramDesc = paramDescs[index];
+			if (paramDesc.isHolderType()) {
+				paramDescList.add(paramDesc);
+				webParam.add(paramDesc.getParameterName());
+			}
+		}      
+		
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to unwrap object from WrapperClazz");
+        }
+        JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+        Object[] objects = wrapperTool.unWrap(jaxbObject, webParam);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Object unwrapped");
+        }
+        if (log.isDebugEnabled()) {
+			log.debug("Attempting to create Holder Method Parameters");
+		}
+        ArrayList<Object> paramValues = new ArrayList<Object>();
+        int index = 0;
+        for(ParameterDescription pd:paramDescList){
+        	Object value = objects[index];
+        	if (value != null && !isHolder(value)
+					&& pd.isHolderType()) {
+				Holder<Object> holder = createHolder(pd.getParameterType(),
+						value);
+				value = holder;
+        	}
+        	else if(value == null && pd.isHolderType()){
+        		Holder<Object> holder = createHolder(pd.getParameterType(),
+						value);
+				value = holder;
+        	}
+        	paramValues.add(value);
+        	index++;
+        }
+		mps = createParameters(paramDescList.toArray(new ParameterDescription[0]), paramValues);
+
+		if (log.isDebugEnabled()) {
+			log.debug("Holder Method Parameters created");
+		}
+					
+		return mps;
+	}
+	
+	/*
+	 * Extract Holder parameter from supplied parameters and add annotation data for these parameters.
+	 */
+	protected ArrayList<MethodParameter> extractHolderParameters(Object[] objects)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
+		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
+		//Hand no input parameters
+		if(objects == null){
+			return mps;
+		}
+		if(objects!=null && objects.length==0){
+			return mps;
+		}
+		
+		ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
+		ArrayList<ParameterDescription> paramDescList = new ArrayList<ParameterDescription>();
+		if (paramDescs.length != objects.length) {
+			throw ExceptionFactory.makeWebServiceException(Messages
+					.getMessage("InvalidWebParams"));
+		}
+		ArrayList<Object> paramValues = new ArrayList<Object>();
+		int index =0;
+		//Add only Holder parameters. 
+		for(ParameterDescription pd : paramDescs){
+			Object value = objects[index];
+			if(pd.isHolderType()){
+				if (value != null && isHolder(value)
+						&& pd.isHolderType()) {
+					Object holderValue = getHolderValue(pd.getMode(),
+							value);
+					value = holderValue;
+				}
+				paramValues.add(value);
+				paramDescList.add(pd);
+			}
+			index++;
+		}
+		
+			
+		if (log.isDebugEnabled()) {
+			log.debug("Attempting to create Holder Method Parameters");
+		}
+		mps = createParameters(paramDescList.toArray(new ParameterDescription[0]), paramValues);
+
+		if (log.isDebugEnabled()) {
+			log.debug("Holder Method Parameters created");
+		}
+					
+		return mps;
+	}
+	private ArrayList<MethodParameter> createParameters(
+			ParameterDescription[] paramDescs, ArrayList<Object> paramValues){
+		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
+		int index = 0;
+		for (Object paramValue : paramValues){
+			ParameterDescription paramDesc = paramDescs[index];
+			MethodParameter mp = null;
+			if (!isParamAsyncHandler(paramDesc.getParameterName(), paramValue)){
+				mp = new MethodParameter(paramDesc, paramValue);
+				mps.add(mp);
+			}
+			index++;
+		}
+		return mps;
+	}
+	
+	
+	private ArrayList<MethodParameter> createMethodParameters(
 			ParameterDescription[] paramDescs, ArrayList<Object> paramValues)
 			throws IllegalAccessException, InstantiationException,
 			ClassNotFoundException {
@@ -323,23 +532,26 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			// and value;
 			if (!isParamAsyncHandler(paramDesc.getParameterName(), paramValue)) {
 				if (paramType != null) {
-					// Identify Holders and get Holder Values, this if condition
-					// will mostly execute during client side call
-					if (paramValue != null && isHolder(paramValue)
-							&& isHolderType) {
-						Object holderValue = getHolderValue(paramMode,
-								paramValue);
-						mp = new MethodParameter(paramDesc, holderValue);
+				    if(paramValue == null && isHolderType){
+                        Holder<Object> holder = createHolder(paramType, paramValue);
+						mp = new MethodParameter(paramDesc, holder);
 					}
 					// Identify that param value is not Holders however if the
-					// method parameter is holder type and create Holder, this
+					// method parameter is holder type then create Holder, this
 					// will mostly be called during server side call
 					else if (paramValue != null && !isHolder(paramValue)
 							&& isHolderType) {
 						Holder<Object> holder = createHolder(paramType,
 								paramValue);
 						mp = new MethodParameter(paramDesc, holder);
-					} else {
+					} 
+				    // Identify Holders and get Holder Values, this if condition
+				    // will mostly execute during client side call
+					else if (paramValue != null && isHolder(paramValue) && isHolderType) {
+					    Object holderValue = getHolderValue(paramMode, paramValue);
+					    mp = new MethodParameter(paramDesc, holderValue);
+					}
+					else {
 						mp = new MethodParameter(paramDesc, paramValue);
 					}
 				}
@@ -695,7 +907,8 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         Block jaxbBlock = factory.createFrom(block, blockContext);
         return jaxbBlock.getBusinessObject(true); 
 	}
-	protected void createResponseHolders(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message)throws JAXBException, MessageException, XMLStreamException{
+	
+    protected void assignHolderValues(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message)throws JAXBException, MessageException, XMLStreamException{
 		Object bo = null;
 		int index = 0;
 		for(MethodParameter mp:mps){
@@ -719,57 +932,47 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		
 	
 	}
-
 	
-	protected void createResponseHolders(Object bo, Object[] inputArgs, boolean isBare)throws JAXBWrapperException, InstantiationException, ClassNotFoundException, IllegalAccessException{
+    protected void assignHolderValues(Object bo, Object[] inputArgs, boolean isBare)throws JAXBWrapperException, InstantiationException, ClassNotFoundException, IllegalAccessException{
 		if(inputArgs == null){
 			return;
 		}
-		ArrayList<Object> objList = toArrayList(inputArgs);
-		for(Object arg:inputArgs){
-			if(arg == null){
-				objList.remove(arg);
-			}
-			else if(arg!=null && !Holder.class.isAssignableFrom(arg.getClass())){
-				objList.remove(arg);
-			}
-			
+		//Remove everything except for Holders from input parameter provided by client application.
+		ArrayList<Object> objList = new ArrayList<Object>();
+		ParameterDescription[] pds = operationDesc.getParameterDescriptions();
+		int index = 0;
+		//Read Holders from Input parameteres.
+		for(ParameterDescription pd : pds){
+		    if(pd.isHolderType()) {
+		        objList.add(inputArgs[index]);
+            }
+		    index++;
 		}
+		//If no holder params in method
 		if(objList.size()<=0){
 			return;
 		}
-		ArrayList<MethodParameter> mps = null;
-		if(isBare){
-			mps = toInputMethodParameters(new Object[]{bo});
-			
-		}
-		else{
-			mps = toInputMethodParameter(bo);
-		}
-			
-		MethodParameter[] mpArray = mps.toArray(new MethodParameter[0]);
-		for(MethodParameter mp:mpArray){
-			ParameterDescription pd = mp.getParameterDescription();
-			if(!pd.isHolderType()){
-				mps.remove(mp);
-			}
-		}
+
+		//Next get all the holder objects from Business Object created from Response Message
+		ArrayList<MethodParameter> mps = extractHolderParameters(bo);
+        
 		if(mps.size() <=0){
 			return;
 		}
-		mpArray = null;
-		int index=0;
+
+		index=0;
+		//assign Holder values from Business Object to input client parameters.
 		for(Object inputArg: objList){
-			Holder inputHolder = (Holder)inputArg;
-			MethodParameter mp = mps.get(index);
-			Holder responseHolder = (Holder)mp.getValue();
-			inputHolder.value = responseHolder.value;
+		    if(inputArg!=null){
+		        Holder inputHolder = (Holder)inputArg;
+		        MethodParameter mp = mps.get(index);
+		        Holder responseHolder = (Holder)mp.getValue();
+		        inputHolder.value = responseHolder.value;
+		    }
 			index++;
 		}
 		
 	}
-	
-	
 	
 	protected Object findProperty(String propertyName, Object jaxbObject)throws JAXBWrapperException{
 		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();

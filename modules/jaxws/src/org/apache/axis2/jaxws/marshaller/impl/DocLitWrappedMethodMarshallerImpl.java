@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.OperationDescriptionJava;
+import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.DocLitWrappedMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
@@ -35,6 +36,7 @@ import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xerces.xs.datatypes.ObjectList;
 
 public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		implements DocLitWrappedMethodMarshaller {
@@ -67,7 +69,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		}
 		String resultName = operationDesc.getResultName();
 		Object bo = createBusinessObject(wrapperClazz, message);
-		createResponseHolders(bo, inputArgs, false);
+        assignHolderValues(bo, inputArgs, false);
         // REVIEW: Is the the appropriate logic, to be checking for the existence of the annotation
         //         as the decision point for getting into the property logic?  Note that even if the annotation
         //         is not present, a default result name will be returned.
@@ -93,7 +95,8 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
         if (log.isDebugEnabled()) {
             log.debug("reading input method parameters");
         }
-        ArrayList<MethodParameter> mps = toInputMethodParameter(jaxbObject);
+       
+        ArrayList<MethodParameter> mps = createParameterForSEIMethod(jaxbObject);
         if (log.isDebugEnabled()) {
             log.debug("done reading input method parameters");
         }
@@ -134,14 +137,15 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			wrapperClazz = loadClass(wrapperClazzName);
 		}
 		//create all holders list
+		ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
 		ArrayList<Object> objectList = new ArrayList<Object>();
-		if(holderObjects!=null){
-			objectList = toArrayList(holderObjects);
-			for(Object obj:holderObjects){
-				if(!(isHolder(obj))){
-					objectList.remove(obj);
-				}
+		int index =0;
+		for(ParameterDescription pd:paramDescs){
+			Object value = holderObjects[index];
+			if(pd.isHolderType()){
+				objectList.add(value);
 			}
+			index++;
 		}
 		//No Holders found 
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
@@ -151,11 +155,11 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		}
 		if(objectList.size() == 0 && !wrapperClazz.getName().equals("void")){
 			//No holders but a return type example --> public ReturnType someMethod()
-			mps = toOutputMethodParameter(returnObject);
+			mps = createResponseWrapperParameter(returnObject);
 		}
 		else{
 			//Holders found and return type or no return type. example --> public ReturnType someMethod(Holder<String>) or public void someMethod(Holder<String>)
-			mps = toOutputMethodParameter(returnObject, objectList.toArray());
+			mps = createResponseWrapperParameter(returnObject, objectList.toArray());
 		}
 		
         JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
@@ -179,7 +183,8 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		String wrapperTNS = operationDesc.getRequestWrapperTargetNamespace();
 		
 		//Get Name Value pair for input parameter Objects, skip AsyncHandler and identify Holders.
-		ArrayList<MethodParameter> methodParameters = toInputMethodParameters(objects);
+		
+		ArrayList<MethodParameter> methodParameters = createRequestWrapperParameters(objects);
 		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
 		if (log.isDebugEnabled()) {
             log.debug("JAXBWrapperTool attempting to wrap propertes in WrapperClass :" + wrapperClazz);

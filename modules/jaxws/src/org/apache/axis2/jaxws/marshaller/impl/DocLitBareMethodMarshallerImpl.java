@@ -61,17 +61,15 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 	public Object demarshalResponse(Message message, Object[] inputArgs) throws IllegalAccessException, InstantiationException, ClassNotFoundException, JAXBWrapperException, JAXBException, XMLStreamException, MessageException{
 		
 		Class returnType = getReturnType();
-		ArrayList<Object> holderArgs = toArrayList(inputArgs);
+		ArrayList<Object> holderArgs = new ArrayList<Object>();
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
-		mps = toInputMethodParameters(inputArgs);
+		mps = extractHolderParameters(inputArgs);
 		ArrayList<MethodParameter> holdermps = new ArrayList<MethodParameter>(mps);
 		int index =0;
-		//Remove everything except holders from method parameters and input arguments.
-		for(MethodParameter mp: mps){
-			ParameterDescription pd = mp.getParameterDescription();
-			if(!pd.isHolderType()){
-				holdermps.remove(mp);
-				holderArgs.remove(mp.getValue());
+		//Remove everything except holders from input arguments.
+		for(Object inputArg: inputArgs){
+			if(inputArg !=null && isHolder(inputArg)){
+				holderArgs.add(inputArg);
 			}
 			index++;
 		}
@@ -91,14 +89,14 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		}
 		else if(holdermps.size()>0 && returnType.getName().equals("void")){
 			//Holders found and no return type example --> public void someMethod(Holder<AHolder>)	
-			createResponseHolders(holdermps, holderArgs, message);
+			assignHolderValues(holdermps, holderArgs, message);
 			
 		}
 		else{
 			//Holders found and return type example --> public ReturnType someMethod(Holder<AHolder>)
 			//Note that SEI implementation will wrap return type in a holder if method has a return type and input param as holder.
 			//WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject property, if wsdl schema forces a holder and a return type.
-			createResponseHolders(holdermps, holderArgs, message);
+			assignHolderValues(holdermps, holderArgs, message);
 			Object bo = createBusinessObject(returnType, message);
 			return bo;
 		}
@@ -118,7 +116,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		}
 		ArrayList<Object> objectList = new ArrayList<Object>();
 		int index =0;
-		ArrayList<MethodParameter> mps = toInputMethodParameter(message);
+		ArrayList<MethodParameter> mps = createParameterForSEIMethod(message);
 		if (log.isDebugEnabled()) {
             log.debug("reading input method parameters");
         }
@@ -148,19 +146,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 		}
 		String wrapperTNS = operationDesc.getResultTargetNamespace();
 		
-		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
-		mps = toInputMethodParameters(holderObjects);
-		ArrayList<MethodParameter> holdersNreturnObject = new ArrayList<MethodParameter>(mps);
-		
-		//Remove everything except holders
-		for(MethodParameter mp: mps){
-			ParameterDescription pd = mp.getParameterDescription();
-			if(!pd.isHolderType()){
-				holdersNreturnObject.remove(mp);
-			}
-		}
-		
-		mps = null;
+		ArrayList<MethodParameter> holdersNreturnObject = extractHolderParameters(holderObjects);
 		Message message = null;
 		
 		if(holdersNreturnObject.size() == 0 && wrapperClazz.getName().equals("void")){
@@ -203,7 +189,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl
 	@Override
 	public Message marshalRequest(Object[] objects) throws IllegalAccessException, InstantiationException, ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, javax.xml.stream.XMLStreamException{
 		
-		ArrayList<MethodParameter> mps = toInputMethodParameters(objects);
+		ArrayList<MethodParameter> mps = createRequestWrapperParameters(objects);
 		//WSDL wrapped and running wsImport with non-wrap binding or wsdl un-Wrapped and running wsImport with no binding, EITHER WAYS 
 		//there can be only 0 or 1 Body parts as per WS-I. 
 		if(mps.size()> SIZE){
