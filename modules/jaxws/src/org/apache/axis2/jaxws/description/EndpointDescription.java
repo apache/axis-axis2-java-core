@@ -72,6 +72,7 @@ public interface EndpointDescription {
     public abstract String getBindingType();
     public abstract List<String> getHandlerList();
     public abstract QName getPortQName();
+    public abstract QName getServiceQName();
     public abstract Service.Mode getServiceMode();
 
 }

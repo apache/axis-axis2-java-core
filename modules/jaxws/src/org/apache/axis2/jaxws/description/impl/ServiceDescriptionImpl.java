@@ -144,19 +144,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	validateDBCLIntegrity();
     	
         // The ServiceQName instance variable is set based on annotation or default
+        // It will be set by the EndpointDescriptionImpl since it is the one that knows
+        // how to process the annotations and the defaults.
         //TODO: When we get this, need to consider verifying service name between WSDL
         //      and annotations, so
-    	String targetNamespace;
-    	String serviceName;
-    	if(this.composite.getWebServiceAnnot() != null) {
-    		targetNamespace = this.composite.getWebServiceAnnot().targetNamespace();
-    		serviceName = this.composite.getWebServiceAnnot().serviceName();
-    	}
-    	else {
-    		targetNamespace = this.composite.getWebServiceProviderAnnot().targetNamespace();
-    		serviceName = this.composite.getWebServiceProviderAnnot().serviceName();
-    	}
-		this.serviceQName = new QName(targetNamespace, serviceName);
 
         // Create the EndpointDescription hierachy from the service impl annotations; Since the PortQName is null, 
         // it will be set to the annotation value.
@@ -462,6 +453,9 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	//It is assumed that this will always be set in the constructor rather than 
     	//built up from the class or DBC 
         return serviceQName;
+    }
+    void setServiceQName(QName theName) {
+        serviceQName = theName;
     }
 
 

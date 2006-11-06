@@ -74,6 +74,9 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // Corresponds to a port that was added dynamically via addPort and is not declared (either in WSDL or annotations)
     private boolean isDynamicPort;
     
+    // If the WSDL is fully specified, we could build the AxisService from the WSDL
+    private boolean isAxisServiceBuiltFromWSDL;
+    
     private String serviceImplName;	//class name of the service impl or SEI
     
     // Note that an EndpointInterfaceDescription will ONLY be set for an Endpoint-based implementation;
@@ -143,10 +146,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      * @param theClass The SEI or Impl class.  This will be NULL for Dispatch clients
      *                 since they don't use an SEI
      */
-    public EndpointDescriptionImpl(Class theClass, QName portName, ServiceDescriptionImpl parent) {
+    EndpointDescriptionImpl(Class theClass, QName portName, ServiceDescriptionImpl parent) {
         this(theClass, portName, false, parent);
     }
-    public EndpointDescriptionImpl(Class theClass, QName portName, boolean dynamicPort, ServiceDescriptionImpl parent) {
+    EndpointDescriptionImpl(Class theClass, QName portName, boolean dynamicPort, ServiceDescriptionImpl parent) {
         // TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
         // TODO: If there is WSDL, could compare the namespace of the defn against the portQName.namespace
         this.parentServiceDescription = parent;
@@ -193,7 +196,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      * @param theClass The SEI or Impl class.  This will be NULL for Dispatch clients
      *                 since they don't use an SEI
      */
-    public EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
+    EndpointDescriptionImpl(ServiceDescriptionImpl parent, String serviceImplName) {
     	
     	// TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
         // TODO: If there is WSDL, could compare the namespace of the defn against the portQName.namespace
@@ -213,6 +216,8 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         else
         	webServiceProviderAnnotation = composite.getWebServiceProviderAnnot();
         
+        // REVIEW: Maybe this should be an error if the name has already been set and it doesn't match
+        getServiceDescriptionImpl().setServiceQName(getServiceQName());
         //Call the getter to insure the qualified port name is set. 
         getPortQName();
 		
@@ -278,7 +283,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         
         addToAxisService();
 
-        buildEndpointDescriptionFromNoWSDL();
+        buildEndpointDescriptionFromAnnotations();
         
         // The anonymous AxisOperations are currently NOT added here.  The reason 
         // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
@@ -302,7 +307,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         }
     }
 
-    private void buildEndpointDescriptionFromNoWSDL() {
+    private void buildEndpointDescriptionFromAnnotations() {
         // TODO: The comments below are not quite correct; this method is used on BOTH the 
         //       client and server.  On the client the class is always an SEI.  On the server it 
     	//		 is always a service impl which may be a provider or endpoint based; 
@@ -394,7 +399,8 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     }
     
     public QName getPortQName() {
-        // TODO: (JLB) Implement WSDL/Annotation merge
+        // TODO: (JLB) Implement WSDL/Annotation merge? May be OK as is; not sure how would know WHICH port Qname to get out of the WSDL if 
+        //       we didn't use annotations.
         if (portQName == null) {
             // The name was not set by the constructors, so get it from the
             // appropriate annotation.
@@ -405,6 +411,13 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
             portQName = new QName(tns, name);
         }
         return portQName;
+    }
+    
+    public QName getServiceQName() {
+        // REVIEW: Does this need to be cached in an instance variable like the others?
+        String localPart = getAnnoWebServiceServiceName();
+        String tns = getAnnoWebServiceTargetNamespace();
+        return new QName(tns, localPart);
     }
     
     public ServiceDescription getServiceDescription() {
@@ -459,10 +472,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         // one that will be present in the WSDL.  A null class passed in as the SEI indicates this 
         // is a dispatch client.
         if (!isDynamicPort && getServiceDescriptionImpl().getWSDLWrapper() != null) {
-            buildAxisServiceFromWSDL();
+            isAxisServiceBuiltFromWSDL = buildAxisServiceFromWSDL();
         }
         else {
-            buildAxisServiceFromNoWSDL();
+            buildAxisServiceFromAnnotations();
         }
         
         if (axisService == null) {
@@ -502,11 +515,16 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         // one that will be present in the WSDL.  A null class passed in as the SEI indicates this 
         // is a dispatch client.
     	
-     	if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
-            buildAxisServiceFromWSDL();
+        // If WSDL is present, it may be full or only partial.  If we can create the AxisService from 
+        // the WSDL, that WSDL is fully specified.  Otherwise, it is "partial WSDL".  In that case
+        // we use annotaions to build the AxisService
+        isAxisServiceBuiltFromWSDL = false;
+        if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
+            isAxisServiceBuiltFromWSDL = buildAxisServiceFromWSDL();
         }
-        else {
-            buildAxisServiceFromNoWSDL();
+        
+        if (!isAxisServiceBuiltFromWSDL) {
+            buildAxisServiceFromAnnotations();
         }
         
         if (axisService == null) {
@@ -532,6 +550,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         portParameter.setValue(getPortQName().getLocalPart());
 
         //Save the WSDL Definition
+        // REVIEW: This could be a PARTIAL WSDL; not sure if that will cause trouble later on.
         Parameter wsdlDefParameter = new Parameter();
         wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);       
         
@@ -566,8 +585,8 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         }
     }
 
-    private void buildAxisServiceFromWSDL() {
-    	
+    private boolean buildAxisServiceFromWSDL() {
+        boolean isBuiltFromWSDL = false;
     	try {
     		
     		// TODO: Change this to use WSDLToAxisServiceBuilder superclass
@@ -588,13 +607,16 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     		
     		axisService = serviceBuilder.populateService();
     		axisService.setName(createAxisServiceName());
+            isBuiltFromWSDL = true;
     	} catch (AxisFault e) {
     		// TODO We should not swallow a fault here.
     		log.warn(Messages.getMessage("warnAxisFault", e.toString()));
+            isBuiltFromWSDL = false;
     	}
+        return isBuiltFromWSDL;
     }
     
-    private void buildAxisServiceFromNoWSDL() {
+    private void buildAxisServiceFromAnnotations() {
         // TODO: Refactor this to create from annotations.
         String serviceName = null;
         if (portQName != null) {
@@ -620,14 +642,14 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     	//TODO: When MDQ input is the only possible input, then we can remove the check for
     	//      the DBC list, until that time the code in here may appear somewhat redundant
     	if (getServiceDescriptionImpl().isDBCMap()) {
-    		if (!isDynamicPort && getServiceDescriptionImpl().getWSDLWrapper() != null)
+    		if (!isDynamicPort && isWSDLFullySpecified())
     			buildEndpointDescriptionFromWSDL();
     		else
-    			buildEndpointDescriptionFromNoWSDL();
+    			buildEndpointDescriptionFromAnnotations();
     	} else {
     		//Still processing annotations from the class
-    		
-    		if (!isDynamicPort && getServiceDescriptionImpl().getWSDLWrapper() != null) {
+    	    // This path was not updated 
+    		if (!isDynamicPort && isWSDLFullySpecified()) {
     			buildEndpointDescriptionFromWSDL();
     		}
     		else if (implOrSEIClass != null){
@@ -635,7 +657,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     			// If there is no SEI class, then this is a Distpach case, and we currently 
     			// don't create the rest of the description hierachy (since it is not an SEI and thus
     			// not operation-based client.
-    			buildEndpointDescriptionFromNoWSDL();
+    			buildEndpointDescriptionFromAnnotations();
     		}
     	}
     }
@@ -720,6 +742,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         return getServiceDescription().getServiceQName().getLocalPart() + "." + portName;
     }
 
+    public boolean isWSDLFullySpecified() {
+        return isAxisServiceBuiltFromWSDL;
+    }
+    
     public boolean isProviderBased() {
         return webServiceProviderAnnotation != null;
     }

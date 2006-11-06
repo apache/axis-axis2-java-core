@@ -22,5 +22,15 @@ package org.apache.axis2.jaxws.description;
  * 
  */
 public interface EndpointDescriptionWSDL {
+    
+    /**
+     * Is the WSDL definition fully specified for the endpoint (WSDL 1.1 port)
+     * represented by this EndpointDescription.  If the WSDL is Partial, that means
+     * the Endpoint could not be created with the infomation contained in the WSDL file,
+     * and annotations were used.
+     * 
+     * @return true if the WSDL was fully specified; false if it was partial WSDL
+     */
+    public boolean isWSDLFullySpecified();
 
 }

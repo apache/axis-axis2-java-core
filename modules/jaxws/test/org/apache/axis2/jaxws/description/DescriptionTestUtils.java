@@ -22,6 +22,9 @@ import java.lang.reflect.Field;
 import java.net.URL;
 
 import javax.jws.WebParam.Mode;
+import javax.wsdl.Definition;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 import javax.xml.ws.Service;
 
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
@@ -44,16 +47,35 @@ public class DescriptionTestUtils {
      */
 
     static public URL getWSDLURL() {
+        return getWSDLURL("WSDLTests.wsdl");
+        
+    }
+    static public URL getWSDLURL(String wsdlFileName) {
         URL wsdlURL = null;
         // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
         String basedir = System.getProperty("basedir");
-        String urlString = "file://localhost/" + basedir + "/test-resources/wsdl/WSDLTests.wsdl";
+        String urlString = "file://localhost/" + basedir + "/test-resources/wsdl/" + wsdlFileName;
         try {
             wsdlURL = new URL(urlString);
         } catch (Exception e) {
             System.out.println("Caught exception creating WSDL URL :" + urlString + "; exception: " + e.toString());
         }
         return wsdlURL;
+    }
+    
+    static Definition createWSDLDefinition(URL wsdlURL) {
+        Definition wsdlDefinition = null;
+        try {
+            WSDLFactory factory = WSDLFactory.newInstance();
+            WSDLReader reader = factory.newWSDLReader();
+            wsdlDefinition = reader.readWSDL(wsdlURL.toString());
+        }
+        catch (Exception e) {
+            System.out.println("*** ERROR ***: Caught exception trying to create WSDL Definition: " + e);
+            e.printStackTrace();
+        }
+
+        return wsdlDefinition;
     }
 
     static public ServiceDelegate getServiceDelegate(Service service) {

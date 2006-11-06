@@ -100,7 +100,6 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
      */
     EndpointInterfaceDescriptionImpl(EndpointDescriptionImpl parent) {
         parentEndpointDescription = parent;
-        
         AxisService axisService = parentEndpointDescription.getAxisService();
         if (axisService != null) {
             ArrayList publishedOperations = axisService.getPublishedOperations();
@@ -561,7 +560,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         
         //If this list is empty, then there are no false exclusions, so gather
         //all composites that don't have exclude == true
-        if (retrieveList == null) {
+        if (retrieveList == null || retrieveList.size() == 0) {
             Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
             
             while (iter.hasNext()) {
