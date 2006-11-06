@@ -1,3 +1,6 @@
+Sample: Exception Handling using WSDL Faults
+==============================================
+
 Introduction
 ============
 
@@ -7,13 +10,13 @@ Running of this sample assumes that you are running this within the extracted re
 
 Pre-Requisites
 ==============
-
 None
 
-Running The Sample
+
+Running The Client
 ==================
 
-Running the ClientInvoke the client/src/example/BankClient.java class. You may use the command scripts to do so. You need to supply 3 parameters to the command- url, account and amount.
+Invoke the client/src/example/BankClient.java class. You may use the command scripts to do so. You need to supply 3 parameters to the command- url, account and amount.
 
  * ant run.client -Durl=http://localhost:8080/axis2/services/BankService -Daccount=13 -Damt=400
    Throws AccountNotExistFaultMessageException. You will see "Account#13 does not exist"  
