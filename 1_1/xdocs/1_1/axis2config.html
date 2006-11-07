@@ -101,7 +101,7 @@ corresponding transport sender.</p>
 
 <p>The specifying order of phases in execution chain has to be done using
 phase order element and it will look like below:</p>
-<pre>&lt;phaseOrder type="inflow"&gt;
+<pre>&lt;phaseOrder type="InFlow"&gt;
          &lt;phase name="TransportIn"/&gt;
          .
          .
@@ -113,7 +113,7 @@ do that by adding a handler element into it. In addition to that there is no
 hard coding work for the handler chain anywhere in Axis2 (at any Axis*). So
 all those configurations are also done in the phase order element. The
 complete configurations will look as follows: <source></p>
-<pre>&lt;phaseOrder type="inflow"&gt;
+<pre>&lt;phaseOrder type="InFlow"&gt;
         &lt;!--   Global phases    --&gt;
          &lt;phase name="Transport"&gt;
             &lt;handler name="RequestURIBasedDispatcher"
@@ -148,7 +148,7 @@ complete configurations will look as follows: <source></p>
         &lt;!--   After the Dispatch phase module author or service author can add any phase he wants    --&gt;
         &lt;phase name="OperationInPhase"/&gt;
     &lt;/phaseOrder&gt;
-    &lt;phaseOrder type="outflow"&gt;
+    &lt;phaseOrder type="OutFlow"&gt;
         &lt;!--   user can add his own phases to this area  --&gt;
         &lt;phase name="OperationOutPhase"/&gt;
         &lt;!--  Global phases  --&gt;
@@ -156,7 +156,7 @@ complete configurations will look as follows: <source></p>
         &lt;phase name="MessageOut"/&gt;
         &lt;phase name="PolicyDetermination"/&gt;
     &lt;/phaseOrder&gt;
-    &lt;phaseOrder type="INfaultflow"&gt;
+    &lt;phaseOrder type="InFaultFlow"&gt;
         &lt;phase name="PreDispatch"/&gt;
         &lt;phase name="Dispatch" class="org.apache.axis2.engine.DispatchPhase"&gt;
             &lt;handler name="RequestURIBasedDispatcher"
@@ -186,7 +186,7 @@ complete configurations will look as follows: <source></p>
         &lt;!--      user can add his own phases to this area  --&gt;
         &lt;phase name="OperationInFaultPhase"/&gt;
     &lt;/phaseOrder&gt;
-    &lt;phaseOrder type="Outfaultflow"&gt;
+    &lt;phaseOrder type="OutFaultFlow"&gt;
         &lt;!--      user can add his own phases to this area  --&gt;
         &lt;phase name="OperationOutFaultPhase"/&gt;
         &lt;phase name="PolicyDetermination"/&gt;
@@ -196,10 +196,10 @@ complete configurations will look as follows: <source></p>
 <p><strong>type:</strong> the attribute represents the type of the flow and
 which can only be one of the following:</p>
 <ul>
-  <li>inflow</li>
-  <li>outflow</li>
-  <li>INfaultflow</li>
-  <li>Outfaultflow</li>
+  <li>InFlow</li>
+  <li>OutFlow</li>
+  <li>InFaultFlow</li>
+  <li>OutFaultFlow</li>
 </ul>
 
 <p>In addition to that, the only child element is allowed inside "phaseOrder"
@@ -213,8 +213,8 @@ The way of specifying phases inside "phaseOrder" is as follows:</p>
 <p>There are a number of things that one has to keep in mind when changing a
 phaseOrder:</p>
 
-<p>For the phaseOrder types <strong>"inflow"</strong> and
-<strong>"INfaultflow"</strong></p>
+<p>For the phaseOrder types <strong>"InFlow"</strong> and
+<strong>"InFaultFlow"</strong></p>
 <ul>
   <li>All the phases which are above the "Dispatch" phase including the
     "Dispatch" phase are known as "Global phases" and one can add any number
@@ -223,8 +223,8 @@ phaseOrder:</p>
     phase are known as "Operation phases".</li>
 </ul>
 
-<p>For the phaseOrder types <strong>"outflow"</strong> and
-<strong>"Outfaultflow"</strong></p>
+<p>For the phaseOrder types <strong>"OutFlow"</strong> and
+<strong>"OutFaultFlow"</strong></p>
 <ul>
   <li>All the phases which are below the "MessageOut" phase, including the
     "MessageOut" phase are known as "Global phases", and you can add new
@@ -363,24 +363,24 @@ and it should be available in the META-INF directory of the archive file. <br>
 
 <p>A very simple module.xml is shown below:</p>
 <pre>&lt;module class="org.apache.module.Module1Impl"&gt;
-    &lt;inflow&gt;
+    &lt;InFlow&gt;
         .
         .
-    &lt;/inflow&gt;
-    &lt;outflow&gt;
+    &lt;/InFlow&gt;
+    &lt;OutFlow&gt;
         .
         .
-    &lt;/outflow&gt;
+    &lt;/OutFlow&gt;
 
-    &lt;Outfaultflow&gt;
+    &lt;OutFaultFlow&gt;
         .   
         .
-    &lt;/Outfaultflow&gt;
+    &lt;/OutFaultFlow&gt;
 
-    &lt;INfaultflow&gt;
+    &lt;InFaultFlow&gt;
         .         
         .
-    &lt;/INfaultflow&gt;
+    &lt;/InFaultFlow&gt;
 
     &lt;operation name="creatSeq" mep="MEP_URI_IN_OUT"&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
@@ -406,10 +406,10 @@ and there are four types of flows as listed below.</p>
 handlers will be available in corresponding chains at the runtime when they
 are engaged .</p>
 <ul>
-  <li>inflow</li>
-  <li>outflow</li>
-  <li>INfaultflow</li>
-  <li>Outfaultflow</li>
+  <li>InFlow</li>
+  <li>OutFlow</li>
+  <li>InFaultFlow</li>
+  <li>OutFaultFlow</li>
 </ul>
 
 <p><b>operations: </b> If a module wants to add an operation when it is
