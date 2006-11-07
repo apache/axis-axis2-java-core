@@ -4,8 +4,8 @@
   <meta http-equiv="content-type" content="">
   <title>Axis2 Configuration Documents</title>
 </head>
-
 <body lang="en">
+
 <h1>Axis2 Configuration Guide</h1>
 
 <p>In Axis2 there are three kinds of configuration files to configure the
@@ -24,16 +24,17 @@ detail the above configurations.</p>
   (module.xml)</a></li>
 </ul>
 
-<h2><a name="Global_Configuration">Global Configuration</a></h2>
+<a name="Global_Configuration"></a>
+<h2>Global Configuration</h2>
 <ul>
   <li>Writing axis2.xml</li>
 </ul>
 
-<p>All the configurations that require starting Axis2 is obtained from the
-axis2.xml. The way of specifying them is very simple and easy. The document
+<p>All the configurations that require starting Axis2 are obtained from the
+axis2.xml. The way of specifying them is extremely simple and easy. The document
 is all about the proper way of specifying the configurations in axis2.xml.
 There are six top level elements that can be seen in the configuration file
-and those can be listed as follows:</p>
+and can be listed as follows:</p>
 <ul>
   <li><a href="#Parameter">Parameter</a></li>
   <li><a href="#Receiver">Transport Receiver</a></li>
@@ -43,7 +44,6 @@ and those can be listed as follows:</p>
   <li><a href="#Listeners">Listeners (Observers)</a></li>
 </ul>
 <a name="Parameter"></a>
-
 <h3>Parameter</h3>
 
 <p>In Axis2 a parameter is nothing but name value pair. Each and every top
@@ -51,10 +51,11 @@ level parameter available in the axis2.xml (direct sub elements of root
 element) will be transformed into properties in AxisConfiguration. Therefore,
 the top level parameters in the configuration document can be accessed via
 AxisConfiguration in the running system. The correct way of defining a
-parameter looks like what is shown below:</p>
+parameter is shown below:</p>
 <source><pre> 
   &lt;parameter name="name of the parameter" &gt;parameter value &lt;/parameter&gt;</pre>
-</source><a name="Receiver"></a>
+</source>
+<a name="Receiver"></a>
 
 <h3>Transport Receiver</h3>
 
@@ -66,7 +67,7 @@ system is as follows:</p>
         &lt;parameter name="port" &gt;6060&lt;/parameter&gt;
  &lt;/transportReceiver&gt; 
  </pre>
-</source>The above elements shows the way of defining transport receivers in
+</source>The above elements show the way of defining transport receivers in
 axis2.xml. Here the name attribute of the 'transportReceiver' element is the
 name of transport receiver. It can be http, tcp, smtp, commonshttp etc, and
 when the system starts up or when you set the transport at the client side,
@@ -74,7 +75,9 @@ one can use these transport names to load the appropriate transport. Class
 attribute is to specify actual java classes which implements required
 interfaces for the transport. Any transport can have zero or more parameters,
 and if there are any, then those parameters can be accessed via the
-corresponding transport receiver. <a name="Sender"></a>
+corresponding transport receiver. 
+
+<a name="Sender"></a>
 
 <h3>Transport Sender</h3>
 
@@ -93,10 +96,9 @@ http and http1 as transport name)
 
 <p><strong>class:</strong> Implementation class of the corresponding
 transport. As same as transport receivers, transport senders can have zero or
-more parameters, and if there is any then it can be accessed via
+more parameters, and if there are any then it can be accessed via
 corresponding transport sender.</p>
 <a name="Phase_Order"></a>
-
 <h3>Phase Order</h3>
 
 <p>The specifying order of phases in execution chain has to be done using
@@ -108,8 +110,8 @@ phase order element and it will look like below:</p>
 &lt;/phaseOrder&gt;   </pre>
 </source>
 <p>The most interesting thing is that you can add handlers here as well. If
-you want to add a handler which should go in to that phase you can directly
-do that by adding a handler element into it. In addition to that there is no
+you want to add a handler which should go into that phase, you can directly
+do that by adding a handler element into it. In addition to that, there is no
 hard coding work for the handler chain anywhere in Axis2 (at any Axis*). So
 all those configurations are also done in the phase order element. The
 complete configurations will look as follows: <source></p>
@@ -194,7 +196,7 @@ complete configurations will look as follows: <source></p>
     &lt;/phaseOrder&gt;</pre>
 </source>
 <p><strong>type:</strong> the attribute represents the type of the flow and
-which can only be one of the following:</p>
+can only be one of the following:</p>
 <ul>
   <li>InFlow</li>
   <li>OutFlow</li>
@@ -202,7 +204,7 @@ which can only be one of the following:</p>
   <li>OutFaultFlow</li>
 </ul>
 
-<p>In addition to that, the only child element is allowed inside "phaseOrder"
+<p>In addition to that, the only child element that is allowed inside "phaseOrder"
 is "phase" element which represents available phases in the execution chain.
 The way of specifying phases inside "phaseOrder" is as follows:</p>
 <pre> &lt;phase name="Transport"/&gt;</pre>
@@ -218,7 +220,7 @@ phaseOrder:</p>
 <ul>
   <li>All the phases which are above the "Dispatch" phase including the
     "Dispatch" phase are known as "Global phases" and one can add any number
-    of new phases here and these will be concidered global.</li>
+    of new phases here and these will be considered global.</li>
   <li>In these two phaseOrder types the phases added after the "Dispatch"
     phase are known as "Operation phases".</li>
 </ul>
@@ -236,7 +238,6 @@ phaseOrder:</p>
   will be able to clearly identify that.</p>
 </ul>
 <a name="References"></a>
-
 <h3>Module References</h3>
 
 <p>If you want to engage a module, system wide, you can do it by adding top
@@ -246,7 +247,6 @@ level module element in axis2.xml. It should look like following:</p>
 <p><strong>ref:</strong> the module name which is going to be engage, system
 wide.</p>
 <a name="Listeners"></a>
-
 <h3><strong>Listeners (Observers)</strong></h3>
 
 <p>In Axis2, AxisConfiguration is observable so that one can register
@@ -270,8 +270,8 @@ way of registering observers should be like below:
 <p><strong>class:</strong> Represents an Implementation class of observer,
 and it should be noted that the implementation class should implement
 AxisObserver interface, and the class has to be available in the classpath.
-<a name="Service_Configuration"></a></p>
-
+<a name="Service_Configuration"></a>
+</p>
 <h2><font>Service Configuration</font></h2>
 <ul>
   <li><font>Writing services.xml</font></li>
@@ -323,7 +323,7 @@ then the description can be specified here.</font></p>
 be exposed to. This is an optional element. If the transport element is not
 present then the service will be exposed in all the transports available in
 the system. The transport child element is there to specify the transport
-prefix (the name of the transport specified in axis2.xml)</p>
+prefix (the name of the transport specified in axis2.xml).</p>
 
 <p><b>parameters:</b> A services.xml can have any number of top level
 parameters and all the specified parameters will be transformed into service
@@ -334,7 +334,7 @@ really does the job and the class will be loaded by the MessageReceiver.</p>
 <p><b>operations :</b> If the service impl class is java, then all the public
 methods in that service will be exposed and if the user wants to override it
 then he has to add the "operation" tag and override it. In the case of
-Non-Java or if you do not have a service class, then all the operations the
+non-Java or if you do not have a service class, then all the operations the
 user wants to expose by the service has to be indicated in the services.xml
 and the correct way of specifying is as follows:</p>
 <pre>    &lt;operation name="echoString"&gt;
@@ -393,7 +393,7 @@ module implementation class. A module may or may not contain a module
 implementation class since the module can also be a collection of handlers.
 If a module contains an implementation class which implements the
 org.apache.axis2.modules.Module interface where at the deployment time its
-init(); method will be called.</p>
+<code>init();</code> method will be called.</p>
 
 <p><b>parameter:</b> A module can contain any number of parameters and all
 the listed parameters in the module.xml will be transformed into
@@ -440,5 +440,6 @@ the after handler<br>
 
 <p><br>
 </p>
+
 </body>
 </html>
