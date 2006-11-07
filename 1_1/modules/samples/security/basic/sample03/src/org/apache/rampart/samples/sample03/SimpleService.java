@@ -31,8 +31,6 @@ import java.util.Vector;
 public class SimpleService {
 
     public String echo(String arg) {
-            return arg;
-        }
-
+    	return arg;
     }
 }
