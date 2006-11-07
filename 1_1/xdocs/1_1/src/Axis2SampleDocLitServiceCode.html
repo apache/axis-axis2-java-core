@@ -12,10 +12,9 @@
 
 <h3>echoString</h3>
 
-<p>Locate the following code segment in
-"Axis2SampleDocLitServiceSkeleton.java".<br>
+<p>Locate the following code segment in "Axis2SampleDocLitServiceSkeleton.java".<br>
 </p>
-<pre>     public org.apache.axis2.userguide.xsd.EchoStringReturnDocument echoString<br>        (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4 ){<br>        //Todo: fill this with the necessary business logic<br>        throw new  java.lang.UnsupportedOperationException();<br>     }<br> </pre>
+<pre> public org.apache.axis2.userguide.xsd.EchoStringReturnDocument echoString<br>        (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4 ){<br>        //Todo: fill this with the necessary business logic<br>        throw new  java.lang.UnsupportedOperationException();<br>     }<br> </pre>
 
 <p>Then complete the code by adding the business logic as shown below:</p>
 <pre style="margin-left: 40px;">public org.apache.axis2.userguide.xsd.EchoStringReturnDocument echoString<br>   (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4) throws Exception {<br>   <br>   //Use the factory to create the output document.<br>   org.apache.axis2.userguide.xsd.EchoStringReturnDocument retDoc = <br>           org.apache.axis2.userguide.xsd.EchoStringReturnDocument.Factory.newInstance();<br>   <br>   //send the string back.<br>   retDoc.setEchoStringReturn(param4.getEchoStringParam());<br>   return retDoc;<br> }<br></pre>
@@ -48,5 +47,6 @@ echoStringArray operation and echoStruct operation respectively.</p>
 
 <h3>Client for echoStruct Operation</h3>
 <pre>          try {<br>            //Create the stub by passing the AXIS_HOME and target EPR.<br>            //We pass null to the AXIS_HOME and hence the stub will use the current directory as the AXIS_HOME<br>            org.apache.axis2.userguide.Axis2SampleDocLitServiceStub stub = new<br>                    org.apache.axis2.userguide.Axis2SampleDocLitServiceStub(null,<br>                    "http://localhost:8080/axis2/services/Axis2SampleDocLitService");<br>            //Create the request Document<br>            org.apache.axis2.userguide.xsd.EchoStructParamDocument reqDoc =<br>                    org.apache.axis2.userguide.xsd.EchoStructParamDocument.Factory.newInstance();<br><br>            //Create the complex type<br>            org.apache.axis2.userguide.xsd.SOAPStruct reqStruct =<br>                    org.apache.axis2.userguide.xsd.SOAPStruct.Factory.newInstance();<br><br>            reqStruct.setVarFloat(100.50F);<br>            reqStruct.setVarInt(10);<br>            reqStruct.setVarString("High");<br><br>            reqDoc.setEchoStructParam(reqStruct);<br><br>            //Service invocation<br>            org.apache.axis2.userguide.xsd.EchoStructReturnDocument resDoc = stub.echoStruct(reqDoc);<br>            org.apache.axis2.userguide.xsd.SOAPStruct resStruct = resDoc.getEchoStructReturn();<br><br>            System.out.println("floot Value :" + resStruct.getVarFloat());<br>            System.out.println("int Value :" + resStruct.getVarInt());<br>            System.out.println("String Value :" + resStruct.getVarString());<br>        } catch (java.rmi.RemoteException e) {<br>            e.printStackTrace();<br>        }<br></pre>
+
 </body>
 </html>
