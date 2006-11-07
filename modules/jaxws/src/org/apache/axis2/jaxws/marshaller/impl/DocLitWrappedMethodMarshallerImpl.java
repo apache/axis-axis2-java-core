@@ -1,18 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.jaxws.marshaller.impl;
 
@@ -27,16 +29,16 @@ import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.DocLitWrappedMethodMarshaller;
+import org.apache.axis2.jaxws.marshaller.MarshalException;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
+import org.apache.axis2.jaxws.marshaller.UnmarshalException;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
-import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.xerces.xs.datatypes.ObjectList;
 
 public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 		implements DocLitWrappedMethodMarshaller {
@@ -50,53 +52,71 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 	public DocLitWrappedMethodMarshallerImpl(ServiceDescription serviceDesc,
 			EndpointDescription endpointDesc, OperationDescription operationDesc, Protocol protocol) {
 		super(serviceDesc, endpointDesc, operationDesc, protocol);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#toJAXBObject(org.apache.axis2.jaxws.message.Message)
 	 */
 	@Override
-	public Object demarshalResponse(Message message, Object[] inputArgs) throws IllegalAccessException, InstantiationException, ClassNotFoundException, JAXBWrapperException, JAXBException, javax.xml.stream.XMLStreamException, MessageException{
-		Class wrapperClazz = null;
-		String className = operationDesc.getResponseWrapperClassName();
-		//TODO Move this to Operation Description.
-		if(className == null || (className!=null && className.length()==0)){
-			wrapperClazz = getReturnType();
-		}
-		else{		
-			wrapperClazz = loadClass(className);
-		}
-		String resultName = operationDesc.getResultName();
-		Object bo = createBusinessObject(wrapperClazz, message);
-        assignHolderValues(bo, inputArgs, false);
-        // REVIEW: Is the the appropriate logic, to be checking for the existence of the annotation
-        //         as the decision point for getting into the property logic?  Note that even if the annotation
-        //         is not present, a default result name will be returned.
-		// If the WebResult annotation is present, then look up the result Name
-		if(((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified()){
-		//if ReturnType is not of same type as JAXBBlock business Object then I will look for resultName in Business Object and return that.
-			Object resultObject = findProperty(resultName, bo);
-			return resultObject;
-		}
+	public Object demarshalResponse(Message message, Object[] inputArgs) throws UnmarshalException {
+		if (log.isDebugEnabled()) {
+		    log.debug("Attempting to demarshal a document/literal wrapped response");
+        }
         
-		return bo;
+		String className = operationDesc.getResponseWrapperClassName();
+        Object businessObject = null;
+        try {
+            //TODO Move this to Operation Description.
+            Class wrapperClazz = null;
+            if (className == null || (className != null && className.length() == 0)) {
+    			wrapperClazz = getReturnType();
+    		}
+    		else {		
+                wrapperClazz = loadClass(className);
+    		}
+    		
+            String resultName = operationDesc.getResultName();
+    		businessObject = createBusinessObject(wrapperClazz, message);
+            assignHolderValues(businessObject, inputArgs, false);
+            
+            // REVIEW: Is the the appropriate logic, to be checking for the existence of the annotation
+            //         as the decision point for getting into the property logic?  Note that even if the annotation
+            //         is not present, a default result name will be returned.
+            // If the WebResult annotation is present, then look up the result Name
+            if(((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified()){
+                // If the return type is not of same type as the JAXBBlock business Object then 
+                // look for resultName in Business Object and return that.
+            	Object resultObject = findProperty(resultName, businessObject);
+            	return resultObject;
+            }
+        } catch (Exception e) {
+            throw new UnmarshalException(e);
+        }
+        
+		return businessObject;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#toObjects(org.apache.axis2.jaxws.message.Message)
 	 */
 	@Override
-	public Object[] demarshalRequest(Message message)throws ClassNotFoundException, JAXBException, MessageException, JAXBWrapperException, XMLStreamException, InstantiationException, IllegalAccessException {
+	public Object[] demarshalRequest(Message message) throws UnmarshalException {
         String className = operationDesc.getRequestWrapperClassName();
-        Class requestWrapperClazz = loadClass(className);
-        Object jaxbObject = createBusinessObject(requestWrapperClazz, message);
-        
-        if (log.isDebugEnabled()) {
-            log.debug("reading input method parameters");
+
+        ArrayList<MethodParameter> mps;
+        try {
+            Class requestWrapperClazz = loadClass(className);
+            Object jaxbObject = createBusinessObject(requestWrapperClazz, message);
+            
+            if (log.isDebugEnabled()) {
+                log.debug("reading input method parameters");
+            }
+      
+            mps = createParameterForSEIMethod(jaxbObject);
+        } catch (Exception e) {
+            throw new UnmarshalException(e);
         }
-       
-        ArrayList<MethodParameter> mps = createParameterForSEIMethod(jaxbObject);
+        
         if (log.isDebugEnabled()) {
             log.debug("done reading input method parameters");
         }
@@ -118,25 +138,31 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromJAXBObject(java.lang.Object)
 	 */
 	@Override
-	public Message marshalResponse(Object returnObject, Object[] holderObjects)throws ClassNotFoundException, JAXBException, MessageException, JAXBWrapperException, XMLStreamException, InstantiationException, IllegalAccessException {
+	public Message marshalResponse(Object returnObject, Object[] holderObjects) throws MarshalException {
 		Class wrapperClazz = null;
 		String wrapperClazzName = operationDesc.getResponseWrapperClassName();
         // TODO: (JLB) REVIEW: I changed this from getRequestWrapper to getRewponseWrapper...
 		String wrapperXMLElementName = operationDesc.getResponseWrapperLocalName();
 		String wrapperTNS = operationDesc.getResponseWrapperTargetNamespace();
 		String webResult = operationDesc.getResultName();
-		//TODO Move this to Operation Description.
-		if(wrapperClazzName == null || (wrapperClazzName!=null && wrapperClazzName.length()==0)){
-			wrapperClazz = getReturnType();
-			wrapperClazzName = wrapperClazz.getName();
-			if(log.isDebugEnabled()){
-				log.debug("No ResponseWrapper annotation found, using return type of method as response object");
-			}
-		}
-		else{		
-			wrapperClazz = loadClass(wrapperClazzName);
-		}
-		//create all holders list
+		
+        try {
+            //TODO Move this to Operation Description.
+            if (wrapperClazzName == null || (wrapperClazzName != null && wrapperClazzName.length() == 0)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("No ResponseWrapper annotation found, using return type of method as response object");
+                }
+                wrapperClazz = getReturnType();
+            	wrapperClazzName = wrapperClazz.getName();
+            }
+            else {		
+                wrapperClazz = loadClass(wrapperClazzName);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new MarshalException("Unable to load wrapper class", e);
+        }
+        
+		// Create all holders list
 		ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
 		ArrayList<Object> objectList = new ArrayList<Object>();
 		int index =0;
@@ -147,27 +173,41 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			}
 			index++;
 		}
-		//No Holders found 
-		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
-		if(objectList.size() == 0 && wrapperClazz.getName().equals("void")){
-			//No holders and return type void example --> public void someMethod() I will return empty ResponseWrapper in message body for this case.
-			//doNothing as there is nothing to wrap
-		}
-		if(objectList.size() == 0 && !wrapperClazz.getName().equals("void")){
-			//No holders but a return type example --> public ReturnType someMethod()
-			mps = createResponseWrapperParameter(returnObject);
-		}
-		else{
-			//Holders found and return type or no return type. example --> public ReturnType someMethod(Holder<String>) or public void someMethod(Holder<String>)
-			mps = createResponseWrapperParameter(returnObject, objectList.toArray());
-		}
+
+        // No Holders found 
+        ArrayList<MethodParameter> mps = null;
+        try {
+            mps = new ArrayList<MethodParameter>();
+            if(objectList.size() == 0 && wrapperClazz.getName().equals("void")){
+            	//No holders and return type void example --> public void someMethod() I will return empty ResponseWrapper in message body for this case.
+            	//doNothing as there is nothing to wrap
+            }
+            if(objectList.size() == 0 && !wrapperClazz.getName().equals("void")){
+            	//No holders but a return type example --> public ReturnType someMethod()
+            	mps = createResponseWrapperParameter(returnObject);
+            }
+            else{
+            	//Holders found and return type or no return type. example --> public ReturnType someMethod(Holder<String>) or public void someMethod(Holder<String>)
+            	mps = createResponseWrapperParameter(returnObject, objectList.toArray());
+            }
+        } catch (IllegalAccessException e) {
+            throw new MarshalException("Unable to create method parameters list", e);
+        } catch (InstantiationException e) {
+            throw new MarshalException("Unable to create method parameters list", e);
+        } catch (ClassNotFoundException e) {
+            throw new MarshalException("Unable to create method parameters list", e);
+        }
 		
-        JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-        Object wrapper = wrapperTool.wrap(wrapperClazz, 
-        		wrapperClazzName, mps);
-        
-		Message message = createMessage(wrapper, wrapperClazz, wrapperXMLElementName, wrapperTNS);
-		return message;
+        Message message;
+        try {
+            JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+            Object wrapper = wrapperTool.wrap(wrapperClazz, wrapperClazzName, mps);
+            message = createMessage(wrapper, wrapperClazz, wrapperXMLElementName, wrapperTNS);
+        } catch (Exception e) {
+            throw new MarshalException(e);
+        }
+		
+        return message;
 		
 	}
 
@@ -175,33 +215,57 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromObjects(java.lang.Object[])
 	 */
 	@Override
-	public Message marshalRequest(Object[] objects) throws IllegalAccessException, InstantiationException, ClassNotFoundException, JAXBWrapperException, JAXBException, MessageException, javax.xml.stream.XMLStreamException {
-		
+	public Message marshalRequest(Object[] objects) throws MarshalException {
 		String className = operationDesc.getRequestWrapperClassName();
-		Class wrapperClazz = loadClass(className);
-		String localName = operationDesc.getRequestWrapperLocalName();
-		String wrapperTNS = operationDesc.getRequestWrapperTargetNamespace();
+        String localName = operationDesc.getRequestWrapperLocalName();
+        String wrapperTNS = operationDesc.getRequestWrapperTargetNamespace();
+        
+        Class wrapperClazz = null;
+        try {
+            wrapperClazz = loadClass(className);
+        }
+        catch (ClassNotFoundException e) {
+            throw new MarshalException("Unable to load wrapper class.", e);
+        }
 		
 		//Get Name Value pair for input parameter Objects, skip AsyncHandler and identify Holders.
-		
-		ArrayList<MethodParameter> methodParameters = createRequestWrapperParameters(objects);
-		JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
-		if (log.isDebugEnabled()) {
-            log.debug("JAXBWrapperTool attempting to wrap propertes in WrapperClass :" + wrapperClazz);
+		Object jaxbObject = null;
+        try {
+            ArrayList<MethodParameter> methodParameters = createRequestWrapperParameters(objects);
+            JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
+            if (log.isDebugEnabled()) {
+                log.debug("JAXBWrapperTool attempting to wrap propertes in WrapperClass :" + wrapperClazz);
+            }
+
+            jaxbObject = wrapTool.wrap(wrapperClazz, localName, methodParameters);
+            if (log.isDebugEnabled()) {
+                log.debug("JAXBWrapperTool wrapped following propertes :");
+            }
+        } catch (Exception e) {
+            throw new MarshalException(e);
         }
-	
-		Object jaxbObject = wrapTool.wrap(wrapperClazz, localName, methodParameters);
-		if (log.isDebugEnabled()) {
-            log.debug("JAXBWrapperTool wrapped following propertes :");
-        }
 		
-		Message message = createMessage(jaxbObject, wrapperClazz, localName, wrapperTNS);
-		return message;
+		Message message = null;
+        try {
+            message = createMessage(jaxbObject, wrapperClazz, localName, wrapperTNS);
+        } catch (JAXBException e) {
+            throw new MarshalException(e);
+        } catch (MessageException e) {
+            throw new MarshalException(e);
+        } catch (XMLStreamException e) {
+            throw new MarshalException(e);
+        }
+        
+        return message;
 	}
 
-	private Class loadClass(String className)throws ClassNotFoundException{
+    // FIXME: This is wrong.  We first need to get the ClassLoader from the 
+    // AxisService if there is one on there.  Then, if that does not exist
+    // we can grab the thread's context ClassLoader.
+	private Class loadClass(String className) throws ClassNotFoundException {
 		// TODO J2W AccessController Needed
 		// Don't make this public, its a security exposure
-		return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+        Class c = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+		return c;
 	}
 }
