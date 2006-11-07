@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <meta http-equiv="content-type" content="">
     <title>Axis2 Installation Guide</title>
@@ -7,6 +8,7 @@
 </head>
 
 <body lang="en">
+
 <h1 align="center">Apache Axis2 Installation Guide</h1>
 
 <p>This document will give you information on Axis2 distribution packages,
@@ -22,7 +24,7 @@
 <ul>
     <li><a href="#Download_Axis2">Download Axis2</a></li>
     <li><a href="#requirements">System Requirements</a></li>
-    <li><a href="#standalone">Standalone Insatallation Using Standard Binary Distribution</a></li>
+    <li><a href="#standalone">Standalone Installation Using Standard Binary Distribution</a></li>
     <li><a href="#build_war">Building WAR File Using Standard Binary Distribution</a></li>
     <li><a href="#servlet_container">Installing Axis2 in a Servlet
         Container</a></li>
@@ -57,7 +59,8 @@
 
 <p>The Distribution Packages Provided are as follows:</p>
 
-<h3><a name="std-bin" id="std-bin"></a>1. Standard Binary Distribution</h3>
+<a name="std-bin" id="std-bin"></a>
+<h3>1. Standard Binary Distribution</h3>
 
 <p>This is the complete version of Axis2 and include samples and convenient scripts as
     well. Since WS-Addressing implementation module is engaged in to Axis2, by default, this
@@ -100,7 +103,6 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
     Distribution</p>
 
 <a name="requirements"></a>
-
 <h2>System Requirements</h2>
 
 <table border="2">
@@ -149,9 +151,9 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
         </tr>
     </tbody>
 </table>
-<a name="standalone"></a>
 
-<h2>Standalone Insatallation Using Standard Binary Distribution</h2>
+<a name="standalone"></a>
+<h2>Standalone Installation Using Standard Binary Distribution</h2>
 
 <p>All the required jars are shipped with the standard binary distribution.</p>
 
@@ -189,7 +191,6 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
 </table>
 
 <a name="build_war"></a>
-
 <h2>Building the WAR File Using Standard Binary Distribution</h2>
 
 <p>The following examples will run you through on how to build the axis2.war
@@ -207,9 +208,7 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
         (AXIS2_HOME/dist)</li>
 </ol>
 <a name="servlet_container"></a>
-
 <h2>Installing Axis2 in a Servlet Container</h2>
-
 <p>Which ever the distribution, installing Axis2 in a J2EE compliant servlet
     container is as follows:</p>
 <ol>
@@ -258,7 +257,6 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
         For Axis2 this will be the &lt;webapps&gt;/axis2/WEB-INF/services
         directory. Once a service is uploaded it will be installed instantly.</p>
     <a name="hot_deployment"></a>
-
     <p>Since Axis2 supports <strong>hot deployment</strong> one can drop the
         service jar directly through the file system to the above mentioned
         services directory. It will also cause the service to be automatically
@@ -292,15 +290,12 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
         Guide</a></p>
 </ol>
 <a name="advanced"></a>
-
 <h2>Advanced</h2>
 <a name="source"></a>
-
 <h2>Axis2 Source Distribution</h2>
-<a name="_Toc96698083">Using the Source Distribution both brinary files
-    (which is downloadable as the </a><a href="#std-bin">Standard Binary
-    Ditribution</a>) and axis2.war file (which is downloadable as the <a
-        href="#war1">WAR distribution</a>) can be built using maven commands.
+<a name="_Toc96698083"></a>
+Using the Source Distribution both brinary files (which is downloadable as the </a><a href="#std-bin">Standard Binary
+Distribution</a>) and axis2.war file (which is downloadable as the <a href="#war1">WAR distribution</a>) can be built using maven commands.
 
 <p>Required jar files do not come with the distribution and they will also
     have to be built by running the maven command. Before we go any further it is
@@ -381,5 +376,6 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
 
 <p>Once this build step is complete, the binaries are ready to be
     deployed.</p>
-<a name="_Toc96698086"></a></body>
+<a name="_Toc96698086"></a>
+</body>
 </html>
