@@ -1,10 +1,13 @@
+
 <html>
+
 <head>
   <meta http-equiv="content-type" content="">
   <title>JiBX Integration with Axis2</title>
 </head>
 
 <body>
+
 <h1>JiBX Integration With Axis2</h1>
 
 <p>This document describes using JiBX data binding with Axis2. JiBX differs from
@@ -26,12 +29,13 @@ definition in order to work with JiBX in Axis2.</p>
   <li><a href="#coming">Coming Attractions</a></li>
 </ul>
 
-<a name="intro"></a><h2>Introduction</h2>
+<a name="intro"></a>
+<h2>Introduction</h2>
 
 <p><a href="http://www.jibx.org">JiBX data binding</a> supports fast and
 flexible conversions between plain old Java objects (POJOs) and XML. JiBX
 uses a mapped binding approach that's based on binding definition documents
-you provide. This approach lets you customize the way your Java objects are
+you provide. This approach let's you customize the way your Java objects are
 converted to and from XML. You can even define multiple bindings to use the same
 Java objects with different XML representations. These features make JiBX
 especially useful if you're developing a Web service based on existing Java
@@ -40,7 +44,7 @@ code, or when you need to support multiple XML representations for a Web service
 
 <p>Axis2 supports using JiBX with your Web services, including generating the
 necessary linkage code for both client and server sides. However, the Axis2
-support for JiBX doesn't currently include code generation from the schema
+support for JiBX does not currently include code generation from the schema
 for a Web service - you need to provide your own data classes and JiBX
 binding definition, and you also need to make sure that the binding
 definition matches the XML structures defined for your Web service. The JiBX
@@ -57,19 +61,22 @@ users understand the basic approach to working with JiBX in Axis2. You can
 find full instructions on the standard JiBX parts of this sequence on the <a
 href="http://www.jibx.org">JiBX Web site</a>.</p>
 
-<a name="intro"></a><h2>Wrapped vs. unwrapped</h2>
+<a name="wrapped"></a>
+<h2>Wrapped vs. unwrapped</h2>
 
 <p>Axis2 support for JiBX currently only works with the document-literal
 (doc/lit) form of Web services definitions. Doc/lit Web services generally use
 particular schema elements as input and output from each operation, and the
 Axis2 support for JiBX assumes this structure (which is also the structure
 required for compatibility with the
-<a href="http://www.ws-i.org/Profiles/BasicProfile-1.1.html">WS-I Basic Profile</a>).</p>
+<a href="http://www.ws-i.org/Profiles/BasicProfile-1.1.html">WS-I Basic Profile</a>).
+</p>
 
 <p>A popular subset of doc/lit Web services use a form called "wrapped". Wrapped
 doc/lit Web services define service operations that correspond to method calls,
 using input and output element names based on the method name and embedding the
-actual parameter values for the method call within the input element.</p>
+actual parameter values for the method call within the input element.
+</p>
 
 <p>When used with Axis2, JiBX supports both general doc/lit and wrapped service
 definitions. Wrapped service definitions can be "unwrapped" during code
@@ -79,9 +86,11 @@ frameworks used with Axis2, but most users will find the JiBX approach easy and
 convenient. See the <a href="./jibx-unwrapped-example.html">JiBX Unwrapped
 Example</a> and the <a href="./jibx-doclit-example.html">JiBX Document/Literal
 Example</a> pages for a detailed comparison of the two forms of service
-interface.</p>
+interface.
+</p>
 
-<a name="java"></a><h2>Starting from Java</h2>
+<a name="java"></a>
+<h2>Starting from Java</h2>
 
 <p>Here's the sequence of steps for using JiBX with Axis2 to expose existing
 Java code as a Web service:</p>
@@ -109,15 +118,18 @@ calls in your existing code directly as operations in the service. In this case
 you normally just use your existing data objects with JiBX data binding, and add
 schema definitions for the wrapper elements. See the
 <a href="./jibx-unwrapped-example.html">JiBX Unwrapped Example</a> page for more
-details on how this works.</p>
+details on how this works.
+</p>
 
 <p>If you use a non-wrapped interface for your Web service you need to define
 classes to hold the data input and output from each operation. In this case
 these holder classes need to be included in the JiBX binding definition. See the
 <a href="./jibx-doclit-example.html">JiBX Document/Literal Example</a> page for
-more details on this case.</p>
+more details on this case.
+</p>
 
-<a name="wsdl"></a><h2>Starting from WSDL</h2>
+<a name="wsdl"></a>
+<h2>Starting from WSDL</h2>
 
 <p>Here's the sequence of steps for using JiBX with Axis2 to implement a
 client for an existing Web service (or the actual service, when you've been
@@ -141,7 +153,8 @@ the <a href="./jibx-unwrapped-example.html">JiBX Unwrapped Example</a> and
 <a href="./jibx-doclit-example.html">JiBX Document/Literal Example</a> pages for
 more details.</p>
 
-<a name="codegen"></a><h2>WSDL2Java usage</h2>
+<a name="codegen"></a>
+<h2>WSDL2Java usage</h2>
 
 <p>To run the WSDL2Java tool for JiBX data binding you need:</p>
 <ol>
@@ -166,18 +179,22 @@ objects with build-in JiBX conversions are handled automatically.</p>
 include a concrete mapping for each element used as input or output by any
 operation.</p>
 
-<a name="coming"></a><h2>Coming Attractions</h2>
+<a name="coming"></a>
+<h2>Coming Attractions</h2>
 
 <p>Work is in-progress on better tools to support generating Java classes and
 corresponding JiBX binding definitions from an input schema, and also for
 generating binding+schema generation from existing code. These features will be
-integrated into the Axis2 JiBX support when they're available. Check the <a
+integrated into the Axis2 JiBX support when they are available. Check the <a
 href="http://www.jibx.org">JiBX project site</a> for updates on both JiBX
 and the Axis2 JiBX support.</p>
 
 <h2>References</h2>
 
 <p><a href="http://jibx.sourceforge.net/tutorial/binding-tutorial.html">JiBX:
-Bindings Tutorial</a></p>
+Bindings Tutorial</a>
+</p>
+
 </body>
+
 </html>
