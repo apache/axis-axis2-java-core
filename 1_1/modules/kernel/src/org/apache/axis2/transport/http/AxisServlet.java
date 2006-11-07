@@ -173,7 +173,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // 2. list services requests
         // 3. REST requests.
         if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
-                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0)) { // handling meta data exchange stuff
+                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 || query.indexOf("policy") >= 0)) { // handling meta data exchange stuff
             agent.processListService(req, resp);
         } else
         if (requestURI.endsWith(LIST_SERVICES_SUFIX) || requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) { // handling list services request
