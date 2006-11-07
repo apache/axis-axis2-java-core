@@ -1,9 +1,38 @@
-<h2><a name="Modules"></a>Writing your Own Axis2 Module</h2>
+<html>
+<head>
+  <meta http-equiv="content-type" content="">
+  <title>Writing your Own Axis2 Module</title>
+</head>
+
+<body dir="ltr" lang="en-US">
+
+<a name="Modules"></a>
+<h1></a>Writing your Own Axis2 Module</h1>
 
 <p>Axis2 provides extended support for modules (See <a
 href="Axis2ArchitectureGuide.html" target="_blank">Architecture Guide</a> for
 more details about modules in Axis2). Let's create a custom module and deploy
 it to MyService which we created earlier.</p>
+
+<p><i>Send your feedback or questions to: <a
+href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix
+subject with [Axis2]. To subscribe to mailing list see <a
+href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
+
+<h2>Content List</h2>
+<ul>
+  <li><a href="#MyService_with_a_Logging_Module">MyService with a Logging Module</a></li>
+  <ul>
+      <li><a href="#Step1_:_LoggingModule_Class">Step1 : LoggingModule Class</a></li>
+      <li><a href="#Step2_:_LogHandler">Step2 : LogHandler</a></li>
+      <li><a href="#Step3_:_module_xml">Step3 : module.xml</a></li>
+      <li><a href="#Step_4:_Modify_the_&#34;axis2_xml&#34;">Step 4: Modify the "axis2.xml"</a></li>
+      <li><a href="#Step5_:_Modify_the_&#34;services_xml&#34;">Step5 : Modify the "services.xml</a></li>
+      <li><a href="#Step6_:_Packaging">Step6 : Packaging</a></li>
+      <li><a href="#Step7_:_Deploy_the_Module_in_Axis2">Step7 : Deploy the Module in Axis2</a></li>
+  </ul>
+</ul>
+
 
 <p>Following steps show the actions that need to be performed to deploy a
 custom module for a given Web service:</p>
@@ -26,8 +55,8 @@ custom module for a given Web service:</p>
   </li>
 </ol>
 
-<h3><a name="MyService_with_a_Logging_Module">MyService with a Logging
-Module</a></h3>
+<a name="MyService_with_a_Logging_Module"></a>
+<h3>MyService with a Logging Module</h3>
 
 <p>Let's write a simple logging module for our sample located at
 <b>"samples\userguide\src"</b> directory of the binary distribution. This
@@ -39,7 +68,8 @@ archive. Let's create all these and see how it works.</p>
 <p><img src="images/userguide/ModuleView.jpg" name="Graphic5" align="bottom"
 border="0"></p>
 
-<h4><a name="Step1_:_LoggingModule_Class">Step1 : LoggingModule Class</a></h4>
+<a name="Step1_:_LoggingModule_Class"></a>
+<h4>Step1 : LoggingModule Class</h4>
 
 <p>LoggingModule is the implementation class of the Axis2 module. Axis2
 modules should implement the "<a
@@ -55,7 +85,8 @@ with the complete configuration hierarchy. This can be used to fine-tune the
 module behavior by the module writers. For the simple logging service we can
 keep these methods blank in our implementation class.</p>
 
-<h4><a name="Step2_:_LogHandler">Step2 : LogHandler</a></h4>
+<a name="Step2_:_LogHandler"></a>
+<h4>Step2 : LogHandler</h4>
 
 <p>A module in Axis2 can contain, one or more handlers that perform various
 SOAP header processing at different phases. (See<a
@@ -89,7 +120,8 @@ Axis2 engine.</p>
     }
 }</pre>
 
-<h4><a name="Step3_:_module_xml">Step3 : module.xml</a></h4>
+<a name="Step3_:_module_xml"></a>
+<h4>Step3 : module.xml</h4>
 
 <p>"module.xml" contains the deployment configurations for a particular
 module. It contains details such as Implementation class of the module (in
@@ -153,8 +185,8 @@ runs.</p>
 href="http://www.developer.com/java/web/article.php/3529321"
 target="_blank">Axis2 Execution Framework</a></p>
 
-<h4><a name="Step_4:_Modify_the_&#34;axis2_xml&#34;">Step 4: Modify the
-"axis2.xml"</a></h4>
+<a name="Step_4:_Modify_the_&#34;axis2_xml&#34;"></a>
+<h4>Step 4: Modify the "axis2.xml"</h4>
 
 <p>In this handler, the phase "loggingPhase", is defined by the module
 writer. It is not a pre-defined handler phase, hence the module writer should
@@ -229,8 +261,8 @@ flows, hence that phase will be called in all the message flows in the
 engine. Since our module is associated with this phase, the LogHandler inside
 the module will now be executed in this phase.</p>
 
-<h4><a name="Step5_:_Modify_the_&#34;services_xml&#34;">Step5 : Modify the
-"services.xml"</a></h4>
+<a name="Step5_:_Modify_the_&#34;services_xml&#34;"></a>
+<h4>Step5 : Modify the "services.xml"</h4>
 
 <p>Up to this point we have created the required classes and configuration
 descriptions for the logging module and by changing the "axis2.xml" we have
@@ -268,15 +300,16 @@ the module "logging" should be engaged for this service. The handler inside
 the module will be executed in their respective phases as described by the
 "module.xml".</p>
 
-<p><b><a name="Step6_:_Packaging">Step6 : Packaging</a></b></p>
+<a name="Step6_:_Packaging"></a>
+<p><b>Step6 : Packaging</b></p>
 
 <p>Before deploying the module we need to create the ".mar" file for this
 module. This can be done, using the "jar" command and then renaming the
 created jar file. Or you can find the "logging.mar" that is already created
 for you in the "<strong>Axis2_HOME/samples/userguide</strong>" directory.</p>
 
-<h4><a name="Step7_:_Deploy_the_Module_in_Axis2">Step7 : Deploy the Module in
-Axis2</a></h4>
+<a name="Step7_:_Deploy_the_Module_in_Axis2"></a>
+<h4>Step7 : Deploy the Module in Axis2</h4>
 
 <p>Deploying a module in Axis2 require the user to create a directory with
 the name "modules" in the "webapps/axis2/WEB-INF" directory of their servlet
@@ -288,8 +321,7 @@ directory.</p>
 have created a separate service archive (MyServiceWithModule.aar) for users
 to deploy and see.</p>
 
-<p>Deploy this service using the same steps that you used to <a
-href="#Step4_:Deploy_the_Web_Service">deploy "MyService"</a> and copy the
+<p>Deploy this service using the same steps used in <a href="userguide.html#Step5_Deploy_web_service">'Step 4: Deploy Web Service'</a> sub section in '<a href="userguide.html#ws_codegen">Writing a New Service using Codegeneration</a>', and copy the
 "logging.mar" file to the "modules" directory.</p>
 
 <p>Then run using the "TestWebServiceWithModuleClient.bat" or
@@ -306,3 +338,6 @@ Change the line "log4j.rootCategory= ERROR, LOGFILE" to
 <p><font size="4"><b>Note (on samples):</b></font> All samples mentioned in
 the user's guide are located at <b>"samples\userguide\src"</b> directory of
 the binary distribution.</p>
+
+</body>
+</html>
