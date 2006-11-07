@@ -7,7 +7,7 @@
 
 <a name="Writing_Web_Services_Using Axis2's_Primary_APIs"></a>
 <h1>Writing Web Services Using Axis2's Primary APIs</h1>
-<p>Axis2 dispatches a component called <strong>MessageReceiver</strong> while Receiving a Message in the server. Axis2 provides different implementations of this class and it can be configured by adding a messageReceiver tag to services.xml. Axis2 provide implementation for class of Message receivers called RawXml Message receivers. They work on XML level and could only handle OMElements as parameters. This Section explains how to write a service using them.</p>
+<p>Axis2 dispatches a component called <strong>MessageReceiver</strong> while Receiving a Message in the server. Axis2 provides different implementations of this class and it can be configured by adding a messageReceiver tag to services.xml. Axis2 provides implementation for class of Message receivers called RawXml Message receivers. They work on XML level and could only handle OMElements as parameters. This Section explains how to write a service using them.</p>
 
 <p>In our example, the web service will have two operations.</p>
 <pre>public void ping(OMElement element){} //IN-ONLY operation, just accepts the OMElement and does some processing.
@@ -17,16 +17,12 @@ public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMEleme
 <h4>How to write a Web Service?</h4>
 Writing a new Web service with Axis2 involves four steps:
 <ol>
-  <li><p style="margin-bottom: 0in">Write the Implementation Class./p>
-  </li>
-  <li><p style="margin-bottom: 0in">Write a services.xml file to explain the
-    Web service.</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Create a *.aar archive (Axis Archive) for
-    the Web service.</p>
-  </li>
-  <li><p style="margin-bottom: 0in">Deploy the Web service.</p>
-  </li>
+  <li>Write the Implementation Class</li>
+  <li>Write a services.xml file to explain the
+    Web service</li>
+  <li>Create a *.aar archive (Axis Archive) for
+    the Web service</li>
+  <li>Deploy the Web service</li>
 </ol>
 
 <a name="Step1_:Write_the_Implementation_Class"></a>
@@ -37,8 +33,7 @@ implements the operations provided by the Web service. Unless you have data
 binding, the signature of the methods can have only one parameter of type
 OMElement.</p>
 
-<p><span style="color: #FF0000">OMElement is .... </span>For more details see
-<a href="http://ws.apache.org/commons/axiom/OMTutorial.html">OM
+<p>For more details on OMElement see <a href="http://ws.apache.org/commons/axiom/OMTutorial.html">OM
 Tutorial</a>.</p>
 <pre>public class MyService{
     public void ping(OMElement element){
