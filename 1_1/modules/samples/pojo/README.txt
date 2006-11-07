@@ -1,11 +1,23 @@
+Sample: POJO (Plain Old Java Object)
+====================================
 
-This is an example POJO web service. It shows how to expose the methods of a Java class as a web
+Introduction
+============
+
+This is an example POJO web service. It shows how to expose the methods of a Java class as a Web
 service using Aixs2.
+
+
+Prerequisites  
+==============
 
 To build the sample service you must have ant-1.6.x installed in your system. 
 
 To set AXIS2_HOME in Unix/Linux type:
 $export AXIS2_HOME=<path to axis2 distribution>
+
+Build the Sample
+================
 
 To build the sample service, type:
 $ant 
@@ -23,6 +35,10 @@ http://<yourhost>:<yourport>/axis2/services/AddressBookService?wsdl
 
 src/sample/addressbook/rpcclient/AddressBookRPCClient.java is a Client that uses RPCServiceClient
 to invoke the methods of this web services just like the method invocations of a Java object.
+
+
+Run the Sample
+==============
 
 To compile and run, type
 $ant rpc.client
