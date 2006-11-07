@@ -105,9 +105,12 @@ ease the process of getting started with Axis2 development.</p>
   <li><strong>Intellij IDEA-</strong> type <strong>maven
     idea:multiproject</strong>. This will generate the necessary IDEA .ipr,
     .iml and .iws project files</li>
-  <li><strong>eclipse</strong>- The Maven eclipse plugin does not support
-    Maven multiprojects. You will need to execute <strong>maven
-    eclipse</strong> from each of the module directories.</li>
+  <li><strong>eclipse</strong>- type 
+  <strong>maven multiproject:goal -Dgoal=eclipse</strong>
+  Then in Eclipse, setup a Classpath Variable for MAVEN_REPO, and select 
+  File > Import > Existing Projects into Workspace > Select root directory. 
+  Selecting the root of the Axis source discovers all of the modules and allows 
+  all to be imported as individual projects at once.</li>
 </ul>
 </body>
 </html>
