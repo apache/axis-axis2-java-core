@@ -1,30 +1,36 @@
-<h1><a name="Writing_Web_Services_Using Axis2's_Primary_APIs">Writing Web Services Using Axis2's Primary APIs</a></h1>
+<html>
+<head>
+  <meta http-equiv="content-type" content="">
+  <title>Writing Web Services Using Axis2's Primary APIs</title>
+</head>
+<body>
 
+<a name="Writing_Web_Services_Using Axis2's_Primary_APIs"></a>
+<h1>Writing Web Services Using Axis2's Primary APIs</h1>
 <p>Axis2 dispatches a component called <strong>MessageReceiver</strong> while Receiving a Message in the server. Axis2 provides different implementations of this class and it can be configured by adding a messageReceiver tag to services.xml. Axis2 provide implementation for class of Message receivers called RawXml Message receivers. They work on XML level and could only handle OMElements as parameters. This Section explains how to write a service using them.</p>
 
 <p>In our example, the web service will have two operations.</p>
 <pre>public void ping(OMElement element){} //IN-ONLY operation, just accepts the OMElement and does some processing.
 public OMElement echo(OMElement element){}//IN-OUT operation, accepts an OMElement and  
                                           // sends back the same again </pre>
-
-<h4><a name="How_to_write_the_Web_Service_">How to write a Web
-Service?</a></h4>
+<a name="How_to_write_the_Web_Service_"></a>
+<h4>How to write a Web Service?</h4>
 Writing a new Web service with Axis2 involves four steps:
 <ol>
-  <li><p style="margin-bottom: 0in">Write the Implementation Class</p>
+  <li><p style="margin-bottom: 0in">Write the Implementation Class./p>
   </li>
   <li><p style="margin-bottom: 0in">Write a services.xml file to explain the
-    Web service</p>
+    Web service.</p>
   </li>
   <li><p style="margin-bottom: 0in">Create a *.aar archive (Axis Archive) for
-    the Web service</p>
+    the Web service.</p>
   </li>
-  <li><p style="margin-bottom: 0in">Deploy the Web service</p>
+  <li><p style="margin-bottom: 0in">Deploy the Web service.</p>
   </li>
 </ol>
 
-<h4><a name="Step1_:Write_the_Implementation_Class">Step1 :Write the
-Implementation Class</a></h4>
+<a name="Step1_:Write_the_Implementation_Class"></a>
+<h4>Step1: Write the Implementation Class</h4>
 
 <p>An implementation class has the business logic for the Web service and
 implements the operations provided by the Web service. Unless you have data
@@ -44,10 +50,10 @@ Tutorial</a>.</p>
     }
 }</pre>
 
-<h4><a name="Step2_:Write_the_services_xml_file">Step2 :Write the
-services.xml file</a></h4>
+<a name="Step2_:Write_the_services_xml_file"></a>
+<h4>Step2: Write the services.xml file</h4>
 
-<p>"services.xml" has the configuration for a web Service. Each web service,
+<p>"services.xml" has the configuration for a Web service. Each Web service,
 deployed in Axis2 , must have its configuration in "services.xml". The
 configuration for MyService is as follows:</p>
 <pre>&lt;service &gt;
@@ -119,8 +125,8 @@ following format.</p>
 
 <p>Note : name of the service is a compulsory attribute.</p>
 
-<h4><a name="Step3_:Create_the_Web_Service_Archive">Step3 : Create the Web
-Service Archive</a></h4>
+<a name="Step3_:Create_the_Web_Service_Archive"></a>
+<h4>Step3: Create the Web Service Archive</h4>
 
 <p>Axis2 uses ".aar" (Axis Archive) file as the deployment package for Web
 services. Therefore, for MyService we will use "MyService.aar" with the
@@ -136,10 +142,10 @@ necessary files and then rename it to .aar file. This archive file can be
 found in the "Axis2_HOME/samples/userguide" directory. This file now has to
 be deployed.</p>
 
-<h4><a name="Step4_:Deploy_the_Web_Service">Step4 : Deploy the Web
-Service</a></h4>
+<a name="Step4_:Deploy_the_Web_Service"></a>
+<h4>Step4: Deploy the Web Service</h4>
 
-<p>The service can be deployed by dropping the ".aar" file in to
+<p>The service can be deployed by dropping the ".aar" file into
 "services" directory in "/webapps/axis2/WEB-INF" of your servlet container.
 Start the servlet container (if you have not already started) and check the
 link "Services" on the <a href="http://localhost:8080/axis2/"
@@ -155,3 +161,6 @@ name="Graphic2" align="bottom" border="0"></p>
 Service" tool on Axis2 Web Application's Administration module. Please refer
 to the <a href="webadminguide.html" target="_blank">Web Administration
 Guide</a> for more information.</p>
+
+</body>
+</html>
