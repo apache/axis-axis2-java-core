@@ -358,7 +358,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             for(Class wfClass:webFaultClasses) {
                 for (Annotation anno:wfClass.getAnnotations()) {
                     if (anno.annotationType() == WebFault.class) {
-                        buildFaultList.add(new FaultDescriptionImpl(wfClass.getCanonicalName(), ((WebFault)anno).faultBean(), (WebFault)anno, this));
+                        buildFaultList.add(new FaultDescriptionImpl(wfClass, (WebFault)anno, this));
                     }
                 }
             }
@@ -704,7 +704,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     
     public FaultDescription resolveFaultByFaultBeanName(String faultBeanName) {
         for(FaultDescription fd: faultDescriptions) {
-            if (faultBeanName.equals(fd.getBeanName()))
+            if (faultBeanName.equals(fd.getFaultBean()))
                 return fd;
         }
         return null;

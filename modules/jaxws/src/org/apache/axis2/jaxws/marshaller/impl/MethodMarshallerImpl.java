@@ -122,8 +122,8 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			} else {
                 for(FaultDescription fd: operationDesc.getFaultDescriptions()) {
                     for (Block block: blocks) {
-                        Object obj = createFaultBusinessObject(loadClass(fd.getBeanName()), block);
-                        if (obj.getClass().getName().equals(fd.getBeanName())) {
+                        Object obj = createFaultBusinessObject(loadClass(fd.getFaultBean()), block);
+                        if (obj.getClass().getName().equals(fd.getFaultBean())) {
                             // create the exception we actually want to throw
                             Class exceptionclass = loadClass(fd.getExceptionClassName());
                             return createCustomException(xmlfault.getReason().getText(), exceptionclass, obj);
@@ -161,7 +161,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
             if (fd != null) {
             	Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
             	Object faultBean = getFaultInfo.invoke(t, null);
-            	Class faultClazz = loadClass(fd.getBeanName());
+            	Class faultClazz = loadClass(fd.getFaultBean());
             	JAXBBlockContext context = createJAXBBlockContext(faultClazz);
             	detailBlocks.add(createJAXBBlock(faultBean, context));
                 text = t.getMessage();

@@ -44,7 +44,9 @@ package org.apache.axis2.jaxws.description;
  */
 public interface FaultDescription {
     public OperationDescription getOperationDescription();
-    public String getBeanName();
+    public String getFaultBean();
+    public String getName();
+    public String getTargetNamespace();
     public String getExceptionClassName();
     
 }
