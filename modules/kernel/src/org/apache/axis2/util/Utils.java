@@ -58,7 +58,7 @@ public class Utils {
         newmsgCtx.setSessionContext(inMessageContext.getSessionContext());
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
         newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
-        
+
         Options oldOptions =
                 inMessageContext.getOptions();
 
@@ -84,18 +84,17 @@ public class Utils {
                 replyToEPR.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
                         Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
             }
+        } else {
+            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
         }
-        else {
-            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));            
-        }
-        
+
         AxisOperation ao = inMessageContext.getAxisOperation();
         if (ao.getOutputAction() != null) {
             newmsgCtx.setWSAAction(ao.getOutputAction());
         } else {
             newmsgCtx.setWSAAction(oldOptions.getAction());
         }
-        
+
         newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
         newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
@@ -133,6 +132,8 @@ public class Utils {
                         }
                         newmsgCtx.setTransportOut(transportOut);
                     }
+                    inMessageContext.getOperationContext().setProperty(
+                            Constants.DIFFERENT_EPR, Constants.VALUE_TRUE);
                 }
             }
         } catch (URISyntaxException e) {

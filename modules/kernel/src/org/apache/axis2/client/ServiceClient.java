@@ -738,6 +738,7 @@ public class ServiceClient {
      */
     public void setTargetEPR(EndpointReference targetEpr) {
         serviceContext.setTargetEPR(targetEpr);
+        options.setTo(targetEpr);
     }
 
 
