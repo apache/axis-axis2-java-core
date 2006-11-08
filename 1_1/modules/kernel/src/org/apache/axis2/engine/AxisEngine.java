@@ -725,7 +725,15 @@ public class AxisEngine {
     }
 
     /**
-     * This class is the workhorse for a non-blocking invocation that uses a two
+     *  This class is used when someone invoke a service invocation with two transports
+     * If we dont create a new thread then the main thread will block untill it gets the
+     * response . In the case of HTTP transportsender will block untill it gets HTTP 200
+     * So , main thread also block till transport sender rereases the tread. So there is no
+     * actual non-blocking. That is why when sending we creat a new thead and send the
+     * requset via that.
+     *
+     * So whole porpose of this class to send the requset via a new thread
+     *
      * way transport.
      */
     private class TransportNonBlockingInvocationWorker implements Runnable {
