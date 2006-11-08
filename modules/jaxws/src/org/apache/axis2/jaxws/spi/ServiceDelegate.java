@@ -27,6 +27,9 @@ import java.util.concurrent.Executors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.Source;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
@@ -142,7 +145,9 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	if(qname == null){
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail0"));
     	}
-    	
+    	if(!isValidDispatchType(clazz)){
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidType"));
+    	}
     	if(!isPortValid(qname)){
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail1", qname.toString()));
     	}
@@ -414,5 +419,11 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
 	        	//instantiate http binding implementation here and call setBinding in BindingProvider
 	        }
         }
+    }
+    
+    private boolean isValidDispatchType(Class clazz) {
+    	return clazz != null && (clazz == String.class || 
+    			clazz == Source.class || 
+    			clazz == SOAPMessage.class);
     }
 }
