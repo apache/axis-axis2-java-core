@@ -43,9 +43,9 @@ public class HTTPWorker implements Worker {
     }
 
     public void service(
-            final HttpRequest request, 
-            final HttpResponse response, 
-            final MessageContext msgContext) throws HttpException, IOException {    
+            final HttpRequest request,
+            final HttpResponse response,
+            final MessageContext msgContext) throws HttpException, IOException {
 
         ConfigurationContext configurationContext = msgContext.getConfigurationContext();
         final String servicePath = configurationContext.getServiceContextPath();
@@ -55,7 +55,7 @@ public class HTTPWorker implements Worker {
         String uri = request.getRequestLine().getUri();
         String method = request.getRequestLine().getMethod();
         String soapAction = HttpUtils.getSoapAction(request);
-        
+
         // Adjust version and content chunking based on the config
         boolean chunked = false;
         TransportOutDescription transportOut = msgContext.getTransportOut();
@@ -75,7 +75,7 @@ public class HTTPWorker implements Worker {
                 }
             }
         }
-        
+
         if (method.equals(HTTPConstants.HEADER_GET)) {
             if (uri.equals("/favicon.ico")) {
                 response.setStatusLine(new StatusLine(ver, 301, "Redirect"));
@@ -111,7 +111,7 @@ public class HTTPWorker implements Worker {
                         public void writeTo(final OutputStream outstream) throws IOException {
                             service.printWSDL2(outstream, ip, servicePath);
                         }
-                        
+
                     });
                     entity.setContentType("text/xml");
                     entity.setChunked(chunked);
@@ -130,7 +130,7 @@ public class HTTPWorker implements Worker {
                         public void writeTo(final OutputStream outstream) throws IOException {
                             service.printWSDL(outstream, ip, servicePath);
                         }
-                        
+
                     });
                     entity.setContentType("text/xml");
                     entity.setChunked(chunked);
@@ -148,7 +148,7 @@ public class HTTPWorker implements Worker {
                         public void writeTo(final OutputStream outstream) throws IOException {
                             service.printSchema(outstream);
                         }
-                        
+
                     });
                     entity.setContentType("text/xml");
                     entity.setChunked(chunked);
@@ -168,7 +168,7 @@ public class HTTPWorker implements Worker {
                     service.populateSchemaMappings();
                     //write out the correct schema
                     Map schemaTable = service.getSchemaMappingTable();
-                    final XmlSchema schema = (XmlSchema)schemaTable.get(schemaName);
+                    final XmlSchema schema = (XmlSchema) schemaTable.get(schemaName);
                     //schema found - write it to the stream
                     if (schema != null) {
                         EntityTemplate entity = new EntityTemplate(new ContentProducer() {
@@ -176,7 +176,7 @@ public class HTTPWorker implements Worker {
                             public void writeTo(final OutputStream outstream) throws IOException {
                                 schema.write(outstream);
                             }
-                            
+
                         });
                         entity.setContentType("text/xml");
                         entity.setChunked(chunked);
@@ -190,19 +190,19 @@ public class HTTPWorker implements Worker {
                 }
             }
 
-            OutputBuffer outbuffer = new OutputBuffer(); 
+            OutputBuffer outbuffer = new OutputBuffer();
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer);
             msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
 
             // deal with GET request
             boolean processed = HTTPTransportUtils.processHTTPGetRequest(
-                    msgContext, 
-                    outbuffer.getOutputStream(), 
-                    soapAction, 
+                    msgContext,
+                    outbuffer.getOutputStream(),
+                    soapAction,
                     uri,
                     configurationContext,
                     HTTPTransportReceiver.getGetRequestParameters(uri));
-            
+
             if (processed) {
                 outbuffer.setChunked(chunked);
                 response.setEntity(outbuffer);
@@ -214,11 +214,11 @@ public class HTTPWorker implements Worker {
                 entity.setChunked(chunked);
                 response.setEntity(entity);
             }
-            
+
         } else if (method.equals(HTTPConstants.HEADER_POST)) {
             // deal with POST request
 
-            OutputBuffer outbuffer = new OutputBuffer(); 
+            OutputBuffer outbuffer = new OutputBuffer();
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer);
             msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
 
@@ -228,27 +228,35 @@ public class HTTPWorker implements Worker {
                 contenttype = inentity.getContentType().getValue();
             }
             HTTPTransportUtils.processHTTPPostRequest(
-                    msgContext, 
-                    inentity.getContent(), 
+                    msgContext,
+                    inentity.getContent(),
                     outbuffer.getOutputStream(),
-                    contenttype, 
-                    soapAction, 
+                    contenttype,
+                    soapAction,
                     uri);
-            
+
             outbuffer.setChunked(chunked);
             response.setEntity(outbuffer);
-            
+
         } else {
             throw new MethodNotSupportedException(method + " method not supported");
         }
-        
+
         // Finalize response
         OperationContext operationContext = msgContext.getOperationContext();
         Object contextWritten = null;
+        Object isTwoChannel = null;
         if (operationContext != null) {
             contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
+            isTwoChannel = operationContext.getProperty(Constants.DIFFERENT_EPR);
         }
+
+
         if ((contextWritten != null) && Constants.VALUE_TRUE.equals(contextWritten)) {
+            if ((isTwoChannel != null) && Constants.VALUE_TRUE.equals(isTwoChannel)) {
+                response.setStatusLine(new StatusLine(ver, 202, "OK"));
+                return;
+            }
             response.setStatusLine(new StatusLine(ver, 200, "OK"));
         } else {
             response.setStatusLine(new StatusLine(ver, 202, "OK"));
