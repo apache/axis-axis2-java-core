@@ -29,8 +29,6 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -65,9 +63,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected static final String STUB_SUFFIX = "Stub";
     protected static final String TEST_SUFFIX = "Test";
     protected static final String SKELETON_CLASS_SUFFIX = "Skeleton";
-    protected static final String SKELETON_CLASS_SUFFIX_BACK = "BindingImpl";
+    protected static final String SKELETON_CLASS_SUFFIX_BACK = "Impl";
     protected static final String SKELETON_INTERFACE_SUFFIX = "SkeletonInterface";
-    protected static final String SKELETON_INTERFACE_SUFFIX_BACK = "Interface";
+    // keep a seperate variable for  SKELETON_INTERFACE_SUFFIX_BACK although it is
+    // "" to accomadate any future changes easily.
+    protected static final String SKELETON_INTERFACE_SUFFIX_BACK = "";
     protected static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
     protected static final String FAULT_SUFFIX = "Exception";
     protected static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
@@ -388,6 +388,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // the stubs implementation and not visible outside
         rootElement.appendChild(createDOMElementforDatabinders(doc,false));
         doc.appendChild(rootElement);
+        //////////////////////////////////////////////////////////
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
+        ////////////////////////////////////////////////////////////
 
         return doc;
     }
@@ -722,11 +725,16 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Document createDOMDocumentForInterface(boolean writeDatabinders) {
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("interface");
-        String localPart = makeJavaClassName(axisService.getName());
+        String localPart = null;
+        if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
+            localPart = makeJavaClassName(axisService.getPortTypeName());
+        } else {
+            localPart = makeJavaClassName(axisService.getName());
+        }
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         addAttribute(doc, "name", localPart, rootElement);
-        addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX,
+        addAttribute(doc, "callbackname", makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
@@ -779,7 +787,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = makeJavaClassName(axisService.getName());
         String skeltonName;
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
-             skeltonName = packageName + "." + localPart + SKELETON_CLASS_SUFFIX_BACK;
+             skeltonName = packageName + "." + makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK;
         } else {
              skeltonName = packageName + "." + localPart + SKELETON_CLASS_SUFFIX;
         }
@@ -794,7 +802,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = makeJavaClassName(axisService.getName());
         String skeltonInterfaceName;
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
-             skeltonInterfaceName = packageName + "." + localPart + SKELETON_INTERFACE_SUFFIX_BACK;
+             skeltonInterfaceName = packageName + "." + makeJavaClassName(axisService.getPortTypeName()) + SKELETON_INTERFACE_SUFFIX_BACK;
         } else {
              skeltonInterfaceName = packageName + "." + localPart + SKELETON_INTERFACE_SUFFIX;
         }
@@ -1000,12 +1008,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "name", localPart + mepToSuffixMap.get(mep), rootElement);
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
-            addAttribute(doc, "skeletonname", localPart + SKELETON_CLASS_SUFFIX_BACK, rootElement);
+            addAttribute(doc, "skeletonname", makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK, rootElement);
             if (isServerSideInterface) {
-                addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_INTERFACE_SUFFIX_BACK,
+                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(axisService.getPortTypeName()) + SKELETON_INTERFACE_SUFFIX_BACK,
                         rootElement);
             } else {
-                addAttribute(doc, "skeletonInterfaceName", localPart + SKELETON_CLASS_SUFFIX_BACK,
+                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK,
                         rootElement);
             }
         } else {
@@ -1342,8 +1350,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected Document createDOMDocumentForServiceXML() {
         Document doc = getEmptyDocument();
+        String className = null;
         String serviceName = axisService.getName();
-        String className = makeJavaClassName(serviceName);
+        if(this.codeGenConfiguration.isBackwordCompatibilityMode()){
+             className = makeJavaClassName(axisService.getBindingName());
+        } else {
+             className = makeJavaClassName(serviceName);
+        }
 
         doc.appendChild(getServiceElement(serviceName, className, doc));
         return doc;
@@ -1380,7 +1393,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Object key = it.next();
 
             if (Boolean.TRUE.equals(infoHolder.get(key))) {
-                Element elt = addElement(doc, "messagereceiver", className + mepToSuffixMap.get(key), rootElement);
+                Element elt = addElement(doc, "messagereceiver", makeJavaClassName(serviceName) + mepToSuffixMap.get(key), rootElement);
                 addAttribute(doc, "mepURI", key.toString(), elt);
             }
 
@@ -1433,7 +1446,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String serviceName = makeJavaClassName(axisService.getName());
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
-             addAttribute(doc, "name", serviceName + SKELETON_CLASS_SUFFIX_BACK, rootElement);
+             addAttribute(doc, "name", makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK, rootElement);
         } else {
              addAttribute(doc, "name", serviceName + SKELETON_CLASS_SUFFIX, rootElement);
         }
@@ -1441,7 +1454,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 rootElement);
         if (isSkeletonInterface) {
             if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
-                addAttribute(doc, "skeletonInterfaceName", serviceName + SKELETON_INTERFACE_SUFFIX_BACK,
+                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(axisService.getPortTypeName()) + SKELETON_INTERFACE_SUFFIX_BACK,
                     rootElement);
             } else {
                 addAttribute(doc, "skeletonInterfaceName", serviceName + SKELETON_INTERFACE_SUFFIX,
@@ -1471,7 +1484,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String serviceName = makeJavaClassName(axisService.getName());
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
-            addAttribute(doc, "name", serviceName + SKELETON_INTERFACE_SUFFIX_BACK, rootElement);
+            addAttribute(doc, "name", makeJavaClassName(axisService.getPortTypeName()) + SKELETON_INTERFACE_SUFFIX_BACK, rootElement);
         } else {
             addAttribute(doc, "name", serviceName + SKELETON_INTERFACE_SUFFIX, rootElement);
         }
