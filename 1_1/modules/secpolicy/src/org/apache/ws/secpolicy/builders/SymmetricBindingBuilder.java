@@ -37,7 +37,7 @@ public class SymmetricBindingBuilder implements AssertionBuilder {
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
         SymmetricBinding symmetricBinding = new SymmetricBinding(); 
         
-        Policy policy = PolicyEngine.getPolicy(element);
+        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
         policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {

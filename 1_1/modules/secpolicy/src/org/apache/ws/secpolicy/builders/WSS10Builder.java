@@ -36,7 +36,7 @@ public class WSS10Builder implements AssertionBuilder {
         
         Wss10 wss10 = new Wss10();
         
-        Policy policy = PolicyEngine.getPolicy(element);
+        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
         policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
