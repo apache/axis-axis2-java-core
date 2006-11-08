@@ -23,12 +23,14 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.Constants;
@@ -131,5 +133,8 @@ public class SWAClient {
 		mepClient.execute(true);
 		MessageContext response = mepClient
 				.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+	  	SOAPBody body = response.getEnvelope().getBody();
+	  	OMElement element = body.getFirstElement().getFirstChildWithName(new QName("return"));
+		System.out.println(element.getText());
 	}
 }
