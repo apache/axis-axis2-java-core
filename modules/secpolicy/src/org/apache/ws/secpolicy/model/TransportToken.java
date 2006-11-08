@@ -65,8 +65,20 @@ public class TransportToken extends AbstractSecurityAssertion implements TokenWr
         
         writer.writeStartElement(prefix, localName, namespaceURI);
         
+        String wspPrefix = writer.getPrefix(Constants.POLICY.getNamespaceURI());
+        if (wspPrefix == null) {
+            writer.setPrefix(wspPrefix, Constants.POLICY.getNamespaceURI());
+        }
+        
+        // <wsp:Policy>
+        writer.writeStartElement(Constants.POLICY.getPrefix(), Constants.POLICY.getLocalPart(), Constants.POLICY.getNamespaceURI());
+        
         // serialization of the token ..
         transportToken.serialize(writer);
+        
+        // </wsp:Policy>
+        writer.writeEndElement();
+        
         
         writer.writeEndElement();
         // </sp:TransportToken>

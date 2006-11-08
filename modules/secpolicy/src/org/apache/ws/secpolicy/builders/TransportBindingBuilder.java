@@ -37,9 +37,8 @@ public class TransportBindingBuilder implements AssertionBuilder {
  
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
         TransportBinding transportBinding = new TransportBinding();
-        OMElement policyElement = element.getFirstElement();
-        
-        Policy policy = PolicyEngine.getPolicy(policyElement);
+       
+        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
         policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {

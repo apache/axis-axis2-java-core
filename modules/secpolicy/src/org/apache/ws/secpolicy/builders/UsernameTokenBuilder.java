@@ -52,16 +52,22 @@ public class UsernameTokenBuilder implements AssertionBuilder {
             usernameToken.setInclusion(Constants.INCLUDE_ALWAYS);
         }
         
-        Policy policy = PolicyEngine.getPolicy(element);
-        policy = (Policy) policy.normalize(false);
         
-        for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
-            processAlternative((List) iterator.next(), usernameToken);
+        OMElement policyElement = element.getFirstElement();
+        
+        if (policyElement != null && !policyElement.getQName().equals(org.apache.neethi.Constants.Q_ELEM_POLICY)) {
+        
+            Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
+            policy = (Policy) policy.normalize(false);
             
-            /*
-             * since there should be only one alternative
-             */
-            break;
+            for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
+                processAlternative((List) iterator.next(), usernameToken);
+                
+                /*
+                 * since there should be only one alternative
+                 */
+                break;
+            }            
         }
         
         return usernameToken;

@@ -36,7 +36,7 @@ public class RecipientTokenBuilder implements AssertionBuilder {
             throws IllegalArgumentException {
         RecipientToken recipientToken = new RecipientToken();
         
-        Policy policy = PolicyEngine.getPolicy(element);
+        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
         policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
