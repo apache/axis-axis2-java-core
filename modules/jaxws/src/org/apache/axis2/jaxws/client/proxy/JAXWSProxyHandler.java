@@ -334,7 +334,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	
 	private boolean isValidMethodCall(Method method){
 		Class clazz = method.getDeclaringClass();
-		if(clazz == javax.xml.ws.BindingProvider.class || clazz == seiClazz){
+		if(clazz.isAssignableFrom(javax.xml.ws.BindingProvider.class) || clazz.isAssignableFrom(seiClazz)){
 			return true;
 		}
 		return false;

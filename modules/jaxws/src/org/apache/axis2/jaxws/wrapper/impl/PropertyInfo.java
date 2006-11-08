@@ -21,11 +21,14 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 public class PropertyInfo {
 	String propertyName;
 	PropertyDescriptor descriptor;
-	
+	private static Log log = LogFactory.getLog(PropertyInfo.class);
 	/**
 	 * @param propertyName
 	 * @param descriptor
@@ -46,9 +49,22 @@ public class PropertyInfo {
 		return method.invoke(targetBean, null);
 	}
 	
-	public void set(Object targetBean, Object propValue)throws InvocationTargetException, IllegalAccessException{
+	public void set(Object targetBean, Object propValue)throws InvocationTargetException, IllegalAccessException, JAXBWrapperException{
 		Method method = descriptor.getWriteMethod();
-		method.invoke(targetBean, propValue);
+		Object[] object = new Object[]{propValue};
+		Class[] paramTypes = method.getParameterTypes();
+		if(paramTypes !=null && paramTypes.length ==1){
+			Class paramType = paramTypes[0];
+			if(paramType.isPrimitive() && propValue == null){
+				//Ignoring null value for primitive type, this could potentially be the way of a customer indicating to set
+				//default values defined in JAXBObject/xmlSchema.
+				if(log.isDebugEnabled()){
+					log.debug("Ignoring null value for primitive type, this is the way to set default values defined in JAXBObject/xmlSchema. for primitive types");
+				}
+				return;
+			}
+		}
+		method.invoke(targetBean, object);
 	}
 	
 }
