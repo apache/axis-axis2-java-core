@@ -28,12 +28,18 @@ public class MtomSampleTests extends TestCase {
     private static final QName QNAME_SERVICE = new QName("urn://mtom.test.org", "MtomSampleService");
     private static final QName QNAME_PORT    = new QName("urn://mtom.test.org", "MtomSample");
     private static final String URL_ENDPOINT = "http://localhost:8080/axis2/services/MtomSampleService";
+    private static final String IMAGE_DIR = "test-resources"+File.separator+"image";     
     
-    public void testSendImageAttachment() throws Exception {
+    /*
+     * Enable attachment Optimization through the SOAPBinding method 
+     * -- setMTOMEnabled([true|false])
+     * Using SOAP11
+     */
+    public void testSendImageAttachmentAPI11() throws Exception {
         System.out.println("----------------------------------");
         System.out.println("test: " + getName());
         
-        String imageResourceDir = "test-resources"+File.separator+"image";
+        String imageResourceDir = IMAGE_DIR;
         
         //Create a DataSource from an image 
         File file = new File(imageResourceDir+File.separator+"test.jpg");
@@ -57,9 +63,96 @@ public class MtomSampleTests extends TestCase {
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
         service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
-        Dispatch<Object> dispatch = service.createDispatch(
-                QNAME_PORT, jbc, Mode.PAYLOAD);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
         
+        //Enable attachment optimization
+        SOAPBinding binding = (SOAPBinding) dispatch.getBinding();
+        binding.setMTOMEnabled(true);
+        
+        SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+    }
+    
+    /*
+     * Enable attachment optimization using the SOAP11 binding
+     * property for MTOM.
+     */
+    public void testSendImageAttachmentProperty11() throws Exception {
+        System.out.println("----------------------------------");
+        System.out.println("test: " + getName());
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        //Create a DataSource from an image 
+        File file = new File(imageResourceDir+File.separator+"test.jpg");
+        ImageInputStream fiis = new FileImageInputStream(file);
+        Image image = ImageIO.read(fiis);
+        DataSource imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        SendImage request = new ObjectFactory().createSendImage();
+        request.setInput(imageDepot);
+        
+        //Create the necessary JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        // Create the JAX-WS client needed to send the request with soap 11 binding
+        // property for MTOM
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING, URL_ENDPOINT);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
+        
+        SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+        
+        assertNotNull(response);
+        assertNotNull(response.getOutput().getImageData());
+    }
+    
+    /*
+     * Enable attachment optimization using both the SOAP11 binding
+     * property for MTOM and the Binding API
+     */
+    public void testSendImageAttachmentAPIProperty11() throws Exception {
+        System.out.println("----------------------------------");
+        System.out.println("test: " + getName());
+        
+        String imageResourceDir = IMAGE_DIR;
+        
+        //Create a DataSource from an image 
+        File file = new File(imageResourceDir+File.separator+"test.jpg");
+        ImageInputStream fiis = new FileImageInputStream(file);
+        Image image = ImageIO.read(fiis);
+        DataSource imageDS = new DataSourceImpl("image/jpeg","test.jpg",image);
+        
+        //Create a DataHandler with the String DataSource object
+        DataHandler dataHandler = new DataHandler(imageDS);
+        
+        //Store the data handler in ImageDepot bean
+        ImageDepot imageDepot = new ObjectFactory().createImageDepot();
+        imageDepot.setImageData(dataHandler);
+        
+        SendImage request = new ObjectFactory().createSendImage();
+        request.setInput(imageDepot);
+        
+        //Create the necessary JAXBContext
+        JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
+        
+        // Create the JAX-WS client needed to send the request with soap 11 binding
+        // property for MTOM
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_MTOM_BINDING, URL_ENDPOINT);
+        Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
+        
+        
+        //Enable attachment optimization
         SOAPBinding binding = (SOAPBinding) dispatch.getBinding();
         binding.setMTOMEnabled(true);
         

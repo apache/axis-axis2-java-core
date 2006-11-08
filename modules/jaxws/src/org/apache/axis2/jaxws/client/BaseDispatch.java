@@ -367,6 +367,15 @@ public abstract class BaseDispatch<T> extends BindingProvider
             if (soapBinding.isMTOMEnabled())
                 msg.setMTOMEnabled(true);
         }
+        
+        // Check if the user enabled MTOM using the SOAP binding 
+        // properties for MTOM
+        String bindingID = this.port.getBindingID();
+        if((bindingID.equalsIgnoreCase(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+        	bindingID.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) &&
+        	!msg.isMTOMEnabled()){
+        	msg.setMTOMEnabled(true);
+        }
     }
     
     /*

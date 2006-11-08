@@ -60,8 +60,7 @@ public class JAXBSourceDispatch extends TestCase {
 	        // Initialize the JAX-WS client artifacts
 	        Service svc = Service.create(serviceName);
 	        svc.addPort(portName, null, url);
-	        Dispatch<JAXBSource> dispatch = svc.createDispatch(portName, 
-	                JAXBSource.class, Service.Mode.PAYLOAD);
+	        Dispatch<Source> dispatch = svc.createDispatch(portName, Source.class, Service.Mode.PAYLOAD);
 	        
 	        //Create JAXBContext and JAXBSource here.
 	        ObjectFactory factory = new ObjectFactory();

@@ -38,10 +38,12 @@ public enum Protocol {
      */
     public static Protocol getProtocolForBinding(String url) throws MessageException {
         //TODO: Add support for more URLs as needed.
-        if (url.equals(SOAPBinding.SOAP11HTTP_BINDING)) {
+        if (url.equals(SOAPBinding.SOAP11HTTP_BINDING) || 
+        	url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)) {
             return Protocol.soap11;
         }
-        else if (url.equals(SOAPBinding.SOAP12HTTP_BINDING)) {
+        else if (url.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
+        		 url.equals(SOAPBinding.SOAP12HTTP_BINDING)) {
             return Protocol.soap12;
         }
         else {
