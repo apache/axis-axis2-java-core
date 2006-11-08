@@ -69,10 +69,10 @@ public class SimpleAxis2Server {
 		CommandLineOption confOption = (CommandLineOption) optionsMap
 				.get("conf");
 
-		System.out.println("[SimpleAxisServer] Starting");
+		log.info("[SimpleAxisServer] Starting");
 		if (repoOption != null) {
 			repoLocation = repoOption.getOptionValue();
-			System.out.println("[SimpleAxisServer] Using the Axis2 Repository"
+			log.info("[SimpleAxisServer] Using the Axis2 Repository"
 					+ new File(repoLocation).getAbsolutePath());
 		}
 		if (confOption != null) {
@@ -89,10 +89,9 @@ public class SimpleAxis2Server {
 			ListenerManager listenerManager =  new ListenerManager();
 				listenerManager.init(configctx);
 			listenerManager.start();
-			System.out.println("[SimpleAxisServer] Started");
+			log.info("[SimpleAxisServer] Started");
 		} catch (Throwable t) {
-            log.fatal("Error starting SimpleAxisServer", t);
-            System.out.println("[SimpleAxisServer] Shutting down");
+            log.fatal("[SimpleAxisServer] Shutting down. Error starting SimpleAxisServer", t);
         }
     }
     
