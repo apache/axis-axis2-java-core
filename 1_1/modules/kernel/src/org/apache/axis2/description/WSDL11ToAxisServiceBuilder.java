@@ -428,6 +428,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             PortType portType = dif.getPortType(binding.getPortType().getQName());
             processPortType(portType, dif);
 
+            axisService.setBindingName(binding.getQName().getLocalPart());
+
             // String portTypeNs = portType.getQName().getNamespaceURI();
             List list = binding.getBindingOperations();
             for (int i = 0; i < list.size(); i++) {
@@ -883,6 +885,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
                 axisService, PORT_TYPE);
+
+        // set port the type name
+        axisService.setPortTypeName(wsdl4jPortType.getQName().getLocalPart());
 
         Iterator wsdl4JOperationsIterator = wsdl4jPortType.getOperations()
                 .iterator();

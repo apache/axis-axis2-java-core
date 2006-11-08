@@ -182,6 +182,11 @@ public class AxisService extends AxisDescription {
 
     private TypeTable typeTable;
 
+    // name of the  binding used : use in codegeneration
+    private String bindingName;
+    // name of the port type used : use in codegeneration
+    private String portTypeName;
+
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
     }
@@ -240,6 +245,22 @@ public class AxisService extends AxisDescription {
         schemaList = new ArrayList();
         serviceClassLoader = Thread.currentThread().getContextClassLoader();
         objectSupplier = new DefaultObjectSupplier();
+    }
+
+    public String getPortTypeName() {
+        return portTypeName;
+    }
+
+    public void setPortTypeName(String portTypeName) {
+        this.portTypeName = portTypeName;
+    }
+
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
     }
 
     /**
