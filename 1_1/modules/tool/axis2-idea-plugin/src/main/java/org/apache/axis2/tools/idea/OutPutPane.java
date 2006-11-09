@@ -229,7 +229,7 @@ class OutPutPaneLayout implements LayoutManager {
         }
         c = parent.getComponent(5);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 200, insets.top + 40, 250, 24);
+            c.setBounds(insets.left + 200, insets.top + 40, 330, 24);
         }
         c = parent.getComponent(6);
         if (c.isVisible()) {

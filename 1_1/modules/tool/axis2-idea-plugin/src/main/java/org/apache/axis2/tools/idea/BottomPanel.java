@@ -105,13 +105,13 @@ public class BottomPanel extends JPanel implements ActionListener {
                     } catch (Exception e1) {
                         StringWriter writer = new StringWriter();
                         JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
+                                "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
                         java2CodeFrame.dispose();
                         return;
                     }
 
-                    JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration successful!",
-                            "Axis2 codegeneration", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
+                            "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
                     java2CodeFrame.dispose();
                     return;
 
@@ -136,7 +136,7 @@ public class BottomPanel extends JPanel implements ActionListener {
                     } catch (Exception e1) {
                     StringWriter writer = new StringWriter();
                     JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                            "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
+                            "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
                     java2CodeFrame.dispose();
                         return;
                     }
@@ -152,7 +152,7 @@ public class BottomPanel extends JPanel implements ActionListener {
                 } catch (Exception e1) {
                     StringWriter writer = new StringWriter();
                     JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                            "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
+                            "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
                     java2CodeFrame.dispose();
                     return;
                 }
@@ -170,7 +170,7 @@ public class BottomPanel extends JPanel implements ActionListener {
                     } catch (Exception e1) {
                         StringWriter writer = new StringWriter();
                         JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
+                                "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
                         java2CodeFrame.dispose();
                         return;
                     }
@@ -185,7 +185,7 @@ public class BottomPanel extends JPanel implements ActionListener {
                         } catch (Exception e1) {
                             StringWriter writer = new StringWriter();
                             JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                    "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
+                                    "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
                             java2CodeFrame.dispose();
                             return;
                         }
@@ -213,7 +213,7 @@ public class BottomPanel extends JPanel implements ActionListener {
                     } catch (Exception e1) {
                         StringWriter writer = new StringWriter();
                         JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
+                                "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
                         java2CodeFrame.dispose();
                         return;
 
@@ -230,7 +230,7 @@ public class BottomPanel extends JPanel implements ActionListener {
                         } catch (Exception e1) {
                             StringWriter writer = new StringWriter();
                             JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                    "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
+                                    "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
                             java2CodeFrame.dispose();
                             return;
                         }
@@ -245,8 +245,8 @@ public class BottomPanel extends JPanel implements ActionListener {
                 }
             }
 
-            JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration successful!",
-                    "Axis2 codegeneration", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
+                    "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
             java2CodeFrame.dispose();
             return;
 

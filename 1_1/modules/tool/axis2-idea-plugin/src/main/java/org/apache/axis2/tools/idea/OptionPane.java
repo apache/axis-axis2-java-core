@@ -35,7 +35,7 @@ public class OptionPane extends JPanel implements ActionListener {
 
         setLayout(customLayout);
 
-        lblOption = new JLabel("Please select your option");
+        lblOption = new JLabel("");
         add(lblOption);
 
         buttonGroup = new ButtonGroup();

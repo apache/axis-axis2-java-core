@@ -192,14 +192,13 @@ public class Java2CodeFrame extends JFrame {
             SrcCompiler compiler = new SrcCompiler();
             compiler.compileSource(temp.getAbsolutePath());
             String wsdl = codegenBean.getWSDLFileName();
-            final String name = wsdl.substring(wsdl.lastIndexOf(File.separatorChar) + 1, wsdl.lastIndexOf(".")) + "-stub.jar";
-            System.out.println(name);
+            final String name = wsdl.substring(wsdl.lastIndexOf(File.separatorChar) + 1, wsdl.lastIndexOf(".")) + "-stub";
             final File lib = new File(codegenBean.getActiveProject().getProjectFile().getParent().getPath() + File.separator + "lib");
             if (!lib.isDirectory()) {
                 lib.mkdir();
             }
             JarFileWriter jarFileWriter = new JarFileWriter();
-            jarFileWriter.writeJarFile(lib, name, new File(temp + File.separator + "classes"));
+            jarFileWriter.writeJarFile(lib, name + ".jar", new File(temp + File.separator + "classes"));
             Project project = codegenBean.getActiveProject();
 
             final LibraryTable table = (LibraryTable) project.getComponent(LibraryTable.class);
@@ -211,7 +210,7 @@ public class Java2CodeFrame extends JFrame {
                     Runnable() {
                         public void run() {
 
-                            String url = VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, lib.getAbsolutePath() + File.separator + name) + JarFileSystem.JAR_SEPARATOR;
+                            String url = VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, lib.getAbsolutePath() + File.separator + name + ".jar") + JarFileSystem.JAR_SEPARATOR;
 
 
 
@@ -259,7 +258,7 @@ public class Java2CodeFrame extends JFrame {
                 break;
             }
             case 2: {
-                panel_3.setCaptions("  Options"
+                panel_3.setCaptions("  Custom Options"
                         , "  Set the options for the code generation");
 
                 this.secondPanel.setVisible(true);
@@ -282,7 +281,7 @@ public class Java2CodeFrame extends JFrame {
                     break;
                 }
 
-                panel_3.setCaptions("  Output"
+                panel_3.setCaptions("  Set the output location for the generated code"
                         , "  set the output project for the generated code");
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(false);
@@ -347,7 +346,7 @@ public class Java2CodeFrame extends JFrame {
                     this.backButtonImpl();
                     break;
                 }
-                panel_3.setCaptions("  Options"
+                panel_3.setCaptions("  Custom  Options"
                         , "  Set the options for the code generation");
 
                 this.secondPanel.setVisible(true);
@@ -358,7 +357,7 @@ public class Java2CodeFrame extends JFrame {
                 break;
             }
             case 3: {
-                panel_3.setCaptions("  Output"
+                panel_3.setCaptions("  Set the output location for the generated code"
                         , "  set the output project for the generated code");
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(false);
