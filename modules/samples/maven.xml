@@ -67,14 +67,12 @@
     <!-- ================================================================ -->
     <!--- User Guide Sample -->
     <!-- ================================================================ -->
-
-
     <goal name="userguide">
         <mkdir dir="target/samples"/>
         <mkdir dir="${samples.dir}/userguide"/>
         <mkdir dir="${samples.dir}/userguide/src"/>
         <ant:copy todir="${samples.dir}/userguide/src">
-            <ant:fileset dir="src">
+            <ant:fileset dir="userguide/src">
                 <ant:include name="userguide/**"/>
             </ant:fileset>
         </ant:copy>
@@ -83,41 +81,6 @@
                 <include name="userguide/**"/>
             </fileset>
         </jar>
-        <jar destfile="${samples.dir}/userguide/MyService.aar">
-            <fileset dir="src/userguide/example1/">
-                <include name="META-INF/**"/>
-            </fileset>
-            <fileset dir="target/classes">
-                <include name="userguide/example1/**/*.class"/>
-            </fileset>
-        </jar>
-        <jar destfile="${samples.dir}/userguide/MyServiceWithModule.aar">
-            <fileset dir="src/userguide/example2/">
-                <include name="META-INF/**"/>
-            </fileset>
-            <fileset dir="target/classes">
-                <include name="userguide/example2/**/*.class"/>
-            </fileset>
-        </jar>
-        <jar destfile="${samples.dir}/userguide/WsaMappingService.aar">
-            <fileset dir="src/userguide/example3/">
-                <include name="META-INF/**"/>
-            </fileset>
-            <fileset dir="target/classes">
-                <include name="userguide/example3/**/*.class"/>
-            </fileset>
-        </jar>
-
-        <jar destfile="${samples.dir}/userguide/logging.mar">
-            <fileset dir="src/userguide/loggingmodule/">
-                <include name="META-INF/**"/>
-            </fileset>
-            <fileset dir="target/classes">
-                <include name="userguide/loggingmodule/**/*.class"/>
-            </fileset>
-        </jar>
-        <ant:copy file="script/userguide/build.xml" tofile="target/samples/userguide/build.xml"/>
-
     </goal>
  
     <goal name="yahooRESTSearch">
