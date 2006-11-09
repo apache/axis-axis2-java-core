@@ -57,7 +57,7 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         cbg.add(service);
         getContentPane().add(service);
 
-        javawsdl = new JRadioButton("WSDL2Code codegenaration", false);
+        javawsdl = new JRadioButton("WSDL2Code code generation", false);
         javawsdl.setToolTipText("Helps generate skeletons and stubs for a given WSDL");
         cbg.add(javawsdl);
         getContentPane().add(javawsdl);
