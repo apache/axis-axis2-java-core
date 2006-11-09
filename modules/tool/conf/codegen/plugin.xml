@@ -56,6 +56,9 @@
       <library name="lib/XmlSchema-@XmlSchema.version@.jar">
          <export name="*"/>
       </library>
+      <library name="lib/woden-@woden.version@.jar">
+         <export name="*"/>
+      </library>
    </runtime>
 
    <requires>

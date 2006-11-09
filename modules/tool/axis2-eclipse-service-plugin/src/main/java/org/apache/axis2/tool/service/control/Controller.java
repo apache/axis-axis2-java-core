@@ -4,6 +4,7 @@ import org.apache.axis2.tool.core.ClassFileHandler;
 import org.apache.axis2.tool.core.FileCopier;
 import org.apache.axis2.tool.core.JarFileWriter;
 import org.apache.axis2.tool.core.ServiceFileCreator;
+import org.apache.axis2.tool.core.ServiceXMLCreater;
 import org.apache.axis2.tool.service.bean.ClassFileSelectionBean;
 import org.apache.axis2.tool.service.bean.LibrarySelectionBean;
 import org.apache.axis2.tool.service.bean.Page2Bean;
@@ -11,7 +12,9 @@ import org.apache.axis2.tool.service.bean.Page3Bean;
 import org.apache.axis2.tool.service.bean.WSDLFileLocationBean;
 import org.apache.axis2.tool.service.bean.WizardBean;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,11 +98,23 @@ public class Controller {
                 throw new ProcessException(
                         "There are no methods selected to generate the service!!");
             }
-            serviceFile =
-                    new ServiceFileCreator().createServiceFile(
-                            page2Bean.getServiceName(),
-                            page2Bean.getAutomaticClassName(),
-                            page2Bean.getSelectedMethodNames());//create the file here
+            String currentUserDir = System.getProperty("user.dir");
+            String fileName = "services.xml";
+            ServiceXMLCreater serviceXMLCreater = new ServiceXMLCreater(page2Bean.getServiceName(),
+            												 page2Bean.getAutomaticClassName(),
+            												 page2Bean.getSelectedMethodNames());
+            String serviceFileString = serviceXMLCreater.toString();
+            	serviceFile = new File(currentUserDir + File.separator + fileName);
+            FileWriter serviceXMLFileWriter = new FileWriter(serviceFile, true);
+            BufferedWriter writer = new BufferedWriter(serviceXMLFileWriter) ;
+            writer.write(serviceFileString) ;
+            writer.close() ;
+            
+//                    new ServiceFileCreator().createServiceFile(
+//                            page2Bean.getServiceName(),
+//                            page2Bean.getAutomaticClassName(),
+//                            page2Bean.getSelectedMethodNames());//create the file here
+            	
             isServiceCreated = true;
         }
 

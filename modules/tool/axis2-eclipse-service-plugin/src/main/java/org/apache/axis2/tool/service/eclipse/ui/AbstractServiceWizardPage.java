@@ -61,6 +61,8 @@ public abstract class AbstractServiceWizardPage extends WizardPage implements Se
 
     protected abstract void initializeDefaultSettings(); 
     
+    protected abstract boolean getWizardComplete(); 
+    
     //Default implementation
     public boolean isSkipNext(){
         return false;

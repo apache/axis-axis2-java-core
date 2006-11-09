@@ -53,6 +53,7 @@
      <filter token="XmlSchema.version" value="${XmlSchema.version}" />
      <filter token="log4j.version" value="${log4j.version}" />
      <filter token="wsdl4j.version" value="${wsdl4j.version}" />
+     <filter token="woden.version" value="${woden.version}" />
 
 
      <!--Codegen wizard libraries -->
@@ -72,6 +73,7 @@
 		<include name="wstx-${stax.impl.version}.jar" />
 		<include name="xbean-${xbean.version}.jar" />
 		<include name="XmlSchema-${XmlSchema.version}.jar" />
+		<include name="woden-${woden.version}.jar" />
     </fileset>
 
      <!--Service wizard libraries -->
