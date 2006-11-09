@@ -1,54 +1,103 @@
 <project name="samples" default="alltests">
     <property name="mainDir" value="../.."/>
+    <property name="classes.dir" value="build/classes"/>
     <path id="axis.classpath">
         <fileset dir="../../lib">
             <include name="*.jar"/>
         </fileset>
-        <pathelement location="./sample.jar"/>
-    </path>
-    <path id="sample.classpath">
-        <path refid="axis.classpath"/>
+        <pathelement location="build/userguide.jar"/>
     </path>
 
     <target name="alltests"
             depends="testEchoBlockingClient,testEchoBlockingDualClient,testEchoNonBlockingDualClient,testPingClient,testWebServiceWithModuleClient">
     </target>
+    
+    <target name="compile">
+    		<mkdir dir="${classes.dir}" />
+		<javac srcdir="src" destdir="${classes.dir}">
+			<classpath refid="axis.classpath" />
+		</javac>
+		<jar destfile="build/userguide.jar">
+            		<fileset dir="${classes.dir}">
+                		<include name="userguide/**"/>
+            		</fileset>
+       		</jar>
+    </target>
+    
+    <target name="generate.service" depends="compile">
+            <jar destfile="build/MyService.aar">
+            <fileset dir="src/userguide/example1/">
+                <include name="META-INF/**"/>
+            </fileset>
+            <fileset dir="${classes.dir}">
+                <include name="userguide/example1/**/*.class"/>
+            </fileset>
+        </jar>
+        <jar destfile="build/MyServiceWithModule.aar" >
+            <fileset dir="src/userguide/example2/">
+                <include name="META-INF/**"/>
+            </fileset>
+            <fileset dir="${classes.dir}">
+                <include name="userguide/example2/**/*.class"/>
+            </fileset>
+        </jar>
+        <jar destfile="build/WsaMappingService.aar">
+            <fileset dir="src/userguide/example3/">
+                <include name="META-INF/**"/>
+            </fileset>
+            <fileset dir="${classes.dir}">
+                <include name="userguide/example3/**/*.class"/>
+            </fileset>
+        </jar>
+        <jar destfile="build/logging.mar">
+            <fileset dir="src/userguide/loggingmodule/">
+                <include name="META-INF/**"/>
+            </fileset>
+            <fileset dir="${classes.dir}">
+                <include name="userguide/loggingmodule/**/*.class"/>
+            </fileset>
+        </jar>
+    </target>
 
-    <target name="testEchoBlockingClient">
+    <target name="testEchoBlockingClient" depends="compile">
         <java classname="userguide.clients.EchoBlockingClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
         </java>
     </target>
-    <target name="testEchoBlockingDualClient">
+    <target name="testEchoBlockingDualClient" depends="compile">
         <java classname="userguide.clients.EchoBlockingDualClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
         </java>
     </target>
-    <target name="testEchoNonBlockingDualClient">
+    <target name="testEchoNonBlockingDualClient" depends="compile">
         <java classname="userguide.clients.EchoNonBlockingDualClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
         </java>
     </target>
-    <target name="testPingClient">
+    <target name="testPingClient" depends="compile">
         <java classname="userguide.clients.PingClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
         </java>
     </target>
-    <target name="testWebServiceWithModuleClient">
+    <target name="testWebServiceWithModuleClient" depends="compile">
         <java classname="userguide.clients.ClientForWebServiceWithModule"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
         </java>
     </target>
 
-    <target name="testEchoNonBlockingClient">
+    <target name="testEchoNonBlockingClient" depends="compile">
         <java classname="userguide.clients.EchoNonBlockingClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
         </java>
+    </target>
+    
+    <target name="clean">
+	<delete dir="build" />
     </target>
 </project>
