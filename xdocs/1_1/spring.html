@@ -370,6 +370,15 @@ the AAR, as shown below - it will NOT work otherwise. </p>
 ./spring/MyBeanImpl.class
 ./spring/SpringAwareService.class
 ./spring/SpringInit.class </pre> </source>
+
+<p>As explained in the <a href="#24">Outside a Servlet Container</a> section, likewise the
+'Spring inside an AAR' config needs to hook Axis2 and Spring together via a Spring bean. 
+Place the following in your Spring config file:</p>
+<pre>
+  &lt;!-- Configure spring to give a hook to axis2 without a ServletContext --&gt;
+  &lt;bean id="applicationContext" 
+    class="org.apache.axis2.extensions.spring.receivers.ApplicationContextHolder" /&gt;
+</pre>
 <ul>
   <li><strong><a name="262"></a>The Spring inside an AAR init class</strong></li>
 </ul>
