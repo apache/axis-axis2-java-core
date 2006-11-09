@@ -156,7 +156,7 @@ public class AxisEngine {
                 processingContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION));
         faultContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
                 processingContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES));
-        
+
         // register the fault message context
         if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null) {
             processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());
@@ -176,13 +176,12 @@ public class AxisEngine {
 
         // Add correct Action
         AxisOperation op = processingContext.getAxisOperation();
-        if(op != null && op.getFaultAction()!=null){
+        if (op != null && op.getFaultAction() != null) {
             faultContext.setWSAAction(processingContext.getAxisOperation().getFaultAction());
-        }
-        else{ //If, for some reason there is no value set, should use a sensible action.
+        } else { //If, for some reason there is no value set, should use a sensible action.
             faultContext.setWSAAction(Final.WSA_SOAP_FAULT_ACTION);
         }
-                
+
         // there are some information  that the fault thrower wants to pass to the fault path.
         // Means that the fault is a ws-addressing one hence use the ws-addressing fault action.
         Object faultInfoForHeaders = processingContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
@@ -202,11 +201,10 @@ public class AxisEngine {
         EndpointReference faultTo = processingContext.getFaultTo();
         if (faultTo != null && !doNotSendFaultUsingFaultTo) {
             faultContext.setTo(faultTo);
-        }
-        else {
+        } else {
             faultContext.setTo(processingContext.getReplyTo());
         }
-        
+
         // do Target Resolution
         faultContext.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(faultContext);
 
@@ -406,17 +404,17 @@ public class AxisEngine {
 
         // Allow handlers to override the sendStacktraceDetailsWithFaults setting from the Configuration to allow
         // WS-* protocol faults to not include the exception.
-        boolean sendStacktraceDetailsWithFaults = false;
+        boolean sendStacktraceDetailsWithFaults;
         OperationContext oc = context.getOperationContext();
         Object flagFromContext = null;
-        if(oc!=null){
+        if (oc != null) {
             flagFromContext = context.getOperationContext().getProperty(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
         }
-        if(flagFromContext!=null){
+        if (flagFromContext != null) {
             sendStacktraceDetailsWithFaults = JavaUtils.isTrue(flagFromContext);
-        }else{
+        } else {
             Parameter param = context.getParameter(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
-            sendStacktraceDetailsWithFaults = JavaUtils.isTrue(param.getValue());    
+            sendStacktraceDetailsWithFaults = JavaUtils.isTrue(param.getValue());
         }
 
         Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
@@ -484,17 +482,16 @@ public class AxisEngine {
         msgContext.setFLOW(MessageContext.IN_FLOW);
         InvocationResponse pi = invoke(msgContext);
 
-        if (pi.equals(InvocationResponse.CONTINUE))
-        {
-          if (msgContext.isServerSide()) {
+        if (pi.equals(InvocationResponse.CONTINUE)) {
+            if (msgContext.isServerSide()) {
 
-            // invoke the Message Receivers
-            checkMustUnderstand(msgContext);
+                // invoke the Message Receivers
+                checkMustUnderstand(msgContext);
 
-            MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+                MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
 
-            receiver.receive(msgContext);
-          }
+                receiver.receive(msgContext);
+            }
         }
     }
 
@@ -521,13 +518,12 @@ public class AxisEngine {
             pi = currentHandler.invoke(msgContext);
 
             if (pi.equals(InvocationResponse.SUSPEND) ||
-                pi.equals(InvocationResponse.ABORT))
-            {
-              break;
+                    pi.equals(InvocationResponse.ABORT)) {
+                break;
             }
             msgContext.setCurrentHandlerIndex(msgContext.getCurrentHandlerIndex() + 1);
         }
-        
+
         return pi;
     }
 
@@ -543,16 +539,15 @@ public class AxisEngine {
     public InvocationResponse resumeReceive(MessageContext msgContext) throws AxisFault {
         //invoke the phases
         InvocationResponse pi = invoke(msgContext);
-        
-        if (pi.equals(InvocationResponse.CONTINUE))
-        {
-          //invoking the MR
-          if (msgContext.isServerSide()) {
-            // invoke the Message Receivers
-            checkMustUnderstand(msgContext);
-            MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
-            receiver.receive(msgContext);
-          }
+
+        if (pi.equals(InvocationResponse.CONTINUE)) {
+            //invoking the MR
+            if (msgContext.isServerSide()) {
+                // invoke the Message Receivers
+                checkMustUnderstand(msgContext);
+                MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+                receiver.receive(msgContext);
+            }
         }
         return pi;
     }
@@ -575,7 +570,7 @@ public class AxisEngine {
             TransportSender sender = transportOut.getSender();
             sender.invoke(msgContext);
         }
-        
+
         return pi;
     }
 
@@ -588,7 +583,7 @@ public class AxisEngine {
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
 
-    	log.debug(Messages.getMessage("receivederrormessage",
+        log.debug(Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
@@ -599,23 +594,23 @@ public class AxisEngine {
         msgContext.setExecutionChain((ArrayList) preCalculatedPhases.clone());
         msgContext.setFLOW(MessageContext.IN_FAULT_FLOW);
         InvocationResponse pi = invoke(msgContext);
-        
-        if (pi.equals(InvocationResponse.CONTINUE))
-        {
-          if (msgContext.isServerSide()) {
 
-            // invoke the Message Receivers
-            checkMustUnderstand(msgContext);
+        if (pi.equals(InvocationResponse.CONTINUE)) {
+            if (msgContext.isServerSide()) {
 
-            MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+                // invoke the Message Receivers
+                checkMustUnderstand(msgContext);
 
-            receiver.receive(msgContext);
-          }
+                MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+
+                receiver.receive(msgContext);
+            }
         }
     }
 
     /**
      * Resume processing of a message.
+     *
      * @param msgctx
      * @return An InvocationResponse allowing the invoker to perhaps determine
      *         whether or not the message processing will ever succeed.
@@ -659,7 +654,7 @@ public class AxisEngine {
 
             // write the Message to the Wire
             TransportOutDescription transportOut = msgContext.getTransportOut();
-            if(transportOut == null) {
+            if (transportOut == null) {
                 throw new AxisFault("Transport out has not been set");
             }
             TransportSender sender = transportOut.getSender();
@@ -687,14 +682,14 @@ public class AxisEngine {
         OperationContext opContext = msgContext.getOperationContext();
 
         InvocationResponse pi = InvocationResponse.CONTINUE;
-        
+
         // find and execute the Fault Out Flow Handlers
         if (opContext != null) {
             AxisOperation axisOperation = opContext.getAxisOperation();
             ArrayList faultExecutionChain = axisOperation.getPhasesOutFaultFlow();
 
             //adding both operation specific and global out fault flows.
-            
+
             ArrayList outFaultPhases = new ArrayList();
             outFaultPhases.addAll((ArrayList) faultExecutionChain.clone());
             msgContext.setExecutionChain((ArrayList) outFaultPhases.clone());
@@ -707,7 +702,7 @@ public class AxisEngine {
                     (ArrayList) msgContext.getConfigurationContext()
                             .getAxisConfiguration().getOutFaultFlow().clone());
             msgContext.setFLOW(MessageContext.OUT_FAULT_FLOW);
-            pi = invoke(msgContext);
+            invoke(msgContext);
 
             // Actually send the SOAP Fault
             TransportSender sender = msgContext.getTransportOut().getSender();
@@ -725,21 +720,20 @@ public class AxisEngine {
     }
 
     /**
-     *  This class is used when someone invoke a service invocation with two transports
+     * This class is used when someone invoke a service invocation with two transports
      * If we dont create a new thread then the main thread will block untill it gets the
      * response . In the case of HTTP transportsender will block untill it gets HTTP 200
      * So , main thread also block till transport sender rereases the tread. So there is no
      * actual non-blocking. That is why when sending we creat a new thead and send the
      * requset via that.
-     *
+     * <p/>
      * So whole porpose of this class to send the requset via a new thread
-     *
+     * <p/>
      * way transport.
      */
     private class TransportNonBlockingInvocationWorker implements Runnable {
         private MessageContext msgctx;
         private TransportSender sender;
-        private boolean done;
 
         public TransportNonBlockingInvocationWorker(MessageContext msgctx,
                                                     TransportSender sender) {
@@ -749,10 +743,7 @@ public class AxisEngine {
 
         public void run() {
             try {
-                while (!done) {
-                    sender.invoke(msgctx);
-                    done = true;
-                }
+                sender.invoke(msgctx);
             } catch (Exception e) {
                 log.info(e.getMessage());
             }
