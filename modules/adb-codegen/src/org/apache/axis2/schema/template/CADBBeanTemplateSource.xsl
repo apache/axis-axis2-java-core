@@ -1127,7 +1127,7 @@
                                           element = AXIS2_MALLOC( env-> allocator, 64);
                                           (*(<xsl:value-of select="$nativePropertyType"/>*)element) = (char)atoi(text_value);
                                           AXIS2_ARRAY_LIST_ADD_AT( arr_list, env, i, element);
-                                        </xsl:when>>
+                                        </xsl:when>
                                         <xsl:when test="$nativePropertyType='int'">
                                           text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
                                           /** we keeps ints in arrays from their pointers */
