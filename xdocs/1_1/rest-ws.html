@@ -26,9 +26,7 @@ GET.</p>
 <a name="intro"></a>
 <h2>Introduction</h2>
 
-<p>REST (Representational State Transfer) provides access to resources
-through the two methods; GET and POST. REST Web services are a reduced subset
-of the usual Web service stack.</p>
+<p>WSDL 2.0 HTTP Binding defines a way to implement REST (Representational State Transfer) with Web services. Axis2 implements most defined in HTTP binding specification. REST Web services are a reduced subset of the usual Web service stack.</p>
 
 <p>The Axis2 REST implementation assumes the following properties:</p>
 <ol>
@@ -36,7 +34,7 @@ of the usual Web service stack.</p>
   <li>When REST Web services are accessed via GET, the service and the
     operations are identified based on the URL. The parameters are assumed as
     parameters of the Web service. In this case the GET based REST Web
-    services supports only simple types as arguments.</li>
+    services supports only simple types as arguments and it should adhere to <a href="http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#_operation_iri_style">IRI style</a>.</li>
   <li>POST based Web services do not need a SOAP Envelope or a SOAP Body.
     REST Web Services do not have Headers and the payload is sent
   directly.</li>
@@ -44,17 +42,16 @@ of the usual Web service stack.</p>
 
 <p>Axis2 can be configured as a REST Container and can be used to send and
 receive RESTful Web service requests and responses. REST Web services can be
-accessed in two ways, i.e., using HTTP GET and POST.</p>
+accessed using HTTP GET and POST.</p>
 
 <a name="rest_with_post"></a>
 <h2>Doing REST Web Services with HTTP POST</h2>
 
-<p>Axis will act as both a REST endpoint and a SOAP endpoint. When a Message
-is received, if the content type is text/xml and if the SOAP Action Headers
-are missing, then the Message is treated as a RESTful Message, if not it is
+<p>Axis2 server, if REST is enabled, will act as both a REST endpoint and a SOAP endpoint. When a message is received, if the content type is text/xml and if the SOAPAction Header
+is missing, then the message is treated as a RESTful Message, if not it is
 treated as a usual SOAP Message.</p>
 
-<p>On sending a message out, the fact that the message is RESTful or not, can
+<p>On sending a message, the fact that the message is RESTful or not, can
 be decided from the client API.<br>
 Set a property in the client api.<br>
 </p>
@@ -79,8 +76,7 @@ demonstrates the usage of the above, using the "echo"operation of the</p>
 
         Options options = new Options();
         options.setTo(new EndpointReference(toEpr));
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
+        
         options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
 
         ServiceClient sender = new ServiceClient();
