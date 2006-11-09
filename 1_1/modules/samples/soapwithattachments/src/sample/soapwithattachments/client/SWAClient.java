@@ -120,9 +120,9 @@ public class SWAClient {
 		OMNamespace omNs = fac.createOMNamespace(
 				"http://service.soapwithattachments.sample/xsd", "swa");
 		OMElement uploadFile = fac.createOMElement("uploadFile", omNs);
-		OMElement nameEle = fac.createOMElement("param0", omNs);
+		OMElement nameEle = fac.createOMElement("name", omNs);
 		nameEle.setText(destinationFile);
-		OMElement idEle = fac.createOMElement("param1", omNs);
+		OMElement idEle = fac.createOMElement("attchmentID", omNs);
 		idEle.setText(attachmentID);
 		uploadFile.addChild(nameEle);
 		uploadFile.addChild(idEle);
