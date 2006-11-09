@@ -302,7 +302,7 @@ asynchrony!!</strong></p>
               ex.printStackTrace();
             } finally {
             try {
-                sender.finalizeInvoke();
+                sender.cleanup();
             } catch (AxisFault axisFault) {
                 //have to ignore this
             }
@@ -311,11 +311,11 @@ asynchrony!!</strong></p>
 <p><font color="#0000ff"><font color="#000000">The boolean flag (value true)
 in the <b><code>options.setUseSeparateListener(...)</code></b> method informs the Axis2
 engine to use separate transport connections for request and response.
-Finally <b><code>service.finalizeInvoke()</code></b> informs the Axis2 engine to stop
+Finally <b><code>sender.cleanup()</code></b> informs the Axis2 engine to stop
 the client side listener started to retrieve the response.</font></font></p>
 
 <p>To run the sample client ("EchoNonBlockingDualClient") you can simply use the
 "testEchoNonBlockingDualClient" target of the ant file found at the
-"<strong>Axis2_HOME/samples</strong>" directory.</p>
+"<strong>Axis2_HOME/samples/userguide/</strong>" directory.</p>
 </body>
 </html>
