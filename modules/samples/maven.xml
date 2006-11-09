@@ -63,6 +63,7 @@
         <copy file="target/version/version.jar"
               tofile="target/toWar/services/version.aar"/>
     </goal>
+    
     <!-- ================================================================ -->
     <!--- User Guide Sample -->
     <!-- ================================================================ -->
@@ -71,15 +72,11 @@
     <goal name="userguide">
         <mkdir dir="target/samples"/>
         <mkdir dir="${samples.dir}/userguide"/>
-        <mkdir dir="${samples.dir}/userguide/client_scripts"/>
         <mkdir dir="${samples.dir}/userguide/src"/>
         <ant:copy todir="${samples.dir}/userguide/src">
             <ant:fileset dir="src">
                 <ant:include name="userguide/**"/>
             </ant:fileset>
-        </ant:copy>
-        <ant:copy todir="${samples.dir}/userguide/client_scripts">
-            <ant:fileset dir="script/userguide/client_scripts"/>
         </ant:copy>
         <jar destfile="${samples.dir}/userguide/sample.jar">
             <fileset dir="target/classes">
