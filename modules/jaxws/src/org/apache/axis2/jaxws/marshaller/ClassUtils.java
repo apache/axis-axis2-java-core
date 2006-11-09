@@ -16,15 +16,26 @@
  */
 package org.apache.axis2.jaxws.marshaller;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.management.openmbean.SimpleType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -239,4 +250,78 @@ public class ClassUtils {
         return null;
     }
     
+    /**
+	 * This method will return all the Class names excluding the interfaces from a given package. 
+	 * @param pckgname
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	public static List<Class> getAllClassesFromPackage(String pckgname) throws ClassNotFoundException {
+	        // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
+	        ArrayList<File> directories = new ArrayList<File>();
+	        try {
+	            ClassLoader cld = Thread.currentThread().getContextClassLoader();
+	            if (cld == null) {
+	            	if(log.isDebugEnabled()){
+	            		log.debug("Unable to get class loader");
+	            	}
+	                throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr1"));
+	            }
+	            String path = pckgname.replace('.', '/');
+	            // Ask for all resources for the path
+	            Enumeration<URL> resources = cld.getResources(path);
+	            while (resources.hasMoreElements()) {
+	                directories.add(new File(URLDecoder.decode(resources.nextElement().getPath(), "UTF-8")));
+	            }
+	        } catch (UnsupportedEncodingException e) {
+	        	if(log.isDebugEnabled()){
+            		log.debug(pckgname + " does not appear to be a valid package (Unsupported encoding)");
+            	}
+	            throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr2", pckgname));
+	        } catch (IOException e) {
+	        	if(log.isDebugEnabled()){
+            		log.debug("IOException was thrown when trying to get all resources for "+ pckgname);
+            	}
+	            throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr3", pckgname));
+	        }
+	 
+	        ArrayList<Class> classes = new ArrayList<Class>();
+	        // For every directory identified capture all the .class files
+	        for (File directory : directories) {
+	            if (directory.exists()) {
+	                // Get the list of the files contained in the package
+	                String[] files = directory.list();
+	                for (String file : files) {
+	                    // we are only interested in .class files
+	                    if (file.endsWith(".class")) {
+	                        // removes the .class extension
+	                    	// TODO Java2 Sec
+	                    	try {
+	                    		Class clazz = Class.forName(pckgname + '.' + file.substring(0, file.length() - 6));
+	                    		// dont add any interfaces only classes
+	                    		if(!clazz.isInterface() && getDefaultPublicConstructor(clazz) != null){
+	                    			classes.add(clazz);
+	                    		}
+	                    	} catch (Exception e) {}
+	                       
+	                    }
+	                }
+	            }
+	        }
+	        return classes;
+	    }
+	
+	private static final Class[] noClass=new Class[] {};
+	/**
+	 * Get the default public constructor
+	 * @param clazz
+	 * @return Constructor or null
+	 */
+	public static Constructor getDefaultPublicConstructor(Class clazz) {
+		try {
+			return clazz.getConstructor(noClass);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

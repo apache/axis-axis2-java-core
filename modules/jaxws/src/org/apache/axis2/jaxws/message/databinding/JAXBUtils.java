@@ -17,6 +17,7 @@
 package org.apache.axis2.jaxws.message.databinding;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -26,6 +27,7 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.axis2.jaxws.marshaller.ClassUtils;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,11 +93,30 @@ public class JAXBUtils {
 		JAXBContext context = map.get(cls.getName());
 		if (context == null) {
             synchronized(map) {
+                try{
+                	Package pkg = cls.getPackage();
+                	if (log.isDebugEnabled()) {
+                        log.debug("Package for " + cls.getName() + " "+pkg.getName());
+                    }
+                	if (log.isDebugEnabled()) {
+                        log.debug("Attempting to read all classes from package " + pkg.getName());
+                    }
+                	List<Class> classList = ClassUtils.getAllClassesFromPackage(pkg.getName());
+                	Class[] classes = classList.toArray(new Class[0]);
+                	if (log.isDebugEnabled()) {
+                        log.debug("All classes from package " + pkg.getName() + "[read].");
+                    }
+                	if (log.isDebugEnabled()) {
+                        log.debug("Attempting to create JAXBContext for " + cls.getName());
+                    }
+                	context = JAXBContext.newInstance(classes);
+                    map.put(cls.getName(), context);	
+                }catch(ClassNotFoundException e){
+                	throw new JAXBException(e);
+                }
                 if (log.isDebugEnabled()) {
                     log.debug("JAXBContext [created] for" + cls.getName());
                 }
-                context = JAXBContext.newInstance(cls);
-                map.put(cls.getName(), context);
             }
 		} else {
             if (log.isDebugEnabled()) {
