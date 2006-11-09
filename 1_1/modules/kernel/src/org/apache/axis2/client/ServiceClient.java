@@ -291,7 +291,13 @@ public class ServiceClient {
      * @throws AxisFault if something goes wrong
      */
     public void engageModule(QName moduleName) throws AxisFault {
-        axisService.engageModule(axisConfig.getModule(moduleName), axisConfig);
+        AxisModule module = axisConfig.getModule(moduleName);
+        if (module != null) {
+            axisService.engageModule(module, axisConfig);
+        } else {
+            throw new AxisFault("Unable to engage module : " +
+                    moduleName.getLocalPart());
+        }
     }
 
     /**
@@ -635,7 +641,7 @@ public class ServiceClient {
      * stub code.
      *
      * @param operationQName qualified name of operation (local name is operation
-     *                  name, namespace URI is just the empty string)
+     *                       name, namespace URI is just the empty string)
      * @return client configured to talk to the given operation
      * @throws AxisFault if the operation is not found
      */
@@ -679,8 +685,8 @@ public class ServiceClient {
     /**
      * Prepare a SOAP envelope with the stuff to be sent.
      *
-     * @param messageContext   the message context to be filled
-     * @param xmlPayload the payload content
+     * @param messageContext the message context to be filled
+     * @param xmlPayload     the payload content
      * @throws AxisFault if something goes wrong
      */
     private void fillSOAPEnvelope(MessageContext messageContext, OMElement xmlPayload)
