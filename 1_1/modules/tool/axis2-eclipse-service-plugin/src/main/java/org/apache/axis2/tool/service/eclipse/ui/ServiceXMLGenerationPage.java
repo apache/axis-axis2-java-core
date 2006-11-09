@@ -297,4 +297,8 @@ public class ServiceXMLGenerationPage extends AbstractServiceWizardPage{
         }
         return previousBean;
     }
+    
+	protected boolean getWizardComplete() {
+		return false;
+	}
 }

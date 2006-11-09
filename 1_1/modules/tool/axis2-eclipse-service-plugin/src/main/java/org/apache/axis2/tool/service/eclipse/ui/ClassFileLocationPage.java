@@ -142,4 +142,10 @@ public class ClassFileLocationPage extends AbstractServiceWizardPage{
         }
         return pageBean;
     }
+
+
+
+	protected boolean getWizardComplete() {
+		return false;
+	}
 }

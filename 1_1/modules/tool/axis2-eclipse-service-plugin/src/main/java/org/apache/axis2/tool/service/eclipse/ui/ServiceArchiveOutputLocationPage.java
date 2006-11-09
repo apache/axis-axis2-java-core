@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Text;
      private Text outputFileLocationTextBox;
      private Button browseButton;
      private Text outputFileNameTextbox;
+     private boolean isWizardComplete = false;
      
      public ServiceArchiveOutputLocationPage(){
          super("page4");
@@ -67,7 +68,7 @@ import org.eclipse.swt.widgets.Text;
  		
  		outputFileLocationTextBox = new Text(container,SWT.BORDER);
  		outputFileLocationTextBox.setLayoutData(gd);
- 		outputFileLocationTextBox.setText(settings.get(PREF_OUTPUT_LOCATION));
+ 		outputFileLocationTextBox.setText("");
  		outputFileLocationTextBox.addModifyListener(new ModifyListener(){
  		    public void modifyText(ModifyEvent e){
  		        handleLocationModification();
@@ -126,6 +127,7 @@ import org.eclipse.swt.widgets.Text;
          if (outputLocationText==null ||"".equals(outputLocationText.trim())){
              this.updateStatus(ServiceArchiver.getResourceString("page4.error.location"));
          }else{
+        	 isWizardComplete = true;
              updateStatus(null);
          }
      }
@@ -147,4 +149,8 @@ import org.eclipse.swt.widgets.Text;
          pageBean.setOutputFileName(this.outputFileNameTextbox.getText().trim());
          return pageBean;
      }
+     
+ 	protected boolean getWizardComplete() {
+		return isWizardComplete;
+	}
  }

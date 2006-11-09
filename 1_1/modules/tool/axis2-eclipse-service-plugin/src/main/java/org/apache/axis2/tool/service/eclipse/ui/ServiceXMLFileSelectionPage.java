@@ -195,4 +195,8 @@ public class ServiceXMLFileSelectionPage extends AbstractServiceWizardPage {
         pageBean.setManualFileName(this.serviceXMLText.getText());
         return pageBean;
     }
+    
+	protected boolean getWizardComplete() {
+		return false;
+	}
 }

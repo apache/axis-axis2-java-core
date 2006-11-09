@@ -40,8 +40,9 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
     private Text wsdlTextBox;
     private Label selectionLabel;
     private Button browseButton;
-    private Button autoGenerateWSDLCheckButton;
+    //private Button autoGenerateWSDLCheckButton;
     private Button skipWSDLCheckButton;
+    private Button selectWSDLCheckButton;
     
     public WSDLFileSelectionPage(){
         super("page5");
@@ -52,8 +53,9 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
      */
     protected void initializeDefaultSettings() {
         settings.put(PREF_WSDL_FILE_NAME,"");
-        settings.put(PREF_CHECK_WSDL_GENERATE,false);
+        settings.put(PREF_CHECK_WSDL_GENERATE,true);
         settings.put(PREF_CHECK_SKIP_WSDL,false);
+        settings.put(PREF_CHECK_SELECT_WSDL,false);
 
     }
 
@@ -65,11 +67,69 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
         GridLayout layout = new GridLayout();
         layout.numColumns=3;
         container.setLayout(layout);
-               
+        
+        GridData gd = new GridData();
+		//gd.horizontalSpan = 3;
+		//autoGenerateWSDLCheckButton = new Button(container,SWT.CHECK);
+		//autoGenerateWSDLCheckButton.setLayoutData(gd);
+		//autoGenerateWSDLCheckButton.setText(ServiceArchiver.getResourceString("page5.generateauto.caption"));
+		//autoGenerateWSDLCheckButton.setSelection(settings.getBoolean(PREF_CHECK_WSDL_GENERATE));
+		//autoGenerateWSDLCheckButton.addSelectionListener(new SelectionListener(){
+		//    public void widgetSelected(SelectionEvent e){
+		//        handleSelection();
+		//    }
+		//    public void widgetDefaultSelected(SelectionEvent e){}
+		//});
+		//autoGenerateWSDLCheckButton.setToolTipText(ServiceArchiver.getResourceString("page5.autogen.tooltip"));
+		////////////////////////////////////////
+		// enable the automatic generation box
+		//autoGenerateWSDLCheckButton.setEnabled(true);
+		///////////////////////////////////////
+		
+		
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		skipWSDLCheckButton = new Button(container,SWT.CHECK);
+		skipWSDLCheckButton.setText(ServiceArchiver.getResourceString("page5.skipWSDL.caption"));
+		skipWSDLCheckButton.setLayoutData(gd);
+		skipWSDLCheckButton.setSelection(settings.getBoolean(PREF_CHECK_SKIP_WSDL));
+		////////////////////////////////////////
+		// enable the skip check box
+		skipWSDLCheckButton.setEnabled(true);
+		///////////////////////////////////////
+		skipWSDLCheckButton.addSelectionListener(new SelectionListener(){
+		    public void widgetSelected(SelectionEvent e){
+		        handleSkip();
+		    }
+		    public void widgetDefaultSelected(SelectionEvent e){} 
+		    
+		});
+		
+		//add an empty lable
+		new Label(container,SWT.NONE);
+		
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		selectWSDLCheckButton = new Button(container,SWT.CHECK);
+		selectWSDLCheckButton.setText(ServiceArchiver.getResourceString("page5.selectWSDL.caption"));
+		selectWSDLCheckButton.setLayoutData(gd);
+		selectWSDLCheckButton.setSelection(settings.getBoolean(PREF_CHECK_SELECT_WSDL));
+		////////////////////////////////////////
+		// enable the skip check box
+		selectWSDLCheckButton.setEnabled(true);
+		///////////////////////////////////////
+		selectWSDLCheckButton.addSelectionListener(new SelectionListener(){
+		    public void widgetSelected(SelectionEvent e){
+		        handleSelect();
+		    }
+		    public void widgetDefaultSelected(SelectionEvent e){} 
+		    
+		});
+           
+		gd = new GridData(GridData.FILL_HORIZONTAL); 
         selectionLabel= new Label(container,SWT.NULL);
         selectionLabel.setText(ServiceArchiver.getResourceString("page5.selectwsdl.caption"));
 		
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         wsdlTextBox = new Text(container,SWT.BORDER);
         wsdlTextBox.setLayoutData(gd);
         wsdlTextBox.setText(settings.get(PREF_WSDL_FILE_NAME));
@@ -87,77 +147,105 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
 		    }
 		});
 		
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		autoGenerateWSDLCheckButton = new Button(container,SWT.CHECK);
-		autoGenerateWSDLCheckButton.setLayoutData(gd);
-		autoGenerateWSDLCheckButton.setText(ServiceArchiver.getResourceString("page5.generateauto.caption"));
-		autoGenerateWSDLCheckButton.setSelection(settings.getBoolean(PREF_CHECK_WSDL_GENERATE));
-		autoGenerateWSDLCheckButton.addSelectionListener(new SelectionListener(){
-		    public void widgetSelected(SelectionEvent e){
-		        handleSelection();
-		    }
-		    public void widgetDefaultSelected(SelectionEvent e){}
-		});
-		autoGenerateWSDLCheckButton.setToolTipText(ServiceArchiver.getResourceString("page5.autogen.tooltip"));
-		////////////////////////////////////////
-		// enable the automatic generation box
-		autoGenerateWSDLCheckButton.setEnabled(true);
-		///////////////////////////////////////
-		
-		//add an empty lable
-		new Label(container,SWT.NONE);
-		
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		skipWSDLCheckButton = new Button(container,SWT.CHECK);
-		skipWSDLCheckButton.setText(ServiceArchiver.getResourceString("page5.skipWSDL.caption"));
-		skipWSDLCheckButton.setLayoutData(gd);
-		skipWSDLCheckButton.setSelection(settings.getBoolean(PREF_CHECK_SKIP_WSDL));
-		////////////////////////////////////////
-		// enable the skip check box
-		skipWSDLCheckButton.setEnabled(true);
-		///////////////////////////////////////
-		skipWSDLCheckButton.addSelectionListener(new SelectionListener(){
-		    public void widgetSelected(SelectionEvent e){
-		        handleSkip();
-		    }
-		    public void widgetDefaultSelected(SelectionEvent e){} 
-		    
-		});
+
 				
 		setControl(container);
 		
 		if (restoredFromPreviousSettings){
 		    handleSkip();
 		    if (!skipWSDLCheckButton.getSelection()){
-		    handleSelection();
+		    	handleSelect();
 		    }
 		}
     }
+    
+    //private void handleSelection(){
+    //    boolean selection = this.autoGenerateWSDLCheckButton.getSelection();
+    //    settings.put(PREF_CHECK_WSDL_GENERATE,selection);
+    //    if (selection){
+    //        this.skipNextPage = false;
+    //        updateStatus(null);
+    //        updateRecommendation(ServiceArchiver.getResourceString("page5.recommendation"));
+    //        this.skipWSDLCheckButton.setSelection(false);
+    //        this.selectWSDLCheckButton.setSelection(false);
+    //        changeManualSelectionStatus(false); 
+    //    }else{ 
+    //          changeManualSelectionStatus(true);
+    //          this.skipNextPage = true;
+    //          handleModify();
+    //          updateRecommendation("");
+    //          this.skipWSDLCheckButton.setSelection(true);
+    //    	if (skipWSDLCheckButton.getSelection() || selectWSDLCheckButton.getSelection()){
+    //    		//you should not come here
+    //   		
+    //    	}else {
+    //    		autoGenerateWSDLCheckButton.setSelection(true);
+    //            this.skipNextPage = false;
+    //            updateStatus(null);
+    //            updateRecommendation(ServiceArchiver.getResourceString("page5.recommendation"));
+    //            this.skipWSDLCheckButton.setSelection(false);
+    //            this.selectWSDLCheckButton.setSelection(false);
+    //            changeManualSelectionStatus(false); 
+    //    	}
+    //    }
+    //}
 
     private void handleSkip(){
         if (skipWSDLCheckButton.getSelection()){
            //disable other widgtets
-           setStatus(false);
+           changeManualSelectionStatus(false);
            //enable next
            this.updateStatus(null);
            settings.put(PREF_CHECK_SKIP_WSDL,true);
-           
+           this.selectWSDLCheckButton.setSelection(false);
         }else{
-            setStatus(true);
-            //call this to update the status
-            handleModify();
-            settings.put(PREF_CHECK_SKIP_WSDL,false);
+//            //call this to update the status
+//            handleModify();
+//            settings.put(PREF_CHECK_SKIP_WSDL,false);
+//            this.autoGenerateWSDLCheckButton.setSelection(true);
+        	if (selectWSDLCheckButton.getSelection()){
+        		//you should not come here
+        		
+        	}else {
+        		skipWSDLCheckButton.setSelection(true);
+                //disable other widgtets
+                changeManualSelectionStatus(false);
+                //enable next
+                this.updateStatus(null);
+                settings.put(PREF_CHECK_SKIP_WSDL,true);
+                this.selectWSDLCheckButton.setSelection(false);
+        	}
         }
     }
     
-    private void setStatus(boolean b){
-        this.selectionLabel.setEnabled(b);
-        this.browseButton.setEnabled(b);
-        this.wsdlTextBox.setEnabled(b);
+    private void handleSelect(){
+        if (selectWSDLCheckButton.getSelection()){
+            changeManualSelectionStatus(true);
+            //enable next
+            this.updateStatus(null);
+            this.skipWSDLCheckButton.setSelection(false);
+           
+        }else{
+//            setStatus(true);
+//            //call this to update the status
+//            handleModify();
+//            settings.put(PREF_CHECK_SKIP_WSDL,false);
+//            this.autoGenerateWSDLCheckButton.setSelection(true);
+        	if (skipWSDLCheckButton.getSelection()){
+        		//you should not come here
+        		
+        	}else {
+        		selectWSDLCheckButton.setSelection(true);
+                //disable other widgtets
+                changeManualSelectionStatus(true);
+                //enable next
+                this.updateStatus(null);
+                this.skipWSDLCheckButton.setSelection(false);
+        	}
+        }
     }
-    private void handleBrowse(){
+    
+   private void handleBrowse(){
         FileDialog fileDialog = new FileDialog(this.getShell());
         fileDialog.setFilterExtensions(new String[]{"*.wsdl"});
         String returnFileName = fileDialog.open() ;
@@ -166,21 +254,7 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
         }
     }
     
-    private void handleSelection(){
-        boolean selection = this.autoGenerateWSDLCheckButton.getSelection();
-        settings.put(PREF_CHECK_WSDL_GENERATE,selection);
-        if (selection){
-            changeManualSelectionStatus(false); 
-            this.skipNextPage = false;
-            updateStatus(null);
-            updateRecommendation(ServiceArchiver.getResourceString("page5.recommendation"));
-        }else{
-            changeManualSelectionStatus(true);
-            this.skipNextPage = true;
-            handleModify();
-            updateRecommendation("");
-        }
-    }
+
     
     private void handleModify(){
         String text = wsdlTextBox.getText();
@@ -207,7 +281,7 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
     }
     
     public boolean isAutoGenerate(){
-        return autoGenerateWSDLCheckButton.getSelection();
+        return false ;// autoGenerateWSDLCheckButton.getSelection();
     }
     
     /* (non-Javadoc)
@@ -220,9 +294,13 @@ public class WSDLFileSelectionPage extends AbstractServiceWizardPage {
     
     public WSDLFileLocationBean getBean(){
         WSDLFileLocationBean locationBean = new WSDLFileLocationBean();
-        locationBean.setManual(!autoGenerateWSDLCheckButton.getSelection());
+        locationBean.setManual(!isAutoGenerate());
         locationBean.setWSDLFileName(wsdlTextBox.getText());
         locationBean.setSkip(skipWSDLCheckButton.getSelection());
         return locationBean;
     }
+    
+	protected boolean getWizardComplete() {
+		return false;
+	}
 }

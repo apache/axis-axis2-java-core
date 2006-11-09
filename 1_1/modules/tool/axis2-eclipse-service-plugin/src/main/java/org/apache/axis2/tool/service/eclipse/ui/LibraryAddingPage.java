@@ -179,4 +179,8 @@ public class LibraryAddingPage extends AbstractServiceWizardPage {
         return bean;
     }
     
+	protected boolean getWizardComplete() {
+		return false;
+	}
+    
 }
