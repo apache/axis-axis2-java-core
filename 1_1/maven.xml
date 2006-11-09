@@ -698,6 +698,7 @@
         <ant:mkdir dir="${std.bin.temp.dir}/samples/faulthandling"/>
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
+            	<include name="userguide/**/*.*"/>
                 <include name="yahoorestsearch/**/*.*"/>
                 <include name="databinding/**/*.*"/>
                 <include name="googlespellcheck/**/*.*"/>
