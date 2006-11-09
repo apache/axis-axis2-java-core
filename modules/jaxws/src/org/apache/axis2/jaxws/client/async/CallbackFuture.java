@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.client.async;
 
+import java.lang.SuppressWarnings;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
@@ -27,13 +28,26 @@ import javax.xml.ws.AsyncHandler;
 
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+/**
+ * The CallbackFuture implements the Axis2 <link>org.apache.axis2.client.async.Callback</link>
+ * API and will get registered with the Axis2 engine to receive the asynchronous
+ * callback responses.  This object is also responsible for taking the 
+ * <link>java.util.concurrent.Executor</link> given to it by the JAX-WS client
+ * and using that as the thread on which to deliver the async response the 
+ * JAX-WS <link>javax.xml.ws.AsynchHandler</link>.
+ */
 public class CallbackFuture extends Callback {
+    
+    private static final Log log = LogFactory.getLog(CallbackFuture.class);
     
     private CallbackFutureTask cft;
     private Executor executor;
     private FutureTask task;
    
+    @SuppressWarnings("unchecked")
     public CallbackFuture(AsyncResponse response, AsyncHandler handler, Executor exec) {
         cft = new CallbackFutureTask(response, handler);
         task = new FutureTask(cft);
@@ -57,13 +71,23 @@ public class CallbackFuture extends Callback {
     }
     
     private void execute() {
+        if (log.isDebugEnabled()) {
+            log.debug("Executor task starting to process async response");
+        }
+        
         if (executor != null) {
             executor.execute(task);
+        }
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Executor task completed");
         }
     }    
 }
 
 class CallbackFutureTask implements Callable {
+    
+    private static final Log log = LogFactory.getLog(CallbackFutureTask.class);
     
     AsyncResponse response;
     AsyncResult result;
@@ -83,6 +107,7 @@ class CallbackFutureTask implements Callable {
         error = e;
     }
     
+    @SuppressWarnings("unchecked")
     public Object call() throws Exception {
         if (result != null) {
             response.onComplete(result);    
@@ -91,6 +116,9 @@ class CallbackFutureTask implements Callable {
             response.onError(error);
         }
         
+        if (log.isDebugEnabled()) {
+            log.debug("Calling JAX-WS AsyncHandler with the Response object");
+        }
         handler.handleResponse(response);        
         return null;
     }

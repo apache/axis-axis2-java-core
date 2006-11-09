@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.client.async;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,14 @@ import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * The AsyncResponse class is used to collect the response information from
+ * Axis2 and deliver it to a JAX-WS client.  AsyncResponse implements the 
+ * <link>javax.xml.ws.Response</link> API that is defined in the JAX-WS 2.0
+ * specification.  The <code>Response</code> object will contain both the 
+ * object that is returned as the response along with a <link>java.util.Map</link>
+ * with the context information of the response.  
+ */
 public class AsyncResponse extends Callback implements Response {
 
     private static final Log log = LogFactory.getLog(AsyncResponse.class);
@@ -52,13 +61,28 @@ public class AsyncResponse extends Callback implements Response {
     //-------------------------------------
     // org.apache.axis2.client.async.Callback APIs
     //-------------------------------------
+    
+    /**
+     * This method will be called when the asynchronous invocation has completed
+     * and the response is delivered from Axis2.
+     */    
     @Override
     public void onComplete(AsyncResult result) {
+        boolean debug = log.isDebugEnabled();
+        if (debug) {
+            log.debug("JAX-WS async response listener received the response");
+        }
+        
         try {
+            if (debug) {
+                log.debug("Creating response MessageContext");
+            }
+            
+            // Create the JAX-WS response MessageContext from the Axis2 response
             org.apache.axis2.context.MessageContext axisResponse = result.getResponseMessageContext();
             response = new MessageContext(axisResponse);
             
-            //REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
+            // REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
             // TODO: Remove workaround for WS-Addressing running in thin client (non-server) environment
             try {
                 ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponse);
@@ -66,7 +90,7 @@ public class AsyncResponse extends Callback implements Response {
             catch (Throwable t) {
                 fault = t;
                 
-                if (log.isDebugEnabled()) {
+                if (debug) {
                     log.debug("JAX-WS AxisCallback caught throwable from ThreadContextMigratorUtil " + t);
                     log.debug("...caused by " + t.getCause());
                 }
@@ -74,7 +98,9 @@ public class AsyncResponse extends Callback implements Response {
             }
         } catch (MessageException e) {
             fault = e;
-            e.printStackTrace();
+            if (debug) {
+                log.debug("An error occured while processing the async response.  " + e.getMessage());
+            }
         }
         
         done = true;
@@ -90,7 +116,20 @@ public class AsyncResponse extends Callback implements Response {
     //-------------------------------------
     
     public boolean cancel(boolean mayInterruptIfRunning) {
-        return false;
+        // If the task has been cancelled or has completed, then we must
+        // return false because the call failed.
+        // If the task has NOT been cancelled or completed, then we must
+        // set the appropriate flags and not allow the task to continue.
+
+        // TODO: Do we actually need to do some level of interrupt on the
+        // processing in the get() call?  If so, how?  
+        if (!cancelled || !done) {
+            return false;
+        }
+        else {
+            //TODO: Implement the actual cancellation.
+            return false;
+        }
     }
 
     public Object get() throws InterruptedException, ExecutionException {
@@ -105,12 +144,16 @@ public class AsyncResponse extends Callback implements Response {
         // TODO: Check the type of the object to make sure it corresponds with
         // the parameterized generic type.
         if (responseObj == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Demarshalling the async response message");
+            }
             responseObj = getResponseValueObject(response);
         }
-        
+
         return responseObj;
     }
 
+    // TODO: Implement this method with the correct timeout
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return null;
     }
@@ -124,10 +167,13 @@ public class AsyncResponse extends Callback implements Response {
     }
 
     public Map getContext() {
+        if (responseContext == null) {
+            responseContext = new HashMap<String, Object>();
+        }
         return responseContext;
     }
     
-    public boolean hasFault() {
+    private boolean hasFault() {
         if (fault != null)
             return true;
         else
@@ -141,6 +187,9 @@ public class AsyncResponse extends Callback implements Response {
      * @param msg
      */
     protected Object getResponseValueObject(MessageContext mc) {
+        if (log.isDebugEnabled()) {
+            log.debug("Demarshalling response message as a String");
+        }
         try {
             Message msg = mc.getMessage();
             OMElement om = msg.getAsOMElement();
