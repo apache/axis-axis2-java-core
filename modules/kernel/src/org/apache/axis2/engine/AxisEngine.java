@@ -27,6 +27,7 @@ import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -35,6 +36,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -612,6 +614,22 @@ public class AxisEngine {
                 }
             } catch (Exception e) {
                 log.info(e.getMessage());
+                if (msgctx.getProperty(MessageContext.DISABLE_ASYNC_CALLBACK_ON_TRANSPORT_ERROR) == null)
+                {
+                  AxisOperation axisOperation = msgctx.getAxisOperation();
+                  if (axisOperation != null)
+                  {
+                    MessageReceiver msgReceiver = axisOperation.getMessageReceiver();
+                    if ((msgReceiver != null) && (msgReceiver instanceof CallbackReceiver))
+                    {
+                      Callback callback = ((CallbackReceiver)msgReceiver).lookupCallback(msgctx.getMessageID());
+                      if (callback != null)
+                      {
+                        callback.onError(e);
+                      }
+                    }
+                  }
+                }
             }
         }
     }
