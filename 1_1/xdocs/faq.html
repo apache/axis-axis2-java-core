@@ -123,10 +123,10 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
   <p>1. A third party module wants to access your resources, then the
   scenario is as follows:</p>
   <pre>   AxisService myService =
-   messageContext.getAxisConfiguration().getAxisService("serviceName"); 
+   messageContext.getAxisConfiguration().getAxisService("serviceName"); </pre>
 
-   or
-
+   <p>or</p>
+<pre>
    AxisService myService = msgCtx.getAxisService();</pre>
 
   <p>Then you can ask for service class loader using which you can access its
@@ -166,8 +166,7 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java"
     target="_blank">ServiceClient</a>.</p>
   </li>
-  <li><a name="c3"></a><strong>When I try to do a non blocking call with use
-    Separate Listener true I get the error <i>to do two Transport Channels
+  <li><a name="c3"></a><strong>When I try to do a non blocking call with <pre>useSeparateListener=true</pre> I get the error <i>to do two Transport Channels
     the Addressing Modules must be engaged</i>, Why is this?</strong><br>
 
     <p>To do the two transport Channel invocation you need to engage the
@@ -175,15 +174,14 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     axis2.xml file or Call.engageModule(QName). But addressing is enabled by
     default.</p>
   </li>
-  <li><a name="c4"></a><strong>I have engaged addressing and when I trying to
+  <li><a name="c4"></a><strong>I have engaged addressing and when I was trying to
     invoke a service I am getting an exception </strong><br>
 
-    <p>If you have engaged addressing , then you have to have wsa:action , so
-    you have to called  <br>
+    <p>If you have engaged addressing , then you have to have wsa:action, the required WS-Addressing header. so you have to call  <br>
     option.setAction("urn:myaction"); <br>
     It should be not that the action should be a URI.</p>
   </li>
-  <li><a name="c5"><strong>What is Axis Repository?</strong></a><br>
+  <li><a name="c5"><strong>What is Axis2 Repository?</strong></a><br>
 
     <p>Repository stores the configuration of Axis2, the users should specify
     the repository folder starting the Axis Server (HTTP or TCP). In the case
