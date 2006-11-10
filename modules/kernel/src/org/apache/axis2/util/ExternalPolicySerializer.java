@@ -93,9 +93,12 @@ public class ExternalPolicySerializer {
 
             for (Iterator iterator = policy.getAlternatives(); iterator
                     .hasNext();) {
-                // write <wsp:All>
+               
                 assertionList = (List) iterator.next();
-
+                
+                // write <wsp:All>
+                writer.writeStartElement(Constants.ATTR_WSP, Constants.ELEM_ALL, Constants.URI_POLICY_NS);
+                
                 Assertion assertion;
 
                 for (Iterator assertions = assertionList.iterator(); assertions
@@ -107,6 +110,9 @@ public class ExternalPolicySerializer {
                     }
                     assertion.serialize(writer);
                 }
+                
+                // write </wsp:All>
+                writer.writeEndElement();
             }
             
             // write </wsp:ExactlyOne>
