@@ -9,18 +9,17 @@ service using Aixs2.
 
 
 Prerequisites  
-==============
+=============
 
 To build the sample service you must have ant-1.6.x installed in your system. 
 
 To set AXIS2_HOME in Unix/Linux type:
 $export AXIS2_HOME=<path to axis2 distribution>
 
-Build the Sample
-================
+Building the Service
+====================
 
-To build the sample service, type:
-$ant 
+To build the sample service, type: $ant generate.service or just ant
 
 This will build the AddressBookService.aar in the build directory and copy it to the
 <AXIS2_HOME>/repository/services directory.
@@ -37,8 +36,8 @@ src/sample/addressbook/rpcclient/AddressBookRPCClient.java is a Client that uses
 to invoke the methods of this web services just like the method invocations of a Java object.
 
 
-Run the Sample
-==============
+Running the Client
+==================
 
 To compile and run, type
 $ant rpc.client
