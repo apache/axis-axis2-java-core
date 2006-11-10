@@ -3,12 +3,15 @@ package client;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.databinding.utils.BeanUtil;
+import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.rpc.client.RPCServiceClient;
 import sample.servicelifecycle.bean.Book;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -228,21 +231,36 @@ public class LibraryServiceClient {
         rpcClient.getOptions().setAction("urn:listAvailableBook");
         OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
                 "listAvailableBook"), new Object[]{null});
-        System.out.println(elemnt);
+        printBookData(elemnt);
+    }
+
+    private void printBookData(OMElement element) throws Exception {
+        if (element != null) {
+            Iterator values = element.getChildrenWithName(new QName("http://servicelifecycle.sample/xsd", "return"));
+            while (values.hasNext()) {
+                OMElement omElement = (OMElement) values.next();
+                Book book = (Book) BeanUtil.deserialize(Book.class, omElement, new DefaultObjectSupplier(), "book");
+                System.out.println("Isbn : " + book.getIsbn());
+                System.out.println("Author : " + book.getAuthor());
+                System.out.println("Title : " + book.getTitle());
+                System.out.println("");
+            }
+
+        }
     }
 
     public void listAllBook(RPCServiceClient rpcClient) throws Exception {
         rpcClient.getOptions().setAction("urn:listAllBook");
         OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
                 "listAllBook"), new Object[]{null});
-        System.out.println(elemnt);
+        printBookData(elemnt);
     }
 
     public void listLendBook(RPCServiceClient rpcClient) throws Exception {
         rpcClient.getOptions().setAction("urn:listLendBook");
         OMElement elemnt = rpcClient.invokeBlocking(new QName("http://servicelifecycle.sample/xsd",
                 "listLendBook"), new Object[]{null});
-        System.out.println(elemnt);
+        printBookData(elemnt);
     }
 
 }
