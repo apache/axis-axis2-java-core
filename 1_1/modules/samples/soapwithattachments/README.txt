@@ -1,4 +1,4 @@
-Sample for SOAP with Attachments
+Sample: SOAP with Attachments
 ================================
 
 Introduction
@@ -17,10 +17,14 @@ written using the OperationClient API of Axis2 together with the Attachment API 
 Objectives
 ==========
 
-    * Writing a POJO (Plain Old Java Object) based service to access attachments.
-    * Implement a Axis2 OperationClient based Web Service client to invoke the service with SOAP 
-    with Attachment type attachments.
+ * Writing a POJO (Plain Old Java Object) based service to access attachments.
+ * Implement a Axis2 OperationClient based Web Service client to invoke the service with SOAP 
+   with Attachment type attachments.
     * Invoke the deployed service.
+
+Prerequisites
+=============
+Install Apache Ant 1.6.2 or later
 
 
 Running the Sample:
@@ -48,6 +52,7 @@ Use "ant run.client -Dfile <file to be send> -Ddest <destination file name>" com
 SWA_SAMPLE_DIR to build and run the client. Source file ralating to the client can be found at 
 SWA_SAMPLE_DIR/src/sample/soapwithattachments/client/SWAClient.java.
 
-
+Help
+====
 Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
 

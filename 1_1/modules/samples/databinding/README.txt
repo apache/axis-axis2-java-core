@@ -59,3 +59,8 @@ How It Works
 - Get StAX events from the castor objects and construct OMElements from them. Those StAX events
   are fed into StAXOMBuilder which can create OM tree from it.
 - Feed those OMElement in to generated code.
+
+Help
+====
+Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+

@@ -48,6 +48,10 @@ to invoke the methods of this web service.
 To generate the stub, compile and run, type
 $ant adb.client -Dwsdl=http://<yourhost>:<yourport>/axis2/services/AddressBookService?wsdl
 
+Help
+====
+Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+
 
 
 

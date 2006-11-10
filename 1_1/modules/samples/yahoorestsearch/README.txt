@@ -19,3 +19,7 @@ Running The Sample
 ==================
 
 Type "ant" from Axis2_HOME/samples/yahoorestsearch directory.
+
+Help
+====
+Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.

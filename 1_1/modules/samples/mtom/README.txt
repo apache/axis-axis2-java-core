@@ -14,11 +14,11 @@ Apache Ant 1.6.2 or later
 
 Running the Sample:
 ===================
-1. Use ant generate.service or just ant command in the AXIS2_DIST/sample/mtom/ to build the service.
-2. Generated service gets copied to the AXIS2_DIST/repository/services automatically.
-3. Run the AXIS2_DIST/bin/axis2server.{sh.bat} to start the standalone axis2 server. (Alternatively
+1. Use ant generate.service or just ant command in the Axis2_HOME/sample/mtom/ to build the service.
+2. Generated service gets copied to the Axis2_HOME/repository/services automatically.
+3. Run the Axis2_HOME/bin/axis2server.{sh.bat} to start the standalone axis2 server. (Alternatively
   you can drop the sample to the services directory of a Axis2 server running in a servlet container)
-4. Use ant run.client -Dfile "file to be send" -Ddest "destination file name" > to build and run the
+4. Use ant run.client -Dfile "file to be send" -Ddest "destination file name" to build and run the
  client.
 
 
