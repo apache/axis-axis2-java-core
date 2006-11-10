@@ -63,8 +63,8 @@ follows:</p>
   <li>Spring-based POJO Web service and deployment</li>
 </ul>
 
-<p>The code for the document can be found at Axis2_HOME/samples/axis2pojo
-&amp; Axis2_HOME/samples/axis2springpojo once you extract the <a
+<p>The code for the document can be found at Axis2_HOME/samples/pojoguide
+&amp; Axis2_HOME/samples/pojoguidespring once you extract the <a
 href="../../download/1_1/download.html#std-bin">Axis2 Stadard
 Distribution</a>, and it might help to go grab it now to help you as you
 follow along. Let's get started.</p>
@@ -203,7 +203,7 @@ here are the main Ant tasks you'll be using:</p>
 <p>Before you can build the source, however, you'll need to download the
 Axis2 1.1-bin and 1.1-war distributions <a
 href="../../download/1_1/download.html">here</a>. Then modify the following
-line inside the build.xml file (in the Axis2_HOME/samples/axis2pojo directory
+line inside the build.xml file (in the Axis2_HOME/samples/pojoguide directory
 in the extracted Axis2 1.1 Standard Binary (bin) Distribution) :</p>
 <pre>&lt;property name="axis2.home" value="c:\apps\axis2" /&gt;</pre>
 
@@ -380,7 +380,7 @@ section you'll need the spring.jar from the latest 1.x Spring download.</p>
 <h3>Quick Introduction</h3>
 
 <p>If you take a look at the source code of this document in
-Axis2_HOME/samples/axis2springpojo (to see how the Spring based POJO Web
+Axis2_HOME/samples/pojoguidespring (to see how the Spring based POJO Web
 service is coded), you can see that the Weather class didn't change at all
 and the WeatherService class only got its name changed to
 WeatherSpringService.</p>
@@ -535,7 +535,7 @@ The Spring Framework is now up and ready for our WeatherSpringService.</p>
 <p>Great, your POJO is now ready for primetime within the Spring Framework.
 Before you build, you'll first need to make sure the axis2-spring-1.1.jar and
 spring.jar files are in the project's <em>src/lib</em> directory ( in the
-Axis2_HOME/samples/axis2springpojo directory found in the extracted <a
+Axis2_HOME/samples/pojoguidespring directory found in the extracted <a
 href="../../download/1_1/download.html#std-bin">Axis2 Standarad Binary
 Distribution</a>). Now build the source and create an AAR file by typing:
 ant</p>
