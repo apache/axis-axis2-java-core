@@ -1,17 +1,22 @@
 <html>
+<head>
+  <meta http-equiv="content-type" content="">
+  <title></title>
+</head>
+
 <body>
 <a name="Web_Service_Clients_Using_Axis2"></a>
+
 <h1>Writing Web Service Clients Using Axis2's Primary APIs</h1>
 
+<p>This section presents complex yet powerful <strong>XML based client
+API</strong> which is intended for advanced users. However if you are a new
+user we recommend using code generation given in the <a
+href="userguide.html">user guide</a>.</p>
 
-<p>This section presents complex yet powerful <strong>XML based client API</strong> 
-which is intended for advanced users. However if you are a new user we recommend 
-using code generation given in the <a href="userguide.html">user guide</a>.
-</p>
-
-<p>Web services can be used to provide a wide-range of functionality to the user
-from simple, less time consuming operations such as "getStockQuote" to time
-consuming business services. When we utilize (invoke using client
+<p>Web services can be used to provide a wide-range of functionality to the
+user from simple, less time consuming operations such as "getStockQuote" to
+time consuming business services. When we utilize (invoke using client
 applications) these Web services we cannot use simple generic invocation
 paradigms that suite all the timing complexities involved in the service
 operations. For example, if we use a single transport channel (such as HTTP)
@@ -20,8 +25,8 @@ complete, then most often we may end up with "connection time outs". On the
 other hand, if there are simultaneous service invocations that we need to
 perform from a single client application, then the use of a "blocking" client
 API will degrade the performance of the client application. Similarly, there
-are various other consequences such as One-Way transports that come into
-play when we need them. Let's try to analyze some common service invocation
+are various other consequences such as One-Way transports that come into play
+when we need them. Let's try to analyze some common service invocation
 paradigms.</p>
 
 <p>Many Web service engines provide users with a Blocking and Non-Blocking
@@ -113,20 +118,21 @@ services as shown in the following table.</p>
 <p>Axis2 provides the user with all these possibilities to invoke Web
 services.</p>
 
-<p>Following section present clients that use different possibilities presented above to invoke a Web Service using <code>ServiceClient</code>s.  All samples mentioned in this guide are located at the
-<b><font color="#000000">"samples\userguide\src"</font></b> directory of the
-binary distribution.</p>
+<p>Following section present clients that use different possibilities
+presented above to invoke a Web Service using <code>ServiceClient</code>s.
+All samples mentioned in this guide are located at the <b><font
+color="#000000">"samples\userguide\src"</font></b> directory of the binary
+distribution.</p>
 
 <p>This section presents four types of clients.</p>
-
 <ol>
-	<li>Request-Response, Blocking Client</li>
-	<li>One Way Client</li>
-	<li>Request-Response, Non-Blocking that uses one transport connection</li>
-	<li>Request-Response, Non-Blocking that uses two transport connections</li>
+  <li>Request-Response, Blocking Client</li>
+  <li>One Way Client</li>
+  <li>Request-Response, Non-Blocking that uses one transport connection</li>
+  <li>Request-Response, Non-Blocking that uses two transport connections</li>
 </ol>
-
 <a name="EchoBlockingClient"></a>
+
 <h4>Request-Response, Blocking Client</h4>
 
 <p>Axis2 provides the user with several invocation patterns for Web services,
@@ -160,11 +166,10 @@ display the response OMElement.</p>
 
 <p>To test this client, use the provided ant build file that can be found in
 the "<strong>Axis2_HOME/samples/userguide</strong>" directory. Run the
-"testEchoBlockingClient" target. If you can see the response OMElement
-printed in your command line, then you have successfully tested the client.
-</p>
-
+"run.client.blocking" target. If you can see the response OMElement printed
+in your command line, then you have successfully tested the client.</p>
 <a name="PingClient"></a>
+
 <h4>One Way Client</h4>
 
 <p>In the Web service "MyService" we had an IN-ONLY operation with the name
@@ -190,25 +195,25 @@ catch (AxisFault axisFault) {
      }</pre>
 
 <p>Since we are accessing an IN-ONLY operation we can directly use the
-<code>fireAndForget()</code> in ServiceClient to invoke this operation. This will not
-block the invocation and will return the control immediately back to the
-client. You can test this client by running the target "testPingClient" of
-the ant build file at "<strong>Axis2Home/samples/userguide</strong>".</p>
+<code>fireAndForget()</code> in ServiceClient to invoke this operation. This
+will not block the invocation and will return the control immediately back to
+the client. You can test this client by running the target "run.client.ping"
+of the ant build file at "<strong>Axis2Home/samples/userguide</strong>".</p>
 
 <p>We have now invoked the two operations in our service. Are we done? No!
 There's a lot more to explore. Let's see some other ways to invoke the same
 operations.</p>
-
-
 <a name="EchoNonBlockingClient"></a>
+
 <h4>Request-Response, Non-Blocking that uses one transport connection</h4>
 
-<p>In the "EchoBlockingClient" once the <code>serviceClient.sendReceive(payload);</code>
-is called, the client is blocked till the operation is complete. This
-behavior is not desirable when there are many Web service invocations to be
-done in a single client application or within a GUI. A solution would be to
-use a Non-Blocking API to invoke Web services. Axis2 provides a callback
-based non-blocking API for users.</p>
+<p>In the "EchoBlockingClient" once the
+<code>serviceClient.sendReceive(payload);</code> is called, the client is
+blocked till the operation is complete. This behavior is not desirable when
+there are many Web service invocations to be done in a single client
+application or within a GUI. A solution would be to use a Non-Blocking API to
+invoke Web services. Axis2 provides a callback based non-blocking API for
+users.</p>
 
 <p>A sample client for this can be found under
 "<strong>Axis2_HOME/samples/userguide/src/userguide/clients</strong>" with
@@ -231,10 +236,10 @@ invocation and provide users with the flexibility to use Non Blocking API for
 Web service Clients.</p>
 
 <p>To run the sample client ("EchoNonBlockingClient") you can simply use the
-<code>testEchoNonBlockingClient</code> target of the ant file found at the
-"<strong>Axis2_HOME/samples</strong>" directory.</p>
-
+<code>run.client.nonblocking</code> target of the ant file found at the
+"<strong>Axis2_HOME/samples/userguide</strong>" directory.</p>
 <a name="EchoNonBlockingDualClient"></a>
+
 <h4>Request-Response, Non-Blocking that uses two transport connections</h4>
 
 <p>The solution provided by the Non-Blocking API has one limitation when it
@@ -245,7 +250,7 @@ a non blocking invocation mechanism for users, but the request and the
 response come in a single transport (Two-Way transport) connection (like
 HTTP). Long running Web service invocations or Web service invocations using
 One-Way transports (like SMTP) cannot be utilized by simply using a non
-blocking invocation. </p>
+blocking invocation.</p>
 
 <p>The trivial solution is to use separate transport connections (either
 One-Way or Two-Way) for the request and response. The next problem that needs
@@ -308,14 +313,14 @@ asynchrony!!</strong></p>
             }
         }</pre>
 
-<p><font color="#0000ff"><font color="#000000">The boolean flag (value true)
-in the <b><code>options.setUseSeparateListener(...)</code></b> method informs the Axis2
-engine to use separate transport connections for request and response.
+<p>The boolean flag (value true) in the
+<b><code>options.setUseSeparateListener(...)</code></b> method informs the
+Axis2 engine to use separate transport connections for request and response.
 Finally <b><code>sender.cleanup()</code></b> informs the Axis2 engine to stop
-the client side listener started to retrieve the response.</font></font></p>
+the client side listener started to retrieve the response.</p>
 
-<p>To run the sample client ("EchoNonBlockingDualClient") you can simply use the
-"testEchoNonBlockingDualClient" target of the ant file found at the
+<p>To run the sample client ("EchoNonBlockingDualClient") you can simply use
+the "run.client.nonblockingdual" target of the ant file found at the
 "<strong>Axis2_HOME/samples/userguide/</strong>" directory.</p>
 </body>
 </html>
