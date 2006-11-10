@@ -59,9 +59,8 @@ the new instance as well.</p>
 
 <h2>Prerequisites</h2>
 
-<p>We have the option of running the sample client using <a
-href="http://ant.apache.org/">Apache Ant</a>. In which case you will have to
-install Apache Ant 1.6.2 or later.</p>
+<p>You will have to install <a href="http://ant.apache.org/">Apache Ant</a>
+1.6.2 or later.</p>
 
 <h2>Running the Sample</h2>
 
@@ -75,7 +74,7 @@ directory.</p>
 <p>Next, go to http://[url and port to your app server]/axis2 and see whether
 your service is listed there.</p>
 
-<h3>How to Run the Client</h3>
+<h3>How to Invoke the Service</h3>
 
 <p>You can invoke complete service using REST API, but it only works in
 application servers like Apache Tomcat and it will not work in
@@ -85,11 +84,10 @@ SimpleHttpServer. First try to use library system using REST API.</p>
 steps given below to make sure that the sample works as it should:</p>
 
 <p><strong>Step 1</strong>:- View all the available books in the library,
-just type the following URL on your favorite browser.</p>
+just type the URL http://127.0.0.1:8080/axis2/rest/Library/listAvailableBook
+on your favorite browser.</p>
 
-<p>http://127.0.0.1:8080/axis2/rest/Library/listAvailableBook</p>
-
-<p>You will see all the available books in the system</p>
+<p>You will see all the available books in the system.</p>
 
 <p><strong>Step 2</strong> : View all the books in the system at
 http://127.0.0.1:8080/axis2/rest/Library/listAllBook</p>
@@ -109,9 +107,8 @@ you will get an exception.</p>
 wsdl at http://127.0.0.1:port/axis2/services/serviceName?wsdl. You will see
 what you need to pass in)</p>
 
-<p>So let's create a user called 'foo' with the password '123'</p>
-
-<p>http://127.0.0.1:8080/axis2/rest/Library/register?userName=foo&amp;passWord=123</p>
+<p>So let's create a user called 'foo' with the password '123'
+(http://127.0.0.1:8080/axis2/rest/Library/register?userName=foo&amp;passWord=123)</p>
 
 <p>Then you will get the following response, if everything has gone well.</p>
 <pre>&lt;ns:registerResponse&gt;
@@ -119,9 +116,8 @@ what you need to pass in)</p>
 &lt;/ns:registerResponse&gt;</pre>
 
 <p><strong>Step 5</strong> : Log into system. To log in you need to pass user
-name and password. So let's try to login to system.</p>
-
-<p>http://127.0.0.1:8080/axis2/rest/Library/login?userName=foo&amp;passWord=123</p>
+name and password. So let's try to login to system. The request will be
+http://127.0.0.1:8080/axis2/rest/Library/login?userName=foo&amp;passWord=123</p>
 
 <p><strong>Step 6</strong> : Now we are ready to lend a book. To lend a book
 you need to pass isbn and userName. Let's try to lend the book with isbn
@@ -166,25 +162,17 @@ you will realize that list is empty.</p>
 (say Tomcat), and see whether all the previous data is there in the new
 instance.</p>
 
-<h3>Running Java Client</h3>
+<h3>Running the Java Client</h3>
 
 <p>Open up the LibraryServiceClient java class in your favorite IDE and run
-the main class. And you can comment and un-comment whatever method depending
-on what you want to invoke.</p>
+the main class. And you can comment out the methods you do not wish to invoke
+while un-commenting the method(s) you want to invoke.</p>
 
-<p>Java client also can be run using <a href="http://ant.apache.org/">Ant</a>.
-</p>
-
-<p>=============================</p>
-
-<p>invoke</p>
-
-<p>ant run.client</p>
-
-<p></p>
+<p>Java client also can be run using <a
+href="http://ant.apache.org/">Ant</a>. You can execute the client and invoke
+service typing <code>ant run.client</code> command in the
+Axis2_HOME/samples/servicelifecycle</p>
 
 <p>And then follow the instructions as mentioned in the console.</p>
-
-<p></p>
 </body>
 </html>
