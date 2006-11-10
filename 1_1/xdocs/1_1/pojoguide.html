@@ -171,7 +171,7 @@ the services.xml file. Let's get right into it (see Code Listing 3).</p>
             mep="http://www.w3.org/2004/08/wsdl/in-out"
     class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/&gt;
     &lt;/messageReceivers&gt;
-    &lt;parameter name="ServiceClass" locked="false"&gt;
+    &lt;parameter name="ServiceClass"&gt;
         sample.pojo.service.WeatherService
     &lt;/parameter&gt;
 &lt;/service&gt;</pre>
@@ -410,13 +410,11 @@ class="sample.spring.service.SpringInit</b>"&gt;
     &lt;description&gt;
       This web service initializes Spring.
     &lt;/description&gt;
-    <b>&lt;parameter name="ServiceClass" locked="false"&gt;
+    <b>&lt;parameter name="ServiceClass"&gt;
         sample.spring.service.SpringInit
     &lt;/parameter&gt;
-    &lt;parameter name="ServiceTCCL" 
-locked="false"&gt;composite&lt;/parameter&gt;
-    &lt;parameter name="load-on-startup" 
-locked="false"&gt;true&lt;/parameter&gt;</b>
+    &lt;parameter name="ServiceTCCL"&gt;composite&lt;/parameter&gt;
+    &lt;parameter name="load-on-startup"&gt;true&lt;/parameter&gt;</b>
     &lt;operation name="springInit"&gt;
       &lt;messageReceiver 
       class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
@@ -426,13 +424,13 @@ locked="false"&gt;true&lt;/parameter&gt;</b>
     &lt;description&gt;
       Weather Spring POJO Axis2 AAR deployment
     &lt;/description&gt;
-    <b>&lt;parameter name="ServiceClass" locked="false"&gt;
+    <b>&lt;parameter name="ServiceClass"&gt;
         sample.spring.service.WeatherSpringService
     &lt;/parameter&gt;
-    &lt;parameter name="ServiceObjectSupplier" locked="false"&gt;
+    &lt;parameter name="ServiceObjectSupplier"&gt;
 org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier
     &lt;/parameter&gt;
-    &lt;parameter name="SpringBeanName" locked="false"&gt;
+    &lt;parameter name="SpringBeanName"&gt;
         weatherSpringService
     &lt;/parameter&gt;</b>
     &lt;messageReceivers&gt;
