@@ -1130,6 +1130,14 @@ public class AxisService extends AxisDescription {
         return enableAllTransports;
     }
 
+    /**
+     * To eneble service to be expose in all the transport
+     * @param enableAllTransports
+     */
+    public void setEnableAllTransports(boolean enableAllTransports) {
+        this.enableAllTransports = enableAllTransports;
+    }
+
     public List getExposedTransports() {
         return this.exposedTransports;
     }
