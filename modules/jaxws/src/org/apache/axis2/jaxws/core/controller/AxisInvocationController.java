@@ -138,7 +138,7 @@ public class AxisInvocationController extends InvocationController {
             if (response.getMessage() == null && faultexception != null) {
                 MessageFactory factory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
                 Message message = factory.create(request.getMessage().getProtocol());
-                message.setLocalException(faultexception);
+                response.setLocalException(faultexception);
                 response.setMessage(message);
             }
             

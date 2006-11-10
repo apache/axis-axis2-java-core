@@ -52,6 +52,10 @@ public class MessageContext {
     private QName operationName;    //FIXME: This should become the OperationDescription
     private Message message;
     private Mode mode;
+    
+    // If a local exception is thrown, the exception is placed on the message context.
+    // It is not converted into a Message.
+    private Throwable localException = null;
         
     public MessageContext() {
         axisMsgCtx = new org.apache.axis2.context.MessageContext();
@@ -144,5 +148,26 @@ public class MessageContext {
         }
 
         return maintainSession;
+    }
+    
+    /**
+     * The local exception is the Throwable object held on the Message
+     * from a problem that occurred due to something other than the
+     * server.  In other words, no message ever travelled across the wire.
+     * @return the Throwable object or null
+     */
+     public Throwable getLocalException() {
+         return localException;
+     }
+
+    /**
+     * The local exception is the Throwable object held on the Message
+     * from a problem that occurred due to something other than the
+     * server.  In other words, no message ever travelled across the wire.
+     * @param t
+     * @see Throwable
+     */
+    public void setLocalException(Throwable t) {
+        localException = t;
     }
 }

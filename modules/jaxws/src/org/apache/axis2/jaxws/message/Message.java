@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.message;
 import java.util.List;
 
 import javax.activation.DataHandler;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 
 /**
@@ -95,20 +96,13 @@ public interface Message extends XMLPart {
     public void setMTOMEnabled(boolean b);
     
     /**
-     * The local exception is the Throwable object held on the Message
-     * from a problem that occurred due to something other than the
-     * server.  In other words, no message ever travelled across the wire.
-     * @return the Throwable object or null
+     * @return get the MimeHeaders
      */
-     public Throwable getLocalException();
-
+    public MimeHeaders getMimeHeaders();
+    
     /**
-     * The local exception is the Throwable object held on the Message
-     * from a problem that occurred due to something other than the
-     * server.  In other words, no message ever travelled across the wire.
-     * @param t
-     * @see Throwable
+     * Set the MimeHeaders
+     * @param mhs MimeHeaders
      */
-    public void setLocalException(Throwable t);
-	
+    public void setMimeHeaders(MimeHeaders mhs);
 }

@@ -27,6 +27,7 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
@@ -67,7 +68,7 @@ public class MessageImpl implements Message {
 	XMLPart xmlPart = null; // the representation of the xmlpart
 	List<Attachment> attachments = new ArrayList<Attachment>(); // non-xml parts
     boolean mtomEnabled;
-	Throwable localException = null;
+    private MimeHeaders mimeHeaders = new MimeHeaders(); 
     
 	// Constants
 	private static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
@@ -177,10 +178,9 @@ public class MessageImpl implements Message {
 
 			// Create soapMessage object from Message Factory using the input
 			// stream created from OM.
-
-			// TODO should we read the MIME Header from JAXWS MessageContext.
-			// For now I will create a default header
-			MimeHeaders defaultHeader = new MimeHeaders();
+      
+			// Get the MimeHeaders
+			MimeHeaders defaultHeaders = this.getMimeHeaders();
 
 			// Toggle based on SOAP 1.1 or SOAP 1.2
 			String contentType = null;
@@ -189,8 +189,10 @@ public class MessageImpl implements Message {
 			} else {
 				contentType = SOAP12_CONTENT_TYPE;
 			}
-			defaultHeader.addHeader("Content-type", contentType +"; charset=UTF-8");
-			SOAPMessage soapMessage = mf.createMessage(defaultHeader, inStream);
+            
+            // Override the content-type
+			defaultHeaders.setHeader("Content-type", contentType +"; charset=UTF-8");
+			SOAPMessage soapMessage = mf.createMessage(defaultHeaders, inStream);
             
             // At this point the XMLPart is still an OMElement.  We need to change it to the new SOAPEnvelope.
 			createXMLPart(soapMessage.getSOAPPart().getEnvelope());
@@ -385,14 +387,6 @@ public class MessageImpl implements Message {
     public String getXMLPartContentType() {
         return xmlPart.getXMLPartContentType();
     }
-    
-    public Throwable getLocalException() {
-        return localException;
-    }
-
-    public void setLocalException(Throwable t) {
-        localException = t;
-    }
 
     public Style getStyle() {
         return xmlPart.getStyle();
@@ -410,5 +404,21 @@ public class MessageImpl implements Message {
         xmlPart.setOperationElement(operationQName);
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.Attachment#getMimeHeaders()
+     */
+    public MimeHeaders getMimeHeaders() {
+       return mimeHeaders;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.Attachment#setMimeHeaders(javax.xml.soap.MimeHeaders)
+     */
+    public void setMimeHeaders(MimeHeaders mhs) {
+        mimeHeaders = mhs;
+        if (mimeHeaders == null) {
+            mimeHeaders = new MimeHeaders();
+        }
+    }
 
 }

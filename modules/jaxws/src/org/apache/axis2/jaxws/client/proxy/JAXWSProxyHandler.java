@@ -316,9 +316,9 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		    }
 		    
 		    throw (Throwable)object;
-		} else if (responseMsg.getLocalException() != null) {
+		} else if (responseContext.getLocalException() != null) {
 		    // use the factory, it'll throw the right thing:
-		    throw ExceptionFactory.makeWebServiceException(responseMsg.getLocalException());
+		    throw ExceptionFactory.makeWebServiceException(responseContext.getLocalException());
 		}
 		Object object = methodMarshaller.demarshalResponse(responseMsg, args);
 		if (log.isDebugEnabled()) {

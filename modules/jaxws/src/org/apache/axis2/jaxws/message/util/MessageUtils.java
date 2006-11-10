@@ -17,6 +17,7 @@
 package org.apache.axis2.jaxws.message.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,6 +54,7 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
 
 
 /**
@@ -164,6 +166,18 @@ public class MessageUtils {
                 throw ExceptionFactory.makeWebServiceException("Could not create new Message");
             }
             
+            // Add all the MimeHeaders from the Axis2 MessageContext
+            MimeHeaders mhs = message.getMimeHeaders();
+            HashMap headerMap = (HashMap) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+            if (headerMap != null) {
+                Iterator it = headerMap.keySet().iterator();
+                while (it.hasNext()) {
+                    String key = (String) it.next();
+                    String value = (String) headerMap.get(key);
+                    mhs.addHeader(key, value);
+                }
+            }
+            
             // FIXME: This should be revisited when we re-work the MTOM support.
             //This destroys performance by forcing a double pass through the message.
             //If attachments are found on the MessageContext, then that means
@@ -241,6 +255,14 @@ public class MessageUtils {
         // Put the XML message on the Axis 2 Message Context
         SOAPEnvelope envelope = (SOAPEnvelope) message.getAsOMElement();
         msgContext.setEnvelope(envelope);
+        
+        // Put the Headers onto the MessageContext
+        HashMap headerMap = new HashMap();
+        for (Iterator it = message.getMimeHeaders().getAllHeaders(); it.hasNext();) {
+            MimeHeader mh = (MimeHeader) it.next();
+            headerMap.put(mh.getName(), mh.getValue());
+        }
+        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
         
         // Enable MTOM Attachments 
         if (message.isMTOMEnabled()) {

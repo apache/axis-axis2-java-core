@@ -163,6 +163,10 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     private SOAPMessage getXMLResponse(SOAPMessage request, SOAPElement dataElement) throws Exception {
         SOAPMessage response;
         
+        // Transport header check
+        assert(request.getContentDescription() != null);
+        assert(request.getContentDescription().equals(SoapMessageProvider.XML_REQUEST));
+
         // Additional assertion checks
         assert(countAttachments(request) == 0);
         
@@ -171,6 +175,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         String responseXML = responseMsgStart + XML_RETURN + responseMsgEnd;
         response = factory.createMessage(null, new ByteArrayInputStream(responseXML.getBytes()));
         
+        // Set a content description
+        response.setContentDescription(SoapMessageProvider.XML_RESPONSE);
         return response;
     }
     

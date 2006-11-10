@@ -174,13 +174,8 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 am.setMessage(msg);
                 m.setAttachmentMarshaller(am);
             }   
-            if (busObject instanceof JAXBElement) {
-            	m.marshal(busObject, writer);
-            } else {
-            	JAXBElement b = new JAXBElement(this.getQName(), busObject.getClass(), busObject);
-            	m.marshal(b, writer);
-            }
             
+            m.marshal(busObject, writer);
             
             
             // Successfully marshalled the data
