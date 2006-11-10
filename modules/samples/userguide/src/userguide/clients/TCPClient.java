@@ -44,6 +44,7 @@ public class TCPClient {
         Options options = new Options();
         options.setTo(new EndpointReference(toEpr));
         options.setTransportInProtocol(Constants.TRANSPORT_TCP);
+        options.setAction("urn:echo");
 
         ServiceClient sender = new ServiceClient();
         sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
