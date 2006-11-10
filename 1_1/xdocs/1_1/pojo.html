@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding=""?>
 <html lang="en">
 <head>
   <meta http-equiv="content-type" content="">
@@ -64,9 +63,11 @@ follows:</p>
   <li>Spring-based POJO Web service and deployment</li>
 </ul>
 
-<p>The code for the document can be found <a
-href="src/">here</a>, and it might help to go grab it now to
-help you as you follow along. Let's get started.</p>
+<p>The code for the document can be found at Axis2_HOME/samples/axis2pojo
+&amp; Axis2_HOME/samples/axis2springpojo once you extract the <a
+href="../../download/1_1/download.html#std-bin">Axis2 Stadard
+Distribution</a>, and it might help to go grab it now to help you as you
+follow along. Let's get started.</p>
 <a name="pojo"></a>
 
 <h2>The POJO</h2>
@@ -176,14 +177,13 @@ the services.xml file. Let's get right into it (see Code Listing 3).</p>
 &lt;/service&gt;</pre>
 
 <p>The name of the service is specified as WeatherService and the scope of
-the service is application. As you can see in the
-WeatherService POJO, there are two methods, an IN-ONLY method and a IN-OUT
-method, hence the ordering for the messageReceiver elements within the
-messageReceivers tag. Lastly, the ServiceClass parameter specifies the class
-of the Web service, which is sample.pojo.service.WeatherService. When
-operations of your Web service get called, the methods of the WeatherService
-class will be called. Next you'll take a look at an easy method of building
-your application using Ant.</p>
+the service is application. As you can see in the WeatherService POJO, there
+are two methods, an IN-ONLY method and a IN-OUT method, hence the ordering
+for the messageReceiver elements within the messageReceivers tag. Lastly, the
+ServiceClass parameter specifies the class of the Web service, which is
+sample.pojo.service.WeatherService. When operations of your Web service get
+called, the methods of the WeatherService class will be called. Next you'll
+take a look at an easy method of building your application using Ant.</p>
 <a name="buildpojows"></a>
 
 <h2>Building the POJO Web Service Using Apache Ant</h2>
@@ -203,8 +203,8 @@ here are the main Ant tasks you'll be using:</p>
 <p>Before you can build the source, however, you'll need to download the
 Axis2 1.1-bin and 1.1-war distributions <a
 href="../../download/1_1/download.html">here</a>. Then modify the following
-line inside the build.xml file (in the axis2POJO directory of the <a
-href="src/">source code</a> for this document) :</p>
+line inside the build.xml file (in the Axis2_HOME/samples/axis2pojo directory
+in the extracted Axis2 1.1 Standard Binary (bin) Distribution) :</p>
 <pre>&lt;property name="axis2.home" value="c:\apps\axis2" /&gt;</pre>
 
 <p>This modification contains the path to the root of the unzipped Axis2
@@ -379,10 +379,11 @@ section you'll need the spring.jar from the latest 1.x Spring download.</p>
 
 <h3>Quick Introduction</h3>
 
-<p>If you take a look at the <a href="src/">source code</a> of
-this document (to see how the Spring based POJO Web service is coded), you
-can see that the Weather class didn't change at all and the WeatherService
-class only got its name changed to WeatherSpringService.</p>
+<p>If you take a look at the source code of this document in
+Axis2_HOME/samples/axis2springpojo (to see how the Spring based POJO Web
+service is coded), you can see that the Weather class didn't change at all
+and the WeatherService class only got its name changed to
+WeatherSpringService.</p>
 
 <p>You'll also notice an applicationContext.xml file, which we'll cover
 later: it's used to setup the beans used in our Web service.</p>
@@ -451,7 +452,7 @@ application context. The load-on-startup variable is a must-have so that the
 service loads up immediately on startup, creating the Spring application
 context. The WeatherSpringService stays mostly the same to the WeatherService
 previously with a couple additions: The ServiceObjectSupplier provides the
-service with the Spring application context, making it "Spring Aware." </p>
+service with the Spring application context, making it "Spring Aware."</p>
 
 <p>Lastly, the SpringBeanName points to the name of the bean associated with
 this Web service, which is defined in the applicationContext.xml file
@@ -533,10 +534,11 @@ The Spring Framework is now up and ready for our WeatherSpringService.</p>
 
 <p>Great, your POJO is now ready for primetime within the Spring Framework.
 Before you build, you'll first need to make sure the axis2-spring-1.1.jar and
-spring.jar files are in the project's <em>src/lib</em> directory (the
-axis2SpringPOJO directory found in the <a
-href="src/axis2SpringPOJO/">source code</a> for this
-document). Now build the source and create an AAR file by typing: ant</p>
+spring.jar files are in the project's <em>src/lib</em> directory ( in the
+Axis2_HOME/samples/axis2springpojo directory found in the extracted <a
+href="../../download/1_1/download.html#std-bin">Axis2 Standarad Binary
+Distribution</a>). Now build the source and create an AAR file by typing:
+ant</p>
 
 <p>It'll be created at <em>target/WeatherSpringService.aar</em>. Copy it over
 to <em>&lt;tomcat-home&gt;/webapps/axis2/WEB-INF/services</em>, and Axis2
