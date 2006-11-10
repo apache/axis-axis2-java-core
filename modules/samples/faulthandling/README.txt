@@ -10,8 +10,16 @@ Running of this sample assumes that you are running this within the extracted re
 
 Pre-Requisites
 ==============
-None
+Apache Ant 1.6.2 or later
 
+
+Building The Service
+=====================
+
+* Type ant generate.service or just ant from Axis2_HOME/samples/faulthandling.
+* Then go to Axis2_HOME/bin directory and run either axis2server.bat or axis2server.sh depending on your platform.
+
+If you go to  http://localhost:8080/axis2/ you should see BankService is deployed. 
 
 Running The Client
 ==================
