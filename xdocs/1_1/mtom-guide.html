@@ -1,16 +1,13 @@
 <html>
-
 <head>
-  <meta http-equiv="content-type" content="">
   <title>Handling Binary data with Axis2 (MTOM/SwA)</title>
 </head>
 
 <body>
-
 <h1>Handling Binary data with Axis2 (MTOM/SwA)</h1>
 
-<p>This document will describe how to use Axis2 functionality to send/receive binary data
-with SOAP.</p>
+<p>This document will describe how to use Axis2 functionality to send/receive
+binary data with SOAP.</p>
 
 <h2>Content</h2>
 <ul>
@@ -19,34 +16,39 @@ with SOAP.</p>
       <li><a href="#11">Where Does MTOM Come In?</a></li>
     </ul>
   </li>
+
   <li><a href="#2">MTOM with Axis2 </a>
     <ul>
       <li><a href="#21">Programming Model</a></li>
       <li><a href="#22">Enabling MTOM Optimization at Client Side</a></li>
       <li><a href="#23">Enabling MTOM Optimization at Server Side</a></li>
       <li><a href="#24">Accessing Received Binary Data (Sample Code) </a>
+
         <ul>
           <li><a href="#241">Service</a></li>
           <li><a href="#242">Client</a></li>
         </ul>
       </li>
-      <li><a href="#25">MTOM Databinding</a>
+      <li><a href="#25">MTOM Databinding</a></li>
     </ul>
+
   </li>
-  <li><a href="#3">SOAP with Attachments with Axis2</a></li>
-  	<ul>
-       <li><a href="#31">Sending SwA type attachments</a></li>
-       <li><a href="#32">Receiving SwA type attachments</a></li>
-	    <li><a href="#33">MTOM Backward Compatibility with SwA</a></li>
-   </ul>
+  <li><a href="#3">SOAP with Attachments with Axis2</a>
+    <ul>
+      <li><a href="#31">Sending SwA type attachments</a></li>
+      <li><a href="#32">Receiving SwA type attachments</a></li>
+      <li><a href="#33">MTOM Backward Compatibility with SwA</a></li>
+    </ul>
+
+  </li>
   <li><a href="#4">Advanced Topics </a>
     <ul>
       <li><a href="#41">File Caching for Attachments</a></li>
     </ul>
   </li>
 </ul>
-
 <a name="1"></a>
+
 <h2>Introduction</h2>
 
 <p>Despite the flexibility, interoperability and global acceptance of XML,
@@ -91,6 +93,7 @@ in XML;</p>
       world to deal with this binary attachment problem using the "by
       reference" technique. <a
       href="http://www.w3.org/TR/SOAP-attachments">SOAP with Attachments</a>
+
       is one such example. Since SOAP prohibits document type declarations
       (DTD) in messages, this leads to the  problem of not  representing data
       as part of the message infoset, creating two data models. This scenario
@@ -102,18 +105,18 @@ in XML;</p>
     </blockquote>
   </li>
 </ol>
-
 <a name="11"></a>
+
 <h3>Where Does MTOM Come In?</h3>
 
 <p><a href="http://www.w3.org/TR/2004/PR-soap12-mtom-20041116/">MTOM (SOAP
 Message Transmission Optimization Mechanism)</a> is another specification
 which focuses on solving the "Attachments" problem. MTOM tries to leverage
-the advantages of the above two techniques by trying to merge the two techniques.
-MTOM is actually a "by reference" method. Wire format of a MTOM optimized
-message is same as the Soap with Attachments message, which also makes it
-backward compatible with SwA endpoints. The most notable feature of MTOM is
-the use of XOP:Include element, which is defined in <a
+the advantages of the above two techniques by trying to merge the two
+techniques. MTOM is actually a "by reference" method. Wire format of a MTOM
+optimized message is same as the Soap with Attachments message, which also
+makes it backward compatible with SwA endpoints. The most notable feature of
+MTOM is the use of XOP:Include element, which is defined in <a
 href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XML Binary Optimized
 Packaging (XOP)</a> specification to reference  the binary attachments
 (external unparsed general entities) of the message. With the use of this
@@ -122,8 +125,9 @@ value) with the SOAP document even though actually it is attached separately.
 This merges the two realms by making it possible to work only with one data
 model. This allows the applications to process and describe by only looking
 at XML part making reliance on DTDs obsolete. On a lighter note, MTOM has
-standardized the referencing mechanism of SwA. The following is an extract from
-the <a href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XOP</a>
+standardized the referencing mechanism of SwA. The following is an extract
+from the <a href="http://www.w3.org/TR/2004/PR-xop10-20041116/">XOP</a>
+
 specification.</p>
 
 <p><em>At the conceptual level, this binary data can be thought of as being
@@ -133,8 +137,8 @@ document), it is necessary to have a one-to-one correspondence between XML
 Infosets and XOP Packages. Therefore, the conceptual representation of such
 binary data is as if it were base64-encoded, using the canonical lexical form
 of XML Schema base64Binary datatype (see <a href="#XMLSchemaP2">[XML Schema
-Part 2: Datatypes Second Edition] </a>
-<a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#base64Binary">3.2.16
+Part 2: Datatypes Second Edition] </a> <a
+href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#base64Binary">3.2.16
 base64Binary</a>). In the reverse direction, XOP is capable of optimizing
 only base64-encoded Infoset data that is in the canonical lexical
 form.</em></p>
@@ -144,9 +148,10 @@ Attachments</strong> &amp; <strong>MTOM (SOAP Message Transmission
 Optimization Mechanism).</strong></p>
 
 <a name="2"></a>
-<h2>MTOM with Axis2</h2>
 
+<h2>MTOM with Axis2</h2>
 <a name="21"></a>
+
 <h3>Programming Model</h3>
 
 <p>AXIOM is (and may be the first) Object Model which has the ability to hold
@@ -180,6 +185,7 @@ content.</p>
 
         //create an OMText node with the above DataHandler and set optimized to true
         OMText textData = <strong>fac.createOMText(dataHandler, true);</strong>
+
         imageElement.addChild(textData);
 
         //User can set optimized to false by using the following
@@ -200,9 +206,9 @@ optimized at any case. They will be serialized and send as Base64 Strings.</p>
         javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("someLocation"));
         OMText textData = fac.createOMText(dataHandler, <strong>false</strong>); 
         image.addChild(textData);</pre>
-</source>
 
-<a name="22"></a>
+</source><a name="22"></a>
+
 <h3>Enabling MTOM Optimization at Client Side</h3>
 
 <p>Set the "enableMTOM" property in the Options to true, when sending
@@ -213,8 +219,9 @@ messages.</p>
         <strong>options.setProperty(Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);</strong>
         serviceClient .setOptions(options);</pre>
 </source>
-<p>When this property is set to true any SOAP envelope, regardless whether it contains optimizable content or not,
- will be serialized as a MTOM optimized MIME message. 
+<p>When this property is set to true any SOAP envelope, regardless whether it
+contains optimizable content or not, will be serialized as a MTOM optimized
+MIME message.</p>
 
 <p>Axis2 serializes all binary content nodes as Base64 encoded strings
 regardless of they are qualified to be optimize or not, if,</p>
@@ -226,38 +233,45 @@ regardless of they are qualified to be optimize or not, if,</p>
     Infosets Constructs </a>).</li>
 </ul>
 
-<p>User does <strong>not</strong> have to specify anything in order for Axis2 to receive MTOM optimised messages.
-Axis2 will automatically identify and de-serialize accordingly as and when a MTOM message arrives.</p>
+<p>User does <strong>not</strong> have to specify anything in order for Axis2
+to receive MTOM optimised messages. Axis2 will automatically identify and
+de-serialize accordingly as and when a MTOM message arrives.</p>
 
 <a name="23"></a>
+
 <h3>Enabling MTOM Optimization at Server Side</h3>
 
 <p>Axis 2 server automatically identifies incoming MTOM optimized messages
 based on the content-type and de-serializes accordingly. User can enableMTOM
 in the server side for outgoing messages,</p>
-    <blockquote>
-      <p>To enableMTOM globally for all services users can set the "enableMTOM" parameter to true in the Axis2.xml.
-      When it is set, all outgoing messages will be serialized and send as MTOM optimized MIME messages. 
-      If it is not set all the binary data in binary content nodes will be
-      serialized as Base64 encoded strings. This configuration can be overriden in services.xml for per service and per operation
-      basis.</p>
-    </blockquote>
 
+<blockquote>
+  <p>To enableMTOM globally for all services users can set the "enableMTOM"
+  parameter to true in the Axis2.xml. When it is set, all outgoing messages
+  will be serialized and send as MTOM optimized MIME messages. If it is not
+  set all the binary data in binary content nodes will be serialized as
+  Base64 encoded strings. This configuration can be overriden in services.xml
+  for per service and per operation basis.</p>
+</blockquote>
 <pre>&lt;parameter name="enableMTOM" locked="false"&gt;true&lt;/parameter&gt;</pre>
+
 <p>User must restart the server after setting this parameter.</p>
-  
 <a name="24"></a>
+
 <h3>Accessing Received Binary Data (Sample Code)</h3>
 <ul>
-  <a name="241"></a> 
-  <li><strong>Service</strong></li>
+  <a name="241"></a>
+  <ul>
+    <li><strong>Service</strong></li>
+  </ul>
+
 </ul>
 <source><pre>public class MTOMService {
     public void uploadFileUsingMTOM(OMElement element) throws Exception {
 
         Iterator itr = element.getChildElements();
         folder = (OMElement) itr.next();
-  			....
+                          ....
 
         images = (OMElement) itr.next();
         itr = images.getChildElements();
@@ -275,15 +289,15 @@ in the server side for outgoing messages,</p>
             ... <em>Do whatever you need with the DataHandler</em> ...
         }
     }
-  }
-</pre>
-</source>
+  }</pre>
+</source><ul>
+  <a name="242"></a>
   <ul>
-    <a name="242"></a>
     <li><strong>Client</strong></li>
+
   </ul>
-<source><pre>
-        ServiceClient sender = new ServiceClient();        
+</ul>
+<source><pre>        ServiceClient sender = new ServiceClient();        
         Options options = new Options();
         options.setTo(targetEPR); 
         // enabling MTOM
@@ -298,35 +312,224 @@ in the server side for outgoing messages,</p>
         DataHandler actualDH;
         actualDH = binaryNode.getDataHandler();
         .............</pre>
-</source>
+</source><a name="25"></a>
 
-<a name="25"></a>
 <h3>MTOM Databinding</h3>
 
-<p>When using MTOM, you simply define the binary file as part of your SOAP message as
-type="xsd:base64Binary" or type="xsd:hexBinary". You indicate the
-type of content in the element at runtime using an MTOM attribute extension,
-xmime:contentType. Furthermore, you can identify what type of data
-might be expected in the element using the xmime:expectedContentType. Putting it all
-together, our example element becomes: 
-</p>
+<p>You can defining a binary element in the schema using the schema
+type="xsd:base64Binary". Having an element with the type "xsd:base64Binary"
+is enough for the Axis2 code generators to identify possible MTOM attachments
+and to generate code accordingly.</p>
 
-<source><pre>
-      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' &gt;
+<p>Going a little bit further you can use the xmime schema
+(http://www.w3.org/2005/05/xmlmime) to describe the binary content more
+precisely. With xmime schema you can indicate the type of content in the
+element at runtime using an MTOM attribute extension, xmime:contentType.
+Furthermore, you can identify what type of data might be expected in the
+element using the xmime:expectedContentType. Putting it all together, our
+example element becomes:</p>
+<source><pre>      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' &gt;
         &lt;complexType&gt;
           &lt;simpleContent&gt;
             &lt;extension base="base64Binary" &gt;
+
               &lt;attribute ref="xmime:contentType" use="required"/&gt;
             &lt;/extension&gt;
           &lt;/simpleContent&gt;
         &lt;/complexType&gt;
-      &lt;/element&gt;</pre>
+      &lt;/element&gt;
+</pre>
 </source>
-<p>Lets define a full, validated doc / lit style WSDL that imports the xmime schema, has a service that 
-       receives a jpeg and returns a pass / fail status to the client:</p>
 
+<p>You can also use the xmime:base64Binary type to express the above
+mentioned data much more cleanly.</p>
+<source><pre>      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' type="xmime:base64Binary"/&gt;</pre>
+</source>
+<h3>Using ADB</h3>
+
+<p>Let's define a full, validated doc/lit style WSDL that uses the xmime
+schema, has a service that receives a file and saves it in the server using the given path.
+</p>
 <source><pre>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;wsdl:definitions xmlns:tns="http://ws.apache.org/axis2/mtomsample/"
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+	xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+	xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns="http://schemas.xmlsoap.org/wsdl/"
+	targetNamespace="http://ws.apache.org/axis2/mtomsample/">
+	&lt;import namespace="http://www.w3.org/2005/05/xmlmime"
+                schemaLocation="http://www.w3.org/2005/05/xmlmime"/>
+	&lt;wsdl:types>
+		&lt;xsd:schema xmlns="http://schemas.xmlsoap.org/wsdl/"
+			attributeFormDefault="qualified" elementFormDefault="qualified"
+			targetNamespace="http://ws.apache.org/axis2/mtomsample/">
+			&lt;xsd:import namespace="http://www.w3.org/2005/05/xmlmime"
+				schemaLocation="xmime.xsd" />
+			&lt;xsd:complexType name="AttachmentType">
+				&lt;xsd:sequence>
+					&lt;xsd:element minOccurs="0" name="fileName"
+						type="xsd:string" />
+					&lt;xsd:element minOccurs="0" name="binaryData"
+						type="xmime:base64Binary" />
+				&lt;/xsd:sequence>
+			&lt;/xsd:complexType>
+			&lt;xsd:element name="AttachmentRequest" type="tns:AttachmentType" />
+			&lt;xsd:element name="AttachmentResponse" type="xsd:string" />
+		&lt;/xsd:schema>
+	&lt;/wsdl:types>
+	&lt;wsdl:message name="AttachmentRequest">
+		&lt;wsdl:part name="part1" element="tns:AttachmentRequest" />
+	&lt;/wsdl:message>
+	&lt;wsdl:message name="AttachmentResponse">
+		&lt;wsdl:part name="part1" element="tns:AttachmentResponse" />
+	&lt;/wsdl:message>
+	&lt;wsdl:portType name="MTOMServicePortType">
+		&lt;wsdl:operation name="attachment">
+			&lt;wsdl:input message="tns:AttachmentRequest"
+				wsaw:Action="attachment" />
+			&lt;wsdl:output message="tns:AttachmentResponse"
+				wsaw:Action="http://schemas.xmlsoap.org/wsdl/MTOMServicePortType/AttachmentResponse" />
+		&lt;/wsdl:operation>
+	&lt;/wsdl:portType>
+	&lt;wsdl:binding name="MTOMServiceSOAP11Binding"
+		type="tns:MTOMServicePortType">
+		&lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+			style="document" />
+		&lt;wsdl:operation name="attachment">
+			&lt;soap:operation soapAction="attachment" style="document" />
+			&lt;wsdl:input>
+				&lt;soap:body use="literal" />
+			&lt;/wsdl:input>
+			&lt;wsdl:output>
+				&lt;soap:body use="literal" />
+			&lt;/wsdl:output>
+		&lt;/wsdl:operation>
+	&lt;/wsdl:binding>
+	&lt;wsdl:binding name="MTOMServiceSOAP12Binding"
+		type="tns:MTOMServicePortType">
+		&lt;soap12:binding transport="http://schemas.xmlsoap.org/soap/http"
+			style="document" />
+		&lt;wsdl:operation name="attachment">
+			&lt;soap12:operation soapAction="attachment" style="document" />
+			&lt;wsdl:input>
+				&lt;soap12:body use="literal" />
+			&lt;/wsdl:input>
+			&lt;wsdl:output>
+				&lt;soap12:body use="literal" />
+			&lt;/wsdl:output>
+		&lt;/wsdl:operation>
+	&lt;/wsdl:binding>
+	&lt;wsdl:service name="MTOMSample">
+		&lt;wsdl:port name="MTOMSampleSOAP11port_http"
+			binding="tns:MTOMServiceSOAP11Binding">
+			&lt;soap:address
+				location="http://localhost:8080/axis2/services/MTOMSample" />
+		&lt;/wsdl:port>
+		&lt;wsdl:port name="MTOMSampleSOAP12port_http"
+			binding="tns:MTOMServiceSOAP12Binding">
+			&lt;soap12:address
+				location="http://localhost:8080/axis2/services/MTOMSample" />
+		&lt;/wsdl:port>
+	&lt;/wsdl:service>
+&lt;/wsdl:definitions>
+</pre></source>
+<p>The important point here is we import http://www.w3.org/2005/05/xmlmime
+and define an element, 'binaryData' , that utilizes MTOM.</p>
+
+<p>The next step is using the Axis2 tool 'WSDL2Java' to generate java source
+files from this WSDL. See the 'Code Generator Tool' guide for more info.
+Here, we define an ant task that chooses ADB (Axis2 Data Binding) as the databinding
+implementation. We also choose to generate an interface which our Skeleton
+will implement. The name we list for the WSDL above is MTOMSample.wsdl, and
+we define our package name for our generated source files to be
+'sample.mtom.service' . Our ant task for this example is:</p>
+<source><pre>	&lt;target name="generate.service">
+ 		&lt;java classname="org.apache.axis2.wsdl.WSDL2Java">
+			&lt;arg value="-uri" />
+			&lt;arg value="${basedir}/resources/MTOMSample.wsdl" />
+			&lt;arg value="-ss" />
+			&lt;arg value="-sd" />
+          		&lt;arg value="-g"/>
+			&lt;arg value="-p" />
+			&lt;arg value="sample.mtom.service" />
+			&lt;arg value="-o" />
+			&lt;arg value="${service.dir}" />
+			&lt;classpath refid="class.path" />
+		&lt;/java>
+  &lt;/target&gt;</pre>
+</source>
+<p>Now we are ready to code. Lets edit
+output/src/sample/mtom/service/MTOMSampleSkeleton.java and fill in the business logic. Following is an example:</p>
+<source><pre>
+	public org.apache.ws.axis2.mtomsample.AttachmentResponse attachment(
+			org.apache.ws.axis2.mtomsample.AttachmentRequest param0)
+			throws Exception
+
+	{
+		AttachmentType attachmentRequest = param0.getAttachmentRequest();
+		Base64Binary binaryData = attachmentRequest.getBinaryData();
+		DataHandler dataHandler = binaryData.getBase64Binary();
+		File file = new File(
+				attachmentRequest.getFileName());
+		FileOutputStream fileOutputStream = new FileOutputStream(file);
+		dataHandler.writeTo(fileOutputStream);
+		fileOutputStream.flush();
+		fileOutputStream.close();
+		
+		AttachmentResponse response = new AttachmentResponse();
+		response.setAttachmentResponse("File saved succesfully.");
+		return response;
+	}
+</pre></source>
+<p>The code above receives a file and writes it to disk using the given file name. It returns a message
+on success.
+Now lets define the client:</p>
+<source><pre>	public static void transferFile(File file, String destination)
+			throws RemoteException {
+		MTOMSampleStub serviceStub = new MTOMSampleStub();
+
+		// Enable MTOM in the client side
+		serviceStub._getServiceClient().getOptions().setProperty(
+				Constants.Configuration.ENABLE_MTOM, Constants.VALUE_TRUE);
+		//Increase the time out when sending large attachments
+		serviceStub._getServiceClient().getOptions().setTimeOutInMilliSeconds(10000);
+
+		// Populating the code generated beans
+		AttachmentRequest attachmentRequest = new AttachmentRequest();
+		AttachmentType attachmentType = new AttachmentType();
+		Base64Binary base64Binary = new Base64Binary();
+
+		// Creating a javax.activation.FileDataSource from the input file.
+		FileDataSource fileDataSource = new FileDataSource(file);
+
+		// Create a dataHandler using the fileDataSource. Any implementation of
+		// javax.activation.DataSource interface can fit here.
+		DataHandler dataHandler = new DataHandler(fileDataSource);
+		base64Binary.setBase64Binary(dataHandler);
+		base64Binary.setContentType(dataHandler.getContentType());
+		attachmentType.setBinaryData(base64Binary);
+		attachmentType.setFileName(destination);
+		attachmentRequest.setAttachmentRequest(attachmentType);
+
+		AttachmentResponse response = serviceStub.attachment(attachmentRequest);
+		System.out.println(response.getAttachmentResponse());
+	}</pre>
+
+</source>
+<p>The last step is to create an AAR with our Skeleton and the services.xml, and then deploy the service. See the user guide
+for more info. You can find the completed sample in the Axis2 standard binary distribution under the samples/mtom directory</p>
+
+<h3>Using Xml Beans</h3>
+
+<p>Lets define a full, validated doc / lit style WSDL that imports the xmime
+schema, has a service that receives a jpeg and returns a pass / fail status
+to the client:</p>
+<source><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 
 &lt;definitions name="MyMTOMService" targetNamespace="http://myMtomNS" xmlns:tns="http://myMtomNS" xmlns="http://schemas.xmlsoap.org/wsdl/" 
   xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns2="http://myMtomNS/types"&gt;
@@ -335,6 +538,7 @@ together, our example element becomes:
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://www.w3.org/2001/XMLSchema" 
     xmlns:xmime="http://www.w3.org/2005/05/xmlmime"&gt;
       &lt;import namespace="http://schemas.xmlsoap.org/soap/encoding/"/&gt;
+
        &lt;import namespace="http://www.w3.org/2005/05/xmlmime"
                 schemaLocation="http://www.w3.org/2005/05/xmlmime"/&gt;
       &lt;complexType name="ReturnWebBase"&gt;
@@ -342,80 +546,95 @@ together, our example element becomes:
           &lt;element name="errorMessage" type="xsd:string"/&gt;
           &lt;element name="successErrorCode" type="xsd:int"/&gt;
         &lt;/sequence&gt;
+
       &lt;/complexType&gt;
       &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' &gt;
         &lt;complexType&gt;
           &lt;simpleContent&gt;
             &lt;extension base="base64Binary" &gt;
               &lt;attribute ref="xmime:contentType" use="required"/&gt;
+
             &lt;/extension&gt;
           &lt;/simpleContent&gt;
         &lt;/complexType&gt;
       &lt;/element&gt;
       &lt;element name="sendData"&gt;
         &lt;complexType&gt;
+
           &lt;sequence&gt;
             &lt;element ref='tns:MyBinaryData' minOccurs="1" maxOccurs="1" /&gt;
           &lt;/sequence&gt;
         &lt;/complexType&gt;
       &lt;/element&gt;
       &lt;element name="sendDataResponse"&gt;
+
         &lt;complexType&gt;
           &lt;sequence&gt;
             &lt;element minOccurs="1" maxOccurs="1" name="sendDataResult" type="tns:ReturnWebBase" /&gt;
           &lt;/sequence&gt;
         &lt;/complexType&gt;
       &lt;/element&gt;
+
     &lt;/schema&gt;
   &lt;/types&gt;
   &lt;message name="MyMTOMEndpoint_sendData"&gt;
      &lt;part name="parameters" element="ns2:sendData"/&gt;
   &lt;/message&gt;
   &lt;message name="MyMTOMEndpoint_sendDataResponse"&gt;
+
     &lt;part name="result" element="ns2:sendDataResponse"/&gt;
   &lt;/message&gt;
   &lt;portType name="MyMTOMEndpoint"&gt;
     &lt;operation name="sendData"&gt;
       &lt;input message="tns:MyMTOMEndpoint_sendData" name="MyMTOMEndpoint_sendData"/&gt;
       &lt;output message="tns:MyMTOMEndpoint_sendDataResponse" name="MyMTOMEndpoint_sendDataResponse"/&gt;
+
     &lt;/operation&gt;
   &lt;/portType&gt;
   &lt;binding name="MyMTOMEndpointBinding" type="tns:MyMTOMEndpoint"&gt;
     &lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/&gt;
     &lt;operation name="sendData"&gt;
       &lt;soap:operation soapAction="sendData"/&gt;
+
       &lt;input name="MyMTOMEndpoint_sendData"&gt;
         &lt;soap:body use="literal"/&gt;
       &lt;/input&gt;
       &lt;output name="MyMTOMEndpoint_sendDataResponse"&gt;
         &lt;soap:body use="literal"/&gt;
       &lt;/output&gt;
+
     &lt;/operation&gt;
   &lt;/binding&gt;
   &lt;service name="MyMTOMService"&gt;
     &lt;port name="MyMTOMEndpointPort" binding="tns:MyMTOMEndpointBinding"&gt;
       &lt;soap:address location="http://localhost:8080/axis2/services/MyMTOMService"/&gt;&lt;/port&gt;&lt;/service&gt;&lt;/definitions&gt;
+
   </pre>
 </source>
-<p>The important point here is we import http://www.w3.org/2005/05/xmlmime and define an element, 'MyBinaryData' , that utilizes MTOM. </p>
+<p>The important point here is we import http://www.w3.org/2005/05/xmlmime
+and define an element, 'MyBinaryData' , that utilizes MTOM.</p>
 
-<p>The next step is using the Axis2 tool 'WSDL2Java' to generate java source files from this WSDL. See the 'Code Generator Tool' guide for more 
-info.  Here, we define an ant task that chooses XMLBeans as the databinding implementation. We also choose to generate an interface which our 
-Skeleton will implement. The name we list for the WSDL above is mtomExample.wsdl, and we define our package name for our generated source files to be 
-'org.apache.axis2.samples.mtomDatabinding.endpoint' . Our ant task for this example is: 
-</p>
-
+<p>The next step is using the Axis2 tool 'WSDL2Java' to generate java source
+files from this WSDL. See the 'Code Generator Tool' guide for more info.
+Here, we define an ant task that chooses XMLBeans as the databinding
+implementation. We also choose to generate an interface which our Skeleton
+will implement. The name we list for the WSDL above is mtomExample.wsdl, and
+we define our package name for our generated source files to be
+'org.apache.axis2.samples.mtomDatabinding.endpoint' . Our ant task for this
+example is:</p>
 <source><pre>&lt;target name="wsdl2java" depends="clean,prepare"&gt;
       &lt;delete dir="output" /&gt;
       &lt;java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true"&gt;
           &lt;classpath refid="axis.classpath"/&gt; 
           &lt;arg value="-d"/&gt;
+
           &lt;arg value="xmlbeans"/&gt;
           &lt;arg value="-uri"/&gt;
           &lt;arg file="wsdl/mtomExample.wsdl"/&gt;
           &lt;arg value="-ss"/&gt;
           &lt;arg value="-ssi"/&gt;
           &lt;arg value="-g"/&gt;
+
           &lt;arg value="-sd"/&gt;
           &lt;arg value="-o"/&gt;
           &lt;arg file="output"/&gt;
@@ -429,13 +648,14 @@ Skeleton will implement. The name we list for the WSDL above is mtomExample.wsdl
               &lt;include name="*schema*/**/*.class"/&gt;
               &lt;include name="*schema*/**/*.xsb"/&gt;
           &lt;/fileset&gt;
+
       &lt;/move&gt;
 
   &lt;/target&gt;</pre>
 </source>
-<p>Now we are ready to code. Lets edit output/src/org/apache/axis2/samples/mtomDatabinding/endpoint/MyMTOMServiceSkeleton.java
-and fill in the business logic. The end result becomes: </p>
-
+<p>Now we are ready to code. Lets edit
+output/src/org/apache/axis2/samples/mtomDatabinding/endpoint/MyMTOMServiceSkeleton.java
+and fill in the business logic. The end result becomes:</p>
 <source><pre>/**
  * MyMTOMServiceSkeleton.java
  *
@@ -522,10 +742,9 @@ public class MyMTOMServiceSkeleton implements MyMTOMServiceSkeletonInterface {
      
 }</pre>
 </source>
-
-<p>The code above receives a jpeg file and writes it to disk. 
-It returns zero on success and in the case of an error, returns -1 along with a stacktrace. Now lets define the client:</p>
-
+<p>The code above receives a jpeg file and writes it to disk. It returns zero
+on success and in the case of an error, returns -1 along with a stacktrace.
+Now lets define the client:</p>
 <source><pre>package client;
 
 import java.io.File;
@@ -584,31 +803,36 @@ public class MTOMXMLBeansClient {
         }
     }
 }</pre>
+
 </source>
-
-<p>The last step is to create an AAR with our Skeleton and the generated interface and services.xml, and then deploy the service. See the user guide for more info. </p>
-
+<p>The last step is to create an AAR with our Skeleton and the generated
+interface and services.xml, and then deploy the service. See the user guide
+for more info.</p>
 <a name="3"></a>
-<h2>SOAP with Attachments (SwA) with Axis2</h2>
 
+<h2>SOAP with Attachments (SwA) with Axis2</h2>
 <a name="31"></a>
+
 <h3>Receiving SwA type attachments</h3>
 
-<p>Axis2 automatically identifies SwA messages based on the content type. Axis2 stores the references 
-to the received attachment parts (MIME parts) in the Message Context. Axis2 preserves the order of the received attachments
- when storing them in the MessageContext. Users can access binary 
-attachments using the attachement API given in the Message Context using content-id of the mime part as the key. 
-Care needs be taken to rip off the "cid" prefix when content-id
-is taken from the "Href" attributes. Users can access the the message context from whithin a service 
-implementation class using the "setOperationContext()" method as shown in the following example.</p>
+<p>Axis2 automatically identifies SwA messages based on the content type.
+Axis2 stores the references to the received attachment parts (MIME parts) in
+the Message Context. Axis2 preserves the order of the received attachments
+when storing them in the MessageContext. Users can access binary attachments
+using the attachement API given in the Message Context using content-id of
+the mime part as the key. Care needs be taken to rip off the "cid" prefix
+when content-id is taken from the "Href" attributes. Users can access the the
+message context from whithin a service implementation class using the
+"setOperationContext()" method as shown in the following example.</p>
 
-<p>Note: Axis2 supports content-id based referencing only. Axis2 does not support
-Content Location based referencing of MIME parts.</p>
+<p>Note: Axis2 supports content-id based referencing only. Axis2 does not
+support Content Location based referencing of MIME parts.</p>
+
 <ul>
-  <li><strong>Sample service which accesses a received SwA type attachment</strong></li>
+  <li><strong>Sample service which accesses a received SwA type
+    attachment</strong></li>
 </ul>
-<source><pre>
-public class SwA {
+<source><pre>public class SwA {
     private OperationContext operationContext;
 
     public SwA() {
@@ -633,33 +857,34 @@ public class SwA {
         DataHandler dataHandler = attachment.getDataHandler(contentID);
         ...........
     }
-}
-</pre>
-</source>
+}</pre>
+</source><a name="32"></a>
 
-<a name="32"></a>
 <h3>Sending SwA Type Attachments</h3>
-<p>User need to set the "enableSwA" property to true in order to be able to send SwA
-messages. Axis2 user is <strong>not</strong> expected to enable MTOM & SwA together. 
-In such a situation MTOM will get priority over SwA. </p>
+
+<p>User need to set the "enableSwA" property to true in order to be able to
+send SwA messages. Axis2 user is <strong>not</strong> expected to enable MTOM
+&amp; SwA together. In such a situation MTOM will get priority over SwA.</p>
+
 <p>This can be set using the axis2.xml as follows.</p>
 <source><pre>  
-        &lt;parameter name="enableSwA" locked="false"&gt;true&lt;/parameter&gt;
-</pre></source>
-
+        &lt;parameter name="enableSwA" locked="false"&gt;true&lt;/parameter&gt;</pre>
+</source>
 <p>"enableSwA" can also be set using the client side Options as follows</p>
 <source><pre>  
-        options.setProperty(Constants.Configuration.ENABLE_SwA, Constants.VALUE_TRUE);
-</pre></source>
+        options.setProperty(Constants.Configuration.ENABLE_SwA, Constants.VALUE_TRUE);</pre>
+</source>
+<p>Users are expected to use the attachment API provided in the
+MessageContext to specify the binary attachments needed to be attached to the
+outgoing message as SwA type attachments. Client side SwA capability can be
+used only with the OperationClient api, since the user needs the ability to
+access the MessageContext.</p>
 
-<p> Users are expected to use the attachment API provided in the MessageContext to specify the 
-binary attachments needed to be attached to the outgoing message as SwA type attachments. Client side SwA capability 
-can be used only with the OperationClient api, since the user needs the ability to access the MessageContext.</p>
 <ul>
-  <li><strong>Sample client which sends a message with SwA type attachments</strong></li>
+  <li><strong>Sample client which sends a message with SwA type
+    attachments</strong></li>
 </ul>
-<source><pre>
-   public void uploadFileUsingSwA(String fileName) throws Exception {
+<source><pre>   public void uploadFileUsingSwA(String fileName) throws Exception {
 
         Options options = new Options();
         options.setTo(targetEPR);
@@ -680,12 +905,11 @@ can be used only with the OperationClient api, since the user needs the ability 
        
         mepClient.addMessageContext(mc);
         mepClient.execute(true);
-    }
-</pre>
-</source>
+    }</pre>
+</source><a name="33"></a>
 
-<a name="33"></a>
 <h3>MTOM Backward Compatibility with SwA</h3>
+
 <p>MTOM specification is designed to be backward compatible with the SOAP
 with Attachments specification. Even though the representation is different,
 both technologies have the same wire format. We can safely assume that any
@@ -693,7 +917,9 @@ SOAP with Attachments endpoint can accept a MTOM optimized messages and treat
 them as SOAP with Attachment messages - Any MTOM optimized message is a valid
 SwA message.</p>
 
-<p>Note : Above backword compatibility was succesfully tested against Axis 1.x</p>
+<p>Note : Above backword compatibility was succesfully tested against Axis
+1.x</p>
+
 <ul>
   <li><strong>A sample SwA message from Axis 1.x</strong></li>
 </ul>
@@ -710,6 +936,7 @@ Content-Id: &lt;9D645C8EBB837CE54ABD027A3659535D&gt;
 &lt;soapenv:Envelope xmlns:soapenv="...."....&gt;
     ........
                 &lt;source href="cid:3936AE19FBED55AE4620B81C73BDD76E" xmlns="/&gt;
+
     ........
 &lt;/soapenv:Envelope&gt;
 ------=_Part_0_1977511.1123163571138
@@ -722,6 +949,7 @@ Content-Id: &lt;3936AE19FBED55AE4620B81C73BDD76E&gt;
 </source><ul>
   <li><strong>Corresponding MTOM message from Axis2</strong></li>
 </ul>
+
 <source><pre>Content-Type: multipart/related; boundary=MIMEBoundary4A7AE55984E7438034;
                          type="application/xop+xml"; start="<0.09BC7F4BE2E4D3EF1B@apache.org>";
                          start-info="text/xml; charset=utf-8"
@@ -738,6 +966,7 @@ content-id: &lt;0.09BC7F4BE2E4D3EF1B@apache.org&gt;
                         xmlns:xop="http://www.w3.org/2004/08/xop/include"&gt;
          &lt;/xop:Include&gt;
   ........
+
 &lt;/soapenv:Envelope&gt;
 --MIMEBoundary4A7AE55984E7438034
 content-type: application/octet-stream
@@ -746,12 +975,11 @@ content-id: <1.A91D6D2E3D7AC4D580@apache.org>
 
 <em>Binary Data.....</em>
 --MIMEBoundary4A7AE55984E7438034--</pre>
-</source>
+</source><a name="4"></a>
 
-<a name="4"></a>
 <h2>Advanced Topics</h2>
-
 <a name="41"></a>
+
 <h3>File Caching for Attachments</h3>
 
 <p>Axis2 comes handy with a file caching mechanism for incoming attachments,
@@ -759,35 +987,35 @@ which gives Axis2 the ability to handle very large attachments without
 buffering them in memory at any time. Axis2 file caching streams the incoming
 MIME parts directly in to files, after reading the MIME part headers.</p>
 
-<p>Also a user can specify a size threshold for the File caching (in bytes). When this
-threshold value is specified, only the attachments whose size is bigger than
-the threshold value will get cached in files. Smaller attachments will remain
-in Memory.</p>
+<p>Also a user can specify a size threshold for the File caching (in bytes).
+When this threshold value is specified, only the attachments whose size is
+bigger than the threshold value will get cached in files. Smaller attachments
+will remain in Memory.</p>
 
 <p><em>NOTE</em> : It is a must to specify a directory to temporary store the
-attachments. Also care should be taken to <strong>clean that directory</strong> from time to
-time.</p>
+attachments. Also care should be taken to <strong>clean that
+directory</strong> from time to time.</p>
 
 <p>The following parameters need to be set in Axis2.xml in order to enable
 file caching.</p>
 <source><pre>&lt;axisconfig name="AxisJava2.0"&gt;
+
     &lt;!-- ================================================= --&gt;
     &lt;!-- Parameters --&gt;
     &lt;!-- ================================================= --&gt;
     &lt;parameter name="cacheAttachments" locked="false"&gt;true&lt;/parameter&gt;
     &lt;parameter name="attachmentDIR" locked="false"&gt;<em>temp directory</em>&lt;/parameter&gt;
+
     &lt;parameter name="sizeThreshold" locked="false"&gt;<em>4000</em>&lt;/parameter&gt;
     .........
     .........
 &lt;/axisconfig&gt;</pre>
 </source>
-<p>Enabling file caching for client side receiving can be done for the by setting the Options as follows.</p>
-<source><pre>
-options.setProperty(Constants.Configuration.CACHE_ATTACHMENTS,Constants.VALUE_TRUE);
+<p>Enabling file caching for client side receiving can be done for the by
+setting the Options as follows.</p>
+<source><pre>options.setProperty(Constants.Configuration.CACHE_ATTACHMENTS,Constants.VALUE_TRUE);
 options.setProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR,<em>TempDir</em>);
-options.setProperty(Constants.Configuration.FILE_SIZE_THRESHOLD, <em>"4000"</em>);
-</pre>
-</source>
-</body>
+options.setProperty(Constants.Configuration.FILE_SIZE_THRESHOLD, <em>"4000"</em>);</pre>
 
+</source></body>
 </html>
