@@ -53,7 +53,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
 
     protected void initializeDefaultSettings() {
         settings.put(JAVA_CLASS_NAME, "");
-        settings.put(JAVA_CLASS_PATH_ENTRIES, new String[]{});
+        settings.put(JAVA_CLASS_PATH_ENTRIES, new String[]{""});
     }
 
     /*
@@ -144,6 +144,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         javaClasspathList = new List(container,SWT.READ_ONLY | SWT.BORDER| SWT.V_SCROLL);
         javaClasspathList.setLayoutData(gd);
         javaClasspathList.setItems(settings.getArray(JAVA_CLASS_PATH_ENTRIES));
+        javaClasspathList.setSize(300, 300);
         container.redraw();
 
 
@@ -216,8 +217,10 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         DirectoryDialog fileDialog = new DirectoryDialog(this.getShell());
         String dirName = fileDialog.open();
         if (dirName != null) {
-        	javaClasspathList.add(dirName);
-        	updateListEntries();
+        	if (!checkFilenameExistsInList(dirName)){  
+        		javaClasspathList.add(dirName);
+        		updateListEntries();
+        	}
         }
         updateStatusTextField(false,"");
     }
@@ -246,10 +249,29 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         fileDialog.setFilterExtensions(new String[]{"*.jar"});
         String fileName = fileDialog.open();
         if (fileName != null) {
-        	javaClasspathList.add(fileName);
-        	updateListEntries();
+        	if (!checkFilenameExistsInList(fileName)){
+            	javaClasspathList.add(fileName);
+            	updateListEntries();
+        	}
         }
         updateStatusTextField(false,"");
+    }
+    
+    /**
+     * Method checks the list antries and compare that to the file name 
+     * return the results of the comparison
+     * @param filename
+     * @return
+     */
+    private boolean checkFilenameExistsInList(String filename){
+    	String[] array = javaClasspathList.getItems();
+
+    	for (int i = 0; i < array.length; i++) {
+			if (array[i].equals(filename)) {
+				return true;
+			}
+		}
+    	return false;
     }
     
     private void updateStatusTextField(boolean success,String text){
