@@ -246,6 +246,10 @@ public abstract class AxisDescription implements ParameterInclude,
      * 
      */
     public void applyPolicy() throws AxisFault {
+        
+        if (this instanceof AxisMessage) {
+            return;
+        }
 
         AxisConfiguration configuration = getAxisConfiguration();
         if (configuration == null) {
