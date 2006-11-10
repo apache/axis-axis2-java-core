@@ -22,16 +22,16 @@ import java.util.ArrayList;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.WebServiceException;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.DocLitWrappedMethodMarshaller;
-import org.apache.axis2.jaxws.marshaller.MarshalException;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
-import org.apache.axis2.jaxws.marshaller.UnmarshalException;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -58,14 +58,16 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#toJAXBObject(org.apache.axis2.jaxws.message.Message)
 	 */
 	@Override
-	public Object demarshalResponse(Message message, Object[] inputArgs) throws UnmarshalException {
-		if (log.isDebugEnabled()) {
-		    log.debug("Attempting to demarshal a document/literal wrapped response");
-        }
-        
-		String className = operationDesc.getResponseWrapperClassName();
-        Object businessObject = null;
+	public Object demarshalResponse(Message message, Object[] inputArgs) throws WebServiceException {
+		
         try {
+        	if (log.isDebugEnabled()) {
+    		    log.debug("Attempting to demarshal a document/literal wrapped response");
+            }
+            
+    		String className = operationDesc.getResponseWrapperClassName();
+            Object businessObject = null;
+            
             //TODO Move this to Operation Description.
             Class wrapperClazz = null;
             if (className == null || (className != null && className.length() == 0)) {
@@ -89,174 +91,160 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
             	Object resultObject = findProperty(resultName, businessObject);
             	return resultObject;
             }
+            return businessObject;
         } catch (Exception e) {
-            throw new UnmarshalException(e);
+        	// Firewall.  Only WebServiceExceptions are thrown
+            throw ExceptionFactory.makeWebServiceException(e);
         }
-        
-		return businessObject;
+       
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#toObjects(org.apache.axis2.jaxws.message.Message)
 	 */
 	@Override
-	public Object[] demarshalRequest(Message message) throws UnmarshalException {
-        String className = operationDesc.getRequestWrapperClassName();
+	public Object[] demarshalRequest(Message message) throws WebServiceException {
+		try {
+			String className = operationDesc.getRequestWrapperClassName();
 
-        ArrayList<MethodParameter> mps;
-        try {
-            Class requestWrapperClazz = loadClass(className);
-            Object jaxbObject = createBusinessObject(requestWrapperClazz, message);
-            
-            if (log.isDebugEnabled()) {
-                log.debug("reading input method parameters");
-            }
-      
-            mps = createParameterForSEIMethod(jaxbObject);
-        } catch (Exception e) {
-            throw new UnmarshalException(e);
-        }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("done reading input method parameters");
-        }
-        
-        Object[] contents = new Object[mps.size()];
-        int i =0;
-        for (MethodParameter mp:mps){
-        	contents[i++] =mp.getValue();
-        }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Object unwrapped");
-        }
-        
-        return contents;
+			ArrayList<MethodParameter> mps;
+
+			Class requestWrapperClazz = loadClass(className);
+			Object jaxbObject = createBusinessObject(requestWrapperClazz, message);
+
+			if (log.isDebugEnabled()) {
+				log.debug("reading input method parameters");
+			}
+
+			mps = createParameterForSEIMethod(jaxbObject);
+
+
+			if (log.isDebugEnabled()) {
+				log.debug("done reading input method parameters");
+			}
+
+			Object[] contents = new Object[mps.size()];
+			int i =0;
+			for (MethodParameter mp:mps){
+				contents[i++] =mp.getValue();
+			}
+
+			if (log.isDebugEnabled()) {
+				log.debug("Object unwrapped");
+			}
+
+			return contents;
+		} catch (Exception e) {
+			// Firewall.  Only WebServiceExceptions are thrown
+			throw ExceptionFactory.makeWebServiceException(e);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromJAXBObject(java.lang.Object)
 	 */
 	@Override
-	public Message marshalResponse(Object returnObject, Object[] holderObjects) throws MarshalException {
-		Class wrapperClazz = null;
-		String wrapperClazzName = operationDesc.getResponseWrapperClassName();
-        // TODO: (JLB) REVIEW: I changed this from getRequestWrapper to getRewponseWrapper...
-		String wrapperXMLElementName = operationDesc.getResponseWrapperLocalName();
-		String wrapperTNS = operationDesc.getResponseWrapperTargetNamespace();
-		String webResult = operationDesc.getResultName();
-		
-        try {
-            //TODO Move this to Operation Description.
-            if (wrapperClazzName == null || (wrapperClazzName != null && wrapperClazzName.length() == 0)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("No ResponseWrapper annotation found, using return type of method as response object");
-                }
-                wrapperClazz = getReturnType();
-            	wrapperClazzName = wrapperClazz.getName();
-            }
-            else {		
-                wrapperClazz = loadClass(wrapperClazzName);
-            }
-        } catch (ClassNotFoundException e) {
-            throw new MarshalException("Unable to load wrapper class", e);
-        }
-        
-		// Create all holders list
-		ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
-		ArrayList<Object> objectList = new ArrayList<Object>();
-		int index =0;
-		for(ParameterDescription pd:paramDescs){
-			Object value = holderObjects[index];
-			if(pd.isHolderType()){
-				objectList.add(value);
+	public Message marshalResponse(Object returnObject, Object[] holderObjects) throws WebServiceException {
+
+		try {
+			// Get the necessary information from the OperationDesc
+			Class wrapperClazz = null;
+			String wrapperClazzName = operationDesc.getResponseWrapperClassName();
+			String wrapperXMLElementName = operationDesc.getResponseWrapperLocalName();
+			String wrapperTNS = operationDesc.getResponseWrapperTargetNamespace();
+			String webResult = operationDesc.getResultName();
+
+			//TODO Move this to Operation Description.
+			if (wrapperClazzName == null || (wrapperClazzName != null && wrapperClazzName.length() == 0)) {
+				if (log.isDebugEnabled()) {
+					log.debug("No ResponseWrapper annotation found, using return type of method as response object");
+				}
+				wrapperClazz = getReturnType();
+				wrapperClazzName = wrapperClazz.getName();
 			}
-			index++;
+			else {		
+				wrapperClazz = loadClass(wrapperClazzName);
+			}
+
+
+			// Create all holders list
+			ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
+			ArrayList<Object> objectList = new ArrayList<Object>();
+			int index =0;
+			for(ParameterDescription pd:paramDescs){
+				Object value = holderObjects[index];
+				if(pd.isHolderType()){
+					objectList.add(value);
+				}
+				index++;
+			}
+
+			ArrayList<MethodParameter> mps = null;
+
+			mps = new ArrayList<MethodParameter>();
+			if(objectList.size() == 0 && wrapperClazz.getName().equals("void")){
+				//No holders and return type void example --> public void someMethod() I will return empty ResponseWrapper in message body for this case.
+				//doNothing as there is nothing to wrap
+			}
+			if(objectList.size() == 0 && !wrapperClazz.getName().equals("void")){
+				//No holders but a return type example --> public ReturnType someMethod()
+				mps = createResponseWrapperParameter(returnObject);
+			}
+			else{
+				//Holders found and return type or no return type. example --> public ReturnType someMethod(Holder<String>) or public void someMethod(Holder<String>)
+				mps = createResponseWrapperParameter(returnObject, objectList.toArray());
+			}
+
+			JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+			Object wrapper = wrapperTool.wrap(wrapperClazz, wrapperClazzName, mps);
+			Message message = createMessage(wrapper, wrapperClazz, wrapperXMLElementName, wrapperTNS);
+
+
+			return message;
+		} catch (Exception e) {
+			// Firewall.  Only WebServiceExceptions are thrown
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 
-        // No Holders found 
-        ArrayList<MethodParameter> mps = null;
-        try {
-            mps = new ArrayList<MethodParameter>();
-            if(objectList.size() == 0 && wrapperClazz.getName().equals("void")){
-            	//No holders and return type void example --> public void someMethod() I will return empty ResponseWrapper in message body for this case.
-            	//doNothing as there is nothing to wrap
-            }
-            if(objectList.size() == 0 && !wrapperClazz.getName().equals("void")){
-            	//No holders but a return type example --> public ReturnType someMethod()
-            	mps = createResponseWrapperParameter(returnObject);
-            }
-            else{
-            	//Holders found and return type or no return type. example --> public ReturnType someMethod(Holder<String>) or public void someMethod(Holder<String>)
-            	mps = createResponseWrapperParameter(returnObject, objectList.toArray());
-            }
-        } catch (IllegalAccessException e) {
-            throw new MarshalException("Unable to create method parameters list", e);
-        } catch (InstantiationException e) {
-            throw new MarshalException("Unable to create method parameters list", e);
-        } catch (ClassNotFoundException e) {
-            throw new MarshalException("Unable to create method parameters list", e);
-        }
-		
-        Message message;
-        try {
-            JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object wrapper = wrapperTool.wrap(wrapperClazz, wrapperClazzName, mps);
-            message = createMessage(wrapper, wrapperClazz, wrapperXMLElementName, wrapperTNS);
-        } catch (Exception e) {
-            throw new MarshalException(e);
-        }
-		
-        return message;
-		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromObjects(java.lang.Object[])
 	 */
 	@Override
-	public Message marshalRequest(Object[] objects) throws MarshalException {
-		String className = operationDesc.getRequestWrapperClassName();
-        String localName = operationDesc.getRequestWrapperLocalName();
-        String wrapperTNS = operationDesc.getRequestWrapperTargetNamespace();
-        
-        Class wrapperClazz = null;
-        try {
-            wrapperClazz = loadClass(className);
-        }
-        catch (ClassNotFoundException e) {
-            throw new MarshalException("Unable to load wrapper class.", e);
-        }
-		
-		//Get Name Value pair for input parameter Objects, skip AsyncHandler and identify Holders.
-		Object jaxbObject = null;
-        try {
-            ArrayList<MethodParameter> methodParameters = createRequestWrapperParameters(objects);
-            JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
-            if (log.isDebugEnabled()) {
-                log.debug("JAXBWrapperTool attempting to wrap propertes in WrapperClass :" + wrapperClazz);
-            }
+	public Message marshalRequest(Object[] objects) throws WebServiceException {
+		try {
+			String className = operationDesc.getRequestWrapperClassName();
+			String localName = operationDesc.getRequestWrapperLocalName();
+			String wrapperTNS = operationDesc.getRequestWrapperTargetNamespace();
 
-            jaxbObject = wrapTool.wrap(wrapperClazz, localName, methodParameters);
-            if (log.isDebugEnabled()) {
-                log.debug("JAXBWrapperTool wrapped following propertes :");
-            }
-        } catch (Exception e) {
-            throw new MarshalException(e);
-        }
-		
-		Message message = null;
-        try {
-            message = createMessage(jaxbObject, wrapperClazz, localName, wrapperTNS);
-        } catch (JAXBException e) {
-            throw new MarshalException(e);
-        } catch (MessageException e) {
-            throw new MarshalException(e);
-        } catch (XMLStreamException e) {
-            throw new MarshalException(e);
-        }
-        
-        return message;
+			Class wrapperClazz = null;
+
+			wrapperClazz = loadClass(className);
+
+			//Get Name Value pair for input parameter Objects, skip AsyncHandler and identify Holders.
+			Object jaxbObject = null;
+
+			ArrayList<MethodParameter> methodParameters = createRequestWrapperParameters(objects);
+			JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
+			if (log.isDebugEnabled()) {
+				log.debug("JAXBWrapperTool attempting to wrap propertes in WrapperClass :" + wrapperClazz);
+			}
+
+			jaxbObject = wrapTool.wrap(wrapperClazz, localName, methodParameters);
+			if (log.isDebugEnabled()) {
+				log.debug("JAXBWrapperTool wrapped following propertes :");
+			}
+
+			Message message = createMessage(jaxbObject, wrapperClazz, localName, wrapperTNS);
+
+
+			return message;
+
+		} catch (Exception e) {
+			// Firewall.  Only WebServiceExceptions are thrown
+			throw ExceptionFactory.makeWebServiceException(e);
+		}
 	}
 
     // FIXME: This is wrong.  We first need to get the ClassLoader from the 

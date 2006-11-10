@@ -107,9 +107,9 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             	// Normal Unmarshalling
             	jaxb = u.unmarshal(reader);
 				setQName(getQName(jaxb, ctx));
-			}else{
+			} else {
 				// Unmarshal as a JAXBElement and then get the value
-				JAXBElement jaxbElement = u.unmarshal(reader, ctx.getType());
+				JAXBElement jaxbElement = u.unmarshal(reader, ctx.getTypes()[0]); 
 				jaxb = jaxbElement.getValue();
 			}
             
@@ -174,7 +174,14 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 am.setMessage(msg);
                 m.setAttachmentMarshaller(am);
             }   
-            m.marshal(busObject, writer);
+            if (busObject instanceof JAXBElement) {
+            	m.marshal(busObject, writer);
+            } else {
+            	JAXBElement b = new JAXBElement(this.getQName(), busObject.getClass(), busObject);
+            	m.marshal(b, writer);
+            }
+            
+            
             
             // Successfully marshalled the data
             // TODO remove attachment marshaller ?

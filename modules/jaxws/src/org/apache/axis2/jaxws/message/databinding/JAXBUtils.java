@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.message.databinding;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -84,9 +85,10 @@ public class JAXBUtils {
 	 * @return JAXBContext
 	 * @throws JAXBException
 	 */
-	public static JAXBContext getJAXBContext(Class cls) throws JAXBException {
+	public static JAXBContext getJAXBContext(Class[] classes) throws JAXBException {
 		// JAXBContexts for the same class can be reused and are supposed to be thread-safe
 		// TODO Can we cache by package name ?
+		Class cls = classes[0];
         if (cls.isPrimitive()) {
             return getGenericJAXBContext();
         }
@@ -94,22 +96,22 @@ public class JAXBUtils {
 		if (context == null) {
             synchronized(map) {
                 try{
-                	Package pkg = cls.getPackage();
-                	if (log.isDebugEnabled()) {
-                        log.debug("Package for " + cls.getName() + " "+pkg.getName());
-                    }
-                	if (log.isDebugEnabled()) {
-                        log.debug("Attempting to read all classes from package " + pkg.getName());
-                    }
-                	List<Class> classList = ClassUtils.getAllClassesFromPackage(pkg.getName());
-                	Class[] classes = classList.toArray(new Class[0]);
-                	if (log.isDebugEnabled()) {
-                        log.debug("All classes from package " + pkg.getName() + "[read].");
-                    }
-                	if (log.isDebugEnabled()) {
-                        log.debug("Attempting to create JAXBContext for " + cls.getName());
-                    }
-                	context = JAXBContext.newInstance(classes);
+                	// TODO
+                	// For now we are generating a list of all of the classes in each
+                	// of the referenced packages.  We have plans to use a contextPath instead
+                	List<Class> fullList = new ArrayList<Class>();
+                	for (int i=0; i<classes.length; i++) {
+                		Package pkg = classes[i].getPackage();
+                		if (log.isDebugEnabled()) {
+                			log.debug("Package for " + classes[i].getName() + " "+pkg.getName());
+                		}
+                		if (log.isDebugEnabled()) {
+                			log.debug("Attempting to read all classes from package " + pkg.getName());
+                		}
+                		fullList.addAll(ClassUtils.getAllClassesFromPackage(pkg.getName()));
+                	}
+                	Class[] classArray = fullList.toArray(new Class[0]);
+                	context = JAXBContext.newInstance(classArray);
                     map.put(cls.getName(), context);	
                 }catch(ClassNotFoundException e){
                 	throw new JAXBException(e);

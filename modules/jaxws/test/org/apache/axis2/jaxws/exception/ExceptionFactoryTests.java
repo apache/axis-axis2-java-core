@@ -88,8 +88,8 @@ public class ExceptionFactoryTests extends TestCase {
     		throw ExceptionFactory.makeWebServiceException(wse);
     	} catch(WebServiceException e){
     		// Should only be a single WebServiceException with a Protocol Exception
-    		assertTrue(e.getMessage() == null);
     		assertTrue(e.getCause() == npe);
+    		assertTrue(e.getCause().getMessage() == null);
     	}
     }
     

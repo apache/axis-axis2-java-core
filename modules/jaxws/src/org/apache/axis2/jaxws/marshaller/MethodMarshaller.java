@@ -18,11 +18,15 @@
  */
 package org.apache.axis2.jaxws.marshaller;
 
+import javax.xml.ws.WebServiceException;
+
 import org.apache.axis2.jaxws.message.Message;
 
 /**
- * This is a helper class that converts org.apache.axis2.jaxws.message.Message to java Objects
- * or JAXBObject. It also converts java objects or JAXBObject to org.apache.axis2.jaxws.message.Message.
+ * This class marshals and unmarshals method invocations.
+ * 
+ * If there are any problems, a WebServiceException is thrown.  (Each of the methods is guranteed to catch any unchecked exception and wrap
+ * it in a WebServiceException).
  */
 public interface MethodMarshaller {
 	
@@ -42,7 +46,7 @@ public interface MethodMarshaller {
 	 * @param object
 	 * @return
 	 */
-	public Message marshalRequest(Object[] object) throws MarshalException; 
+	public Message marshalRequest(Object[] object) throws WebServiceException; 
 	
 	/**
 	 * This method creates Message from a returnObject and input parameters of holder type. This is a case where we have method with return
@@ -50,7 +54,7 @@ public interface MethodMarshaller {
 	 * @param jaxbObject
 	 * @return
 	 */
-	public Message marshalResponse(Object returnObject, Object[] holderObjects)throws MarshalException;
+	public Message marshalResponse(Object returnObject, Object[] holderObjects)throws WebServiceException;
 	
 	/**
 	 * This method creates Fault Message from a Throbale input parameter. 
@@ -58,14 +62,14 @@ public interface MethodMarshaller {
 	 * @param jaxbObject
 	 * @return
 	 */
-	public Message marshalFaultResponse(Throwable throwable) throws MarshalException;
+	public Message marshalFaultResponse(Throwable throwable) throws WebServiceException;
 	/**
 	 * This method converts Message to java objects. Used on Server Side to this extract method input parameters from message and invokes method on service
 	 * with found input parameters on ServiceEndpoint.
 	 * @param message
 	 * @return
 	 */
-	public Object[] demarshalRequest(Message message)throws UnmarshalException;
+	public Object[] demarshalRequest(Message message)throws WebServiceException;
 	
 	/**
 	 * This method converts Message to Object. Used on Client side when converting response message from Server to ResponseWrapper/return type of method that
@@ -83,14 +87,14 @@ public interface MethodMarshaller {
 	 * @param message
 	 * @return
 	 */
-	public Object demarshalResponse(Message message, Object[] inputArgs) throws UnmarshalException;
+	public Object demarshalResponse(Message message, Object[] inputArgs) throws WebServiceException;
 	
     /**
 	 * This method converts Fault Message to fault java objects. Used on Client Side to extract Fault Object expected by client from message.
 	 * @param message
 	 * @return
 	 */
-	public Object demarshalFaultResponse(Message message) throws UnmarshalException;
+	public Object demarshalFaultResponse(Message message) throws WebServiceException;
 	
 	
 }

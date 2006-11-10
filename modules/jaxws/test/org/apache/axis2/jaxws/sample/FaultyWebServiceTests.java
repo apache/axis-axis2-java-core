@@ -77,7 +77,7 @@ public class FaultyWebServiceTests extends TestCase {
         
         assertNotNull(exception);
         assertTrue(exception.getCause() instanceof UnknownHostException);
-        assertEquals(exception.getMessage(), host);
+        assertEquals(exception.getCause().getMessage(), host);
 
     }
 
@@ -112,7 +112,7 @@ public class FaultyWebServiceTests extends TestCase {
         
         assertNotNull(exception);
         assertTrue(exception.getCause() instanceof UnknownHostException);
-        assertEquals(exception.getMessage(), host);
+        assertEquals(exception.getCause().getMessage(), host);
         
     }
     

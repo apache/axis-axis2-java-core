@@ -56,10 +56,12 @@ import org.apache.axis2.jaxws.proxy.ProxyNonWrappedTests;
 import org.apache.axis2.jaxws.proxy.ProxyTests;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
+import org.apache.axis2.jaxws.sample.FaultsServiceTests;
 import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
+import org.apache.axis2.jaxws.sample.faultsservice.FaultsService;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
 import org.apache.log4j.BasicConfigurator;
 
@@ -67,7 +69,7 @@ public class JAXWSTest extends TestCase {
     
     static {
         // Enable debug
-        // BasicConfigurator.configure();
+        //BasicConfigurator.configure();
     }
     
     /**
@@ -121,9 +123,13 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(NonAnonymousComplexTypeTests.class);
         suite.addTestSuite(AddNumbersTests.class);
         suite.addTestSuite(FaultyWebServiceTests.class);
+        
+        // TODO don't enable until working:
+        //suite.addTestSuite(FaultsServiceTests.class);
+
         suite.addTestSuite(EndpointLifecycleTests.class);
         suite.addTestSuite(ResourceInjectionTests.class);
-        
+
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {

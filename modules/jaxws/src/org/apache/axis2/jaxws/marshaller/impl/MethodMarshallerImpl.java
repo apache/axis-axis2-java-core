@@ -37,6 +37,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Holder;
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -47,10 +48,8 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.ClassUtils;
-import org.apache.axis2.jaxws.marshaller.MarshalException;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
-import org.apache.axis2.jaxws.marshaller.UnmarshalException;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -84,60 +83,83 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		this.protocol = protocol;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.helper.XMLMessageConvertor#toJAXBObject(org.apache.axis2.jaxws.message.Message)
-	 */
-	public abstract Object demarshalResponse(Message message, Object[] inputArgs) throws UnmarshalException; 
-
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.helper.XMLMessageConvertor#toObjects(org.apache.axis2.jaxws.message.Message)
-	 */
-	public abstract Object[] demarshalRequest(Message message) throws UnmarshalException;
-
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.helper.XMLMessageConvertor#fromJAXBObject(java.lang.Object)
-	 */
-	public abstract Message marshalResponse(Object returnObject, Object[] holderObjects)throws MarshalException; 
 	
 	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.helper.XMLMessageConvertor#fromObjects(java.lang.Object[])
+	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#demarshalResponse(org.apache.axis2.jaxws.message.Message, java.lang.Object[])
 	 */
-	public abstract Message marshalRequest(Object[] object)throws MarshalException; 
+	public abstract Object demarshalResponse(Message message, Object[] inputArgs) throws WebServiceException; 
+
+	
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#demarshalRequest(org.apache.axis2.jaxws.message.Message)
+	 */
+	public abstract Object[] demarshalRequest(Message message) throws WebServiceException;
+
+	
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalResponse(java.lang.Object, java.lang.Object[])
+	 */
+	public abstract Message marshalResponse(Object returnObject, Object[] holderObjects)throws WebServiceException; 
+	
+	
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalRequest(java.lang.Object[])
+	 */
+	public abstract Message marshalRequest(Object[] object)throws WebServiceException; 
 	
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#demarshalFaultResponse(org.apache.axis2.jaxws.message.Message)
 	 */
-	public Object demarshalFaultResponse(Message message) throws UnmarshalException {
+	public Object demarshalFaultResponse(Message message) throws WebServiceException {
 		
 		Exception exception = null;
         
 		try {
+			// Get the fault from the message and get the detail blocks (probably one)
 			XMLFault xmlfault = message.getXMLFault();
-			//Class beanclass = (jaxbClassName == null || jaxbClassName.length() ==0 || className == null || className.length() == 0) ? null : loadClass(jaxbClassName);
 			Block[] blocks = xmlfault.getDetailBlocks();
             
+			
 			if ((operationDesc.getFaultDescriptions().length == 0) || (blocks == null)) {
+				// This is a system exception if the method does not throw a checked exception or if 
+				// there is nothing in the detail element.
 				exception = createGenericException(xmlfault.getReason()
 						.getText());
 			} else {
-                for(FaultDescription fd: operationDesc.getFaultDescriptions()) {
-                    for (Block block: blocks) {
-                        Object obj = createFaultBusinessObject(loadClass(fd.getFaultBean()), block);
-                        if (obj.getClass().getName().equals(fd.getFaultBean())) {
-                            // create the exception we actually want to throw
-                            Class exceptionclass = loadClass(fd.getExceptionClassName());
-                            return createCustomException(xmlfault.getReason().getText(), exceptionclass, obj);
-                        }
-                    }
-                }
-                // if we get out of the for loop without returning anything, that means an endpoint
-                // has thrown a custom exception that doesn't have an annotation -- that's illegal!
-                exception = ExceptionFactory.makeWebServiceException("Endpoint has thrown a custom exception that has no annotation.");
+				// Create a JAXBContext object that can handle any of the 
+				// checked exceptions defined on this operation
+				Class[] classes = new Class[operationDesc.getFaultDescriptions().length];
+				for(int i=0; i<operationDesc.getFaultDescriptions().length; i++) {
+					FaultDescription fd = operationDesc.getFaultDescriptions()[i];
+					classes[i] = loadClass(fd.getFaultBean());
+				}
+				
+				// TODO what if there are multiple blocks in the detail ?
+				// We should create a generic fault with the appropriate detail
+				Block block = blocks[0];
+				
+				// Now demarshal the block to get a business object (faultbean)
+				Object obj = createFaultBusinessObject(classes, block);
+				
+				// Find the JAX-WS exception that can except this kind of fault bean
+				Class exceptionClass = null;
+				for(int i=0; i<operationDesc.getFaultDescriptions().length && exceptionClass == null; i++) {
+					FaultDescription fd = operationDesc.getFaultDescriptions()[i];
+					Class expectedFaultBean = loadClass(fd.getFaultBean());
+					if (expectedFaultBean.isAssignableFrom(obj.getClass())) {
+						exceptionClass = loadClass(fd.getExceptionClassName());
+					}
+				}
+				
+				// Now create the JAX-WS Exception class 
+				if (exceptionClass == null) {
+					throw ExceptionFactory.makeWebServiceException(Messages.getMessage("MethodMarshallerErr1", obj.getClass().toString()));
+				}
+                return createCustomException(xmlfault.getReason().getText(), exceptionClass, obj);
 			}
 		} catch (Exception e) {
-			// TODO if we have problems creating the exception object, we'll end up here,
-            // where we should return at least a meaningfull exception to the user
-			exception = ExceptionFactory.makeWebServiceException(e.toString());
+			// Catch all nested exceptions and throw WebServiceException
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 
 		return exception;
@@ -146,42 +168,41 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalFaultResponse(java.lang.Throwable)
 	 */
-	public Message marshalFaultResponse(Throwable throwable) throws MarshalException {
-		Throwable t = ClassUtils.getRootCause(throwable);
-		
-        FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getName());
+	public Message marshalFaultResponse(Throwable throwable) throws WebServiceException {
+		try {
+			Throwable t = ClassUtils.getRootCause(throwable);
 
-		// if faultClazzName is still null, don't create a detail block.  If it's non-null, we need a detail block.
-		XMLFault xmlfault = null;
-        ArrayList<Block> detailBlocks = new ArrayList<Block>();
-        
-        Message message = null;
-        try {
-            String text = null;
-            if (fd != null) {
+			XMLFault xmlfault = null;
+			
+			Message message = createEmptyMessage();
+			
+			// Get the FaultDescriptor matching this Exception.
+			// If FaultDescriptor is found, this is a JAX-B Service Exception.
+			// If not found, this is a System Exception
+			FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getName());
+
+			String text = null;
+			if (fd != null) {
+				// Service Exception.  Create an XMLFault with the fault bean
             	Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
             	Object faultBean = getFaultInfo.invoke(t, null);
-            	Class faultClazz = loadClass(fd.getFaultBean());
-            	JAXBBlockContext context = createJAXBBlockContext(faultClazz);
-            	detailBlocks.add(createJAXBBlock(faultBean, context));
+            	JAXBBlockContext context = createJAXBBlockContext(faultBean.getClass());
+            	Block[] detailBlocks = new Block[1];
+            	detailBlocks[0] = createJAXBBlock(faultBean, context);
                 text = t.getMessage();
+                xmlfault = new XMLFault(null, new XMLFaultReason(text), detailBlocks);
             } else {
-                // TODO probably want to set text to the stacktrace
-                text = t.toString();
+                // System Exception
+            	xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
+                        new XMLFaultReason(text));  // Assumes text is the language supported by the current Locale
             }
-            xmlfault = new XMLFault(null, // Use the default XMLFaultCode
-                        new XMLFaultReason(text),  // Assumes text is the language supported by the current Locale
-                        detailBlocks.toArray(new Block[0]));
-            		
-            message = createEmptyMessage();
+			// Add the fault to the message
             message.setXMLFault(xmlfault);
+            return message;
         } catch (Exception e) {
-            throw new MarshalException(e);
+        	// Catch all nested exceptions and throw WebServiceException
+			throw ExceptionFactory.makeWebServiceException(e);
         }
-		
-		return message;
-		
-		//throw new UnsupportedOperationException();
 	}
 		
 	/*
@@ -891,10 +912,17 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return blockContext;
 	}
 
-	protected Object createFaultBusinessObject(Class jaxbClazz, Block block)
+	/**
+	 * @param possibleClasses
+	 * @param block
+	 * @return
+	 * @throws JAXBException
+	 * @throws MessageException
+	 * @throws XMLStreamException
+	 */
+	protected Object createFaultBusinessObject(Class[] possibleClasses, Block block)
 			throws JAXBException, MessageException, XMLStreamException {
-		JAXBBlockContext blockContext = createJAXBBlockContext(jaxbClazz);
-		
+		JAXBBlockContext blockContext = new JAXBBlockContext(possibleClasses, false);		
 		// Get a JAXBBlockFactory instance. 
         JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
         

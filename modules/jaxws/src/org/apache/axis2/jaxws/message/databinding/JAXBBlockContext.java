@@ -22,13 +22,13 @@ import javax.xml.bind.JAXBException;
 /*
  * A JAXBBlockContext controls access to the JAXB Context/Marshal/Unmarshal code.
  * In addition the JAXBBlockContext contains additional contextural information needed
- * by the JAX-WS component (i.e. the type of the object)
+ * by the JAX-WS component (i.e. the possible type(s) of the object)
  * 
  * This class is immutable after construction.
  */
 public class JAXBBlockContext {
 
-	private Class type = null;
+	private Class[] types = null;
 	private JAXBContext jaxbContext = null;
 	private boolean useJAXBElement = false;
 	
@@ -58,7 +58,21 @@ public class JAXBBlockContext {
 	 * @param jaxbContext
 	 */
 	public JAXBBlockContext(Class type, boolean useJAXBElement, JAXBContext jaxbContext) {
-		this.type = type;
+		this.types = new Class[] {type};
+		this.useJAXBElement = useJAXBElement;
+		this.jaxbContext = jaxbContext;
+	}
+	
+	/**
+	 * Constructor JAXBBlockContext
+	 * @param types Class[] object that represents the actual type of the object.
+	 * @param useJAXBElement boolean indicating whether the object should be rendered
+	 * as a JAXBElement.
+	 * 
+	 * This constructor is used when the demarshalling exceptions.
+	 */
+	public JAXBBlockContext(Class[] types, boolean useJAXBElement) {
+		this.types = types;
 		this.useJAXBElement = useJAXBElement;
 		this.jaxbContext = jaxbContext;
 	}
@@ -66,8 +80,8 @@ public class JAXBBlockContext {
 	/**
 	 * @return Class representing type of the element
 	 */
-	public Class getType() {
-		return type;
+	public Class[] getTypes() {
+		return types;
 	}
 
 	/**
@@ -84,9 +98,9 @@ public class JAXBBlockContext {
 	public JAXBContext getJAXBContext() throws JAXBException {
 		if (jaxbContext == null) {	
 			if (!useJAXBElement) {
-				jaxbContext = JAXBUtils.getJAXBContext(type);
+				jaxbContext = JAXBUtils.getJAXBContext(types);
 			} else {
-				jaxbContext = JAXBUtils.getJAXBContext(type);
+				jaxbContext = JAXBUtils.getJAXBContext(types);
 			}
 		}
 		return jaxbContext;
