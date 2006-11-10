@@ -29,6 +29,11 @@ failure SimplifiedSpellCheck echo sends back the phrase (sent for spell check) i
 an error. Therefore, if the spell check editor just outputs the input words/phrase, that is because
 of this behavior of the SimplifiedSpellCheck service.
 
+Help
+====
+Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
+
+
 
 
 

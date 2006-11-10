@@ -1,5 +1,5 @@
-Sample: JMS
-===========
+POJO Web Services using Apache Axis2- Sample 2
+==============================================
 
 Introduction
 ============
@@ -13,7 +13,7 @@ Apache Ant 1.6.2 or later
 Building the Service
 ====================
 
-Type "ant" from Axis2_HOME/samples/jms directory.
+Type "ant" from Axis2_HOME/samples/pojoguidespring directory.
 
 
 Running the Client

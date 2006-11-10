@@ -1,5 +1,5 @@
-Sample: JMS
-===========
+Axis2 User's Guide Sample
+===================
 
 Introduction
 ============
@@ -13,7 +13,7 @@ Apache Ant 1.6.2 or later
 Building the Service
 ====================
 
-Type "ant" from Axis2_HOME/samples/jms directory.
+Type "ant" from Axis2_HOME/samples/userguide directory.
 
 
 Running the Client

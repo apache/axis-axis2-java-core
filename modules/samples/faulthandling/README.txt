@@ -41,3 +41,7 @@ When you call ant run.client with parameters, before running client/src/example/
 Advanced Guide
 ==============
 For more details kindly see doc/FaultHandlingSampleGuide.html
+
+Help
+====
+Please contact axis-user list (axis-user@ws.apache.org) if you have any trouble running the sample.
