@@ -25,6 +25,7 @@ import java.util.List;
 import javax.activation.DataHandler;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPEnvelope;
@@ -47,6 +48,7 @@ import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
@@ -192,6 +194,13 @@ public class MessageImpl implements Message {
             
             // At this point the XMLPart is still an OMElement.  We need to change it to the new SOAPEnvelope.
 			createXMLPart(soapMessage.getSOAPPart().getEnvelope());
+            
+            // Now add the attachments to the SOAPMessage
+            Iterator it = getAttachments().iterator();
+            while (it.hasNext()) {
+                AttachmentPart ap = MessageUtils.createAttachmentPart((Attachment)it.next(), soapMessage);
+                soapMessage.addAttachmentPart(ap);
+            }
             
             return soapMessage;
 		} catch (Exception e) {

@@ -29,6 +29,11 @@ public class AttachmentImpl implements Attachment {
     private DataHandler dh;
     private MimeHeaders mimeHeaders = new MimeHeaders(); 
     
+    /**
+     * Constructor
+     * @param dh DataHandler
+     * @param id Content ID
+     */
     AttachmentImpl(DataHandler dh, String id) {
         setDataHandler(dh);
         setContentID(id);

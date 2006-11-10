@@ -71,8 +71,14 @@ public class JAXBAttachmentMarshaller extends AttachmentMarshaller {
     }
 
     @Override
-    public String addSwaRefAttachment(DataHandler arg0) {
-        throw new UnsupportedOperationException("SwaRef attachments are not supported.");
+    public String addSwaRefAttachment(DataHandler data) {
+        if (log.isDebugEnabled()) 
+            log.debug("Adding SWARef attachment");
+        
+        String cid = UUIDGenerator.getUUID();
+        Attachment a = message.createAttachment(data, cid);
+        message.addAttachment(a);
+        return cid;
     }
     
 }

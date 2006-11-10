@@ -57,6 +57,9 @@ public class AttachmentUtils {
      */
     private static void findXopElements(OMElement root, ArrayList<OMElement> xops) {
         
+        //      Forces a parse.  This seems to be necessary due to bugs in OMNavigator
+        root.getNextOMSibling();
+        
         // Navigator does a traversal that mimics the structure of an xml document. 
         // Each non-element object is processed once.
         // Each element object is visited prior to its children and after its children.
@@ -77,7 +80,7 @@ public class AttachmentUtils {
     	
     	while (nav.isNavigable()) {
     		OMNode curr = nav.next();
-            
+ 
             // Inspect elements that have been visited. 
             // It is probably safer to inspect the node when it is visited, because this guarantees that its
             // children have been processed/expanded.
@@ -132,6 +135,8 @@ public class AttachmentUtils {
      */
     private static void findBinaryElements(OMNode node, ArrayList<OMText> attachments) {
         
+        // Forces a parse.  This seems to be necessary due to bugs in OMNavigator
+        node.getNextOMSibling();
     	
         // Navigator does a traversal that mimics the structure of an xml document. 
         // Each non-element object is processed once.
@@ -150,7 +155,7 @@ public class AttachmentUtils {
         // is A B D D' e B' C F F' g C' A'
         // The ' indicates that this is the second time the node is visited (i.e. nav.isVisited() returns true)
     	OMNavigator nav = new OMNavigator(node);
-    	
+    
     	while (nav.isNavigable()) {
     		OMNode curr = nav.next();
     		if (curr instanceof OMText) {
