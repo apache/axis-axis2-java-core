@@ -177,7 +177,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         
         dispatch.setServiceClient(serviceClient);
         dispatch.setServiceDelegate(this);
-    	
+    	dispatch.setType(clazz);
         return dispatch;        
     }
     

@@ -23,6 +23,8 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
+import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
+
 public class StringProviderTests extends ProviderTestCase {
 
     String endpointUrl = "http://localhost:8080/axis2/services/StringProviderService";
@@ -55,4 +57,26 @@ public class StringProviderTests extends ProviderTestCase {
         String retVal = dispatch.invoke(xmlString);
         System.out.println(">> Response [" + retVal + "]");
     }
+    
+    public void testSyncPayloadModeWithNull() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Service svc = Service.create(serviceName);
+        svc.addPort(portName, null, endpointUrl);
+        
+        Dispatch<String> dispatch = svc
+                .createDispatch(portName, String.class, Service.Mode.PAYLOAD);
+        
+        System.out.println(">> Invoking Dispatch<String> StringProviderService");
+        dispatch.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+        dispatch.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,"echoString");
+        // Invoke the Dispatch
+        System.out.println(">> Invoking sync Dispatch With Null Object");
+        String response = dispatch.invoke(null);
+
+        assertNotNull("dispatch invoke returned null", response);
+        System.out.println(response);
+        
+	}
 }

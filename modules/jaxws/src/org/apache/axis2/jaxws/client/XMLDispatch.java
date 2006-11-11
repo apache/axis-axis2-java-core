@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.client;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.ws.Service.Mode;
 
@@ -28,6 +29,7 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -40,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class XMLDispatch<T> extends BaseDispatch<T> {
     private static final Log log = LogFactory.getLog(XMLDispatch.class);
-    
+    private static QName SOAPENV_QNAME = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
     private Class type;
     private Class blockFactoryType;
     
@@ -68,14 +70,29 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     }
     
     public Message createMessageFromValue(Object value) {
-        type = value.getClass();
-        if (log.isDebugEnabled()) {
-            log.debug("Parameter type: " + type.getName());
-            log.debug("Message mode: " + mode.name());
-        }
-        
+    	if(value!=null){
+	        type = value.getClass();
+	        if (log.isDebugEnabled()) {
+	            log.debug("Parameter type: " + type.getName());
+	            log.debug("Message mode: " + mode.name());
+	        }
+    	}else{
+    		if (log.isDebugEnabled()) {
+    			log.debug("Dispatch invoked with null parameter Value");
+    			log.debug("creating empty soap message");
+    		}
+    		try{
+    			blockFactoryType = getBlockFactory();
+    			return createEmptyMessage(Protocol.getProtocolForBinding(port.getBindingID()));
+    			
+    		}catch(MessageException e){
+    			throw ExceptionFactory.makeWebServiceException(e);
+    		}catch(XMLStreamException e){
+    			throw ExceptionFactory.makeWebServiceException(e);
+    		}
+    		
+    	}
         Block block = null;
-        
         blockFactoryType = getBlockFactory(value);
         BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
         if (log.isDebugEnabled()) {
@@ -200,4 +217,43 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         }
         return null;
     }
+    
+    private Class getBlockFactory() {
+    	
+        if (String.class.isAssignableFrom(type)) {
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning XMLStringBlockFactory");
+            }
+            return XMLStringBlockFactory.class;
+        }
+        else if (Source.class.isAssignableFrom(type)) {
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning SourceBlockFactory");
+            }
+            return SourceBlockFactory.class;
+        }
+        else if (SOAPMessage.class.isAssignableFrom(type)) {
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning SOAPMessageFactory");
+            }
+            return SOAPEnvelopeBlockFactory.class;
+        } 
+        else if (SOAPEnvelope.class.isAssignableFrom(type)) {
+            if (log.isDebugEnabled()) {
+                log.debug(">> returning SOAPEnvelope");
+            }
+            return SOAPEnvelopeBlockFactory.class;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(">> ERROR: Factory not found");
+        }
+        return null;
+    }
+    private Message createEmptyMessage(Protocol protocol)throws MessageException, XMLStreamException{
+    	MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+    	Message m = mf.create(protocol);
+    	return m;
+    }
+   
+   
 }

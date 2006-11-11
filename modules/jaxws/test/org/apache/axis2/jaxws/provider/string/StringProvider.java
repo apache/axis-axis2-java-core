@@ -23,7 +23,7 @@ import javax.xml.ws.WebServiceProvider;
 public class StringProvider implements Provider<String> {
 
     private static String responseGood = "<provider><message>request processed</message></provider>";
-    private static String responseBad  = "<provider><message>ERROR:null request received</message><provider>";
+    private static String responseBad  = "<provider><message>ERROR:null request received</message></provider>";
     
     public String invoke(String obj) {
         if (obj != null) {

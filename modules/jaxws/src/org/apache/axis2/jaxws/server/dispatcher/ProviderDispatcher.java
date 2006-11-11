@@ -141,20 +141,30 @@ public class ProviderDispatcher extends JavaDispatcher{
             }
             else {
                 // If it is not MESSAGE, then it is PAYLOAD (which is the default); only work with the body 
-                Block block = message.getBodyBlock(0, null, factory);
-                requestParamValue = block.getBusinessObject(true);
-            }
+            	if(message.getNumBodyBlocks()!=0){
+            		Block block = message.getBodyBlock(0, null, factory);
+            		requestParamValue = block.getBusinessObject(true);
+            	}else{
+            		if(log.isDebugEnabled()){
+            			log.debug("No body blocks in SOAPMessage, Calling provider method with null input parameters");
+            		}
+            		requestParamValue = null;
+            	}
+           }
         }
 
         if (log.isDebugEnabled())
             log.debug("Provider Type = " + providerType + "; parameter type = " + requestParamValue);
         
         final Object input = providerType.cast(requestParamValue);
-        if (log.isDebugEnabled()) {
+        if (input!=null && log.isDebugEnabled()) {
             log.debug("Invoking Provider<" + providerType.getName() + "> with " +
                     "parameter of type " + input.getClass().getName());
         }
-
+        if(input == null && log.isDebugEnabled()){
+        	log.debug("Invoking Provider<" + providerType.getName() + "> with " +
+                    "NULL input parameter");
+        }
 
         // Invoke the actual Provider.invoke() method
         Object responseParamValue = null;
