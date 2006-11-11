@@ -19,6 +19,8 @@
 package org.apache.axis2.jaxws.marshaller.impl;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -32,6 +34,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.DocLitWrappedMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Block;
@@ -43,6 +46,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
+import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -202,8 +206,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 				mps = createResponseWrapperParameter(returnObject, objectList.toArray());
 			}
 
-			JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-			Object wrapper = wrapperTool.wrap(wrapperClazz, mps);
+			Object wrapper = wrap(wrapperClazz, mps);
 			
             // If the wrapper class does not represent an root element, then make
             // the appropriate JAXBElement
@@ -240,15 +243,9 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			Object jaxbObject = null;
 
 			ArrayList<MethodParameter> methodParameters = createRequestWrapperParameters(objects);
-			JAXBWrapperTool wrapTool = new JAXBWrapperToolImpl();
-			if (log.isDebugEnabled()) {
-				log.debug("JAXBWrapperTool attempting to wrap propertes in WrapperClass :" + wrapperClazz);
-			}
 
-			jaxbObject = wrapTool.wrap(wrapperClazz, methodParameters);
-			if (log.isDebugEnabled()) {
-				log.debug("JAXBWrapperTool wrapped following propertes :");
-			}
+			jaxbObject = wrap(wrapperClazz, methodParameters);
+			
 
             // If the wrapper class does not represent an root element, then make
             // the appropriate JAXBElement
@@ -304,4 +301,35 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
             m.setBodyBlock(0,bodyBlock);
             return m;
         }
+    
+    private Object wrap(Class jaxbClass, ArrayList<MethodParameter> mps) throws JAXBWrapperException{
+        if (log.isDebugEnabled()) {
+            log.debug("start: Create Doc Lit Wrapper");
+        }
+        if(mps == null){
+            throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr7"));
+        }
+        ArrayList<String> nameList = new ArrayList<String>();
+        Map<String, Object> objectList = new WeakHashMap<String, Object>();
+        for(MethodParameter mp:mps){
+            ParameterDescription pd = mp.getParameterDescription();
+            String name = null;
+            if(!mp.isWebResult()){
+                name = pd.getParameterName();
+            }else{
+                name = mp.getWebResultName();
+            }
+            Object object = mp.getValue();
+            
+            nameList.add(name);
+            objectList.put(name, object);
+        }
+        JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+
+        Object wrapper  = wrapperTool.wrap(jaxbClass, nameList, objectList);
+        if (log.isDebugEnabled()) {
+            log.debug("end: Create Doc Lit Wrapper");
+        }
+        return wrapper;
+    }
 }
