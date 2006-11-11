@@ -18,8 +18,14 @@ public class WeatherRPCClient {
 
         Options options = serviceClient.getOptions();
 
-        EndpointReference targetEPR = new EndpointReference(
-                "http://localhost:8080/axis2/services/WeatherService");
+        EndpointReference targetEPR;
+        
+        if (args1 != null && args1.length != 0) {
+            targetEPR = new EndpointReference(args1[0]);
+        } else  {
+             targetEPR = new EndpointReference("http://localhost:8080/axis2/services/WeatherService");
+        }
+        
         options.setTo(targetEPR);
 
         // Setting the weather
