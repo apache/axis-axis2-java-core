@@ -349,82 +349,82 @@ schema, has a service that receives a file and saves it in the server using the 
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns="http://schemas.xmlsoap.org/wsdl/"
-	targetNamespace="http://ws.apache.org/axis2/mtomsample/">
+	targetNamespace="http://ws.apache.org/axis2/mtomsample/"&gt;
 	&lt;import namespace="http://www.w3.org/2005/05/xmlmime"
-                schemaLocation="http://www.w3.org/2005/05/xmlmime"/>
-	&lt;wsdl:types>
+                schemaLocation="http://www.w3.org/2005/05/xmlmime"/&gt;
+	&lt;wsdl:types&gt;
 		&lt;xsd:schema xmlns="http://schemas.xmlsoap.org/wsdl/"
 			attributeFormDefault="qualified" elementFormDefault="qualified"
-			targetNamespace="http://ws.apache.org/axis2/mtomsample/">
+			targetNamespace="http://ws.apache.org/axis2/mtomsample/"&gt;
 			&lt;xsd:import namespace="http://www.w3.org/2005/05/xmlmime"
-				schemaLocation="xmime.xsd" />
-			&lt;xsd:complexType name="AttachmentType">
-				&lt;xsd:sequence>
+				schemaLocation="xmime.xsd" /&gt;
+			&lt;xsd:complexType name="AttachmentType"&gt;
+				&lt;xsd:sequence&gt;
 					&lt;xsd:element minOccurs="0" name="fileName"
-						type="xsd:string" />
+						type="xsd:string" /&gt;
 					&lt;xsd:element minOccurs="0" name="binaryData"
-						type="xmime:base64Binary" />
-				&lt;/xsd:sequence>
-			&lt;/xsd:complexType>
-			&lt;xsd:element name="AttachmentRequest" type="tns:AttachmentType" />
-			&lt;xsd:element name="AttachmentResponse" type="xsd:string" />
-		&lt;/xsd:schema>
-	&lt;/wsdl:types>
-	&lt;wsdl:message name="AttachmentRequest">
-		&lt;wsdl:part name="part1" element="tns:AttachmentRequest" />
-	&lt;/wsdl:message>
-	&lt;wsdl:message name="AttachmentResponse">
-		&lt;wsdl:part name="part1" element="tns:AttachmentResponse" />
-	&lt;/wsdl:message>
-	&lt;wsdl:portType name="MTOMServicePortType">
-		&lt;wsdl:operation name="attachment">
+						type="xmime:base64Binary" /&gt;
+				&lt;/xsd:sequence&gt;
+			&lt;/xsd:complexType&gt;
+			&lt;xsd:element name="AttachmentRequest" type="tns:AttachmentType" /&gt;
+			&lt;xsd:element name="AttachmentResponse" type="xsd:string" /&gt;
+		&lt;/xsd:schema&gt;
+	&lt;/wsdl:types&gt;
+	&lt;wsdl:message name="AttachmentRequest"&gt;
+		&lt;wsdl:part name="part1" element="tns:AttachmentRequest" /&gt;
+	&lt;/wsdl:message&gt;
+	&lt;wsdl:message name="AttachmentResponse"&gt;
+		&lt;wsdl:part name="part1" element="tns:AttachmentResponse" /&gt;
+	&lt;/wsdl:message&gt;
+	&lt;wsdl:portType name="MTOMServicePortType"&gt;
+		&lt;wsdl:operation name="attachment"&gt;
 			&lt;wsdl:input message="tns:AttachmentRequest"
-				wsaw:Action="attachment" />
+				wsaw:Action="attachment" /&gt;
 			&lt;wsdl:output message="tns:AttachmentResponse"
-				wsaw:Action="http://schemas.xmlsoap.org/wsdl/MTOMServicePortType/AttachmentResponse" />
-		&lt;/wsdl:operation>
-	&lt;/wsdl:portType>
+				wsaw:Action="http://schemas.xmlsoap.org/wsdl/MTOMServicePortType/AttachmentResponse" /&gt;
+		&lt;/wsdl:operation&gt;
+	&lt;/wsdl:portType&gt;
 	&lt;wsdl:binding name="MTOMServiceSOAP11Binding"
-		type="tns:MTOMServicePortType">
+		type="tns:MTOMServicePortType"&gt;
 		&lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http"
-			style="document" />
-		&lt;wsdl:operation name="attachment">
-			&lt;soap:operation soapAction="attachment" style="document" />
-			&lt;wsdl:input>
-				&lt;soap:body use="literal" />
-			&lt;/wsdl:input>
-			&lt;wsdl:output>
-				&lt;soap:body use="literal" />
-			&lt;/wsdl:output>
-		&lt;/wsdl:operation>
-	&lt;/wsdl:binding>
+			style="document" /&gt;
+		&lt;wsdl:operation name="attachment"&gt;
+			&lt;soap:operation soapAction="attachment" style="document" /&gt;
+			&lt;wsdl:input&gt;
+				&lt;soap:body use="literal" /&gt;
+			&lt;/wsdl:input&gt;
+			&lt;wsdl:output&gt;
+				&lt;soap:body use="literal" /&gt;
+			&lt;/wsdl:output&gt;
+		&lt;/wsdl:operation&gt;
+	&lt;/wsdl:binding&gt;
 	&lt;wsdl:binding name="MTOMServiceSOAP12Binding"
-		type="tns:MTOMServicePortType">
+		type="tns:MTOMServicePortType"&gt;
 		&lt;soap12:binding transport="http://schemas.xmlsoap.org/soap/http"
-			style="document" />
-		&lt;wsdl:operation name="attachment">
-			&lt;soap12:operation soapAction="attachment" style="document" />
-			&lt;wsdl:input>
-				&lt;soap12:body use="literal" />
-			&lt;/wsdl:input>
-			&lt;wsdl:output>
-				&lt;soap12:body use="literal" />
-			&lt;/wsdl:output>
-		&lt;/wsdl:operation>
-	&lt;/wsdl:binding>
-	&lt;wsdl:service name="MTOMSample">
+			style="document" /&gt;
+		&lt;wsdl:operation name="attachment"&gt;
+			&lt;soap12:operation soapAction="attachment" style="document" /&gt;
+			&lt;wsdl:input&gt;
+				&lt;soap12:body use="literal" /&gt;
+			&lt;/wsdl:input&gt;
+			&lt;wsdl:output&gt;
+				&lt;soap12:body use="literal" /&gt;
+			&lt;/wsdl:output&gt;
+		&lt;/wsdl:operation&gt;
+	&lt;/wsdl:binding&gt;
+	&lt;wsdl:service name="MTOMSample"&gt;
 		&lt;wsdl:port name="MTOMSampleSOAP11port_http"
-			binding="tns:MTOMServiceSOAP11Binding">
+			binding="tns:MTOMServiceSOAP11Binding"&gt;
 			&lt;soap:address
-				location="http://localhost:8080/axis2/services/MTOMSample" />
-		&lt;/wsdl:port>
+				location="http://localhost:8080/axis2/services/MTOMSample" /&gt;
+		&lt;/wsdl:port&gt;
 		&lt;wsdl:port name="MTOMSampleSOAP12port_http"
-			binding="tns:MTOMServiceSOAP12Binding">
+			binding="tns:MTOMServiceSOAP12Binding"&gt;
 			&lt;soap12:address
-				location="http://localhost:8080/axis2/services/MTOMSample" />
-		&lt;/wsdl:port>
-	&lt;/wsdl:service>
-&lt;/wsdl:definitions>
+				location="http://localhost:8080/axis2/services/MTOMSample" /&gt;
+		&lt;/wsdl:port&gt;
+	&lt;/wsdl:service&gt;
+&lt;/wsdl:definitions&gt;
 </pre></source>
 <p>The important point here is we import http://www.w3.org/2005/05/xmlmime
 and define an element, 'binaryData' , that utilizes MTOM.</p>
@@ -435,19 +435,20 @@ Here, we define an ant task that chooses ADB (Axis2 Data Binding) as the databin
 implementation. The name we list for the WSDL above is MTOMSample.wsdl, and
 we define our package name for our generated source files to be
 'sample.mtom.service' . Our ant task for this example is:</p>
-<source><pre>	&lt;target name="generate.service">
- 		&lt;java classname="org.apache.axis2.wsdl.WSDL2Java">
-			&lt;arg value="-uri" />
-			&lt;arg value="${basedir}/resources/MTOMSample.wsdl" />
-			&lt;arg value="-ss" />
-			&lt;arg value="-sd" />
-          		&lt;arg value="-g"/>
-			&lt;arg value="-p" />
-			&lt;arg value="sample.mtom.service" />
-			&lt;arg value="-o" />
-			&lt;arg value="${service.dir}" />
-			&lt;classpath refid="class.path" />
-		&lt;/java>
+<source><pre>	
+&lt;target name="generate.service"&gt;
+ 		&lt;java classname="org.apache.axis2.wsdl.WSDL2Java"&gt;
+			&lt;arg value="-uri" /&gt;
+			&lt;arg value="${basedir}/resources/MTOMSample.wsdl" /&gt;
+			&lt;arg value="-ss" /&gt;
+			&lt;arg value="-sd" /&gt;
+          		&lt;arg value="-g"/&gt;
+			&lt;arg value="-p" /&gt;
+			&lt;arg value="sample.mtom.service" /&gt;
+			&lt;arg value="-o" /&gt;
+			&lt;arg value="${service.dir}" /&gt;
+			&lt;classpath refid="class.path" /&gt;
+		&lt;/java&gt;
   	&lt;/target&gt;</pre>
 </source>
 <p>Now we are ready to code. Lets edit
