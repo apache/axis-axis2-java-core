@@ -1883,25 +1883,27 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element outputElt = doc.createElement("output");
         String MEP = operation.getMessageExchangePattern();
 
-        AxisMessage outMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-        if (outMessage != null) {
-            PolicyInclude policyInclude = outMessage.getPolicyInclude();
-            Policy policy = policyInclude.getPolicy();
+        
+        if (WSDLUtil.isOutputPresentForMEP(MEP)) {
 
-            if (policy != null) {
-                policy = (Policy) policy.normalize(policyInclude.getPolicyRegistry(), false);
+	    AxisMessage outMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            if (outMessage != null) {
+                PolicyInclude policyInclude = outMessage.getPolicyInclude();
+                Policy policy = policyInclude.getPolicy();
 
-                try {
-                    String policyString = PolicyUtil.policyComponentToString(policy);
-                    policyString = PolicyUtil.getSafeString(policyString);
+                if (policy != null) {
+                    policy = (Policy) policy.normalize(policyInclude.getPolicyRegistry(), false);
 
-                } catch (Exception e ) {
-                    throw new RuntimeException(e);
+                    try {
+                        String policyString = PolicyUtil.policyComponentToString(policy);
+                        policyString = PolicyUtil.getSafeString(policyString);
+
+                    } catch (Exception e ) {
+                       throw new RuntimeException(e);
+                    }
                 }
             }
-        }
 
-        if (WSDLUtil.isOutputPresentForMEP(MEP)) {
             Element param = getOutputParamElement(doc, operation);
 
             if (param != null) {
