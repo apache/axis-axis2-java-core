@@ -1,0 +1,6 @@
+======================================================
+Apache Axis2 @axisVersion@ build (@TODAY@)
+Documentation Release
+
+http://ws.apache.org/axis2
+------------------------------------------------------
