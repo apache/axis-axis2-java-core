@@ -29,7 +29,12 @@ binary data with SOAP.</p>
           <li><a href="#242">Client</a></li>
         </ul>
       </li>
-      <li><a href="#25">MTOM Databinding</a></li>
+      <li><a href="#25">MTOM Databinding</a>
+        <ul>
+          <li><a href="#251">Using ADB</a></li>
+          <li><a href="#252">Using XMLBeans</a></li>
+        </ul>
+      </li>
     </ul>
 
   </li>
@@ -174,13 +179,9 @@ base64encoding (None optimized) and larger attachments as optimized
 content.</p>
 <source><pre>        OMElement imageElement = fac.createOMElement("image", omNs);
 
-        // Creating the Data Handler for the image.
-        // User has the option to use a FileDataSource or a ImageDataSource 
-        // in this scenario...
-        Image image;
-        image = new ImageIO()
-                .loadImage(new FileInputStream(inputImageFileName));
-        ImageDataSource dataSource = new ImageDataSource("test.jpg",image);
+        // Creating the Data Handler for the file.  Any implementation of
+	// javax.activation.DataSource interface can fit here.
+        javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("SomeFile"));
         DataHandler dataHandler = new DataHandler(dataSource);
 
         //create an OMText node with the above DataHandler and set optimized to true
@@ -203,7 +204,7 @@ is not enabled". One can also create binary content nodes which will not be
 optimized at any case. They will be serialized and send as Base64 Strings.</p>
 <source><pre>        //create an OMText node with the above DataHandler and set "optimized" to false
         //This data will be send as Base64 encoded string regardless of MTOM is enabled or not
-        javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("someLocation"));
+        javax.activation.DataHandler dataHandler = new javax.activation.DataHandler(new FileDataSource("SomeFile"));
         OMText textData = fac.createOMText(dataHandler, <strong>false</strong>); 
         image.addChild(textData);</pre>
 
@@ -269,25 +270,11 @@ in the server side for outgoing messages,</p>
 <source><pre>public class MTOMService {
     public void uploadFileUsingMTOM(OMElement element) throws Exception {
 
-        Iterator itr = element.getChildElements();
-        folder = (OMElement) itr.next();
-                          ....
-
-        images = (OMElement) itr.next();
-        itr = images.getChildElements();
-
-        int i = 1;
-        String picName;
-        while (itr.hasNext()) {
-            picture = (OMElement) itr.next();
-            if (picture == null) throw new AxisFault("Picture " + i + " is null");
+       <strong>OMText binaryNode = (OMText) (element.getFirstElement()).getFirstOMChild();
+       DataHandler actualDH;
+       actualDH = (DataHandler) binaryNode.getDataHandler();</strong>
             
-            <strong>OMText binaryNode = (OMText) picture.getFirstOMChild();
-            DataHandler actualDH;
-            actualDH = (DataHandler) binaryNode.getDataHandler();</strong>
-            
-            ... <em>Do whatever you need with the DataHandler</em> ...
-        }
+       ... <em>Do whatever you need with the DataHandler</em> ...
     }
   }</pre>
 </source><ul>
@@ -345,7 +332,8 @@ example element becomes:</p>
 mentioned data much more cleanly.</p>
 <source><pre>      &lt;element name="MyBinaryData" xmime:expectedContentTypes='image/jpeg' type="xmime:base64Binary"/&gt;</pre>
 </source>
-<h3>Using ADB</h3>
+<a name="251"></a>
+<h3>MTOM Databinding Using ADB</h3>
 
 <p>Let's define a full, validated doc/lit style WSDL that uses the xmime
 schema, has a service that receives a file and saves it in the server using the given path.
@@ -461,15 +449,13 @@ we define our package name for our generated source files to be
 			&lt;arg value="${service.dir}" />
 			&lt;classpath refid="class.path" />
 		&lt;/java>
-  &lt;/target&gt;</pre>
+  	&lt;/target&gt;</pre>
 </source>
 <p>Now we are ready to code. Lets edit
 output/src/sample/mtom/service/MTOMSampleSkeleton.java and fill in the business logic. Following is an example:</p>
 <source><pre>
 	public org.apache.ws.axis2.mtomsample.AttachmentResponse attachment(
-			org.apache.ws.axis2.mtomsample.AttachmentRequest param0)
-			throws Exception
-
+			org.apache.ws.axis2.mtomsample.AttachmentRequest param0) throws Exception
 	{
 		AttachmentType attachmentRequest = param0.getAttachmentRequest();
 		Base64Binary binaryData = attachmentRequest.getBinaryData();
@@ -524,7 +510,9 @@ Now lets define the client:</p>
 <p>The last step is to create an AAR with our Skeleton and the services.xml, and then deploy the service. See the user guide
 for more info. You can find the completed sample in the Axis2 standard binary distribution under the samples/mtom directory</p>
 
-<h3>Using Xml Beans</h3>
+<a name="252"></a>
+<h3>MTOM Databinding Using XMLBeans</h3>
+
 
 <p>Lets define a full, validated doc / lit style WSDL that imports the xmime
 schema, has a service that receives a jpeg and returns a pass / fail status
