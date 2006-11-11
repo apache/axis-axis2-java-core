@@ -38,6 +38,7 @@
      <property name="service.help.images.dir" value="../../xdocs/tools/1_1/eclipse/images"></property>
 
      <property name="axis2.lib.dir" value="../../target/lib"></property>
+     <property name="readme.file.name" value="readme.txt"></property>
 
 	 <!--Filter tockens for the copy command to filter the versions of external dependencies -->
      <filter token="axis2_version" value="${axis2_version}" />
@@ -323,6 +324,14 @@
         </copy>
         <copy todir="${output.target}/codegen/${codegen.plugin.version}">
               <fileset dir="${plugin.output.dir}/${codegen.plugin.version}"/>
+        </copy>
+    	
+    	<!--Copy the readme.txt files -->
+        <copy todir="${output.target}/codegen">
+              <fileset file="${codegen.resource.dir}/${readme.file.name}"/>
+        </copy>
+        <copy todir="${output.target}/service">
+              <fileset file="${service.resource.dir}/${readme.file.name}"/>
         </copy>
     	
     	<!--Zip the eclipse plugins to eclipse_plugins/target -->
