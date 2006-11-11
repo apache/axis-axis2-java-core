@@ -17,8 +17,10 @@ public class WeatherSpringRPCClient {
 
         Options options = serviceClient.getOptions();
 
-        EndpointReference targetEPR = new EndpointReference(
-                "http://localhost:8080/axis2/services/WeatherSpringService");
+        EndpointReference targetEPR 
+                = new EndpointReference(
+                "http://localhost:8080/axis2/services/WeatherSpringService"); 
+        
         options.setTo(targetEPR);
 
         // Get the weather (no setting, the Spring Framework has already initialized it for us)

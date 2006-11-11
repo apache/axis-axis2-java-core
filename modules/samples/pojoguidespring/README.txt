@@ -11,21 +11,26 @@ This is a quick way to get a Web service up and running in no time.
 Introduction
 ============
 
+This sample shows how to expose the getters and setters of WeatherSpringService that takes Weather type Java Object as the argument and the return type. It uses the Spring framework to initialize the weather property of the WeatherSpringService.
+
 
 Pre-Requisites
 ==============
 
 Apache Ant 1.6.2 or later
 
+Spring-1.2.6.jar or later 
+You need to have this jar in your build and runtime class path. The easiest way to do this is to copy it to AXIS2HOME/lib directory.
+
 Building the Service
 ====================
 
-Type "ant" from Axis2_HOME/samples/pojoguidespring directory.
+Type: $ant
 
 
 Running the Client
 ==================
-
+Type: $ant rpc.client
 
 Help
 ====
