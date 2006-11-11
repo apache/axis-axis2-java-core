@@ -124,8 +124,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(AddNumbersTests.class);
         suite.addTestSuite(FaultyWebServiceTests.class);
         
-        // TODO don't enable until working:
-        //suite.addTestSuite(FaultsServiceTests.class);
+        suite.addTestSuite(FaultsServiceTests.class);
 
         suite.addTestSuite(EndpointLifecycleTests.class);
         suite.addTestSuite(ResourceInjectionTests.class);

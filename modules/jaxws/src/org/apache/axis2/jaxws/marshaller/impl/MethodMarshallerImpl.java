@@ -31,6 +31,8 @@ import javax.jws.WebParam.Mode;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -120,9 +122,12 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			Block[] blocks = xmlfault.getDetailBlocks();
             
 			
-			if ((operationDesc.getFaultDescriptions().length == 0) || (blocks == null)) {
+			if ((operationDesc.getFaultDescriptions().length == 0) || (blocks == null))  {
 				// This is a system exception if the method does not throw a checked exception or if 
 				// there is nothing in the detail element.
+                // Shouldn't this create 
+                
+                // TODO Shouldn't we create a SOAPFaultException
 				exception = createGenericException(xmlfault.getReason()
 						.getText());
 			} else {
@@ -139,15 +144,26 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 				Block block = blocks[0];
 				
 				// Now demarshal the block to get a business object (faultbean)
+                // Capture the qname of the element, which will be used to find the JAX-WS Exception
 				Object obj = createFaultBusinessObject(classes, block);
-				
-				// Find the JAX-WS exception that can except this kind of fault bean
+                QName faultQName = null;
+                if (obj instanceof JAXBElement) {
+                    faultQName = ((JAXBElement)obj).getName();
+                    obj = ((JAXBElement)obj).getValue();
+                } else {
+                    faultQName = ClassUtils.getXmlRootElementQName(obj);
+                }
+                
+				// Find the JAX-WS exception using a qname match
 				Class exceptionClass = null;
+                Class faultBeanFormalClass = null;
 				for(int i=0; i<operationDesc.getFaultDescriptions().length && exceptionClass == null; i++) {
 					FaultDescription fd = operationDesc.getFaultDescriptions()[i];
-					Class expectedFaultBean = loadClass(fd.getFaultBean());
-					if (expectedFaultBean.isAssignableFrom(obj.getClass())) {
+                    QName tryQName = new QName(fd.getTargetNamespace(), fd.getName());
+                                    
+					if (faultQName == null || faultQName.equals(tryQName)) {
 						exceptionClass = loadClass(fd.getExceptionClassName());
+                        faultBeanFormalClass = loadClass(fd.getFaultBean());
 					}
 				}
 				
@@ -155,7 +171,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 				if (exceptionClass == null) {
 					throw ExceptionFactory.makeWebServiceException(Messages.getMessage("MethodMarshallerErr1", obj.getClass().toString()));
 				}
-                return createCustomException(xmlfault.getReason().getText(), exceptionClass, obj);
+                return createCustomException(xmlfault.getReason().getText(), exceptionClass, obj, faultBeanFormalClass);
 			}
 		} catch (Exception e) {
 			// Catch all nested exceptions and throw WebServiceException
@@ -188,6 +204,15 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
             	Object faultBean = getFaultInfo.invoke(t, null);
             	JAXBBlockContext context = createJAXBBlockContext(faultBean.getClass());
             	Block[] detailBlocks = new Block[1];
+                
+                // Make sure to createJAXBBlock with an object that is 
+                // a JAXBElement or has the XMLRootElement annotation
+                // The actual faultBean object's class is used (because
+                // the actual object may be a derived type of the formal declaration)
+            	if (!ClassUtils.isXmlRootElementDefined(faultBean.getClass())) {
+                    QName faultQName = new QName(fd.getTargetNamespace(), fd.getName());
+                    faultBean = new JAXBElement(faultQName, faultBean.getClass(), faultBean);
+                }
             	detailBlocks[0] = createJAXBBlock(faultBean, context);
                 text = t.getMessage();
                 xmlfault = new XMLFault(null, new XMLFaultReason(text), detailBlocks);
@@ -1016,10 +1041,13 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 */
 	
 	
-    private static Exception createCustomException(String message, Class exceptionclass, Object bean) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+    private static Exception createCustomException(String message, Class exceptionclass, Object bean, Class beanFormalType) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
 		// All webservice exception classes are required to have a constructor that takes a (String, bean) argument
     	// TODO necessary to be more careful here with instantiating, cassting, etc?
-		Constructor constructor = exceptionclass.getConstructor(new Class[] { String.class, bean.getClass() });
+		if (log.isDebugEnabled()) {
+		    log.debug("Constructing JAX-WS Exception:" + exceptionclass);
+        }
+        Constructor constructor = exceptionclass.getConstructor(new Class[] { String.class, beanFormalType });
 		Object exception = constructor.newInstance(new Object[] { message, bean });
 
 		return (Exception) exception;

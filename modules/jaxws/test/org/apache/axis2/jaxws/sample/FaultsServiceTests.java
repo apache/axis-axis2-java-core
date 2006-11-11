@@ -68,7 +68,7 @@ public class FaultsServiceTests extends TestCase {
         System.out.println("----------------------------------");
         
         assertNotNull(exception);
-        assertTrue(((BaseFault_Exception)exception).getFaultInfo() instanceof ComplexFault);
+        assertTrue(((ComplexFault_Exception)exception).getFaultInfo() instanceof ComplexFault);
         
     }
 
