@@ -5,7 +5,7 @@ Binary Release
 http://ws.apache.org/axis2
 ------------------------------------------------------
 
-This is the Standard Binary release of Axis2.
+This is the Standard Binary Release of Axis2.
 
 The lib directory contains;
 
@@ -29,7 +29,7 @@ The webapp folder contains an ant build script to generate the axis2.war out of 
 (This requires Ant 1.6.5)
 
 The samples directory contains all the Axis2 samples which demonstrates some of the key features of
-Axis2.
+Axis2. It also contains a few samples relevant to documents found in Axis2's Docs Distribution.
 
 The bin directory contains a set of usefull scripts for the users.
 

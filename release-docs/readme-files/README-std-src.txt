@@ -5,7 +5,7 @@ Source Release
 http://ws.apache.org/axis2
 ------------------------------------------------------
 
-This is the Standard source release of Axis2.
+This is the Standard Source Release of Axis2.
 
 The modules directory contains source code of the following 
 Axis2 modules:
@@ -25,7 +25,7 @@ Axis2 modules:
 13. tool
 14. jaxbri
 
-One can use maven 1.x to create the standard binary distribution out of this, 
+One can use maven 1.x to create the Standard Binary Distribution from this, 
 by typing "$maven dist-bin".
 
 (Please note that this does not include the other WS-* implementation modules, 
