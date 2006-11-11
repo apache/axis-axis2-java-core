@@ -432,8 +432,7 @@ and define an element, 'binaryData' , that utilizes MTOM.</p>
 <p>The next step is using the Axis2 tool 'WSDL2Java' to generate java source
 files from this WSDL. See the 'Code Generator Tool' guide for more info.
 Here, we define an ant task that chooses ADB (Axis2 Data Binding) as the databinding
-implementation. We also choose to generate an interface which our Skeleton
-will implement. The name we list for the WSDL above is MTOMSample.wsdl, and
+implementation. The name we list for the WSDL above is MTOMSample.wsdl, and
 we define our package name for our generated source files to be
 'sample.mtom.service' . Our ant task for this example is:</p>
 <source><pre>	&lt;target name="generate.service">
@@ -507,8 +506,7 @@ Now lets define the client:</p>
 	}</pre>
 
 </source>
-<p>The last step is to create an AAR with our Skeleton and the services.xml, and then deploy the service. See the user guide
-for more info. You can find the completed sample in the Axis2 standard binary distribution under the samples/mtom directory</p>
+<p>The last step is to create an AAR with our Skeleton and the services.xml, and then deploy the service. You can find the completed sample in the Axis2 standard binary distribution under the samples/mtom directory</p>
 
 <a name="252"></a>
 <h3>MTOM Databinding Using XMLBeans</h3>
