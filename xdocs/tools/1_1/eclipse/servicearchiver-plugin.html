@@ -58,14 +58,14 @@ files or the class files only of the folder on page 1.</p>
 <p><strong>Page 2:</strong></p>
 
 <p>Page 2 of the wizard as seen below requires you to locate/browse the wsdl
-file. Note that the WSDL file cannot be skipped in this version of the
-tool.</p>
+file. If you do not wish to add a wsdl file to the service archive, select skip wsdl. Else you can 
+select the location of the wsdl file by selecting the select wsdl option.</p>
 
 <p align="center"><img border="0" src="images/service_page2.jpg"></p>
 
 <p><strong>Page 3:</strong></p>
 
-<p>Select the service.xml file on this wizard page by browsing or select the
+<p>Select the services.xml file on this wizard page by browsing or select the
 option of generating service xml automatically, after which you can click
 "Next" button to go to the next page. Notice how the browsing option disables
 when the "Generate service xml automatically" check box is ticked.</p>
@@ -116,14 +116,39 @@ libraries as you wish. See the screen shots below.</p>
 
 <p>If any added library needs to be removed, highlight it or in other words,
 select it from the "Added libraries" list and hit on the "Remove" button as shown
-below. Click on the "Next" button to proceed to the last page of the wizard.</p>
+below. Click on the "Next" button to proceed to the last page of the wizard if the 
+user did not select to auto generate the services.xml file. If user select to auto
+generate the services.xml file then the services.xml option page will be displayd.</p>
 
 <p align="center"><img border="0" src="images/service_page5_remove.jpg"></p>
 
 <p><strong>Page 5:</strong></p>
 
+<p>This page only appears if the user select to generate the services.xml at page 3
+of the wizard. If the user have selected a services.xml then the user will be directed
+to the last page of the wizard.</p>
+
+<p>After entering the correct service name and valid fully qualified calss name,
+try to load the existing methods of that class by clicking the load button.</p>
+
+<p align="center"><img border="0" src="images/service_page4_load.jpg"></p>
+
+<p>If successfuly loaded the user will be presented with a table at the 
+bottom of the page with the details of the loaded class. By checking and unchecking 
+the user can select the nessesary methods to include in the services.xml</p>
+
+<p align="center"><img border="0" src="images/service_page4_table.jpg"></p>
+
+<p>By clicking on the search declared method only check box, the user can remove the 
+inherited methods from the class. Click on the "Next" button to proceed to the last page of the wizard</p>
+
+<p align="center"><img border="0" src="images/service_page4_search_declared.jpg"></p>
+
+<p><strong>Page 6:</strong></p>
+
 <p>The last page of the wizard asks for the output file location and the
-output archive file name.</p>
+output archive file name. To be able to finish the wizard, user must enter
+valid output file location and output file name.</p>
 
 <p></p>
 
