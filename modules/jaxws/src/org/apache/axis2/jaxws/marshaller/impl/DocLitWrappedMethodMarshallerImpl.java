@@ -20,7 +20,9 @@ package org.apache.axis2.jaxws.marshaller.impl;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.WebServiceException;
 
@@ -32,9 +34,14 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.DocLitWrappedMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
+import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
 import org.apache.commons.logging.Log;
@@ -78,7 +85,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
     		}
     		
             String resultName = operationDesc.getResultName();
-    		businessObject = createBusinessObject(wrapperClazz, message);
+    		businessObject = createBusinessObject(createContextPackageSet(wrapperClazz), message);
             assignHolderValues(businessObject, inputArgs, false);
             
             // REVIEW: Is the the appropriate logic, to be checking for the existence of the annotation
@@ -110,7 +117,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			ArrayList<MethodParameter> mps;
 
 			Class requestWrapperClazz = loadClass(className);
-			Object jaxbObject = createBusinessObject(requestWrapperClazz, message);
+			Object jaxbObject = createBusinessObject(createContextPackageSet(requestWrapperClazz), message);
 
 			if (log.isDebugEnabled()) {
 				log.debug("reading input method parameters");
@@ -150,7 +157,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			// Get the necessary information from the OperationDesc
 			Class wrapperClazz = null;
 			String wrapperClazzName = operationDesc.getResponseWrapperClassName();
-			String wrapperXMLElementName = operationDesc.getResponseWrapperLocalName();
+			String wrapperLocalName = operationDesc.getResponseWrapperLocalName();
 			String wrapperTNS = operationDesc.getResponseWrapperTargetNamespace();
 			String webResult = operationDesc.getResultName();
 
@@ -196,8 +203,15 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			}
 
 			JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-			Object wrapper = wrapperTool.wrap(wrapperClazz, wrapperClazzName, mps);
-			Message message = createMessage(wrapper, wrapperClazz, wrapperXMLElementName, wrapperTNS);
+			Object wrapper = wrapperTool.wrap(wrapperClazz, mps);
+			
+            // If the wrapper class does not represent an root element, then make
+            // the appropriate JAXBElement
+            if (!JAXBUtils.isXmlRootElementDefined(wrapperClazz)) {
+                QName qName = new QName(wrapperTNS, wrapperLocalName);
+                wrapper = new JAXBElement(qName, wrapperClazz, wrapper);
+            }
+			Message message = createMessage(wrapper);
 
 
 			return message;
@@ -215,7 +229,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 	public Message marshalRequest(Object[] objects) throws WebServiceException {
 		try {
 			String className = operationDesc.getRequestWrapperClassName();
-			String localName = operationDesc.getRequestWrapperLocalName();
+			String wrapperLocalName = operationDesc.getRequestWrapperLocalName();
 			String wrapperTNS = operationDesc.getRequestWrapperTargetNamespace();
 
 			Class wrapperClazz = null;
@@ -231,12 +245,18 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 				log.debug("JAXBWrapperTool attempting to wrap propertes in WrapperClass :" + wrapperClazz);
 			}
 
-			jaxbObject = wrapTool.wrap(wrapperClazz, localName, methodParameters);
+			jaxbObject = wrapTool.wrap(wrapperClazz, methodParameters);
 			if (log.isDebugEnabled()) {
 				log.debug("JAXBWrapperTool wrapped following propertes :");
 			}
 
-			Message message = createMessage(jaxbObject, wrapperClazz, localName, wrapperTNS);
+            // If the wrapper class does not represent an root element, then make
+            // the appropriate JAXBElement
+            if (!JAXBUtils.isXmlRootElementDefined(wrapperClazz)) {
+                QName qName = new QName(wrapperTNS, wrapperLocalName);
+                jaxbObject = new JAXBElement(qName, wrapperClazz, jaxbObject);
+            }
+			Message message = createMessage(jaxbObject);
 
 
 			return message;
@@ -256,4 +276,32 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
         Class c = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
 		return c;
 	}
+    
+    /**
+     * @param jaxbElement object representing the element to marshal (JAXBElement or object has @XmlRootElement)
+     * @return
+     * @throws JAXBException
+     * @throws MessageException
+     * @throws XMLStreamException
+     */
+    private Message createMessage(Object jaxbElement)throws JAXBException, MessageException, XMLStreamException{
+            Block bodyBlock = null;
+            
+            // Get the object that is the type
+            Object jaxbType = (jaxbElement instanceof JAXBElement) ? ((JAXBElement) jaxbElement).getValue() : jaxbElement; 
+     
+            // Create the context
+            JAXBBlockContext ctx = new JAXBBlockContext(createContextPackageSet(jaxbType.getClass()));
+            bodyBlock = createJAXBBlock(jaxbElement, ctx);
+            
+            if (log.isDebugEnabled()) {
+                log.debug("JAXBBlock Created");
+            }
+            
+            MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+            
+            Message m = mf.create(protocol);
+            m.setBodyBlock(0,bodyBlock);
+            return m;
+        }
 }

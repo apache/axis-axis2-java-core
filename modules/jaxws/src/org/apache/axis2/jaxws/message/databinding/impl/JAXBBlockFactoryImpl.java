@@ -27,6 +27,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 
@@ -64,7 +65,7 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 	 */
 	public Block createFrom(Object businessObject, Object context, QName qName) throws MessageException {
 		
-		// The context for a JAXBFactory must be non-null and should be a JAXBBlockContext.
+		// The context must be non-null and should be a JAXBBlockContext.
 		// For legacy reasons, a JAXBContext is also supported (and wrapped into a JAXBBlockContext)
 		if (context == null) {
 			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", "null"), null);
@@ -73,6 +74,18 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 		} else {
 			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName()), null);
 		}
+        
+        // The business object must be either a JAXBElement or a block with an @XmlRootElement qname.  The best way
+        // to verify this is to get the QName from the business object.
+        QName bQName = JAXBUtils.getXmlRootElementQName(businessObject);
+        if (bQName == null) {
+            throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr2", businessObject.getClass().getName()), null);
+        }
+        
+        // If the business obect qname does not match the parameter, use the business object qname
+        if (!bQName.equals(qName)) {
+            qName = bQName;
+        }
 		try {
 			return new JAXBBlockImpl(businessObject, (JAXBBlockContext) context, qName, this);
 		} catch (JAXBException e) {

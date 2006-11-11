@@ -19,9 +19,11 @@
 package org.apache.axis2.jaxws.marshaller.impl;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -90,7 +92,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 			}
 			else if(holdermps.size() == 0 && !returnType.getName().equals("void")){
 				// No holders but a return type example --> public ReturnType someMethod()
-				Object bo = createBusinessObject(returnType, message);
+				Object bo = createBusinessObject(createContextPackageSet(returnType), message);
 				return bo;
 			}
 			else if(holdermps.size()>0 && returnType.getName().equals("void")){
@@ -104,7 +106,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 				// WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject 
 				// property, if wsdl schema forces a holder and a return type.
 				assignHolderValues(holdermps, holderArgs, message);
-				Object bo = createBusinessObject(returnType, message);
+				Object bo = createBusinessObject(createContextPackageSet(returnType), message);
 				return bo;
 			}
 
@@ -114,6 +116,47 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 			// Firewall.  Only WebServiceExceptions are thrown
 			throw ExceptionFactory.makeWebServiceException(e);
 		}
+        
+    }
+	private ArrayList<MethodParameter> createParameterForSEIMethod(Message message)throws IllegalAccessException, InstantiationException, ClassNotFoundException, MessageException, XMLStreamException, JAXBException{
+	    ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
+	    if(message == null){
+	        return null;
+	    }
+	    ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
+	    
+	    ArrayList<Object> paramValues = new ArrayList<Object>(); 
+	    for (int index = 0; index < paramDescs.length; index++) {
+	        ParameterDescription paramDesc = paramDescs[index];
+	        String paramName = paramDesc.getParameterName();
+	        String paramTNS = paramDesc.getTargetNamespace();
+	        boolean isHeader = paramDesc.isHeader();
+	        Class actualType = paramDesc.getParameterActualType();
+	        Object bo = null;
+            // Create a set of context packages that will be needed to demarshal
+            // the jaxb object.  For now just consider the actualType
+            Set<Package> contextPackages = createContextPackageSet(actualType);
+            
+            // Create the business object
+	        if(isHeader){
+	            bo = createBOFromHeaderBlock(contextPackages, message, paramTNS, paramName);
+	        }
+	        else{
+	            bo = createBOFromBodyBlock(contextPackages,message);
+	        }
+	        
+            // Now create an argument from the business object
+            Object arg = bo;
+	        if (paramDesc.isHolderType()) {
+                // If the parameter requires a holder, create a holder
+                // object containting the parameter
+	            arg = createHolder(paramDesc.getParameterType(), bo);
+	        } 
+	        paramValues.add(arg);
+	    }
+	    mps = createParameters(paramDescs, paramValues);
+	    
+	    return mps;
 	}
 
 	/* (non-Javadoc)

@@ -41,7 +41,7 @@ public class WrapperToolTest extends TestCase {
 			String symbolObj = new String("IBM");
 			Map<String, Object> childObjects= new WeakHashMap<String, Object>();
 			childObjects.put(childName, symbolObj);
-			Object jaxbObject = wrapper.wrap(jaxbClass, jaxbClassName,childNames, childObjects);
+			Object jaxbObject = wrapper.wrap(jaxbClass, childNames, childObjects);
 			org.test.stock2.GetPrice getPrice = (org.test.stock2.GetPrice)jaxbObject;
 			
 		}catch(JAXBWrapperException e){
@@ -92,7 +92,7 @@ public class WrapperToolTest extends TestCase {
 			childObjects.put(holding, topHolding);
 			childObjects.put(nav, navInMillion);
 			
-			Object jaxbObject = wrapper.wrap(jaxbClass, jaxbClassName,childNames, childObjects);
+			Object jaxbObject = wrapper.wrap(jaxbClass, childNames, childObjects);
 			org.test.stock1.GetPrice getPrice = (org.test.stock1.GetPrice)jaxbObject;
 			
 		}catch(JAXBWrapperException e){

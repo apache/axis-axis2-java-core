@@ -56,7 +56,7 @@ public class JAXBDispatchAsyncListener extends AsyncResponse {
         Message message = mc.getMessage();
         try {
             JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            JAXBBlockContext context = new JAXBBlockContext(null, false, jaxbContext);
+            JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
             Block block = message.getBodyBlock(0, context, factory);
             value = block.getBusinessObject(true);
         } catch (Exception e) {

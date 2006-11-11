@@ -20,7 +20,9 @@ package org.apache.axis2.jaxws.message.factory;
 /**
  * JAXBBlockFactory
  * 
- * Creates a JAXBBlock
+ * Creates a JAXBBlock.  The business object of a JAXBBlock must
+ * be either a JAXBElement or a generated object with the XMLRootElement 
+ * annotation
  * 
  * * The FactoryRegistry should be used to get access to the Factory
  * @see org.apache.axis2.jaxws.registry.FactoryRegistry

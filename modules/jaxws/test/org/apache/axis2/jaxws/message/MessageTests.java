@@ -507,7 +507,7 @@ public class MessageTests extends TestCase {
         obj.setEchoStringReturn("sample return value");
         
         // Create the JAXBContext
-        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class, false);
+        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class.getPackage());
         
         // Create a JAXBBlock using the Echo object as the content.  This simulates
         // what occurs on the outbound JAX-WS Dispatch<Object> client
@@ -573,7 +573,7 @@ public class MessageTests extends TestCase {
         obj.setEchoStringReturn("sample return value");
         
         // Create the JAXBContext
-        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class, false);
+        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class.getPackage());
        
         // Create a JAXBBlock using the Echo object as the content.  This simulates
         // what occurs on the outbound JAX-WS Dispatch<Object> client
@@ -655,7 +655,7 @@ public class MessageTests extends TestCase {
         
         // Create the JAXBContext instance that will be used
         // to deserialize the JAX-B object content in the message.
-        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class, false);
+        JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class.getPackage());
         
         // Get the JAXBBlock that wraps the content
         Block b = m.getBodyBlock(0, context, bf);

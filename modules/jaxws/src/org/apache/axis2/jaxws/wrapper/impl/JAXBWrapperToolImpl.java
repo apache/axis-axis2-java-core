@@ -56,11 +56,17 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 			if(childNames == null){
 				throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr2"));
 			}
+            
+            // Get the object that will have the property descriptors (i.e. the object representing the complexType)
+            Object jaxbComplexTypeObj = (jaxbObject instanceof JAXBElement) ?
+                    ((JAXBElement)jaxbObject).getValue() : // Type object is the value of the JAXBElement
+                        jaxbObject;                        // Or JAXBObject represents both the element and anon complexType
+            
 			ArrayList<Object> objList = new ArrayList<Object>();
-			Map<String , PropertyInfo> pdTable = createPropertyDescriptors(jaxbObject.getClass(), childNames);
+			Map<String , PropertyInfo> pdTable = createPropertyDescriptors(jaxbComplexTypeObj.getClass(), childNames);
 			for(String childName:childNames){
 				PropertyInfo propInfo = pdTable.get(childName);
-				Object object = propInfo.get(jaxbObject);
+				Object object = propInfo.get(jaxbComplexTypeObj);
 				objList.add(object);
 			}
 			Object[] jaxbObjects = objList.toArray();
@@ -80,7 +86,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.wrapped.JAXBWrapperTool#wrap(java.lang.Class, java.lang.String, java.util.ArrayList, java.util.ArrayList)
 	 */
-	public Object wrap(Class jaxbClass, String jaxbClassName,
+	public Object wrap(Class jaxbClass, 
 			ArrayList<String> childNames, Map<String, Object> childObjects)
 			throws JAXBWrapperException {
 		
@@ -111,7 +117,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 		}
 	}
 	
-	public Object wrap(Class jaxbClass, String jaxbClassName, ArrayList<MethodParameter> mps) throws JAXBWrapperException{
+	public Object wrap(Class jaxbClass, ArrayList<MethodParameter> mps) throws JAXBWrapperException{
 		if(mps == null){
 			throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr7"));
 		}
@@ -130,15 +136,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 			nameList.add(name);
 			objectList.put(name, object);
 		}
-		return wrap(jaxbClass, jaxbClassName, nameList, objectList);
-	}
-	
-	public JAXBElement wrapAsJAXBElement(Class jaxbClass, String jaxbClassName,
-			ArrayList<String> childNames, Map<String, Object> childObjects) throws JAXBWrapperException{
-		
-		Object obj = wrap( jaxbClass, jaxbClassName, childNames, childObjects);
-		JAXBElement<Object> element = new JAXBElement<Object>(new QName(jaxbClassName), jaxbClass, obj);
-		return element;
+		return wrap(jaxbClass, nameList, objectList);
 	}
 	
 	/** creates propertyDescriptor for the childNames using the jaxbClass.  

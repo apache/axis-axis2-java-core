@@ -22,11 +22,11 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.impl.AsyncListener;
-import org.apache.axis2.jaxws.marshaller.ClassUtils;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -60,7 +60,12 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
             
             Class clazz = value.getClass();
-            JAXBBlockContext context = new JAXBBlockContext(clazz, !ClassUtils.isXmlRootElementDefined(clazz), jaxbContext);
+            JAXBBlockContext context = null;
+            if (jaxbContext != null) {
+                context = new JAXBBlockContext(jaxbContext);
+            } else {
+                context = new JAXBBlockContext(clazz.getPackage());
+            }
             Block block = factory.createFrom(value, context, null);
             
             // The protocol of the Message that is created should be based
@@ -81,7 +86,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
         Object value = null;
         try {
             JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            JAXBBlockContext context = new JAXBBlockContext(null, false, jaxbContext);
+            JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
             Block block = message.getBodyBlock(0, context, factory);
             value = block.getBusinessObject(true);
         } catch (Exception e) {

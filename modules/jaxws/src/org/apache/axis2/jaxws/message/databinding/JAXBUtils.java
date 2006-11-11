@@ -18,15 +18,21 @@ package org.apache.axis2.jaxws.message.databinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.namespace.QName;
 
 import org.apache.axis2.jaxws.marshaller.ClassUtils;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockImpl;
@@ -42,9 +48,9 @@ public class JAXBUtils {
 	
     private static final Log log = LogFactory.getLog(JAXBUtils.class);
     
-	// Create a synchronized weak hashmap key=class name, value= JAXBContext
-	private static Map<String, JAXBContext> map =
-			Collections.synchronizedMap(new WeakHashMap<String, JAXBContext>());
+	// Create a synchronized weak hashmap key=set contextPackages, value= JAXBContext
+	private static Map<Set<Package>, JAXBContext> map =
+			Collections.synchronizedMap(new WeakHashMap<Set<Package>, JAXBContext>());
 	private static JAXBContext genericJAXBContext = null;
 	
 	private static Map<JAXBContext,Unmarshaller> umap = 
@@ -81,48 +87,37 @@ public class JAXBUtils {
 	
 	/**
 	 * Get a JAXBContext for the class
-	 * @param cls Class
+	 * @param contextPackage Set<Package>
 	 * @return JAXBContext
 	 * @throws JAXBException
 	 */
-	public static JAXBContext getJAXBContext(Class[] classes) throws JAXBException {
+	public static JAXBContext getJAXBContext(Set<Package> contextPackages) throws JAXBException {
 		// JAXBContexts for the same class can be reused and are supposed to be thread-safe
-		// TODO Can we cache by package name ?
-		Class cls = classes[0];
-        if (cls.isPrimitive()) {
+        if (contextPackages == null || contextPackages.isEmpty()) {
             return getGenericJAXBContext();
         }
-		JAXBContext context = map.get(cls.getName());
+		JAXBContext context = map.get(contextPackages);
 		if (context == null) {
             synchronized(map) {
                 try{
-                	// TODO
-                	// For now we are generating a list of all of the classes in each
-                	// of the referenced packages.  We have plans to use a contextPath instead
-                	List<Class> fullList = new ArrayList<Class>();
-                	for (int i=0; i<classes.length; i++) {
-                		Package pkg = classes[i].getPackage();
-                		if (log.isDebugEnabled()) {
-                			log.debug("Package for " + classes[i].getName() + " "+pkg.getName());
-                		}
-                		if (log.isDebugEnabled()) {
-                			log.debug("Attempting to read all classes from package " + pkg.getName());
-                		}
-                		fullList.addAll(ClassUtils.getAllClassesFromPackage(pkg.getName()));
+                    Iterator<Package> it = contextPackages.iterator();
+                    List<Class> fullList = new ArrayList<Class>();
+                    while (it.hasNext()) {
+                		fullList.addAll(ClassUtils.getAllClassesFromPackage(it.next()));
                 	}
                 	Class[] classArray = fullList.toArray(new Class[0]);
                 	context = JAXBContext.newInstance(classArray);
-                    map.put(cls.getName(), context);	
+                    map.put(contextPackages, context);	
                 }catch(ClassNotFoundException e){
                 	throw new JAXBException(e);
                 }
                 if (log.isDebugEnabled()) {
-                    log.debug("JAXBContext [created] for" + cls.getName());
+                    log.debug("JAXBContext [created] for" + contextPackages.toString());
                 }
             }
 		} else {
             if (log.isDebugEnabled()) {
-                log.debug("JAXBContext [from pool] for" + cls.getName());
+                log.debug("JAXBContext [from pool] for" + contextPackages.toString());
             }
         }
 		return context;
@@ -255,4 +250,62 @@ public class JAXBUtils {
         }
         imap.put(context, introspector);
 	}
+
+    /**
+     * @param clazz
+     * @return namespace of root element qname or null if this is not object does not represent a root element
+     */
+    public static QName getXmlRootElementQName(Object obj){
+        
+        // A JAXBElement stores its name
+        if (obj instanceof JAXBElement) {
+            return ((JAXBElement) obj).getName();
+        }
+        
+        Class clazz = obj.getClass();
+        
+    	// If the clazz is a primitive, then it does not have a corresponding root element.
+    	if (clazz.isPrimitive() ||
+    	    ClassUtils.getWrapperClass(clazz) != null) {
+    		return null;
+    	}
+    	
+    	// See if the object represents a root element
+    	XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
+        if (root == null) {
+            return null;
+        }
+        
+        String namespace = root.namespace();
+        String localPart = root.name();
+        
+        // The namespace may need to be defaulted
+        if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
+            Package pkg = clazz.getPackage();
+            XmlSchema schema = (XmlSchema) pkg.getAnnotation(XmlSchema.class);
+            if (schema != null) {
+                namespace = schema.namespace();
+            } else {
+                return null;
+            }
+        }
+    	return new QName(namespace, localPart);
+    }
+
+    /**
+     * @param clazz
+     * @return true if this class has a corresponding xml root element
+     */
+    public static boolean isXmlRootElementDefined(Class clazz){
+        // If the clazz is a primitive, then it does not have a corresponding root element.
+        if (clazz.isPrimitive() ||
+            ClassUtils.getWrapperClass(clazz) != null) {
+            return false;
+        }
+        // TODO We could also prune out other known classes that will not have root elements defined.
+        // java.util.Date, arrays, java.math.BigInteger.
+        
+        XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
+        return root !=null;
+    }
 }

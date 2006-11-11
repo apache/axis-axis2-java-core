@@ -16,92 +16,66 @@
  */
 package org.apache.axis2.jaxws.message.databinding;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 /*
- * A JAXBBlockContext controls access to the JAXB Context/Marshal/Unmarshal code.
+ * A JAXBBlockContext controls access to the JAXB Context
  * In addition the JAXBBlockContext contains additional contextural information needed
- * by the JAX-WS component (i.e. the possible type(s) of the object)
+ * by the JAX-WS component
  * 
  * This class is immutable after construction.
  */
 public class JAXBBlockContext {
 
-	private Class[] types = null;
+	private Set<Package> contextPackages;  // List of packages needed by the context
 	private JAXBContext jaxbContext = null;
-	private boolean useJAXBElement = false;
 	
 	/**
 	 * Normal Constructor JAXBBlockContext
-	 * @param type Class object that represents the actual type of the object.
-	 * @param useJAXBElement boolean indicating whether the object should be rendered
-	 * as a JAXBElement.
-	 * 
-	 * Example: if the object is a primitive (type=int.class) then 
-	 * useJAXBElement must be set to true because int is not a JAXB object.
-	 * 
-	 * Example: if the object is a JAXB object you would normally set useJAXBElement
-	 * to false.  However if the JAXB object does not have a corresponding root element,
-	 * then useJAXBElement hould be set to false.
+	 * @param packages Set of packages needed by the JAXBContext.
 	 */
-	public JAXBBlockContext(Class type, boolean useJAXBElement) {
-		this(type, useJAXBElement, null);
+	public JAXBBlockContext(Set<Package> packages) {
+        this.contextPackages = packages;
 	}
+    
+    /**
+     * Normal Constructor JAXBBlockContext
+     * @param contextPackage
+     */
+    public JAXBBlockContext(Package contextPackage) {
+        this.contextPackages = new HashSet();
+        this.contextPackages.add(contextPackage);
+    }
 
 	/**
 	 * "Dispatch" Constructor
 	 * Use this full constructor when the JAXBContent is provided by
 	 * the customer.  
-	 * @param type
-	 * @param useJAXBElement
 	 * @param jaxbContext
 	 */
-	public JAXBBlockContext(Class type, boolean useJAXBElement, JAXBContext jaxbContext) {
-		this.types = new Class[] {type};
-		this.useJAXBElement = useJAXBElement;
-		this.jaxbContext = jaxbContext;
-	}
-	
-	/**
-	 * Constructor JAXBBlockContext
-	 * @param types Class[] object that represents the actual type of the object.
-	 * @param useJAXBElement boolean indicating whether the object should be rendered
-	 * as a JAXBElement.
-	 * 
-	 * This constructor is used when the demarshalling exceptions.
-	 */
-	public JAXBBlockContext(Class[] types, boolean useJAXBElement) {
-		this.types = types;
-		this.useJAXBElement = useJAXBElement;
+	public JAXBBlockContext(JAXBContext jaxbContext) {
 		this.jaxbContext = jaxbContext;
 	}
 
 	/**
 	 * @return Class representing type of the element
 	 */
-	public Class[] getTypes() {
-		return types;
+	public Set<Package> getContextPackages() {
+		return contextPackages;
 	}
-
-	/**
-	 * @return indicate if object should be rendered as JAXBElement
-	 */
-	public boolean isUseJAXBElement() {
-		return useJAXBElement;
-	}
-
+    
 	/**
 	 * @return get the JAXBContext
 	 * @throws JAXBException
 	 */
 	public JAXBContext getJAXBContext() throws JAXBException {
 		if (jaxbContext == null) {	
-			if (!useJAXBElement) {
-				jaxbContext = JAXBUtils.getJAXBContext(types);
-			} else {
-				jaxbContext = JAXBUtils.getJAXBContext(types);
-			}
+			jaxbContext = JAXBUtils.getJAXBContext(contextPackages);
 		}
 		return jaxbContext;
 	}

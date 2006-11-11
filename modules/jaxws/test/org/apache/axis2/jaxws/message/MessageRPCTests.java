@@ -111,7 +111,7 @@ public class MessageRPCTests extends TestCase {
             FactoryRegistry.getFactory(JAXBBlockFactory.class);
         
         // Create the JAXBContext
-        JAXBBlockContext context = new JAXBBlockContext(StockPrice.class, true);
+        JAXBBlockContext context = new JAXBBlockContext(StockPrice.class.getPackage());
         
         // Create the JAX-B object
         ObjectFactory of = new ObjectFactory();
@@ -186,7 +186,7 @@ public class MessageRPCTests extends TestCase {
             FactoryRegistry.getFactory(JAXBBlockFactory.class);
         
         // Create the JAXBContext
-        JAXBBlockContext context = new JAXBBlockContext(StockPrice.class, false);
+        JAXBBlockContext context = new JAXBBlockContext(StockPrice.class.getPackage());
         
         // Create the JAX-B object
         ObjectFactory of = new ObjectFactory();
@@ -282,7 +282,7 @@ public class MessageRPCTests extends TestCase {
         
         // Create the JAXBContext instance that will be used
         // to deserialize the JAX-B object content in the message.
-        JAXBBlockContext context = new JAXBBlockContext(StockPrice.class, true);
+        JAXBBlockContext context = new JAXBBlockContext(StockPrice.class.getPackage());
         
         // Get the JAXBBlock that wraps the content
         Block b = m.getBodyBlock(0, context, bf);

@@ -50,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * JAXBBlockImpl
  * 
- * A Block containing a JAXB business object
+ * A Block containing a JAXB business object (either a JAXBElement or an object with @XmlRootElement)
  */
 public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
@@ -58,7 +58,8 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
     
 	/**
 	 * Called by JAXBBlockFactory
-	 * @param busObject
+	 * @param busObject..The business object must be a JAXBElement or an object
+     * with an @XMLRootElement.  This is assertion is validated in the JAXBFactory.
 	 * @param busContext
 	 * @param qName
 	 * @param factory
@@ -103,15 +104,15 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 u.setAttachmentUnmarshaller(aum);
             }
             Object jaxb = null;
-            if (!ctx.isUseJAXBElement()){
-            	// Normal Unmarshalling
-            	jaxb = u.unmarshal(reader);
-				setQName(getQName(jaxb, ctx));
-			} else {
-				// Unmarshal as a JAXBElement and then get the value
-				JAXBElement jaxbElement = u.unmarshal(reader, ctx.getTypes()[0]); 
-				jaxb = jaxbElement.getValue();
-			}
+            
+            // Unmarshal into the business object.
+            jaxb = u.unmarshal(reader);
+            
+            // Set the qname 
+            QName qName = JAXBUtils.getXmlRootElementQName(jaxb);
+            if (qName != null) {  // qname should always be non-null
+                setQName(qName); 
+            }
             
             // Successfully unmarshalled the object
             // TODO remove attachment unmarshaller ?
@@ -176,7 +177,6 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             }   
             
             m.marshal(busObject, writer);
-            
             
             // Successfully marshalled the data
             // TODO remove attachment marshaller ?
