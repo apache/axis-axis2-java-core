@@ -359,16 +359,16 @@
       <xsl:if test="out-wrapper/@empty='false'">
                 org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient
                     .getMessageContext(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                org.apache.axiom.om.OMElement result = _returnMessageContext.getEnvelope().getBody().getFirstElement();
-                if (result != null &amp;&amp; "<xsl:value-of select='out-wrapper/@name'/>".equals(result.getLocalName()) &amp;&amp;
-                    "<xsl:value-of select='out-wrapper/@ns'/>".equals(result.getNamespace().getNamespaceURI())) {
-                    org.jibx.runtime.impl.UnmarshallingContext uctx = getNewUnmarshalContext(result);
+                org.apache.axiom.om.OMElement _response = _returnMessageContext.getEnvelope().getBody().getFirstElement();
+                if (_response != null &amp;&amp; "<xsl:value-of select='out-wrapper/@name'/>".equals(_response.getLocalName()) &amp;&amp;
+                    "<xsl:value-of select='out-wrapper/@ns'/>".equals(_response.getNamespace().getNamespaceURI())) {
+                    org.jibx.runtime.impl.UnmarshallingContext uctx = getNewUnmarshalContext(_response);
                     uctx.parsePastStartTag("<xsl:value-of select='out-wrapper/@ns'/>", "<xsl:value-of select='out-wrapper/@name'/>");
                     int index;
         <xsl:apply-templates select="out-wrapper/return-element" mode="interface-implementation"/>
                     return <xsl:value-of select="out-wrapper/return-element/@java-name"/>;
                 } else {
-                    throw new org.apache.axis2.AxisFault("Missing expected result wrapper element {<xsl:value-of select='out-wrapper/@ns'/>}<xsl:value-of select='out-wrapper/@name'/>");
+                    throw new org.apache.axis2.AxisFault("Missing expected return wrapper element {<xsl:value-of select='out-wrapper/@ns'/>}<xsl:value-of select='out-wrapper/@name'/>");
                 }
       </xsl:if>
             } catch (Exception e) {
@@ -405,7 +405,7 @@
                     }
 
                     public void onError(Exception e) {
-                        _callback.receiveErrorgetBook(e);
+                        _callback.receiveError<xsl:value-of select="@method-name"/>(e);
                     }
                 });
                         
@@ -649,7 +649,7 @@
             bindingFactory = factory;
             bindingErrorMessage = message;
     <xsl:apply-templates mode="set-index-fields" select="abstract-type"/>
-        };
+        }
         
         private static org.jibx.runtime.impl.UnmarshallingContext getNewUnmarshalContext(org.apache.axiom.om.OMElement param)
             throws org.jibx.runtime.JiBXException {
