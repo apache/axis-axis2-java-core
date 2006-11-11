@@ -84,21 +84,21 @@ the BeanWriter interface.</li>
 schema compiler looks towards to find classes</li>
 <li><strong>JavaTypeMap</strong> - the default implementation of
 the TypeMap</li>
-<li><strong>BeanTemplate.xsl</strong> - the XSLtemplate the
+<li><strong>ADBBeanTemplate.xsl</strong> - the XSLtemplate the
 JavaBeanWriter uses.</li>
 <li><strong>Schema-compile.properties</strong> - The property file
 for the schema compiler</li>
 </ol>
 <p>The easiest way to obtain the ADB binaries is to run the maven
-build for the codegen module. This will generate the
-<strong>axis2-codegen-{$version}.jar</strong> inside the target
+build for the Axis2 adb-codegen module. This will generate the
+<strong>axis2-adb-codegen-{$version}.jar</strong> inside the target
 folder which is directly usable when the ADB schema compiler is
 required.</p>
 <p>The runtime dependancies for the ADB generated classes is in the
-Axis2 ADB module. Hence to compile and work with the generated
-classes the <strong>axis2-adb-{$version}.jar</strong> needs to be
-in the classpath apart from other dependancies like the StAX
-utilities.</p>
+Axis2 adb module and the kernal module. Hence to compile and work with the generated
+classes the <strong>axis2-adb-{$version}.jar</strong> and <strong>axis2-kernal-{$version}.jar</strong> needs to be
+in the classpath apart from other dependancies like the StAX,
+Axiom,Commons-logging and javax.activation.</p>
 <a name="code_gen" id="code_gen"></a>
 <h2>Invoking the ADB Code Generator</h2>
 <a name="schema_compiler"></a>
@@ -238,7 +238,8 @@ type with the basetype</li>
 the following. Consider the following piece of schema</p>
 <pre>
 &lt;schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-xmlns:tns="http://soapinterop.org/types" targetNamespace="http://soapinterop.org/types"&gt;
+xmlns:tns="http://soapinterop.org/types" targetNamespace="http://soapinterop.org/types" 
+elementFormDefault="qualified" &gt;
 &lt;import namespace="http://schemas.xmlsoap.org/soap/encoding/"/&gt;
  &lt;complexType name="SOAPStruct"&gt;
   &lt;sequence&gt;
@@ -271,7 +272,7 @@ representing the SOAPStruct object that it encapsulates.</p>
 encapsulates two methods for creation and serializing the beans.
 Note that to make this work, the generated beans implement the
 <strong>org.apache.axis2.databinding.ADBBean</strong> interface</p>
-<p>The creator and reader methods look like the following</p>
+<p>The creator and serializer methods look like the following</p>
 <ul>
 <li>
 <pre>
@@ -292,6 +293,23 @@ null for the elements.</li>
 example) will use the passed in QName to return an instance of the
 ADBpullparser. This will effectively wrap the elements inside with
 an element having the passed QName</li>
+</ol>
+</li>
+<li>
+
+<pre>
+ public org.apache.axiom.om.OMElement getOMElement(
+            final javax.xml.namespace.QName parentQName,
+            final org.apache.axiom.om.OMFactory factory){
+</pre>
+<p>This method returns an OMElement representing the ADB bean object.</p>
+<ol>
+<li>There is an annonymous ADBDataSource class has implemented, in side the getOMElement method.
+This annonymous class implements the serialize method where the serializing logic is written,
+for that pirticular bean class. Fianlly an OMSourcedElementImpl object with the
+above annonymous class type object as the data source, is
+returned. 
+</li>
 </ol>
 </li>
 <li>
@@ -322,7 +340,7 @@ before calling the parse methods</p>
 <h3>An Example!</h3>
 <p>Consider the following XML fragment</p>
 <pre>
-&lt;myElement&gt;
+&lt;myElement xmlns="http://soapinterop.org/types"&gt;
   &lt;varInt&gt;5&lt;/varInt&gt;
   &lt;varString&gt;Hello&lt;/varString&gt;
   &lt;varFloat&gt;3.3&lt;/varFloat&gt;
@@ -337,6 +355,15 @@ XMLStreamReader reader = XMLInputFactory.newInstance().
                                 createXMLStreamReader(
                                         new ByteArrayInputStream(xmlString.getBytes()));
 MyElement elt = MyElement.Factory.parse(reader);
+</pre>
+<p>
+Optionally above xml fragment can be reproduced with the following
+code fragment
+<P>
+<pre>
+OMElement omElement = myElement.getOMElement
+		(MyElement.MY_QNAME, OMAbstractFactory.getSOAP12Factory());
+String xmlString = omElement.toStringWithConsume();
 </pre>
 <p>Although this example takes on the tedious effort of creating a
 reader out of the String, inside the Axis2 environment an
@@ -359,8 +386,7 @@ use ADB for something serious.</p>
 <p>ADB is meant to be a 'Simple' databinding framework and was not meant to compile all types of schemas. The following limitations
 are the most highlighted.</p>
 <ol>
-<li>Complex Extensions and Restrictions, Simple Extensions and
-Restrictions are not supported.</li>
+<li>Complex Extensions and Restrictions.</li>
 </ol>
 <a name="more" id="more"></a>
 <h2>Want to Learn More?</h2>
