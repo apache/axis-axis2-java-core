@@ -1,5 +1,12 @@
 POJO Web Services using Apache Axis2- Sample 1
 =============================================
+This sample contains source code for the xdocs/1_1/pojoguide.html document found in 
+the extracted Axis2 Documents Distribution. For a more detailed description on the 
+source code kindly see this 'POJO Web Services using Apache Axis2' document.
+
+The above mentioned document shows you how to take a simple POJO (Plain Old Java 
+Object), and deploy it on Apache Tomcat as a Web service in the exploded directory 
+format. This is a quick way to get a Web service up and running in no time. 
 
 Introduction
 ============
@@ -9,21 +16,21 @@ The WeatherService Java class provides methods to get and set a Weather
 type Java objects. The client uses RPCServiceClient to invoke those two 
 methods just as Java object method invocation.
 
-Pre-Requisites
+Prerequisites
 ==============
 
 Apache Ant 1.6.2 or later
 
 Building the Service
+====================
 
-type:
-$ant
+Type $ant from Axis2_HOME/samples/pojoguide
 
 
 Running the Client
 ==================
-type:
-$ant rpc.client -Duri=http://<your host>:<your port>/axis2/services/WeatherService
+
+Type $ant rpc.client -Duri=http://<your host>:<your port>/axis2/services/WeatherService
 
 
 Help
