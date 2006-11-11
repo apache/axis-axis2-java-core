@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
  public class ServiceArchiveOutputLocationPage extends AbstractServiceWizardPage {
 
-     private static final String DEFAULT_JAR_NAME = "my_service.jar";
+     private static final String DEFAULT_JAR_NAME = "my_service.aar";
      private Text outputFileLocationTextBox;
      private Button browseButton;
      private Text outputFileNameTextbox;
@@ -99,7 +99,22 @@ import org.eclipse.swt.widgets.Text;
  		        handleFileNameModification();
  		    }
         });
-
+ 		
+ 		//Add some fill lables 
+        gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalSpan = 3;
+ 		Label fillLable = new Label(container,SWT.NULL);
+ 		fillLable.setText("");
+ 		fillLable.setLayoutData(gd);
+ 		Label fillLable1 = new Label(container,SWT.NULL);
+ 		fillLable1.setText("");
+ 		fillLable1.setLayoutData(gd);
+ 		
+        //Hint Lable
+ 		Label hintLable = new Label(container,SWT.NULL);
+ 		hintLable.setText(ServiceArchiver.getResourceString("page4.hint.caption"));
+ 		hintLable.setLayoutData(gd);
+ 		
         if (restoredFromPreviousSettings) {
             handleFileNameModification();
             handleLocationModification();
@@ -126,9 +141,19 @@ import org.eclipse.swt.widgets.Text;
          settings.put(PREF_OUTPUT_LOCATION,outputLocationText);
          if (outputLocationText==null ||"".equals(outputLocationText.trim())){
              this.updateStatus(ServiceArchiver.getResourceString("page4.error.location"));
-         }else{
-        	 isWizardComplete = true;
+             isWizardComplete=false;
              updateStatus(null);
+         }else{
+             String outputFilenameText = outputFileNameTextbox.getText();
+             settings.put(PREF_OUTPUT_NAME,outputFilenameText);
+        	 if (outputFilenameText==null || "".equals(outputFilenameText.trim())){
+                 this.updateStatus(ServiceArchiver.getResourceString("page4.error.filename"));
+                 isWizardComplete=false;
+                 updateStatus(null);
+        	 }else{
+        		 isWizardComplete = true;
+        		 updateStatus(null);
+        	 }
          }
      }
      private void handleFileNameModification(){
@@ -136,8 +161,19 @@ import org.eclipse.swt.widgets.Text;
          settings.put(PREF_OUTPUT_NAME,outputFilenameText);
          if (outputFilenameText==null || "".equals(outputFilenameText.trim())){
              this.updateStatus(ServiceArchiver.getResourceString("page4.error.filename"));
-         }else{
+             isWizardComplete=false;
              updateStatus(null);
+         }else{
+             String outputLocationText = outputFileLocationTextBox.getText();
+             settings.put(PREF_OUTPUT_LOCATION,outputLocationText);
+             if (outputLocationText==null ||"".equals(outputLocationText.trim())){
+                 this.updateStatus(ServiceArchiver.getResourceString("page4.error.location"));
+                 isWizardComplete=false;
+                 updateStatus(null);
+             }else{
+            	 isWizardComplete = true;
+            	 updateStatus(null);
+             }
          }
      }
      
