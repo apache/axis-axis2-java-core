@@ -12,7 +12,6 @@
     </path>
 
     <target name="compile.service">
-        <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}/classes"/>
 
