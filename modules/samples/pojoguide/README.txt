@@ -2,8 +2,12 @@ POJO Web Services using Apache Axis2- Sample 1
 =============================================
 
 Introduction
+============
 
-This sample shows how to how to expose a Java class as a web service.  The WeatherService Java class provides methods to get and set a Weather type Java objects.  The client uses RPCServiceClient to invoke those two methods just like Java object method invocations.
+This sample shows how to expose a Java class as a web service.  
+The WeatherService Java class provides methods to get and set a Weather 
+type Java objects. The client uses RPCServiceClient to invoke those two 
+methods just as Java object method invocation.
 
 Pre-Requisites
 ==============
