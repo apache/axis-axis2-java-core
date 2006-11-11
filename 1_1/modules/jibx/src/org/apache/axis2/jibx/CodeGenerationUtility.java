@@ -90,6 +90,72 @@ public class CodeGenerationUtility {
         s_primitiveSet.add("void");
     }
     
+    /** Reserved words for Java (keywords and literals). */
+    private static final HashSet s_reservedWords = new HashSet();
+    static {
+
+        // keywords
+        s_reservedWords.add("abstract");
+        s_reservedWords.add("assert");
+        s_reservedWords.add("boolean");
+        s_reservedWords.add("break");
+        s_reservedWords.add("byte");
+        s_reservedWords.add("case");
+        s_reservedWords.add("catch");
+        s_reservedWords.add("char");
+        s_reservedWords.add("class");
+        s_reservedWords.add("const");
+        s_reservedWords.add("continue");
+
+        s_reservedWords.add("default");
+        s_reservedWords.add("do");
+        s_reservedWords.add("double");
+        s_reservedWords.add("else");
+        s_reservedWords.add("enum");
+        s_reservedWords.add("extends");
+        s_reservedWords.add("final");
+        s_reservedWords.add("finally");
+        s_reservedWords.add("float");
+        s_reservedWords.add("for");
+        s_reservedWords.add("goto");
+
+        s_reservedWords.add("if");
+        s_reservedWords.add("implements");
+        s_reservedWords.add("import");
+        s_reservedWords.add("instanceof");
+        s_reservedWords.add("int");
+        s_reservedWords.add("interface");
+        s_reservedWords.add("long");
+        s_reservedWords.add("native");
+        s_reservedWords.add("new");
+        s_reservedWords.add("package");
+
+        s_reservedWords.add("private");
+        s_reservedWords.add("protected");
+        s_reservedWords.add("public");
+        s_reservedWords.add("return");
+        s_reservedWords.add("short");
+        s_reservedWords.add("static");
+        s_reservedWords.add("strictfp");
+        s_reservedWords.add("super");
+        s_reservedWords.add("switch");
+        s_reservedWords.add("synchronized");
+
+        s_reservedWords.add("this");
+        s_reservedWords.add("throw");
+        s_reservedWords.add("throws");
+        s_reservedWords.add("transient");
+        s_reservedWords.add("try");
+        s_reservedWords.add("void");
+        s_reservedWords.add("volatile");
+        s_reservedWords.add("while");
+
+        // literals
+        s_reservedWords.add("true");
+        s_reservedWords.add("false");
+        s_reservedWords.add("null");
+    }
+    
     /**
      * Constructor.
      * 
@@ -238,7 +304,7 @@ public class CodeGenerationUtility {
                     Element dbmethod = doc.createElement("dbmethod");
                     dbmethod.setAttribute("receiver-name", receivername);
                     dbmethod.setAttribute("method-name", op.getName().getLocalPart());
-                    Set nameset = new HashSet();
+                    Set nameset = new HashSet(s_reservedWords);
                     if (inmsg != null) {
                         dbmethod.appendChild(unwrapMessage(inmsg, false, simpleTypeMap, complexTypeMap, typeMappedClassMap, nameset, doc));
                     }
@@ -547,8 +613,11 @@ public class CodeGenerationUtility {
         }
         int count = 0;
         String jname = buff.toString();
-        while (!nameset.add(jname)) {
-            jname = buff.toString() + count++;
+        if (!nameset.add(jname)) {
+            jname = "_" + jname;
+            while (!nameset.add(jname)) {
+                jname = buff.toString() + count++;
+            }
         }
         return jname;
     }
