@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.server.dispatcher;
 import java.lang.reflect.Method;
 
 import javax.jws.soap.SOAPBinding.ParameterStyle;
+import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 
@@ -201,11 +202,13 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 		if(isDocLitWrapped(endpointDesc, operationDesc)){
 			parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 		}
-		return cf.createDocLitMethodMarshaller(parameterStyle, serviceDesc, endpointDesc, operationDesc, protocol);
+        return cf.createMethodMarshaller(Style.DOCUMENT, parameterStyle, 
+                serviceDesc, endpointDesc, operationDesc, protocol);
 	}
 	
 	private MethodMarshaller createRPCLitMessageConvertor(MethodMarshallerFactory cf, Protocol protocol){
-		return cf.createDocLitMethodMarshaller(null, serviceDesc, endpointDesc, operationDesc, protocol);
+        return cf.createMethodMarshaller(Style.RPC, ParameterStyle.WRAPPED, 
+                serviceDesc, endpointDesc, operationDesc, protocol);
 	}
 	
     

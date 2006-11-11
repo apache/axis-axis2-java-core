@@ -56,8 +56,7 @@ public class FactoryRegistry {
 		table.put(MessageFactory.class, new MessageFactoryImpl());
 		table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
 		table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
-		table.put(MethodMarshallerFactory.class, new MethodMarshallerFactory());
-		table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
+	    table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
 	}
 	/**
 	 * FactoryRegistry is currently a static singleton
