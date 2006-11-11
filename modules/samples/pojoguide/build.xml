@@ -55,9 +55,7 @@
 
 		<antcall target="rpc.client.jar" />
 
-		<antcall target="rpc.client.run">
-			<param name="uri" value="${uri}"/>
-		</antcall>
+		<antcall target="rpc.client.run" />
 
 	</target>
 
@@ -74,7 +72,6 @@
 	<target name="rpc.client.run">
 		<java classname="sample.pojo.rpcclient.WeatherRPCClient">
 			<classpath refid="client.class.path" />
-			<arg value="${uri}" />
 		</java>
 	</target>
 </project>
