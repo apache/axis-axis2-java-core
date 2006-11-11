@@ -30,7 +30,7 @@ Type $ant from Axis2_HOME/samples/pojoguide
 Running the Client
 ==================
 
-Type $ant rpc.client -Duri=http://<your host>:<your port>/axis2/services/WeatherService
+Type $ant rpc.client
 
 
 Help
