@@ -36,7 +36,7 @@
                    synconly="true"
                    serverside="true"
                    serverSideInterface="true"
-                   namespaceToPackages="http://StockQuoteService/xsd=samples.quickstart.service.adb.xsd"
+                   namespaceToPackages="http://quickstart.samples/xsd=samples.quickstart.service.adb.xsd"
                    generateservicexml="true"/>
         <copy file="${basedir}/src/samples/quickstart/service/adb/StockQuoteServiceSkeleton.java"
               toDir="${build.dir}/service/src/samples/quickstart/service/adb/"
@@ -53,7 +53,7 @@
                    output="${build.dir}/client"
                    packageName="samples.quickstart.service.adb"
                    databindingName="adb"
-                   namespaceToPackages="http://StockQuoteService/xsd=samples.quickstart.service.adb.xsd"
+                   namespaceToPackages="http://quickstart.samples/xsd=samples.quickstart.service.adb.xsd"
                    language="java"
                    synconly="true"/>
         <copy file="${basedir}/src/samples/quickstart/clients/ADBClient.java"

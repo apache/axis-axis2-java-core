@@ -36,7 +36,7 @@
                    synconly="true"
                    serverside="true"
                    serverSideInterface="true"
-                   namespaceToPackages="http://StockQuoteService/xsd=samples.quickstart.service.xmlbeans.xsd"
+                   namespaceToPackages="http://quickstart.samples/xsd=samples.quickstart.service.xmlbeans.xsd"
                    generateservicexml="true"/>
         <copy file="${basedir}/src/samples/quickstart/service/xmlbeans/StockQuoteServiceSkeleton.java"
               toDir="${build.dir}/service/src/samples/quickstart/service/xmlbeans/"
@@ -53,7 +53,7 @@
                    output="${build.dir}/client"
                    packageName="samples.quickstart.service.xmlbeans"
                    databindingName="xmlbeans"
-                   namespaceToPackages="http://StockQuoteService/xsd=samples.quickstart.service.xmlbeans.xsd"
+                   namespaceToPackages="http://quickstart.samples/xsd=samples.quickstart.service.xmlbeans.xsd"
                    language="java"
                    synconly="true"/>
         <copy file="${basedir}/src/samples/quickstart/clients/XMLBEANSClient.java"
