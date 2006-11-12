@@ -119,7 +119,7 @@
   <!-- Invoked by main template to handle unwrapped method generation for message receiver -->
   <xsl:template match="dbmethod" mode="message-receiver">
     <xsl:variable name="method-name" select="@method-name"/>
-      public org.apache.axiom.soap.SOAPEnvelope <xsl:value-of select="@receiver-name"/>(org.apache.axiom.om.OMElement element, <xsl:value-of select="/*/@skeletonname"/> skel, org.apache.axiom.soap.SOAPFactory factory) throws org.apache.axis2.AxisFault
+      public org.apache.axiom.soap.SOAPEnvelope <xsl:value-of select="@receiver-name"/>(org.apache.axiom.om.OMElement element, <xsl:value-of select="/*/@skeletonInterfaceName"/> skel, org.apache.axiom.soap.SOAPFactory factory) throws org.apache.axis2.AxisFault
       <xsl:for-each select="/interface/method[@name=$method-name]/fault/param">, <xsl:value-of select="@name"/></xsl:for-each>
       {
           org.apache.axiom.soap.SOAPEnvelope envelope = null;
@@ -181,7 +181,7 @@
                       child.setText(result.toString());
               </xsl:when>
               <xsl:otherwise>
-                      child.setText(<xsl:value-of select="out-wrapper/return-element/@serializer"/>(result);
+                      child.setText(<xsl:value-of select="out-wrapper/return-element/@serializer"/>(result));
               </xsl:otherwise>
             </xsl:choose>
                       wrapper.addChild(child);
@@ -224,11 +224,17 @@
           <xsl:otherwise>
               org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
             <xsl:choose>
-              <xsl:when test="out-wrapper/return-element/@serializer=''">
-              child.setText(result.toString());
+              <xsl:when test="out-wrapper/return-element/@object='true'">
+              if (result == null) {
+                  org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+                  child.declareNamespace(xsins);
+                  child.addAttribute("nil", "true", xsins);
+              } else {
+                <xsl:call-template name="set-result-text"/>
+              }
               </xsl:when>
               <xsl:otherwise>
-              child.setText(<xsl:value-of select="out-wrapper/return-element/@serializer"/>(result));
+                <xsl:call-template name="set-result-text"/>
               </xsl:otherwise>
             </xsl:choose>
               wrapper.addChild(child);
@@ -251,6 +257,17 @@
           }
           return envelope;
       }
+  </xsl:template>
+  
+  <xsl:template name="set-result-text">
+    <xsl:choose>
+      <xsl:when test="out-wrapper/return-element/@serializer=''">
+              child.setText(result.toString());
+      </xsl:when>
+      <xsl:otherwise>
+              child.setText(<xsl:value-of select="out-wrapper/return-element/@serializer"/>(result<xsl:if test="out-wrapper/return-element/@wrapped-primitive='true'">.<xsl:value-of select="out-wrapper/return-element/@value-method"/>()</xsl:if>));
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <!-- Generate argument list for message receiver call to actual implementation method. -->
@@ -296,7 +313,7 @@
         <xsl:for-each select="in-wrapper/parameter-element">
          * @param <xsl:value-of select="@java-name"/></xsl:for-each>
          */
-        public <xsl:choose><xsl:when test="out-wrapper/@empty='true'">void</xsl:when><xsl:otherwise><xsl:value-of select="$return-full-type"/></xsl:otherwise></xsl:choose><xsl:text> </xsl:text><xsl:value-of select="@method-name"/>(
+        public <xsl:choose><xsl:when test="string-length(normalize-space($return-full-type)) &gt; 0"><xsl:value-of select="$return-full-type"/></xsl:when><xsl:otherwise>void</xsl:otherwise></xsl:choose><xsl:text> </xsl:text><xsl:value-of select="@method-name"/>(
     </xsl:if>
     <xsl:if test="$sync='false'">
          * Auto generated asynchronous call method
@@ -543,7 +560,7 @@
   </xsl:template>
   
   <!-- Reference to parameter or array item value, as appropriate -->
-  <xsl:template name="parameter-or-array-item"><xsl:choose><xsl:when test="@array='true'">_item</xsl:when><xsl:otherwise><xsl:value-of select='@java-name'/></xsl:otherwise></xsl:choose></xsl:template>
+  <xsl:template name="parameter-or-array-item"><xsl:choose><xsl:when test="@array='true'">_item</xsl:when><xsl:otherwise><xsl:value-of select='@java-name'/></xsl:otherwise></xsl:choose><xsl:if test="@wrapped-primitive='true'">.<xsl:value-of select="@value-method"/>()</xsl:if></xsl:template>
   
   <!-- Generate code for the result in a client stub method -->
   <xsl:template match="return-element" mode="interface-implementation">
@@ -643,7 +660,14 @@
             org.jibx.runtime.IBindingFactory factory = null;
             String message = null;
             try {
+    <xsl:choose>
+      <xsl:when test="@bound-class=''">
+                factory = new org.apache.axis2.jibx.NullBindingFactory();
+      </xsl:when>
+      <xsl:otherwise>
                 factory = org.jibx.runtime.BindingDirectory.getFactory(<xsl:value-of select="@bound-class"/>.class);
+      </xsl:otherwise>
+    </xsl:choose>
                 message = null;
             } catch (Exception e) { message = e.getMessage(); }
             bindingFactory = factory;
@@ -664,6 +688,7 @@
             return ctx;
         }
         
+    <!-- shouldn't be needed when no actual binding, but called by fault conversion code so must be left in for now -->
         private static Object fromOM(org.apache.axiom.om.OMElement param, Class type,
             java.util.Map extraNamespaces) {
             try {
@@ -756,6 +781,9 @@
       </xsl:when>
       <xsl:when test="@form='simple' and @deserializer=''">
         new <xsl:value-of select="@java-type"/>(uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>"))
+      </xsl:when>
+      <xsl:when test="@form='simple' and @wrapped-primitive='true'">
+        new <xsl:value-of select="@java-type"/>(<xsl:value-of select="@deserializer"/>(uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>")))
       </xsl:when>
       <xsl:when test="@form='simple'">
         <xsl:value-of select="@deserializer"/>(uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>"))
