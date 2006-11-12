@@ -69,7 +69,7 @@ public class Java2WSDLUtils {
         if (pkg != null)
             name = pkg.getName();
         else
-            name = packageNameFromClass(clazz.getName());
+            name = packageNameFromClass(className);
 
         return nsGen.namespaceFromPackageName(name);
     }
@@ -111,7 +111,7 @@ public class Java2WSDLUtils {
         if (pkg != null)
             name = pkg.getName();
         else
-            name = packageNameFromClass(clazz.getName());
+            name = packageNameFromClass(className);
         return name;
     }
 
@@ -120,7 +120,7 @@ public class Java2WSDLUtils {
         int lastDot = name.lastIndexOf('.');
 
         if (lastDot != -1)
-            ret = name.substring(lastDot + 1);
+            ret = name.substring(0, lastDot);
         return ret;
     }
 }
