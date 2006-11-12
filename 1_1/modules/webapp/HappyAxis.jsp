@@ -350,7 +350,7 @@
             ConfigurationContext configctx =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
             ServiceClient client = new ServiceClient(configctx, null);
-            EndpointReference targetEPR = new EndpointReference(IP + configctx.getServicePath() + "/version");
+            EndpointReference targetEPR = new EndpointReference(IP + configctx.getServicePath() + "/Version");
             Options options = new Options();
             client.setOptions(options);
             options.setTo(targetEPR);
