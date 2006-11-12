@@ -134,14 +134,15 @@ public class SchemaUtil {
                         while (iterator.hasNext()) {
                             XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
                             QName qName = innerElement.getQName();
-                            String[] parameterValuesArray = (String[]) parameterMap.get(qName.getLocalPart());
+                            String name = qName != null ? qName.getLocalPart() : innerElement.getName();
+                            String[] parameterValuesArray = (String[]) parameterMap.get(name);
                             if (parameterValuesArray != null &&
                                 !"".equals(parameterValuesArray[0]) && parameterValuesArray[0] != null)
                             {
-                                OMNamespace ns = (qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
+                                OMNamespace ns = (qName == null || qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
                                         null :
                                         soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
-                                soapFactory.createOMElement(qName.getLocalPart(), ns,
+                                soapFactory.createOMElement(name, ns,
                                                             bodyFirstChild).setText(parameterValuesArray[0]);
                             } else {
                                 throw new AxisFault("Required element " + qName +
