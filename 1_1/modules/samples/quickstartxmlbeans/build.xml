@@ -20,7 +20,6 @@
     </path>
 
     <target name="init">
-        <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
     </target>
 

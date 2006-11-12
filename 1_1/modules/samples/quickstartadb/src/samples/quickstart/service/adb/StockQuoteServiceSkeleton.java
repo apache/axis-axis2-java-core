@@ -4,7 +4,7 @@ import samples.quickstart.service.adb.xsd.Update;
 import samples.quickstart.service.adb.xsd.GetPrice;
 
 import java.util.HashMap;
-public class StockQuoteServiceSkeleton {
+public class StockQuoteServiceSkeleton implements StockQuoteServiceSkeletonInterface {
     private HashMap map = new HashMap();
 
     public void update(Update param0) {
