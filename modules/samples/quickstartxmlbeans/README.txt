@@ -1,6 +1,10 @@
 Axis2 Quick Start Guide- Sample 4 (XML Beans)
 ============================================
 
+This sample contains source code for the xdocs/1_1/quickstartguide.html document found in 
+the extracted Axis2 Documents Distribution. For a more detailed description on the 
+source code kindly see this 'Axis2 Quick Start Guide' document.
+
 Introduction
 ============
 In this sample, we are deploying an XMLBEANS generated service. The service
