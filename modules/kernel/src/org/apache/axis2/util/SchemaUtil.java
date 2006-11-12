@@ -16,6 +16,7 @@
 package org.apache.axis2.util;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -132,15 +133,18 @@ public class SchemaUtil {
 
                         while (iterator.hasNext()) {
                             XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
-                            String name = innerElement.getName();
-                            String[] parameterValuesArray = (String[]) parameterMap.get(name);
+                            QName qName = innerElement.getQName();
+                            String[] parameterValuesArray = (String[]) parameterMap.get(qName.getLocalPart());
                             if (parameterValuesArray != null &&
                                 !"".equals(parameterValuesArray[0]) && parameterValuesArray[0] != null)
                             {
-                                soapFactory.createOMElement(name, null,
+                                OMNamespace ns = (qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
+                                        null :
+                                        soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
+                                soapFactory.createOMElement(qName.getLocalPart(), ns,
                                                             bodyFirstChild).setText(parameterValuesArray[0]);
                             } else {
-                                throw new AxisFault("Required element " + name +
+                                throw new AxisFault("Required element " + qName +
                                                     " defined in the schema can not be found in the request");
                             }
                         }
