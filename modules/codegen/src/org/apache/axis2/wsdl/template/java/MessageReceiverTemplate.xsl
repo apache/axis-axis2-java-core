@@ -282,7 +282,7 @@
                 </xsl:when>
 
                 <xsl:otherwise>
-                    <xsl:value-of select="$usedbmethod"/>(msgContext.getEnvelope().getBody().getFirstElement(), skel, null);
+                    <xsl:value-of select="$usedbmethod"/>(inMessage.getEnvelope().getBody().getFirstElement(), skel, null);
                 </xsl:otherwise>
 
             </xsl:choose>
