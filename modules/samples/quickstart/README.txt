@@ -14,8 +14,8 @@ Apache Ant 1.6.2 or later
 Building the Service
 ====================
 
-Type "ant" from Axis2_HOME/samples/quickstart directory and then deploy
-the Axis2_HOME/samples/quickstart/build/StockQuoteService.aar
+Type "ant generate.service" or just "ant" from Axis2_HOME/samples/quickstart directory 
+and then deploy the Axis2_HOME/samples/quickstart/build/StockQuoteService.aar
 
 Running the Client
 ==================
@@ -23,7 +23,8 @@ Running the Client
 http://localhost:8080/axis2/rest/StockQuoteService/getPrice?symbol=IBM
 
 You will get the following response:
-<ns:getPriceResponse xmlns:ns="http://pojo.service.quickstart.samples/xsd"><ns:return>42</ns:return></ns:getPriceResponse>
+<ns:getPriceResponse xmlns:ns="http://pojo.service.quickstart.samples/xsd">
+<ns:return>42</ns:return></ns:getPriceResponse>
 
 - If you invoke the update method like so:
 http://localhost:8080/axis2/rest/StockQuoteService/update?symbol=IBM&price=100
