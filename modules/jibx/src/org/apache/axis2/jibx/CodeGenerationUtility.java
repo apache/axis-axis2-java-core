@@ -39,6 +39,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.extension.JiBXExtension;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
@@ -88,6 +89,18 @@ public class CodeGenerationUtility {
         s_primitiveSet.add("long");
         s_primitiveSet.add("short");
         s_primitiveSet.add("void");
+    }
+    
+    private static HashMap s_wrapperMap = new HashMap();
+    static {
+        s_wrapperMap.put("boolean", "Boolean");
+        s_wrapperMap.put("byte", "Byte");
+        s_wrapperMap.put("char", "Character");
+        s_wrapperMap.put("double", "Double");
+        s_wrapperMap.put("float", "Float");
+        s_wrapperMap.put("int", "Integer");
+        s_wrapperMap.put("long", "Long");
+        s_wrapperMap.put("short", "Short");
     }
     
     /** Reserved words for Java (keywords and literals). */
@@ -154,6 +167,13 @@ public class CodeGenerationUtility {
         s_reservedWords.add("true");
         s_reservedWords.add("false");
         s_reservedWords.add("null");
+        
+        // variable names used by template unwrapped code generation
+        // TODO change templates to use $xxx names, block generation from WSDL
+        s_reservedWords.add("true");
+        s_reservedWords.add("uctx");
+        s_reservedWords.add("child");
+        s_reservedWords.add("wrapper");
     }
     
     /**
@@ -180,37 +200,48 @@ public class CodeGenerationUtility {
      * each unwrapped parameter, and the detailed information is set on the
      * message information. Sound confusing? Welcome to Axis2 code generation.
      * 
-     * @param path binding path
+     * @param path binding path (<code>null</code> if none)
      */
     public void engage(String path) {
         
-        // make sure the binding definition file is present
-        File file = new File(path);
-        if (!file.exists()) {
-            throw new RuntimeException("jibx binding definition file " + path + " not found");
-//                CodegenMessages.getMessage("extension.encodedNotSupported"));
-        }
-        
-        // Read the JiBX binding definition into memory. The binding definition
-        // is only prevalidated so as not to require the user to have all
-        // the referenced classes in the classpath, though this does make for
-        // added work in finding the namespaces.
-        try {
-            ValidationContext vctx = BindingElement.newValidationContext();
-            BindingElement binding =
-                BindingElement.readBinding(new FileInputStream(file), path, vctx);
-            binding.setBaseUrl(file.toURL());
-            vctx.setBindingRoot(binding);
-            IncludePrevalidationVisitor ipv = new IncludePrevalidationVisitor(vctx);
-            vctx.tourTree(binding, ipv);
-            if (vctx.getErrorCount() != 0 || vctx.getFatalCount() != 0) {
-                throw new RuntimeException("invalid jibx binding definition file " + path);
+        // make sure the binding definition file is present, if passed
+        File file = null;
+        if (path != null) {
+            file = new File(path);
+            if (!file.exists()) {
+                throw new RuntimeException("jibx binding definition file " + path + " not found");
             }
+        }
+        try {
             
-            // make sure classes will be generated for abstract mappings
+            // set flag for unwrapping
             boolean unwrap = !codeGenConfig.isParametersWrapped();
-            if (unwrap && !binding.isForceClasses()) {
-                throw new RuntimeException("unwrapped binding must use force-classes='true' option in " + path);
+            
+            // initialize the binding information
+            BindingElement binding = null;
+            if (file == null) {
+                
+                // unwrapped can be used without a binding, but wrapped requires one
+                if (!unwrap) {
+                    throw new RuntimeException("JiBX wrapped support requires a binding definition to be provided using the -E" +
+                        JiBXExtension.BINDING_PATH_OPTION + " {file-path} parameter");
+                }
+                
+            } else {
+                
+                // Read the JiBX binding definition into memory. The binding definition
+                // is only prevalidated so as not to require the user to have all
+                // the referenced classes in the classpath, though this does make for
+                // added work in finding the namespaces.
+                ValidationContext vctx = BindingElement.newValidationContext();
+                binding = BindingElement.readBinding(new FileInputStream(file), path, vctx);
+                binding.setBaseUrl(file.toURL());
+                vctx.setBindingRoot(binding);
+                IncludePrevalidationVisitor ipv = new IncludePrevalidationVisitor(vctx);
+                vctx.tourTree(binding, ipv);
+                if (vctx.getErrorCount() != 0 || vctx.getFatalCount() != 0) {
+                    throw new RuntimeException("invalid jibx binding definition file " + path);
+                }
             }
             
             // create table with all built-in format definitions
@@ -262,8 +293,15 @@ public class CodeGenerationUtility {
             // collect all the top-level mapping and format definitions
             Map elementMap = new HashMap();
             Map complexTypeMap = new HashMap();
-            collectTopLevelComponents(binding, null, elementMap,
-                complexTypeMap, simpleTypeMap);
+            if (binding != null) {
+                collectTopLevelComponents(binding, null, elementMap,
+                    complexTypeMap, simpleTypeMap);
+            }
+            
+            // make sure classes will be generated for abstract mappings
+            if (unwrap && complexTypeMap.size() > 0 && !binding.isForceClasses()) {
+                throw new RuntimeException("unwrapped binding must use force-classes='true' option in " + path);
+            }
             
             // force off inappropriate option (set by error in options handling)
             codeGenConfig.setPackClasses(false);
@@ -355,6 +393,9 @@ public class CodeGenerationUtility {
                         mappedclass = mapping.getClassName();
                     }
                 }
+            }
+            if (mappedclass == null) {
+                mappedclass = "";
             }
             bindinit.setAttribute("bound-class", mappedclass);
             details.add(bindinit);
@@ -510,12 +551,21 @@ public class CodeGenerationUtility {
                     param.setAttribute("form", "simple");
                     param.setAttribute("serializer", format.getSerializerName());
                     param.setAttribute("deserializer", format.getDeserializerName());
-                    String dflt = element.getDefaultValue();
-                    if (dflt == null) {
-                        dflt = format.getDefaultText();
-                    }
-                    if (dflt != null) {
-                        param.setAttribute("default", dflt);
+                    
+                    // convert primitive types to wrapper types for nillable
+                    if (element.isNillable() && s_wrapperMap.containsKey(javatype)) {
+                        param.setAttribute("wrapped-primitive", "true");
+                        param.setAttribute("value-method", javatype + "Value");
+                        javatype = (String)s_wrapperMap.get(javatype);
+                    } else {
+                        param.setAttribute("wrapped-primitive", "false");
+                        String dflt = element.getDefaultValue();
+                        if (dflt == null) {
+                            dflt = format.getDefaultText();
+                        }
+                        if (dflt != null) {
+                            param.setAttribute("default", dflt);
+                        }
                     }
                     
                 } else {
@@ -613,11 +663,8 @@ public class CodeGenerationUtility {
         }
         int count = 0;
         String jname = buff.toString();
-        if (!nameset.add(jname)) {
-            jname = "_" + jname;
-            while (!nameset.add(jname)) {
-                jname = buff.toString() + count++;
-            }
+        while (!nameset.add(jname)) {
+            jname = buff.toString() + count++;
         }
         return jname;
     }
