@@ -114,11 +114,12 @@ public class BeanUtil {
                     }
                     object.add(value == null ? null : SimpleTypeMapper.getStringValue(value));
                 } else if (ptype.isArray()) {
-                    Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
-                            null);
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
-                        for (int j = 0; j < value.length; j++) {
-                            Object o = value[j];
+                        Object value = propDesc.getReadMethod().invoke(beanObject,
+                                null);
+                        int i1 = Array.getLength(value);
+                        for (int j = 0; j < i1; j++) {
+                            Object o = Array.get(value, j);
                             if (elemntNameSpace != null) {
                                 object.add(new QName(elemntNameSpace.getNamespaceURI(),
                                         propDesc.getName(), elemntNameSpace.getPrefix()));
@@ -129,6 +130,8 @@ public class BeanUtil {
                             object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
                         }
                     } else {
+                        Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
+                                null);
                         for (int j = 0; j < value.length; j++) {
                             Object o = value[j];
                             if (elemntNameSpace != null) {
