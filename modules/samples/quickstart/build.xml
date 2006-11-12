@@ -30,8 +30,8 @@
                  classpathref="axis2.classpath"/>
         <java2wsdl className="samples.quickstart.service.pojo.StockQuoteService"
                    outputLocation="${build.dir}"
-                   targetNamespace="http://pojo.service.quickstart.samples"
-                   schemaTargetNamespace="http://pojo.service.quickstart.samples/xsd">
+                   targetNamespace="http://quickstart.samples/"
+                   schemaTargetNamespace="http://quickstart.samples/xsd">
             <classpath>
                 <pathelement path="${axis2.classpath}"/>
                 <pathelement location="${build.dir}/classes"/>
