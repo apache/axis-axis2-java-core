@@ -142,7 +142,7 @@ public class PolicyUtil {
 
                 return PolicyEngine.getPolicy(bais);
 
-            } else if (Constants.ELEM_POLICYREF.equals(element.getLocalName())) {
+            } else if (Constants.ELEM_POLICY_REF.equals(element.getLocalName())) {
                 xmlString = DOM2Writer.nodeToString(element);
                 bais = new ByteArrayInputStream(xmlString.getBytes());
 
