@@ -20,13 +20,15 @@
       <li><a href="#deploy">Deploying POJOs</a></li>
       <li><a href="#axiom">Building the service using AXIOM</a></li>
       <li><a href="#adb">Generating the service using ADB</a></li>
-      <li><a href="#xmlbeans">Generate the service using XMLBeans</a></li>
+      <li><a href="#xmlbeans">Generating the service using XMLBeans</a></li>
+      <li><a href="#jibx">Generating the service using JiBX</a></li>
      </ul>
   <li><a href="#clients">Generating Clients</a></li>
   <ul>
     <li><a href="#clientaxiom">Creating a client with AXIOM</a></li>
     <li><a href="#clientadb">Generating a client using ADB</a></li>
     <li><a href="#clientxmlbeans">Generating a client using XML Beans</a></li>
+    <li><a href="#clientjibx">Generating a client using JiBX</a></li>
   </ul>
   <li><a href="#summary">Summary</a></li>
   <li><a href="#furtherstudy">For Further Study</a></li>
@@ -34,7 +36,7 @@
 
 <h3>A quick setup note:</h3>
 
-<p>The code for the article can be download <a href="axis2.quickstart.source.zip">here</a>, and it might help to go grab it now to help you as you follow along.  It includes an Ant buildfiles (build.xml) that we'll reference throughout the examples to make compilation easier.</p>
+<p>The code for the article can be downloaded <a href="axis2.quickstart.source.zip">here</a>, and it might help to go grab it now to help you as you follow along.  It includes an Ant buildfiles (build.xml) that we'll reference throughout the examples to make compilation easier.</p>
 
 <a name="introduction"></a><h2>Introduction</h2>
 
@@ -176,11 +178,11 @@ WEB-INF
 
 <p>In this section, we'll look at three ways to create a service based on the StockQuoteService class:  deploying Plain Old Java Objects, building the service using AXIOM's OMElement, generating the service using Axis2 Databinding Framework (ADB), and generating the service using XMLBeans.</p>
 
-<a name="deploy"><h3>Deploying POJOs</h3>
+<a name="deploy"></a><h3>Deploying POJOs</h3>
 
 <p>To deploy the service using POJOs, execute the following steps.</p>
 
-<p>Note the directory structure contained at <AXIS2_HOME>/samples/quickstart (the services.xml file is from the first section of this guide):</p>
+<p>Note the directory structure contained at &lt;AXIS2_HOME>/samples/quickstart (the services.xml file is from the first section of this guide):</p>
 <pre>
 - quickstart
    - README.txt
@@ -237,12 +239,12 @@ http://localhost:8080/axis2/rest/StockQuoteService/getPrice?symbol=IBM
 
 <p>If you invoke the update method like so:</p>
 <pre>
-http://localhost:8080/axis2/rest/StockQuoteService/update?symbol=IBM&price=100
+http://localhost:8080/axis2/rest/StockQuoteService/update?symbol=IBM&amp;price=100
 </pre>
 
 and then execute the first getPrice url. You can see that the price got updated.
 
-<a name="axiom"><h3>Building the service using AXIOM</h3>
+<a name="axiom"></a><h3>Building the service using AXIOM</h3>
 
 <p>To build a service "from scratch" using AXIOM, execute the following steps.</p>
 
@@ -353,7 +355,7 @@ http://localhost:8080/axis2/services/StockQuoteService?wsdl
 http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
 
-<a name="adb"><h3>Generating the service using ADB</h3>
+<a name="adb"></a><h3>Generating the service using ADB</h3>
 
 <p>To generate and deploy the service using the Axis2 Databinding Framework (ADB) execute the following steps.</p>
 
@@ -362,7 +364,7 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>Or by simply typing ant generate.service in the quickstartadb directory.</p>
 
-<p>The option –d adb specifies Axis Data Binding (ADB). The –s switch specifies synchronous or blocking calls only. The –ss switch creates the server side code (skeleton and related files). The –sd switch creates a service descriptor (services.xml file).  The –ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.<p>
+<p>The option –d adb specifies Axis Data Binding (ADB). The –s switch specifies synchronous or blocking calls only. The –ss switch creates the server side code (skeleton and related files). The –sd switch creates a service descriptor (services.xml file).  The –ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
 
 <p>Open the build/service/src/samples/quickstart/adb/service/StockQuoteServiceSkeleton.java file and modify it to add the functionality of your service to the generated methods, shown in Code Listing 6.</p>
 
@@ -421,7 +423,7 @@ http://localhost:8080/axis2/services/StockQuoteService?wsdl
 http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
 
-<a name="xmlbeans"><h3>Generate the service using XMLBeans</h3>
+<a name="xmlbeans"></a><h3>Generating the service using XMLBeans</h3>
 
 <p>To generate a service using XMLBeans, execute the following steps.</p>
 
@@ -431,7 +433,7 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>Or by simply typing ant generate.service in the quickstartxmlbeans directory.</p>
 
-<p>The option –d xmlbeans specifies XML Beans data binding. The –s switch specifies synchronous or blocking calls only. The –ss switch creates the server side code (skeleton and related files). The –sd switch creates a service descriptor (services.xml file).  The –ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.<p>
+<p>The option –d xmlbeans specifies XML Beans data binding. The –s switch specifies synchronous or blocking calls only. The –ss switch creates the server side code (skeleton and related files). The –sd switch creates a service descriptor (services.xml file).  The –ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
 
 <p>Next open the build/service/src/samples/quickstart/service/xmlbeans/StockQuoteServiceSkeleton.java file and modify it to add the functionality of your service to the generated methods (see Code Listing 7).</p>
 
@@ -493,11 +495,80 @@ http://localhost:8080/axis2/services/StockQuoteService?wsdl
 http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
 
-<a name="clients"><h2>Creating clients</h2>
+<a name="jibx"></a><h3>Generating the service using JiBX</h3>
+
+<p>To generate and deploy the service using <a href="http://www.jibx.org">JiBX data binding</a>, execute the following steps.</p>
+
+<p>Generate the skeleton using the WSDL2Java utility by typing the following at a console in the quickstartjibx directory:</p>
+<pre>%AXIS2_HOME%/bin/wsdl2java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.service.jibx -d jibx -s -ss -sd -ssi -uw -o build/service</pre>
+
+<p>Or by simply typing "ant generate.service" in the quickstartjibx directory.</p>
+
+<p>The option –d jibx specifies JiBX data binding. The –s switch specifies
+synchronous or blocking calls only. The –ss switch creates the server side code
+(skeleton and related files). The –sd switch creates a service descriptor
+(services.xml file).  The –ssi switch creates an interface for the service
+skeleton. The  uw switch unwraps the parameters passed to and from service
+operations, in order to create a more natural programming interface. The service
+files should now be located at build/service.</p>
+
+<p>If you generated the code by using WSDL2Java directly, you next need to modify
+the generated skeleton to implement the service (if you used "ant generate.service"
+a completed skeleton will be copied over the generated one automatically). Open
+the build/service/src/samples/quickstart/service/jibx/StockQuoteServiceSkeleton.java
+file and modify it to add the functionality of your service to the generated
+methods, as shown in Code Listing 8.</p>
+
+<p><b>Code Listing 8: Defining the service skeleton file</b></p>
+<pre>package samples.quickstart.service.jibx;
+
+import java.util.HashMap;
+
+public class StockQuoteServiceSkeleton implements StockQuoteServiceSkeletonInterface {
+    private HashMap map = new HashMap();
+
+    public void update(String symbol, Double price) {
+        map.put(symbol, price);
+    }
+
+    public Double getPrice(String symbol) {
+        Double ret = (Double) map.get(symbol);
+        if (ret == null) {
+            ret = new Double(42.0);
+        }
+        return ret;
+    }
+}
+</pre>
+
+<p>Now you can build the project by typing the following command in the
+build/service directory:</p>
+<pre>
+ant jar.server
+</pre>
+
+<p>If all goes well, you should see the BUILD SUCCESSFUL message in your window, and the StockQuoteService.aar file in the build/service/build/lib directory.  Copy this file to the webapps/axis2/WEB-INF/services directory of the servlet engine.</p>
+
+<p>You can check to make sure that the service has been properly deployed by viewing the list of services at:</p>
+<pre>
+http://localhost:8080/axis2/services/listServices
+</pre>
+
+<p>You can also check the custom WSDL at:</p>
+<pre>
+http://localhost:8080/axis2/services/StockQuoteService?wsdl
+</pre>
+
+<p>And the schema at:</p>
+<pre>
+http://localhost:8080/axis2/services/StockQuoteService?xsd
+</pre>
+
+<a name="clients"></a><h2>Creating clients</h2>
 
 <p>In this section, we'll look at three ways to create clients based on the StockQuoteService class:  Building an AXIOM based client, generating a client using Axis2 Databinding Framework (ADB), and generating a client using XMLBeans.</p>
 
-<a name="clientaxiom"><h3>Creating a client with AXIOM</h3>
+<a name="clientaxiom"></a><h3>Creating a client with AXIOM</h3>
 
 <p>To build a client using AXIOM, execute the following steps.</p>
 
@@ -520,9 +591,9 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
            - AXIOMClient.java
 </pre>
 
-<p>The above referenced AXIOMClient.java class is defined as follows, shown in Code Listing 8.</p>
+<p>The above referenced AXIOMClient.java class is defined as follows, shown in Code Listing 9.</p>
 
-<p><b>Code Listing 8: The AXIOMClient class using AXIOM</b></p>
+<p><b>Code Listing 9: The AXIOMClient class using AXIOM</b></p>
 <pre>package samples.quickstart.clients;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -603,7 +674,7 @@ done
 Current price of WSO: 123.42
 </pre>
 
-<a name="clientadb"><h3>Generating a client using ADB</h3>
+<a name="clientadb"></a><h3>Generating a client using ADB</h3>
 
 <p>To build a client using Axis Data Binding (ADB), execute the following steps.</p>
 
@@ -614,9 +685,9 @@ Current price of WSO: 123.42
 
 <p>Or by simply typing ant generate.client in the quickstartadb directory.</p>
 
-<p>Next take a look at quickstartadb/src/samples/quickstart/clients/ADBClient.java, and see how it's defined in Code Listing 9.</p>
+<p>Next take a look at quickstartadb/src/samples/quickstart/clients/ADBClient.java, and see how it's defined in Code Listing 10.</p>
 
-<p><b>Code Listing 9: The ADBClient class</b></p>
+<p><b>Code Listing 10: The ADBClient class</b></p>
 <pre>
 package samples.quickstart.clients;
 
@@ -683,7 +754,7 @@ public class ADBClient{
 done
 </pre>
 
-<a name="clientxmlbeans"><h3>Generating a client using XMLBeans</h3>
+<a name="clientxmlbeans"></a><h3>Generating a client using XMLBeans</h3>
 
 <p>To build a client using the XML Beans data bindings, execute the following steps.</p>
 <p>Generate the databings by typing the following in the xmlbeansClient directory:</p>
@@ -695,9 +766,9 @@ done
 
 <p>Note that this creates client stub code and no server side code.</p>
 
-<p>Next take a look at quickstartxmlbeans/src/samples/quickstart/clients/XMLBEANSClient.java, and see how it's defined in Code Listing 10.</p>
+<p>Next take a look at quickstartxmlbeans/src/samples/quickstart/clients/XMLBEANSClient.java, and see how it's defined in Code Listing 11.</p>
 
-<p><b>Code Listing 10: The XMLBEANSClient class</b></p>
+<p><b>Code Listing 11: The XMLBEANSClient class</b></p>
 <pre>
 package samples.quickstart.clients;
 
@@ -761,6 +832,75 @@ public class XMLBEANSClient{
 <p>This class creates a client stub using the XML Beans data bindings you created. Then it calls the getPrice and update operations on the web service. The getPrice method operation creates the GetPriceDocument, its inner GetPrice classes and sets the symbol to ABC. It then sends the request and retrieves a GetPriceResponseDocument and displays the current price.  The update method creates an UpdateDocument, Update and sets the symbol to ABC and price to 42.32, displaying done when complete.</p>
 
 <p>Now build and run the the project by typing ant run.client in the quickstartxmlbeans directory.</p>
+
+<p>You should get the following as output:</p>
+<pre>
+42
+done
+</pre>
+
+<a name="clientjibx"></a><h3>Generating a client using JiBX</h3>
+
+<p>To build a client using JiBX, execute the following steps.</p>
+
+<p>Generate the client stub by typing the following at a console in the quickstartjibx directory:</p>
+<pre>
+%AXIS2_HOME%/bin/wsdl2java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.clients -d jibx -s -uw -o build/client
+</pre>
+
+<p>Or by simply typing "ant generate.client".</p>
+
+<p>Next take a look at quickstartjibx/src/samples/quickstart/clients/JiBXClient.java, shown below in Code Listing 12.</p>
+
+<p><b>Code Listing 12: The JiBXClient class</b></p>
+<pre>
+package samples.quickstart.clients;
+
+import samples.quickstart.service.jibx.StockQuoteServiceStub;
+
+public class JiBXClient{
+    public static void main(java.lang.String args[]){
+        try{
+            StockQuoteServiceStub stub =
+                new StockQuoteServiceStub
+                ("http://localhost:8080/axis2/services/StockQuoteService");
+
+            getPrice(stub);
+            update(stub);
+
+        } catch(Exception e){
+            e.printStackTrace();
+            System.err.println("\n\n\n");
+        }
+    }
+
+    /* fire and forget */
+    public static void update(StockQuoteServiceStub stub){
+        try{
+            stub.update("ABC", new Double(42.35));
+            System.err.println("done");
+        } catch(Exception e){
+            e.printStackTrace();
+            System.err.println("\n\n\n");
+        }
+    }
+
+    /* two way call/receive */
+    public static void getPrice(StockQuoteServiceStub stub){
+        try{
+            System.err.println(stub.getPrice("ABC"));
+        } catch(Exception e){
+            e.printStackTrace();
+            System.err.println("\n\n\n");
+        }
+    }
+
+}
+</pre>
+
+<p>This class uses the created JiBX client stub to access the getPrice and update operations on the web service. The getPrice method sends a request for the stock "ABC" and displays the current price.  The update method set the price for stock "ABC" to 42.35.</p>
+
+<p>Now build and run the client by typing "ant run.client" at a console in the quickstartjibx directory.</p>
 
 <p>You should get the following as output:</p>
 <pre>
