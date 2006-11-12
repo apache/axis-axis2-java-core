@@ -29,7 +29,9 @@
                  classname="org.apache.ws.java2wsdl.Java2WSDLTask"
                  classpathref="axis2.classpath"/>
         <java2wsdl className="samples.quickstart.service.pojo.StockQuoteService"
-                   outputLocation="${build.dir}">
+                   outputLocation="${build.dir}"
+                   targetNamespace="http://pojo.service.quickstart.samples"
+                   schemaTargetNamespace="http://pojo.service.quickstart.samples/xsd">
             <classpath>
                 <pathelement path="${axis2.classpath}"/>
                 <pathelement location="${build.dir}/classes"/>
