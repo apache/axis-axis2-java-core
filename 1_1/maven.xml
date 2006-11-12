@@ -698,7 +698,6 @@
         <ant:mkdir dir="${std.bin.temp.dir}/samples/faulthandling"/>
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
-            	<include name="userguide/**/*.*"/>
                 <include name="yahoorestsearch/**/*.*"/>
                 <include name="databinding/**/*.*"/>
                 <include name="googlespellcheck/**/*.*"/>
@@ -708,6 +707,14 @@
                 <include name="version/**/*.*"/>
                 <include name="servicelifecycle/**/*.*"/>
                 <include name="pojo/**/*.*"/>
+                <!-- Docs related samples -->
+                <include name="userguide/**/*.*"/>
+                <include name="pojoguide/**/*.*"/>
+                <include name="pojoguidespring/**/*.*"/>
+                <include name="quickstart/**/*.*"/>
+                <include name="quickstartaxiom/**/*.*"/>
+                <include name="quickstartadb/**/*.*"/>
+                <include name="quickstartxmlbeans/**/*.*"/>
             </ant:fileset>
         </ant:copy>
 
