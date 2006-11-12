@@ -35,6 +35,15 @@ DESCRIPTION
         -sn &lt;service_name&gt; : name of service in the presence of multiple services
         -u : unpacks the databinding classes
         -r &lt;repository_path&gt; : path of the repository against which code is generated
+	-ns2p ns1=pkg1,ns2=pkg2 : Specify a custom package name for each namespace specified in the wsdl's schema
+	-ssi : Generate an interface for the service implementation (Default: off)
+	-em : Specify an external mapping file
+	-wv : WSDL Version. Valid Options : 2, 2.0, 1.1
+	-f : Generate the source output folder without the src directory
+	-uw : Switch on un-wrapping.
+	-S &lt;folder name&gt; : Generated source folder name. (Default: src)
+	-R &lt;folder name&gt; : Generated resources folder name. (Default: resources)
+	
 EXAMPLES
        WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl
        WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd 
