@@ -2,6 +2,7 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.woden.WSDLException;
 import org.apache.woden.WSDLFactory;
@@ -29,10 +30,6 @@ import org.apache.woden.wsdl20.xml.InterfaceOperationElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.PolicyReference;
-import org.apache.ws.policy.util.DOMPolicyReader;
-import org.apache.ws.policy.util.PolicyFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -421,24 +418,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             "location"));
                 } else if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
                         .getExtensionType())) {
+                    // TODO
 
-                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
-                            .getPolicyReader(PolicyFactory.DOM_POLICY_READER);
-                    Policy policy = policyReader.readPolicy(unknown
-                            .getElement());
-
-                    // addPolicy(description, originOfExtensibilityElements,
-                    // policy);
 
                 } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE.equals(unknown
                         .getExtensionType())) {
+                    // TODO
 
-                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
-                            .getPolicyReader(PolicyFactory.DOM_POLICY_READER);
-                    PolicyReference policyRef = policyReader
-                            .readPolicyReference(unknown.getElement());
-                    // addPolicyRef(description, originOfExtensibilityElements,
-                    // policyRef);
+                    
 
                 } else {
                     // TODO : we are ignored that.
