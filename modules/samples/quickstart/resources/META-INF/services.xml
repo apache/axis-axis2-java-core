@@ -8,5 +8,7 @@
         <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out"
                          class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
     </messageReceivers>
+    <targetNamespace qname="http://pojo.service.quickstart.samples"/>
+    <schematargetNamespace qname="http://pojo.service.quickstart.samples/xsd"/>
     <parameter name="ServiceClass">samples.quickstart.service.pojo.StockQuoteService</parameter>
 </service>
