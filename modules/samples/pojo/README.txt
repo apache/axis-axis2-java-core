@@ -4,7 +4,7 @@ Sample: POJO (Plain Old Java Object)
 Introduction
 ============
 
-This is an example POJO web service. It shows how to expose the methods of a Java class as a Web
+This is an example POJO Web service. It shows how to expose the methods of a Java class as a Web
 service using Aixs2.
 
 
