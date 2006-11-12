@@ -41,6 +41,10 @@
               toDir="${build.dir}/service/src/samples/quickstart/service/xmlbeans/"
               overwrite="yes">    
         </copy>
+        <copy file="${basedir}/resources/META-INF/services.xml"
+              toDir="${build.dir}/service/resources/"
+              overwrite="yes">
+        </copy>
         <ant dir="${build.dir}/service"/>
     </target>
 
