@@ -5,7 +5,7 @@ Introduction:
 ============
 
 This sample demonstrate usage of service lifecycle and bit of session managment. 
-The main idea is to show where and how do you use service lifecycle interface and 
+The main idea is to show where and how to use service lifecycle interface and 
 session related methods. 
 
 
