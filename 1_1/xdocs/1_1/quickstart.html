@@ -508,11 +508,11 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 synchronous or blocking calls only. The –ss switch creates the server side code
 (skeleton and related files). The –sd switch creates a service descriptor
 (services.xml file).  The –ssi switch creates an interface for the service
-skeleton. The  uw switch unwraps the parameters passed to and from service
-operations, in order to create a more natural programming interface. The service
-files should now be located at build/service.</p>
+skeleton. The –uw switch unwraps the parameters passed to and from service
+operations, in order to create a more natural programming interface.</p>
 
-<p>If you generated the code by using WSDL2Java directly, you next need to modify
+<p>After running WSDL2Java, the service files should be located at
+build/service. If you generated the code by using WSDL2Java directly, you next need to modify
 the generated skeleton to implement the service (if you used "ant generate.service"
 a completed skeleton will be copied over the generated one automatically). Open
 the build/service/src/samples/quickstart/service/jibx/StockQuoteServiceSkeleton.java
