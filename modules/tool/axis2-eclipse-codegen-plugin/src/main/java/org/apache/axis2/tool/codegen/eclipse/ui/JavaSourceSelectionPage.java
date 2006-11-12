@@ -20,6 +20,7 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.ClassFileReader;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -138,15 +139,19 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         	}
         });
         
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 3;
-        gd.verticalSpan = 7;
-        javaClasspathList = new List(container,SWT.READ_ONLY | SWT.BORDER| SWT.V_SCROLL);
-        javaClasspathList.setLayoutData(gd);
-        javaClasspathList.setItems(settings.getArray(JAVA_CLASS_PATH_ENTRIES));
-        javaClasspathList.setSize(300, 300);
-        container.redraw();
-
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		gd.verticalSpan = 2;
+        ScrolledComposite c2 = new ScrolledComposite(container, SWT.V_SCROLL);
+        c2.setExpandHorizontal(false);
+        c2.setExpandVertical(false);
+		c2.setLayoutData(gd);
+		javaClasspathList = new List(c2,SWT.READ_ONLY |SWT.BORDER | SWT.V_SCROLL);
+		javaClasspathList.setLayoutData(gd);
+        settings.put(JAVA_CLASS_PATH_ENTRIES, new String[]{});
+		javaClasspathList.setItems(settings.getArray(JAVA_CLASS_PATH_ENTRIES));
+		javaClasspathList.setSize(600, 250);
+		c2.setContent(javaClasspathList);
 
         gd = new GridData(GridData.FILL_HORIZONTAL);
         Button tryLoadButton = new Button(container,SWT.PUSH);
