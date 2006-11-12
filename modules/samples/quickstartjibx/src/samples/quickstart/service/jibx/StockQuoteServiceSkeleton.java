@@ -1,6 +1,7 @@
 package samples.quickstart.service.jibx;
 
 import java.util.HashMap;
+
 public class StockQuoteServiceSkeleton implements StockQuoteServiceSkeletonInterface {
     private HashMap map = new HashMap();
 
@@ -9,10 +10,10 @@ public class StockQuoteServiceSkeleton implements StockQuoteServiceSkeletonInter
     }
 
     public Double getPrice(String symbol) {
-        if (symbol == null) {
-            return null;
-        } else {
-            return (Double) map.get(symbol);
+        Double ret = (Double) map.get(symbol);
+        if (ret == null) {
+            ret = new Double(42.0);
         }
+        return ret;
     }
 }

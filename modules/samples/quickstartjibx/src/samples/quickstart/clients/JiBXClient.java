@@ -1,6 +1,7 @@
 package samples.quickstart.clients;
 
 import samples.quickstart.service.jibx.StockQuoteServiceStub;
+
 public class JiBXClient{
     public static void main(java.lang.String args[]){
         try{
@@ -10,7 +11,6 @@ public class JiBXClient{
 
             getPrice(stub);
             update(stub);
-            getPrice(stub);
 
         } catch(Exception e){
             e.printStackTrace();
