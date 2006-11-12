@@ -24,8 +24,15 @@
 <ul>
     <li><a href="#Download_Axis2">Download Axis2</a></li>
     <li><a href="#requirements">System Requirements</a></li>
-    <li><a href="#standalone">Standalone Installation Using Standard Binary Distribution</a></li>
-    <li><a href="#build_war">Building WAR File Using Standard Binary Distribution</a></li>
+    <li><a href="#standalone">Installation Using Standard Binary Distribution</a>
+                <ul>
+                    <li><a href="#standalone1">Install the Apache Axis2 Binary Distribution</a></li>
+                    <li><a href="#standalone2">Starting up Axis2 Standalone Server</a></li>
+                    <li><a href="#standalone3">Building WAR File Using Standard Binary Distribution</a></li>
+                    <li><a href="#standalone4">Getting Familiar with the Axis2 Convenient Scripts</a></li>
+                </ul>
+    </li>
+    <li><a href="#build_war"></a></li>
     <li><a href="#servlet_container">Installing Axis2 in a Servlet
         Container</a></li>
     <li><a href="#upload">Uploading Services</a></li>
@@ -94,7 +101,7 @@
 <p>This will contain the sources of Axis2 standard distribution, and is
     mainly for the benefit of the advance users. One can generate a binary
     distribution using the source by typing <span class="style1">$maven
-dist-standard-bin. </span> You need to set up the Axis2 environment before
+dist-bin. </span> You need to set up the Axis2 environment before
     running this command. Step by step details on how to create the binary
     distribution is available in the <a href="#advanced">Advanced</a> section.</p>
 
@@ -108,9 +115,9 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
     <caption></caption>
     <tbody>
         <tr>
-            <td>Java Runtime Environment
+            <td>Java Development Kit (JDK)
             </td>
-            <td>1.4 or higher (For instructions on setting up the JRE in different operating systems,
+            <td>1.4 or later (For instructions on setting up the JDK in different operating systems,
                 visit
                 <a href="http://java.sun.com/">http://java.sun.com</a>)</td>
         </tr>
@@ -145,67 +152,98 @@ dist-standard-bin. </span> You need to set up the Axis2 environment before
 </table>
 
 <a name="standalone"></a>
-<h2>Standalone Installation Using Standard Binary Distribution</h2>
+<h2>Installation Using Standard Binary Distribution</h2>
+<a name="standalone1"></a>
+<h3>1. Download and Install the Apache Axis2 Binary Distribution</h3>
+<p> Download and install a Java Development Kit (JDK) release (version 1.4 or later) from <a href="http://java.sun.com/j2se/"
+> here .</a> Install the JDK according to the instructions included with the release.Set an environment 
+variable JAVA_HOME to the pathname of the directory into which you installed the JDK release.</p>
 
-<p>All the required jars are shipped with the standard binary distribution.</p>
+<p>Download and unpack the <a
+        href="http://ws.apache.org/axis2/download/1_1/download.cgi">Axis2 Standard Binary Distribution</a>
+        into a convenient location so that the distribution resides in its own directory. Set an 
+        environment variables AXIS2_HOME to the pathname of the extracted directory of Axis2 (Eg: /opt/axis2-1.1).
+</p>
+<a name="standalone2"></a>
+<h3>2. Starting up Axis2 Standalone Server</h3>
+<p> Standalone Axis2 server can be started by executing the following commands: <br/>
+$AXIS2_HOME\bin\axis2server.bat          (Windows) <br/>
+      $AXIS2_HOME/bin/axis2server.sh           (Unix)<br/>
+      After startup, the default web services included with Axis2 will be
+available by visiting:<br/>
+    http://localhost:8080/axis2/services/</p>
+<a name="standalone3"></a>
+<h3>3. Building the Axis2 Web Application (axis2.war) Using Standard Binary Distribution</h3>
+<p> Download and install a Apache Ant (version 1.6.5 or later) from <a href="http://ant.apache.org/bindownload.cgi"
+> here .</a> Install the Apache Ant according to the instructions included with the Ant release.</p>
 
-<p>Installing Axis2 is merely a matter of <a
-        href="http://ws.apache.org/axis2/download/1_1/download.cgi">downloading</a> and extracting
-    the Standard Binary Distribution and setting the system variables JAVA_HOME and AXIS2_HOME.
-    Point JAVA_HOME to the location of
-    your JDK, eg. C:\Program Files\Java\jdk1.5.0_02 and AXIS2_HOME to the extracted folder of the
-    release.</p>
+<p>Locate the ant build file (build.xml) inside the webapp directory which resides in your Axis2 home
+ directory (i.e:- $AXIS_HOME/webapp)". Run the Ant build by executing "ant create.war" inside the $AXIS2_HOME/webapps folder. 
+You can find the generated axis2.war inside the $AXIS2_HOME/dist directory. All the services and modules that are present in the
+AXIS2_HOME/repository will be packed in to the created axis2.war together with the Axis2 configuration found
+at $AXIS2_HOME/conf/axis2.xml.</p>
+<p> You can read the <a href="#servlet_container">installing Axis2 in a servlet container</a> to figure 
+out how to deploy the Axis2 web application in a servlet container. </p>
 
-<p>Let's look at the different scripts available inside the bin folder.</p>
+<a name="standalone4"></a>
+<h3>4. Getting Familiar with the Axis2 Convenient Scripts</h3>
+<p>It is advised to add the $AXIS2_HOME/bin to the PATH, so that you'll be able to run the following scripts from any where.</p>
 
-<table>
+<table border="1">
 <tr>
 	<td><b>Script Name</b></td>
 	<td><b>Description</b></td>
 </tr>
 <tr>
-	<td>setenv.bat/sh</td>
-	<td>This will set AXIS2_HOME, AXIS2_CLASSPATH and JAVA_HOME variables for the other scripts to run.</td>
+	<td>axis2.{bat|sh}</td>
+	<td>You can use this script to run web service clients written using Axis2.
+	This script calls the "java" command after adding the classpath for Axis2 dependent libraries (*.jar files present in your AXIS2_HOME/lib), 
+	setting the Axis2 repository location (AXIS2_HOME/repository) and setting the Axis2 configuration file location(AXIS2_HOME/conf/axis2.xml) for you. With this you can be relieved from setting all the above Axis2 specific parameters.<br/>
+	
+	<em>Usage : axis2.{sh.bat}  [-options] class [args...]</em><br/>
+	Eg: $axis2.sh -classpath myservice-client.jar sample.foo.Client<br/>
+	    All the options supported by "java" are supported here (Eg: -classpath,  -D&lt;name>=&lt;value>, ...). <br/>
+	    
+</td>
 </tr>
 <tr>
-	<td>axis2.bat/sh</td>
-	<td>This will act like the java command for Axis2. This will set the proper class path, Axis2 repository location and Axis2 confgiuration file (axis2.xml) location for you. <br/>
-	This will enable some one to invoke, say for example, WSDLJava like "sh axis2.sh org.apache.axis2.wsdl.WSDL2Java -uri myService.wsdl". If you use this, you are relieved from setting all the above parameters.</td>
+	<td>axis2server.{sh|bat}</td>
+	<td>This script will start an standalone Axis2 server using the AXIS2_HOME/repository as the
+	 Axis2 repository and the AXIS2_HOME/conf/axis2.xml listed in AXIS2_HOME/conf/axis2.xml as
+	  the Axis2 configuration file.  This will start all the transport listeners enabled in the 
+	  AXIS2_HOME/conf/axis2.xml.<br/>
+	As an example, if you want to deploy a service using standalone Axis2 server,then copy your 
+	service archive to the AXIS2_HOME/repository/services directory. After that go to the "Transport Ins" section of the AXIS2_HOME/conf/axis2.xml 
+	and configure the tranport receivers (simpleHttpServer in port 8080 is listed by default). Then invoke this script. </td>
 </tr>
 <tr>
-	<td>axis2server.bat</td>
-	<td>This script will start all the listeners listed in conf/axis2.xml file. For example, if you want to start only SimpleHTTPServer, go to conf/axis2.xml and make sure only SimpleHTTPServer is listed as the transport receiver. Then invoking this script will start SimpleHTTPServer. </td>
+	<td>wsdl2java.{bat|sh}</td>
+	<td>This script generates java code according to a given WSDL file to handle Web service invocations 
+	(Client side Stubs). This script also has the ability to generate service skeletons according to the given wsdl.<br/>
+	<em>Usage:  WSDL2Java.{sh|bat} [OPTION]... -uri &lt;Location of WSDL> </em><br/>
+	Eg:  WSDL2Java.sh -uri ../wsdl/Axis2Sample.wsdl <br/>
+	A more detailed reference about this script can be found <a href="reference.html">here</a></td>	
 </tr>
 <tr>
-	<td>java2wsdl.bat/sh and wsdl2java.bat/sh</td>
-	<td>The scripts helps you to invoke java2wsdl and wsdl2java tasks, respectively.</td>
+	<td>java2wsdl.{bat|sh} </td>
+	<td>This script generates the appropriate WSDL file for a given java class.<br/>
+	<em>Usage:  Java2WSDL.{sh|bat} [OPTION]... -cn &lt;fully qualified class name> </em><br/>
+	Eg:  Java2WSDL.sh -cn ../samples/test/searchTool.Search  <br/>
+	A more detailed reference about this script can be found <a href="reference.html">here</a>
+	</td>
 </tr>
 </table>
 
-<a name="build_war"></a>
-<h2>Building the WAR File Using Standard Binary Distribution</h2>
 
-<p>The following examples will run you through on how to build the axis2.war
-    file which is required to install Apache Axis2 in a J2EE compliant servlet
-    container.</p>
-<ol>
-    <li><a href="http://ws.apache.org/axis2/download/1_1/download.cgi">Download</a> Standard
-        Binary Distribution and extract it to your box.</li>
-    <li>Locate the webapp directory which resides in your Axis home directory (i.e:- AXIS_HOME/webapp)"</li>
-    <li>There is a build.xml file, which can be used to build axis2.war</li>
-    <li>Run the following ant target inorder to build axis2.war using <code>ant
-        create.war</code></li>
-    <li>You can find the generated axis2.war inside dist directory
-        (AXIS2_HOME/dist)</li>
-</ol>
 <a name="servlet_container"></a>
 <h2>Installing Axis2 in a Servlet Container</h2>
 <p>Which ever the distribution, installing Axis2 in a J2EE compliant servlet
     container is as follows:</p>
 <ol>
-    <li><a href="http://ws.apache.org/axis2/download/1_1/download.cgi">Download</a> Axis2 WAR
-        file. (This guide also gives you instructions on how to build axis2.war
-        using either the <a href="#build_war">Standard Binary Distribution</a> or <a href="#war">Source
+    <li>Build the Axis2 WAR
+        file using the Axis2 Standard Binary Distributioon. (Alternatively you can
+         <a href="http://ws.apache.org/axis2/download/1_1/download.cgi">download</a> the axis2.war
+        or you can build axis2.war using the <a href="#war">Source
         Distribution</a>.</li>
     <li>Drop the war in the webapps folder of the servlet container. Most
         servlet containers will automatically install war. (some servlet
