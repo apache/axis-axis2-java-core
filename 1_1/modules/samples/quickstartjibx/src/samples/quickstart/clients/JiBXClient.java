@@ -6,7 +6,7 @@ public class JiBXClient{
         try{
             StockQuoteServiceStub stub =
                 new StockQuoteServiceStub
-                ("http://localhost:8800/axis2/services/StockQuoteService");
+                ("http://localhost:8080/axis2/services/StockQuoteService");
 
             getPrice(stub);
             update(stub);
