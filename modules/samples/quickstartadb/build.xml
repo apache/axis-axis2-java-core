@@ -1,4 +1,4 @@
-<project basedir="." default="generate.all">
+<project basedir="." default="generate.service">
 
     <property environment="env"/>
     <property name="AXIS2_HOME" value="${env.AXIS2_HOME}"/>
@@ -20,7 +20,6 @@
     </path>
 
     <target name="init">
-        <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
     </target>
 
@@ -41,6 +40,10 @@
         <copy file="${basedir}/src/samples/quickstart/service/adb/StockQuoteServiceSkeleton.java"
               toDir="${build.dir}/service/src/samples/quickstart/service/adb/"
               overwrite="yes">    
+        </copy>
+        <copy file="${basedir}/resources/META-INF/services.xml"
+              toDir="${build.dir}/service/resources/"
+              overwrite="yes">
         </copy>
         <ant dir="${build.dir}/service"/>
     </target>

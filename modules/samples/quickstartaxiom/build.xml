@@ -18,7 +18,6 @@
 	</path>
 
     <target name="compile">
-        <delete dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}/classes"/>
 
