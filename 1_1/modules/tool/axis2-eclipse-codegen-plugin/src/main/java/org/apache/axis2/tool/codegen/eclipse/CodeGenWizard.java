@@ -385,6 +385,10 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                     optionsMap.put(SCHEMA_TARGET_NAMESPACE_OPTION,option);
                     
                     option = new Java2WSDLCommandLineOption(
+                    		SERVICE_NAME_OPTION,new String[]{java2wsdlOptionsPage.getServiceName()});
+                    optionsMap.put(SERVICE_NAME_OPTION,option);
+                    
+                    option = new Java2WSDLCommandLineOption(
                     		SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,
                     		new String[]{java2wsdlOptionsPage.getSchemaTargetNamespacePrefix()});
                     optionsMap.put(SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,option);
@@ -396,7 +400,6 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                     option = new Java2WSDLCommandLineOption(
                     		OUTPUT_FILENAME_OPTION,new String[]{java2wsdlOutputLocationPage.getOutputWSDLName()});
                     optionsMap.put(OUTPUT_FILENAME_OPTION,option);
-                    
                     
                     monitor.worked(1);
                     
