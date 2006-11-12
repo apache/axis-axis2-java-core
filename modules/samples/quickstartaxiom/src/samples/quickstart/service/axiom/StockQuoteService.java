@@ -24,9 +24,9 @@ public class StockQuoteService {
         }
         OMFactory fac = OMAbstractFactory.getOMFactory();
         OMNamespace omNs =
-            fac.createOMNamespace("http://quickstart.mypackage/xsd", "tns");
+            fac.createOMNamespace("http://quickstart.samples/xsd", "ns");
         OMElement method = fac.createOMElement("getPriceResponse", omNs);
-        OMElement value = fac.createOMElement("price", omNs);
+        OMElement value = fac.createOMElement("return", omNs);
         value.addChild(fac.createOMText(value, returnText));
         method.addChild(value);
         return method;
