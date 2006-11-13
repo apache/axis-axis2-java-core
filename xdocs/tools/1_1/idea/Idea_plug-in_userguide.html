@@ -12,7 +12,7 @@
 <body lang="en">
 <h1>Axis2 Plug-in Guide for IntelliJ IDEA</h1>
 
-<p>This document explains the installation and usage of Axis2 plugin for IntelliJ IDEA.</p>
+<p>This document explains the installation and usage of Axis2 plug-in for IntelliJ IDEA.</p>
 
 <p><a href="http://ws.apache.org/axis2/tools/index.html">[Download
 Plug-in]</a></p>
@@ -33,10 +33,10 @@ Plug-in]</a></p>
 
 <h2>Introduction</h2>
 
-<p>The Axis2 plugin for IntelliJ IDEA helps users to create service archives 
+<p>The Axis2 plug-in for IntelliJ IDEA helps users to create service archives 
 which can be deployed in Axis2, and generate java classes files from WSDL
 files. The following section describes the installation procedure followed
-by the usage of the plugin.</p>
+by the usage of the plug-in.</p>
 
 <a name="installation"></a>
 
@@ -45,7 +45,7 @@ by the usage of the plugin.</p>
 <p>First <a href="http://ws.apache.org/axis2/tools/index.html">download</a>
 the plug-in which is a zipped file, and extract it into plugins directory 
 which is located in the directory where IDEA is installed. If a previous 
-version of the plugin resides in this directory you will have to delete it 
+version of the plug-in resides in this directory you will have to delete it 
 prior to extracting the new zip file. If you have extracted the file correctly 
 you would see a directory called axis2-idea-plugin.</p>
 
@@ -109,8 +109,8 @@ default configurations.</p>
 			<li>When client side code is generated under default configurations it generates 
 the stub, compiles it, packages it as a jar (the name of the jar will be 
 &lt;service name &gt;-jar) places it in a lib folder (If there is no lib 
-folder it is created) under the idea project that is opened. This jar thats 
-generated will also be added as a project library to the current active idea project.
+folder, it is created) under the IDEA project that is opened. This jar that's 
+generated will also be added as a project library to the current active IDEA project.
 			</li>
 			
 			<li>When server code is generated under default configurations it generates the 
@@ -118,7 +118,7 @@ generated will also be added as a project library to the current active idea pro
 			</li>
 			
 			<li>When both server and client side is generated under default configurations the client stub is 
-			added are a jar to the current idea project and the user is taken to page 5.			
+			added are a jar to the current IDEA project and the user is taken to page 5.			
 			</li>
 
 	</ul>
@@ -140,44 +140,44 @@ of the code being generated.</p>
   <li>Output language can be Java, C#. But we have not fully tested C#
     codegeneration, therefore, it is better to select Java as output
   language.</li>
-  <li>If the WSDL comprises of several services, the user can select the service which the code should be generated for.</li>
+  <li>If the WSDL comprises of several services, the user can select the service for which the code should be generated for.</li>
   <li>If the WSDL comprises of several ports for a particullar service, the user can select the port which the code should be generated for.</li>
-  <li>The default data binding type is adb (Axis2 data binding). Although the
+  <li>The default data binding type is adb (Axis2 Data Binding). Although the
     tool is capable of providing XML beans, due to class loading issues in
-    XML beans, current implementation only generate code with OM and adb.</li>
+    XML beans, current implementation only generate code with OM and ADB.</li>
   <li>As for the package name of the generated code, you can set the name as
     you wish.</li>
-  <li>Users can select the one out of the three options Generate Client Side, 
-  Generate Server Side and Generate all. The user will be able to select further options based on his options selected here. These sub options are explained below.</li>
+  <li>Users can select the one out of the three options- "Generate Client Side", 
+  "Generate Server Side" and "Generate All". The user will be able to select further options based on his options selected here. These sub options are explained below.</li>
 
   <ul>
-  <li>If user selects Generate Client Side, he can further select the service invocation style. 
+  <li>If user selects "Generate Client Side", he can further select the service invocation style. 
 Since Axis2 supports both synchronous and asynchronous client
     programming model, the tool has provided a way to selecting the invocation style.</li>
-  <li>If user selects Generate Server Side, he can also generate a default service XML file. 
-  If the user selects generate an interface for skeleton option then it only generates an 
+  <li>If user selects "Generate Server Side", he can also generate a default service XML file. 
+  If the user selects "Generate an interface for skeleton" option then it only generates an 
 interface for the server side. If so the user has to implement this interface. If this 
-option is not delected the skeleton class is generated which the user can fill in later on.</li> 
-  <li>If user selects Generate all option .......................</li>  
+option is not selected, the skeleton class is generated, which the user can fill in later on.</li> 
+  <li>If user selects "Generate All" option .......................</li>  
   </ul> 
 
   <li>The dafault behaviour of the code generator is to map namespaces to 
 package names logically, but if the user wishes to change the package 
-names of the generated classes he can do so by changing the values in 
+names of the generated classes, he can do so by changing the values in 
 the Namespace to Packagename mapping table.</li>  
 
 </ul>
 
 <p>With these enhanced options novices need not worry about the options that 
-can be set because the default options cover the most common cases. Advanced 
-users will find it very easy to "turn the knobs" using the custom generation option.</p>
+can be set as the default options cover the most common cases. Advanced 
+users will find it very easy to turn the knobs using the custom generation option.</p>
 <p><strong>WSDL2Java Page 5:</strong></p>
 
 <p><img alt="Figure6" src="images/fig3.jpg"></p>
 
 <p>Here uses have the option of adding the generated code directly to their 
-working idea project or choose a custom location. If the user decides to add 
-it to the current idea project he/she will have to choose the module and the 
+working IDEA project or choose a custom location. If the user decides to add 
+it to the current IDEA project he/she will have to choose the module and the 
 source directory that the code should be generated to. </p>
 
 <p>Alternatively the user can browse and select the output location/path (the location at
@@ -255,7 +255,7 @@ files. If you want to add multiple WSDL files to a single service type you can d
 library files and then click on the "Add" button. Once added the selected
 file will appear in the list box.</p>
 
-<p>To add WSDLs first click on the browse button to browse for WSDL file
+<p>To add WSDLs, first click on the browse button to browse for WSDL file
 and then click the "Add" button to add the file to the list.</p>
 
 <p>After adding external libraries and service WSDL files click on the "Next" button to move to next page.</p>
@@ -271,19 +271,19 @@ implementation classes. This process is explained in detail below.</p>
 can select the methods that you want to publish using the check boxes.</p>
 
 <p><strong>Note : </strong>If you do not select the correct class
-path<em></em> from the "Class location selection" window, the public methods
-which are available in the selected<em></em> class file will not be
+path from the "Class location selection" window, the public methods
+which are available in the selected class file will not be
 loaded.</p>
 
 <p><img alt="fig10" src="images/fig10.jpg"></p>
 
 <p>In "Service Name" text box you can type the name of the service you want,
-but remember that the service name should be unique throughout<em></em> the
+but remember that the service name should be unique throughout the
 system.</p>
 
 <p>When you have completed this particular service click on the button
 "Next". In the case of a service group when you click on the "Next" button
-for that particular service the following dialog will appear with option to
+for that particular service the following dialog box will appear with option to
 add more service(s) to a service group.</p>
 
 <p><img alt="fig11" src="images/fig11.jpg"></p>
@@ -310,8 +310,8 @@ references to any level.</p>
 
 <p><strong>Note : </strong>When you click on either the "+Parameter" or the
 "+ModuleRef" buttons remember that corresponding text will be added to the
-current mouse position. Therefore click on the location you want to add the
-parameter<em> </em>or<em> </em>module references and then click relevant
+current mouse position. Therefore, click on the location you want to add the
+parameter or module references and then click relevant
 button (+Parameter or +ModuleRef).</p>
 
 <p><strong>+Parameter button:</strong></p>
@@ -326,7 +326,7 @@ give parameter name and parameter value.</p>
 
 <p><strong>+ModuleRef button:</strong></p>
 
-<p>Like wise, adding module references can be done by clicking on the
+<p>Likewise, adding module references can be done by clicking on the
 "+ModuleRef" button in the page. You have to type the name of the module to
 be engaged as shown in the following figure.</p>
 
@@ -348,7 +348,7 @@ to place. This name will finally become the service group name.</p>
 <p><strong>Note :</strong> Do not include file extension when you type archive name.
 System will generate that for you.</p>
 
-<p>When you are done, click the Finish button. If everything has been done
+<p>When you are done, click the "Finish" button. If everything has been done
 successfully you will see following message.</p>
 
 <p><img alt="fig16" src="images/fig16.jpg"></p>
