@@ -7,8 +7,8 @@ source code kindly see this 'Axis2 Quick Start Guide' document.
 
 Introduction
 ============
-In this sample, we are deploying a pojo after writing a services.xml and
-creating an aar. We also test the 2 methods using a browser.
+In this sample, we are deploying a POJO after writing a services.xml and
+creating an aar. We also test the gePrice and update methods using a browser.
 
 Pre-Requisites
 ==============
@@ -21,19 +21,25 @@ Building the Service
 Type "ant generate.service" or just "ant" from Axis2_HOME/samples/quickstart directory 
 and then deploy the Axis2_HOME/samples/quickstart/build/StockQuoteService.aar
 
+Generate WSDL
+==============
+
+Type "ant generate.wsdl" from Axis2_HOME/samples/quickstart directory which generates a 
+WSDL file for the above Web service and it will be placed in Axis2_HOME/samples/quickstart/build 
+directory.
+
 Running the Client
 ==================
 - From your browser, If you point to the following URL:
 http://localhost:8080/axis2/rest/StockQuoteService/getPrice?symbol=IBM
 
 You will get the following response:
-<ns:getPriceResponse xmlns:ns="http://pojo.service.quickstart.samples/xsd">
-<ns:return>42</ns:return></ns:getPriceResponse>
+<ns:getPriceResponse><ns:return>42.0</ns:return></ns:getPriceResponse>
 
 - If you invoke the update method like so:
 http://localhost:8080/axis2/rest/StockQuoteService/update?symbol=IBM&price=100
 
-and then execute the first getPrice url. You can see that the price got updated.
+And then execute the first getPrice url. You can see that the price got updated.
 
 Help
 ====
