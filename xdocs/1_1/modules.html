@@ -77,11 +77,16 @@ modules should implement the "<a
 href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/modules/Module.java?rev=396785&amp;view=log">org.apache.axis2.modules.Module</a>"
 interface with the following methods.</p>
 <pre>public void init(ConfigurationContext configContext, AxisModule module) throws AxisFault;//Initialize the module
-public void shutdown(AxisConfiguration axisSystem) throws AxisFault;//End of module processing
-public void engageNotify(AxisDescription axisDescription) throws AxisFault;</pre>
+public void shutdown(ConfigurationContext configurationContext) throws AxisFault;//End of module processing
+public void engageNotify(AxisDescription axisDescription) throws AxisFault;
+public String[] getPolicyNamespaces() throws AxisFault;
+public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault ;
+public boolean canSupportAssertion(Assertion assertion) ;
+</pre>
 
-<p>These methods can be used to control the module initialization and the
-termination. With the input parameter AxisConfiguration, the user is provided
+<p>Firt three methods can be used to control the module initialization and the
+termination , and the next three methods are used to perform policy related stuff
+With the input parameter AxisConfiguration, the user is provided
 with the complete configuration hierarchy. This can be used to fine-tune the
 module behavior by the module writers. For the simple logging service we can
 keep these methods blank in our implementation class.</p>
@@ -105,18 +110,23 @@ Axis2 engine when the control is passed to the handler. "public void
 revoke(MessageContext ctx);" is called when the handlers are revoked by the
 Axis2 engine.</p>
 <pre>public class LogHandler extends AbstractHandler implements Handler {
-    private Log log = LogFactory.getLog(getClass());
-    private QName name;
+    private static final Log log = LogFactory.getLog(LogHandler.class);
+    private String name;
 
-    public QName getName() {
+    public String getName() {
         return name;
     }
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+        log.info(msgContext.getEnvelope().toString());
+        return InvocationResponse.CONTINUE;        
+    }
+
+    public void revoke(MessageContext msgContext) {
         log.info(msgContext.getEnvelope().toString());
     }
 
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 }</pre>
@@ -157,15 +167,15 @@ follows:</p>
 
 <p>As you can see there are four flows defined in this "module.xml"</p>
 <ol>
-  <li>inflowÂ - Represents the handler chain that will run when a message is
+  <li>inflow - Represents the handler chain that will run when a message is
     coming in. </li>
-  <li><p style="margin-bottom: 0in">outflowÂ - Represents the handler chain
+  <li><p style="margin-bottom: 0in">outflow - Represents the handler chain
     that will run when the message is going out. </p>
   </li>
   <li><p style="margin-bottom: 0in">Outfaultflow - Represents the handler
     chain that will run when there is a fault and the fault is going out</p>
   </li>
-  <li><p>INfaultflowÂ - Represents the handler chain that will run when there
+  <li><p>INfaultflow - Represents the handler chain that will run when there
     is a fault and the fault is coming in </p>
   </li>
 </ol>
