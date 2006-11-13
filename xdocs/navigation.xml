@@ -33,20 +33,25 @@
 			<item name="Version 0.94" href="/0_94/index.html" />
 			<item name="Version 0.93" href="/0_93/index.html" />
 		</menu>
-		<menu name="Get Involved" href="overview.html">
-			<item name="Checkout the Source" href="svn.html" />
-			<item name="Build the Site" href="siteHowTo.html" />
-			<item name="Developer Guidelines" href="guidelines.html" />
+		<menu name="Resources">
+		<item name="FAQ" href="faq.html" />
+		<item name="Articles" href="articles.html" />
+		<item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2/" />
 			<item name="Reference Library" href="refLib.html" />
-			<item name="Mailing Lists" href="mail-lists.html" />
-			<item name="FAQ" href="faq.html" />
+			<item name="Online Java Docs" href="http://ws.apache.org/axis2/1_1/api/index.html" />
+		</menu>
+		<menu name="Get Involved" href="overview.html">
+		<item name="Overview" href="overview.html" />
+			<item name="Checkout the Source" href="svn.html" />
+		 <item name="Mailing Lists" href="mail-lists.html" />
+		 <item name="Developer Guidelines" href="guidelines.html" />
+			<item name="Build the Site" href="siteHowTo.html" />	
 		</menu>
 		<menu name="Project Information">
 			<item name="Project Team" href="team-list.html" />
+				<item name="Issue Tracking" href="issue-tracking.html" />
 			<item name="Source Code"
 				href="http://svn.apache.org/viewcvs.cgi/webservices/axis2/trunk/?root=Apache-SVN" />
-			<item name="Issue Tracking" href="issue-tracking.html" />
-			<item name="Wiki" href="http://wiki.apache.org/ws/FrontPage/Axis2/" />
 			<item name="Acknowledgements" href="thanks.html" />
 			<item name="License"
 				href="http://www.apache.org/licenses/LICENSE-2.0.html" />
