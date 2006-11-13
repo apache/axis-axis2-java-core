@@ -46,6 +46,23 @@
     <module>axis2-wsdl2code-maven-plugin</module>
   </modules>
 
+  <repositories>
+     <repository>
+        <id>maven-repo1</id>
+        <name>maven official repo</name>
+        <url>http://repo1.maven.org/maven/</url>
+        <layout>legacy</layout>
+     </repository>
+     <repository>
+        <snapshots>
+           <enabled>true</enabled>
+        </snapshots>
+        <id>ws-zones</id>
+        <name>ws.zones maven repository</name>
+        <url>http://ws.zones.apache.org/repository/</url>
+        <layout>legacy</layout>
+     </repository>
+  </repositories>
   <dependencyManagement>
     <dependencies>
       <dependency>
