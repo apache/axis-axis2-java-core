@@ -1,31 +1,31 @@
 <html>
 <head>
-<title>:: Maven 2 Java2WSDL Plugin ::</title>
-<link href="../../../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <meta http-equiv="content-type" content="">
+  <title>Maven 2 Java2WSDL Plugin</title>
+  <link href="../../../css/axis-docs.css" rel="stylesheet" type="text/css"
+  media="all">
 </head>
+
 <body>
 <h1>Maven 2 Java2WSDL Plugin Help</h1>
 
 <h2>Introduction</h2>
 
-<p>This plugin takes as input a Java class and generates a WSDL,
-  which describes a web service for invoking the classes
-  methods.</p>
-  
-  <h2>Goals</h2>
+<p>This plugin takes as input a Java class and generates a WSDL, which
+describes a Web service for invoking the classes methods.</p>
 
-  <p>The Java2WSDL plugin offers a single goal:</p>
+<h2>Goals</h2>
 
+<p>The Java2WSDL plugin offers a single goal:</p>
 <ul>
-<li>java2wsdl (default): Reads a java class and generates a WSDL for invoking the classes methods as a web service.</li>
+  <li>java2wsdl (default): Reads a java class and generates a WSDL for
+    invoking the classes methods as a Web service.</li>
 </ul>
-   
 
-  <p>To run the plugin, add the following section to your POM:</p>
-
-
-  <pre>
-  &lt;build&gt;
+<p>To run the plugin, add the following section to your <a
+href="http://maven.apache.org/guides/introduction/introduction-to-the-pom.html">POM</a>
+(Project Object Model):</p>
+<pre>  &lt;build&gt;
     &lt;plugins&gt;
       &lt;plugin&gt;
         &lt;groupId&gt;org.apache.axis2.maven2&lt;/groupId&gt;
@@ -45,75 +45,79 @@
   &lt;/build&gt;
   </pre>
 
-
-  <p>The plugin will be invoked automatically in the generate-resources
-  phase. You can also invoke it directly from the command line by
-  running the command: <pre>mvn java2wsdl:java2wsdl</pre></p>
+<p>The plugin will be invoked automatically in the generate-resources phase.
+You can also invoke it directly from the command line by running the
+command:</p>
+<pre>mvn java2wsdl:java2wsdl</pre>
 
 <h3>The Java2WSDL Goal</h3>
 
-  <p>By default, the plugin reads the given Java class and creates a
-  file <strong>target/generated-resources/java2wsdl/service.xml</strong>. The
-  Java class is given by the configuration element <strong>className</strong>
-  above.</p>
-  
-  <h2>Configuration</h2>
-  
-   <p>The Java2WSDL goal takes the following parameters as input. All parameters can be set from the command line by using properties. For example, the parameter "className" may be set using the property
-  "axis2.java2wsdl.className". If the parameter isn't set via property or in the POM, then a default
-  value applies.</p>
-  
-  
-  <table>
-  <tr>
-	<td><strong>Parameter name</strong></td>
-	<td><strong>Command line property</strong></td>
-	<td><strong>Description</strong></td>
-	<td><strong>Default value</strong></td>
-</tr>
-<tr>
-	<td>className</td>
-	<td>${axis2.java2wsdl.className}</td>
-	<td>Fully qualified name of the class, which is being read and transformed into a WSDL</td>
-	<td></td>
-</tr>
-<tr>
-	<td>outputFileName</td>
-	<td>${axis2.java2wsdl.outputFileName}</td>
-	<td>Path of the generated service file.</td>
-	<td></td>
-</tr>
-<tr>
-	<td>schemaTargetNamespace</td>
-	<td>${axis2.java2wsdl.schemaTargetNamespace}</td>
-	<td>Target namespace of the generated schema.   </td>
-	<td></td>
-</tr>
-<tr>
-	<td>schemaTargetNamespacePrefix</td>
-	<td>${axis2.java2wsdl.schemaTargetNamespacePrefix}</td>
-	<td>Prefix, which is being associated with the schemas target namespace.</td>
-	<td></td>
-</tr>
-<tr>
-	<td>serviceName</td>
-	<td>${axis2.java2wsdl.serviceName}  </td>
-	<td>Name of the generated web service.  </td>
-	<td>Unqualified name of the input class.</td>
-</tr>
-<tr>
-	<td>targetNamespace</td>
-	<td>${axis2.java2wsdl.targetNamespace} </td>
-	<td>Target namespace of the generated WSDL</td>
-	<td>Default namespace </td>
-</tr>
-<tr>
-	<td>targetNamespacePrefix</td>
-	<td>${axis2.java2wsdl.targetNamespacePrefix}</td>
-	<td>Prefix, which is being associated with the target namespace</td>
-	<td></td>
-</tr>
-</table>
+<p>By default, the plugin reads the given Java class and creates a file
+<strong>target/generated-resources/java2wsdl/service.xml</strong>. The Java
+class is given by the configuration element <strong>className</strong>
+above.</p>
 
+<h2>Configuration</h2>
+
+<p>The Java2WSDL goal takes the following parameters as input. All parameters
+can be set from the command line by using properties. For example, the
+parameter "className" may be set using the property
+"axis2.java2wsdl.className". If the parameter isn't set via property or in
+the POM, then a default value applies.</p>
+
+<table border="2">
+  <tbody>
+    <tr>
+      <td><strong>Parameter name</strong></td>
+      <td><strong>Command line property</strong></td>
+      <td><strong>Description</strong></td>
+      <td><strong>Default value</strong></td>
+    </tr>
+    <tr>
+      <td>className</td>
+      <td>${axis2.java2wsdl.className}</td>
+      <td>Fully qualified name of the class, which is being read and
+        transformed into a WSDL</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>outputFileName</td>
+      <td>${axis2.java2wsdl.outputFileName}</td>
+      <td>Path of the generated service file.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>schemaTargetNamespace</td>
+      <td>${axis2.java2wsdl.schemaTargetNamespace}</td>
+      <td>Target namespace of the generated schema.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>schemaTargetNamespacePrefix</td>
+      <td>${axis2.java2wsdl.schemaTargetNamespacePrefix}</td>
+      <td>Prefix, which is being associated with the schemas target
+      namespace.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>serviceName</td>
+      <td>${axis2.java2wsdl.serviceName}</td>
+      <td>Name of the generated Web service.</td>
+      <td>Unqualified name of the input class.</td>
+    </tr>
+    <tr>
+      <td>targetNamespace</td>
+      <td>${axis2.java2wsdl.targetNamespace}</td>
+      <td>Target namespace of the generated WSDL</td>
+      <td>Default namespace</td>
+    </tr>
+    <tr>
+      <td>targetNamespacePrefix</td>
+      <td>${axis2.java2wsdl.targetNamespacePrefix}</td>
+      <td>Prefix, which is being associated with the target namespace</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
 </body>
 </html>
