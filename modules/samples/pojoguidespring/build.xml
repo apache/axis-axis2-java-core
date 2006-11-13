@@ -17,10 +17,7 @@
 		<fileset dir="${axis2.home}/lib">
 			<include name="*.jar" />
 		</fileset>
-		<fileset dir="src/lib">
-			<include name="*.jar" />
-		</fileset>
-	</path>
+    </path>
 
 	<path id="client.class.path">
 		<pathelement location="${dest.dir.classes}" />
