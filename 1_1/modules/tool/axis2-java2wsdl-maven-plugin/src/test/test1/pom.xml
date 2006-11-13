@@ -10,7 +10,7 @@
       <plugin>
         <groupId>org.apache.axis2.maven2</groupId>
         <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.1</version>
         <configuration>
           <className>org.apache.axis2.maven2.java2wsdl.test.Adder</className>
         </configuration>
