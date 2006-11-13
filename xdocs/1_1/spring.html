@@ -18,8 +18,8 @@
     <ul>
       <li><a href="#21">Programming Model</a></li>
       <li><a href="#22">Simple Spring config example</a></li>
-      <li><a href="#23">Inside a Servlet Container</a></li>
-      <li><a href="#24">Outside a Servlet Container</a></li>
+      <li><a href="#23">With a ServletContext </a></li>
+      <li><a href="#24">Without a ServletContext</a></li>
       <li><a href="#25">Putting it all together</a></li>
       <li><a href="#26">Spring inside an AAR </a>
         <ul>
@@ -43,8 +43,8 @@ the Message Receiver will use, alternatively one can define a
 ServiceObjectSupplier that will supply the Object.</p>
 
 <p>This guide will show how to use two separate ServiceObjectSupplier classes
-that are part of the Axis2 standard distribution: One for use with a servlet
-container, and one without. Once configured, the web service itself acts like
+that are part of the Axis2 standard distribution: One for use with a ServletContext, 
+and one without. Once configured, the web service itself acts like
 any other Spring wired bean. These Spring beans can be loaded any way desired, 
 as Axis2 has no configuration file dependencies from Spring. Spring 
 versions 1.2.6, 1.2.8 and 2.0 have been tested, but probably any version would 
@@ -80,13 +80,13 @@ context-param and a listener:</p>
     &lt;/context-param&gt;</pre>
 
 <p>Next we will show two examples of Spring's /WEB-INF/applicationContext.xml
-referenced in the web.xml listener -  one with a servlet container, and one
+referenced in the web.xml listener -  one using a ServletContext, and one
 without.</p>
 <a name="23"></a>
 
-<h3>Inside a Servlet Container</h3>
+<h3>With a ServletContext</h3>
 
-<p>This 'inside a servlet container' example applicationContext.xml should be
+<p>This 'with a ServletContext' example applicationContext.xml should be
 familiar to any Spring user:</p>
 <pre> &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
@@ -124,10 +124,10 @@ would be any Message Receiver that extends
 org.apache.axis2.receivers.AbstractMessageReceiver .</p>
 <a name="24"></a>
 
-<h3>Outside a Servlet Container</h3>
+<h3>Without a ServletContext</h3>
 
-<p>In the case Axis2 can't get a ServletContext, you have the option of
-defining a bean that takes advantage of Spring's internal abilities
+<p>In the case Axis2 can't get a ServletContext, ie another transport or running inside the AAR etc, 
+you have the option of defining a bean that takes advantage of Spring's internal abilities
 (ApplicationContextAware interface, specifically) to provide an Application
 Context to Axis2, with a bean ref 'applicationContext' :</p>
 <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -153,7 +153,7 @@ Context to Axis2, with a bean ref 'applicationContext' :</p>
 &lt;/beans&gt;</pre>
 
 <p>If the service is _NOT_ running in a Servlet Container, i.e., Axis2 will
-_NOT_ be able to get a hold of ServletContext, the services.xml for the
+_NOT_ be able to get a hold of ServletContext or you prefer not to, the services.xml for the
 example would be using SpringAppContextAwareObjectSupplier such as:</p>
 <pre> &lt;service name="SpringAwareService"&gt;
     &lt;description&gt;
@@ -171,7 +171,7 @@ messageReceiver class, all Message Receivers are currently supported, as
 would be any Message Receiver that extends
 org.apache.axis2.receivers.AbstractMessageReceiver .</p>
 
-<p>In a non-servlet container environment, one way you could load the
+<p>In a 'without a ServletContext' environment, one way you could load the
 applicationContext.xml file is in a place that will be run once, upon
 start-up, execute:</p>
 <pre>import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -265,7 +265,6 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 
 public class TestClient {
-          /** Access point inside the servlet container. **/
     private static EndpointReference targetEPR =
         new EndpointReference(
                "http://localhost:8080/axis2/services/SpringAwareService");
@@ -372,7 +371,7 @@ the AAR, as shown below - it will NOT work otherwise. </p>
 ./spring/SpringAwareService.class
 ./spring/SpringInit.class </pre> </source>
 
-<p>As explained in the <a href="#24">Outside a Servlet Container</a> section, likewise the
+<p>As explained in the <a href="#24">Without a ServletContext</a> section, likewise the
 'Spring inside an AAR' config needs to hook Axis2 and Spring together via a Spring bean. 
 Place the following in your Spring config file:</p>
 <pre>
