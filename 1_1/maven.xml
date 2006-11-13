@@ -933,6 +933,14 @@
             <ant:link href="http://xmlbeans.apache.org/docs/2.1.0/reference/"/>
         </ant:javadoc>
     </goal>
+    
+    <postGoal name="site">
+         <ant:copy toDir="target/docs/style" overwrite="true">
+             <ant:fileset dir="xdocs/style">
+                 <ant:include name="*.css"/>
+             </ant:fileset>
+         </ant:copy>
+    </postGoal>
 
     <!-- ================================================================ -->
     <!--- Reports -->
