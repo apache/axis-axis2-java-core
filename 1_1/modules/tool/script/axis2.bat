@@ -50,7 +50,7 @@ if exist "%AXIS2_HOME%\bin\java2wsdl.bat" goto okHome
 rem guess the home. Jump one directory up to check if that is the home
 cd ..
 set AXIS2_HOME=%cd%
-cd %CURRENT_DIR%
+cd "%CURRENT_DIR%"
 
 :gotHome
 if EXIST "%AXIS2_HOME%\lib\axis2*.jar" goto okHome
@@ -68,9 +68,9 @@ FOR %%c in ("%AXIS2_HOME%\lib\*.jar") DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!
 rem ----- Execute The Requested Command ---------------------------------------
 echo Using AXIS2_HOME:   %AXIS2_HOME%
 echo Using JAVA_HOME:    %JAVA_HOME%
-echo %AXIS2_CLASS_PATH%
+REM echo %AXIS2_CLASS_PATH%
 set _RUNJAVA="%JAVA_HOME%\bin\java"
 
-%_RUNJAVA% %JAVA_OPTS% -cp "%AXIS2_CLASS_PATH%" -Daxis2.repo="%AXIS2_HOME%\repository" -Daxis2.xml="%AXIS2_HOME%\conf\axis2.xml" %*
+echo %_RUNJAVA% %JAVA_OPTS% -cp "%AXIS2_CLASS_PATH%" -Daxis2.repo="%AXIS2_HOME%\repository" -Daxis2.xml="%AXIS2_HOME%\conf\axis2.xml" %*
 endlocal
 :end
