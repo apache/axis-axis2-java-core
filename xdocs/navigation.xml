@@ -18,7 +18,15 @@
 			<item name="Tools" href="tools/index.html" />
 		</menu>
 		<menu name="Documentation">
-			<item name="Version 1.1" href="/1_1/index.html" />
+			<item name="Version 1.1" href="/1_1/contents.html" >
+			   <item name="Installation Guide" href="1_1/installationguide.html" />
+			   <item name="QuickStart Guide" href="1_1/quickstart.html" />
+			   <item name="User Guide" href="1_1/userguide.html" />
+			   <item name="POJO Guide" href="1_1/pojoguide.html" />
+			   <item name="Spring Guide" href="1_1/spring.html" />
+			   <item name="Web Administrator's Guide" href="1_1/webadminguide.html" />
+			   <item name="Migration Guide (from Axis1)" href="1_1/migration.html" />
+			</item>
 			<item name="Version 1.0" href="/1_0/index.html" />
 			<item name="Version 0.95" href="/0_95/index.html" />
 			<item name="Version 0.94" href="/0_94/index.html" />
