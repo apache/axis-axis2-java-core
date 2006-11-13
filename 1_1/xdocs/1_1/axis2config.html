@@ -92,7 +92,7 @@ HTTP. The way of specifying transport senders is as follows:</p>
         &lt;parameter name="PROTOCOL" locked="xsd:false"&gt;HTTP/1.0&lt;/parameter&gt;
  &lt;/transportSender&gt; 
  </pre>
-</source><strong>name:</strong> Name of the transport (it is possible to have
+<strong>name:</strong> Name of the transport (it is possible to have
 http and http1 as transport name)
 
 <p><strong>class:</strong> Implementation class of the corresponding
@@ -109,7 +109,7 @@ phase order element and it will look like below:</p>
          .
          .
 &lt;/phaseOrder&gt;   </pre>
-</source>
+
 <p>The most interesting thing is that you can add handlers here as well. If
 you want to add a handler which should go into that phase, you can directly
 do that by adding a handler element into it. In addition to that, there is no
@@ -261,15 +261,15 @@ observers are informed of the following events:</p>
   <li>Module deploy</li>
   <li>Module remove</li>
 </ul>
-Registering Observers is very useful for additional features such as RSS feed
+<p>Registering Observers is very useful for additional features such as RSS feed
 generation which will provide service information to subscribers. The correct
-way of registering observers should be like below:
+way of registering observers should be like below:</p>
 <pre>&lt;listener class="org.apache.axis2.ObserverIMPL"&gt;
     &lt;parameter name="RSS_URL" &gt;http://127.0.0.1/rss&lt;/parameter&gt;
   &lt;/listener&gt;</pre>
 </source>
 <p><strong>class:</strong> Represents an Implementation class of observer,
-and it should be noted that the implementation class should implement
+and it should be noted that the Implementation class should implement
 AxisObserver interface, and the class has to be available in the classpath.
 <a name="Service_Configuration"></a>
 </p>
@@ -282,7 +282,7 @@ AxisObserver interface, and the class has to be available in the classpath.
 service archive file needs to have a services.xml in order to be a valid
 service and it should be available in the META-INF directory of the archive
 file. A very simple services.xml is shown below:</font></p>
-<source><pre><font>&lt;service name="name of the service" scope="name of the scope" class="full qualifide name the service lifecycle class"   targetNamespace="target namespase for the service"&gt;
+<source><pre>&lt;service name="name of the service" scope="name of the scope" class="full qualifide name the service lifecycle class"   targetNamespace="target namespase for the service"&gt;
     &lt;description&gt; The description of the service  &lt;/description&gt;  
 
     &lt;transports&gt; 
@@ -303,20 +303,17 @@ file. A very simple services.xml is shown below:</font></p>
         &lt;module ref=" a module name "/&gt;
         &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
-  &lt;/service&gt;</font></pre>
+  &lt;/service&gt;</pre>
 </source>
-<p><font><strong>name</strong>: The service name will be the name of the
+<p><strong>name</strong>: The service name will be the name of the
 archive file, if the .aar file contains only one service, or else the name of
-the service will be the name given by the name attribute.</font></p>
+the service will be the name given by the name attribute.</p>
 
 <p><strong>scope</strong>: (Optional Attribute) The time period in which runtime information of
 deployed services will be available. Scope is of several types-
 "Application", "SOAPSession", "TransportSession", "Request". The default value (if you dont put any value) will be "Request"</p>
 
-<p><strong>class</strong>: (Optional attribute) To specify the full qualified name of the service lifecycle implementation class.
- ServiceLifeCycle class is usefull when you want to do some tasks when the system start and when it shutdowns.
-
-</p> 
+<p><strong>class</strong>: (Optional attribute) To specify the full qualified name of the service lifecycle implementation class. ServiceLifeCycle class is usefull when you want to do some tasks when the system start and when it shutdowns.</p> 
 
 <p><strong>targetNamespace</strong>: (Optional Attribute) Target name space of the service, and
 this value will be used when generating the wsdl , if you do not specify this value , then the value will be calculated from the package name of the service impl class</p>
