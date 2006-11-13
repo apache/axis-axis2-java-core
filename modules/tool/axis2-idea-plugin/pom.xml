@@ -97,42 +97,37 @@
     <dependency>
       <groupId>axis2</groupId>
       <artifactId>axis2-codegen</artifactId>
-      <version>SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>axis2</groupId>
-      <artifactId>axis2-common</artifactId>
-      <version>SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>axis2</groupId>
       <artifactId>axis2-kernel</artifactId>
-      <version>SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>axis2</groupId>
       <artifactId>axis2-adb</artifactId>
-      <version>SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>axis2</groupId>
       <artifactId>axis2-adb-codegen</artifactId>
-      <version>SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>axis2</groupId>
       <artifactId>axis2-java2wsdl</artifactId>
-      <version>SNAPSHOT</version>
+      <version>1.1</version>
     </dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-api</artifactId>
-			<version>SNAPSHOT</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-impl</artifactId>
-			<version>SNAPSHOT</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>woodstox</groupId>
