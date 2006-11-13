@@ -102,7 +102,7 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
-            <name>Rajith Athapaththu</name>
+            <name>Rajith Attapattu</name>
             <id>rajith</id>
             <email>rajith AT apache.org</email>
             <organization>Redhat - Canada</organization>
@@ -114,7 +114,11 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
-            <name>Keith Chapmen</name>
+            <name>Jeff Barrett</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Keith Chapman</name>
             <id>keith</id>
             <email>keith AT wso2.com</email>
             <organization>WSO2</organization>
@@ -150,6 +154,10 @@
             <id>ruchithf</id>
             <email>ruchith AT wso2.com</email>
             <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Nicholas Gallardo</name>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Thilina Gunarathne</name>
@@ -211,6 +219,10 @@
             <organization>Computer Associates</organization>
         </developer>
         <developer>
+            <name>Michael Rheinheimer</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
             <name>Sanka Samaranayake</name>
             <id>sanka</id>
             <email>sanka AT wso2.com</email>
@@ -222,6 +234,12 @@
             <email>sandakith AT wso2.com</email>
             <organization>WSO2</organization>
             <url>http://www.lahiru.net</url>
+        </developer>
+        <developer>
+            <name>Rich Scheuerle</name>
+            <id>scheu</id>
+            <email>scheu AT us.ibm.com</email>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Ashutosh Shahi</name>
@@ -258,6 +276,10 @@
             <id>amilas</id>
             <email>amila AT wso2.com</email>
             <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Nikhil Thaker</name>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Chamil Thanthrimudalige</name>
