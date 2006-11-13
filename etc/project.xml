@@ -102,9 +102,21 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
+            <name>Rajith Athapaththu</name>
+            <id>rajith</id>
+            <email>rajith AT apache.org</email>
+            <organization>Redhat - Canada</organization>
+        </developer>
+        <developer>
             <name>Afkham Azeez</name>
             <id>azeez</id>
             <email>azeez AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Keith Chapmen</name>
+            <id>keith</id>
+            <email>keith AT wso2.com</email>
             <organization>WSO2</organization>
         </developer>
         <developer>
@@ -189,7 +201,7 @@
             <name>Ajith Ranabahu</name>
             <id>ajith</id>
             <email>ajith AT wso2.com</email>
-            <organization>WSO2</organization>
+            <organization></organization>
             <url>http://www.apache.org/~ajith</url>
         </developer>
         <developer>
@@ -203,6 +215,13 @@
             <id>sanka</id>
             <email>sanka AT wso2.com</email>
             <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Lahiru Sandakith</name>
+            <id>sandakith</id>
+            <email>sandakith AT wso2.com</email>
+            <organization>WSO2</organization>
+            <url>http://www.lahiru.net</url>
         </developer>
         <developer>
             <name>Ashutosh Shahi</name>
@@ -233,6 +252,12 @@
             <id>jaya</id>
             <email>jayachandra AT gmail.com</email>
             <organization>Computer Associates</organization>
+        </developer>
+        <developer>
+            <name>Amila Suriarachchi</name>
+            <id>amilas</id>
+            <email>amila AT wso2.com</email>
+            <organization>WSO2</organization>
         </developer>
         <developer>
             <name>Chamil Thanthrimudalige</name>
