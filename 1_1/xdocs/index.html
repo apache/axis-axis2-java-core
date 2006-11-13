@@ -254,22 +254,15 @@ target="_blank">Download Tool Plug-ins</a>]</p>
 
 <h2>Known Issues and Limitations</h2>
 <ul>
-  <li>Recursive schemas (A includes B which includes A) may cause
-  problems</li>
-  <li>JaxMe data binding support is experimental</li>
-  <li>Axis2-595: Hot re-deployment in Apache Tomcat has problems</li>
-  <li>Axis2-666: AddressingSubmissionInHandler does not deserialize EPR
-    extensibility attributes and elements</li>
-  <li>AXIS2-667: Operation dispatch based on message body has a known
-  issue</li>
-  <li>Axis Data Binding (ADB) does not cover all of XML Schema; its an 80-20
-    design point. Unsupported XML Schema features include:
+  <li>JaxMe and JAXBRI data binding support is experimental</li>
+  <li>AXIS2-595: Hot re-deployment in Apache Tomcat has problems</li>
+  <li>Axis Data Binding (ADB) does not support the following construct(s):
     <ol>
-      <li>Simple content extension and restriction</li>
-      <li>Complex content restriction</li>
+      <li>AXIS2-983: Support for Simple Type Union and Simple Type List</li>
+      <li>AXIS2-1092: Support for xs:list inside an xs:simpleType</li>
+      <li>AXIS2-1093: Support for xs:union inside xs:simpleType</li>
     </ol>
   </li>
-  <li>ADB does not support xsi:type based deserialization at runtime</li>
   <li>No support yet for unwrapping of doc/lit WSDL files (in stub
   generation)</li>
   <li>No support yet for rpc/encoded style WSDL documents (in stub
