@@ -24,6 +24,7 @@ Axis2 modules:
 12. spring
 13. tool
 14. jaxbri
+15. soapmonitor
 
 One can use maven 1.x to create the Standard Binary Distribution from this, 
 by typing "$maven dist-bin".
