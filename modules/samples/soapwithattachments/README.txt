@@ -20,7 +20,7 @@ Objectives
  * Writing a POJO (Plain Old Java Object) based service to access attachments.
  * Implement a Axis2 OperationClient based Web Service client to invoke the service with SOAP 
    with Attachment type attachments.
-    * Invoke the deployed service.
+ * Invoke the deployed service.
 
 Prerequisites
 =============
@@ -44,7 +44,7 @@ when building this service can be found at SWA_SAMPLE_DIR/resources directory.
 
 2. Deploy the service
 Run the AXIS2_DIST/bin/axis2server.{sh.bat} script to start the standalone axis2 server. This server 
-will deploy all the srvices available at AXIS2_DIST/repository/services directoryt. Alternatively you
+will deploy all the srvices available at AXIS2_DIST/repository/services directory. Alternatively you
 can drop the sample-swa.aar service archive to the services directory of a running Axis2 servlet)
 
 3. Running the client
