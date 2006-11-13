@@ -51,6 +51,7 @@ public class LibraryServiceClient {
         System.out.println(" To login     5 - -userName -passWord");
         System.out.println(" To lend a book 6 - -isbn -userName   ");
         System.out.println(" To return a book 7 - -isbn");
+        System.out.println(" To exit tyep -1 ");
         System.out.println("                                      ");
         System.out.println("                                      ");
         System.out.println("Enter service epr address :          ");
