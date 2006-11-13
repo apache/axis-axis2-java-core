@@ -56,8 +56,8 @@ class needs all the Axis dependency jars in the classpath. New services can
 be added in the usual way by dropping the archives to the repository (See <a
 href="userguide.html">User's Guide</a> for more information)</p>
 
-<p>Alternatively the TCP Server can run with tcp-server.bat/ tcp-server.sh
-file in the bin directory of the Binary distribution of TCP Server.</p>
+<!--<p>Alternatively the TCP Server can run with tcp-server.bat/ tcp-server.sh
+file in the bin directory of the Binary distribution of TCP Server.</p>-->
 <a name="send"></a>
 <h2>How to Send SOAP Messages Using TCP Transport</h2>
 
@@ -68,7 +68,7 @@ segment demonstrates how it can be done.</p>
 ServiceClient serviceClient = new ServiceClient();
 Options options = new Options();
 options.setTo(targetEPR);
-options.useSeperateListener(false);
+<!--options.useSeperateListener(false);--><!--commented off as their is an error--- "The method useSeperateListener(boolean)is undefined for the type Options">
 serviceClient.setOptions(options);
 
 OMElement response =
@@ -92,6 +92,10 @@ TCPServer with the same repository used for the <a
 href="userguide.html">Axis2 User's Guide</a> samples. Since sample is already
 deployed in the repository while trying the userguide it will be
 automatically available.</p>
+
+<p>In order to run the TCPClient.java, addressing should be engaged both in the 
+client and server sides. In client side, you can engage addressing by copying 
+the addressing-1.1.mar (AXIS2_HOME/repository/module) to AXIS2_HOME/lib directory.</p>
 
 <a name="components"></a>
 <h2>Transport Components</h2>
