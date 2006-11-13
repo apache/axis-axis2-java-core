@@ -98,7 +98,10 @@ note that we use xmlbeans as the data binding framework and generated code
 will be sent to samples directory. Other data binding tools you could use are
 adb (Axis data binding) and jaxme (<a
 href="http://ws.apache.org/jaxme/">JaxMe data binding</a>)</p>
-<pre style="margin-bottom: 0.2in;">WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans -o ../samples -p org.apache.axis2.userguide</pre>
+<pre>
+WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -ss -sd -d xmlbeans 
+-o ../samples -p org.apache.axis2.userguide
+</pre>
 
 <p>This will generate the required classes in the <b>"sample/src"</b>
 directory, and the schema classes in
@@ -120,7 +123,17 @@ three operations: echoString, echoStringArray, echoStruct. To see how others
 will look when they are filled up see <a
 href="src/Axis2SampleDocLitServiceCode.html">Code Listing For
 Axis2SampleDocLitService Service</a></p>
-<pre>public org.apache.axis2.userguide.xsd.EchoStringReturnDocument echoString<br>   (org.apache.axis2.userguide.xsd.EchoStringParamDocument param4) throws Exception {<br>   //Use the factory to create the output document.<br>   org.apache.axis2.userguide.xsd.EchoStringReturnDocument retDoc = org.apache.axis2.userguide.xsd.EchoStringReturnDocument.Factory.newInstance();<br>   //send the string back.<br>   retDoc.setEchoStringReturn(param4.getEchoStringParam());<br>   return retDoc;<br> }</pre>
+<source>
+<pre>
+public org.apache.axis2.userguide.xsd.EchoStringReturnDocument 
+    echoString(org.apache.axis2.userguide.xsd.EchoStringParamDocument param4) throws Exception {
+    //Use the factory to create the output document.
+    org.apache.axis2.userguide.xsd.EchoStringReturnDocument retDoc = 
+           org.apache.axis2.userguide.xsd.EchoStringReturnDocument.Factory.newInstance();
+    //send the string back.
+    retDoc.setEchoStringReturn(param4.getEchoStringParam());
+   return retDoc;<br>
+</pre></source>
 
 <a name="Step4_Create_archive"></a>
 <h3>Step 3: Create Archive File</h3>
@@ -188,7 +201,11 @@ generation</strong> approach presented below.</p>
 <p>Let's see how we could generate java code (Stub) to handle the client side
 Web Service invocation for you. That can be done by running the WSDL2Java
 tool using following arguments</p>
-<pre style="margin-bottom: 0.2in;">WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -d xmlbeans -o ../samples/src -p org.apache.axis2.userguide</pre>
+<source>
+<pre>WSDL2Java.sh -uri ../samples/wsdl/Axis2SampleDocLit.wsdl -d xmlbeans 
+     -o ../samples/src -p org.apache.axis2.userguide
+</pre></source>
+
 
 <p>This will generate client side stubs and xmlbeans types for your types.
 The Stub class that you need to use will be of the form
@@ -211,7 +228,23 @@ strategies.</p>
 <code>Axis2SampleDocLitService</code> that we have already deployed. The code
 is extremely simple to understand and the explanations are in the form of
 comments.</p>
-<pre>     try {<br>            org.apache.axis2.userguide.Axis2SampleDocLitServiceStub stub = new<br>                    org.apache.axis2.userguide.Axis2SampleDocLitServiceStub(null,<br>                    "http://localhost:8080/axis2/services/Axis2SampleDocLitService");<br>            <br>            //Create the request document to be sent.<br>            org.apache.axis2.userguide.xsd.EchoStringParamDocument reqDoc =<br>                    org.apache.axis2.userguide.xsd.EchoStringParamDocument.Factory.newInstance();<br>            reqDoc.setEchoStringParam("Axis2 Echo");<br>            <br>            //invokes the Web service.<br>            org.apache.axis2.userguide.xsd.EchoStringReturnDocument resDoc = stub.echoString(reqDoc);<br>            System.out.println(resDoc.getEchoStringReturn());<br><br>        } catch (java.rmi.RemoteException e) {<br>            e.printStackTrace();<br>        }<br></pre>
+<source>
+<pre>     try {
+               org.apache.axis2.userguide.Axis2SampleDocLitServiceStub stub 
+                  = new org.apache.axis2.userguide.Axis2SampleDocLitServiceStub(null,
+                    "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
+                //Create the request document to be sent.
+                org.apache.axis2.userguide.xsd.EchoStringParamDocument reqDoc =
+                org.apache.axis2.userguide.xsd.EchoStringParamDocument.Factory.newInstance();
+                reqDoc.setEchoStringParam("Axis2 Echo");
+                //invokes the Web service.
+                org.apache.axis2.userguide.xsd.EchoStringReturnDocument resDoc = 
+                stub.echoString(reqDoc);
+                System.out.println(resDoc.getEchoStringReturn());
+               } catch (java.rmi.RemoteException e) {
+                  e.printStackTrace();
+              }
+</pre></source>
 
 <p>First argument of <code>Axis2SampleDocLitPortTypeStub</code> should be the
 Axis2 repository for the client. Here we use null to make the stub use
@@ -228,7 +261,29 @@ innovation, for each method in the Service there will be a method
 <strong>start&lt;method-name&gt;</strong>. These methods accept a callback
 object which would be called when the response is received. Sample code that
 does an asynchronous interaction is given below.</p>
-<pre>        try {<br>            org.apache.axis2.userguide.Axis2SampleDocLitServiceStub stub = new<br>                    org.apache.axis2.userguide.Axis2SampleDocLitServiceStub(null,<br>                    "http://localhost:8080/axis2/services/Axis2SampleDocLitService");<br><br>            //implementing the callback online<br>            org.apache.axis2.userguide.Axis2SampleDocLitServiceCallbackHandler callback =<br>                    new org.apache.axis2.userguide.Axis2SampleDocLitServiceCallbackHandler() {<br><br>                public void receiveResultechoString(org.apache.axis2.userguide.xsd.EchoStringReturnDocument resDoc) {<br>                    System.out.println(resDoc.getEchoStringReturn());<br>                }<br>            };<br><br>            org.apache.axis2.userguide.xsd.EchoStringParamDocument reqDoc = <br>                    org.apache.axis2.userguide.xsd.EchoStringParamDocument.Factory.newInstance();<br>            reqDoc.setEchoStringParam("Axis2 Echo");<br>            stub.startechoString(reqDoc, callback);<br>        } catch (java.rmi.RemoteException e) {<br>            e.printStackTrace();<br>        }<br></pre>
+<source>
+<pre>try {
+         org.apache.axis2.userguide.Axis2SampleDocLitServiceStub stub
+           = new org.apache.axis2.userguide.Axis2SampleDocLitServiceStub(null,
+             "http://localhost:8080/axis2/services/Axis2SampleDocLitService");
+             //implementing the callback online
+            org.apache.axis2.userguide.Axis2SampleDocLitServiceCallbackHandler callback =
+            new org.apache.axis2.userguide.Axis2SampleDocLitServiceCallbackHandler() {
+                    public void receiveResultechoString(
+                      org.apache.axis2.userguide.xsd.EchoStringReturnDocument resDoc) {
+                       System.out.println(resDoc.getEchoStringReturn());
+                       }
+            };
+        org.apache.axis2.userguide.xsd.EchoStringParamDocument reqDoc = 
+          org.apache.axis2.userguide.xsd.EchoStringParamDocument.Factory.newInstance();
+           reqDoc.setEchoStringParam("Axis2 Echo");
+           stub.startechoString(reqDoc, callback);
+        } catch (java.rmi.RemoteException e) {
+          e.printStackTrace();
+       }
+</pre>
+</source>
+
 
 <p>Even though the above code does a non-blocking invocation at the client
 API, the transport connection may still operate in blocking fashion. For
@@ -239,7 +294,13 @@ transport connections are used for the request and the response please add
 the following code segment after creating the stub. These will force Axis2 to
 use two transport connections for the request and the response while the
 client uses a Callback to process the response.</p>
-<pre>stub._getServiceClient().engageModule(new QName("addressing"));<br>stub._getServiceClient().getOptions().setUseSeparateListener(true);<br></pre>
+<source>
+<pre>
+stub._getServiceClient().engageModule(new QName("addressing"));
+stub._getServiceClient().getOptions().setUseSeparateListener(true);
+</pre>
+</source>
+
 
 <p>Once those options are set, Axis2 client does the following:</p>
 <ol>
@@ -256,7 +317,19 @@ client uses a Callback to process the response.</p>
 
 <p>You could use your own repository with Axis2 Client, code below shows
 how to do this.</p>
-<pre>String axis2Repo = ...<br>String axis2xml = ...<br>ConfigurationContext configContext = <br>        ConfigurationContextFactory.createConfigurationContextFromFileSystem(axis2Repo, axis2xml);<br>Service1Stub stub1 = new Service1Stub(configContext,...);<br>//invoke Service1<br><br>Service2Stub stub2 = new Service2Stub(configContext,...);<br>//invoke Service2<br>.....<br></pre>
+<source>
+<pre>
+String axis2Repo = ...
+String axis2xml = ...
+ConfigurationContext configContext =
+ConfigurationContextFactory.createConfigurationContextFromFileSystem(axis2Repo, axis2xml);
+Service1Stub stub1 = new Service1Stub(configContext,...);
+//invoke Service1
+Service2Stub stub2 = new Service2Stub(configContext,...);
+//invoke Service2
+</pre>
+</source>
+
 
 <p>Note by creating the <code>ConfigurationContext</code> outside and
 passing it to the stubs, you could make number of stubs to use same
