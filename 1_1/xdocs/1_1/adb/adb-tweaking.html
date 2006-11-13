@@ -7,7 +7,7 @@
 </head>
 <body lang="en" xml:lang="en">
 <h1>ADB Tweaking Guide</h1>
-<p>This document explains available mechanisms to extend ADB and
+<p>This document explains the mechanisms available to extend ADB and
 possibly adopt it to compile schemas to support other
 languages.</p>
 <h2>Content</h2>
@@ -41,13 +41,13 @@ the specified instance of the BeanWriter.</p>
 </li>
 <li>schema.bean.writer.template
 <p>This specifies the template to be used in the BeanWriter. The
-beanWriter author is free to use any mechanism to write the classes
+BeanWriter author is free to use any mechanism to write the classes
 but the default mechanism is to use a xsl template. This property
 may be left blank if the BeanWriter implementation does not require
 a template.</p>
 </li>
 <li>schema.bean.typemap
-<p>This is the type map to be used by the schema compiler. it
+<p>This is the type map to be used by the schema compiler. It
 should be an implementation of the
 <strong>org.apache.axis2.schema.typemap.TypeMap</strong> interface. The
 default typemap implementation encapsulates a hashmap with type
@@ -79,7 +79,7 @@ templates to generate code in their own formats.</p>
 <a name="advanced_tweak" id="advanced_tweak"></a>
 <h2>A More Advanced Tweak - Generate Code for Another Language</h2>
 <p>To generate code for another language, there are two main
-components are to be written.</p>
+components to be written.</p>
 <ul>
 <li>The BeanWriter
 <p>Implement the BeanWriter interface for this class. A nice
@@ -98,7 +98,7 @@ fairly sufficient and only the type names would need to change to
 support another language.</p>
 </li>
 </ul>
-<p>Surprisingly this is enough to have other language support for
+<p>Surprisingly, this is enough to have other language support for
 ADB. Change the configuration and you are ready to generate code
 for other languages!</p>
 <p>This tweaking guide is supposed to be a simple guideline for
@@ -108,6 +108,5 @@ compiler accordingly to their needs. Also note that the intention
 of this section is <em>not</em> to be a step by step guide to
 custom code generation. Anyone who wish to do so would need to dig
 into the code and get their hands dirty!</p>
-<hr />
 </body>
 </html>
