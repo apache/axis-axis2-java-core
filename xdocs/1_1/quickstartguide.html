@@ -70,7 +70,7 @@ public class StockQuoteService {
 <p>First, let's look at how this simple Java class corresponds to a service.</p>
 
 
-<a name="ready"></a><h2>Getting ready</h2>
+<a name="ready"></a><h2>Getting Ready</h2>
 
 <p>Before we build anything using Axis2, we're going to need to take care of a little housekeeping. First off, you'll need to ready your environment for working with Axis2. Fortunately, it involves just a few simple steps:</p>
 
@@ -180,7 +180,7 @@ WEB-INF
 
 <a name="deploy"></a><h3>Deploying POJOs</h3>
 
-<p>To deploy the service using POJOs, execute the following steps.</p>
+<p>To deploy the service using POJOs (Plain Old Java Objects), execute the following steps.</p>
 
 <p>Note the directory structure contained at &lt;AXIS2_HOME>/samples/quickstart (the services.xml file is from the first section of this guide):</p>
 <pre>
@@ -268,7 +268,7 @@ and then execute the first getPrice url. You can see that the price got updated.
 </pre>
 
 <p>Since AXIOM is a little different, you’re going to need a different services.xml file from the one used for POJO. Define it, as shown in Code Listing 4.</p>
-<p><b>Code Listing 4: The service definition file.</b></p>
+<p><b>Code Listing 4: The Service Definition File.</b></p>
 <pre>&lt;service name="StockQuoteService" scope="application"&gt;
     &lt;description&gt;
         Stock Quote Service
@@ -355,7 +355,7 @@ http://localhost:8080/axis2/services/StockQuoteService?wsdl
 http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
 
-<a name="adb"></a><h3>Generating the service using ADB</h3>
+<a name="adb"></a><h3>Generating the Service using ADB</h3>
 
 <p>To generate and deploy the service using the Axis2 Databinding Framework (ADB) execute the following steps.</p>
 
@@ -368,7 +368,7 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>Open the build/service/src/samples/quickstart/adb/service/StockQuoteServiceSkeleton.java file and modify it to add the functionality of your service to the generated methods, shown in Code Listing 6.</p>
 
-<p><b>Code Listing 6: Defining the service skeleton file</b></p>
+<p><b>Code Listing 6: Defining the Service Skeleton File</b></p>
 <pre>package samples.quickstart.service.adb;
 
 import samples.quickstart.service.adb.xsd.GetPriceResponse;
@@ -437,7 +437,7 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>Next open the build/service/src/samples/quickstart/service/xmlbeans/StockQuoteServiceSkeleton.java file and modify it to add the functionality of your service to the generated methods (see Code Listing 7).</p>
 
-<p><b>Code Listing 7: Defining the service skeleton</b></p>
+<p><b>Code Listing 7: Defining the Service Skeleton</b></p>
 <pre>package samples.quickstart.service.xmlbeans;
 
 import samples.quickstart.service.xmlbeans.xsd.GetPriceDocument;
@@ -495,7 +495,7 @@ http://localhost:8080/axis2/services/StockQuoteService?wsdl
 http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
 
-<a name="jibx"></a><h3>Generating the service using JiBX</h3>
+<a name="jibx"></a><h3>Generating the Service using JiBX</h3>
 
 <p>To generate and deploy the service using <a href="http://www.jibx.org">JiBX data binding</a>, execute the following steps.</p>
 
@@ -564,11 +564,11 @@ http://localhost:8080/axis2/services/StockQuoteService?wsdl
 http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
 
-<a name="clients"></a><h2>Creating clients</h2>
+<a name="clients"></a><h2>Creating Clients</h2>
 
 <p>In this section, we'll look at three ways to create clients based on the StockQuoteService class:  Building an AXIOM based client, generating a client using Axis2 Databinding Framework (ADB), and generating a client using XMLBeans.</p>
 
-<a name="clientaxiom"></a><h3>Creating a client with AXIOM</h3>
+<a name="clientaxiom"></a><h3>Creating a Client with AXIOM</h3>
 
 <p>To build a client using AXIOM, execute the following steps.</p>
 
@@ -674,7 +674,7 @@ done
 Current price of WSO: 123.42
 </pre>
 
-<a name="clientadb"></a><h3>Generating a client using ADB</h3>
+<a name="clientadb"></a><h3>Generating a Client using ADB</h3>
 
 <p>To build a client using Axis Data Binding (ADB), execute the following steps.</p>
 
@@ -839,7 +839,7 @@ public class XMLBEANSClient{
 done
 </pre>
 
-<a name="clientjibx"></a><h3>Generating a client using JiBX</h3>
+<a name="clientjibx"></a><h3>Generating a Client using JiBX</h3>
 
 <p>To build a client using JiBX, execute the following steps.</p>
 
