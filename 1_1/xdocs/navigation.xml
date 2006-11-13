@@ -20,7 +20,7 @@
 		<menu name="Documentation">
 			<item name="Version 1.1" href="/1_1/contents.html" >
 			   <item name="Installation Guide" href="1_1/installationguide.html" />
-			   <item name="QuickStart Guide" href="1_1/quickstart.html" />
+			   <item name="QuickStart Guide" href="1_1/quickstartguide.html" />
 			   <item name="User Guide" href="1_1/userguide.html" />
 			   <item name="POJO Guide" href="1_1/pojoguide.html" />
 			   <item name="Spring Guide" href="1_1/spring.html" />
