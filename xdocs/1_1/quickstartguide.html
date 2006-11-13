@@ -11,7 +11,7 @@
 
 <p>The purpose of this guide is to get you started creating services and clients using Axis2 as quickly as possible.  We'll take a simple StockQuote Service and show you some of the different ways in which you can create and deploy it, as well as taking a quick look at one or two utilities that come with Axis2.  We'll then look at creating clients to access those services.</p>
 
-
+<h2>Content</h2>
 <ul>
   <li><a href="#introduction">Introduction</a></li>
   <li><a href="#ready">Getting Ready</a></li>
@@ -35,13 +35,13 @@
   <li><a href="#furtherstudy">For Further Study</a></li>
 </ul>
 
-<h3>A quick setup note:</h3>
+<h3>A Quick Setup Note:</h3>
 
-<p>The code for the article can be downloaded <a href="axis2.quickstart.source.zip">here</a>, and it might help to go grab it now to help you as you follow along.  It includes an Ant buildfiles (build.xml) that we'll reference throughout the examples to make compilation easier.</p>
+<p>The code for the document can be found in the extracted <a href="../download/1_1/download.html#std-bin">Standard Binary Distribution</a>, more specifically at Axis2_HOME/samples/ inside the directories- quickstart, quickstartadb, quickstartaxiom, quickstartjibx and quickstartxmlbeans, and it might help to go grab it now to help you as you follow along.  It includes an Ant buildfiles (build.xml) that we'll reference throughout the examples to make compilation easier.</p>
 
 <a name="introduction"></a><h2>Introduction</h2>
 
-<p>Let's start with the service itself.  We'll make it simple so you can see what going on when we build and deploy things.  A StockQuoteService example seems to be mandatory in instances like this one, so let's use the following (see Code Listing 1).</p>
+<p>Let's start with the service itself.  We'll make it simple so you can see what is going on when we build and deploy services. A StockQuoteService example seems to be mandatory in instances like this one, so let's use the following (see Code Listing 1).</p>
 
 <p><b>Code Listing 1: The StockQuoteService class</b></p>
 <pre>package samples.quickstart.service.pojo;
@@ -72,7 +72,7 @@ public class StockQuoteService {
 
 <a name="ready"></a><h2>Getting ready</h2>
 
-<p>Before we build anything using Axis2, we're going to need to take care of a little housekeeping.  First off, you'll need to ready your environment for working with Axis2.  Fortunately, it involves just a few simple steps:</p>
+<p>Before we build anything using Axis2, we're going to need to take care of a little housekeeping. First off, you'll need to ready your environment for working with Axis2. Fortunately, it involves just a few simple steps:</p>
 
 <ol>
 <li>Download and install Java. (Minimum version is JDK1.4)</li>
@@ -81,7 +81,7 @@ public class StockQuoteService {
 <li>Set the AXIS2_HOME environment variable to point to the target directory in step. Note that all of the scripts and build files Axis2 generates depend on this value, so don't skip this step!</li>
 </ol>
 
-<p>In most cases, we're also going to need a WSDL file for our service.  Axis2's Java2WSL can be used to bootstap a WSDL.  To generate a WSDL file from a Java class, perform the following steps:</p>
+<p>In most cases, we're also going to need a WSDL file for our service.  Axis2's Java2WSDL can be used to bootstrap a WSDL.  To generate a WSDL file from a Java class, perform the following steps:</p>
 
 <ol>
 <li>Create and compile the Java class.</li>
@@ -93,12 +93,12 @@ public class StockQuoteService {
 
 <p>Once you've generated the WSDL file, you can make any changes you need.  For example, you might add custom faults or change the name of generated elements.  For example, this StockQuoteService.wsdl is in %AXIS2_HOME%/samples/quickstartadb/resources/META-INF folder, which we'll be using for the rest of this guide, replaces the generic parameters created by the generation process.</p>
 
-<a name="services"></a><h2>Axis2 services</h2>
+<a name="services"></a><h2>Axis2 Services</h2>
 
 <p>Before we build anything, it's helpful to understand what the finished product looks like.</p>
 <p>The server side of Axis2 can be deployed on any Servlet engine, and has the following structure, shown in Code Listing 2.</p>
 
-<p><b>Code Listing 2: The directory structure of axis2.war</b></p>
+<p><b>Code Listing 2: The Directory Structure of axis2.war</b></p>
 <pre>
 axis2-web 
 META-INF
@@ -140,9 +140,9 @@ WEB-INF
            - StockQuoteService.class
 </pre>
 
-<p>This is not too complicated.  The name of the service is StockQuoteService which is specified in the services.xml, and places any Java classes in their proper place based on the package name.  the META-INF directory contains additional information about the services that Axis2 needs to execute it properly.  The services.xml file defines the service itself and links the Java class to it (See Code Listing 3).</p>
+<p>This is not too complicated.  The name of the service is StockQuoteService which is specified in the services.xml, and places any Java classes in their proper place based on the package name. The META-INF directory contains additional information about the services that Axis2 needs to execute it properly. The services.xml file defines the service itself and links the Java class to it (See Code Listing 3).</p>
 
-<p><b>Code Listing 3: The service definition file</b></p>
+<p><b>Code Listing 3: The Service Definition File</b></p>
 <pre>
 &lt;service name="StockQuoteService" scope="application"&gt;
     &lt;description&gt;
@@ -170,14 +170,13 @@ WEB-INF
 
 <p>Now that you understand what we're trying to accomplish, we're almost ready to start building.</p>
 
-<p>First, download and unzip the appropriate version of Axis2.  Make sure that you set the value of the AXIS2_HOME variable to match the location into which you extracted the contents of this release.</p>
+<p>First, <a href="../download/1_1/download.html#std-bin">download</a> and unzip the appropriate version of Axis2 Standard Binary Distribution.  Make sure that you set the value of the AXIS2_HOME variable to match the location into which you extracted the contents of this release.</p>
 
 <p>Let's look at some different ways to create clients and services.</p>
 
+<a name="create"></a><h2>Creating Services</h2>
 
-<a name="create"></a><h2>Creating services</h2>
-
-<p>In this section, we'll look at three ways to create a service based on the StockQuoteService class:  deploying Plain Old Java Objects, building the service using AXIOM's OMElement, generating the service using Axis2 Databinding Framework (ADB), and generating the service using XMLBeans.</p>
+<p>In this section, we'll look at three ways to create a service based on the StockQuoteService class:  deploying Plain Old Java Objects (POJO), building the service using AXIOM's OMElement, generating the service using Axis2 Databinding Framework (ADB), and generating the service using XMLBeans.</p>
 
 <a name="deploy"></a><h3>Deploying POJOs</h3>
 
@@ -245,7 +244,7 @@ http://localhost:8080/axis2/rest/StockQuoteService/update?symbol=IBM&amp;price=1
 
 and then execute the first getPrice url. You can see that the price got updated.
 
-<a name="axiom"></a><h3>Building the service using AXIOM</h3>
+<a name="axiom"></a><h3>Building the Service using AXIOM</h3>
 
 <p>To build a service "from scratch" using AXIOM, execute the following steps.</p>
 
@@ -287,7 +286,7 @@ and then execute the first getPrice url. You can see that the price got updated.
 
 <p>Now, the above referenced StockQuoteService.java class, a plain Java class that uses classes from the Axis2 libraries, is defined as shown in Code Listing 5.</p>
 
-<p><b>Code Listing 5: The StockQuoteService class using AXIOM</b></p>
+<p><b>Code Listing 5: The StockQuoteService Class using AXIOM</b></p>
 <pre>package samples.quickstart.service.axiom;
 
 import javax.xml.stream.XMLStreamException;
@@ -337,9 +336,9 @@ public class StockQuoteService {
 }
 </pre>
 
-<p>Axis2 uses AXIOM, or the AXIs Object Model, a DOM-like structure that is based on the StAX API.  Methods that act as services must take as their argument an OMElement, which represents an XML element that happens, in this case, to be the payload of the incoming SOAP message.  Here, you're extracting the contents of the first child of the payload element, adding text to it, and using it as content for the return OMElement.  Unless this is an "in only" service, these methods must return an OMElement, because that becomes the payload of the return SOAP message.</p>
+<p>Axis2 uses AXIOM, or the AXIs Object Model, a <a href="http://www.w3.org/DOM/">DOM</a> (Document Object Model)-like structure that is based on the StAX API (Streaming API for XML).  Methods that act as services must take as their argument an OMElement, which represents an XML element that happens, in this case, to be the payload of the incoming SOAP message.  Here, you're extracting the contents of the first child of the payload element, adding text to it, and using it as content for the return OMElement.  Unless this is an "in only" service, these methods must return an OMElement, because that becomes the payload of the return SOAP message.</p>
 
-<p>Now build the project by typing ant generate.service in the quickstartaxiom directory.</p>
+<p>Now build the project by typing ant generate.service in the Axis2_HOME/samples/quickstartaxiom directory.</p>
 
 <p>Place the StockQuoteService.aar file in the webapps/axis2/WEB-INF/services directory of the servlet engine, and check to make sure that the service has been properly deployed by viewing the list of services at:</p>
 <pre>
@@ -360,10 +359,10 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>To generate and deploy the service using the Axis2 Databinding Framework (ADB) execute the following steps.</p>
 
-<p>Generate the skeleton using the WSDL2Java utility by typing the following in the quickstartadb directory:</p>
+<p>Generate the skeleton using the WSDL2Java utility by typing the following in the Axis2_HOME/samples/quickstartadb directory:</p>
 <pre>%AXIS2_HOME%/bin/WSDL2Java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.service.adb -d adb -s -ss -sd -ssi -o build/service</pre>
 
-<p>Or by simply typing ant generate.service in the quickstartadb directory.</p>
+<p>Or by simply typing ant generate.service in the Axis2_HOME/samples/quickstartadb directory.</p>
 
 <p>The option –d adb specifies Axis Data Binding (ADB). The –s switch specifies synchronous or blocking calls only. The –ss switch creates the server side code (skeleton and related files). The –sd switch creates a service descriptor (services.xml file).  The –ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
 
@@ -424,15 +423,15 @@ http://localhost:8080/axis2/services/StockQuoteService?wsdl
 http://localhost:8080/axis2/services/StockQuoteService?xsd
 </pre>
 
-<a name="xmlbeans"></a><h3>Generating the service using XMLBeans</h3>
+<a name="xmlbeans"></a><h3>Generating the Service using XMLBeans</h3>
 
 <p>To generate a service using XMLBeans, execute the following steps.</p>
 
-<p>Generate the skeleton using the WSDL2Java utility by typing, in the quickstart/xmlbeansService directory:</p>
+<p>Generate the skeleton using the WSDL2Java utility by typing, in the Axis2_HOME/samples/quickstartxmlbeans directory:</p>
 <pre>
 %AXIS2_HOME%/bin/WSDL2Java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.service.xmlbeans -d xmlbeans -s -ss -sd -ssi -o build/service</pre>
 
-<p>Or by simply typing ant generate.service in the quickstartxmlbeans directory.</p>
+<p>Or by simply typing ant generate.service in the Axis2_HOME/samples/quickstartxmlbeans directory.</p>
 
 <p>The option –d xmlbeans specifies XML Beans data binding. The –s switch specifies synchronous or blocking calls only. The –ss switch creates the server side code (skeleton and related files). The –sd switch creates a service descriptor (services.xml file).  The –ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
 
@@ -479,7 +478,7 @@ public class StockQuoteServiceSkeleton implements StockQuoteServiceSkeletonInter
 ant jar.server
 </pre>
 
-<p>If all goes well, you should see the BUILD SUCCESSFUL message in your window, and the StockQuoteService.aar file in the newly created build/service/build/lib directory.  Copy this file to the webapps/axis2/WEB-INF/services directory of the servlet engine.</p>
+<p>If all goes well, you should see the BUILD SUCCESSFUL message in your window, and the StockQuoteService.aar file in the newly created build/service/build/lib directory. Copy this file to the webapps/axis2/WEB-INF/services directory of the servlet engine.</p>
 
 <p>You can check to make sure that the service has been properly deployed by viewing the list of services at:</p>
 <pre>
@@ -500,10 +499,10 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>To generate and deploy the service using <a href="http://www.jibx.org">JiBX data binding</a>, execute the following steps.</p>
 
-<p>Generate the skeleton using the WSDL2Java utility by typing the following at a console in the quickstartjibx directory:</p>
+<p>Generate the skeleton using the WSDL2Java utility by typing the following at a console in the Axis2_HOME/samples/quickstartjibx directory:</p>
 <pre>%AXIS2_HOME%/bin/wsdl2java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.service.jibx -d jibx -s -ss -sd -ssi -uw -o build/service</pre>
 
-<p>Or by simply typing "ant generate.service" in the quickstartjibx directory.</p>
+<p>Or by simply typing "ant generate.service" in the Axis2_HOME/samples/quickstartjibx directory.</p>
 
 <p>The option –d jibx specifies JiBX data binding. The –s switch specifies
 synchronous or blocking calls only. The –ss switch creates the server side code
@@ -520,7 +519,7 @@ the build/service/src/samples/quickstart/service/jibx/StockQuoteServiceSkeleton.
 file and modify it to add the functionality of your service to the generated
 methods, as shown in Code Listing 8.</p>
 
-<p><b>Code Listing 8: Defining the service skeleton file</b></p>
+<p><b>Code Listing 8: Defining the Service Skeleton File</b></p>
 <pre>package samples.quickstart.service.jibx;
 
 import java.util.HashMap;
@@ -665,9 +664,9 @@ public class AXIOMClient {
 }
 </pre>
 
-<p>Axis2 uses AXIOM, or the AXIs Object Model, a DOM-like structure that is based on the StAX API. Here you setup the payload for the update and getPrice methods of the service. The payloads are created similar to how you created the getPriceResponse payload for the AXIOM service. Then you setup the Options class, and create a ServiceClient that you'll use to communicate with the service. First you call the update method, a fireAndForget method that returns nothing. Lastly, you call the getPrice method, and retrieve the current price from the service and display it.</p>
+<p>Axis2 uses AXIOM, or the AXIs Object Model, a DOM (Document Object Model)-like structure that is based on the StAX API (Streaming API for XML). Here you setup the payload for the update and getPrice methods of the service. The payloads are created similar to how you created the getPriceResponse payload for the AXIOM service. Then you setup the Options class, and create a ServiceClient that you'll use to communicate with the service. First you call the update method, a fireAndForget method that returns nothing. Lastly, you call the getPrice method, and retrieve the current price from the service and display it.</p>
 
-<p>Now you can build and run the AXIOM client by typing ant run.client in the quickstartaxiom directory.</p>
+<p>Now you can build and run the AXIOM client by typing ant run.client in the Axis2_HOME/samples/quickstartaxiom directory.</p>
 
 <p>You should get the following as output:</p>
 <pre>
@@ -679,16 +678,16 @@ Current price of WSO: 123.42
 
 <p>To build a client using Axis Data Binding (ADB), execute the following steps.</p>
 
-<p>Generate the client databings by typing the following in the quickstartadb directory:</p>
+<p>Generate the client databings by typing the following in the Axis2_HOME/samples/quickstartadb directory:</p>
 <pre>
 %AXIS2_HOME%/bin/WSDL2Java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.clients -d adb -s -o build/client
 </pre>
 
-<p>Or by simply typing ant generate.client in the quickstartadb directory.</p>
+<p>Or by simply typing ant generate.client in the Axis2_HOME/samples/quickstartadb directory.</p>
 
 <p>Next take a look at quickstartadb/src/samples/quickstart/clients/ADBClient.java, and see how it's defined in Code Listing 10.</p>
 
-<p><b>Code Listing 10: The ADBClient class</b></p>
+<p><b>Code Listing 10: The ADBClient Class</b></p>
 <pre>
 package samples.quickstart.clients;
 
@@ -745,9 +744,9 @@ public class ADBClient{
 }
 </pre>
 
-<p>This class creates a client stub using the Axis Data Bindings you created. Then it calls the getPrice and update operations on the web service. The getPrice method operation creates the GetPrice payload and sets the symbol to ABC. It then sends the request and displays the current price.  The update method creates an Update payload, setting the symbol to ABC and the price to 42.35.</p>
+<p>This class creates a client stub using the Axis Data Bindings you created. Then it calls the getPrice and update operations on the Web service. The getPrice method operation creates the GetPrice payload and sets the symbol to ABC. It then sends the request and displays the current price.  The update method creates an Update payload, setting the symbol to ABC and the price to 42.35.</p>
 
-<p>Now build and run the client by typing ant run.client in the quickstartadb directory.</p>
+<p>Now build and run the client by typing ant run.client in the Axis2_HOME/samples/quickstartadb directory.</p>
 
 <p>You should get the following as output:</p>
 <pre>
@@ -755,7 +754,7 @@ public class ADBClient{
 done
 </pre>
 
-<a name="clientxmlbeans"></a><h3>Generating a client using XMLBeans</h3>
+<a name="clientxmlbeans"></a><h3>Generating a Client using XMLBeans</h3>
 
 <p>To build a client using the XML Beans data bindings, execute the following steps.</p>
 <p>Generate the databings by typing the following in the xmlbeansClient directory:</p>
@@ -763,7 +762,7 @@ done
 %AXIS2_HOME%/bin/WSDL2Java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.service.xmlbeans -d xmlbeans -s -o build/client
 </pre>
 
-<p>Or by simply typing ant generate.client in the quickstartxmlbeans directory.</p>
+<p>Or by simply typing ant generate.client in the Axis2_HOME/samples/quickstartxmlbeans directory.</p>
 
 <p>Note that this creates client stub code and no server side code.</p>
 
@@ -830,9 +829,9 @@ public class XMLBEANSClient{
 }
 </pre>
 
-<p>This class creates a client stub using the XML Beans data bindings you created. Then it calls the getPrice and update operations on the web service. The getPrice method operation creates the GetPriceDocument, its inner GetPrice classes and sets the symbol to ABC. It then sends the request and retrieves a GetPriceResponseDocument and displays the current price.  The update method creates an UpdateDocument, Update and sets the symbol to ABC and price to 42.32, displaying done when complete.</p>
+<p>This class creates a client stub using the XML Beans data bindings you created. Then it calls the getPrice and update operations on the Web service. The getPrice method operation creates the GetPriceDocument, its inner GetPrice classes and sets the symbol to ABC. It then sends the request and retrieves a GetPriceResponseDocument and displays the current price.  The update method creates an UpdateDocument, Update and sets the symbol to ABC and price to 42.32, displaying done when complete.</p>
 
-<p>Now build and run the the project by typing ant run.client in the quickstartxmlbeans directory.</p>
+<p>Now build and run the the project by typing ant run.client in the Axis2_HOME/samples/quickstartxmlbeans directory.</p>
 
 <p>You should get the following as output:</p>
 <pre>
@@ -844,7 +843,7 @@ done
 
 <p>To build a client using JiBX, execute the following steps.</p>
 
-<p>Generate the client stub by typing the following at a console in the quickstartjibx directory:</p>
+<p>Generate the client stub by typing the following at a console in the Axis2_HOME/samples/quickstartjibx directory:</p>
 <pre>
 %AXIS2_HOME%/bin/wsdl2java -uri resources/META-INF/StockQuoteService.wsdl -p samples.quickstart.clients -d jibx -s -uw -o build/client
 </pre>
@@ -899,9 +898,9 @@ public class JiBXClient{
 }
 </pre>
 
-<p>This class uses the created JiBX client stub to access the getPrice and update operations on the web service. The getPrice method sends a request for the stock "ABC" and displays the current price.  The update method set the price for stock "ABC" to 42.35.</p>
+<p>This class uses the created JiBX client stub to access the getPrice and update operations on the Web service. The getPrice method sends a request for the stock "ABC" and displays the current price.  The update method set the price for stock "ABC" to 42.35.</p>
 
-<p>Now build and run the client by typing "ant run.client" at a console in the quickstartjibx directory.</p>
+<p>Now build and run the client by typing "ant run.client" at a console in the Axis2_HOME/samples/quickstartjibx directory.</p>
 
 <p>You should get the following as output:</p>
 <pre>
@@ -911,7 +910,7 @@ done
 
 <a name="summary"></a><h2>Summary</h2>
 
-<p>Axis2 is a slick and robust way to get web services up and running in no time. This guide presented four methods of creating a service deployable on Axis2, and three methods of creating a client to communicate with the services. You now have the flexibility to create web services using a variety of different technologies.</p>
+<p>Axis2 is a slick and robust way to get web services up and running in no time. This guide presented four methods of creating a service deployable on Axis2, and three methods of creating a client to communicate with the services. You now have the flexibility to create Web services using a variety of different technologies.</p>
 
 <a name="furtherstudy"></a>
 
