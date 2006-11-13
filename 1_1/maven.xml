@@ -726,9 +726,14 @@
         <ant:copy toFile="${std.bin.temp.dir}/NOTICE.txt" filtering="on">
             <ant:fileset file="NOTICE.txt"/>
         </ant:copy>
+        
+        <!--copy NOTICE.txt file-->
+        <ant:copy toFile="${std.bin.temp.dir}/INSTALL.txt" filtering="on">
+            <ant:fileset file="release-docs/readme-files/installation-std-bin.txt"/>
+        </ant:copy>
         <!-- Copy the release documents -->
         <macros:copy-release-docs toDir="${std.bin.temp.dir}"
-                                  readmeFile="release-docs/readme-files/README-std-bin.txt"/>
+                    readmeFile="release-docs/readme-files/README-std-bin.txt"/>
 
         <ant:zip file="${dist.dir}/axis2-${pom.currentVersion}.zip"
                  basedir="target/temp/main"/>
