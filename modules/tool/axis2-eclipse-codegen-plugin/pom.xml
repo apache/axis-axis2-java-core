@@ -146,7 +146,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.neethi</groupId>
+            <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
