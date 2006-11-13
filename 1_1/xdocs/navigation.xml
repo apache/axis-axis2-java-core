@@ -18,7 +18,8 @@
 			<item name="Tools" href="tools/index.html" />
 		</menu>
 		<menu name="Documentation">
-			<item name="Version 1.1" href="/1_1/contents.html" >
+			<item name="Version 1.1" href="/1_1/toc.html" >
+			   <item name="Table of Contents" href="1_1/toc.html" />
 			   <item name="Installation Guide" href="1_1/installationguide.html" />
 			   <item name="QuickStart Guide" href="1_1/quickstartguide.html" />
 			   <item name="User Guide" href="1_1/userguide.html" />
