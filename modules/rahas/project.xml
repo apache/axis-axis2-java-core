@@ -179,7 +179,7 @@
         </dependency>
 	<!-- For WS-Policy support -->
 	<dependency>
-		<groupId>org.apache.ws.commons.neethi</groupId>
+		<groupId>org.apache.neethi</groupId>
 		<artifactId>neethi</artifactId>
 		<version>${neethi.version}</version>
 		<properties>
