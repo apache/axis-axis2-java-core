@@ -51,6 +51,7 @@
 		<mkdir dir="${dest.dir.classes}/META-INF" />
 
 		<copy file="src/META-INF/services.xml" tofile="${dest.dir.classes}/META-INF/services.xml" overwrite="true" />
+		<copy file="src/applicationContext.xml" tofile="${dest.dir.classes}/applicationContext.xml" overwrite="true" />
 
 		<javac debug="on" srcdir="src" destdir="${dest.dir.classes}" includes="sample/**">
 			<classpath refid="build.class.path" />
