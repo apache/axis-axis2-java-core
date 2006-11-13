@@ -350,27 +350,27 @@ schema, has a service that receives a file and saves it in the server using the 
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns="http://schemas.xmlsoap.org/wsdl/"
-	targetNamespace="http://ws.apache.org/axis2/mtomsample/"&gt;
-	&lt;import namespace="http://www.w3.org/2005/05/xmlmime"
-                schemaLocation="http://www.w3.org/2005/05/xmlmime"/&gt;
-	&lt;wsdl:types&gt;
+	targetNamespace="http://ws.apache.org/axis2/mtomsample/">
+
+	&lt;wsdl:types>
 		&lt;xsd:schema xmlns="http://schemas.xmlsoap.org/wsdl/"
 			attributeFormDefault="qualified" elementFormDefault="qualified"
-			targetNamespace="http://ws.apache.org/axis2/mtomsample/"&gt;
+			targetNamespace="http://ws.apache.org/axis2/mtomsample/">
+
 			&lt;xsd:import namespace="http://www.w3.org/2005/05/xmlmime"
-				schemaLocation="xmime.xsd" /&gt;
-			&lt;xsd:complexType name="AttachmentType"&gt;
-				&lt;xsd:sequence&gt;
+				schemaLocation="http://www.w3.org/2005/05/xmlmime" />
+			&lt;xsd:complexType name="AttachmentType">
+				&lt;xsd:sequence>
 					&lt;xsd:element minOccurs="0" name="fileName"
-						type="xsd:string" /&gt;
+						type="xsd:string" />
 					&lt;xsd:element minOccurs="0" name="binaryData"
-						type="xmime:base64Binary" /&gt;
-				&lt;/xsd:sequence&gt;
-			&lt;/xsd:complexType&gt;
-			&lt;xsd:element name="AttachmentRequest" type="tns:AttachmentType" /&gt;
-			&lt;xsd:element name="AttachmentResponse" type="xsd:string" /&gt;
-		&lt;/xsd:schema&gt;
-	&lt;/wsdl:types&gt;
+						type="xmime:base64Binary" />
+				&lt;/xsd:sequence>
+			&lt;/xsd:complexType>
+			&lt;xsd:element name="AttachmentRequest" type="tns:AttachmentType" />
+			&lt;xsd:element name="AttachmentResponse" type="xsd:string" />
+		&lt;/xsd:schema>
+	&lt;/wsdl:types>
 	&lt;wsdl:message name="AttachmentRequest"&gt;
 		&lt;wsdl:part name="part1" element="tns:AttachmentRequest" /&gt;
 	&lt;/wsdl:message&gt;
