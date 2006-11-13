@@ -43,14 +43,6 @@
             <version>${axiom.version}</version>
         </dependency>
 		<dependency>
-            <groupId>org.apache.ws.commons.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>${neethi.version}</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-		<dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
             <version>${pom.currentVersion}</version>
@@ -243,7 +235,7 @@
         </dependency>
 	<!-- For WS-Policy support -->
 	<dependency>
-		<groupId>org.apache.ws.commons.neethi</groupId>
+		<groupId>org.apache.neethi</groupId>
 		<artifactId>neethi</artifactId>
 		<version>${neethi.version}</version>
 		<properties>

@@ -715,6 +715,7 @@
                 <include name="quickstartaxiom/**/*.*"/>
                 <include name="quickstartadb/**/*.*"/>
                 <include name="quickstartxmlbeans/**/*.*"/>
+                <include name="quickstartjibx/**/*.*"/>
             </ant:fileset>
         </ant:copy>
 
