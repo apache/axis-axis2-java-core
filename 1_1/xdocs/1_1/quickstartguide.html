@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type" content=""></meta>
   <title>Axis2 Quick Start Guide</title>
-  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <!--<link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />-->
 </head>
 
 <body lang="en">
@@ -87,7 +87,7 @@ public class StockQuoteService {
 <li>Create and compile the Java class.</li>
 <li>Generate the WSDL using the command:</li>
 <pre>
-%AXIS2_HOME%/bin/java2wsdl -cp . –cn samples.quickstart.service.pojo.StockQuoteService -of StockQuoteService.wsdl
+%AXIS2_HOME%/bin/java2wsdl -cp . -cn samples.quickstart.service.pojo.StockQuoteService -of StockQuoteService.wsdl
 </pre>
 </ol>
 
@@ -267,7 +267,7 @@ and then execute the first getPrice url. You can see that the price got updated.
            - AXIOMClient.java
 </pre>
 
-<p>Since AXIOM is a little different, you’re going to need a different services.xml file from the one used for POJO. Define it, as shown in Code Listing 4.</p>
+<p>Since AXIOM is a little different, you're going to need a different services.xml file from the one used for POJO. Define it, as shown in Code Listing 4.</p>
 <p><b>Code Listing 4: The Service Definition File.</b></p>
 <pre>&lt;service name="StockQuoteService" scope="application"&gt;
     &lt;description&gt;
@@ -282,7 +282,7 @@ and then execute the first getPrice url. You can see that the price got updated.
     &lt;parameter name="ServiceClass"&gt;samples.quickstart.service.axiom.StockQuoteService&lt;/parameter&gt;
 &lt;/service&gt;</pre>
 
-<p>Note how it’s mostly the same, except that the operations are explicitly defined in the service.xml file, and the MessageReceivers are now RawXML.</p>
+<p>Note how it's mostly the same, except that the operations are explicitly defined in the service.xml file, and the MessageReceivers are now RawXML.</p>
 
 <p>Now, the above referenced StockQuoteService.java class, a plain Java class that uses classes from the Axis2 libraries, is defined as shown in Code Listing 5.</p>
 
@@ -364,7 +364,7 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>Or by simply typing ant generate.service in the Axis2_HOME/samples/quickstartadb directory.</p>
 
-<p>The option –d adb specifies Axis Data Binding (ADB). The –s switch specifies synchronous or blocking calls only. The –ss switch creates the server side code (skeleton and related files). The –sd switch creates a service descriptor (services.xml file).  The –ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
+<p>The option -d adb specifies Axis Data Binding (ADB). The -s switch specifies synchronous or blocking calls only. The -ss switch creates the server side code (skeleton and related files). The -sd switch creates a service descriptor (services.xml file).  The -ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
 
 <p>Open the build/service/src/samples/quickstart/adb/service/StockQuoteServiceSkeleton.java file and modify it to add the functionality of your service to the generated methods, shown in Code Listing 6.</p>
 
@@ -433,7 +433,7 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>Or by simply typing ant generate.service in the Axis2_HOME/samples/quickstartxmlbeans directory.</p>
 
-<p>The option –d xmlbeans specifies XML Beans data binding. The –s switch specifies synchronous or blocking calls only. The –ss switch creates the server side code (skeleton and related files). The –sd switch creates a service descriptor (services.xml file).  The –ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
+<p>The option -d xmlbeans specifies XML Beans data binding. The -s switch specifies synchronous or blocking calls only. The -ss switch creates the server side code (skeleton and related files). The -sd switch creates a service descriptor (services.xml file).  The -ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
 
 <p>Next open the build/service/src/samples/quickstart/service/xmlbeans/StockQuoteServiceSkeleton.java file and modify it to add the functionality of your service to the generated methods (see Code Listing 7).</p>
 
@@ -504,11 +504,11 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>Or by simply typing "ant generate.service" in the Axis2_HOME/samples/quickstartjibx directory.</p>
 
-<p>The option –d jibx specifies JiBX data binding. The –s switch specifies
-synchronous or blocking calls only. The –ss switch creates the server side code
-(skeleton and related files). The –sd switch creates a service descriptor
-(services.xml file).  The –ssi switch creates an interface for the service
-skeleton. The –uw switch unwraps the parameters passed to and from service
+<p>The option -d jibx specifies JiBX data binding. The -s switch specifies
+synchronous or blocking calls only. The -ss switch creates the server side code
+(skeleton and related files). The -sd switch creates a service descriptor
+(services.xml file).  The -ssi switch creates an interface for the service
+skeleton. The -uw switch unwraps the parameters passed to and from service
 operations, in order to create a more natural programming interface.</p>
 
 <p>After running WSDL2Java, the service files should be located at
