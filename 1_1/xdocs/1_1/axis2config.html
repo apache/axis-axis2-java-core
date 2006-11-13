@@ -282,7 +282,7 @@ AxisObserver interface, and the class has to be available in the classpath.
 service archive file needs to have a services.xml in order to be a valid
 service and it should be available in the META-INF directory of the archive
 file. A very simple services.xml is shown below:</font></p>
-<source><pre><font>&lt;service name="name of the service" scope="name of the scope" targetNamespace="target namespase for the service"&gt;
+<source><pre><font>&lt;service name="name of the service" scope="name of the scope" class="full qualifide name the service lifecycle class"   targetNamespace="target namespase for the service"&gt;
     &lt;description&gt; The description of the service  &lt;/description&gt;  
 
     &lt;transports&gt; 
@@ -309,12 +309,17 @@ file. A very simple services.xml is shown below:</font></p>
 archive file, if the .aar file contains only one service, or else the name of
 the service will be the name given by the name attribute.</font></p>
 
-<p><strong>scope</strong>: The time period in which runtime information of
+<p><strong>scope</strong>: (Optional Attribute) The time period in which runtime information of
 deployed services will be available. Scope is of several types-
-"Application", "SOAPSession", "TransportSession", "Request"</p>
+"Application", "SOAPSession", "TransportSession", "Request". The default value (if you dont put any value) will be "Request"</p>
 
-<p><strong>targetNamespace</strong>: Target name space of the service, and
-this value will be used when generating the wsdl</p>
+<p><strong>class</strong>: (Optional attribute) To specify the full qualified name of the service lifecycle implementation class.
+ ServiceLifeCycle class is usefull when you want to do some tasks when the system start and when it shutdowns.
+
+</p> 
+
+<p><strong>targetNamespace</strong>: (Optional Attribute) Target name space of the service, and
+this value will be used when generating the wsdl , if you do not specify this value , then the value will be calculated from the package name of the service impl class</p>
 
 <p><font><strong>description</strong>: This is an optional element if you
 want to display any description about the service via Axis2 web-admin module,
