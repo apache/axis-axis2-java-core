@@ -1,12 +1,12 @@
                  
-                 Axis2 Binary Distribution Installation Guide
-                 ============================================
+                 Axis2 Standard Binary Distribution Installation Guide
+                 =====================================================
 
 1. Download and Install the Apache Axis2 Binary Distribution
 
   Download and install a Java Development Kit (JDK) release (version 1.4 or
   later) from http://java.sun.com/j2se/. Install the JDK according to the
-  instructions included with the release.Set an environment variable JAVA_HOME 
+  instructions included with the release. Set an environment variable JAVA_HOME 
   to the pathname of the directory into which you installed the JDK release.
 
   Download and unpack the Axis2 Standard Binary Distribution into a convenient 
@@ -22,8 +22,7 @@
   			$AXIS2_HOME/bin/axis2server.sh (Unix)
 
   After startup, the default web services included with Axis2 will be available 
-  by visiting:
-    	http://localhost:8080/axis2/services/
+  by visiting http://localhost:8080/axis2/services/
 
 
 3. Building the Axis2 Web Application (axis2.war) Using Standard Binary 
@@ -36,6 +35,7 @@ Distribution
   Locate the ant build file (build.xml) inside the webapp directory which 
   resides in your Axis2 home directory (i.e:- $AXIS_HOME/webapp)". Run the Ant 
   build by executing "ant create.war" inside the $AXIS2_HOME/webapps folder. 
+  
   You can find the generated axis2.war inside the $AXIS2_HOME/dist directory. 
   All the services and modules that are present in the AXIS2_HOME/repository 
   will be packed in to the created axis2.war together with the Axis2 
@@ -43,9 +43,9 @@ Distribution
 
   Drop the war in the webapps folder of the servlet container. Most servlet 
   containers will automatically install war. (some servlet containers may 
-  require a restart in order to capture the new web application. Refer your 
+  require a restart in order to capture the new Web application. Refer your 
   servlet container documentation for more information about this.) Once the 
-  WAR is successfully installed, test it by pointing the web browser to the 
+  WAR is successfully installed, test it by pointing the Web browser to the 
   http://<host :port>/axis2. It should produce the the Axis2 Web Application 
   Home Page.
   
@@ -65,7 +65,7 @@ Distribution
 
    * axis2.{bat|sh} 	
    
-   You can use this script to run web service clients written using Axis2. This 
+   You can use this script to run Web service clients written using Axis2. This 
    script calls the "java" command after adding the classpath for Axis2 
    dependent libraries (*.jar files present in your AXIS2_HOME/lib), setting 
    the Axis2 repository location (AXIS2_HOME/repository) and setting the Axis2 
@@ -79,7 +79,7 @@ Distribution
   D<name>=<value>, ...).
   
 
-   * axis2server.{sh|bat} 
+   * axis2server.{bat|sh} 
    
    This script will start an standalone Axis2 server using the AXIS2_HOME/
    repository directory as the Axis2 repository and the AXIS2_HOME/conf/
@@ -95,7 +95,7 @@ Distribution
    
    * wsdl2java.{bat|sh} 	
    
-   This script generates java code according to a given WSDL file to handle Web 
+   This script generates Java code according to a given WSDL file to handle Web 
    service invocations (Client side Stubs). This script also has the ability to 
    generate service skeletons according to the given wsdl.
    
@@ -114,5 +114,11 @@ Distribution
         
    A more detailed reference about this script can be found in http://
    ws.apache.org/axis2/1_1/reference.html
+
+Complete Installation Guide
+===========================
+A complete Installation Guide on Apache Axis2 is available at
+http://ws.apache.org/axis2/1_1/installationguide.html or at 
+Axis2_HOME/xdocs/1_1/installationguide.html in the extracted Axis2 Docs Distribution.
    
    
