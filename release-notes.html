@@ -103,9 +103,20 @@ XML object model.</p>
 
 <h3>Known Issues and Limitations</h3>
 <ul>
-  <li>Idea plugin shows random behavior when XMLBeans is used</li>
-  <li>No support yet for soapenc:array in rpc/encoded style WSDL documents (in stub
+  <li>JaxMe and JAXBRI data binding support is experimental</li>
+  <li>AXIS2-595: Hot re-deployment in Apache Tomcat has problems</li>
+  <li>Axis Data Binding (ADB) does not support the following construct(s):
+    <ol>
+      <li>AXIS2-983: Support for Simple Type Union and Simple Type List</li>
+      <li>AXIS2-1092: Support for xs:list inside an xs:simpleType</li>
+      <li>AXIS2-1093: Support for xs:union inside xs:simpleType</li>
+    </ol>
+  </li>
+  <li>No support yet for unwrapping of doc/lit WSDL files (in stub
   generation)</li>
+  <li>No support yet for rpc/encoded style WSDL documents (in stub
+  generation)</li>
+  <li>Idea plugin shows random behavior when XMLBeans is used</li>
 </ul>
 
 <p>Thank you for your interest in Axis2.</p>
