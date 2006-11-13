@@ -378,6 +378,7 @@ based POJO, covered next.</p>
 <p>Spring is a hot framework for J2EE and makes bean usage a breeze. You'll
 use it in this section to create a Spring based POJO Web service. For this
 section you'll need the spring.jar from the latest 1.x Spring download.</p>
+
 <a name="quickintro"></a>
 
 <h3>Quick Introduction</h3>
@@ -535,10 +536,10 @@ The Spring Framework is now up and ready for our WeatherSpringService.</p>
 
 <p>Great, your POJO is now ready for primetime within the Spring Framework.
 Before you build, you'll first need to make sure the axis2-spring-1.1.jar and
-spring.jar files are in the project's <em>src/lib</em> directory ( in the
-Axis2_HOME/samples/pojoguidespring directory found in the extracted <a
-href="../../download/1_1/download.html#std-bin">Axis2 Standarad Binary
-Distribution</a>). Now build the source and create an AAR file by typing:
+spring.jar files are in the project's <em>Axis2_HOME/lib</em> directory.</p>
+
+<p><strong>Note:</strong> The service will not deploy if you add the above jars files to the service archive due to cloass loding issues.</p>
+<p>Now build the source and create an AAR file by typing:
 ant</p>
 
 <p>It'll be created at <em>target/WeatherSpringService.aar</em>. Copy it over
