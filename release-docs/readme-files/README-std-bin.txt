@@ -33,6 +33,8 @@ Axis2. It also contains a few samples relevant to documents found in Axis2's Doc
 
 The bin directory contains a set of usefull scripts for the users.
 
+The conf directory contains the axis2.xml file which allows to configure Axis2.
+
 (Please note that this release does not include the other WS-* implementation modules, like
 WS-Security, that are being developed within Axis2. Those can be downloaded from
 http://ws.apache.org/axis2/modules/)
