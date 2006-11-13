@@ -72,12 +72,7 @@ Distribution
    configuration file location(AXIS2_HOME/conf/axis2.xml) for you. With this 
    you can be relieved from setting all the above Axis2 specific parameters.
    
-    Usage : axis2.{sh.bat} [-options] class [args...]
-       Eg: $axis2.sh -classpath myservice-client.jar sample.foo.Client
-       
-  All the options supported by "java" are supported here (Eg: -classpath, -
-  D<name>=<value>, ...).
-  
+    Usage : axis2.{sh.bat} [-options] class [args...]  
 
    * axis2server.{bat|sh} 
    
