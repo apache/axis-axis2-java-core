@@ -366,6 +366,8 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 
 <p>The option -d adb specifies Axis Data Binding (ADB). The -s switch specifies synchronous or blocking calls only. The -ss switch creates the server side code (skeleton and related files). The -sd switch creates a service descriptor (services.xml file).  The -ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
 
+<p>If you generated the code by using WSDL2Java directly, you next need to modify the generated skeleton to implement the service (if you used "ant generate.service", a completed skeleton will be copied over the generated one automatically).</p> 
+
 <p>Open the build/service/src/samples/quickstart/adb/service/StockQuoteServiceSkeleton.java file and modify it to add the functionality of your service to the generated methods, shown in Code Listing 6.</p>
 
 <p><b>Code Listing 6: Defining the Service Skeleton File</b></p>
@@ -434,6 +436,8 @@ http://localhost:8080/axis2/services/StockQuoteService?xsd
 <p>Or by simply typing ant generate.service in the Axis2_HOME/samples/quickstartxmlbeans directory.</p>
 
 <p>The option -d xmlbeans specifies XML Beans data binding. The -s switch specifies synchronous or blocking calls only. The -ss switch creates the server side code (skeleton and related files). The -sd switch creates a service descriptor (services.xml file).  The -ssi switch creates an interface for the service skeleton. The service files should now be located at build/service.</p>
+
+<p>If you generated the code by using WSDL2Java directly, you next need to modify the generated skeleton to implement the service (if you used "ant generate.service", a completed skeleton will be copied over the generated one automatically).</p> 
 
 <p>Next open the build/service/src/samples/quickstart/service/xmlbeans/StockQuoteServiceSkeleton.java file and modify it to add the functionality of your service to the generated methods (see Code Listing 7).</p>
 
