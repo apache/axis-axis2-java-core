@@ -11,14 +11,8 @@ import org.test.sample.wrap.HeaderPart0;
 import org.test.sample.wrap.HeaderPart1;
 import org.test.sample.wrap.HeaderResponse;
 
-import com.ibm.CORBA.iiop.Response;
-
 import junit.framework.TestCase;
 
-/**
- * @author nvthaker
- *
- */
 public class WrapTests extends TestCase {
 
 	/**

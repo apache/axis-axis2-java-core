@@ -13,10 +13,6 @@ import org.test.sample.nonwrap.TwoWayHolder;
 
 
 
-/**
- * @author nvthaker
- *
- */
 public class AsyncCallback implements AsyncHandler {
 
 	/**

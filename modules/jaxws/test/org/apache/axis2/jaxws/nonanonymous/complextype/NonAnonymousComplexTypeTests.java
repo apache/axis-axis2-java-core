@@ -10,10 +10,6 @@ import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessageService;
 
 import junit.framework.TestCase;
 
-/**
- * @author nvthaker
- *
- */
 public class NonAnonymousComplexTypeTests extends TestCase {
 
 	/**
