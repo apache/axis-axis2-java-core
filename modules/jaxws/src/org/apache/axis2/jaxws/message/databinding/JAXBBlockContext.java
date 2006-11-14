@@ -23,6 +23,9 @@ import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /*
  * A JAXBBlockContext controls access to the JAXB Context
  * In addition the JAXBBlockContext contains additional contextural information needed
@@ -31,7 +34,9 @@ import javax.xml.bind.JAXBException;
  * This class is immutable after construction.
  */
 public class JAXBBlockContext {
-
+    
+    private static final Log log = LogFactory.getLog(JAXBBlockContext.class);
+    
 	private Set<Package> contextPackages;  // List of packages needed by the context
 	private JAXBContext jaxbContext = null;
 	
@@ -75,8 +80,16 @@ public class JAXBBlockContext {
 	 */
 	public JAXBContext getJAXBContext() throws JAXBException {
 		if (jaxbContext == null) {	
-			jaxbContext = JAXBUtils.getJAXBContext(contextPackages);
+		    if (log.isDebugEnabled()) {
+		        log.debug("A JAXBContext did not exist, creating a new one with the context packages.");
+            }
+            jaxbContext = JAXBUtils.getJAXBContext(contextPackages);
 		}
+        else {
+            if (log.isDebugEnabled()) {
+                log.debug("Using an existing JAXBContext");
+            }
+        }
 		return jaxbContext;
 	}
 }

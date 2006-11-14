@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.apache.axis2.jaxws;
 
 import java.util.Hashtable;
@@ -112,6 +111,28 @@ public class BindingProvider implements javax.xml.ws.BindingProvider {
 
         if(sessionValue != null){
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullValueForMaintainSessionProperty",sessionKey));
+        }
+    }
+    
+    /**
+     * Returns a boolean value representing whether or not a SOAPAction header
+     * should be sent with the request.
+     */
+    protected boolean useSoapAction() {
+        //TODO: Add some bit of validation for this property so that we know
+        // it is actually a Boolean and not a String.
+        Boolean use = (Boolean) requestContext.get(BindingProvider.SOAPACTION_USE_PROPERTY); 
+        if (use != null) {
+            if (use.booleanValue()) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            // If the value is not set, then just default to sending a SOAPAction
+            return true;
         }
     }
 }

@@ -103,21 +103,22 @@ public class JAXBUtils {
                     Iterator<Package> it = contextPackages.iterator();
                     List<Class> fullList = new ArrayList<Class>();
                     while (it.hasNext()) {
-                		fullList.addAll(ClassUtils.getAllClassesFromPackage(it.next()));
+                        Package pkg = it.next();
+                		fullList.addAll(ClassUtils.getAllClassesFromPackage(pkg));
                 	}
                 	Class[] classArray = fullList.toArray(new Class[0]);
-                	context = JAXBContext.newInstance(classArray);
+                    context = JAXBContext.newInstance(classArray);
                     map.put(contextPackages, context);	
                 }catch(ClassNotFoundException e){
                 	throw new JAXBException(e);
                 }
                 if (log.isDebugEnabled()) {
-                    log.debug("JAXBContext [created] for" + contextPackages.toString());
+                    log.debug("JAXBContext [created] for " + contextPackages.toString());
                 }
             }
 		} else {
             if (log.isDebugEnabled()) {
-                log.debug("JAXBContext [from pool] for" + contextPackages.toString());
+                log.debug("JAXBContext [from pool] for " + contextPackages.toString());
             }
         }
 		return context;

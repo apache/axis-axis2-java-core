@@ -21,18 +21,18 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.management.openmbean.SimpleType;
-
+import javax.jws.WebService;
+import javax.xml.ws.Holder;
+import javax.xml.ws.WebFault;
+import javax.xml.ws.WebServiceClient;
+import javax.xml.ws.WebServiceProvider;
 
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
@@ -268,21 +268,35 @@ public class ClassUtils {
 	        ArrayList<Class> classes = new ArrayList<Class>();
 	        // For every directory identified capture all the .class files
 	        for (File directory : directories) {
-	            if (directory.exists()) {
+	            if (log.isDebugEnabled()) {
+	                log.debug("Adding classes from: " + directory.getName());
+                }
+                if (directory.exists()) {
 	                // Get the list of the files contained in the package
 	                String[] files = directory.list();
 	                for (String file : files) {
-	                    // we are only interested in .class files
+                        // we are only interested in .class files
 	                    if (file.endsWith(".class")) {
-	                        // removes the .class extension
+                            // removes the .class extension
 	                    	// TODO Java2 Sec
 	                    	try {
-	                    		Class clazz = Class.forName(pckgname + '.' + file.substring(0, file.length() - 6));
-	                    		// dont add any interfaces only classes
-	                    		if(!clazz.isInterface() && getDefaultPublicConstructor(clazz) != null){
-	                    			classes.add(clazz);
+	                    		Class clazz = Class.forName(pckgname + '.' + file.substring(0, file.length() - 6), 
+                                        false, 
+                                        Thread.currentThread().getContextClassLoader());
+	                    		// Don't add any interfaces or JAXWS specific classes.  
+                                // Only classes that represent data and can be marshalled 
+                                // by JAXB should be added.
+	                    		if(!clazz.isInterface() 
+                                   && getDefaultPublicConstructor(clazz) != null
+                                   && !isJAXWSClass(clazz)){
+	                    			if (log.isDebugEnabled()) {
+	                    			    log.debug("Adding class: " + file);
+                                    }
+                                    classes.add(clazz);
 	                    		}
-	                    	} catch (Exception e) {}
+	                    	} catch (Exception e) {
+	                    	    e.printStackTrace();
+                            }
 	                       
 	                    }
 	                }
@@ -299,9 +313,53 @@ public class ClassUtils {
 	 */
 	public static Constructor getDefaultPublicConstructor(Class clazz) {
 		try {
-			return clazz.getConstructor(noClass);
+            return clazz.getConstructor(noClass);
 		} catch (Exception e) {
 			return null;
 		}
 	}
+    
+    /**
+     * @param cls
+     * @return true if this is a JAX-WS or JAX-WS generated class
+     */
+    public static final boolean isJAXWSClass(Class cls) {
+        // Kinds of generated classes: Service, Provider, Impl, Exception, Holder
+        // Or the class is in the jaxws.xml.ws package
+        
+        // Check for Impl
+        WebService wsAnn = (WebService) cls.getAnnotation(WebService.class);
+        if (wsAnn != null) {
+            return true;
+        }
+        
+        // Check for service
+        WebServiceClient wscAnn = (WebServiceClient) cls.getAnnotation(WebServiceClient.class);
+        if (wscAnn != null) {
+            return true;
+        }
+        
+        // Check for provider
+        WebServiceProvider wspAnn = (WebServiceProvider) cls.getAnnotation(WebServiceProvider.class);
+        if (wspAnn != null) {
+            return true;
+        }
+        
+        // Check for Exception
+        WebFault wfAnn = (WebFault) cls.getAnnotation(WebFault.class);
+        if (wfAnn != null) {
+            return true;
+        }
+        
+        // Check for Holder
+        if (Holder.class.isAssignableFrom(cls)) {
+            return true;
+        }
+        
+        if (cls.getPackage() != null && cls.getPackage().getName().startsWith("javax.xml.ws")) {
+            return true;
+        }
+        return false;
+    }
+    
 }
