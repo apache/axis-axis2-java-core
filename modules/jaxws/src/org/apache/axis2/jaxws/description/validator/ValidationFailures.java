@@ -16,31 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.description;
+package org.apache.axis2.jaxws.description.validator;
 
-import javax.wsdl.Binding;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
+import java.util.ArrayList;
+
 
 /**
  * 
  */
-public interface EndpointDescriptionWSDL {
-    
-    public Service getWSDLService();
-    public Port getWSDLPort();
-    public Binding getWSDLBinding();
-    public String getWSDLBindingType();
-    
-    /**
-     * Is the WSDL definition fully specified for the endpoint (WSDL 1.1 port)
-     * represented by this EndpointDescription.  If the WSDL is Partial, that means
-     * the Endpoint could not be created with the infomation contained in the WSDL file,
-     * and annotations were used.
-     * 
-     * @return true if the WSDL was fully specified; false if it was partial WSDL
-     */
-    public boolean isWSDLFullySpecified();
+public class ValidationFailures {
 
+    ArrayList <ValidationFailure> validationFailures = new ArrayList<ValidationFailure>();
+    
+    public void add(Validator failingValidator, String message) {
+        validationFailures.add(new ValidationFailure(failingValidator, message));
+    }
+}
+
+class ValidationFailure {
+    Validator validator;
+    String message;
+    
+    ValidationFailure(Validator validator, String message) {
+        this.validator = validator;
+        this.message = message;
+    }
 }

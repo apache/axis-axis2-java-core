@@ -25,16 +25,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.jws.soap.SOAPBinding;
+import javax.wsdl.Binding;
+import javax.wsdl.Definition;
+import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
@@ -119,8 +124,8 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
      * @param parent
      */
     EndpointInterfaceDescriptionImpl(   DescriptionBuilderComposite dbc, 
-                                    	boolean isClass,
-                                    	EndpointDescriptionImpl parent){
+                                    boolean isClass,
+                                    EndpointDescriptionImpl parent){
         
         parentEndpointDescription = parent;
         this.dbc = dbc;
@@ -614,6 +619,25 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         }
                 
         return retrieveList;
+    }
+
+    private Definition getWSDLDefinition() {
+        return ((ServiceDescriptionWSDL) getEndpointDescription().getServiceDescription()).getWSDLDefinition();
+    }
+    public PortType getWSDLPortType() {
+        PortType portType = null;
+//        EndpointDescriptionWSDL endpointDescWSDL = (EndpointDescriptionWSDL) getEndpointDescription();
+//        Binding wsdlBinding = endpointDescWSDL.getWSDLBinding();
+//        if (wsdlBinding != null) {
+//            portType = wsdlBinding.getPortType();
+//        }
+        Definition wsdlDefn = getWSDLDefinition();
+        if (wsdlDefn != null) {
+            String tns = getEndpointDescription().getTargetNamespace();
+            String localPart = getEndpointDescription().getName();
+            portType = wsdlDefn.getPortType(new QName(tns, localPart));
+        }
+        return portType;
     }
 
 }

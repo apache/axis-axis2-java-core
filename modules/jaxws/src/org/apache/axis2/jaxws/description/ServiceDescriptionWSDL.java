@@ -2,6 +2,8 @@ package org.apache.axis2.jaxws.description;
 
 import java.net.URL;
 
+import javax.wsdl.Definition;
+
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
 public interface ServiceDescriptionWSDL {
@@ -10,5 +12,8 @@ public interface ServiceDescriptionWSDL {
     public abstract WSDLWrapper getGeneratedWsdlWrapper();
 
     public abstract URL getWSDLLocation();
+    
+    public Definition getWSDLDefinition();
+    public boolean isWSDLSpecified();
 
 }

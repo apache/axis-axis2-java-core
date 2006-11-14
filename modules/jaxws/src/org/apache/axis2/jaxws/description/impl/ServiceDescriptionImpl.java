@@ -143,6 +143,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	
 		// Do a first pass validation for this DescriptionBuilderComposite.
     	// This is not intended to be a full integrity check, but rather a fail-fast mechanism
+        // TODO: Refactor this to a seperate validator class?
     	validateDBCLIntegrity();
     	
         // The ServiceQName instance variable is set based on annotation or default
@@ -155,7 +156,6 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         // it will be set to the annotation value.
         //EndpointDescription endpointDescription = new EndpointDescription(null, this, serviceImplName);
         EndpointDescriptionImpl endpointDescription = new EndpointDescriptionImpl(this, serviceImplName);
-        
         addEndpointDescription(endpointDescription);       
     }
     
@@ -782,4 +782,16 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 	private void validateWSDLOperations() {
 		//Verifies that all operations on the wsdl are found in the impl/sei class
 	}
+
+    public boolean isWSDLSpecified() {
+        return getWSDLWrapper().getDefinition() != null;
+    }
+
+    public Definition getWSDLDefinition() {
+        Definition defn = null;
+        if (getWSDLWrapper() != null) {
+            defn = getWSDLWrapper().getDefinition();
+        }
+        return defn;
+    }
 }

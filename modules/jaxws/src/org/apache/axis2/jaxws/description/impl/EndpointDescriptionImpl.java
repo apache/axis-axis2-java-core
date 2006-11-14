@@ -26,8 +26,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.jws.WebService;
+import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
@@ -50,6 +52,7 @@ import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -67,6 +70,7 @@ import org.apache.commons.logging.LogFactory;
  * somehow from an AxisService/AxisPort combination, and not directly from the WSDL.
  */
 class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptionJava, EndpointDescriptionWSDL {
+    
     private ServiceDescriptionImpl parentServiceDescription;
     private AxisService axisService;
 
@@ -234,8 +238,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         //      Remember that this will only happen when we generate an AxisService from existing
         //		WSDL and then need to perform further processing because we have annotations as well
         //		If there is no WSDL, we would never process the Method to begin with.
-
-       
+        
         buildDescriptionHierachy();
         
         //Invoke the callback for generating the wsdl
@@ -551,7 +554,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         //Save the Port Type name
         Parameter portTypeNameParameter = new Parameter();
         portTypeNameParameter.setName(MDQConstants.WSDL_PORTTYPE_NAME);
-        portTypeNameParameter.setValue(getAnnoWebServiceName());
+        portTypeNameParameter.setValue(getName());
         
         // Save the Service QName as a parameter.
         Parameter serviceNameParameter = new Parameter();
@@ -602,7 +605,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     		else 
     			serviceBuilder.setServerSide(false);
     		
-    		axisService = serviceBuilder.populateService();    		
+    		axisService = serviceBuilder.populateService();
     		axisService.setName(createAxisServiceName());
             isBuiltFromWSDL = true;
     	} catch (AxisFault e) {
@@ -1073,11 +1076,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         return getAnnoServiceModeValue();
     }
     
-    public String getTargetNamespace() {
-        // TODO: (JLB) WSDL/Anno Merge
-        return getAnnoWebServiceTargetNamespace();
-    }
-    
     public Service.Mode getAnnoServiceModeValue() {
         // This annotation is only valid on Provider-based endpoints. 
         if (isProviderBased() && serviceModeValue == null) {
@@ -1141,7 +1139,50 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     public List<String> getHandlerList() {
         return handlerList;
     }
-    
+    private Definition getWSDLDefinition() {
+        return ((ServiceDescriptionWSDL) getServiceDescription()).getWSDLDefinition();
+    }
+    public javax.wsdl.Service getWSDLService() {
+        Definition defn = getWSDLDefinition();
+        if (defn != null) {
+            return defn.getService(getServiceQName());
+        }
+        else {
+            return null;
+        }
+    }
+    public Port getWSDLPort() {
+        javax.wsdl.Service service = getWSDLService();
+        if (service != null) {
+            return service.getPort(getPortQName().getLocalPart());
+        }
+        else {
+            return null;
+        }
+    }
+    public Binding getWSDLBinding() {
+        Binding wsdlBinding = null;
+        Port wsdlPort = getWSDLPort();
+        Definition wsdlDef = getWSDLDefinition();
+        if (wsdlPort != null && wsdlDef != null) {
+            wsdlBinding = wsdlPort.getBinding();
+        }
+        return wsdlBinding;
+    }
+    public String getWSDLBindingType() {
+        String wsdlBindingType = null;
+        Binding wsdlBinding = getWSDLBinding();
+        if (wsdlBinding != null) {
+            wsdlBindingType = wsdlBinding.getQName().getNamespaceURI();
+        }
+        return wsdlBindingType;
+    }
+    public String getName() {
+        return getAnnoWebServiceName();
+    }
+    public String getTargetNamespace() {
+        return getAnnoWebServiceTargetNamespace();
+    }
     /**
      * Returns the packages that are needed to marshal/unmarshal the 
      * data objects.  Example: this set of packages is used to construct a 

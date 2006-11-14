@@ -35,6 +35,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 
 /**
@@ -76,7 +77,15 @@ public class DescriptionFactoryImpl {
                 // process this impl class
                 ServiceDescription serviceDescription = new ServiceDescriptionImpl(
                         dbcMap, serviceImplComposite);
-                serviceDescriptionList.add(serviceDescription);
+                ServiceDescriptionValidator validator = new ServiceDescriptionValidator(serviceDescription);
+                if (validator.validate()) {
+                    serviceDescriptionList.add(serviceDescription);
+                }
+                else {
+                    // TODO: Validate all service descriptions before failing
+                    // TODO: Get more detailed failure information from the Validator
+                    throw ExceptionFactory.makeWebServiceException("ServiceDescription did not validate correctly");
+                }
             }
         }
 
