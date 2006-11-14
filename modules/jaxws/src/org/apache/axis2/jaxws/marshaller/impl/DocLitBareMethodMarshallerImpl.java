@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.marshaller.impl;
 import java.util.ArrayList;
 import java.util.Set;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.Holder;
@@ -83,17 +84,16 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 				index++;
 			}
 
-
+            Object bo = null;
 			if(holdermps.size() == 0 && returnType.getName().equals("void")){
 				// No holders and return type void example --> public void someMethod() 
 				// I will return null for this case.
 				// doNothing as there is nothing to return.
-				return null;
+				
 			}
 			else if(holdermps.size() == 0 && !returnType.getName().equals("void")){
 				// No holders but a return type example --> public ReturnType someMethod()
-				Object bo = createBusinessObject(createContextPackageSet(), message);
-				return bo;
+				bo = createBusinessObject(createContextPackageSet(), message);
 			}
 			else if(holdermps.size()>0 && returnType.getName().equals("void")){
 				// Holders found and no return type example --> public void someMethod(Holder<AHolder>)	
@@ -106,12 +106,14 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 				// WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject 
 				// property, if wsdl schema forces a holder and a return type.
 				assignHolderValues(holdermps, holderArgs, message);
-				Object bo = createBusinessObject(createContextPackageSet(), message);
-				return bo;
+				bo = createBusinessObject(createContextPackageSet(), message);
 			}
 
+            if (bo instanceof JAXBElement) {
+                bo = ((JAXBElement) bo).getValue();
+            }
 
-			return null;
+			return bo;
 		} catch (Exception e) {
 			// Firewall.  Only WebServiceExceptions are thrown
 			throw ExceptionFactory.makeWebServiceException(e);
@@ -145,6 +147,13 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 	            bo = createBOFromBodyBlock(contextPackages,message);
 	        }
 	        
+            // The resulting business object may be a JAXBElement.
+            // In such cases get the contained type
+            if ( (actualType != JAXBElement.class) &&  
+                    bo instanceof JAXBElement) {
+                bo = ((JAXBElement) bo).getValue();
+            }
+            
             // Now create an argument from the business object
             Object arg = bo;
 	        if (paramDesc.isHolderType()) {
@@ -184,13 +193,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 			}
 			for(MethodParameter mp:mps){
 				ParameterDescription pd = mp.getParameterDescription();
-				if(pd.isHolderType()){
-					Object holderObject = mp.getValue();
-					objectList.add(holderObject);
-				}
-				else{
-					objectList.add(mp.getValue());
-				}
+				objectList.add(mp.getValue());
 			}
 			return objectList.toArray();		
 		} catch (Exception e) {

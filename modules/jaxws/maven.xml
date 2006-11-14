@@ -135,14 +135,14 @@
     	            <arg line="-d ${schema.generated.src.dir} -wsdl ${wsdl.source.dir}/EchoMessage.wsdl"/>
     	        </java>
     	<ant:echo>Generating java from resourceinjection.wsdl for javabean endpoint Resource Injection support</ant:echo>
-		<!--
+		
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
     	    <jvmarg line="${maven.junit.jvmargs}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/resourceinjection.wsdl"/>
     	 </java>
-    	 -->
+    	
     	 
     	<!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>

@@ -123,7 +123,7 @@ public class ResourceInjectionTests extends TestCase {
 		}
 	}
 
-	/*
+	
     public void testEchoWithResourceInjectionAndLifecycleMethods(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());
@@ -138,5 +138,5 @@ public class ResourceInjectionTests extends TestCase {
 			fail();
 		}
 	}
-    */
+   
 }

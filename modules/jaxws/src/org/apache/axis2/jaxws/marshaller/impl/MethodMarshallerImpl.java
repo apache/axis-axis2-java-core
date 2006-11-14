@@ -660,12 +660,6 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return factory.createFrom(om,context,null);
 		
 	}
-
-	protected Block createEmptyBodyBlock() throws MessageException {
-		String emptyBody = "";
-		XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-		return stringFactory.createFrom(emptyBody, null, SOAPENV_QNAME);
-	}
 	
 	protected String readXMLTypeName(Class jaxbClazz){
 		XmlType type = (XmlType)jaxbClazz.getAnnotation(XmlType.class);
@@ -841,10 +835,8 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	}
 	
 	protected Message createEmptyMessage() throws JAXBException, MessageException, XMLStreamException {
-		Block emptyBodyBlock = createEmptyBodyBlock();
 		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
 		Message m = mf.create(protocol);
-		m.setBodyBlock(0,emptyBodyBlock);
 		return m;
 	}
 	

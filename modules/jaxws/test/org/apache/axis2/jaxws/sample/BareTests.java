@@ -34,4 +34,27 @@ public class BareTests extends TestCase {
 			fail();
 		}
 	}
+	
+	public void testOneWayEmpty(){
+		System.out.println("------------------------------");
+		System.out.println("Test : "+getName());
+		
+		try{
+			
+			BareDocLitService service = new BareDocLitService();
+			DocLitBarePortType proxy = service.getBareDocLitPort();
+			 BindingProvider p = (BindingProvider) proxy;
+			
+	            p.getRequestContext().put(
+	                    BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+	            p.getRequestContext().put(
+	                    BindingProvider.SOAPACTION_URI_PROPERTY, "oneWayEmpty");
+			proxy.oneWayEmpty();
+			
+			System.out.println("------------------------------");
+		}catch(Exception e){
+			e.printStackTrace();
+			fail();
+		}
+	}
 }
