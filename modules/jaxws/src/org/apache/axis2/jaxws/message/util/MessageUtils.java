@@ -167,8 +167,6 @@ public class MessageUtils {
             }
             
             // Add all the MimeHeaders from the Axis2 MessageContext
-            // TODO: Merge with latest TransportHeaders impl.
-            /*
             MimeHeaders mhs = message.getMimeHeaders();
             HashMap headerMap = (HashMap) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
             if (headerMap != null) {
@@ -179,7 +177,7 @@ public class MessageUtils {
                     mhs.addHeader(key, value);
                 }
             }
-            */
+            
             
             // FIXME: This should be revisited when we re-work the MTOM support.
             //This destroys performance by forcing a double pass through the message.
@@ -261,14 +259,12 @@ public class MessageUtils {
         
         // Put the Headers onto the MessageContext
         // TODO: Merge with latest TransportHeaders impl.
-        /*
         HashMap headerMap = new HashMap();
         for (Iterator it = message.getMimeHeaders().getAllHeaders(); it.hasNext();) {
             MimeHeader mh = (MimeHeader) it.next();
             headerMap.put(mh.getName(), mh.getValue());
         }
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
-        */
         
         // Enable MTOM Attachments 
         if (message.isMTOMEnabled()) {

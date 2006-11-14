@@ -164,9 +164,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         SOAPMessage response;
         
         // Transport header check
-        // TODO: Merge with latest mime headers impl.
-        //assert(request.getContentDescription() != null);
-        //assert(request.getContentDescription().equals(SoapMessageProvider.XML_REQUEST));
+        assert(request.getContentDescription() != null);
+        assert(request.getContentDescription().equals(SoapMessageProvider.XML_REQUEST));
 
         // Additional assertion checks
         assert(countAttachments(request) == 0);

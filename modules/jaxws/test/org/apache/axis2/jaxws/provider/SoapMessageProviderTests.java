@@ -103,9 +103,8 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         	SOAPMessage response = dispatch.invoke(request);
 
             // Check for valid content description
-            // TODO: Merge with latest mime headers impl
-            //assert(response.getContentDescription() != null);
-            //assert(response.getContentDescription().equals(SoapMessageProvider.XML_RESPONSE));
+            assert(response.getContentDescription() != null);
+            assert(response.getContentDescription().equals(SoapMessageProvider.XML_RESPONSE));
             
             // Check assertions and get the data element
             SOAPElement dataElement = assertResponseXML(response, SoapMessageProvider.XML_RESPONSE);
