@@ -62,5 +62,7 @@ public interface ServiceDescription {
     public abstract ServiceClient getServiceClient(QName portQName);
 
     public abstract QName getServiceQName();
+    
+
 
 }

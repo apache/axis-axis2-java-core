@@ -69,6 +69,7 @@ public interface EndpointDescription {
     public abstract boolean isProviderBased();
     public abstract boolean isEndpointBased();
     
+    public abstract String getTargetNamespace();
     public abstract String getBindingType();
     public abstract List<String> getHandlerList();
     public abstract QName getPortQName();

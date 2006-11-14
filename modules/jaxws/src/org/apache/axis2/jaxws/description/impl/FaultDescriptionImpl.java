@@ -21,12 +21,14 @@ package org.apache.axis2.jaxws.description.impl;
 import java.lang.reflect.Constructor;
 import java.util.StringTokenizer;
 
+import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.FaultDescriptionJava;
 import org.apache.axis2.jaxws.description.FaultDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 
 /**
  * @see ../FaultDescription
@@ -37,8 +39,10 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, FaultDescriptionWSDL {
     
     private Class exceptionClass;
+    private DescriptionBuilderComposite composite;
     private WebFault annotation;
     private OperationDescription parent;
+    
     
     private String name = "";  // WebFault.name
     private String faultBean = "";  // WebFault.faultBean
@@ -58,13 +62,25 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
      * @param annotation the WebFault annotation object on this exception class
      * @param parent the OperationDescription that is the parent of this FaultDescription
      */
-    public FaultDescriptionImpl(Class exceptionClass, WebFault annotation, OperationDescription parent) {
+    FaultDescriptionImpl(Class exceptionClass, WebFault annotation, OperationDescription parent) {
         this.exceptionClass = exceptionClass;
         this.annotation = annotation;
         this.parent = parent;
     }
 
+    FaultDescriptionImpl(DescriptionBuilderComposite faultDBC, OperationDescription parent) {
+        this.composite = faultDBC;
+        this.parent = parent;
+    }
+
     public WebFault getAnnoWebFault() {
+        
+    	if (annotation == null) {
+            if (isDBC()) {
+            	annotation = this.composite.getWebFaultAnnot();              
+            }
+        }
+    	
         return annotation;
     }
 
@@ -89,26 +105,30 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
              * of each is the faultBean.  Let's see if we can figure what the faultBean is from that:
              */
 
-            try {
-                Constructor[] cons = exceptionClass.getConstructors();
-                Class[] parms = cons[0].getParameterTypes();
-                faultBean = parms[1].getCanonicalName();
-            } catch (Exception e) {
-                /* 
-                 * if faultBean is still not set, then something is wrong with the exception
-                 * class that the code generators generated, or someone instantiated a FaultDescription
-                 * object for a generic exception.
-                 *
-                 * TODO log it?  I don't think we need to worry about throwing an exception here, as we're just
-                 * doing a best-effort to determine the faultBean name.  If the try{} fails, something is really
-                 * messed up in the generated code anyway, and I suspect nothing would work right.
-                 */
-            }
-                
-            // If all else fails, this might get us what we want:
-            if ((faultBean == null) || (faultBean.length() == 0))
-                faultBean = getOperationDescription().getRequestWrapperClassName().toString() + FAULT;
-
+        	if (!isDBC()) {
+        		try {
+        			Constructor[] cons = exceptionClass.getConstructors();
+        			Class[] parms = cons[0].getParameterTypes();
+        			faultBean = parms[1].getCanonicalName();
+        		} catch (Exception e) {
+        			/* 
+        			 * if faultBean is still not set, then something is wrong with the exception
+        			 * class that the code generators generated, or someone instantiated a FaultDescription
+        			 * object for a generic exception.
+        			 *
+        			 * TODO log it?  I don't think we need to worry about throwing an exception here, as we're just
+        			 * doing a best-effort to determine the faultBean name.  If the try{} fails, something is really
+        			 * messed up in the generated code anyway, and I suspect nothing would work right.
+        			 */
+        		}
+        		
+        		// If all else fails, this might get us what we want:
+        		if ((faultBean == null) || (faultBean.length() == 0))
+        			faultBean = getOperationDescription().getRequestWrapperClassName().toString() + FAULT;
+        	} else {
+        		//REVIEW: Need to verify that this is the name we need...hmm, seems to easy
+        		faultBean = composite.getClassName();
+        	}
         }
         return faultBean;
     }
@@ -135,7 +155,8 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
             targetNamespace = annotation.targetNamespace();
         }
         else {
-            // need to figure out a default.  Let's use the logic in getFaultBean() and make a namespace out of the package
+            // need to figure out a default.  Let's use the logic in getFaultBean() 
+        	//and make a namespace out of the package
             
             targetNamespace = makeNamespace(getFaultBean());
         }
@@ -143,10 +164,14 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
     }
 
     public String getExceptionClassName() {
-        // no need for defaults here.  The exceptionClass stored in this
-        // FaultDescription object is one that has been declared to be
-        // thrown from the service method
-        return exceptionClass.getCanonicalName();
+    	if (!isDBC()) {
+    		// no need for defaults here.  The exceptionClass stored in this
+    		// FaultDescription object is one that has been declared to be
+    		// thrown from the service method
+    		return exceptionClass.getCanonicalName();
+    	} else {
+    		return composite.getClassName();
+    	}
     }
 
     public OperationDescription getOperationDescription() {
@@ -198,6 +223,13 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         }
         namespace.append('/');
         return namespace.toString();
+    }
+    
+    private boolean isDBC() {
+    	if (this.composite != null)
+    		return true;
+    	else 
+    		return false;
     }
     
 }

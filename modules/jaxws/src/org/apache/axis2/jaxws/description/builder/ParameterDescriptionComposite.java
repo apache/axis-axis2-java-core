@@ -17,8 +17,9 @@ public class ParameterDescriptionComposite {
 	private WebServiceRefAnnot 		webServiceRefAnnot;
 	private WebServiceContextAnnot	webServiceContextAnnot;
 	private int 					listOrder;
-	private ClassLoader 			classLoader;
 
+	private MethodDescriptionComposite	parentMDC;
+	
 	public ParameterDescriptionComposite () {
 		
 	}
@@ -51,6 +52,10 @@ public class ParameterDescriptionComposite {
 	 * Do lazy loading
 	 */
 	public Class getParameterTypeClass() {
+		
+		ClassLoader classLoader = null; 
+		//	classLoader = getMethodDescriptionCompositeRef().getDescriptionBuilderCompositeRef().getClassLoader();
+		
 		if (parameterTypeClass == null) {
 			if (getParameterType() != null) {
 				parameterTypeClass = getPrimitiveClass(getParameterType());
@@ -116,13 +121,13 @@ public class ParameterDescriptionComposite {
 		return listOrder;
 	}
 
-	/*
-	 * @return Returns the classloader to use
+	/**
+	 * @return Returns the parentMDC.
 	 */
-	public ClassLoader getClassLoader() {
-		return this.classLoader;
+	public MethodDescriptionComposite getMethodDescriptionCompositeRef() {
+		return this.parentMDC;
 	}
-	
+
 	/**
 	 * @param parameterType The parameterType to set.
 	 */
@@ -172,17 +177,17 @@ public class ParameterDescriptionComposite {
 		this.listOrder = listOrder;
 	}
 
-	/*
-	 * @param classLoader the class loader to set
+	/**
+	 * @param  mdc The parent MethodDescriptionComposite to set.
 	 */
-	public void setClassLoader(ClassLoader classLoader) {
-		this.classLoader = classLoader;
+	public void setMethodDescriptionCompositeRef(MethodDescriptionComposite mdc) {
+		this.parentMDC = mdc;
 	}
 
 	private Class getPrimitiveClass(String classType) {
 		
 		Class paramClass = null;
-System.out.println("classType: " +classType);
+
 		if (classType.equals("int")) {
 			paramClass = int.class;
 		} else if (classType.equals("byte")) {

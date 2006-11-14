@@ -28,7 +28,7 @@ public class MDQConstants {
     public static final String WSDL_PORT = "WSDL_PORT";
     public static final String WSDL_DEFINITION = WSDLConstants.WSDL_4_J_DEFINITION;
     public static final String WSDL_LOCATION = "WSDL_LOCATION";
-    public static final String SERVICE_CLASS = "SERVICE_CLASS";
+    public static final String SERVICE_CLASS = "ServiceClass";
     public static final String WSDL_PORTTYPE_NAME = "WSDL_PORTTYPE_NAME";
     
     public static final String OBJECT_CLASS_NAME = "java.lang.Object";

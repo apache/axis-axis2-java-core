@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
@@ -118,14 +119,18 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
      * @param parent
      */
     EndpointInterfaceDescriptionImpl(   DescriptionBuilderComposite dbc, 
-                                    boolean isClass,
-                                    EndpointDescriptionImpl parent){
+                                    	boolean isClass,
+                                    	EndpointDescriptionImpl parent){
         
         parentEndpointDescription = parent;
         this.dbc = dbc;
         
 //        BasicConfigurator.configure();
         
+        //TODO: yikes! ...too much redirection, consider setting this in higher level
+        getEndpointDescription().getAxisService().setName(getEndpointDescriptionImpl().getServiceQName().getLocalPart());
+        getEndpointDescription().getAxisService().setTargetNamespace(getEndpointDescriptionImpl().getTargetNamespace());
+		        
         //TODO: Determine if the isClass parameter is really necessary
         
         // Per JSR-181 all methods on the SEI are mapped to operations regardless
@@ -467,6 +472,9 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         return soapParameterStyle;
     }
     
+    /*
+     * Returns a non-null (possibly empty) list of MethodDescriptionComposites
+     */
     Iterator<MethodDescriptionComposite> retrieveReleventMethods(DescriptionBuilderComposite dbc) {
  
         /*
@@ -492,6 +500,10 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
             //Now gather methods off the chain of superclasses, if any
             DescriptionBuilderComposite tempDBC = dbc;          
             while (!DescriptionUtils.isEmpty(tempDBC.getSuperClassName())) {
+            	
+                if (DescriptionUtils.javifyClassName(tempDBC.getSuperClassName()).equals(MDQConstants.OBJECT_CLASS_NAME))
+                    break;
+
                 DescriptionBuilderComposite superDBC = 
                                     getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap().get(tempDBC.getSuperClassName());
                 retrieveList.addAll(retrieveSEIMethods(superDBC));
@@ -552,6 +564,9 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         return retrieveList.iterator();
     }
 
+    /*
+     * This is called when we know that this DBC is an implicit SEI
+     */
     private ArrayList<MethodDescriptionComposite> retrieveImplicitSEIMethods(DescriptionBuilderComposite dbc) {
         
         ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
@@ -560,14 +575,20 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         
         //If this list is empty, then there are no false exclusions, so gather
         //all composites that don't have exclude == true
+        //If the list is not empty, then it means we found at least one method with 'exclude==false'
+        //so the list should contain only those methods
         if (retrieveList == null || retrieveList.size() == 0) {
-            Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
-            
-            while (iter.hasNext()) {
-                MethodDescriptionComposite mdc = iter.next();
-                
-                if (!DescriptionUtils.isExcludeTrue(mdc)) {
-                    retrieveList.add(mdc);
+            Iterator<MethodDescriptionComposite> iter = null;
+            List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
+
+            if (mdcList != null) {
+            	iter = dbc.getMethodDescriptionsList().iterator();
+                while (iter.hasNext()) {
+                    MethodDescriptionComposite mdc = iter.next();
+                    
+                    if (!DescriptionUtils.isExcludeTrue(mdc)) {
+                        retrieveList.add(mdc);
+                    }
                 }
             }
         }
@@ -581,13 +602,17 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         //Just retrieve all methods regardless of WebMethod annotations
         ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
         
-        Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
+        Iterator<MethodDescriptionComposite> iter = null;
+        List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
         
-        while (iter.hasNext()) {
-            MethodDescriptionComposite mdc = iter.next();           
-            retrieveList.add(mdc);
+        if (mdcList != null) {
+        	iter = dbc.getMethodDescriptionsList().iterator();
+            while (iter.hasNext()) {
+                MethodDescriptionComposite mdc = iter.next();           
+                retrieveList.add(mdc);
+            }
         }
-        
+                
         return retrieveList;
     }
 

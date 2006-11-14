@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -64,6 +65,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     
     // TODO: Possibly remove Definition and delegate to the Defn on the AxisSerivce set as a paramater by WSDLtoAxisServicBuilder?
     private WSDLWrapper wsdlWrapper; 
+    private WSDLWrapper generatedWsdlWrapper;
     
     private Hashtable<QName, EndpointDescriptionImpl> endpointDescriptions = new Hashtable<QName, EndpointDescriptionImpl>();
     
@@ -153,6 +155,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         // it will be set to the annotation value.
         //EndpointDescription endpointDescription = new EndpointDescription(null, this, serviceImplName);
         EndpointDescriptionImpl endpointDescription = new EndpointDescriptionImpl(this, serviceImplName);
+        
         addEndpointDescription(endpointDescription);       
     }
     
@@ -419,6 +422,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         return wsdlURL;
     }
 
+    public WSDLWrapper getGeneratedWsdlWrapper() {
+    	return this.generatedWsdlWrapper;
+    }
+    
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.ServiceDescription#getAxisConfigContext()
      */
@@ -465,6 +472,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 
     HashMap<String, DescriptionBuilderComposite> getDBCMap() {
     	return dbcMap;
+    }
+    
+    void setGeneratedWsdlWrapper(WSDL4JWrapper wrapper) {
+    	this.generatedWsdlWrapper = wrapper;
     }
     
 	private void validateDBCLIntegrity(){
@@ -573,7 +584,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 							|| composite.getWebFaultAnnot() != null
 							|| composite.getWebServiceClientAnnot() != null
 							|| composite.getWebServiceContextAnnot()!= null
-							|| composite.getAllWebServiceRefAnnots() != null
+							|| !composite.getAllWebServiceRefAnnots().isEmpty()
 					) {
 						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
 					}
@@ -711,9 +722,6 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 		
 		//TODO:	Validate that the interface is public 
 		
-		if (!composite.getWebServiceAnnot().endpointInterface().equals("")) {
-			throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebService annotation contains a non-empty field for the SEI");
-		}
 		//		Call ValidateWebMethodAnnots()
 		//
 		

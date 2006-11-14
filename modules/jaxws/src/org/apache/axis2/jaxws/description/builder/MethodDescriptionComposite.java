@@ -27,6 +27,7 @@ public class MethodDescriptionComposite {
 	private ResponseWrapperAnnot 	responseWrapperAnnot;//TODO EDIT CHECK: only on methods of SEI
 	private List<ParameterDescriptionComposite> parameterDescriptions;//TODO EDIT CHECK: only on methods of SEI
 
+	private DescriptionBuilderComposite	parentDBC;
 	
 	/*
 	 * Default Constructor
@@ -174,6 +175,14 @@ public class MethodDescriptionComposite {
 	}
 	
 	/**
+	 * @return Returns the ModuleClassType.
+	 */
+	public DescriptionBuilderComposite getDescriptionBuilderCompositeRef() {
+		
+		return this.parentDBC;
+	}
+	
+	/**
 	 * @param methodName The methodName to set.
 	 */
 	public void setMethodName(String methodName) {
@@ -308,6 +317,14 @@ public class MethodDescriptionComposite {
 	 */
 	public void setDeclaringClass(String declaringClass) {
 		this.declaringClass = declaringClass;
+	}
+	
+	/**
+	 * @return Returns the ModuleClassType.
+	 */
+	public void setDescriptionBuilderCompositeRef(DescriptionBuilderComposite dbc) {
+		
+		this.parentDBC = dbc;
 	}
 	
 	/**

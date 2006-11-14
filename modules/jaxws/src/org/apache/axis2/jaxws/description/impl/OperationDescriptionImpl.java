@@ -22,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.jws.Oneway;
@@ -37,6 +38,7 @@ import javax.xml.ws.WebFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
@@ -45,6 +47,7 @@ import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.OperationDescriptionWSDL;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ParameterDescriptionJava;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
@@ -245,7 +248,11 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     public EndpointInterfaceDescription getEndpointInterfaceDescription() {
         return parentEndpointInterfaceDescription;
     }
-    
+
+    public EndpointInterfaceDescriptionImpl getEndpointInterfaceDescriptionImpl() {
+        return (EndpointInterfaceDescriptionImpl) parentEndpointInterfaceDescription;
+    }
+
     public AxisOperation getAxisOperation() {
         return axisOperation;
     }
@@ -364,7 +371,40 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             }
         } else {
             // TODO do I care about methodComposite like the paramDescription does?
+        	//Call FaultDescriptionImpl for all non-generic exceptions...Need to check a
+        	// a couple of things
+        	// 1. If this is a generic exception, ignore it
+        	// 2. If this is not a generic exception, then find it in the DBC Map
+        	//       If not found in map, then throw not found exception
+        	//       Else it was found, Verify that it has a WebFault Annotation, if not
+        	//        then throw exception
+        	//3. Pass the validated WebFault dbc and possibly the classImpl dbc to FaultDescription
+        	//4. Possibly set AxisOperation.setFaultMessages array...or something like that
+        	
+        	String[] webFaultClassNames = methodComposite.getExceptions();
+        	
+			HashMap<String, DescriptionBuilderComposite> dbcMap = 
+				getEndpointInterfaceDescriptionImpl().getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap();
+			
+			if (webFaultClassNames != null) {
+				for (String wfClassName:webFaultClassNames) {
+					//	Try to find this exception class in the dbc list. If we can't find it
+					//  then just assume that its a generic exception.
+					
+					DescriptionBuilderComposite faultDBC = dbcMap.get(wfClassName);
+					
+					if (faultDBC != null){
+						if (faultDBC.getWebFaultAnnot() == null) {
+							throw ExceptionFactory.makeWebServiceException("OperationDescription: custom exception does not contain WebFault annotation");
+						} else {
+							//We found a valid exception composite thats annotated
+							buildFaultList.add(new FaultDescriptionImpl(faultDBC, this));
+						}
+					}
+				}
+			}
         }
+    
         return buildFaultList.toArray(new FaultDescription[0]);
     }
     

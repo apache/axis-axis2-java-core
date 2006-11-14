@@ -52,6 +52,7 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 /**
@@ -65,7 +66,6 @@ import org.apache.commons.logging.LogFactory;
  * somehow from an AxisService/AxisPort combination, and not directly from the WSDL.
  */
 class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptionJava, EndpointDescriptionWSDL {
-    
     private ServiceDescriptionImpl parentServiceDescription;
     private AxisService axisService;
 
@@ -230,41 +230,52 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         //      Remember that this will only happen when we generate an AxisService from existing
         //		WSDL and then need to perform further processing because we have annotations as well
         //		If there is no WSDL, we would never process the Method to begin with.
-        
+
+       
         buildDescriptionHierachy();
         
-        //Currently, we need to set the anonymous operations only for the client
-        //side
-        //TODO: Determine if we need to do this for server side?
-        //	addAnonymousAxisOperations();
-        
-        // This will set the serviceClient field after adding the AxisService 
-        // to the AxisConfig...probably not necessary on server side
-        //getServiceClient();
-        
-        // Give the configuration builder a chance to finalize configuration for this service
-        
-        //Supposedly, this call should only be made for the client, comment out
-        //for now. Be careful, this may be needed for finalizing configuration
-/*
-        try {
-            getServiceDescription().getClientConfigurationFactory().completeAxis2Configuration(axisService);
-        } catch (DeploymentException e) {
-            // TODO RAS
-            // TODO NLS
-            // TODO: Remove this println
-            System.out.println("Caught exception in ServiceDescription.ServiceDescription: " + e);
-            e.printStackTrace();
-//            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
-        } catch (Exception e) {
-            // TODO RAS
-            // TODO NLS
-            // TODO: Remove this println
-            System.out.println("Caught exception in ServiceDescription.ServiceDescription: " + e);
-            e.printStackTrace();
-//            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
+        //Invoke the callback for generating the wsdl
+        if (composite.getCustomWsdlGenerator() != null) {
+        	Definition wsdlDef = 
+        		composite.getCustomWsdlGenerator().generateWsdl((Class)axisService.getParameterValue(MDQConstants.SERVICE_CLASS));
+   					
+        	try {
+    			WSDL4JWrapper wsdl4jWrapper = new WSDL4JWrapper(composite.getWsdlURL(), wsdlDef);
+    			getServiceDescriptionImpl().setGeneratedWsdlWrapper(wsdl4jWrapper);
+            } catch (Exception e) {
+                throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: WSDLException thrown when attempting to instantiate WSDL4JWrapper ");
+            }
         }
-        */
+
+        //Save the WSDL Definition
+        // REVIEW: This could be a PARTIAL WSDL; not sure if that will cause trouble later on.
+        //			Maybe we should always be setting it to generated WSDL
+        Parameter wsdlDefParameter = new Parameter();
+        wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);       
+        
+        if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
+            wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
+        } else {
+        	if (getServiceDescriptionImpl().getGeneratedWsdlWrapper() != null) {
+        		wsdlDefParameter.setValue(getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition());
+        	} else {
+        		//TODO: Hmmm, this should probably be an exception, will probably always need to set wsdl	
+        	}
+        }
+        
+        //Save the WSDL Location
+        //REVIEW: hmm, this won't always be set
+        Parameter wsdlLocationParameter = new Parameter();
+        wsdlLocationParameter.setName(MDQConstants.WSDL_LOCATION);
+        wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
+
+        try {
+        	axisService.addParameter(wsdlDefParameter);
+        	axisService.addParameter(wsdlLocationParameter);                        
+        } catch (Exception e) {
+        	throw ExceptionFactory.makeWebServiceException("EndpointDescription: Unable to add parms. to AxisService");
+        }
+         
     }
     
     /**
@@ -549,22 +560,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         portParameter.setName(MDQConstants.WSDL_PORT);
         portParameter.setValue(getPortQName().getLocalPart());
 
-        //Save the WSDL Definition
-        // REVIEW: This could be a PARTIAL WSDL; not sure if that will cause trouble later on.
-        Parameter wsdlDefParameter = new Parameter();
-        wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);       
-        
-        //TODO: At some point this should always return a valid WSDL definition, for now just
-        //  	make sure we don't get an NPE
-        if (getServiceDescriptionImpl().getWSDLWrapper() != null) 
-            wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
-        else
-            wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper());
-        
-        //Save the WSDL Location
-        Parameter wsdlLocationParameter = new Parameter();
-        wsdlDefParameter.setName(MDQConstants.WSDL_LOCATION);
-        wsdlDefParameter.setValue(getAnnoWebServiceWSDLLocation());
         
         //Save the fully qualified class name for the serviceImpl
         Parameter serviceClassNameParameter = new Parameter();
@@ -575,8 +570,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
             axisService.addParameter(portTypeNameParameter);
             axisService.addParameter(serviceNameParameter);
             axisService.addParameter(portParameter);                        
-            axisService.addParameter(wsdlDefParameter);
-            axisService.addParameter(wsdlLocationParameter);                        
             axisService.addParameter(serviceClassNameParameter);
         } 
         catch (AxisFault e) {
@@ -605,7 +598,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     		else 
     			serviceBuilder.setServerSide(false);
     		
-    		axisService = serviceBuilder.populateService();
+    		axisService = serviceBuilder.populateService();    		
     		axisService.setName(createAxisServiceName());
             isBuiltFromWSDL = true;
     	} catch (AxisFault e) {
@@ -1074,6 +1067,11 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     public Service.Mode getServiceMode() {
         // TODO: (JLB) WSDL/Anno Merge
         return getAnnoServiceModeValue();
+    }
+    
+    public String getTargetNamespace() {
+        // TODO: (JLB) WSDL/Anno Merge
+        return getAnnoWebServiceTargetNamespace();
     }
     
     public Service.Mode getAnnoServiceModeValue() {

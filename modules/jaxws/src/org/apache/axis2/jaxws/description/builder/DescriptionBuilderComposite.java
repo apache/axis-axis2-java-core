@@ -10,9 +10,6 @@ import java.util.List;
 
 import javax.wsdl.Definition;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.util.WSDL4JWrapper;
-
 public class DescriptionBuilderComposite {
 	/*
 	 * This structure contains the full reflected class, as well as, the
@@ -23,10 +20,10 @@ public class DescriptionBuilderComposite {
 
 	public DescriptionBuilderComposite () {
 		
-		methodDescriptions = new ArrayList<MethodDescriptionComposite>();
-		fieldDescriptions = new ArrayList<FieldDescriptionComposite>();
-		webServiceRefAnnotList = new ArrayList<WebServiceRefAnnot>();	
-		interfacesList = new ArrayList<String>();
+		methodDescriptions 		= new ArrayList<MethodDescriptionComposite>();
+		fieldDescriptions 		= new ArrayList<FieldDescriptionComposite>();
+		webServiceRefAnnotList 	= new ArrayList<WebServiceRefAnnot>();	
+		interfacesList 			= new ArrayList<String>();
 	}
 
 	//Class type within the module
@@ -58,6 +55,9 @@ public class DescriptionBuilderComposite {
 	
 	private List<MethodDescriptionComposite> methodDescriptions;		
 	private List<FieldDescriptionComposite> fieldDescriptions;		
+	
+	private WsdlGenerator	wsdlGenerator;
+	private ClassLoader		classLoader;
 
 	// Methods
 	public WebServiceAnnot getWebServiceAnnot() {
@@ -238,6 +238,22 @@ public class DescriptionBuilderComposite {
 	}
 	
 	/**
+	 * @return Returns the ModuleClassType.
+	 */
+	public WsdlGenerator getCustomWsdlGenerator() {
+		
+		return this.wsdlGenerator;
+	}	
+
+	/**
+	 * @return Returns the ClassLoader.
+	 */
+	public ClassLoader getClassLoader() {
+		
+		return this.classLoader;
+	}	
+
+	/**
 	 *
 	 * @return Returns true if this is an interface
 	 */
@@ -393,6 +409,22 @@ public class DescriptionBuilderComposite {
 			//TODO: Determine the class type
 		}
 		return moduleClassType;
+	}
+	
+	/**
+	 * @return Returns the ModuleClassType.
+	 */
+	public void setCustomWsdlGenerator(WsdlGenerator wsdlGenerator) {
+		
+		this.wsdlGenerator = wsdlGenerator;
+	}
+	
+	/**
+	 * @return Returns the ModuleClassType.
+	 */
+	public void setClassLoader(ClassLoader classLoader) {
+		
+		this.classLoader = classLoader;
 	}
 	
 	/**
