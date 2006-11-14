@@ -143,7 +143,14 @@
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/resourceinjection.wsdl"/>
     	 </java>
     	
-    	 
+    	<ant:echo>Generating java from AnyType.wsdl for javabean endpoint AnyType support</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl"/>
+    	 </java>
+    	 	
     	<!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>
         <javac destdir="${schema.generated.classes.dir}" srcdir="${schema.generated.src.dir}">
@@ -388,6 +395,17 @@
 			   <ant:include name="org/apache/axis2/jaxws/resourceinjection/**"/>
 			</ant:fileset>
 			<ant:fileset dir="test/org/apache/axis2/jaxws/resourceinjection">
+			   <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/AnyTypeMessageService/">
+			<ant:fileset dir="target/test-classes">
+			   <ant:include name="org/apache/axis2/jaxws/anytype/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/anytype">
 			   <ant:include name="META-INF/**"/>
 			</ant:fileset>
 			<ant:fileset dir="target/classes">

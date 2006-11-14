@@ -197,7 +197,8 @@ public class JAXWSProxyHandler extends BindingProvider implements
             }
 		}
 		
-		if(method.getReturnType().isAssignableFrom(Future.class)){
+		//if(method.getReturnType().isAssignableFrom(Future.class))
+		if(method.getReturnType() == Future.class){
 			if(log.isDebugEnabled()){
 				log.debug("Async Callback");
 			}
@@ -227,7 +228,8 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	        return future;
 		}
 		
-		if(method.getReturnType().isAssignableFrom(Response.class)){
+		//if(method.getReturnType().isAssignableFrom(Response.class))
+		if(method.getReturnType() == Response.class){
 			if(log.isDebugEnabled()){
 				log.debug("Async Polling");
 			}
