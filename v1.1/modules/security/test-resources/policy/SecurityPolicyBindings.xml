@@ -1,0 +1,50 @@
+
+<!-- Example Endpoint Policy --> 
+<wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+            xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+            xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+<sp:AsymmetricBinding>
+ <wsp:Policy>
+ <sp:RecipientToken>
+ <wsp:Policy>
+ <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Always" />
+ </wsp:Policy> </sp:RecipientToken>
+ <sp:InitiatorToken>
+ <wsp:Policy>
+ <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Always" />
+ </wsp:Policy>
+ </sp:InitiatorToken>
+ <sp:AlgorithmSuite>
+ <wsp:Policy>
+ <sp:Basic256 />
+ </wsp:Policy>
+ </sp:AlgorithmSuite>
+ <sp:Layout>
+ <wsp:Policy>
+ <sp:Strict />
+ </wsp:Policy>
+ </sp:Layout>
+ <sp:IncludeTimestamp />
+ <sp:EncryptBeforeSigning />
+ <sp:EncryptSignature />
+ <sp:ProtectTokens />
+ <sp:SignedSupportingTokens>
+ <wsp:Policy>
+ <sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Once" />
+ </wsp:Policy>
+ </sp:SignedSupportingTokens>
+ <sp:SignedEndorsingSupportingTokens>
+ <wsp:Policy>
+ <sp:X509Token sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/Once" />
+ </wsp:Policy>
+ </sp:SignedEndorsingSupportingTokens>
+ </wsp:Policy> 
+ </sp:AsymmetricBinding>
+ <sp:Wss11> 
+ <wsp:Policy>
+ <sp:RequireSignatureConfirmation />
+ </wsp:Policy>
+ </sp:Wss11>
+ </wsp:Policy>
+
+ 
