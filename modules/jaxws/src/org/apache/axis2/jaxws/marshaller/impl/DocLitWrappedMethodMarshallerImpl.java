@@ -45,6 +45,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
@@ -89,7 +90,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
     		}
     		
             String resultName = operationDesc.getResultName();
-    		businessObject = createBusinessObject(createContextPackageSet(wrapperClazz), message);
+    		businessObject = createBusinessObject(createContextPackageSet(), message);
             assignHolderValues(businessObject, inputArgs, false);
             
             // REVIEW: Is the the appropriate logic, to be checking for the existence of the annotation
@@ -121,7 +122,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			ArrayList<MethodParameter> mps;
 
 			Class requestWrapperClazz = loadClass(className);
-			Object jaxbObject = createBusinessObject(createContextPackageSet(requestWrapperClazz), message);
+			Object jaxbObject = createBusinessObject(createContextPackageSet(), message);
 
 			if (log.isDebugEnabled()) {
 				log.debug("reading input method parameters");
@@ -210,7 +211,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 			
             // If the wrapper class does not represent an root element, then make
             // the appropriate JAXBElement
-            if (!JAXBUtils.isXmlRootElementDefined(wrapperClazz)) {
+            if (!ClassUtils.isXmlRootElementDefined(wrapperClazz)) {
                 QName qName = new QName(wrapperTNS, wrapperLocalName);
                 wrapper = new JAXBElement(qName, wrapperClazz, wrapper);
             }
@@ -249,7 +250,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
 
             // If the wrapper class does not represent an root element, then make
             // the appropriate JAXBElement
-            if (!JAXBUtils.isXmlRootElementDefined(wrapperClazz)) {
+            if (!ClassUtils.isXmlRootElementDefined(wrapperClazz)) {
                 QName qName = new QName(wrapperTNS, wrapperLocalName);
                 jaxbObject = new JAXBElement(qName, wrapperClazz, jaxbObject);
             }
@@ -288,7 +289,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl
             Object jaxbType = (jaxbElement instanceof JAXBElement) ? ((JAXBElement) jaxbElement).getValue() : jaxbElement; 
      
             // Create the context
-            JAXBBlockContext ctx = new JAXBBlockContext(createContextPackageSet(jaxbType.getClass()));
+            JAXBBlockContext ctx = new JAXBBlockContext(createContextPackageSet());
             bodyBlock = createJAXBBlock(jaxbElement, ctx);
             
             if (log.isDebugEnabled()) {

@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.description;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -76,4 +77,11 @@ public interface EndpointDescription {
     public abstract QName getServiceQName();
     public abstract Service.Mode getServiceMode();
 
+    /**
+     * Returns the packages that are needed to marshal/unmarshal the 
+     * data objects.  Example: This set of packages is used to construct a 
+     * JAXBContext.
+     * @return Set<Package>
+     */
+    public Set<Package> getPackages();
 }

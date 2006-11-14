@@ -51,7 +51,6 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.marshaller.ClassUtils;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Block;
@@ -66,6 +65,7 @@ import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
@@ -147,13 +147,13 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 				
 				// Now demarshal the block to get a business object (faultbean)
                 // Capture the qname of the element, which will be used to find the JAX-WS Exception
-				Object obj = createFaultBusinessObject(contextPackages, block);
+				Object obj = createFaultBusinessObject(block);
                 QName faultQName = null;
                 if (obj instanceof JAXBElement) {
                     faultQName = ((JAXBElement)obj).getName();
                     obj = ((JAXBElement)obj).getValue();
                 } else {
-                    faultQName = JAXBUtils.getXmlRootElementQName(obj);
+                    faultQName = ClassUtils.getXmlRootElementQName(obj);
                 }
                 
 				// Find the JAX-WS exception using a qname match
@@ -204,14 +204,14 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 				// Service Exception.  Create an XMLFault with the fault bean
             	Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
             	Object faultBean = getFaultInfo.invoke(t, null);
-            	JAXBBlockContext context = createJAXBBlockContext(createContextPackageSet(faultBean.getClass()));
+            	JAXBBlockContext context = createJAXBBlockContext(createContextPackageSet());
             	Block[] detailBlocks = new Block[1];
                 
                 // Make sure to createJAXBBlock with an object that is 
                 // a JAXBElement or has the XMLRootElement annotation
                 // The actual faultBean object's class is used (because
                 // the actual object may be a derived type of the formal declaration)
-            	if (!JAXBUtils.isXmlRootElementDefined(faultBean.getClass())) {
+            	if (!ClassUtils.isXmlRootElementDefined(faultBean.getClass())) {
                     QName faultQName = new QName(fd.getTargetNamespace(), fd.getName());
                     faultBean = new JAXBElement(faultQName, faultBean.getClass(), faultBean);
                 }
@@ -805,11 +805,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		        }
 				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr2"));
 			}
-			JAXBBlockContext ctx = createJAXBBlockContext(createContextPackageSet(objectType));
+			JAXBBlockContext ctx = createJAXBBlockContext(createContextPackageSet());
 			if (log.isDebugEnabled()) {
 	            log.debug("Attempting to create Block");
 	        }
-			if(JAXBUtils.isXmlRootElementDefined(objectType)){
+			if(ClassUtils.isXmlRootElementDefined(objectType)){
 				block = createJAXBBlock(object, ctx);
 			}
 			else{
@@ -888,9 +888,9 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 * @throws MessageException
 	 * @throws XMLStreamException
 	 */
-	protected Object createFaultBusinessObject(Set<Package> contextPackages, Block block)
+	protected Object createFaultBusinessObject(Block block)
 			throws JAXBException, MessageException, XMLStreamException {
-		JAXBBlockContext blockContext = new JAXBBlockContext(contextPackages);		
+		JAXBBlockContext blockContext = new JAXBBlockContext(createContextPackageSet());		
 		// Get a JAXBBlockFactory instance. 
         JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
         
@@ -898,18 +898,19 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         return jaxbBlock.getBusinessObject(true); 
 	}
 	
-    protected void assignHolderValues(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message)throws JAXBException, MessageException, XMLStreamException{
+    protected void assignHolderValues(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message)
+            throws JAXBException, MessageException, XMLStreamException{
 		Object bo = null;
 		int index = 0;
 		for(MethodParameter mp:mps){
 			ParameterDescription pd = mp.getParameterDescription();
 			if (pd.isHeader() && pd.isHolderType()) {
-				bo = createBOFromHeaderBlock(createContextPackageSet(pd.getParameterActualType()),
+				bo = createBOFromHeaderBlock(createContextPackageSet(),
 						message, pd.getTargetNamespace(), pd
 								.getParameterName());
 			}
 			else if(!pd.isHeader() && pd.isHolderType()){
-				bo = createBOFromBodyBlock(createContextPackageSet(pd.getParameterActualType()), message);
+				bo = createBOFromBodyBlock(createContextPackageSet(), message);
 			}
 			try{
 				Holder inputArgHolder = (Holder)inputArgHolders.get(index);
@@ -926,22 +927,8 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
      * @param cls
      * @return
      */
-    protected Set<Package> createContextPackageSet(Class cls) {
-        HashSet<Package> set = new HashSet<Package>();
-        set.add(cls.getPackage());
-        return set;
-    }
-    /**
-     * Simple utility to create package set from two classes
-     * @param cls1
-     * @param cls2
-     * @return
-     */
-    protected Set<Package> createContextPackageSet(Class cls1, Class cls2) {
-        HashSet<Package> set = new HashSet<Package>();
-        set.add(cls1.getPackage());
-        set.add(cls2.getPackage());
-        return set;
+    protected Set<Package> createContextPackageSet() {
+         return operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getPackages();
     }
 	
     protected void assignHolderValues(Object bo, Object[] inputArgs, boolean isBare)throws JAXBWrapperException, InstantiationException, ClassNotFoundException, IllegalAccessException{

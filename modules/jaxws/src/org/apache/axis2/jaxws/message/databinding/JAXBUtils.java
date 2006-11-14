@@ -25,17 +25,13 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchema;
-import javax.xml.namespace.QName;
 
-import org.apache.axis2.jaxws.marshaller.ClassUtils;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockImpl;
+import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -251,62 +247,4 @@ public class JAXBUtils {
         }
         imap.put(context, introspector);
 	}
-
-    /**
-     * @param clazz
-     * @return namespace of root element qname or null if this is not object does not represent a root element
-     */
-    public static QName getXmlRootElementQName(Object obj){
-        
-        // A JAXBElement stores its name
-        if (obj instanceof JAXBElement) {
-            return ((JAXBElement) obj).getName();
-        }
-        
-        Class clazz = obj.getClass();
-        
-    	// If the clazz is a primitive, then it does not have a corresponding root element.
-    	if (clazz.isPrimitive() ||
-    	    ClassUtils.getWrapperClass(clazz) != null) {
-    		return null;
-    	}
-    	
-    	// See if the object represents a root element
-    	XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
-        if (root == null) {
-            return null;
-        }
-        
-        String namespace = root.namespace();
-        String localPart = root.name();
-        
-        // The namespace may need to be defaulted
-        if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
-            Package pkg = clazz.getPackage();
-            XmlSchema schema = (XmlSchema) pkg.getAnnotation(XmlSchema.class);
-            if (schema != null) {
-                namespace = schema.namespace();
-            } else {
-                return null;
-            }
-        }
-    	return new QName(namespace, localPart);
-    }
-
-    /**
-     * @param clazz
-     * @return true if this class has a corresponding xml root element
-     */
-    public static boolean isXmlRootElementDefined(Class clazz){
-        // If the clazz is a primitive, then it does not have a corresponding root element.
-        if (clazz.isPrimitive() ||
-            ClassUtils.getWrapperClass(clazz) != null) {
-            return false;
-        }
-        // TODO We could also prune out other known classes that will not have root elements defined.
-        // java.util.Date, arrays, java.math.BigInteger.
-        
-        XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
-        return root !=null;
-    }
 }

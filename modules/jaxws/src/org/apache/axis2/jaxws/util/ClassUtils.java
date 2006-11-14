@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.marshaller;
+package org.apache.axis2.jaxws.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.jws.WebService;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebFault;
 import javax.xml.ws.WebServiceClient;
@@ -235,76 +239,79 @@ public class ClassUtils {
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
-	public static List<Class> getAllClassesFromPackage(Package pkg) throws ClassNotFoundException {
-	        // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
-	        String pckgname = pkg.getName();
-            ArrayList<File> directories = new ArrayList<File>();
-	        try {
-	            ClassLoader cld = Thread.currentThread().getContextClassLoader();
-	            if (cld == null) {
-	            	if(log.isDebugEnabled()){
-	            		log.debug("Unable to get class loader");
-	            	}
-	                throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr1"));
-	            }
-	            String path = pckgname.replace('.', '/');
-	            // Ask for all resources for the path
-	            Enumeration<URL> resources = cld.getResources(path);
-	            while (resources.hasMoreElements()) {
-	                directories.add(new File(URLDecoder.decode(resources.nextElement().getPath(), "UTF-8")));
-	            }
-	        } catch (UnsupportedEncodingException e) {
-	        	if(log.isDebugEnabled()){
-            		log.debug(pckgname + " does not appear to be a valid package (Unsupported encoding)");
-            	}
-	            throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr2", pckgname));
-	        } catch (IOException e) {
-	        	if(log.isDebugEnabled()){
-            		log.debug("IOException was thrown when trying to get all resources for "+ pckgname);
-            	}
-	            throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr3", pckgname));
-	        }
-	 
-	        ArrayList<Class> classes = new ArrayList<Class>();
-	        // For every directory identified capture all the .class files
-	        for (File directory : directories) {
-	            if (log.isDebugEnabled()) {
-	                log.debug("Adding classes from: " + directory.getName());
+    public static List<Class> getAllClassesFromPackage(Package pkg) throws ClassNotFoundException {
+        if (pkg == null) {
+            return new ArrayList<Class>();
+        }   
+        // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
+        String pckgname = pkg.getName();
+        ArrayList<File> directories = new ArrayList<File>();
+        try {
+            ClassLoader cld = Thread.currentThread().getContextClassLoader();
+            if (cld == null) {
+                if(log.isDebugEnabled()){
+                    log.debug("Unable to get class loader");
                 }
-                if (directory.exists()) {
-	                // Get the list of the files contained in the package
-	                String[] files = directory.list();
-	                for (String file : files) {
-                        // we are only interested in .class files
-	                    if (file.endsWith(".class")) {
-                            // removes the .class extension
-	                    	// TODO Java2 Sec
-	                    	try {
-	                    		Class clazz = Class.forName(pckgname + '.' + file.substring(0, file.length() - 6), 
-                                        false, 
-                                        Thread.currentThread().getContextClassLoader());
-	                    		// Don't add any interfaces or JAXWS specific classes.  
-                                // Only classes that represent data and can be marshalled 
-                                // by JAXB should be added.
-	                    		if(!clazz.isInterface() 
-                                   && getDefaultPublicConstructor(clazz) != null
-                                   && !isJAXWSClass(clazz)){
-	                    			if (log.isDebugEnabled()) {
-	                    			    log.debug("Adding class: " + file);
-                                    }
-                                    classes.add(clazz);
-	                    		}
-	                    	} catch (Exception e) {
-	                    	    e.printStackTrace();
+                throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr1"));
+            }
+            String path = pckgname.replace('.', '/');
+            // Ask for all resources for the path
+            Enumeration<URL> resources = cld.getResources(path);
+            while (resources.hasMoreElements()) {
+                directories.add(new File(URLDecoder.decode(resources.nextElement().getPath(), "UTF-8")));
+            }
+        } catch (UnsupportedEncodingException e) {
+            if(log.isDebugEnabled()){
+                log.debug(pckgname + " does not appear to be a valid package (Unsupported encoding)");
+            }
+            throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr2", pckgname));
+        } catch (IOException e) {
+            if(log.isDebugEnabled()){
+                log.debug("IOException was thrown when trying to get all resources for "+ pckgname);
+            }
+            throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr3", pckgname));
+        }
+        
+        ArrayList<Class> classes = new ArrayList<Class>();
+        // For every directory identified capture all the .class files
+        for (File directory : directories) {
+            if (log.isDebugEnabled()) {
+                log.debug("Adding classes from: " + directory.getName());
+            }
+            if (directory.exists()) {
+                // Get the list of the files contained in the package
+                String[] files = directory.list();
+                for (String file : files) {
+                    // we are only interested in .class files
+                    if (file.endsWith(".class")) {
+                        // removes the .class extension
+                        // TODO Java2 Sec
+                        try {
+                            Class clazz = Class.forName(pckgname + '.' + file.substring(0, file.length() - 6), 
+                                    false, 
+                                    Thread.currentThread().getContextClassLoader());
+                            // Don't add any interfaces or JAXWS specific classes.  
+                            // Only classes that represent data and can be marshalled 
+                            // by JAXB should be added.
+                            if(!clazz.isInterface() 
+                                    && getDefaultPublicConstructor(clazz) != null
+                                    && !isJAXWSClass(clazz)){
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Adding class: " + file);
+                                }
+                                classes.add(clazz);
                             }
-	                       
-	                    }
-	                }
-	            }
-	        }
-	        return classes;
-	    }
-	
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        
+                    }
+                }
+            }
+        }
+        return classes;
+    }
+    
 	private static final Class[] noClass=new Class[] {};
 	/**
 	 * Get the default public constructor
@@ -361,5 +368,64 @@ public class ClassUtils {
         }
         return false;
     }
+
     
+    /**
+     * @param clazz
+     * @return namespace of root element qname or null if this is not object does not represent a root element
+     */
+    public static QName getXmlRootElementQName(Object obj){
+        
+        // A JAXBElement stores its name
+        if (obj instanceof JAXBElement) {
+            return ((JAXBElement) obj).getName();
+        }
+        
+        Class clazz = obj.getClass();
+        
+        // If the clazz is a primitive, then it does not have a corresponding root element.
+        if (clazz.isPrimitive() ||
+                getWrapperClass(clazz) != null) {
+            return null;
+        }
+        
+        // See if the object represents a root element
+        XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
+        if (root == null) {
+            return null;
+        }
+        
+        String namespace = root.namespace();
+        String localPart = root.name();
+        
+        // The namespace may need to be defaulted
+        if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
+            Package pkg = clazz.getPackage();
+            XmlSchema schema = (XmlSchema) pkg.getAnnotation(XmlSchema.class);
+            if (schema != null) {
+                namespace = schema.namespace();
+            } else {
+                return null;
+            }
+        }
+        return new QName(namespace, localPart);
+    }
+    
+    /**
+     * @param clazz
+     * @return true if this class has a corresponding xml root element
+     */
+    public static boolean isXmlRootElementDefined(Class clazz){
+        // If the clazz is a primitive, then it does not have a corresponding root element.
+        if (clazz.isPrimitive() ||
+                getWrapperClass(clazz) != null) {
+            return false;
+        }
+        // TODO We could also prune out other known classes that will not have root elements defined.
+        // java.util.Date, arrays, java.math.BigInteger.
+        
+        XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
+        return root !=null;
+    }
 }
+

@@ -92,7 +92,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 			}
 			else if(holdermps.size() == 0 && !returnType.getName().equals("void")){
 				// No holders but a return type example --> public ReturnType someMethod()
-				Object bo = createBusinessObject(createContextPackageSet(returnType), message);
+				Object bo = createBusinessObject(createContextPackageSet(), message);
 				return bo;
 			}
 			else if(holdermps.size()>0 && returnType.getName().equals("void")){
@@ -106,7 +106,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 				// WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject 
 				// property, if wsdl schema forces a holder and a return type.
 				assignHolderValues(holdermps, holderArgs, message);
-				Object bo = createBusinessObject(createContextPackageSet(returnType), message);
+				Object bo = createBusinessObject(createContextPackageSet(), message);
 				return bo;
 			}
 
@@ -135,7 +135,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl impleme
 	        Object bo = null;
             // Create a set of context packages that will be needed to demarshal
             // the jaxb object.  For now just consider the actualType
-            Set<Package> contextPackages = createContextPackageSet(actualType);
+            Set<Package> contextPackages = createContextPackageSet();
             
             // Create the business object
 	        if(isHeader){

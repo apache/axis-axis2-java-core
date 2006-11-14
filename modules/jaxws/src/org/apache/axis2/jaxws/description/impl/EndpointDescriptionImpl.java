@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.jws.WebService;
@@ -94,6 +95,9 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     
     //This is the base WebService or WebServiceProvider that we are processing
     DescriptionBuilderComposite composite = null;
+ 
+    // Set of packages that are needed to marshal/unmashal data (used to set JAXBContext)
+    Set<Package> packages = null;
     
     private static final Log log = LogFactory.getLog(EndpointDescriptionImpl.class);
 
@@ -1136,6 +1140,36 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      */
     public List<String> getHandlerList() {
         return handlerList;
+    }
+    
+    /**
+     * Returns the packages that are needed to marshal/unmarshal the 
+     * data objects.  Example: this set of packages is used to construct a 
+     * JAXBContext.
+     * @return Set<Package>
+     */
+    public Set<Package> getPackages() {
+        // @REVIEW Currently the package set is stored on the
+        // EndpointDescription.  We may consider moving this to 
+        // ServiceDescription. 
+        
+        // The set of packages is calcuated once and saved
+        if (packages == null) {
+            synchronized(this) {
+                // @TODO There are two ways to get the packages.
+                // Schema Walk (prefered) and Annotation Walk.
+                // The Schema walk requires an existing or generated schema.
+                // For now, we will force the use of annotation walk
+                // @See PackageSetBuilder for details
+                boolean useSchemaWalk = false;
+                if (useSchemaWalk) {
+                    packages = PackageSetBuilder.getPackagesFromSchema(this.getServiceDescription());
+                } else {
+                    packages = PackageSetBuilder.getPackagesFromAnnotations(this);
+                }
+            }
+        }
+        return packages;
     }
 }
 
