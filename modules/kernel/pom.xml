@@ -67,7 +67,7 @@
     </dependency>
     <!-- Added this to support WS Policy in Axis2 -->
     <dependency>
-      <groupId>org.apache.neethi</groupId>
+      <groupId>org.apache.ws.commons.neethi</groupId>
       <artifactId>neethi</artifactId>
     </dependency>
     <dependency>
@@ -112,7 +112,6 @@
   		<artifactId>maven-surefire-plugin</artifactId>
   		<inherited>true</inherited>
   		<configuration>
-  			<skip>false</skip>
   			<excludes>
                 <exclude>**/*Abstract*.java</exclude>
                 <exclude>**/*Util*.java</exclude>
