@@ -67,6 +67,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setTo(epr);
         msgCtxt.setReplyTo(replyTo);
         msgCtxt.setEnvelope(defaultEnvelope);
+        msgCtxt.setWSAAction("http://www.actions.org/action");
         outHandler.invoke(msgCtxt);
 
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("eprTest.xml");
@@ -98,8 +99,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setTo(epr);
         msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
 
-        epr =
-                new EndpointReference("http://www.replyTo.org/service/");
+        epr = new EndpointReference("http://www.replyTo.org/service/");
         msgCtxt.setReplyTo(epr);
 
         msgCtxt.setMessageID("123456-7890");
@@ -141,8 +141,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setTo(epr);
         msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
 
-        epr =
-                new EndpointReference("http://www.replyTo.org/service/");
+        epr = new EndpointReference("http://www.replyTo.org/service/");
         msgCtxt.setReplyTo(epr);
 
         msgCtxt.setMessageID("123456-7890");
@@ -174,6 +173,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setEnvelope(defaultEnvelope);
 
         msgCtxt.setTo(eprOne);
+        msgCtxt.setWSAAction("http://www.actions.org/action");
         outHandler.invoke(msgCtxt);
 
         // now the soap message within the msgCtxt must have a to header.
@@ -201,6 +201,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         msgCtxt.setProperty(REPLACE_ADDRESSING_HEADERS, Boolean.TRUE);
         msgCtxt.setTo(eprOne);
+        msgCtxt.setWSAAction("http://www.actions.org/action");
         outHandler.invoke(msgCtxt);
 
         assertTrue("http://whatever.org".equals(defaultEnvelope.getHeader().getFirstChildWithName(new QName(WSA_TO)).getText()));
@@ -223,6 +224,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         msgCtxt.setProperty(REPLACE_ADDRESSING_HEADERS, Boolean.FALSE);
         msgCtxt.setTo(eprOne);
+        msgCtxt.setWSAAction("http://www.actions.org/action");
         outHandler.invoke(msgCtxt);
 
         assertTrue("http://oldEPR.org".equals(defaultEnvelope.getHeader().getFirstChildWithName(new QName(WSA_TO)).getText()));
