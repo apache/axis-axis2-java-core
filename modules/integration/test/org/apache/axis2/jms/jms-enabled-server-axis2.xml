@@ -127,6 +127,10 @@
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
+            <handler name="RequestURIOperationDispatcher"
+                     class="org.apache.axis2.engine.RequestURIOperationDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
 
             <handler name="SOAPMessageBodyBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher">
@@ -164,6 +168,10 @@
 
             <handler name="AddressingBasedDispatcher"
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
+            <handler name="RequestURIOperationDispatcher"
+                     class="org.apache.axis2.engine.RequestURIOperationDispatcher">
                 <order phase="Dispatch"/>
             </handler>
 
