@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-	<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
- 		<soap:Body> 
-			<ns2:invoke xmlns:ns2="http://org.test.soapmessage"><invoke_str>some request</invoke_str></ns2:invoke>
-		</soap:Body>
-	</soap:Envelope>
