@@ -1,0 +1,14 @@
+<schema targetNamespace="http://soapinterop.org/xsd2"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:xsd1="http://soapinterop.org/xsd2"
+        elementFormDefault="qualified">
+    <complexType name="SOAPStruct">
+        <all>
+            <element name="varFloat" type="xsd:float"/>
+            <element name="varInt" type="xsd:int"/>
+            <element name="varString" type="xsd:string"/>
+        </all>
+    </complexType>
+</schema>

@@ -1,0 +1,24 @@
+<module name="Savan" class="org.apache.savan.module.SavanModule">
+
+    <InFlow>
+        <handler name="SavanInHandler" class="org.apache.savan.handlers.SavanInHandler">
+            <order phase="OperationInPhase"/>
+        </handler>
+    </InFlow>
+    
+    <OutFlow>
+        <handler name="SavanOutHandler" class="org.apache.savan.handlers.SavanOutHandler">
+            <order phase="OperationOutPhase"/>
+        </handler>
+    </OutFlow>
+
+    <operation name="SavanInOutOperation" mep="http://www.w3.org/2004/08/wsdl/in-out">
+        <messageReceiver class="org.apache.savan.messagereceiver.SavanInOutMessageReceiver"/>
+        
+        <actionMapping>http://schemas.xmlsoap.org/ws/2004/08/eventing/Subscribe</actionMapping>
+        <actionMapping>http://schemas.xmlsoap.org/ws/2004/08/eventing/Renew</actionMapping>
+        <actionMapping>http://schemas.xmlsoap.org/ws/2004/08/eventing/GetStatus</actionMapping>
+        <actionMapping>http://schemas.xmlsoap.org/ws/2004/08/eventing/Unsubscribe</actionMapping>
+    </operation>
+    
+</module>
