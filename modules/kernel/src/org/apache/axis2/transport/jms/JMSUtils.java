@@ -15,15 +15,13 @@
 */
 package org.apache.axis2.transport.jms;
 
-import org.apache.axiom.om.*;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.*;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
-import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
@@ -31,7 +29,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -44,10 +41,10 @@ import javax.jms.Message;
 import javax.jms.TextMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.namespace.QName;
-import javax.activation.DataHandler;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -346,76 +343,15 @@ public class JMSUtils {
         }
 
         if (builder == null) {
-            XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader
-                (in, MessageContext.DEFAULT_CHAR_SET_ENCODING);
+            XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in,
+                                                                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
 
             // Set the encoding scheme in the message context
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                    MessageContext.DEFAULT_CHAR_SET_ENCODING);
-            builder = new StAXOMBuilder(xmlreader);
-            SOAPFactory soapFactory = new SOAP11Factory();
-            builder.setOMBuilderFactory(soapFactory);
-            try {
-                String ns = builder.getDocumentElement().getNamespace().getNamespaceURI();
-                if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(ns)) {
-                    envelope = getEnvelope(in, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                } else if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(ns)) {
-                    envelope = getEnvelope(in, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                } else {
-                    // this is POX ... mark MC as REST
-                    msgContext.setDoingREST(true);
-                    envelope = soapFactory.getDefaultEnvelope();
-                    envelope.getBody().addChild(builder.getDocumentElement());
-                }
-            } catch (OMException e) {
-                log.debug("Non SOAP/XML JMS message received");
-
-                Parameter operationParam = msgContext.getAxisService().
-                    getParameter(JMSConstants.OPERATION_PARAM);
-                QName operationQName = (operationParam != null ?
-                    getQName(operationParam.getValue()) : JMSConstants.DEFAULT_OPERATION);
-
-                AxisOperation operation = msgContext.getAxisService().getOperation(operationQName);
-                if (operation != null) {
-                    msgContext.setAxisOperation(operation);
-                } else {
-                    handleException("Cannot find operation : " + operationQName + " on the service "
-                        + msgContext.getAxisService());
-                }
-
-
-                Parameter wrapperParam = msgContext.getAxisService().
-                    getParameter(JMSConstants.WRAPPER_PARAM);
-                QName wrapperQName = (wrapperParam != null ?
-                    getQName(wrapperParam.getValue()) : JMSConstants.DEFAULT_WRAPPER);
-
-                OMElement wrapper = soapFactory.createOMElement(wrapperQName, null);
-
-                try {
-                    if (message instanceof TextMessage) {
-                        OMTextImpl textData = (OMTextImpl) soapFactory.createOMText(
-                            ((TextMessage) message).getText());
-                        textData.setType(XMLStreamConstants.CDATA);
-                        wrapper.addChild(textData);
-                    } else if (message instanceof BytesMessage) {
-                        BytesMessage bm = (BytesMessage) message;
-                        byte[] msgBytes = new byte[(int) bm.getBodyLength()];
-                        ((BytesMessage) message).readBytes(msgBytes);
-                        DataHandler dataHandler = new DataHandler(
-                            new ByteArrayDataSource(msgBytes));
-                        OMText textData = soapFactory.createOMText(dataHandler, true);
-                        wrapper.addChild(textData);
-                        msgContext.setDoingMTOM(true);
-                    } else {
-                        handleException("Unsupported JMS Message format : " + message.getJMSType());
-                    }
-                    envelope = soapFactory.getDefaultEnvelope();
-                    envelope.getBody().addChild(wrapper);
-
-                } catch (JMSException j) {
-                    handleException("Error wrapping JMS message into a SOAP envelope ", j);
-                }
-            }
+            builder = new StAXSOAPModelBuilder(
+                xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+            envelope = (SOAPEnvelope) builder.getDocumentElement();
         }
 
         String charEncOfMessage = builder.getDocument().getCharsetEncoding();
@@ -442,35 +378,6 @@ public class JMSUtils {
                 "SOAP message");
         }
         return envelope;
-    }
-
-    private static SOAPEnvelope getEnvelope(InputStream in, String namespace) throws XMLStreamException {
-
-        try {
-            in.reset();
-        } catch (IOException e) {
-            throw new XMLStreamException("Error resetting message input stream", e);
-        }
-        XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader
-            (in, MessageContext.DEFAULT_CHAR_SET_ENCODING);
-        StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, namespace);
-        return (SOAPEnvelope) builder.getDocumentElement();
-    }
-
-    private static QName getQName(Object obj) {
-        String value;
-        if (obj instanceof QName) {
-            return (QName) obj;
-        } else {
-            value = obj.toString();
-        }
-        int open = value.indexOf('{');
-        int close = value.indexOf('}');
-        if (close > open && open > -1 && value.length() > close) {
-            return new QName(value.substring(open+1, close-open), value.substring(close+1));
-        } else {
-            return new QName(value);
-        }
     }
 
     private static void handleException(String s) {

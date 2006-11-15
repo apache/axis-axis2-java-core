@@ -5,7 +5,7 @@
  <jochen.wiedmann@gmail.com>
  ------
 
-Introduction
+Goals
 
   The Aar plugin allows the packaging of an Axis 2 service aar in 3 different modes:
 
@@ -16,7 +16,7 @@ Introduction
    * exploded : package an exploded aar application
 
   Each mode is materialized by a goal. For instance, to generate an exploded
-  sar from the current project, one would type
+  aar from the current project, one would type
 
 +--------
   mvn aar:exploded

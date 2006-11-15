@@ -3,6 +3,7 @@
 <head>
   <meta http-equiv="content-type" content="">
   <title>JMS Transport</title>
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body lang="en">
@@ -111,7 +112,7 @@ provide the following optional parameters.</p>
 <h2>Writing Services to Use The JMS Transport</h2>
 
 <p>This section assumes that you are already familiar with <a
-href="userguide2.html">writing service implementations</a> for Axis2, and
+href="xmlbased-server.html">writing service implementations</a> for Axis2, and
 provides information to enable you to write your own service implementations
 which are exposed over JMS.</p>
 
@@ -188,8 +189,7 @@ this service is:</p>
 <pre> </pre>
 
 <h2>Starting up the Axis2 JMS transport</h2>
-<pre>The Axis2 standalone binary distribution ships with the Axis2 SimpleHTTPServer, which only starts up the http transport by default. Hence to start the JMS transport with it, you need to pass in the parameter '-t all' as shown below.
-
-e.g. http-server -p &lt;port&gt; <strong>-t all</strong> &lt;repository&gt;</pre>
+<pre>The Axis2 standalone binary distribution ships with an Axis2 Server, which starts up all of the transports that are configured as per the axis2.xml. 
+Hence configure the JMS transport in your axis2.xml, and use the axis2server.bat or the axis2server.sh to start the JMS transport.</pre>
 </body>
 </html>

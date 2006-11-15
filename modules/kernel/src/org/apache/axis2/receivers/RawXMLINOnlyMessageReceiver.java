@@ -21,7 +21,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.logging.Log;
@@ -43,7 +42,7 @@ import java.lang.reflect.Method;
 public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
         implements MessageReceiver {
 
-	private static final Log log = LogFactory.getLog(RawXMLINOnlyMessageReceiver.class);
+    private static final Log log = LogFactory.getLog(RawXMLINOnlyMessageReceiver.class);
 
     private Method findOperation(AxisOperation op, Class ImplClass) {
         String methodName = op.getName().getLocalPart();
@@ -51,10 +50,10 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
 
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().equals(methodName) &&
-                methods[i].getParameterTypes().length == 1 &&
-                OMElement.class.getName().equals(
-                    methods[i].getParameterTypes()[0].getName()) &&
-                "void".equals(methods[i].getReturnType().getName())) {
+                    methods[i].getParameterTypes().length == 1 &&
+                    OMElement.class.getName().equals(
+                            methods[i].getParameterTypes()[0].getName()) &&
+                    "void".equals(methods[i].getReturnType().getName())) {
                 return methods[i];
             }
         }
@@ -64,6 +63,7 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
 
     /**
      * Invokes the bussiness logic invocation on the service implementation class
+     *
      * @param msgContext the incoming message context
      * @throws AxisFault on invalid method (wrong signature)
      */
@@ -76,18 +76,15 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
             // find the WebService method
             Class ImplClass = obj.getClass();
 
-            DependencyManager.configureBusinessLogicProvider(obj,
-                    msgContext.getOperationContext());
-
             AxisOperation op = msgContext.getOperationContext().getAxisOperation();
             Method method = findOperation(op, ImplClass);
 
             if (method != null) {
                 method.invoke(
-                    obj, new Object[] {msgContext.getEnvelope().getBody().getFirstElement()});
+                        obj, new Object[]{msgContext.getEnvelope().getBody().getFirstElement()});
             } else {
                 throw new AxisFault(Messages.getMessage("methodDoesNotExistInOnly",
-                    op.getName().toString()));
+                        op.getName().toString()));
             }
 
         } catch (Exception e) {

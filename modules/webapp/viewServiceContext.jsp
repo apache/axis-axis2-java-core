@@ -57,7 +57,7 @@
 <%
 } else {
 %>
-<h4>No persistance property found in the context</h4>
+<h4>No persistance properties found in the context</h4>
 <%
         }
     }

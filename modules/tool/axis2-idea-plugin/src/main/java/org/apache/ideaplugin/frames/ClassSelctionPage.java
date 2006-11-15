@@ -60,17 +60,19 @@ public class ClassSelctionPage extends JPanel implements ObjectKeeper, ActionLis
         add(txtClassDir);
         txtClassDir.setBounds(insets.left + 136, insets.top + 24, 336, 24);
 
-        butSelect = new JButton(" ... ");
+        butSelect = new JButton("Browse...");
         add(butSelect);
         butSelect.addActionListener(this);
-        butSelect.setBounds(insets.left + 480, insets.top + 24, 56, 24);
+        butSelect.setBounds(insets.left + 480, insets.top + 24, 90, 24);
         setSize(getPreferredSize());
 //        this.parent.setEnable(true, false, false, true);
 //        this.parent.reShow();
+
+
     }
 
     public void fillBean(ArchiveBean bean) {
-        bean.setClassLocation(file);
+        bean.setClassLoc(file);
     }
 
     //to keep a refernce to next panel
@@ -79,6 +81,7 @@ public class ClassSelctionPage extends JPanel implements ObjectKeeper, ActionLis
 
     public JPanel getNext() {
         ResourceChooser res = new ResourceChooser(parent);
+        parent.setEnable(true,true,false,true);
         res.setPrivious(this);
         return res;
 //        return selectPanel;
@@ -111,11 +114,11 @@ public class ClassSelctionPage extends JPanel implements ObjectKeeper, ActionLis
                 file = parent.fc.getSelectedFile();
                 parent.fc.setCurrentDirectory(file);
                 txtClassDir.setText(file.getAbsolutePath());
-                parent.setEnable(false, true, false, true);
+                parent.setEnable(true, true, false, true);
 //                selectPanel = new SelectPanel(parent,file);
 //                selectPanel.setPrivious(this);
             } else {
-                txtClassDir.setText("No File");
+                txtClassDir.setText("");
                 parent.setEnable(true, false, false, true);
             }
         }

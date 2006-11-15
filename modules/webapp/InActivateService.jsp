@@ -24,46 +24,58 @@
   */
 %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
-<h1>Turn Off Service</h1>
+<h1>Deactivate Service</h1>
 <form method="get" name="serviceInActivate" action="axis2-admin/deactivateService">
   <table width="100%"  border="0">
 <tr>
   <td colspan="2" >
-     <p>Only the services that are active are listed below. Note that although you can activate a service from this page,once system is restarted the service will be active again</p>
-<%--    <b>Remove Service :</b> The selected axisService will be removed from the file system and if the--%>
-<%--    &nbsp; system restart it wont be there next time--%>
+     <p>Only the services that are active are listed below. Note that although you can activate a service from this page, once system is restarted the service will be active again</p>
   </td>
   </tr>
   <tr>
+<%
+HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
+Collection col = services.values();
+String html = "";
+int count = 0;
+
+for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+	AxisService axisServices = (AxisService) iterator.next();
+	if(axisServices.isActive()){
+		count++;
+		html += "<option value='" + axisServices.getName() + "'>";
+		html += axisServices.getName() + "</option>";
+	}
+}
+request.getSession().setAttribute(Constants.SERVICE_MAP,null);
+if (count > 0) {
+%>
+
     <td width="20%"> Select Service : </td>
     <td width="80%">
-       <select name="axisService" class="selectBoxes" >
-
-                           <%
-                       HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
-                       Collection col = services.values();
-                       for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-                           AxisService axisServices = (AxisService) iterator.next();
-                           if(axisServices.isActive()){
-                               %> <option value="<%=axisServices.getName()%>">
-                           <%=axisServices.getName()%></option> <%
-                           }
-                       }
-                       request.getSession().setAttribute(Constants.SERVICE_MAP,null);
-                           %>
-                  </td>
+       <select name="axisService" class="selectBoxes">
+<%=html%>
+		</select>
+	</td>
   </tr>
   <tr>
-    <td width="20%">Inactivate Service </td>
+    <td width="20%">Deactivate Service </td>
     <td width="80%"><input type="checkbox" name="turnoff">
     </td>
   </tr>
   <tr>
   <td>&nbsp;</td>
   <td>
-    <input name="submit" type="submit" value=" Inactivate " >
+    <input name="submit" type="submit" value=" Deactivate " >
    <input name="reset" type="reset" value=" Clear " >
   </td>
+<%
+} else {
+	%>
+	<td colspan="2">No active services present.</td>
+	<%
+}
+%>
   </tr>
 
 </table>

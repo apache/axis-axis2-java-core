@@ -18,10 +18,6 @@
                      class="org.apache.axis2.engine.AddressingBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
-            <handler name="RequestURIOperationDispatcher"
-                     class="org.apache.axis2.engine.RequestURIOperationDispatcher">
-                <order phase="Dispatch"/>
-            </handler>
 
             <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">

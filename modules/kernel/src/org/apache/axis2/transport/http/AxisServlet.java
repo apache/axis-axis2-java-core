@@ -36,7 +36,6 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -80,8 +79,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
 
     protected MessageContext
-            createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
-                                               HttpServletRequest req) throws AxisFault {
+    createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
+                                       HttpServletRequest req) throws AxisFault {
         MessageContext msgContext = new MessageContext();
         if (axisConfiguration.isManageTransportSession()) {
             // We need to create this only if transport session is enabled.
@@ -120,13 +119,24 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     /**
-     * Set the context root if it is not set already. 
-     * 
+     * Set the context root if it is not set already.
+     *
      * @param req
      */
     public void initContextRoot(HttpServletRequest req) {
-        if (contextRoot == null) {
-            String [] parts = JavaUtils.split(req.getContextPath(), '/');
+        boolean findContext = true;
+        String findContextParameter = servletConfig.getInitParameter("axis2.find.context");
+        if (findContextParameter != null) {
+            findContextParameter = findContextParameter.trim();
+            findContext = JavaUtils.isTrue(findContextParameter);
+        }
+        if(!findContext) {
+            if (contextRoot == null) {
+                contextRoot = configContext.getContextRoot();
+            }
+        }
+        if (contextRoot == null || "".equals(contextRoot)) {
+            String[] parts = JavaUtils.split(req.getContextPath(), '/');
             if (parts != null) {
                 for (int i = 0; i < parts.length; i++) {
                     if (parts[i].length() > 0) {
@@ -152,7 +162,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                          HttpServletResponse resp) throws ServletException, IOException {
 
         initContextRoot(req);
-        
+
         // this method is also used to serve for the listServices request.
 
         String requestURI = req.getRequestURI();
@@ -163,15 +173,17 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // 2. list services requests
         // 3. REST requests.
         if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
-                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0)) { // handling meta data exchange stuff
+                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 || query.indexOf("policy") >= 0)) { // handling meta data exchange stuff
             agent.processListService(req, resp);
-        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) || requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) { // handling list services request
+        } else
+        if (requestURI.endsWith(LIST_SERVICES_SUFIX) || requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) { // handling list services request
             try {
                 agent.handle(req, resp);
             } catch (Exception e) {
                 throw new ServletException(e);
             }
-        } else if (!disableREST && enableRESTInAxis2MainServlet) { // if the main servlet should handle REST also
+        } else
+        if (!disableREST && enableRESTInAxis2MainServlet) { // if the main servlet should handle REST also
             MessageContext messageContext = null;
             try {
                 messageContext = createMessageContext(req, resp);
@@ -288,7 +300,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
         AxisEngine engine = new AxisEngine(configContext);
-        MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
+        MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
 
         engine.sendFault(faultContext);
     }
@@ -306,16 +318,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             axisConfiguration = configContext.getAxisConfiguration();
             config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
-            // setting the ServletConfig to AxisConfiguration
-            Parameter servletConfigParam = new Parameter();
-            servletConfigParam.setName(HTTPConstants.HTTP_SERVLETCONFIG);
-            servletConfigParam.setValue(this.servletConfig);
-            axisConfiguration.addParameter(servletConfigParam);
+
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
-            // setting ServletContext into configctx
-            configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
-                    servletConfig.getServletContext());
             TransportInDescription transportInDescription = new TransportInDescription(
                     new QName(Constants.TRANSPORT_HTTP));
             transportInDescription.setReceiver(this);
@@ -348,6 +353,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (parameter != null) {
             disableSeperateEndpointForREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
         }
+
     }
 
     public void init() throws ServletException {
@@ -449,7 +455,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         if (!disableREST && !disableSeperateEndpointForREST) {
             EndpointReference restEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
-                configContext.getRESTContextPath() + "/" + serviceName);
+                    configContext.getRESTContextPath() + "/" + serviceName);
             return new EndpointReference[]{soapEndpoint, restEndpoint};
         } else {
             return new EndpointReference[]{soapEndpoint};

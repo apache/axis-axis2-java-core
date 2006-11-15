@@ -5,6 +5,7 @@
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <title>WS Policy Support in Axis2</title>
   <meta name="generator" content="amaya 9.2.1, see http://www.w3.org/Amaya/">
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body lang="en">
@@ -51,10 +52,12 @@ line of code.</p>
 <p>This release <strong>fully supports WS Policy at client-side</strong>. It
 means that when you codegen a stub against a WSLD which contains policies,
 the stub will contain the capability to engage the required modules with the
-appropriate configurations. For instance, if there is a security policy
-attached to an operation in the WSDL, the generated stub will engage the
-security module for that operation with the appropriate security
-configurations.</p>
+appropriate configurations plus it will generate additional methods in stub 
+where the user can used set certain properties. For instance, if there is 
+a security policy attached to a binding, the generated stub will engage the
+security module for that service with the appropriate security
+configurations with some addtional methods that the user can used set properties 
+in the generated stub.</p>
 
 <h3>How it works:</h3>
 
@@ -62,74 +65,73 @@ configurations.</p>
 
 <p>Codegen engine runs few of its registered extensions before it generates
 the stub. When PolicyEvalutor (which is a registered Codegen extension) is
-initialized, it populates a registry of namespaces of supported policies to
+initialized, it populates a registry of QNames of supported policy assertions to
 PolicyExtensions.</p>
 
-<p>For instance, module foo might have a mapping of namespace
-http://test.com/foo which means any primitive assertion which has this
-namespace will be processed by this module. Foo module might implement the
-ModulePolicyExtension interface through which PolicyExtension object can be
-obtained.</p>
+<p>For instance, module Foo might have a mapping of assertion
+{http://test.com/foo, foo} which means any assertion that has this name will be 
+processed by this module. Foo module might implement the ModulePolicyExtension 
+interface through which PolicyExtension object can be obtained.</p>
 
 <p>A <strong>PolicyExtension</strong> is the access point for a module to add
-any other methods to the stub. For instance Reliable Messaging module can add
-createSequence() and endSequence() methods to the stub, that the user must
-call to start and end an RM sequence.</p>
+any additional methods to the stub. For instance Reliable Messaging module can add
+startSequence() and endSequence() methods to the stub, that the user must call to
+start and end an RM sequence.</p>
 
-<p>Then at the engagement of PolicyEvaluator, effective policy of each
-operation is calculated based on policy information declared in the WSDL
+<p>Then at the engagement of PolicyEvaluator, effective policy of each messages 
+of every operation is calculated based on policy information declared in the WSDL
 document. Here we assume that effective policy of an operation contains a
 single alternative (<strong>Multiple policy alternatives are not
 supported</strong>). Then we split that policy as follows into few other
-policies such that, each policy will contain primitive assertions belonging
-to only one namespace.</p>
-<pre>  &lt;wsp:Policy&gt;         &lt;wsp:Policy&gt;       &lt;wsp:Policy&gt;           &lt;wsp:Policy&gt;
-    &lt;a:Foo/&gt;             &lt;a:Foo/&gt;           &lt;b:Foo/&gt;               &lt;c:Bar/&gt;
-    &lt;a:Bar/&gt;      =&gt;     &lt;a:Bar/&gt;         &lt;/wsp:Policy&gt;          &lt;/wsp:Policy&gt;
-    &lt;b:Foo/&gt;           &lt;/wsp:Policy&gt;
-    &lt;c:Bar/&gt;
+policies such that, each policy will contain assertions that can be processed
+by a single module.</p>
+<pre>  &lt;wsp:Policy&gt;         &lt;wsp:Policy&gt;       &lt;wsp:Policy&gt;        
+    &lt;a:Foo/&gt;             &lt;a:Foo/&gt;           &lt;b:Foo/&gt;               
+    &lt;b:Bar/&gt;      =&gt;    		           &lt;/wsp:Policy&gt;       
+    		               &lt;/wsp:Policy&gt;
   &lt;/wsp:Policy&gt;</pre>
 
 <p>Then each policy is given to the appropriate PolicyExtension with an
 org.w3c.Element type object to which the module can append any other
 elements/attributes it wishes. Those attributes/elements should resolve to
-meaningful stub functions via PolicyExtensionTemplate.xsl at latter point of
-time.</p>
+meaningful stub functions via Custom PolicyExtensionTemplate.xsl at latter point
+of time.</p>
 
 <p>For instance depending on the policy, Security module can append
 &lt;username&gt;, &lt;passwd&gt; elements to the given element as children,
 which are later resolved into setUsername(..), setPasswd(..), functions of
 the stub. This way a module can include additional methods to the stub which
-can be used to get specific parameters to the module. These methods store any
-user input in the ServiceClient properties
+can be used to get specific propreties from the user. These methods store any
+user input in the ServiceClient properties 
 (ServiceClient.getOptions().putProperty(...)) which can later be accessed by
 the module.</p>
 
-<h4>Phase 2: At MultiLanguageClientEmitter</h4>
+<h4>Phase 2: At AxisServiceBasedMultiLanguageClientEmitter</h4>
 
-<p>Further, effective policies (based on the WSDL) at appropriate levels
-(service level, operation level) are stored as policy strings in the stub.
-Few more generic methods are also added to the stub which are used to
-evaluate/process policies at runtime.</p>
+<p>Further, policies (based on the WSDL) at appropriate levels
+(service level, operation level) are stored as policy strings in the stub. If 
+there are few policies at a given level they are merged together and represented
+as a single policy in the stub. Few more generic methods are also added to the 
+stub which are used to evaluate/process policies at runtime.</p>
 
 <h4>Phase 3: Runtime</h4>
 
 <p>When a new stub object is created, the policy strings in the stub are
-converted into policy objects and merged together to get the effective
-policies of each operation. These effective policies are stored in
-appropriate AxisOperation objects which a module can access at later point of
-time.</p>
+converted into policy objects and are set in the AxisDescription hierarchy that 
+is used in the stub. In other words, any policy information available in the 
+WSDL will be preserved in the AxisService object that is used in the stub.</p>
 
-<p>Then based on its policy each AxisOperation is engaged to a set of
-modules.</p>
+<p>Then based on its policy each AxisDescription is engaged to a set of
+modules. Modules can do a prior calculation of configurations if needed at the
+engagement.</p>
 
 <p>When the stub method is invoked, those modules which are engaged to that
-AxisOperation, access the effective policy for that operation via
-AxisOperation object. It can get other information needed from the
-MessageContext which get stored by stub methods which the module has added to
-the stub earlier. The modules are required to loads their configurations
-according to the effective policy which is set in AxisOperation and
-properties they get via MessageContext.</p>
+AxisDescription, access the policy for that operation via AxisDescription object.
+It can get other information needed from the MessageContext which get stored by 
+stub methods which the module has added to the stub earlier via 
+ModulePolicyExtension implementation. The modules are required to loads their 
+configurations according to the effective policy which is set at AxisDescription
+and properties they get via MessageContext.</p>
 <a name="server"></a>
 
 <h2>Server Side WS-Policy Support</h2>
@@ -146,14 +148,18 @@ axis2.xml then that policy is reflected in service elements of WSDL of every
 service. If a policy is declared in a services.xml, it is shown in the
 service element of WSDL for that particular service.</p>
 
-<p>Next step is to use that information to engage and configure required
-modules and allow the module to make use of this policy information.</p>
+<p>Further when a service is deployed, an arbitary policy alternative is 
+selected and set for each AxisOperation and AxisMessages of the AxisService. If 
+the selected Policy alternative can not be supported by any modules that are 
+capable of processing the selective alternative, then the service is considered 
+as a faulty service. Else set of modules is engaged at appropriate levels to 
+support the requirments and capabilities that are defined in the Policies 
+that are associated with the AxisDescription.</p>
 
-<p>It is evident that a great deal of work is required to make axis2 a fully
-fledged ws-policy supported web service infrastructure. But it is encouraging
-to note that we've taken the first steps towards this goal. We appreciate any
-suggestions, patches etc you send us in this regard. Keep on
-contributing...!</p>
+<p>It is evident that there is some work left to make axis2 a fully fledged 
+ws-policy supported web service infrastructure. But it is encouraging to note 
+that we've taken the first steps towards this goal. We appreciate any suggestions,
+patches etc you send us in this regard. Keep on contributing...!</p>
 <a name="resources"></a>
 
 <h2>Resources</h2>
@@ -162,7 +168,7 @@ contributing...!</p>
     href="http://ws.apache.org/commons/neethi/index.html"
     target="_blank">Home Page</a></li>
   <li>Sanka Samaranayake, March 2006. <a
-    href="http://www.wso2.net/2006/01/web_services_policy_why_what_how"
+    href="http://www.wso2.net/articles/neethi/java/2006/01/24/ws-policy"
     target="_blank">Web services Policy - Why, What &amp; How</a></li>
   <li><a
     href="http://svn.apache.org/viewcvs.cgi/webservices/commons/trunk/modules/neethi/"

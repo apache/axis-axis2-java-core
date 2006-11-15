@@ -276,4 +276,8 @@ public class WSDLOptionsPage extends AbstractServiceWizardPage {
         }
         setPageComplete(!status);
     }
+    
+	protected boolean getWizardComplete() {
+		return false;
+	}
 }

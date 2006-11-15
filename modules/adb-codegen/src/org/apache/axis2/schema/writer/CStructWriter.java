@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.axis2.schema.writer;
 
 import org.w3c.dom.Document;
@@ -200,7 +199,16 @@ public class CStructWriter implements BeanWriter {
      * @see org.apache.axis2.schema.writer.BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
-        throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.notimplementedxception"));
+        try {
+            //determine the package for this type.
+            QName qName = simpleType.getQName();
+            return process(qName, metainf, typeMap, false);
+
+        } catch (SchemaCompilationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new SchemaCompilationException(e);
+        }
     }
 
     /**
@@ -724,7 +732,6 @@ public class CStructWriter implements BeanWriter {
     /**
      * Keep unimplemented
      * @see org.apache.axis2.schema.writer.BeanWriter#getExtensionMapperPackageName() 
-     * @return
      */
     public String getExtensionMapperPackageName() {
         return null;

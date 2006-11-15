@@ -196,11 +196,11 @@ public class EnginePausingTest extends TestCase {
             if (pause) {
                 msgContext.pause();
                 pause = false;
-                return InvocationResponse.SUSPEND;
-                } else {
+                return InvocationResponse.SUSPEND;        
+            } else {
                 executedHandlers.add(index);
-                return InvocationResponse.CONTINUE;
-                }
+                return InvocationResponse.CONTINUE;        
+            }
         }
 
     }

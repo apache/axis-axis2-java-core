@@ -90,13 +90,16 @@ public class RampartUtil {
      * @throws RampartException
      */
     public static CallbackHandler getPasswordCB(MessageContext msgContext, RampartPolicyData rpd) throws RampartException {
-        ClassLoader classLoader = msgContext.getAxisService().getClassLoader();
-        String cbHandlerClass = rpd.getRampartConfig().getPwCbClass();
-        
-        log.debug("loading class : " + cbHandlerClass);
         
         CallbackHandler cbHandler;
-        if (cbHandlerClass != null) {
+
+        if (rpd.getRampartConfig() != null && rpd.getRampartConfig().getPwCbClass() != null) {
+            
+            String cbHandlerClass = rpd.getRampartConfig().getPwCbClass();
+            ClassLoader classLoader = msgContext.getAxisService().getClassLoader();
+                
+            log.debug("loading class : " + cbHandlerClass);
+            
             Class cbClass;
             try {
                 cbClass = Loader.loadClass(classLoader, cbHandlerClass);
@@ -176,8 +179,8 @@ public class RampartUtil {
             throws RampartException {
         log.debug("Loading encryption crypto");
         
-        CryptoConfig cryptoConfig = config.getEncrCryptoConfig();
-        if(cryptoConfig != null) {
+        if(config != null && config.getEncrCryptoConfig() != null) {
+            CryptoConfig cryptoConfig = config.getEncrCryptoConfig();
             String provider = cryptoConfig.getProvider();
             log.debug("Usig provider: " + provider);
             Properties prop = cryptoConfig.getProp();
@@ -185,10 +188,10 @@ public class RampartUtil {
             return CryptoFactory.getInstance(prop, loader);
         } else {
             log.debug("Trying the signature crypto info");
+
             //Try using signature crypto infomation
-            cryptoConfig = config.getSigCryptoConfig();
-            
-            if(cryptoConfig != null) {
+            if(config != null && config.getSigCryptoConfig() != null) {
+                CryptoConfig cryptoConfig = config.getSigCryptoConfig();
                 String provider = cryptoConfig.getProvider();
                 log.debug("Usig provider: " + provider);
                 Properties prop = cryptoConfig.getProp();
@@ -212,8 +215,8 @@ public class RampartUtil {
             throws RampartException {
         log.debug("Loading Signature crypto");
         
-        CryptoConfig cryptoConfig = config.getSigCryptoConfig();
-        if(cryptoConfig != null) {
+        if(config != null && config.getSigCryptoConfig() != null) {
+            CryptoConfig cryptoConfig = config.getSigCryptoConfig();
             String provider = cryptoConfig.getProvider();
             log.debug("Usig provider: " + provider);
             Properties prop = cryptoConfig.getProp();
@@ -294,7 +297,7 @@ public class RampartUtil {
     public static int getTimeToLive(RampartMessageData messageData) {
 
         RampartConfig rampartConfig = messageData.getPolicyData().getRampartConfig();
-        
+        if(rampartConfig != null) {
         String ttl = rampartConfig.getTimestampTTL();
         int ttl_i = 0;
         if (ttl != null) {
@@ -308,6 +311,9 @@ public class RampartUtil {
             ttl_i = messageData.getTimeToLive();
         }
         return ttl_i;
+        } else {
+            return RampartConfig.DEFAULT_TIMESTAMP_TTL;
+        }
     }
     
     /**
@@ -349,11 +355,9 @@ public class RampartUtil {
             bsPol.addAssertion(rmd.getPolicyData().getRampartConfig());
             stsPolicy = bsPol;
         } else {
-            //No bootstrap policy
-            //Use issuer policy specified in rampart config
-            log.debug("No bootstrap policy, using issuer" +
-                    " policy specified in rampart config");
-            stsPolicy = rmd.getPolicyData().getRampartConfig().getTokenIssuerPolicy();
+            //No bootstrap policy use issuer policy
+            log.debug("No bootstrap policy, using issuer policy");
+            stsPolicy = rmd.getPolicyData().getIssuerPolicy();
         }
         
         String id = getToken(rmd, rstTemplate,
@@ -385,8 +389,7 @@ public class RampartUtil {
             OMElement rstTemplate = issuedToken.getRstTemplate();
 
             // Get STS policy
-            Policy stsPolicy = rmd.getPolicyData().getRampartConfig()
-                    .getTokenIssuerPolicy();
+            Policy stsPolicy = rmd.getPolicyData().getIssuerPolicy();
 
             String id = getToken(rmd, rstTemplate, issuerEprAddress, action,
                     stsPolicy);

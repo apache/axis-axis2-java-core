@@ -7,6 +7,7 @@ import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
 import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.util.SchemaUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -78,7 +79,7 @@ import java.util.Properties;
 public class SchemaCompiler {
 
     private static final Log log = LogFactory.getLog(SchemaCompiler .class);
-  
+
     private CompilerOptions options;
     private HashMap processedTypemap;
 
@@ -228,6 +229,14 @@ public class SchemaCompiler {
                 //mapper namespace
                 for (int i = 0; nsp == null && i < schemalist.size(); i++) {
                     nsp = ((XmlSchema) schemalist.get(i)).getTargetNamespace();
+                    if (nsp != null)
+                        break;
+                    XmlSchema[] schemas = SchemaUtil.getAllSchemas((XmlSchema) schemalist.get(i));
+                    for (int j = 0; schemas != null && j < schemas.length; j++) {
+                        nsp = schemas[j].getTargetNamespace();
+                        if (nsp != null)
+                            break;
+                    }
                 }
                 if(nsp == null) {
                     nsp = URLProcessor.DEFAULT_PACKAGE;
@@ -493,9 +502,8 @@ public class SchemaCompiler {
      * Process and Element
      *
      * @param xsElt
-     * @param isOuter-  We need to know this since the treatment of outer elements is different that
+     * @param isOuter  We need to know this since the treatment of outer elements is different that
      *                     inner elements
-     * @param isArray-  flag saying whether the elements represents an array
      * @throws SchemaCompilationException
      */
     private void processElement(XmlSchemaElement xsElt, boolean isOuter,Map innerElementMap,List localNillableList, XmlSchema parentSchema) throws SchemaCompilationException {
@@ -573,6 +581,31 @@ public class SchemaCompiler {
                         xsElt.addMetaInfo(
                                 SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                                 className);
+                    } else if (schemaType instanceof XmlSchemaSimpleType){
+                        //set a name
+                        schemaType.setName(generatedTypeName.getLocalPart());
+                        // Must do this up front to support recursive types
+                        String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(schemaType.getQName());
+                        processedTypemap.put(schemaType.getQName(), fullyQualifiedClassName);
+
+                        BeanWriterMetaInfoHolder metaInfHolder = (BeanWriterMetaInfoHolder) processedAnonymousComplexTypesMap.get(xsElt);
+                        metaInfHolder.setOwnQname(schemaType.getQName());
+                        metaInfHolder.setOwnClassName(fullyQualifiedClassName);
+
+                        writeSimpleType((XmlSchemaSimpleType)schemaType,
+                                metaInfHolder);
+                        //remove the reference from the anon list since we named the type
+                        processedAnonymousComplexTypesMap.remove(xsElt);
+                        String className = findClassName(schemaType.getQName(), isArray(xsElt));
+                        innerElementMap.put(
+                                xsElt.getQName(),
+                                className);
+
+                        //store in the schema map
+                        xsElt.addMetaInfo(
+                                SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                                className);
+
                     }
                 }
             }else{
@@ -680,7 +713,6 @@ public class SchemaCompiler {
      *
      * @param schemaTypeName
      * @param currentSchema
-     * @return
      */
     private XmlSchema resolveParentSchema(QName schemaTypeName,XmlSchema currentSchema)
             throws SchemaCompilationException{
@@ -702,7 +734,6 @@ public class SchemaCompiler {
      * Generate a unique type Qname using an element name
      * @param referenceEltQName
      * @param parentSchema
-     * @return
      */
     private QName generateTypeQName(QName referenceEltQName, XmlSchema parentSchema) {
         QName generatedTypeName = new QName(referenceEltQName.getNamespaceURI(),
@@ -738,7 +769,6 @@ public class SchemaCompiler {
     /**
      * Finds whether a given class is already made
      * @param qName
-     * @return
      */
     private boolean isAlreadyProcessed(QName qName){
         return processedTypemap.containsKey(qName)||
@@ -751,7 +781,6 @@ public class SchemaCompiler {
      * A method to pick the ref class name
      * @param name
      * @param isArray
-     * @return
      */
     private String findRefClassName(QName name,boolean isArray){
         String className = null;
@@ -1024,7 +1053,7 @@ public class SchemaCompiler {
             //process the base type if it has not been processed yet
             if (!isAlreadyProcessed(restriction.getBaseTypeName())){
                 //pick the relevant basetype from the schema and process it
-                XmlSchemaType type=  parentSchema.getTypeByName(restriction.getBaseTypeName());
+                XmlSchemaType type = getType(parentSchema, restriction.getBaseTypeName());
                 if (type instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
                     if (complexType.getName() != null) {
@@ -1135,7 +1164,7 @@ public class SchemaCompiler {
         	//process the base type if it has not been processed yet
         	if (!isAlreadyProcessed(extension.getBaseTypeName())){
         		//pick the relevant basetype from the schema and process it
-        		XmlSchemaType type=  parentSchema.getTypeByName(extension.getBaseTypeName());
+        		XmlSchemaType type = getType(parentSchema,extension.getBaseTypeName());
         		if (type instanceof XmlSchemaComplexType) {
         			XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
         			if (complexType.getName() != null) {
@@ -1177,7 +1206,7 @@ public class SchemaCompiler {
         	//process the base type if it has not been processed yet
         	if (!isAlreadyProcessed(restriction.getBaseTypeName())){
         		//pick the relevant basetype from the schema and process it
-        		XmlSchemaType type=  parentSchema.getTypeByName(restriction.getBaseTypeName());
+        		XmlSchemaType type = getType(parentSchema,restriction.getBaseTypeName());
         		if (type instanceof XmlSchemaComplexType) {
         			XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
         			if (complexType.getName() != null) {
@@ -1538,7 +1567,9 @@ public class SchemaCompiler {
                     }
                 }
 
-
+                if(referencedQName == null) {
+                    throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.emptyName"));
+                }
 
                 //register the occurence counts
                 metainfHolder.addMaxOccurs(referencedQName, elt.getMaxOccurs());
@@ -1668,7 +1699,6 @@ public class SchemaCompiler {
     /**
      * Checks whether a given element is a binary element
      * @param elt
-     * @return
      */
     private boolean isBinary(XmlSchemaElement elt) {
         return elt.getSchemaType()!=null &&
@@ -1678,7 +1708,6 @@ public class SchemaCompiler {
     /**
      * Checks whether a given qname is a binary
      * @param qName
-     * @return
      */
     private boolean isBinary(QName qName) {
         return qName!=null &&
@@ -1783,7 +1812,6 @@ public class SchemaCompiler {
      * Also no higher level element will have the maxOccurs greater than one
      *
      * @param particle
-     * @return
      * @throws SchemaCompilationException
      */
     private boolean isArray(XmlSchemaParticle particle) throws SchemaCompilationException {

@@ -27,10 +27,12 @@ public interface DeploymentConstants {
     public static String SERVICES_XML = "META-INF/services.xml";
     public static String MODULE_XML = "META-INF/module.xml";
     public static String SERVICE_PATH = "services";
+    public static String SERVICE_DIR_PATH = "ServicesDirectory";
     public static String MODULE_PATH = "modules";
+    public static String MODULE_DRI_PATH = "ModulesDirectory";
 
     int TYPE_SERVICE = 0;                // is it a service
-    int TYPE_DEFAULT= -1;                // is it a service
+    int TYPE_DEFAULT = -1;                // is it a service
     int TYPE_MODULE = 1;                // is it a module
 
     String TAG_AXISCONFIG = "axisconfig";
@@ -55,7 +57,8 @@ public interface DeploymentConstants {
     String TAG_PHASE_FIRST = "phaseFirst";
     String TAG_ORDER = "order";           // to resolve the order tag
     String TAG_OPERATION = "operation";       // operation start tag
-    String TAG_EXCLUDE_OPERATIONS="excludeOperations";
+    String TAG_OBJECT_SUPPLIER = "ObjectSupplier";       // operation start tag
+    String TAG_EXCLUDE_OPERATIONS = "excludeOperations";
     String TAG_MESSAGE_RECEIVER = "messageReceiver";
     String TAG_MESSAGE_RECEIVERS = "messageReceivers";
     String TAG_TRANSPORTS = "transports";
@@ -89,13 +92,15 @@ public interface DeploymentConstants {
     String SCHEMA_NAME_SPACE = "schemaNamespace";
     String SCHEMA_ELEMENT_QUALIFIED = "elementFormDefaultQualified";
     String SCHEMA = "schema";
+    String MAPPING = "mapping";
+    String ATTRIBUTE_NAMESPACE = "namespace";
+    String ATTRIBUTE_PACKAGE = "package";
 
     String ATTRIBUTE_DEFAULT_VERSION = "version";
     String ATTRIBUTE_SCOPE = "scope";
     String ATTRIBUTE_LOCKED = "locked";
 
     String PROPERTY_TEMP_DIR = "java.io.tmpdir";
-    String DIRECTORY_MODULES = "modules";
     String DIRECTORY_CONF = "conf";
     String DIRECTORY_AXIS2_HOME = ".axis2";
     String RESOURCE_MODULES = "modules/";
@@ -109,7 +114,6 @@ public interface DeploymentConstants {
             "org/apache/axis2/deployment/axis2_default.xml";
     String AXIS2_REPO = "repository";
     String AXIS2_CONFIGURATION_XML = "axis2.xml";
-    String DIRECTORY_SERVICES = "services";
     String BOOLEAN_TRUE = "true";
     String BOOLEAN_FALSE = "false";
     char SEPARATOR_DOT = '.';

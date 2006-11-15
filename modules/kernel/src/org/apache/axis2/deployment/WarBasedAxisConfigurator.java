@@ -1,20 +1,22 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisConfigurator;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletConfig;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.stream.XMLStreamException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -80,11 +82,11 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
      * <li> When none of the above could be found, the axis2.xml is loaded from the classpath resource, the value of DeploymenConstants.AXIS2_CONFIGURATION_RESOURCE.
      * </ul>
      *
-     * @param svconfig the ServletConfig object from the AxisServlet. This method is called from the init() of the AxisServlet.
+     * @param servletConfig the ServletConfig object from the AxisServlet. This method is called from the init() of the AxisServlet.
      */
-    public WarBasedAxisConfigurator(ServletConfig svconfig) {
+    public WarBasedAxisConfigurator(ServletConfig servletConfig) {
         try {
-            this.config = svconfig;
+            this.config = servletConfig;
             InputStream axis2Stream = null;
 
             try {
@@ -278,13 +280,42 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
             InputStream servicexml = config.getServletContext().
                     getResourceAsStream("/WEB-INF/services.xml");
             if (servicexml != null) {
+                HashMap wsdlServices = new HashMap();
+                ArchiveReader archiveReader = new ArchiveReader();
+                String path = config.getServletContext().getRealPath("/WEB-INF");
+                if(path != null){
+                    archiveReader.processFilesInFolder(new File(path),wsdlServices);
+                }
                 AxisServiceGroup serviceGroup = DeploymentEngine.buildServiceGroup(servicexml,
                         Thread.currentThread().getContextClassLoader(),
-                        "annonServiceGroup", axisConfig);
+                        "annonServiceGroup", configContext,
+                        archiveReader, wsdlServices);
                 axisConfig.addServiceGroup(serviceGroup);
             }
         } catch (AxisFault axisFault) {
             log.info(axisFault);
+        } catch (FileNotFoundException e) {
+            log.info(e);
+        } catch (XMLStreamException e) {
+            log.info(e);
+        }
+    }
+
+    public void setConfigContext(ConfigurationContext configContext) {
+        super.setConfigContext(configContext);
+        // setting ServletContext into configctx
+        configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
+                config.getServletContext());
+        // setting ServletContext into configctx
+        configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
+                                  config.getServletContext());
+        Parameter servletConfigParam = new Parameter();
+        servletConfigParam.setName(HTTPConstants.HTTP_SERVLETCONFIG);
+        servletConfigParam.setValue(config);
+        try {
+            configContext.getAxisConfiguration().addParameter(servletConfigParam);
+        } catch (AxisFault axisFault) {
+            log.error(axisFault);
         }
     }
 }

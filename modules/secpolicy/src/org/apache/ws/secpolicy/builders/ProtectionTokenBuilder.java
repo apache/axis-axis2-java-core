@@ -35,7 +35,7 @@ public class ProtectionTokenBuilder implements AssertionBuilder {
     public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException {
         ProtectionToken protectionToken = new ProtectionToken();
         
-        Policy policy = PolicyEngine.getPolicy(element);
+        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
         policy = (Policy) policy.normalize(false);
         
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {

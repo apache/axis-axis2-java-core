@@ -30,28 +30,32 @@
 <tr>
   <td colspan="2" >
      <p>The services that are inactive are listed below. Although you can activate the services from this page, once system is restarted the services will be inactive again</p>
-<%--    <b>Remove Service :</b> The selected axisService will be removed from the file system and if the--%>
-<%--    &nbsp; system restart it wont be there next time--%>
   </td>
   </tr>
   <tr>
+  <%
+HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
+Collection col = services.values();
+String html = "";
+int count = 0;
+
+for (Iterator iterator = col.iterator(); iterator.hasNext();) {
+	AxisService axisServices = (AxisService) iterator.next();
+	if(!axisServices.isActive()){
+		count++;
+		html += "<option value='" + axisServices.getName() + "'>";
+		html += axisServices.getName() + "</option>";
+	}
+}
+request.getSession().setAttribute(Constants.SERVICE_MAP,null);
+if (count > 0) {
+%>
+  
     <td width="20%"> Select Service : </td>
     <td width="80%">
-       <select name="axisService" class="selectBoxes" >
-
-                           <%
-                       HashMap services = (HashMap)request.getSession().getAttribute(Constants.SERVICE_MAP);
-                       Collection col = services.values();
-                       for (Iterator iterator = col.iterator(); iterator.hasNext();) {
-                           AxisService axisServices = (AxisService) iterator.next();
-                           if(!axisServices.isActive()){
-                               %> <option value="<%=axisServices.getName()%>">
-                           <%=axisServices.getName()%></option> <%
-                           }
-                        }
-                       request.getSession().setAttribute(Constants.SERVICE_MAP,null);
-                           %>
-                  </td>
+       <select name="axisService" class="selectBoxes">
+		<%=html%>
+		</select>
   </tr>
   <tr>
     <td width="20%">Activate Service </td>
@@ -64,6 +68,13 @@
     <input name="submit" type="submit" value=" Activate " >
    <input name="reset" type="reset" value=" Clear " >
   </td>
+<%
+} else {
+	%>
+	<td colspan="2">No inactive services present.</td>
+	<%
+}
+%>
   </tr>
 
 </table>

@@ -80,7 +80,6 @@ public class JMSEchoRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         // Start ActiveMQ embedded broker
         broker.setUseJmx(false);
-        broker.setPersistent(false);
         broker.addConnector("tcp://localhost:61616");
         broker.start();
 
@@ -191,9 +190,9 @@ public class JMSEchoRawXMLTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
-        //options.setTransportInProtocol(Constants.TRANSPORT_JMS);
-        //options.setUseSeparateListener(true);
-        options.setTimeOutInMilliSeconds(2*60*1000);
+        options.setTransportInProtocol(Constants.TRANSPORT_JMS);
+        options.setUseSeparateListener(true);
+        options.setTimeOutInMilliSeconds(60*60*1000);
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);

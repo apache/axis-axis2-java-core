@@ -36,7 +36,8 @@ import java.util.List;
 
 public class ServiceArchiveWizard extends Wizard implements INewWizard {
 
-    private ClassFileLocationPage classFileLocationPage;
+
+	private ClassFileLocationPage classFileLocationPage;
     private WSDLFileSelectionPage wsdlFileSelectionPage;
     private ServiceXMLFileSelectionPage serviceXMLFileSelectionPage;
     private ServiceXMLGenerationPage serviceXMLGenerationPage;
@@ -86,6 +87,19 @@ public class ServiceArchiveWizard extends Wizard implements INewWizard {
         setWindowTitle(ServiceArchiver.getResourceString("main.title"));
     }
 
+    public boolean canFinish() {
+        IWizardPage[] pages = getPages();
+        AbstractServiceWizardPage wizardPage = null;
+        for (int i = 0; i < pages.length; i++) {
+            wizardPage = (AbstractServiceWizardPage) pages[i];
+            if (wizardPage.getName().equals("page4.name")){
+	            if (!wizardPage.getWizardComplete() ) {
+	                    return false;
+	            }
+            }
+        }
+        return true;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)

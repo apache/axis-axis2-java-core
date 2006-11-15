@@ -21,6 +21,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -32,9 +33,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.xmlbeans.BindingConfig;
 import org.apache.xmlbeans.Filer;
 import org.apache.xmlbeans.SchemaGlobalElement;
@@ -52,13 +50,14 @@ import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.io.StringWriter;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,7 +127,7 @@ public class CodeGenerationUtility {
                 XmlOptions options = new XmlOptions();
                 options.setLoadAdditionalNamespaces(
                         nameSpacesMap); //add the namespaces
-                XmlSchema[] allSchemas = getAllSchemas(schema);
+                XmlSchema[] allSchemas = SchemaUtil.getAllSchemas(schema);
                 for (int j = 0; j < allSchemas.length; j++) {
                     completeSchemaList.add(allSchemas[j]);
                 }
@@ -181,11 +180,19 @@ public class CodeGenerationUtility {
             cgconfig.putProperty(Constants.PLAIN_BASE_64_PROPERTY_KEY,
                     findPlainBase64Types(sts));
 
+            SchemaTypeSystem internal = XmlBeans.getBuiltinTypeSystem();
+            SchemaType[] schemaTypes = internal.globalTypes();
+            for (int j = 0; j < schemaTypes.length; j++) {
+                mapper.addTypeMappingName(schemaTypes[j].getName(),
+                        schemaTypes[j].getFullJavaName());
+
+            }
+
             //get the schematypes and add the document types to the type mapper
-            SchemaType[] schemaType = sts.documentTypes();
-            for (int j = 0; j < schemaType.length; j++) {
-                mapper.addTypeMappingName(schemaType[j].getDocumentElementName(),
-                        schemaType[j].getFullJavaName());
+            schemaTypes = sts.documentTypes();
+            for (int j = 0; j < schemaTypes.length; j++) {
+                mapper.addTypeMappingName(schemaTypes[j].getDocumentElementName(),
+                        schemaTypes[j].getFullJavaName());
 
             }
 
@@ -399,10 +406,10 @@ public class CodeGenerationUtility {
      *
      * @param schema
      */
-    private static String getSchemaAsString(XmlSchema schema) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        schema.write(baos);
-        return baos.toString();
+    private static String getSchemaAsString(XmlSchema schema) throws IOException {
+        StringWriter writer = new StringWriter();
+        schema.write(writer);
+        return writer.toString();
     }
 
     /**
@@ -460,36 +467,6 @@ public class CodeGenerationUtility {
                         new SchemaDocument.Schema[uniqueSchemas.size()]);
     }
 
-    private static XmlSchema[] getAllSchemas(XmlSchema schema) {
-        HashMap map = new HashMap();
-        traverseSchemas(schema, map);
-        return (XmlSchema[]) map.values().toArray(new XmlSchema[map.values().size()]);
-    }
-
-    private static void traverseSchemas(XmlSchema schema, HashMap map) {
-        String key = schema.getTargetNamespace() + ":" + schema.getSourceURI();
-        if (map.containsKey(key)) {
-            return;
-        }
-        map.put(key, schema);
-
-        XmlSchemaObjectCollection includes = schema.getIncludes();
-        if (includes != null) {
-            Iterator tempIterator = includes.getIterator();
-            while (tempIterator.hasNext()) {
-                Object o = tempIterator.next();
-                if (o instanceof XmlSchemaImport) {
-                    XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
-                    if (schema1 != null) traverseSchemas(schema1, map);
-                }
-                if (o instanceof XmlSchemaInclude) {
-                    XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
-                    if (schema1 != null) traverseSchemas(schema1, map);
-                }
-            }
-        }
-    }
-
     /**
      * Axis2 specific entity resolver
      */
@@ -520,7 +497,7 @@ public class CodeGenerationUtility {
                     }
                     if (found) {
                         try {
-                            return new InputSource(getSchemaAsStream(schemas[i]));
+                            return new InputSource(getSchemaAsReader(schemas[i]));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -530,7 +507,7 @@ public class CodeGenerationUtility {
                     XmlSchema schema = schemas[i];
                     if (schema.getTargetNamespace() != null && schema.getTargetNamespace().equals(publicId)) {
                         try {
-                            return new InputSource(getSchemaAsStream(schemas[i]));
+                            return new InputSource(getSchemaAsReader(schemas[i]));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -571,11 +548,11 @@ public class CodeGenerationUtility {
          *
          * @param schema
          */
-        private ByteArrayInputStream getSchemaAsStream(XmlSchema schema) throws IOException {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            schema.write(baos);
-            baos.flush();
-            return new ByteArrayInputStream(baos.toByteArray());
+        private StringReader getSchemaAsReader(XmlSchema schema) throws IOException {
+            StringWriter writer = new StringWriter();
+            schema.write(writer);
+            writer.flush();
+            return new StringReader(writer.toString());
         }
     }
 

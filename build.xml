@@ -75,7 +75,7 @@
   <target name="clean" depends="init"
       description="clean everything">
     <maven>
-      <arg value="multiproject:clean"/>
+      <arg value="clean"/>
     </maven>
   </target>
 

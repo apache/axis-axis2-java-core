@@ -29,10 +29,10 @@ public class ServiceArchiveCreator extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent event) {
-        Java2CodeFrame win = new Java2CodeFrame();
-        win.setProject((Project) event.getDataContext().getData(DataConstants.PROJECT));
-        win.pack();
-        win.show();
+//        Java2CodeFrame win = new Java2CodeFrame();
+//        win.setProject((Project) event.getDataContext().getData(DataConstants.PROJECT));
+//        win.pack();
+//        win.show();
     }
 
     public void update(AnActionEvent event) {

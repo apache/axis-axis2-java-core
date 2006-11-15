@@ -2,12 +2,12 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.woden.WSDLException;
 import org.apache.woden.WSDLFactory;
 import org.apache.woden.WSDLReader;
 import org.apache.woden.WSDLSource;
-import org.apache.woden.XMLElement;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.Binding;
@@ -19,7 +19,6 @@ import org.apache.woden.wsdl20.InterfaceMessageReference;
 import org.apache.woden.wsdl20.InterfaceOperation;
 import org.apache.woden.wsdl20.Service;
 import org.apache.woden.wsdl20.enumeration.Direction;
-import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.woden.wsdl20.extensions.ExtensionElement;
 import org.apache.woden.wsdl20.extensions.UnknownExtensionElement;
 import org.apache.woden.wsdl20.xml.BindingElement;
@@ -31,11 +30,8 @@ import org.apache.woden.wsdl20.xml.InterfaceOperationElement;
 import org.apache.woden.wsdl20.xml.TypesElement;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.apache.ws.policy.Policy;
-import org.apache.ws.policy.PolicyReference;
-import org.apache.ws.policy.util.DOMPolicyReader;
-import org.apache.ws.policy.util.PolicyFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -327,7 +323,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         for (int i = 0; i < interfaceMessageReferences.length; i++) {
             InterfaceMessageReferenceElement messageReference = interfaceMessageReferences[i].toElement();
             if (messageReference.getMessageLabel().equals(
-                    MessageLabel.IN)) {
+                    messageReference.getMessageLabel().IN)) {
                 // Its an input message
 
                 if (isServerSide) {
@@ -346,7 +342,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // TODO copy policy elements
                 }
             } else if (messageReference.getMessageLabel().equals(
-                    MessageLabel.OUT)) {
+                    messageReference.getMessageLabel().OUT)) {
                 if (isServerSide) {
                     AxisMessage outMessage = axisOperation
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
@@ -398,48 +394,38 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // TODO this is wrong. Compare this with WSDL 2.0 QName
                 if (WSDLConstants.WSDL11Constants.SOAP_12_OPERATION.equals(unknown
                         .getExtensionType())) {
-                    XMLElement unknownElement = unknown.getElement();
+                    Element unknownElement = unknown.getElement();
                     if (description instanceof AxisOperation) {
                         AxisOperation axisOperation = (AxisOperation) description;
-                        String style = unknownElement.getAttributeValue("style");
+                        String style = unknownElement.getAttribute("style");
                         if (style != null) {
                             axisOperation.setStyle(style);
                         }
                         axisOperation.setSoapAction(unknownElement
-                                .getAttributeValue("soapAction"));
+                                .getAttribute("soapAction"));
                     }
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_HEADER.equals(unknown
                         .getExtensionType())) {
                     // TODO : implement thid
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_BINDING.equals(unknown
                         .getExtensionType())) {
-                    style = unknown.getElement().getAttributeValue("style");
+                    style = unknown.getElement().getAttribute("style");
                     axisService.setSoapNsUri(element.getExtensionType()
                             .getNamespaceURI());
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_ADDRESS.equals(unknown
                         .getExtensionType())) {
-                    axisService.setEndpoint(unknown.getElement().getAttributeValue(
+                    axisService.setEndpoint(unknown.getElement().getAttribute(
                             "location"));
                 } else if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
                         .getExtensionType())) {
+                    // TODO
 
-                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
-                            .getPolicyReader(PolicyFactory.DOM_POLICY_READER);
-                    //REVIEW: getSource(...) is probably not correct here, but without modifying the policyReader it's all that we can do
-                    Policy policy = policyReader.readPolicy((org.w3c.dom.Element)unknown.getElement().getSource());
-
-                    // addPolicy(description, originOfExtensibilityElements,
-                    // policy);
 
                 } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE.equals(unknown
                         .getExtensionType())) {
+                    // TODO
 
-                    DOMPolicyReader policyReader = (DOMPolicyReader) PolicyFactory
-                            .getPolicyReader(PolicyFactory.DOM_POLICY_READER);
-                    //REVIEW: getSource(...) is probably not correct here, but without modifying the policyReader it's all that we can do
-                    PolicyReference policyRef = policyReader.readPolicyReference((org.w3c.dom.Element)unknown.getElement().getSource());
-                    // addPolicyRef(description, originOfExtensibilityElements,
-                    // policyRef);
+                    
 
                 } else {
                     // TODO : we are ignored that.
@@ -564,7 +550,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return binding;
     }
 
-    private XMLElement[] generateWrapperSchema(
+    private Element[] generateWrapperSchema(
             DescriptionElement wodenDescription, BindingElement binding) {
 
         List schemaElementList = new ArrayList();
@@ -584,11 +570,11 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         schemaElementList.add(createSchemaForInterface(binding
                 .getInterfaceElement(), targetNamespaceUri,
                 findWrapForceable(binding)));
-        return (XMLElement[]) schemaElementList
-                .toArray(new XMLElement[schemaElementList.size()]);
+        return (Element[]) schemaElementList
+                .toArray(new Element[schemaElementList.size()]);
     }
 
-    private XMLElement createSchemaForInterface(InterfaceElement interfaceElement,
+    private Element createSchemaForInterface(InterfaceElement interfaceElement,
                                              String targetNamespaceUri, boolean forceWrapping) {
 
         // loop through the messages. We'll populate things map with the

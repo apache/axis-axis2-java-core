@@ -14,7 +14,6 @@
         <!-- Create the sts.aar : STATRT -->
 
         <mkdir dir="target/sts"/>
-        <mkdir dir="target/METS-INF"/>
         <mkdir dir="target/sts/lib"/>
         <!-- Copy classes -->
         <copy todir="target/sts">
@@ -43,25 +42,30 @@
         </jar>
 		
 		<delete file="target/sts/META-INF/module.xml"/>
-        <copy file="test-resources/trust/impl/sts-services.xml" toFile="target/sts/META-INF/services.xml"/>
-		
-        <copy file="test-resources/trust/impl/sct-issuer-config.xml" toFile="target/sts/sct-issuer-config.xml"/>
-        <copy file="test-resources/trust/impl/token-dispatcher-configuration.xml" toFile="target/sts/token-dispatcher-configuration.xml"/>
-        <copy file="test-resources/trust/impl/sctIssuer.properties" toFile="target/sts/sctIssuer.properties"/>
-        <copy file="test-resources/trust/impl/sts.jks" toFile="target/sts/sts.jks"/>
+        <delete includeEmptyDirs="true">
+            <fileset dir="target/sts/org/apache/rahas/client"/>
+        </delete>
+    	
+        <copy file="sts-aar-resources/services.xml" toFile="target/sts/META-INF/services.xml"/>
+        <copy file="sts-aar-resources/sct-issuer-config.xml" toFile="target/sts/META-INF/sct-issuer-config.xml"/>
+        <copy file="sts-aar-resources/saml-issuer-config.xml" toFile="target/sts/META-INF/saml-issuer-config.xml"/>
+        <copy file="sts-aar-resources/token-canceler-config.xml" toFile="target/sts/META-INF/token-canceler-config.xml"/>
+        <copy file="sts-aar-resources/token-dispatcher-configuration.xml" toFile="target/sts/META-INF/token-dispatcher-configuration.xml"/>
+        <copy file="sts-aar-resources/rahas-sts.jks" toFile="target/sts/META-INF/rahas-sts.jks"/>
         
         <jar jarfile="target/rahas-${rahas_version}.aar" basedir="target/sts/">
             <include name="**/*"/>
         </jar>
 
-	<delete includeEmptyDirs="true">
-            <fileset dir="target/sts"/>
+        <delete includeEmptyDirs="true">
+            <fileset dir="target/sts"/> 
         </delete>
+    	
         <!-- Create the sts.aar : END -->
     </postGoal>
 	
 	<postGoal name="test:compile">
 	    <copy file="target/rahas-${rahas_version}.mar" tofile="target/modules/rahas-${rahas_version}.mar"/>
-        <copy file="target/rahas-${rahas_version}.mar" tofile="${maven.repo.local}/axis2/mars/rahas-${rahas_version}.mar"/>
+        <copy file="target/rahas-${rahas_version}.mar" tofile="${maven.repo.local}/org.apache.axis2/mars/rahas-${rahas_version}.mar"/>
 	</postGoal>
 </project>

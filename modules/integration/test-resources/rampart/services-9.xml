@@ -1,4 +1,4 @@
-<service name="SecureService">
+<service name="SecureService9">
 
 	<module ref="addressing"/>
 	<module ref="rampart"/>

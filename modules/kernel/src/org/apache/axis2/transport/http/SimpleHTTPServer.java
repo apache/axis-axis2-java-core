@@ -133,15 +133,28 @@ public class SimpleHTTPServer implements TransportListener {
         if (paramPort != null) {
             port = Integer.parseInt(paramPort);
         }
+        
         boolean startAllTransports = "all".equals(optionsParser.isValueSet('t'));
-        args = optionsParser.getRemainingArgs();
+        String repository= optionsParser.isValueSet('r');
+        if (repository ==null)
+        {
+        	args = optionsParser.getRemainingArgs();
+        	if (args!=null && args[0]!=null && args[0]!="")
+        	{
+        		repository = args[0];
+        	}
+        	else 
+        	{
+        		printUsage();
+        	}
+        }
 
         System.out.println("[SimpleHTTPServer] Starting");
         System.out.println("[SimpleHTTPServer] Using the Axis2 Repository "
-                + new File(args[0]).getAbsolutePath());
+                + new File(repository).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
         try {
-            ConfigurationContext configctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(args[0], null);
+            ConfigurationContext configctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repository, null);
             SimpleHTTPServer receiver = new SimpleHTTPServer(configctx, port);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
@@ -177,11 +190,11 @@ public class SimpleHTTPServer implements TransportListener {
     }
 
     public static void printUsage() {
-        System.out.println("Usage: SimpleHTTPServer [options] <repository>");
+        System.out.println("Usage: SimpleHTTPServer [options] -r <repository>");
         System.out.println(" Opts: -? this message");
         System.out.println();
-        System.out.println("       -p port to listen on (default is 8080)");
-        System.out.println("       -t all  to start all transports defined in the axis2 configuration");
+        System.out.println("       -p port :to listen on (default is 8080)");
+        System.out.println("       -t all  :to start all transports defined in the axis2 configuration");
         System.exit(1);
     }
 

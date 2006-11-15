@@ -2,6 +2,7 @@
 <head>
   <meta http-equiv="content-type" content="">
   <title>Axis2 FAQ</title>
+  <link href="css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body lang="en">
@@ -27,10 +28,11 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 <ul>
   <li>General
     <ul>
-      <li><a href="#a1">Where is data binding?</a></li>
+      <li><a href="#a1">I'm having a problem using Axis2. What should I do?</a></li>
       <li><a href="#a2">What is OMElement, What does it represents?</a></li>
       <li><a href="#a3">Integration security tests fail with JDK 1.5<br>
         </a></li>
+        
     </ul>
   </li>
   <li>Class Loading Issues
@@ -84,20 +86,14 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>General</h2>
 <ol>
-  <li><a name="a1"></a><strong>I see OMElements in all the signatures, in the
-    stubs, Client API and in skeletons. Where is data binding?</strong><br>
+<li><a name="a1"></a><strong>I'm having a problem using Axis2. What should I do?</strong><br>
 
-    <p>Axis2 supports databinding using XML-Beans from 0.9 release. For more
-    information please read the <a href="1_1/userguide.html"
-    target="_blank">User Guide</a></p>
-  </li>
-  <li><a name="a2"></a><strong>What is OMElement, What does it
-    represents?</strong><br>
-
-    <p>OMElement is Axis2 representation of XML, it provide a tree model like
-    DOM. If you are familiar with DOM or JDOM you can soon get familiarize
-    with OM quickly. For more information read<a href="http://ws.apache.org/commons/axiom/OMTutorial.html"
-    target="_blank"> Axiom Tutorial</a></p>
+    <p>First make sure you go through user guide and this FAQ. If you are using a released version of Axis2, then there is a possibility that your problem has already being fixed in the latest code. Download Axis2 nightly builds from <a href="http://ws.zones.apache.org/dist/axis2/nightly/">here</a> and test again with it. </p>
+    <p>If the problem still persists then try to search for your question in our <a href="http://marc.theaimsgroup.com/?l=axis-dev&r=1&w=2">developer</a> or <a href="http://marc.theaimsgroup.com/?l=axis-user&r=1&w=2">user</a> mailing archives as it might have already being answered. </p>
+   <p>If your problem is not answered in the mailing list, now it is the best time to post your question to axis-user mailing list. If you think it is a bug, please fill a bug report in <a href="http://issues.apache.org/jira/browse/AXIS2">JIRA</a>. Please attach all the supportive information, like your wsdl, schema, clients, services, stacktraces, etc., to the JIRA issue you created, as it will help one of our contributors to re-create the problem. <b>PLEASE DO NOT ASK QUESTIONS USING JIRA AND USE IT ONLY AS A ISSUE TRACKER.</b> </p> 
+    <p>If you are asking for an explanation of a feature in Axis2, there is a possibility that there is an article or FAQ written on it. Please do a search on the web as there are lot of article written and hosted by various sources on the web. </p>
+    <p><b>Note</b> : When you ask questions in the mailing list, please remember that everyone working in our project are volunteers. No-one can be forced to fix your bugs (check <a href="http://www.apache.org/foundation/faq.html#what-is-apache-NOT-about">here</a>).</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Make sure you add enough information about your problem with stacktraces and any other supportive information. It will improve the chances of your question being answered. Prefixing your mail subject with prefixes like "URGENT" will not help you in any means. Yes we also accept all the blames about Axis2 in these mailing lists, as those will definitely help us to improve Axis2 :) . </p>
   </li>
   <li><a name="a3"></a><strong>Integration security tests fail with JDK
     1.5</strong><br>
@@ -128,10 +124,10 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
   <p>1. A third party module wants to access your resources, then the
   scenario is as follows:</p>
   <pre>   AxisService myService =
-   messageContext.getAxisConfiguration().getAxisService("serviceName"); 
+   messageContext.getAxisConfiguration().getAxisService("serviceName"); </pre>
 
-   or
-
+   <p>or</p>
+<pre>
    AxisService myService = msgCtx.getAxisService();</pre>
 
   <p>Then you can ask for service class loader using which you can access its
@@ -171,8 +167,7 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/core/src/org/apache/axis2/client/ServiceClient.java"
     target="_blank">ServiceClient</a>.</p>
   </li>
-  <li><a name="c3"></a><strong>When I try to do a non blocking call with use
-    Separate Listener true I get the error <i>to do two Transport Channels
+  <li><a name="c3"></a><strong>When I try to do a non blocking call with <pre>useSeparateListener=true</pre> I get the error <i>to do two Transport Channels
     the Addressing Modules must be engaged</i>, Why is this?</strong><br>
 
     <p>To do the two transport Channel invocation you need to engage the
@@ -180,15 +175,14 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     axis2.xml file or Call.engageModule(QName). But addressing is enabled by
     default.</p>
   </li>
-  <li><a name="c4"></a><strong>I have engaged addressing and when I trying to
+  <li><a name="c4"></a><strong>I have engaged addressing and when I was trying to
     invoke a service I am getting an exception </strong><br>
 
-    <p>If you have engaged addressing , then you have to have wsa:action , so
-    you have to called  <br>
+    <p>If you have engaged addressing , then you have to have wsa:action, the required WS-Addressing header. so you have to call  <br>
     option.setAction("urn:myaction"); <br>
     It should be not that the action should be a URI.</p>
   </li>
-  <li><a name="c5"><strong>What is Axis Repository?</strong></a><br>
+  <li><a name="c5"><strong>What is Axis2 Repository?</strong></a><br>
 
     <p>Repository stores the configuration of Axis2, the users should specify
     the repository folder starting the Axis Server (HTTP or TCP). In the case
@@ -210,7 +204,7 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     <ul>
       <li>maven plugin:download -DgroupId=maven-itest-plugin
         -DartifactId=maven-itest-plugin -Dversion=1.0
-        -Dmaven.repo.remote=http://people.apache.org/repository/maven,http://www.ibiblio.org/maven</li>
+        -Dmaven.repo.remote=http://ws.zones.apache.org/~dims/maven</li>
     </ul>
   </li>
   <li><p><a name="d2"></a><strong>I have problems building with maven

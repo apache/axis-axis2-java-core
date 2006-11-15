@@ -109,7 +109,7 @@
 <i><font color="blue">Service Status : <%=axisService.isActive() ? "Active" : "InActive"%></font></i><br>
 <%
     if (opItr.hasNext()) {
-%><i>Available operations</i><%
+%><i>Available Operations</i><%
 } else {
 %><i> There are no Operations specified</i><%
     }
@@ -145,7 +145,7 @@
         status = true;
     }
     if (!status) {
-%> There seems to be no services listed! Try hitting refresh <%
+%> No services listed! Try hitting refresh. <%
     }
 %>
 <jsp:include page="include/footer.inc" />

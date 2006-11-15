@@ -75,7 +75,6 @@ public abstract class ADBDataSource implements OMDataSource {
 
     /**
      * @see org.apache.axiom.om.OMDataSource#getReader()
-     * @return
      * @throws XMLStreamException
      */
     public XMLStreamReader getReader() throws XMLStreamException {

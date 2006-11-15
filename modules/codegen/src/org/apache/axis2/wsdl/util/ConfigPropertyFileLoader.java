@@ -85,7 +85,6 @@ public class ConfigPropertyFileLoader {
     /**
      * Loads a stream from the given
      * @param propertiesReference
-     * @return
      * @throws FileNotFoundException
      */
     private static InputStream getStream(String propertiesReference) throws FileNotFoundException {

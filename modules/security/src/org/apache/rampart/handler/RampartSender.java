@@ -51,7 +51,7 @@ public class RampartSender implements Handler {
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         
         if (!msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
-          return InvocationResponse.CONTINUE;
+          return InvocationResponse.CONTINUE;        
         }
         
         MessageBuilder builder = new MessageBuilder();
@@ -65,10 +65,6 @@ public class RampartSender implements Handler {
             throw new AxisFault(e.getMessage(), e);
         }
         return InvocationResponse.CONTINUE;        
-    }
-
-    public void flowComplete(MessageContext msgContext)
-    {
     }
 
     public HandlerDescription getHandlerDesc() {

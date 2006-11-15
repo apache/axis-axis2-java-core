@@ -54,12 +54,11 @@ public class SupportingTokensBuilder implements AssertionBuilder {
                     Constants.SUPPORTING_TOKEN_SIGNED_ENDORSING);
         }
 
-        Policy policy = PolicyEngine.getPolicy(element);
+        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
         policy = (Policy) policy.normalize(false);
 
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
             processAlternative((List) iterator.next(), supportingToken);
-            
             /*
              * for the moment we will say there should be only one alternative 
              */

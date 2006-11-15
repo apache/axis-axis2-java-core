@@ -20,7 +20,7 @@ package org.apache.axis2.receivers;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.util.MessageContextBuilder;
+import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,7 +46,7 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                 AxisEngine engine =
                         new AxisEngine(messageCtx.getOperationContext().getServiceContext()
                                 .getConfigurationContext());
-                MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(messageCtx, fault);
+                MessageContext faultContext = engine.createFaultMessageContext(messageCtx, fault);
 
                 engine.sendFault(faultContext);
             }
@@ -54,7 +54,7 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
         Runnable theadedTask = new Runnable() {
             public void run() {
                 try {
-                    MessageContext newmsgCtx = MessageContextBuilder.createOutMessageContext(messageCtx);
+                    MessageContext newmsgCtx = Utils.createOutMessageContext(messageCtx);
                     newmsgCtx.getOperationContext().addMessageContext(newmsgCtx);
                     ThreadContextDescriptor tc = setThreadContext(messageCtx);
                     try {

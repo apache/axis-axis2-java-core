@@ -261,7 +261,7 @@ class OutInAxisOperationClient implements OperationClient {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
             callbackReceiver.addCallback(mc.getMessageID(), callback);
-
+            
             /**
              * If USE_CUSTOM_LISTENER is set to 'true' the replyTo value will not be replaced and Axis2 will not
              * start its internal listner. Some other enntity (e.g. a module) should take care of obtaining the 
@@ -282,6 +282,8 @@ class OutInAxisOperationClient implements OperationClient {
                 }
             }
 
+
+            
             //if we don't do this , this guy will wait till it gets HTTP 202 in the HTTP case
             mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
             AxisEngine engine = new AxisEngine(cc);
@@ -460,10 +462,11 @@ class OutInAxisOperationClient implements OperationClient {
                     }
                 }
 
-                callback.setComplete(true);
             } catch (Exception e) {
-                callback.onError(e);
-            }
+				callback.onError(e);
+			} finally {
+				callback.setComplete(true);
+			}
         }
     }
 }

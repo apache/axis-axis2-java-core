@@ -27,13 +27,13 @@ import javax.xml.namespace.QName;
 import junit.framework.TestCase;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.util.CommandLineOption;
+import org.apache.axis2.util.CommandLineOptionConstants;
+import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.extension.JiBXExtension;
-import org.apache.axis2.wsdl.util.CommandLineOption;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Java;
@@ -53,12 +53,11 @@ public class Test extends TestCase
     private static final String OUTPUT_LOCATION_PREFIX = "/test";
     private static final String WSDL_BASE_DIR = "test-resources/wsdl/";
     private static final String BINDING_BASE_DIR = "test-resources/binding/";
-    public static final String REPOSITORY_DIR = "test-resources/repo/";
+    private static final String REPOSITORY_DIR = "test-resources/repo/";
     private static final String CLASSES_DIR = "/target/classes/";
     private static final String[] moduleNames= {"common", "core"};
     private static final String MODULE_PATH_PREFIX = "../modules/";
     private static final String COMPILE_TARGET_NAME = "compile";
-    private static final String BIND_TARGET_NAME = "bind";
     private static final String STUB_CLASS =
         "org.apache.ws.axis2.jibx.customer.wsdl.EchoCustomerServiceStub";
 
@@ -66,7 +65,6 @@ public class Test extends TestCase
     public static final QName operationName = new QName("echo");
     
     private AxisService service;
-
 
     /**
      * Make the root output directory
@@ -80,6 +78,9 @@ public class Test extends TestCase
         }else{
             outputFile.mkdir();
         }
+    }
+
+    private void startServer() throws Exception {
         service = Utils.createSimpleService(serviceName,
             Echo.class.getName(), operationName);
         UtilServer.start(REPOSITORY_DIR);
@@ -106,11 +107,7 @@ public class Test extends TestCase
         return dir.delete();
     }
 
-    /**
-     * Remove the root output directory
-     * @throws Exception
-     */
-    protected void tearDown() throws Exception {
+    private void stopServer() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.stop();
 /*        File outputFile = new File(OUTPUT_LOCATION_BASE);
@@ -125,10 +122,11 @@ public class Test extends TestCase
      * @param wsdl
      * @param binding
      * @param outdir
+     * @param unwrap
      * @throws CodeGenerationException
      */
-    private void codeGenerate(String wsdl, String binding, String outdir)
-        throws CodeGenerationException {
+    private void codeGenerate(String wsdl, String binding, String outdir,
+        boolean unwrap) throws CodeGenerationException {
         
         // create the option map
         Map optionMap = new HashMap();
@@ -149,6 +147,13 @@ public class Test extends TestCase
          optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
             new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
             new String[] {"jibx"}));
+         
+         // unwrap if requested
+         if (unwrap) {
+             optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                 new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                 new String[0]));
+         }
          
          // binding definition is supplied
          String option = CommandLineOptionConstants.WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX +
@@ -219,51 +224,16 @@ public class Test extends TestCase
         javaCompiler.execute();
 //        codeGenProject.executeTarget(COMPILE_TARGET_NAME);
     }
-
-    /**
-     * Bind the data classes.
-     * 
-     * @param datadir
-     * @param binding
-     */
-    private void bind(String datadir, String binding) throws Exception {
-        
-        // define ant java task for binding compiler
-        Java java = new Java();
-        Project codeGenProject = new Project();
-        Target compileTarget = new Target();
-        compileTarget.setName(BIND_TARGET_NAME);
-        compileTarget.addTask(java);
-        codeGenProject.addTarget(compileTarget);
-        codeGenProject.setSystemProperties();
-        java.setProject(codeGenProject);
-        java.setFork(true);
-        java.setClassname("org.jibx.binding.Compile");
-
-        // set classpath to include generated classes
-        Path classPath = new Path(codeGenProject, datadir) ;
-        classPath.addExisting(classPath.concatSystemClasspath(), false);
-        java.setClasspath(classPath);
-        
-        // add binding definition as argument
-        Argument arg = java.createArg();
-        arg.setValue(binding);
-
-        // execute the binding compiler
-        java.execute();
-    }
     
     public void testBuildAndRun() throws Exception {
+        startServer();
         
         // start by generating and compiling the Axis2 interface code
         String outdir =
             OUTPUT_LOCATION_BASE + OUTPUT_LOCATION_PREFIX;
         codeGenerate(WSDL_BASE_DIR + "customer-echo.wsdl",
-            BINDING_BASE_DIR + "customer-binding.xml", outdir);
+            BINDING_BASE_DIR + "customer-binding.xml", outdir, false);
         compile(outdir);
-        
-        // execute the JiBX binding compiler
-        bind(outdir + "/classes", BINDING_BASE_DIR + "customer-binding.xml");
         
         // finish by testing a roundtrip call to the echo server
         File classesdir = new File(outdir + "/classes");
@@ -275,7 +245,26 @@ public class Test extends TestCase
             "WA", "14619 NE 80th Pl.", new Integer(98052));
         Method method = stub.getMethod("echo", new Class[] {Customer.class});
         Object result = method.invoke(inst, new Object[] {customer});
+        stopServer();
         assertEquals("Result object does not match request object",
             customer, result);
+    }
+    
+    public void testCompileWrapped() throws Exception {
+        
+        // generate and compile the Axis2 interface code
+        String outdir = OUTPUT_LOCATION_BASE + OUTPUT_LOCATION_PREFIX;
+        codeGenerate(WSDL_BASE_DIR + "library.wsdl",
+            BINDING_BASE_DIR + "library-binding.xml", outdir, false);
+        compile(outdir);
+    }
+    
+    public void testCompileUnwrapped() throws Exception {
+        
+        // generate and compile the Axis2 interface code
+        String outdir = OUTPUT_LOCATION_BASE + OUTPUT_LOCATION_PREFIX;
+        codeGenerate(WSDL_BASE_DIR + "library.wsdl",
+            BINDING_BASE_DIR + "library-binding.xml", outdir, true);
+        compile(outdir);
     }
 }

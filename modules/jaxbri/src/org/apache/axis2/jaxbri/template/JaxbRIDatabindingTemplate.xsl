@@ -17,14 +17,42 @@
 
         <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
             <xsl:if test="@type!=''">
+                private static final javax.xml.bind.JAXBContext <xsl:value-of select="translate(@type,'.','_')"/>;
+            </xsl:if>
+        </xsl:for-each>
+
+        private static final java.util.HashMap&lt;Class,javax.xml.bind.JAXBContext&gt; classContextMap = new java.util.HashMap&lt;Class,javax.xml.bind.JAXBContext&gt;();
+
+        static {
+            javax.xml.bind.JAXBContext jc;
+            <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
+                <xsl:if test="@type!=''">
+                    jc = null;
+                    try {
+                        jc = javax.xml.bind.JAXBContext.newInstance(<xsl:value-of select="@type"/>.class);
+                    }
+                    catch ( javax.xml.bind.JAXBException ex ) {
+                        System.err.println("Unable to create JAXBContext for class: <xsl:value-of select='@type'/>");
+                        Runtime.getRuntime().exit(-1);
+                    }
+                    finally {
+                        <xsl:value-of select="translate(@type,'.','_')"/> = jc;
+                        classContextMap.put(<xsl:value-of select="@type"/>.class, jc);
+                    }
+                </xsl:if>
+            </xsl:for-each>
+        }
+
+        <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
+            <xsl:if test="@type!=''">
 
                 private org.apache.axiom.om.OMElement toOM(<xsl:value-of select="@type"/> param, org.apache.axiom.soap.SOAPFactory factory, boolean optimizeContent) {
                     try {
-                        javax.xml.bind.JAXBContext context = javax.xml.bind.JAXBContext.newInstance(<xsl:value-of select="@type"/>.class);
+                        javax.xml.bind.JAXBContext context = <xsl:value-of select="translate(@type,'.','_')"/>;
                         javax.xml.bind.Marshaller marshaller = context.createMarshaller();
                         marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, Boolean.TRUE);            
         
-                        JaxbRIDataSource source = new JaxbRIDataSource(param, marshaller);
+                        JaxbRIDataSource source = new JaxbRIDataSource(<xsl:value-of select="@type"/>.class, param, marshaller);
                         javax.xml.namespace.QName elementName = context.createJAXBIntrospector().getElementName(param);
                         org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(elementName.getNamespaceURI(), null);
                         return factory.createOMElement(source, elementName.getNamespaceURI(), namespace);
@@ -56,7 +84,7 @@
             java.lang.Class type,
             java.util.Map extraNamespaces) {
             try {
-                javax.xml.bind.JAXBContext context = javax.xml.bind.JAXBContext.newInstance( type );
+                javax.xml.bind.JAXBContext context = classContextMap.get(type);
                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
                 return unmarshaller.unmarshal(param.getXMLStreamReader(), type).getValue();
@@ -72,6 +100,11 @@
             private final Object outObject;
 
             /**
+             * Bound class for output.
+             */
+            private final Class outClazz;
+
+            /**
              * Marshaller.
              */
             private final javax.xml.bind.Marshaller marshaller;
@@ -82,7 +115,8 @@
              * @param obj
              * @param marshaller
              */
-            public JaxbRIDataSource(Object obj, javax.xml.bind.Marshaller marshaller) {
+            public JaxbRIDataSource(Class clazz, Object obj, javax.xml.bind.Marshaller marshaller) {
+                this.outClazz = clazz;
                 this.outObject = obj;
                 this.marshaller = marshaller;
             }
@@ -113,7 +147,7 @@
 
             public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
                 try {
-                    javax.xml.bind.JAXBContext context = javax.xml.bind.JAXBContext.newInstance(edu.indiana.extreme.www.wsdl.benchmark1.EchoVoid.class);
+                    javax.xml.bind.JAXBContext context = classContextMap.get(outClazz);
                     org.apache.axiom.om.impl.builder.SAXOMBuilder builder = new org.apache.axiom.om.impl.builder.SAXOMBuilder();
                     javax.xml.bind.Marshaller marshaller = context.createMarshaller();
                     marshaller.marshal(outObject, builder);

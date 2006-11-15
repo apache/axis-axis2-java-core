@@ -5,24 +5,24 @@
 <%@ page import="java.util.HashMap"%>
 <%@ page import="java.util.Iterator"%>
 <%
- /*
-  * Copyright 2004,2005 The Apache Software Foundation.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *      http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  *
-  */
-%>
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *
+ */
+ %>
 <jsp:include page="include/adminheader.jsp"></jsp:include>
 <%
     String status = (String)request.getSession().getAttribute(Constants.ENGAGE_STATUS);
@@ -33,13 +33,21 @@
     request.getSession().setAttribute(Constants.SERVICE_GROUP_MAP,null);
 %>
 <h1>Engage Module for a Service Group</h1>
-<p>To engage a module for a set of services grouped as a axisService group, first select the module you want to engage and then select the axisService group you like the module to be engaged on and click "Engage".</p>
+<p>To engage a module for a set of services grouped as an axis service group,
+
+    <ol>
+        <li>select the module you want to engage </li>
+        <li>select the axis service group you like the module to be engaged.</li>
+        <li>click "Engage".</li>
+    </ol>
+
+    </p>
 <%
 	if (!moduleCol.iterator().hasNext()) {%>
 		<p>No modules are present to be engaged.</p>
 	<%} else {
 		if  (!servicesGroups.hasNext()) {%>
-		<p>No axisService groups are present to be engaged.</p>
+		<p>No Axis service groups are present to be engaged.</p>
 		<%} else {
 %>
 <form method="get" name="selectModuleForm" action="axis2-admin/engageToServiceGroup">

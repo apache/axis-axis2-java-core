@@ -59,7 +59,7 @@
     %>  </ul>
         <%
             } else {%>
-	<p>No Running Contexts were found on the system.</p>
+	<p>No running contexts were found on the system.</p>
             <%}
 %>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>

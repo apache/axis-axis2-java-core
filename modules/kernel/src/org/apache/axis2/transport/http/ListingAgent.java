@@ -19,21 +19,36 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.util.ExternalPolicySerializer;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyRegistry;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.axiom.attachments.utils.IOUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class ListingAgent extends AbstractAgent {
@@ -148,6 +163,8 @@ public class ListingAgent extends AbstractAgent {
         int wsdl2 = query.indexOf("wsdl2");
         int wsdl = query.indexOf("wsdl");
         int xsd = query.indexOf("xsd");
+        int policy = query.indexOf("policy");
+        
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(serviceName);
             if (serviceObj != null) {
@@ -189,8 +206,14 @@ public class ListingAgent extends AbstractAgent {
                             out.flush();
                             out.close();
                         } else {
-                            //the schema is not found - pump a 404
-                            res.sendError(HttpServletResponse.SC_NOT_FOUND);
+                            InputStream in = axisService.getClassLoader().getResourceAsStream(DeploymentConstants.META_INF + "/" + xsds);
+                            if(in != null) {
+                                out.write(IOUtils.getStreamAsByteArray(in));
+                                out.flush();
+                                out.close();
+                            } else {
+                                res.sendError(HttpServletResponse.SC_NOT_FOUND);
+                            }
                         }
 
                         //multiple schemas are present and the user specified
@@ -208,6 +231,88 @@ public class ListingAgent extends AbstractAgent {
                             out.close();
                         }
                     }
+                    return;
+                } else if (policy >= 0) {
+                    
+                    OutputStream out = res.getOutputStream();
+                    
+                    ExternalPolicySerializer serializer = new ExternalPolicySerializer();
+                    serializer.setAssertionsToFilter(configContext
+                            .getAxisConfiguration().getLocalPolicyAssertions());
+
+                    // check whether Id is set
+                    String idParam = req.getParameter("id");
+
+                    if (idParam != null) {
+                        // Id is set
+
+                        Policy targetPolicy = findPolicy(idParam, (AxisService) serviceObj);
+
+                        if (targetPolicy != null) {
+                            XMLStreamWriter writer;
+
+                            try {
+                                writer = XMLOutputFactory.newInstance()
+                                        .createXMLStreamWriter(out);
+
+                                res.setContentType("text/xml");
+                                targetPolicy.serialize(writer);
+                                writer.flush();
+
+                            } catch (XMLStreamException e) {
+                                throw new ServletException(
+                                        "Error occured when serializing the Policy",
+                                        e);
+
+                            } catch (FactoryConfigurationError e) {
+                                throw new ServletException(
+                                        "Error occured when serializing the Policy",
+                                        e);
+                            }
+
+                        } else {
+
+                            res.setContentType("text/html");
+                            String outStr = "<b>No policy found for id="
+                                    + idParam + "</b>";
+                            out.write(outStr.getBytes());
+                        }
+
+                    } else {
+                        
+                        PolicyInclude policyInclude = ((AxisService) serviceObj).getPolicyInclude();
+                        Policy effecPolicy = policyInclude.getEffectivePolicy();
+
+                        if (effecPolicy != null) {
+                            XMLStreamWriter writer;
+
+                            try {
+                                writer = XMLOutputFactory.newInstance()
+                                        .createXMLStreamWriter(out);
+
+                                res.setContentType("text/xml");
+                                effecPolicy.serialize(writer);
+                                writer.flush();
+
+                            } catch (XMLStreamException e) {
+                                throw new ServletException(
+                                        "Error occured when serializing the Policy",
+                                        e);
+
+                            } catch (FactoryConfigurationError e) {
+                                throw new ServletException(
+                                        "Error occured when serializing the Policy",
+                                        e);
+                            }
+                        } else {
+
+                            res.setContentType("text/html");
+                            String outStr = "<b>No effective policy for "
+                                    + serviceName + " servcie</b>";
+                            out.write(outStr.getBytes());
+                        }                        
+                    }
+                  
                     return;
                 } else {
                     req.getSession().setAttribute(Constants.SINGLE_SERVICE,
@@ -230,6 +335,45 @@ public class ListingAgent extends AbstractAgent {
                 configContext.getAxisConfiguration().getFaultyServices());
 
         renderView(LIST_MULTIPLE_SERVICE_JSP_NAME, req, res);
+    }
+    
+    private Policy findPolicy(String id, AxisDescription des) {
+
+        List policyElements = des.getPolicyInclude().getPolicyElements();
+        PolicyRegistry registry = des.getPolicyInclude().getPolicyRegistry();
+
+        Object policyComponent = null;
+
+        Policy policy = registry.lookup(id);
+
+        if (policy != null) {
+            return policy;
+        }
+
+        for (Iterator iterator = policyElements.iterator(); iterator.hasNext();) {
+            policyComponent = iterator.next();
+
+            if (policyComponent instanceof Policy) {
+                // policy found for the id
+
+                if (id.equals(((Policy) policyComponent).getId())) {
+                    return (Policy) policyComponent;
+                }
+            }
+        }
+
+        AxisDescription child;
+
+        for (Iterator iterator = des.getChildren(); iterator.hasNext();) {
+            child = (AxisDescription) iterator.next();
+            policy = findPolicy(id, child);
+
+            if (policy != null) {
+                return policy;
+            }
+        }
+
+        return null;
     }
 
     /**

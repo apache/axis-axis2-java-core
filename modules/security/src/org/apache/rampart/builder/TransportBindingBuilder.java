@@ -30,6 +30,7 @@ import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.UsernameToken;
 import org.apache.ws.secpolicy.model.X509Token;
+import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
@@ -76,6 +77,7 @@ public class TransportBindingBuilder extends BindingBuilder {
                     Token token = (Token) iter.next();
                     if(token instanceof UsernameToken) {
                         WSSecUsernameToken utBuilder = addUsernameToken(rmd);
+                        utBuilder.setPasswordType(WSConstants.PW_TEXT);
                         
                         utBuilder.prepare(rmd.getDocument());
                         

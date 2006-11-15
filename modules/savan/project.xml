@@ -79,6 +79,13 @@
             <version>${pom.currentVersion}</version>
         </dependency>
         
+        <!-- Following dependency was required due to the EndpointReferenceHelper class-->
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-addressing</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+        
         <!-- external JARs -->
         <dependency>
             <groupId>commons-logging</groupId>
@@ -154,18 +161,10 @@
                 <module>true</module>
             </properties>
         </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>1.0.1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-	<dependency>
+       <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
-            <version>2.0</version>
+            <version>${neethi.version}</version>
             <properties>
                 <module>true</module>
             </properties>

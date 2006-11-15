@@ -210,9 +210,9 @@ public class RampartMessageData {
                 RampartConfig rampartConfig = this.policyData.getRampartConfig();
                 if((WSSHandlerConstants.RST_ACTON_SCT.equals(msgContext.getWSAAction())
                         || WSSHandlerConstants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) &&
-                        rampartConfig.getTokenIssuerPolicy() != null) {
+                        this.policyData.getIssuerPolicy() != null) {
                     
-                    this.servicePolicy = rampartConfig.getTokenIssuerPolicy();
+                    this.servicePolicy = this.policyData.getIssuerPolicy();
                     
                     /*
                      * Copy crypto info from the into the new issuer policy 

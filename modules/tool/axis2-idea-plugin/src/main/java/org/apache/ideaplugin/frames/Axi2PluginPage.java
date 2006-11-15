@@ -38,6 +38,7 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
     JButton butCancle;
     JPanel imglbl;
     Project project;
+    Java2CodeFrame win;
 
     public Axi2PluginPage() {
         setBackground(Color.white);
@@ -48,30 +49,29 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
         Axi2PluginPageLayout customLayout = new Axi2PluginPageLayout();
 
         setFont(new Font("Helvetica", Font.PLAIN, 12));
-        setLayout(customLayout);
+        getContentPane().setLayout(customLayout);
         setTitle("Axis2 Plugin");
         cbg = new ButtonGroup();
-        service = new JRadioButton("Create a service archive", false);
+        service = new JRadioButton("Create a service archive", true);
         service.setToolTipText("Hepls package classes, libs and WSDLs to create a archive that can be deployed in Axis2");
         cbg.add(service);
-        add(service);
+        getContentPane().add(service);
 
-        javawsdl = new JRadioButton("WSDL2Code codegenaration", false);
+        javawsdl = new JRadioButton("WSDL2Code code generation", false);
         javawsdl.setToolTipText("Helps generate skeletons and stubs for a given WSDL");
         cbg.add(javawsdl);
-        add(javawsdl);
+        getContentPane().add(javawsdl);
 
         butOK = new JButton("OK");
         butOK.addActionListener(this);
-        //setResizable(false);
-        add(butOK);
+        getContentPane().add(butOK);
 
         butCancle = new JButton("Cancel");
         butCancle.addActionListener(this);
-        add(butCancle);
+        getContentPane().add(butCancle);
 
         imglbl = new LogoPage();
-        add(imglbl);
+        getContentPane().add(imglbl);
 
     }
 
@@ -96,12 +96,18 @@ public class Axi2PluginPage extends JFrame implements ActionListener {
             this.hide();
             setVisible(false);
             if (javawsdl.isSelected()) {
-                Java2CodeFrame win = new Java2CodeFrame();
+
+                win = new Java2CodeFrame();
+                win.setResizable(false);
+                win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 win.setProject(project);
                 win.pack();
                 win.show();
+                
             } else {
                 ServiceArciveFrame window = new ServiceArciveFrame();
+                window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                window.setResizable(false);
                 window.setTitle("Service Archive creation");
                 window.show();
             }

@@ -26,6 +26,7 @@ public interface SettingsConstants {
    static final String PREF_WSDL_FILE_NAME="WSDL_FILE_NAME";
    static final String PREF_CHECK_WSDL_GENERATE="WSDL_GEN";
    static final String PREF_CHECK_SKIP_WSDL="SKIP_WSDL";
+   static final String PREF_CHECK_SELECT_WSDL="SELECT_WSDL";
    // ####################################################
    static final String PREF_WSDL_CLASS_NAME="WSDL_CLASS_NAME";
    static final String PREF_WSDL_STYLE_INDEX="WSDL_STYLE";

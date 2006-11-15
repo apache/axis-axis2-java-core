@@ -43,25 +43,34 @@ public class DefaultConnectionListener implements IOProcessor {
     private static Log LOG = LogFactory.getLog(DefaultConnectionListener.class);
 	
     private volatile boolean destroyed = false;
-    
+
+    private final int port;
     private final HttpConnectionFactory connfactory;
     private final HttpConnectionManager connmanager;
-    private final ServerSocket serversocket;
-        
-    public DefaultConnectionListener(
-    		int port,
-            final HttpConnectionFactory connfactory,
-            final HttpConnectionManager connmanager) throws IOException {
+    private ServerSocket serversocket;
+    private final ConnectionListenerFailureHandler failureHandler;
+    
+    /** Default constructor called by HttpFactory.  A custom HttpFactory subclass can call the other constructor to provide a custom ConnectionListenerErrorHandler */
+    public DefaultConnectionListener(int port, HttpConnectionFactory connfactory, HttpConnectionManager connmanager) throws IOException {
+        this(port, connfactory, connmanager, new DefaultConnectionListenerFailureHandler());
+    }
+
+    /** Use this constructor to provide a custom ConnectionListenerFailureHandler, e.g. by subclassing DefaultConnectionListenerFailureHandler */
+    public DefaultConnectionListener(int port, HttpConnectionFactory connfactory, HttpConnectionManager connmanager,
+                                     ConnectionListenerFailureHandler failureHandler)
+    throws IOException {
     	super();
-        if (connfactory == null) {
+        if (connfactory == null)
             throw new IllegalArgumentException("Connection factory may not be null");
-        }
-        if (connmanager == null) {
+        if (connmanager == null)
             throw new IllegalArgumentException("Connection manager may not be null");
-        }
+        if (failureHandler == null)
+            throw new IllegalArgumentException("Failure handler may not be null");
+        this.port = port;
         this.connmanager = connmanager;
         this.connfactory = connfactory;
         this.serversocket = new ServerSocket(port);
+        this.failureHandler = failureHandler;
     }
 
     public void run() {
@@ -69,8 +78,10 @@ public class DefaultConnectionListener implements IOProcessor {
             LOG.info("Listening on port " + this.serversocket.getLocalPort());
     	}
         try {
-            while (!this.serversocket.isClosed() && !Thread.interrupted()) {
+            while (!Thread.interrupted()) {
                 try {
+                    if (serversocket.isClosed())
+                        serversocket = new ServerSocket(port);
                     LOG.debug("Waiting for incoming HTTP connection");
                     Socket socket = this.serversocket.accept();
                     if (LOG.isDebugEnabled()) {
@@ -79,23 +90,11 @@ public class DefaultConnectionListener implements IOProcessor {
                     }
                     HttpServerConnection conn = this.connfactory.newConnection(socket);
                     this.connmanager.process(conn);
-                } catch (IOException ex) {
-                    if (ex instanceof SocketException) {
-                        if (LOG.isDebugEnabled() 
-                                && !this.destroyed && !Thread.interrupted()) {
-                            LOG.debug("Connection listener terminated due to an I/O error: " + 
-                                    ex.getMessage());
-                        }
-                    } else {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Connection listener terminated due to an I/O error: " + 
-                                    ex.getMessage(), ex);
-                        }
-                    }
-                    break;
                 } catch (Throwable ex) {
-                    LOG.error("Connection listener terminated due to a runtime error", ex);
-                    break;
+                    if (Thread.interrupted())
+                        break;
+                    if (!failureHandler.failed(this, ex))
+                        break;
                 }
             }
         } finally {

@@ -17,6 +17,7 @@
 package org.apache.axis2.tool.codegen.eclipse;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.tool.core.JarFileWriter;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage;
@@ -28,11 +29,15 @@ import org.apache.axis2.tool.codegen.eclipse.ui.OutputPage;
 import org.apache.axis2.tool.codegen.eclipse.ui.ToolSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
+import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
+import org.apache.axis2.tool.core.SrcCompiler;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -44,7 +49,12 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +65,7 @@ import java.util.Map;
 
 public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptionConstants.Java2WSDLConstants {
     private ToolSelectionPage toolSelectionPage;
-
+    
     private WSDLFileSelectionPage wsdlSelectionPage;
 
     private OptionsPage optionsPage;
@@ -68,10 +78,9 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
 
     private JavaWSDLOutputLocationPage java2wsdlOutputLocationPage;
 
-    private int selectedWizardType = SettingsConstants.WSDL_2_JAVA_TYPE;//TODO
-                                                                        // change
-                                                                        // this
+    private int selectedWizardType = SettingsConstants.WSDL_2_JAVA_TYPE;//TODO change this
 
+    private int selectedCodegenOptionType = SettingsConstants.CODEGEN_DEFAULT_TYPE;//TODO change this
     
 
    
@@ -98,6 +107,7 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
         //add the wsdl2java wizard pages
         wsdlSelectionPage = new WSDLFileSelectionPage();
         addPage(wsdlSelectionPage);
+        
         optionsPage = new OptionsPage();
         addPage(optionsPage);
         outputPage = new OutputPage();
@@ -140,7 +150,6 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
             AbstractWizardPage temp = pageout;
             pageout = (AbstractWizardPage) super.getNextPage(currentPage);
             currentPage = temp;
-
         }
         return pageout;
     }
@@ -235,6 +244,63 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                  
                  //TODO refresh the eclipse project space to show the generated files
                  
+                 //Add the codegen libs that are coming with the plugin to the project lib that has been created
+                 if (outputPage.getAxis2PluginLibCopyCheckBoxSelection()){ 
+                	 String eclipseHome = System.getProperty("user.dir");
+                	 String pluginLibLocation = eclipseHome+File.separator+UIConstants.PLUGINS+
+											File.separator+UIConstants.AXIS_CODEGEN_PLUGIN_FOLDER+
+											File.separator+UIConstants.LIB;
+                	 addLibsToProjectLib(pluginLibLocation, outputPage.getOutputLocation());
+                 }
+                 
+                 //Also another requirement arises 
+                 //If the codegen project was newly buided project or else the eclipse
+                 //project intended to save this generated code does not have the required libs
+                 //to compile the generated code. We need to add the relevent libs to a lib directory 
+                 //of the <code>outputPage.getOutputLocation()</code>
+                 
+                 //Add the libraries on the plugin lib directory to the created project lib
+                 if (outputPage.getAxisLibCopyCheckBoxSelection() && outputPage.oktoLoadLibs()){
+//                	 String libDirectory = outputPage.getAxisHomeLocation()+File.separator+
+//                	 					   UIConstants.TARGET+File.separator+UIConstants.LIB;
+                	 String libDirectory = outputPage.getAxisJarsLocation();
+                	 addLibsToProjectLib(libDirectory, outputPage.getOutputLocation());
+                 }
+                 
+                 //This will Create a jar file from the codegen results and add to the output 
+                 //locations lib directory
+                 if (outputPage.getCreateJarCheckBoxSelection()){
+                	 String tempCodegenLocation =  System.getProperty("user.dir")+File.separator+"codegen";
+                	 String tempProjectSrcLocation = tempCodegenLocation+File.separator+"codegen_temp_src_"+
+                	 								 System.currentTimeMillis();
+                	 String tempProjectClassLocation = tempCodegenLocation+File.separator+"codegen_temp_class_"+
+                	 							       System.currentTimeMillis();
+                	 File tempCodegenFile = new File(tempCodegenLocation);
+                	 File tempSrcFile = new File(tempProjectSrcLocation);
+                	 File tempClassFile = new File(tempProjectClassLocation);
+                	 tempCodegenFile.mkdir();
+                	 tempSrcFile.mkdir();
+                	 tempClassFile.mkdir();
+                	 copyDirectory(new File(outputPage.getOutputLocation()), tempSrcFile);
+                	 //Compile the source to another directory 
+                	 SrcCompiler srcCompileTool = new SrcCompiler();
+                	 srcCompileTool.compileSource(tempClassFile, tempProjectSrcLocation);
+                	 //create the jar file and add that to the lib directory
+                	 String projectLib = outputPage.getOutputLocation()+File.separator+"lib";
+                	 JarFileWriter jarFileWriter = new JarFileWriter();
+                	 String jarFileName = "CodegenResults.jar";
+                	 if (!outputPage.getJarFilename().equals("")){
+                		 jarFileName=outputPage.getJarFilename();
+                	 }
+                	 outputPage.setJarFileName(jarFileName);
+                	 jarFileWriter.writeJarFile(new File(projectLib), jarFileName, tempClassFile);
+                	 
+                	 //Delete the temp folders
+                	 deleteDir(tempCodegenFile);
+
+                 }
+                 
+                 
                  monitor.worked(1);
               }
               catch (Exception e)
@@ -319,6 +385,10 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                     optionsMap.put(SCHEMA_TARGET_NAMESPACE_OPTION,option);
                     
                     option = new Java2WSDLCommandLineOption(
+                    		SERVICE_NAME_OPTION,new String[]{java2wsdlOptionsPage.getServiceName()});
+                    optionsMap.put(SERVICE_NAME_OPTION,option);
+                    
+                    option = new Java2WSDLCommandLineOption(
                     		SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,
                     		new String[]{java2wsdlOptionsPage.getSchemaTargetNamespacePrefix()});
                     optionsMap.put(SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION,option);
@@ -330,7 +400,6 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                     option = new Java2WSDLCommandLineOption(
                     		OUTPUT_FILENAME_OPTION,new String[]{java2wsdlOutputLocationPage.getOutputWSDLName()});
                     optionsMap.put(OUTPUT_FILENAME_OPTION,option);
-                    
                     
                     monitor.worked(1);
                     
@@ -376,7 +445,7 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
      */
     public int getSelectedWizardType() {
         return selectedWizardType;
-    }
+    }    
 
     /**
      * @param selectedWizardType
@@ -386,6 +455,21 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
         this.selectedWizardType = selectedWizardType;
     }
     
+    /**
+     * @return Returns the codegenOptionType.
+     */
+    public int getSelectedCodegenOptionType() {
+        return selectedCodegenOptionType;
+    }
+    
+    /**
+     * @param selectedCodegenOptionType
+     *            The selectedCodegenOptionType to set.
+     */
+    public void setSelectedCodegenOptionType(int selectedCodegenOptionType) {
+        this.selectedCodegenOptionType = selectedCodegenOptionType;
+    }
+
     /**
      * Get the selected WSDL from the WSDLselectionpage
      * @return
@@ -405,4 +489,72 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
     public void setDefaultNamespaces(String fullyQualifiedClassName){
     	java2wsdlOptionsPage.setNamespaceDefaults(fullyQualifiedClassName);
     }
+    
+    
+    private void addLibsToProjectLib(String libDirectory, String outputLocation){
+    	String newOutputLocation = outputLocation+File.separator+UIConstants.LIB;
+    	//Create a lib directory; all ancestor directories must exist
+    	boolean success = (new File(newOutputLocation)).mkdir();
+        if (!success) {
+            // Directory creation failed
+        }
+        try {
+			copyDirectory(new File(libDirectory),new File(newOutputLocation));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    // Copies all files under srcDir to dstDir.
+    // If dstDir does not exist, it will be created.
+    public void copyDirectory(File srcDir, File dstDir) throws IOException {
+        if (srcDir.isDirectory()) {
+            if (!dstDir.exists()) {
+                dstDir.mkdir();
+            }
+    
+            String[] children = srcDir.list();
+            for (int i=0; i<children.length; i++) {
+                copyDirectory(new File(srcDir, children[i]),
+                                     new File(dstDir, children[i]));
+            }
+        } else {
+            copyFile(srcDir, dstDir);
+        }
+    }
+        
+    // Copies src file to dst file.
+    // If the dst file does not exist, it is created
+    private void copyFile(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+    
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+    
+    // Deletes all files and subdirectories under dir.
+    // Returns true if all deletions were successful.
+    // If a deletion fails, the method stops attempting to delete and returns false.
+    private boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i=0; i<children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+    
+        // The directory is now empty so delete it
+        return dir.delete();
+    }
+    
 }

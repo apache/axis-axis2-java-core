@@ -164,6 +164,9 @@ public class AxisFault extends RemoteException {
 
         }
 
+        if(soapFaultCode != null && soapFaultCode.getValue() != null) {
+            faultCode = soapFaultCode.getValue().getTextAsQName();
+        }
     }
 
     private void setToElementsListIfNotNull(String soapFaultElementName, OMElement soapFaultElement) {

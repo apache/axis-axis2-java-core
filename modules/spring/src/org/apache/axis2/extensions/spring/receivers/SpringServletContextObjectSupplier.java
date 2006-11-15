@@ -22,6 +22,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -29,6 +31,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 public class SpringServletContextObjectSupplier implements ServiceObjectSupplier {
+
+    private static Log log = LogFactory.getLog(SpringServletContextObjectSupplier.class);
+
     public static final String SERVICE_SPRING_BEANNAME = "SpringBeanName";
 
     /**
@@ -47,17 +52,25 @@ public class SpringServletContextObjectSupplier implements ServiceObjectSupplier
             Parameter implBeanParam = axisService.getParameter(SERVICE_SPRING_BEANNAME);
             String beanName = ((String) implBeanParam.getValue()).trim();
             if (beanName != null) {
-                ServletConfig servletConfig = (ServletConfig) axisService.getAxisConfiguration()
+                Parameter servletConfigParam = axisService.getAxisConfiguration()
                         .getParameter(HTTPConstants.HTTP_SERVLETCONFIG);
-                if (servletConfig == null) {
+
+                if (servletConfigParam == null) {
+                    throw new Exception("Axis2 Can't find ServletConfigParameter");
+                }
+                Object obj = servletConfigParam.getValue();
+                ServletContext servletContext;
+                if (obj instanceof ServletConfig) {
+                    ServletConfig servletConfig = (ServletConfig)obj;
+                    servletContext = servletConfig.getServletContext();
+                } else {
                     throw new Exception("Axis2 Can't find ServletConfig");
                 }
-                ServletContext servletContext = servletConfig.getServletContext();
-
                 ApplicationContext aCtx =
                         WebApplicationContextUtils.getWebApplicationContext(servletContext);
                 if (aCtx == null) {
-                    throw new Exception("Axis2 Can't find Spring's ApplicationContext");
+                    log.warn("Axis2 Can't find Spring's ApplicationContext");
+                    return null;
                 } else if (aCtx.getBean(beanName) == null) {
                     throw new Exception("Axis2 Can't find Spring Bean: " + beanName);
                 }

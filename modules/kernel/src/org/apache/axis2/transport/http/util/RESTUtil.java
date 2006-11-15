@@ -43,7 +43,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 
 /**
- * 
+ *
  */
 public class RESTUtil {
     protected ConfigurationContext configurationContext;
@@ -97,7 +97,7 @@ public class RESTUtil {
             msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST);
             msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.CONTENT_TYPE, contentType);
             msgContext.setDoingREST(true);
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream()); 
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
 
             invokeAxisEngine(msgContext);
 
@@ -114,6 +114,12 @@ public class RESTUtil {
                                      HttpServletResponse response) throws AxisFault {
         // here, only the parameters in the URI are supported. Others will be discarded.
         try {
+
+            // set the required properties so that even if there is an error during the dispatch
+            // phase the response message will be passed to the client well. 
+            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET);
+            msgContext.setDoingREST(true);
+            msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
 
             // 1. First dispatchAndVerify and find out the service and the operation.
             dispatchAndVerify(msgContext);
@@ -133,14 +139,11 @@ public class RESTUtil {
                     xmlSchemaElement,
                     OMAbstractFactory.getSOAP11Factory());
             msgContext.setEnvelope(soapEnvelope);
-            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET);
-            msgContext.setDoingREST(true);
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
 
             invokeAxisEngine(msgContext);
 
         } catch (IOException e) {
-            throw  new AxisFault(e);
+            throw new AxisFault(e);
         }
         return true;
     }
@@ -181,8 +184,8 @@ public class RESTUtil {
                 // If charset is not specified
                 XMLStreamReader xmlreader;
                 if (TransportUtils.getCharSetEncoding(contentType) == null) {
-                	xmlreader = StAXUtils.createXMLStreamReader(inputStream, MessageContext.DEFAULT_CHAR_SET_ENCODING);
-                	
+                    xmlreader = StAXUtils.createXMLStreamReader(inputStream, MessageContext.DEFAULT_CHAR_SET_ENCODING);
+
                     // Set the encoding scheme in the message context
                     msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                             MessageContext.DEFAULT_CHAR_SET_ENCODING);
@@ -198,14 +201,16 @@ public class RESTUtil {
                     msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
                 }
 
-                OMNodeEx documentElement = (OMNodeEx)new StAXOMBuilder(xmlreader).getDocumentElement();
+                OMNodeEx documentElement = (OMNodeEx) new StAXOMBuilder(xmlreader).getDocumentElement();
                 documentElement.setParent(null);
                 body.addChild(documentElement);
 
                 // if the media type is multipart/related, get help from Axis2 :)
-            } else if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
+            } else
+            if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
                 body.addChild(TransportUtils.selectBuilderForMIME(msgCtxt,
-                        inputStream,contentType,false).getDocumentElement());
+                        inputStream,
+                        contentType, false).getDocumentElement());
             }
 
             return soapEnvelope;

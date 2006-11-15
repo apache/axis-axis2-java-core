@@ -431,7 +431,7 @@ public class RESTSender extends AbstractHTTPSender {
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
             if (!msgCtxt.isSOAP11() && (soapActionString != null)
-                && !"".equals(soapActionString.trim())) {
+                && !"".equals(soapActionString.trim()) && ! "\"\"".equals(soapActionString.trim())) {
                 contentType =
                         contentType + ";action=\"" + soapActionString + "\";";
             }

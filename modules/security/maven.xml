@@ -34,7 +34,7 @@
 
         <!--include the license for jars-->
         <ant:copy toDir="target/temp-mar/lib">
-            <ant:fileset dir="../../legal/security">
+            <ant:fileset dir="../../legal/rampart">
                 <ant:include name="*.txt"/>
             </ant:fileset>
         </ant:copy>
@@ -51,8 +51,8 @@
 			<copy file="${dependencies.dir}/xml-apis-${xml_apis.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${dependencies.dir}/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${dependencies.dir}/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
-			<copy file="${dependencies.dir}/axis2-rahas-${rahas_version}.jar" todir="target/temp-mar/lib"/>
-
+			<copy file="${dependencies.dir}/axis2-rahas-${pom.currentVersion}.jar" todir="target/temp-mar/lib"/>
+			<copy file="${dependencies.dir}/axis2-secpolicy-${pom.currentVersion}.jar" todir="target/temp-mar/lib"/>
         </j:if>
 		<j:if test="${context.getVariable('maven.jar.override').toString().trim().equalsIgnoreCase('off')}">
 			<copy file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar" todir="target/temp-mar/lib"/>
@@ -63,8 +63,8 @@
 			<copy file="${maven.repo.local}/xml-apis/jars/xml-apis-${xml_apis.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${maven.repo.local}/xerces/jars/xercesImpl-${xerces.version}.jar" todir="target/temp-mar/lib"/>
 			<copy file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar" todir="target/temp-mar/lib"/>
-			<copy file="${maven.repo.local}/org.apache.axis2/jars/axis2-rahas-${rahas_version}.jar" todir="target/temp-mar/lib"/>
-
+			<copy file="${maven.repo.local}/org.apache.axis2/jars/axis2-rahas-${pom.currentVersion}.jar" todir="target/temp-mar/lib"/>
+			<copy file="${maven.repo.local}/org.apache.axis2/jars/axis2-secpolicy-${pom.currentVersion}.jar" todir="target/temp-mar/lib"/>
         </j:if>
 		
         <copy file="src/META-INF/module.xml"
@@ -77,7 +77,7 @@
         </jar>
 
         <copy file="target/rampart-${rampart_version}.mar" tofile="target/modules/rampart-${rampart_version}.mar"/>
-        <copy file="target/rampart-${rampart_version}.mar" tofile="${maven.repo.local}/axis2/mars/rampart-${rampart_version}.mar"/>
+        <copy file="target/rampart-${rampart_version}.mar" tofile="${maven.repo.local}/org.apache.axis2/mars/rampart-${rampart_version}.mar"/>
 		
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>
@@ -212,34 +212,4 @@
         </copy>
     </preGoal>
 	
-    <postGoal name="jar:jar">
-        <ant:echo>+----------------------------------------------</ant:echo>
-        <ant:echo>| Creating: Rampart Source Distribution</ant:echo>
-        <ant:echo>+----------------------------------------------</ant:echo>
-
-        <ant:mkdir dir="target/dist"/>
-        <ant:mkdir dir="target/temp/src"/>
-
-        <ant:copy toDir="target/temp/src">
-            <ant:fileset dir=".">
-                <ant:include name="src/**"/>
-                <ant:exclude name="**/target/**"/>
-                <ant:exclude name="**/*class*/**"/>
-                <ant:exclude name="**/.svn/**"/>
-                <ant:exclude name="**/bin/**"/>
-                <ant:exclude name="**/*.log"/>
-                <ant:exclude name=".*"/>
-                <ant:exclude name="**/*.license"/>
-                <ant:exclude name="**/*.iml"/>
-            </ant:fileset>
-        </ant:copy>
-
-		<!-- TODO: Create and copy release documents :release-notes.html, README.txt, LICENCE.txt -->
-
-        <ant:zip file="target/rampart-${rampart_version}-src.zip">
-            <ant:fileset dir="target/temp/src"/>
-        </ant:zip>
-        <ant:delete dir="target/temp"/>
-    </postGoal>
-
 </project>

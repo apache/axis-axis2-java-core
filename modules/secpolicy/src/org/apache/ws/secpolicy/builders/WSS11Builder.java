@@ -35,7 +35,7 @@ public class WSS11Builder implements AssertionBuilder {
             throws IllegalArgumentException {
         Wss11 wss11 = new Wss11();
 
-        Policy policy = PolicyEngine.getPolicy(element);
+        Policy policy = PolicyEngine.getPolicy(element.getFirstElement());
         policy = (Policy) policy.normalize(false);
 
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {

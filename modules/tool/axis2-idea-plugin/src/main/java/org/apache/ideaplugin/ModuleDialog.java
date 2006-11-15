@@ -79,7 +79,7 @@ public class ModuleDialog extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
         if (obj == addbut) {
-            String str = "<module ref=\"" + txtModule.getText().trim() + "\" >";
+            String str = "<module ref=\"" + txtModule.getText().trim() + "\" \\>";
             val = str;
             textarea.insert(str, position + 1);
             this.setVisible(false);

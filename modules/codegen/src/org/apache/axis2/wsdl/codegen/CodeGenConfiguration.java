@@ -17,9 +17,9 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
 import java.io.File;

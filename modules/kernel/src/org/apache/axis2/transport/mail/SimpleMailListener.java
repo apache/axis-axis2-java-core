@@ -167,7 +167,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
      * Server process.
      */
     public static void main(String args[]) throws AxisFault {
-        if (args.length != 1) {
+        if (args.length < 2) {
             log.info("java SimpleMailListener <repository>");
             printUsage();
         } else {

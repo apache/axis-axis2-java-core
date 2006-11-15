@@ -42,7 +42,7 @@ public class SOAP12OutFaultFlowHandlerDefault extends AbstractHandler {
         } else {
             msgContext.getEnvelope().getHeader().discard();
         }
-        return InvocationResponse.CONTINUE;        
+        return InvocationResponse.CONTINUE;
     }
 }
 

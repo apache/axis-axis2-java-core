@@ -15,7 +15,7 @@
         <xsl:if test="@skeletonInterfaceName"> implements <xsl:value-of select="@skeletonInterfaceName"/></xsl:if>{
      <xsl:for-each select="method">
          <xsl:variable name="count"><xsl:value-of select="count(output/param)"/></xsl:variable>
-         <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
+         <xsl:variable name="outputtype" select="output/param/@type"/>
          <!-- regardless of the sync or async status, the generated method signature would be just a usual
                java method -->
         /**
@@ -53,7 +53,7 @@
                <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@name"/>
            </xsl:for-each>{
                 //Todo fill this with the necessary business logic
-                <xsl:if test="$outputtype!=''">throw new  java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#<xsl:value-of select="@name"/>");</xsl:if>
+                <xsl:if test="string-length(normalize-space($outputtype)) &gt; 0">throw new  java.lang.UnsupportedOperationException("Please implement " + this.getClass().getName() + "#<xsl:value-of select="@name"/>");</xsl:if>
         }
      </xsl:for-each>
     }

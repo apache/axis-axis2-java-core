@@ -48,7 +48,7 @@ public class ServiceObj {
     }
 
     public String toString() {
-        String serviceXML = "<service name=\"" + serviceName + "\"  scope=\"transportsession\">\n" +
+        String serviceXML = "<service name=\"" + serviceName + "\" >\n" +
                 "<description>\n" +
                 "Please Type your service description here\n" +
                 "</description>\n" +

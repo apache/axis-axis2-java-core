@@ -117,8 +117,7 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
             msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
                     Constants.VALUE_TRUE);
         }
-        
-        return InvocationResponse.CONTINUE; 
+        return InvocationResponse.CONTINUE;        
     }
 
     protected abstract OutputStream openTheConnection(EndpointReference epr, MessageContext msgctx)
@@ -147,8 +146,8 @@ public abstract class AbstractTransportSender extends AbstractHandler implements
                 String charSetEnc =
                         (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
-                format.setDoOptimize(msgContext.isDoingMTOM());
-                format.setDoingSWA(msgContext.isDoingSwA());
+                format.setDoOptimize(false);
+                format.setDoingSWA(false);
                 format.setCharSetEncoding(charSetEnc);
                 outputMessage.serializeAndConsume(out, format);
                 out.flush();

@@ -1,5 +1,5 @@
 ======================================================
-Apache Axis2 @axis2_version@ build (@release_date@)
+Apache Axis2 @axisVersion@ build (@TODAY@)
 Documentation Release
 
 http://ws.apache.org/axis2

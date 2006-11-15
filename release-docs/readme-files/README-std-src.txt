@@ -1,32 +1,37 @@
 ======================================================
-Apache Axis2 @axis2_version@ build (@release_date@)
-Standard Source Release
+Apache Axis2 @axisVersion@ build (@TODAY@)
+Source Release
 
 http://ws.apache.org/axis2
 ------------------------------------------------------
 
-This is the Standard source release of Axis2.
+This is the Standard Source Release of Axis2.
 
 The modules directory contains source code of the following 
 Axis2 modules:
 
-1. core
-2. common
+1. kernel
+2. java2wsdl
 3. addressing
 4. adb
-5. codegen
-6. webapp
-7. java2wsdl
+5. adb-codegen
+6. codegen
+7. webapp
 8. jibx
 9. samples
 10. xmlbeans
+11. saaj
+12. spring
+13. tool
+14. jaxbri
+15. soapmonitor
 
-The samples directory contains all the Axis2 module & service samples.
+One can use maven 1.x to create the Standard Binary Distribution from this, 
+by typing "$maven dist-bin".
 
-One can use maven 1.x to create the standard binary distribution out of this, by typing "$maven dist-bin".
-
-(Please note that this does not include the other WS-* implementation modules, like WS-Security, that are being developed
- within Axis2. Those can be downloaded from http://ws.apache.org/axis2/modules/)
+(Please note that this does not include the other WS-* implementation modules, 
+like WS-Security, that are being developed within Axis2. Those can be downloaded
+ from http://ws.apache.org/axis2/modules/)
  
 
 

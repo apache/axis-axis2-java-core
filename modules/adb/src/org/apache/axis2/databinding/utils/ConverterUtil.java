@@ -166,12 +166,13 @@ public class ConverterUtil {
     public static String convertToString(UnsignedLong o) {
         return o.toString();
     }
-     public static String convertToString(QName o) {
-         if(o!=null){
-             return o.getLocalPart();
-         } else {
-             return "";
-         }
+
+    public static String convertToString(QName o) {
+        if (o != null) {
+            return o.getLocalPart();
+        } else {
+            return "";
+        }
     }
 
     public static String convertToString(Object o) {
@@ -299,8 +300,7 @@ public class ConverterUtil {
         return new HexBinary(s);
     }
 
-    public static javax.activation.DataHandler convertToBase64Binary(String s)
-            {
+    public static javax.activation.DataHandler convertToBase64Binary(String s) {
         // reusing the byteArrayDataSource from the Axiom classes
         ByteArrayDataSource byteArrayDataSource = new ByteArrayDataSource(
                 Base64.decode(s)
@@ -308,8 +308,7 @@ public class ConverterUtil {
         return new DataHandler(byteArrayDataSource);
     }
 
-    public static javax.activation.DataHandler convertToDataHandler(String s)
-            {
+    public static javax.activation.DataHandler convertToDataHandler(String s) {
         return convertToBase64Binary(s);
     }
 
@@ -605,8 +604,8 @@ public class ConverterUtil {
         int colon = source.lastIndexOf(":");
         //context.getNamespaceURI(source.substring(0, colon));
         String localPart = colon < 0 ? source : source.substring(colon + 1);
-        String perfix =    colon <= 0 ? "" : source.substring(0,colon);
-        return new QName(nameSpaceuri, localPart,perfix);
+        String perfix = colon <= 0 ? "" : source.substring(0, colon);
+        return new QName(nameSpaceuri, localPart, perfix);
     }
 
     /* ################################################################# */
@@ -661,35 +660,57 @@ public class ConverterUtil {
         Object returnArray = Array.newInstance(baseArrayClass, listSize);
         if (int.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                Array.setInt(returnArray, i, Integer.parseInt(objectList.get(i).toString()));
+                if (objectList.get(i) != null) {
+                    Array.setInt(returnArray, i, Integer.parseInt(objectList.get(i).toString()));
+                }
             }
         } else if (float.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                Array.setFloat(returnArray, i, Float.parseFloat(objectList.get(i).toString()));
+                if (objectList.get(i) != null) {
+                    Array.setFloat(returnArray, i, Float.parseFloat(objectList.get(i).toString()));
+                }
             }
         } else if (short.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                Array.setShort(returnArray, i, Short.parseShort(objectList.get(i).toString()));
+                if (objectList.get(i) != null) {
+                    Array.setShort(returnArray, i, Short.parseShort(objectList.get(i).toString()));
+                }
+            }
+        } else if (byte.class.equals(baseArrayClass)) {
+            for (int i = 0; i < listSize; i++) {
+                if (objectList.get(i) != null) {
+                    Array.setByte(returnArray, i, Byte.parseByte(objectList.get(i).toString()));
+                }
             }
         } else if (long.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                Array.setLong(returnArray, i, Long.parseLong(objectList.get(i).toString()));
+                if (objectList.get(i) != null) {
+                    Array.setLong(returnArray, i, Long.parseLong(objectList.get(i).toString()));
+                }
             }
         } else if (boolean.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                Array.setBoolean(returnArray, i, Boolean.getBoolean(objectList.get(i).toString()));
+                if (objectList.get(i) != null) {
+                    Array.setBoolean(returnArray, i, Boolean.getBoolean(objectList.get(i).toString()));
+                }
             }
         } else if (char.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                Array.setChar(returnArray, i, objectList.get(i).toString().toCharArray()[0]);
+                if (objectList.get(i) != null) {
+                    Array.setChar(returnArray, i, objectList.get(i).toString().toCharArray()[0]);
+                }
             }
         } else if (double.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                Array.setDouble(returnArray, i, Double.parseDouble(objectList.get(i).toString()));
+                if (objectList.get(i) != null) {
+                    Array.setDouble(returnArray, i, Double.parseDouble(objectList.get(i).toString()));
+                }
             }
         } else if (Calendar.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                Array.set(returnArray, i, convertToDateTime(objectList.get(i).toString()));
+                if (objectList.get(i) != null) {
+                    Array.set(returnArray, i, convertToDateTime(objectList.get(i).toString()));
+                }
             }
         } else {
             ConvertToArbitraryObjectArray(returnArray, baseArrayClass, objectList);
@@ -761,7 +782,7 @@ public class ConverterUtil {
     public static String getStringFromDatahandler(DataHandler dataHandler) {
         try {
             InputStream inStream;
-            if(dataHandler == null) {
+            if (dataHandler == null) {
                 return "";
             }
             inStream = dataHandler.getDataSource().getInputStream();

@@ -71,7 +71,7 @@
       }
              if(! foundModules) {
                  %>
-                 <h2><font color="blue">There is no module deployed in the system</font></h2>
+                 <h2><font color="blue">There are no modules deployed in the system.</font></h2>
                  <%
              }
      %>

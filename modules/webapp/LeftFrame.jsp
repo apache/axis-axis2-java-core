@@ -149,7 +149,7 @@
        &nbsp;&nbsp;&nbsp;&nbsp;
        </td>
        <td>
-         <a href="axis2-admin/deactivateService">Inactivate Service</a>
+         <a href="axis2-admin/deactivateService">Deactivate Service</a>
        </td>
     </tr>
     <tr>

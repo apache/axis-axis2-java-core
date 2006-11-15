@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /*
@@ -32,6 +31,7 @@ import java.io.StringWriter;
  * Time: 3:38:12 PM
  */
 public class BottomPanel extends JPanel implements ActionListener {
+    public static JButton btnBack;
     public static JButton btnNext;
     public static JButton btnFinish;
     public static JButton btnCancel;
@@ -45,7 +45,12 @@ public class BottomPanel extends JPanel implements ActionListener {
 
         setLayout(customLayout);
 
-        btnNext = new JButton("Next");
+        btnBack = new JButton("< Back");
+        btnBack.setEnabled(true);
+        btnBack.addActionListener(this);
+        add(btnBack);
+
+        btnNext = new JButton("Next >");
         btnNext.addActionListener(this);
         add(btnNext);
 
@@ -61,7 +66,8 @@ public class BottomPanel extends JPanel implements ActionListener {
 
     }
 
-    public static void setEnable(boolean next, boolean finish, boolean cancel) {
+    public static void setEnable(boolean back,boolean next, boolean finish, boolean cancel) {
+        btnBack.setEnabled(back);
         btnNext.setEnabled(next);
         btnFinish.setEnabled(finish);
         btnCancel.setEnabled(cancel);
@@ -69,25 +75,87 @@ public class BottomPanel extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if (obj == btnCancel) {
-            java2CodeFrame.setVisible(false);
+        if (obj == btnBack) {
+            java2CodeFrame.backButtonImpl();
+        }
+        else if (obj == btnCancel) {
+            java2CodeFrame.dispose();
             Thread.currentThread().setContextClassLoader(java2CodeFrame.getClassLoader());
+            return;
         } else if (obj == btnFinish) {
+
+            File outputDir = new File(java2CodeFrame.outputpane.txtoutput.getText().trim());
+            if (java2CodeFrame.outputpane.radCustomLocation.isSelected() )
+            {
+                if (!outputDir.isDirectory())
+                {
+                JOptionPane.showMessageDialog(java2CodeFrame, "The Output Directory specified is invalid. Please provide a valid directory",
+                            "Error!", JOptionPane.ERROR_MESSAGE);
+                    java2CodeFrame.repaint();
+                    return;
+                }
+            }
 
             String selected = java2CodeFrame.optionPane.buttonGroup.getSelection().getActionCommand();
 
-            if (selected.equalsIgnoreCase("radCustom")) {
+            if (selected.equalsIgnoreCase("radDefaultClient")) {
+                    File temp = java2CodeFrame.optionPane.setDefaultClientConfigurations();
+                    try {
+                        java2CodeFrame.generateDefaultClientCode(temp);
+                    } catch (Exception e1) {
+                        StringWriter writer = new StringWriter();
+                        JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
+                                "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                        java2CodeFrame.dispose();
+                        return;
+                    }
+
+                    JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
+                            "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
+                    java2CodeFrame.dispose();
+                    return;
+
+                }
+
+           else if (selected.equalsIgnoreCase("radCustom")) {
+
+                String output = java2CodeFrame.outputpane.buttonGroup.getSelection().getActionCommand();
+
+                if (output.equalsIgnoreCase("radCurrentProject")) {
+
+                    File temp = java2CodeFrame.secondPanel.codegenBean.getTemp();
+                    java2CodeFrame.secondPanel.codegenBean.setOutput(temp.getAbsolutePath());
+                    try {
+                        java2CodeFrame.generatecode();
+                        java2CodeFrame.copyDirectory(new File(temp + File.separator + "src"), new File((String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem()));
+                        File src = new File(temp + File.separator + "resources");
+                        if (src.isDirectory())
+                        java2CodeFrame.copyDirectory(src, new File((String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem() + File.separator + ".." + File.separator + "resources"));
+
+                        java2CodeFrame.deleteDirectory(temp);
+                    } catch (Exception e1) {
+                    StringWriter writer = new StringWriter();
+                    JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
+                            "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                    java2CodeFrame.dispose();
+                        return;
+                    }
+
+                }
+                else
+                {
 
                 try {
+
                     java2CodeFrame.generatecode();
 
                 } catch (Exception e1) {
-                    e1.printStackTrace();
                     StringWriter writer = new StringWriter();
-                    e1.printStackTrace(new PrintWriter(writer));
                     JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                            "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
-                    java2CodeFrame.setVisible(false);
+                            "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                    java2CodeFrame.dispose();
+                    return;
+                }
                 }
             } else if (selected.equalsIgnoreCase("radDefaultServer")) {
 
@@ -100,12 +168,11 @@ public class BottomPanel extends JPanel implements ActionListener {
 
                         java2CodeFrame.generateDefaultServerCode(temp, (String) java2CodeFrame.outputpane.cmbModuleSrc.getSelectedItem());
                     } catch (Exception e1) {
-                        e1.printStackTrace();
                         StringWriter writer = new StringWriter();
-                        e1.printStackTrace(new PrintWriter(writer));
                         JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
-                        java2CodeFrame.setVisible(false);
+                                "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                        java2CodeFrame.dispose();
+                        return;
                     }
 
 
@@ -114,14 +181,13 @@ public class BottomPanel extends JPanel implements ActionListener {
                     File outputPath = new File(path);
                     if (outputPath.exists()) {
                         try {
-                            java2CodeFrame.generateDefaultServerCode(temp, outputPath.getAbsolutePath());
+                            java2CodeFrame.generateDefaultServerCodeCustomLocation(path);
                         } catch (Exception e1) {
-                            e1.printStackTrace();
                             StringWriter writer = new StringWriter();
-                            e1.printStackTrace(new PrintWriter(writer));
                             JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                    "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
-                            java2CodeFrame.setVisible(false);
+                                    "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                            java2CodeFrame.dispose();
+                            return;
                         }
 
                     } else {
@@ -145,12 +211,12 @@ public class BottomPanel extends JPanel implements ActionListener {
                         java2CodeFrame.generateDefaultClientCode(temp2);
 
                     } catch (Exception e1) {
-                        e1.printStackTrace();
                         StringWriter writer = new StringWriter();
-                        e1.printStackTrace(new PrintWriter(writer));
                         JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
-                        java2CodeFrame.setVisible(false);
+                                "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                        java2CodeFrame.dispose();
+                        return;
+
                     }
 
                 } else {
@@ -158,16 +224,15 @@ public class BottomPanel extends JPanel implements ActionListener {
                     File outputPath = new File(path);
                     if (outputPath.exists()) {
                         try {
-                            java2CodeFrame.generateDefaultServerCode(temp, outputPath.getAbsolutePath());
+                            java2CodeFrame.generateDefaultServerCodeCustomLocation(path);
                             File temp2 = java2CodeFrame.optionPane.setDefaultClientConfigurations();
                             java2CodeFrame.generateDefaultClientCode(temp2);
                         } catch (Exception e1) {
-                            e1.printStackTrace();
                             StringWriter writer = new StringWriter();
-                            e1.printStackTrace(new PrintWriter(writer));
                             JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                    "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
-                            java2CodeFrame.setVisible(false);
+                                    "Axis2 code generation", JOptionPane.ERROR_MESSAGE);
+                            java2CodeFrame.dispose();
+                            return;
                         }
 
                     } else {
@@ -180,35 +245,18 @@ public class BottomPanel extends JPanel implements ActionListener {
                 }
             }
 
-            JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration successful!",
-                    "Axis2 codegeneration", JOptionPane.INFORMATION_MESSAGE);
-            java2CodeFrame.setVisible(false);
+            JOptionPane.showMessageDialog(java2CodeFrame, "Code generation successful!",
+                    "Axis2 code generation", JOptionPane.INFORMATION_MESSAGE);
+            java2CodeFrame.dispose();
+            return;
 
         } else if (obj == btnNext) {
 
-            if (java2CodeFrame.optionPane.isVisible()) {
+                if (java2CodeFrame.optionPane.isVisible()) {
 
                 String selected = java2CodeFrame.optionPane.buttonGroup.getSelection().getActionCommand();
 
-                if (selected.equalsIgnoreCase("radDefaultClient")) {
-                    File temp = java2CodeFrame.optionPane.setDefaultClientConfigurations();
-                    try {
-                        java2CodeFrame.generateDefaultClientCode(temp);
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                        StringWriter writer = new StringWriter();
-                        e1.printStackTrace(new PrintWriter(writer));
-                        JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration failed!" + writer.toString(),
-                                "Axis2 codegeneration", JOptionPane.ERROR_MESSAGE);
-                        java2CodeFrame.setVisible(false);
-                    }
 
-                    JOptionPane.showMessageDialog(java2CodeFrame, "Code genaration successful!",
-                            "Axis2 codegeneration", JOptionPane.INFORMATION_MESSAGE);
-                    java2CodeFrame.setVisible(false);
-                    return;
-
-                } else
                 if (selected.equalsIgnoreCase("radDefaultServer") || selected.equalsIgnoreCase("radDefaultBoth")) {
 
                     java2CodeFrame.increasePanelID();
@@ -253,13 +301,17 @@ class BottomLayout implements LayoutManager {
         Component c;
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 232, insets.top + 10, 80, 24);
+            c.setBounds(insets.left + 152, insets.top + 10, 80, 24);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 312, insets.top + 10, 80, 24);
+            c.setBounds(insets.left + 232, insets.top + 10, 80, 24);
         }
         c = parent.getComponent(2);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 312, insets.top + 10, 80, 24);
+        }
+        c = parent.getComponent(3);
         if (c.isVisible()) {
             c.setBounds(insets.left + 392, insets.top + 10, 80, 24);
         }

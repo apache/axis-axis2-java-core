@@ -1,53 +1,18 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
-  <title>Apache Axis2 - Next Generation Web Services</title>
-  <style type="text/css">
-<!--
-.style1 {
-font-size: 24px;
-font-weight: bold;
-color: #FF0000;
-}
--->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </style>
+  <title>Apache Axis2/Java - Next Generation Web Services</title>
+  <link href="css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body lang="en">
-<h1>Welcome to Apache Axis2</h1>
+<h1>Welcome to Apache Axis2/Java</h1>
 
-<h2>XX Oct 2006 - Apache Axis2 Version 1.1 Released!</h2>
+<h2>13th November 2006 - Apache Axis2/Java Version 1.1 Released!</h2>
 
-<p>[<a href="http://ws.apache.org/axis2/download.cgi">Download 1.1</a>]</p>
+<p>[ <a
+href="http://ws.apache.org/axis2/download.cgi"><strong>Download</strong></a>
+] | [ <a href="1_1/index.html"><strong>Documents Home</strong></a> ]</p>
 
 <p>Apache Axis2 is the core engine for Web services. It is a complete
 re-design and re-write of the widely used <a
@@ -138,8 +103,8 @@ specification implementations. The key features offered are as follows:</p>
     its own light-weight object model, AXIOM, for message processing which is
     extensible, highly performant and is developer convenient.</p>
   </li>
-  <li><p style="margin-bottom: 0in"><strong><a name="Hot_Deployment">Hot
-    Deployment</a></strong> - Axis2 is equipped with the capability of
+  <li><p style="margin-bottom: 0in"><strong><a name="Hot_Deployment"></a>Hot
+    Deployment</strong> - Axis2 is equipped with the capability of
     deploying Web service &amp; handlers while the system is up and running.
     In other words, new services can be added to the system without having to
     shut down the server. Simply drop the required Web service archive into
@@ -211,6 +176,12 @@ to prefix the subject of the mail with [Axis2].</p>
 
 <h2>Features of Axis2 Latest Version</h2>
 
+<p>Apache Axis2 Version 1.1 comes to you with better Axis2 Databinding
+Framework (ADB) support, <a
+href="http://www.w3.org/TR/SOAP-attachments">attachments API</a>, Spring and
+complete support for SOAP with Attachments (SwA). Check out the complete
+features list below.</p>
+
 <h3>Programming Model</h3>
 <ul>
   <li>Improved, XML-centric client API including full WSDL and policy
@@ -220,7 +191,7 @@ to prefix the subject of the mail with [Axis2].</p>
   <li>Archived service deployment model</li>
   <li>Archived module deployment model supporting controlled extensibility
     with versioning support</li>
-  <li><a href="1_1/userguide1.html#Hot_Deployment">Hot deployment</a></li>
+  <li><a href="#Hot_Deployment">Hot deployment</a></li>
   <li>WS-Policy driven code generation extensions</li>
   <li>Flexible service life cycle model</li>
   <li>Support for querying service's WSDL (using ?wsdl), schema (using ?xsd)
@@ -261,17 +232,24 @@ Release</a></h2>
 target="_blank">Download Tool Plug-ins</a>]</p>
 <ol type="1">
   <li>Axis2 Web Application (Web App)</li>
-  <li>WSDL2WS- <a href="../tools/1_0/eclipse/wsdl2java-plugin.html"
+  <li>WSDL2WS- <a href="tools/1_1/eclipse/wsdl2java-plugin.html"
     target="_blank">eclipse plug-in</a><a>/</a> <a
-    href="../tools/1_0/CodegenToolReference.html" target="_blank">Command
+    href="tools/1_1/CodegenToolReference.html" target="_blank">Command
     line version</a><a>/</a><a
-    href="../tools/1_0/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
-    target="_blank">IntelliJ IDEA plug-in</a></li>
+    href="tools/1_1/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
+    target="_blank">IntelliJ IDEA plug-in</a><a>/</a><a
+    href="tools/1_1/maven-plugins/maven-wsdl2code-plugin.html"
+    target="_blank">Maven2 WSDL2Code Plug-in</a></li>
   <li>Service Archive Wizard- <a
-    href="../tools/1_0/eclipse/servicearchiver-plugin.html"
+    href="tools/1_1/eclipse/servicearchiver-plugin.html"
     target="_blank">eclipse plug-in</a>/ <a
-    href="../tools/1_0/idea/Idea_plug-in_userguide.html#Create_Service_Archive"
-    target="_blank">IntelliJ IDEA plug-in</a></li>
+    href="tools/1_1/idea/Idea_plug-in_userguide.html#Create_Service_Archive"
+    target="_blank">IntelliJ IDEA plug-in</a>/ <a
+    href="tools/1_1/maven-plugins/maven-aar-plugin.html"
+    target="_blank">Maven2 AAR Plug-in</a></li>
+  <li>Java2WSDL- <a href="tools/1_1/maven-plugins/maven-java2wsdl-plugin.html"
+    target="_blank">Maven2 Java2WSDL Plug-in</a>
+    </li>
 </ol>
 
 <h2>Extension Modules</h2>
@@ -283,26 +261,20 @@ target="_blank">Download Tool Plug-ins</a>]</p>
 
 <h2>Known Issues and Limitations</h2>
 <ul>
-  <li>Recursive schemas (A includes B which includes A) may cause
-  problems</li>
-  <li>JaxMe data binding support is experimental</li>
-  <li>Axis2-595: Hot re-deployment in Apache Tomcat has problems</li>
-  <li>Axis2-666: AddressingSubmissionInHandler does not deserialize EPR
-    extensibility attributes and elements</li>
-  <li>AXIS2-667: Operation dispatch based on message body has a known
-  issue</li>
-  <li>Axis Data Binding (ADB) does not cover all of XML Schema; its an 80-20
-    design point. Unsupported XML Schema features include:
+  <li>JaxMe and JAXBRI data binding support is experimental</li>
+  <li>AXIS2-595: Hot re-deployment in Apache Tomcat has problems</li>
+  <li>Axis Data Binding (ADB) does not support the following construct(s):
     <ol>
-      <li>Simple content extension and restriction</li>
-      <li>Complex content restriction</li>
+      <li>AXIS2-983: Support for Simple Type Union and Simple Type List</li>
+      <li>AXIS2-1092: Support for xs:list inside an xs:simpleType</li>
+      <li>AXIS2-1093: Support for xs:union inside xs:simpleType</li>
     </ol>
   </li>
-  <li>ADB does not support xsi:type based deserialization at runtime</li>
   <li>No support yet for unwrapping of doc/lit WSDL files (in stub
   generation)</li>
   <li>No support yet for rpc/encoded style WSDL documents (in stub
   generation)</li>
+   <li>Idea plugin shows random behavior when XMLBeans is used</li>
 </ul>
 
 <h2>Archived News</h2>

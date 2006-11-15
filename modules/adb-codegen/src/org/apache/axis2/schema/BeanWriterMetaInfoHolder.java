@@ -42,8 +42,8 @@ public class BeanWriterMetaInfoHolder {
     protected boolean restriction = false;
     private String extensionClassName = "";
     private String restrictionClassName = "";
-    private QName extensionBaseType = null; 
-    private QName restrictionBaseType = null; 
+    private QName extensionBaseType = null;
+    private QName restrictionBaseType = null;
     protected Map elementToSchemaQNameMap = new LinkedHashMap();
     protected Map elementToJavaClassMap = new LinkedHashMap();
     protected Map specialTypeFlagMap = new LinkedHashMap();
@@ -52,7 +52,7 @@ public class BeanWriterMetaInfoHolder {
     protected Map qNameOrderMap = new LinkedHashMap();
     protected QName ownQname = null;
     protected String ownClassName = null;
-    
+
     protected long lengthFacet = -1;
     protected long maxLengthFacet = -1;
     protected long minLengthFacet = -1;
@@ -63,7 +63,7 @@ public class BeanWriterMetaInfoHolder {
     protected String maxInclusiveFacet = null;
     protected String minInclusiveFacet = null;
 
-    protected List nillableQNameList  = new ArrayList();
+    protected List nillableQNameList = new ArrayList();
 
     //the parent metainfo holder, useful in handling extensions and
     //restrictions
@@ -103,7 +103,6 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * Gets the parent
-     * @return
      */
     public BeanWriterMetaInfoHolder getParent() {
         return parent;
@@ -157,7 +156,6 @@ public class BeanWriterMetaInfoHolder {
     }
 
 
-
     /**
      * Sets the extension status.
      *
@@ -170,7 +168,7 @@ public class BeanWriterMetaInfoHolder {
     public String getRestrictionClassName() {
         return restrictionClassName;
     }
-    
+
     /**
      * Sets the restriction base class name. Valid only when the isRestriction
      * returns true.
@@ -180,7 +178,7 @@ public class BeanWriterMetaInfoHolder {
     public void setRestrictionClassName(String restrictionClassName) {
         this.restrictionClassName = restrictionClassName;
     }
-    
+
     /**
      * Gets the restriction status.
      *
@@ -189,7 +187,7 @@ public class BeanWriterMetaInfoHolder {
     public boolean isRestriction() {
         return restriction;
     }
-    
+
     /**
      * Sets the restriction status.
      *
@@ -198,7 +196,7 @@ public class BeanWriterMetaInfoHolder {
     public void setRestriction(boolean restriction) {
         this.restriction = restriction;
     }
-    
+
     /**
      * Sets the extension basetype.
      *
@@ -207,7 +205,7 @@ public class BeanWriterMetaInfoHolder {
     public void setExtensionBaseType(QName extensionBaseType) {
         this.extensionBaseType = extensionBaseType;
     }
-    
+
     /**
      * Checks if it is a extension base type.
      *
@@ -216,7 +214,7 @@ public class BeanWriterMetaInfoHolder {
     public boolean isExtensionBaseType(QName extensionBaseType) {
         return (this.extensionBaseType == extensionBaseType);
     }
-    
+
     /**
      * Sets the restriction basetype.
      *
@@ -225,7 +223,7 @@ public class BeanWriterMetaInfoHolder {
     public void setRestrictionBaseType(QName restrictionBaseType) {
         this.restrictionBaseType = restrictionBaseType;
     }
-    
+
     /**
      * Checks if it is a restriction base type.
      *
@@ -234,7 +232,7 @@ public class BeanWriterMetaInfoHolder {
     public boolean isRestrictionBaseType(QName restrictionBaseType) {
         return (this.restrictionBaseType == restrictionBaseType);
     }
-    
+
     /**
      * Gets the ordered status.
      *
@@ -245,7 +243,7 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
-     * Sets the ordered flag. 
+     * Sets the ordered flag.
      *
      * @param ordered
      */
@@ -265,7 +263,8 @@ public class BeanWriterMetaInfoHolder {
     }
 
 
-    /* Registers a Qname as nillable
+    /**
+     * Registers a Qname as nillable
      * The qName better be of an element
      *
      * @param qName
@@ -278,8 +277,8 @@ public class BeanWriterMetaInfoHolder {
 
     /**
      * Returns whether a QName is nillable or not
+     *
      * @param eltQName
-     * @return
      */
     public boolean isNillable(QName eltQName) {
         return nillableQNameList.contains(eltQName);
@@ -329,8 +328,25 @@ public class BeanWriterMetaInfoHolder {
     public boolean getAttributeStatusForQName(QName qName) {
 
         Integer state = (Integer) specialTypeFlagMap.get(qName);
-        return state != null && getStatus(state.intValue(),SchemaConstants.ATTRIBUTE_TYPE);
+        return state != null && getStatus(state.intValue(), SchemaConstants.ATTRIBUTE_TYPE);
     }
+
+    /**
+     * checks the element corresponds to the qName type is xsd:anyType
+     *
+     * @param qName
+     * @return is element corresponds to qName has xsd:anyType
+     */
+
+    public boolean getDefaultStatusForQName(QName qName) {
+        boolean isDefault = false;
+        QName schemaTypeQName = (QName) this.elementToSchemaQNameMap.get(qName);
+        if (schemaTypeQName != null) {
+            isDefault = schemaTypeQName.equals(SchemaConstants.XSD_ANYTYPE);
+        }
+        return isDefault;
+    }
+
 
     /**
      * Gets whether a given QName represents a anyType
@@ -340,7 +356,7 @@ public class BeanWriterMetaInfoHolder {
      */
     public boolean getAnyStatusForQName(QName qName) {
         Integer state = (Integer) specialTypeFlagMap.get(qName);
-        return state != null && getStatus(state.intValue(),SchemaConstants.ANY_TYPE);
+        return state != null && getStatus(state.intValue(), SchemaConstants.ANY_TYPE);
     }
 
     /**
@@ -386,22 +402,22 @@ public class BeanWriterMetaInfoHolder {
      * @return Returns boolean.
      */
     public boolean getAnyAttributeStatusForQName(QName qName) {
-       return getArrayStatusForQName(qName) &&
-               getAnyStatusForQName(qName);
+        return getArrayStatusForQName(qName) &&
+                getAnyStatusForQName(qName);
     }
 
     /**
      * Gets whether a given QName has the optional attribute status.
-     * 
+     *
      * @param qName QName of attribute
      * @return Returns <code>true</code> if attribute has optional status
      */
     public boolean getOptionalAttributeStatusForQName(QName qName) {
         Integer state = (Integer) specialTypeFlagMap.get(qName);
         return state != null && getStatus(state.intValue(),
-                SchemaConstants.OPTIONAL_TYPE);    	
+                SchemaConstants.OPTIONAL_TYPE);
     }
-    
+
     /**
      * Clears the whole set of tables.
      */
@@ -509,28 +525,30 @@ public class BeanWriterMetaInfoHolder {
         //add them explicitly to the end of this list
         QName[] allNames = getQNameArray();
         for (int i = 0; i < allNames.length; i++) {
-            if(getAttributeStatusForQName(allNames[i])){
+            if (getAttributeStatusForQName(allNames[i])) {
                 returnQNames.add(allNames[i]);
             }
         }
 
-        return (QName[])returnQNames.toArray(new QName[returnQNames.size()]);
+        return (QName[]) returnQNames.toArray(new QName[returnQNames.size()]);
     }
 
     /**
-     *  Finds the starting count for the addition of new items to the order
+     * Finds the starting count for the addition of new items to the order
+     *
      * @return the starting number for the sequence
      */
-    public int getOrderStartPoint(){
+    public int getOrderStartPoint() {
         return qNameOrderMap.size();
     }
 
 
     /**
      * Creates link to th
+     *
      * @param metaInfo
      */
-    public void setAsParent(BeanWriterMetaInfoHolder metaInfo){
+    public void setAsParent(BeanWriterMetaInfoHolder metaInfo) {
         parent = metaInfo;
     }
 
@@ -538,196 +556,197 @@ public class BeanWriterMetaInfoHolder {
      * Adds a another status to a particular Qname.
      * A Qname can be associated with multiple status flags
      * and they all will be preserved
+     *
      * @param type
      * @param mask
      */
 
-    public void addtStatus(QName type,int mask){
+    public void addtStatus(QName type, int mask) {
         Object obj = this.specialTypeFlagMap.get(type);
-        if (obj!=null){
-            int preValue = ((Integer)obj).intValue();
+        if (obj != null) {
+            int preValue = ((Integer) obj).intValue();
             this.specialTypeFlagMap.put(type, new Integer((preValue | mask)));
-        }else{
+        } else {
             this.specialTypeFlagMap.put(type, new Integer(mask));
         }
 
     }
 
 
-    private boolean getStatus(int storedStatus,int mask){
+    private boolean getStatus(int storedStatus, int mask) {
         //when the mask is anded with the status then we should get
         //the mask it self!
-        return (mask==(mask & storedStatus));
+        return (mask == (mask & storedStatus));
     }
-    
+
     /**
      * Sets the length facet.
      *
      * @param lengthFacet
      */
     public void setLengthFacet(long lengthFacet) {
-    	this.lengthFacet = lengthFacet;
+        this.lengthFacet = lengthFacet;
     }
-    
+
     /**
      * Gets the length facet.
      *
      * @return Returns length facet.
      */
     public long getLengthFacet() {
-    	return this.lengthFacet;
+        return this.lengthFacet;
     }
-    
+
     /**
      * Sets the maxExclusive.
      *
      * @param maxExclusiveFacet
      */
     public void setMaxExclusiveFacet(String maxExclusiveFacet) {
-    	this.maxExclusiveFacet = maxExclusiveFacet;
+        this.maxExclusiveFacet = maxExclusiveFacet;
     }
-    
+
     /**
      * Gets the maxExclusive.
      *
      * @return Returns the maxExclusive.
      */
     public String getMaxExclusiveFacet() {
-    	return this.maxExclusiveFacet;
+        return this.maxExclusiveFacet;
     }
-    
+
     /**
      * Sets the minExclusive.
      *
      * @param minExclusiveFacet
      */
     public void setMinExclusiveFacet(String minExclusiveFacet) {
-    	this.minExclusiveFacet = minExclusiveFacet;
+        this.minExclusiveFacet = minExclusiveFacet;
     }
-    
+
     /**
      * Gets the minExclusive.
      *
      * @return Returns the minExclusive.
      */
     public String getMinExclusiveFacet() {
-    	return this.minExclusiveFacet;
+        return this.minExclusiveFacet;
     }
-    
+
     /**
      * Sets the maxInclusive.
      *
      * @param maxInclusiveFacet
      */
     public void setMaxInclusiveFacet(String maxInclusiveFacet) {
-    	this.maxInclusiveFacet = maxInclusiveFacet;
+        this.maxInclusiveFacet = maxInclusiveFacet;
     }
-    
+
     /**
      * Gets the maxInclusive.
      *
      * @return Returns the maxInclusive.
      */
     public String getMaxInclusiveFacet() {
-    	return this.maxInclusiveFacet;
+        return this.maxInclusiveFacet;
     }
-    
+
     /**
      * Sets the minInclusive.
      *
      * @param minInclusiveFacet
      */
     public void setMinInclusiveFacet(String minInclusiveFacet) {
-    	this.minInclusiveFacet = minInclusiveFacet;
+        this.minInclusiveFacet = minInclusiveFacet;
     }
-    
+
     /**
      * Gets the minInclusive.
      *
      * @return Returns the minInclusive.
      */
     public String getMinInclusiveFacet() {
-    	return this.minInclusiveFacet;
+        return this.minInclusiveFacet;
     }
-    
+
     /**
      * Sets the maxLength.
      *
      * @param maxLengthFacet
      */
     public void setMaxLengthFacet(long maxLengthFacet) {
-    	this.maxLengthFacet = maxLengthFacet;
+        this.maxLengthFacet = maxLengthFacet;
     }
-    
+
     /**
      * Gets the maxLength.
      *
      * @return Returns maxLength.
      */
     public long getMaxLengthFacet() {
-    	return this.maxLengthFacet;
+        return this.maxLengthFacet;
     }
-    
+
     /**
      * Sets the minLength.
      *
      * @param minLengthFacet
      */
     public void setMinLengthFacet(long minLengthFacet) {
-    	this.minLengthFacet = minLengthFacet;
+        this.minLengthFacet = minLengthFacet;
     }
-    
+
     /**
      * Gets the minLength.
      *
      * @return Returns minLength.
      */
     public long getMinLengthFacet() {
-    	return this.minLengthFacet;
+        return this.minLengthFacet;
     }
-    
+
     /**
      * Sets the enumeration.
      *
      * @param enumFacet
      */
     public void setEnumFacet(ArrayList enumFacet) {
-    	this.enumFacet = enumFacet;
+        this.enumFacet = enumFacet;
     }
-    
+
     /**
      * Adds the enumeration.
      *
      * @param enumFacet
      */
     public void addEnumFacet(String enumFacet) {
-    	this.enumFacet.add(enumFacet);
+        this.enumFacet.add(enumFacet);
     }
-    
+
     /**
      * Gets the enumeration.
      *
      * @return Returns enumeration.
      */
     public List getEnumFacet() {
-    	return this.enumFacet;
+        return this.enumFacet;
     }
-    
+
     /**
      * Sets the pattern.
      *
      * @param patternFacet
      */
     public void setPatternFacet(String patternFacet) {
-    	this.patternFacet = patternFacet;
+        this.patternFacet = patternFacet;
     }
-    
+
     /**
      * Gets the pattern.
      *
      * @return Returns pattern.
      */
     public String getPatternFacet() {
-    	return this.patternFacet;
+        return this.patternFacet;
     }
 }

@@ -16,15 +16,26 @@
 
 
 package org.apache.axis2.deployment.repository.util;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.deployment.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.DeploymentErrorMsgs;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.DescriptionBuilder;
+import org.apache.axis2.deployment.ModuleBuilder;
+import org.apache.axis2.deployment.ServiceBuilder;
+import org.apache.axis2.deployment.ServiceGroupBuilder;
 import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDLToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
@@ -34,27 +45,31 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 public class ArchiveReader implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(ArchiveReader.class);
 
     public ArrayList buildServiceGroup(InputStream zin, ArchiveFileData currentFile,
-                                        AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
-                                        AxisConfiguration axisConfig)
+                                       AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
+                                       ConfigurationContext configCtx)
             throws XMLStreamException, AxisFault {
 
-        DescriptionBuilder builder = new DescriptionBuilder(zin, axisConfig);
+        DescriptionBuilder builder = new DescriptionBuilder(zin, configCtx);
         OMElement rootElement = builder.buildOM();
         String elementName = rootElement.getLocalName();
 
         if (TAG_SERVICE.equals(elementName)) {
             AxisService axisService = null;
-//            OMAttribute serviceNameatt = rootElement.getAttribute(new QName(ATTRIBUTE_NAME));
             String serviceName = DescriptionBuilder.getShortFileName(currentFile.getName());
             if (serviceName != null) {
                 axisService = (AxisService) wsdlServices.get(serviceName);
@@ -66,13 +81,13 @@ public class ArchiveReader implements DeploymentConstants {
             if (axisService == null) {
                 axisService = new AxisService(serviceName);
             } else {
-                axisService.setWsdlfound(true);
+                axisService.setWsdlFound(true);
             }
 
             axisService.setParent(axisServiceGroup);
             axisService.setClassLoader(currentFile.getClassLoader());
 
-            ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
+            ServiceBuilder serviceBuilder = new ServiceBuilder(configCtx, axisService);
             AxisService service = serviceBuilder.populateService(rootElement);
 
             ArrayList serviceList = new ArrayList();
@@ -80,10 +95,10 @@ public class ArchiveReader implements DeploymentConstants {
             return serviceList;
         } else if (TAG_SERVICE_GROUP.equals(elementName)) {
             ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, wsdlServices,
-                    axisConfig);
+                    configCtx);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
-        throw new AxisFault("In valid services.xml found");
+        throw new AxisFault("Invalid services.xml found");
     }
 
     /**
@@ -93,7 +108,7 @@ public class ArchiveReader implements DeploymentConstants {
      * @param axisServiceGroup
      * @param extractService
      * @param wsdls
-     * @param axisConfig
+     * @param configCtx
      * @return Returns ArrayList.
      * @throws DeploymentException
      */
@@ -101,7 +116,7 @@ public class ArchiveReader implements DeploymentConstants {
                                          AxisServiceGroup axisServiceGroup,
                                          boolean extractService,
                                          HashMap wsdls,
-                                         AxisConfiguration axisConfig)
+                                         ConfigurationContext configCtx)
             throws AxisFault {
         // get attribute values
         if (!extractService) {
@@ -115,7 +130,7 @@ public class ArchiveReader implements DeploymentConstants {
                     if (entry.getName().equalsIgnoreCase(SERVICES_XML)) {
                         axisServiceGroup.setServiceGroupName(
                                 DescriptionBuilder.getShortFileName(currentFile.getName()));
-                        return buildServiceGroup(zin, currentFile, axisServiceGroup, wsdls, axisConfig);
+                        return buildServiceGroup(zin, currentFile, axisServiceGroup, wsdls, configCtx);
                     }
                 }
                 throw new DeploymentException(
@@ -149,7 +164,7 @@ public class ArchiveReader implements DeploymentConstants {
                 try {
                     in = new FileInputStream(file);
                     axisServiceGroup.setServiceGroupName(currentFile.getName());
-                    return buildServiceGroup(in, currentFile, axisServiceGroup, wsdls, axisConfig);
+                    return buildServiceGroup(in, currentFile, axisServiceGroup, wsdls, configCtx);
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND, e.getMessage()));
@@ -180,7 +195,7 @@ public class ArchiveReader implements DeploymentConstants {
      * @throws DeploymentException
      */
     private AxisService processWSDLFile(WSDLToAxisServiceBuilder axisServiceBuilder, File serviceArchiveFile,
-                                        boolean isArchive, InputStream in) throws DeploymentException {
+                                        boolean isArchive, InputStream in, String baseURI) throws DeploymentException {
         try {
 
             if (serviceArchiveFile != null && isArchive) {
@@ -189,7 +204,7 @@ public class ArchiveReader implements DeploymentConstants {
                 if (axisServiceBuilder instanceof WSDL11ToAxisServiceBuilder) {
 
                     ((WSDL11ToAxisServiceBuilder) axisServiceBuilder).setCustomWSLD4JResolver(
-                            new AARBasedWSDLLocator(serviceArchiveFile, in));
+                            new AARBasedWSDLLocator(baseURI, serviceArchiveFile, in));
                 }
             } else {
                 if (serviceArchiveFile != null) {
@@ -199,7 +214,11 @@ public class ArchiveReader implements DeploymentConstants {
             }
             return axisServiceBuilder.populateService();
         } catch (AxisFault axisFault) {
-            throw new DeploymentException(axisFault);
+            log.info("Trouble processing wsdl file :" + axisFault.getMessage());
+            if(log.isDebugEnabled()) {
+                log.debug(axisFault);
+            }
+            return null;
         }
     }
 
@@ -217,59 +236,19 @@ public class ArchiveReader implements DeploymentConstants {
         boolean isDirectory = serviceFile.isDirectory();
         if (isDirectory) {
             try {
-                File meta_inf = new File(serviceFile, META_INF);
+                File metaInfFolder = new File(serviceFile, META_INF);
 
-                if (!meta_inf.exists()) {
-                    throw new DeploymentException(
-                            Messages.getMessage(
-                                    DeploymentErrorMsgs.META_INF_MISSING, serviceFile.getName()));
-                }
-                File files[] = meta_inf.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    File file1 = files[i];
-                    if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
-                        InputStream in = new FileInputStream(file1);
-                        FileInputStream in2 = null;
-                        
-                        // now the question is which version of WSDL file this archive contains.
-                        // lets check the namespace of the root element and decide. But since we are
-                        // using axiom (dude, you are becoming handy here :)), we will not build the
-                        // whole thing.
-                        OMNamespace documentElementNS = new StAXOMBuilder(in).getDocumentElement().getNamespace();
-                        if (documentElementNS != null) {
-                            WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
-                                // we have a WSDL 2.0 document here.
-                                in2 = new FileInputStream(file1);
-                                wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(in2, null, null);
-                            } else if (Constants.NS_URI_WSDL11.
-                                    equals(documentElementNS.getNamespaceURI())) {
-                                in2 = new FileInputStream(file1);
-                                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(in2, null, null);
-                            } else {
-                                new DeploymentException(Messages.getMessage("invalidWSDLFound"));
-                            }
-
-                            FileInputStream in3 = new FileInputStream(file1);
-                            AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false, in2);
-                            try {
-                                if(in2 != null) {
-                                    in2.close();
-                                }
-                                in3.close();
-                            } catch (IOException e) {
-                                log.info(e);
-                            }
-                            servicesMap.put(service.getName(), service);
-                        }
-
-                        try {
-                            in.close();
-                        } catch (IOException e) {
-                            log.info(e);
-                        }
+                if (!metaInfFolder.exists()) {
+                    metaInfFolder = new File(serviceFile, META_INF.toLowerCase());
+                    if (!metaInfFolder.exists()) {
+                        throw new DeploymentException(
+                                Messages.getMessage(
+                                        DeploymentErrorMsgs.META_INF_MISSING, serviceFile.getName()));
                     }
                 }
+
+                processFilesInFolder(metaInfFolder, servicesMap);
+
             } catch (FileNotFoundException e) {
                 throw new DeploymentException(e);
             } catch (IOException e) {
@@ -324,11 +303,11 @@ public class ArchiveReader implements DeploymentConstants {
                             } else {
                                 new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
-                            AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, serviceFile, true, new ByteArrayInputStream(out.toByteArray()));
-                            servicesMap.put(service.getName(), service);
+                            AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, serviceFile, true, new ByteArrayInputStream(out.toByteArray()), entry.getName());
+                            if(service != null) {
+                                servicesMap.put(service.getName(), service);
+                            }
                         }
-
-
                     }
                 }
                 try {
@@ -352,13 +331,64 @@ public class ArchiveReader implements DeploymentConstants {
         return servicesMap;
     }
 
+    public void processFilesInFolder(File folder, HashMap servicesMap) throws FileNotFoundException, XMLStreamException, DeploymentException {
+        File files[] = folder.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            File file1 = files[i];
+            if (file1.getName().toLowerCase().endsWith(SUFFIX_WSDL)) {
+                InputStream in = new FileInputStream(file1);
+                FileInputStream in2 = null;
+
+                // now the question is which version of WSDL file this archive contains.
+                // lets check the namespace of the root element and decide. But since we are
+                // using axiom (dude, you are becoming handy here :)), we will not build the
+                // whole thing.
+                OMNamespace documentElementNS = new StAXOMBuilder(in).getDocumentElement().getNamespace();
+                if (documentElementNS != null) {
+                    WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
+                    if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
+                        // we have a WSDL 2.0 document here.
+                        in2 = new FileInputStream(file1);
+                        wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(in2, null, null);
+                    } else if (Constants.NS_URI_WSDL11.
+                            equals(documentElementNS.getNamespaceURI())) {
+                        in2 = new FileInputStream(file1);
+                        wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(in2, null, null);
+                    } else {
+                        new DeploymentException(Messages.getMessage("invalidWSDLFound"));
+                    }
+
+                    FileInputStream in3 = new FileInputStream(file1);
+                    AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false, in2, file1.toURI().toString());
+                    try {
+                        if (in2 != null) {
+                            in2.close();
+                        }
+                        in3.close();
+                    } catch (IOException e) {
+                        log.info(e);
+                    }
+                    if(service != null) {
+                        servicesMap.put(service.getName(), service);
+                    }
+                }
+
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    log.info(e);
+                }
+            }
+        }
+    }
+
     public void readModuleArchive(ArchiveFileData archiveFile,
                                   AxisModule module, boolean explodedDir,
                                   AxisConfiguration axisConfig)
             throws DeploymentException {
 
         // get attribute values
-        boolean foundmoduleXML = false;
+        boolean moduleXMLFound = false;
         if (!explodedDir) {
             ZipInputStream zin;
             FileInputStream fin;
@@ -368,7 +398,7 @@ public class ArchiveReader implements DeploymentConstants {
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
                     if (entry.getName().equalsIgnoreCase(MODULE_XML)) {
-                        foundmoduleXML = true;
+                        moduleXMLFound = true;
                         ModuleBuilder builder = new ModuleBuilder(zin, module, axisConfig);
                         // setting module name
                         module.setName(
@@ -381,7 +411,7 @@ public class ArchiveReader implements DeploymentConstants {
                 }
                 zin.close();
                 fin.close();
-                if (!foundmoduleXML) {
+                if (!moduleXMLFound) {
                     throw new DeploymentException(
                             Messages.getMessage(
                                     DeploymentErrorMsgs.MODULE_XML_MISSING, archiveFile.getAbsolutePath()));

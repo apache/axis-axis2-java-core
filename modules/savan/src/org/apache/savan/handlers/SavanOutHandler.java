@@ -78,9 +78,10 @@ public class SavanOutHandler extends AbstractHandler {
 				log.debug(message);
 			}
 			
-			msgContext.pause();
+            msgContext.pause();
+            return InvocationResponse.SUSPEND;        
 		}
-        return InvocationResponse.SUSPEND;
+        return InvocationResponse.CONTINUE;        
 
 	}
 

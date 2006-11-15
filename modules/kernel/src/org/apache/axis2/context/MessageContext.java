@@ -29,7 +29,6 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.Handler;
 import org.apache.neethi.Policy;
 
 import javax.activation.DataHandler;
@@ -37,14 +36,25 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 
 /**
  * MessageContext holds service specific state information.
  */
 public class MessageContext extends AbstractContext {
+
+    /**
+     * A place to store the current MessageContext
+     */
+    public static ThreadLocal currentMessageContext = new ThreadLocal();
+
+    public static MessageContext getCurrentMessageContext() {
+        return (MessageContext) currentMessageContext.get();
+    }
+
+    public static void setCurrentMessageContext(MessageContext ctx) {
+        currentMessageContext.set(ctx);
+    }
 
     protected Options options;
 
@@ -57,7 +67,7 @@ public class MessageContext extends AbstractContext {
     public static final String REMOTE_ADDR = "REMOTE_ADDR";
 
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
-    
+
     public Attachments attachments = new Attachments();
 
     /**
@@ -110,14 +120,6 @@ public class MessageContext extends AbstractContext {
     public static final String TRANSPORT_NON_BLOCKING = "transportNonBlocking";
 
     /**
-     * This property allows someone (e.g. RM) to disable an async callback from
-     * being invoked if a fault occurs during message transmission.  If this is
-     * not set, it can be assumed that the fault will be delivered via
-     * Callback.onError(...).
-     */
-    public static final String DISABLE_ASYNC_CALLBACK_ON_TRANSPORT_ERROR = "disableTransmissionErrorCallback";
-    
-    /**
      * Field processingFault
      */
     private boolean processingFault;
@@ -138,15 +140,12 @@ public class MessageContext extends AbstractContext {
      */
     private ArrayList executionChain = new ArrayList();
 
-    private LinkedList inboundExecutedPhases = new LinkedList();
-    private LinkedList outboundExecutedPhases = new LinkedList();
-
     // Are we doing REST now?
     private boolean doingREST;
 
     // Are we doing MTOM now?
     private boolean doingMTOM;
-    
+
     // Are we doing SwA now?
     private boolean doingSwA;
 
@@ -261,90 +260,6 @@ public class MessageContext extends AbstractContext {
         return executionChain;
     }
 
-    /**
-     * Add a Phase to the collection of executed phases for the inbound path.
-     * Phases will be inserted in a LIFO data structure.
-     * @param phase The phase to add to the list.
-     */
-    public void addInboundExecutedPhase(Handler phase)
-    {
-      inboundExecutedPhases.addFirst(phase); 
-    }
-    
-    /**
-     * Remove the first Phase in the collection of executed phases for the
-     * inbound path.
-     */
-    public void removeFirstInboundExecutedPhase()
-    {
-      if (inboundExecutedPhases != null)
-      {
-        inboundExecutedPhases.removeFirst();
-      }
-    }
-    
-    /**
-     * Get an iterator over the inbound executed phase list.
-     * @return An Iterator over the LIFO data structure.
-     */
-    public Iterator getInboundExecutedPhases()
-    {
-      return inboundExecutedPhases.iterator();
-    }
-      
-    /**
-     * Reset the list of executed inbound phases.
-     * This is needed because the OutInAxisOperation currently invokes
-     * receive() even when a fault occurs, and we will have already executed
-     * the flowComplete on those before receiveFault() is called.
-     */
-    public void resetInboundExecutedPhases()
-    {
-      inboundExecutedPhases = new LinkedList();
-    }
-    
-    /**
-     * Add a Phase to the collection of executed phases for the outbound path.
-     * Phases will be inserted in a LIFO data structure.
-     * @param phase The phase to add to the list.
-     */
-    public void addOutboundExecutedPhase(Handler phase)
-    {
-      outboundExecutedPhases.addFirst(phase); 
-    }
-    
-    /**
-     * Remove the first Phase in the collection of executed phases for the
-     * outbound path.
-     */
-    public void removeFirstOutboundExecutedPhase()
-    {
-      if (outboundExecutedPhases != null)
-      {
-        outboundExecutedPhases.removeFirst();
-      }
-    }
-    
-    /**
-     * Get an iterator over the outbound executed phase list.
-     * @return An Iterator over the LIFO data structure.
-     */
-    public Iterator getOutboundExecutedPhases()
-    {
-      return outboundExecutedPhases.iterator();
-    }
-    
-    /**
-     * Reset the list of executed outbound phases.
-     * This is needed because the OutInAxisOperation currently invokes
-     * receive() even when a fault occurs, and we will have already executed
-     * the flowComplete on those before receiveFault() is called.
-     */
-    public void resetOutboundExecutedPhases()
-    {
-      outboundExecutedPhases = new LinkedList();
-    }
-      
     /**
      * @return Returns EndpointReference.
      */
@@ -725,7 +640,7 @@ public class MessageContext extends AbstractContext {
     public boolean isDoingREST() {
         return doingREST;
     }
-    
+
     /**
      * @return Returns boolean.
      */
@@ -834,7 +749,7 @@ public class MessageContext extends AbstractContext {
     public void setDoingREST(boolean b) {
         doingREST = b;
     }
-    
+
     /**
      * @param b
      */
@@ -1137,42 +1052,40 @@ public class MessageContext extends AbstractContext {
      */
     public boolean isHeaderPresent() {
         OMElement node = this.envelope.getFirstElement();
-        if (node ==null)
-        {
-        	return false;
-        }
-        else if (node.getQName().getLocalPart().equals(SOAPConstants.BODY_LOCAL_NAME)) {
+        if (node == null) {
+            return false;
+        } else if (node.getQName().getLocalPart().equals(SOAPConstants.BODY_LOCAL_NAME)) {
             return false;
         }
         return true;
     }
-    
+
     /**
-	 * Setting of the attachments map should be performed at the receipt of a
-	 * message only. This method is only meant to be used by the Axis2
-	 * internals.
-	 * 
-	 * @param attachments
-	 */
+     * Setting of the attachments map should be performed at the receipt of a
+     * message only. This method is only meant to be used by the Axis2
+     * internals.
+     *
+     * @param attachments
+     */
     public void setAttachmentMap(Attachments attachments) {
-		this.attachments = attachments;
-	}
-    
-    public Attachments getAttachmentMap(){
-    	return attachments;
+        this.attachments = attachments;
     }
 
-	public void addAttachment(String contentID, DataHandler dataHandler) {
-		attachments.addDataHandler(contentID, dataHandler);
-	}
+    public Attachments getAttachmentMap() {
+        return attachments;
+    }
 
-	public String addAttachment(DataHandler dataHandler) {
-		String contentID = UUIDGenerator.getUUID();
-		addAttachment(contentID, dataHandler);
-		return contentID;
-	}
+    public void addAttachment(String contentID, DataHandler dataHandler) {
+        attachments.addDataHandler(contentID, dataHandler);
+    }
 
-	public DataHandler getAttachment(String contentID) {
-		return attachments.getDataHandler(contentID);
-	}
+    public String addAttachment(DataHandler dataHandler) {
+        String contentID = UUIDGenerator.getUUID();
+        addAttachment(contentID, dataHandler);
+        return contentID;
+    }
+
+    public DataHandler getAttachment(String contentID) {
+        return attachments.getDataHandler(contentID);
+    }
 }

@@ -71,14 +71,13 @@
             while (opItr.hasNext()) {
                 AxisOperation axisOperation = (AxisOperation) opItr.next();
                 %><li><%=axisOperation.getName().getLocalPart()%></li>
-<%--                <br>Operation EPR : <%=prifix + axisService.getName().getLocalPart() + "/"+ axisOperation.getName().getLocalPart()%>--%>
                 <%
             }
            %></ul>
            <%
                     } else{
                            %>
-                <h3><font color="red" >No service found in this location</font></h3>
+                <h3><font color="red" >No services found in this location.</font></h3>
  <%
                     }
 

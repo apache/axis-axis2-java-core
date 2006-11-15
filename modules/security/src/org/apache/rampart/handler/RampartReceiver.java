@@ -30,7 +30,6 @@ import org.apache.rampart.RampartException;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSConstants;
-import org.apache.ws.security.WSSecurityEngine;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
@@ -42,8 +41,6 @@ import java.util.Vector;
 
 
 public class RampartReceiver implements Handler {
-
-    protected static final WSSecurityEngine secEngine = WSSecurityEngine.getInstance();
     
     private static HandlerDescription EMPTY_HANDLER_METADATA =
         new HandlerDescription("deafult Handler");
@@ -65,7 +62,7 @@ public class RampartReceiver implements Handler {
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         
         if (!msgContext.isEngaged(new QName(WSSHandlerConstants.SECURITY_MODULE_NAME))) {
-          return InvocationResponse.CONTINUE;
+          return InvocationResponse.CONTINUE;        
         }
         
         RampartEngine engine = new RampartEngine();
@@ -89,7 +86,7 @@ public class RampartReceiver implements Handler {
         }
         
         if(wsResult == null) {
-          return InvocationResponse.CONTINUE;
+          return InvocationResponse.CONTINUE;        
         }
         
         Vector results = null;
@@ -123,9 +120,11 @@ public class RampartReceiver implements Handler {
         }
 
         headerBlock.setProcessed();
-        return InvocationResponse.CONTINUE;
+        return InvocationResponse.CONTINUE;        
+
     }
 
+    
     public HandlerDescription getHandlerDesc() {
         return this.handlerDesc;
     }
@@ -136,10 +135,6 @@ public class RampartReceiver implements Handler {
 
     public Parameter getParameter(String name) {
         return this.handlerDesc.getParameter(name);
-    }
-
-    public void flowComplete(MessageContext msgContext)
-    {
     }
 
 }

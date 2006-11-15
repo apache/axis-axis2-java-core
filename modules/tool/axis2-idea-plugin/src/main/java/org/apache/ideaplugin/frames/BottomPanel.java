@@ -88,22 +88,37 @@ public class BottomPanel extends JPanel implements ActionListener {
         }
         if (obj == butNext) {
             ((ObjectKeeper) currentPanel).fillBean(bean);
-            currentPanel = ((ObjectKeeper) currentPanel).getNext();
-            parent.Next(currentPanel);
-            if (currentPanel instanceof DescriptorFile) {
-                parent.setEnable(false, true, false, true);
+            if (currentPanel instanceof SelectPanel){
+               ((SelectPanel)currentPanel).process(); 
             }
+            if(currentPanel instanceof FirstFrame){
+                parent.setEnable(true, false, false, true);
+            }
+            currentPanel = ((ObjectKeeper) currentPanel).getNext();
+
+
+            parent.Next(currentPanel);
+
         } else if (obj == btnFinsh) {
             ((ObjectKeeper) currentPanel).fillBean(bean);
-            bean.finsh();
+            try {
+                bean.finsh();
+            } catch (Exception e1) {
+               JOptionPane.showMessageDialog(parent, "An error occured while creating the service archieve",
+                    "Error!", JOptionPane.ERROR_MESSAGE);
+            parent.dispose();
+            }
 
             JOptionPane.showMessageDialog(parent, "Service creation successful!",
                     "Axis2 Service creation", JOptionPane.INFORMATION_MESSAGE);
-            parent.setVisible(false);
+            parent.dispose();
 
         } else if (obj == butBack) {
             currentPanel = ((ObjectKeeper) currentPanel).getPrivious();
             parent.Back(currentPanel);
+            if (currentPanel instanceof FirstFrame) {
+                parent.setEnable(false, true, false, true);
+            }
         }
     }
 }

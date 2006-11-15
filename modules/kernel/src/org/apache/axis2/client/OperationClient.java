@@ -55,10 +55,10 @@ public interface OperationClient {
      * process the message - it only records it in the operation client.
      * Processing only occurs when execute() is called.
      *
-     * @param mc the message context
+     * @param messageContext the message context
      * @throws AxisFault if this is called inappropriately.
      */
-    public void addMessageContext(MessageContext mc) throws AxisFault;
+    public void addMessageContext(MessageContext messageContext) throws AxisFault;
 
     /**
      * Return a message from the client - will return null if the requested

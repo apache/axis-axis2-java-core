@@ -30,12 +30,12 @@
 	}
 //-->
 </script>
-<h2>Upload a AxisService Archive File</h2>
+<h1>Upload an Axis Service Archive File</h1>
 
-<p>You can upload a packaged Axis 2 AxisService from this page in two small steps.</p>
+<p>You can upload a packaged Axis2 service from this page in two small steps.</p>
 <ul>
-  <li>Browse to the location and select the axisService archive file you wish to upload</li>
-  <li>Click Upload button</li>
+  <li>Browse to the location and select the axis service archive file you wish to upload</li>
+  <li>Click "Upload" button</li>
 </ul>
 <p>Simple as that!</p>
 
@@ -60,4 +60,8 @@
     </tr>
   </table>
 </form>
+<blockquote>
+<p>Hot deployment of new service archives is <%=request.getAttribute("hotDeployment") %></p>
+<p>Hot update of existing service archives is <%=request.getAttribute("hotUpdate") %></p>
+</blockquote>
 <jsp:include page="include/adminfooter.jsp"/>

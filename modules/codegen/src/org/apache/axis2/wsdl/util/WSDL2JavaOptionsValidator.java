@@ -1,4 +1,9 @@
 package org.apache.axis2.wsdl.util;
+
+import org.apache.axis2.util.CommandLineOption;
+import org.apache.axis2.util.CommandLineOptionConstants;
+import org.apache.axis2.util.OptionsValidator;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

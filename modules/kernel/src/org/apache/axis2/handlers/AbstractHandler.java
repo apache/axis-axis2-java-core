@@ -17,7 +17,6 @@
 
 package org.apache.axis2.handlers;
 
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
@@ -100,9 +99,5 @@ public abstract class AbstractHandler implements Handler {
      */
     public Parameter getParameter(String name) {
         return handlerDesc.getParameter(name);
-    }
-
-    public void flowComplete(MessageContext msgContext)
-    {
     }
 }

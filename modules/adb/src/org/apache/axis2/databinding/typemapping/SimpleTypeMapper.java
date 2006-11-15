@@ -43,7 +43,7 @@ public class SimpleTypeMapper {
     private static final String W_CHAR = "java.lang.Character";
     private static final String W_FLOAT = "java.lang.Float";
     private static final String W_CALENDAR = "java.util.Calendar";
-    private static final String W_DATE = "java.util.Date"; 
+    private static final String W_DATE = "java.util.Date";
     private static final String ARRAY_LIST = "java.util.ArrayList";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
@@ -92,7 +92,7 @@ public class SimpleTypeMapper {
         } else if (parameter.getName().equals(W_CALENDAR)) {
             return makeCalendar(value.getText(), false);
         } else if (parameter.getName().equals(W_DATE)) {
-            return makeCalendar(value.getText(), true); 
+            return makeCalendar(value.getText(), true);
         } else {
             return null;
         }
@@ -121,6 +121,8 @@ public class SimpleTypeMapper {
     public static boolean isSimpleType(Object obj) {
         String objClassName = obj.getClass().getName();
         if (obj instanceof Calendar) {
+            return true;
+        } else if (obj instanceof Date) {
             return true;
         } else {
             return isSimpleType(objClassName);
@@ -173,7 +175,7 @@ public class SimpleTypeMapper {
         } else if (objClassName.equals(W_CALENDAR)) {
             return true;
         } else if (objClassName.equals(W_DATE)) {
-            return true; 
+            return true;
         } else return objClassName.equals(W_CHAR);
     }
 
@@ -197,10 +199,11 @@ public class SimpleTypeMapper {
             }
         } else if (obj instanceof Calendar) {
             return zulu.format(((Calendar) obj).getTime());
+        } else if (obj instanceof Date) {
+            return zulu.format(obj);
         }
         return obj.toString();
     }
-
     public static Object makeCalendar(String source, boolean returnDate) {
         Calendar calendar = Calendar.getInstance();
         Date date;

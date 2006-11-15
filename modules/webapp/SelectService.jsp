@@ -34,18 +34,18 @@
       if(status != null && status.equals("MODULE")) {
           action = "listOperations";
           buttonName = " View Operations";
-          heading = "Select a Service to View Operation Specific Chains";
-          disc = "Select a axisService from the combo and click on the 'View Operations' button to view Operation specific Chains.";
+          heading = "Select a service to view operation specific chains";
+          disc = "Select an Axis service from the combo and click on the 'View Operations' button to view operation specific Chains.";
       } else if(status != null && status.equals("VIEW")){
           buttonName = " View ";
           action = "viewServiceHandlers";
-          heading = "Select a Service to View Service Handlers";
-          disc = "Select a axisService from the combo and click on the 'View' button to view Service Handlers.";
+          heading = "Select a service to view service handlers";
+          disc = "Select an Axis service from the combo and click on the 'View' button to view service handlers.";
       } else if (status != null && status.equals("SERVICE_PARAMETER")){
           buttonName = " Edit Parameters ";
-          action = Constants.EDIR_SERVICE_PARA;
+          action = "editServicePara"; // Constants.EDIR_SERVICE_PARA;
           heading = "Select a Service to Edit Parameters";
-          disc = "Select a axisService from the combo and click on the 'Edit Parameters' button to Edit Parameters.";
+          disc = "Select an Axis service from the combo and click on the 'Edit Parameters' button to edit parameters.";
       }
   %>
 <h1><%=heading%></h1>

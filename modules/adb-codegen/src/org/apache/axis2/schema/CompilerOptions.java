@@ -58,7 +58,6 @@ public class CompilerOptions {
     /**
      * get whether the mapper class package
      * name is present
-     * @return
      */
     public boolean isMapperClassPackagePresent(){
         return   (mapperClassPackage!=null &&

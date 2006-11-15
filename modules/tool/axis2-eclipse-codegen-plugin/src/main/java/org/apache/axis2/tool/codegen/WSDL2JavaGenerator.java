@@ -18,8 +18,8 @@ package org.apache.axis2.tool.codegen;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.axis2.wsdl.util.CommandLineOption;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
+import org.apache.axis2.util.CommandLineOption;
+import org.apache.axis2.util.CommandLineOptionConstants;
 
 import javax.wsdl.WSDLException;
 
@@ -135,7 +135,7 @@ public class WSDL2JavaGenerator {
 	    		   CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION, getStringArray(namespace2packageList)));
        }
        
-       //ns2pkg mapping
+       //server side interface  mapping
        if (isServerSideInterface){
 	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new CommandLineOption(
 	    		   CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new String[0]));
@@ -215,3 +215,4 @@ public class WSDL2JavaGenerator {
        return values;
     }
 }
+

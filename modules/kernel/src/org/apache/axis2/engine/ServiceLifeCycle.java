@@ -24,7 +24,7 @@ import org.apache.axis2.description.AxisService;
  * When you want to initialize database connections , starting threads and etc..
  * at the time you deploy  service (similar to loadonstartup).
  * You need to implement this interface and add additional (optional) attribute
- * into services.xml <service name="Foo"  class="Service life cycle impl class">
+ * into services.xml <service name=”Foo”  class=”Service life cycle impl class”>
  */
 
 public interface ServiceLifeCycle {

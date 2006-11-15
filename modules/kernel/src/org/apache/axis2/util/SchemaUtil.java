@@ -16,6 +16,7 @@
 package org.apache.axis2.util;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -26,16 +27,50 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaImport;
+import org.apache.ws.commons.schema.XmlSchemaInclude;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import java.util.Iterator;
 import java.util.Map;
-
+import java.util.HashMap;
 /**
  * 
  */
 public class SchemaUtil {
+
+    public static XmlSchema[] getAllSchemas(XmlSchema schema) {
+        HashMap map = new HashMap();
+        traverseSchemas(schema, map);
+        return (XmlSchema[]) map.values().toArray(new XmlSchema[map.values().size()]);
+    }
+
+    private static void traverseSchemas(XmlSchema schema, HashMap map) {
+        String key = schema.getTargetNamespace() + ":" + schema.getSourceURI();
+        if (map.containsKey(key)) {
+            return;
+        }
+        map.put(key, schema);
+
+        XmlSchemaObjectCollection includes = schema.getIncludes();
+        if (includes != null) {
+            Iterator tempIterator = includes.getIterator();
+            while (tempIterator.hasNext()) {
+                Object o = tempIterator.next();
+                if (o instanceof XmlSchemaImport) {
+                    XmlSchema schema1 = ((XmlSchemaImport) o).getSchema();
+                    if (schema1 != null) traverseSchemas(schema1, map);
+                }
+                if (o instanceof XmlSchemaInclude) {
+                    XmlSchema schema1 = ((XmlSchemaInclude) o).getSchema();
+                    if (schema1 != null) traverseSchemas(schema1, map);
+                }
+            }
+        }
+    }
 
     /**
      * This method is designed for REST handling. Parameter of a REST request comes in the URL or in
@@ -48,7 +83,6 @@ public class SchemaUtil {
      * @param request
      * @param xmlSchemaElement
      * @param soapFactory
-     * @return
      * @throws AxisFault
      */
     public static SOAPEnvelope handleMediaTypeURLEncoded(MessageContext msgCtxt,
@@ -99,15 +133,19 @@ public class SchemaUtil {
 
                         while (iterator.hasNext()) {
                             XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
-                            String name = innerElement.getName();
+                            QName qName = innerElement.getQName();
+                            String name = qName != null ? qName.getLocalPart() : innerElement.getName();
                             String[] parameterValuesArray = (String[]) parameterMap.get(name);
                             if (parameterValuesArray != null &&
                                 !"".equals(parameterValuesArray[0]) && parameterValuesArray[0] != null)
                             {
-                                soapFactory.createOMElement(name, null,
+                                OMNamespace ns = (qName == null || qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
+                                        null :
+                                        soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
+                                soapFactory.createOMElement(name, ns,
                                                             bodyFirstChild).setText(parameterValuesArray[0]);
                             } else {
-                                throw new AxisFault("Required element " + name +
+                                throw new AxisFault("Required element " + qName +
                                                     " defined in the schema can not be found in the request");
                             }
                         }

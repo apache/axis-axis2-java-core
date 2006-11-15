@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.axis2.maven2</groupId>
         <artifactId>axis2-maven-tools</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>axis2-ant-plugin</artifactId>
@@ -67,7 +67,7 @@
             </snapshots>
             <id>ws-zones</id>
             <name>ws.zones maven repository</name>
-            <url>http://ws.zones.apache.org/~dims/maven/</url>
+            <url>http://ws.zones.apache.org/repository/</url>
             <layout>legacy</layout>
         </repository>
     </repositories>
@@ -75,32 +75,32 @@
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -125,24 +125,24 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.ws.commons.neethi</groupId>
+            <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
-            <version>SNAPSHOT</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>woodstox</groupId>

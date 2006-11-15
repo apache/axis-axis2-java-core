@@ -86,6 +86,7 @@ public class DescriptorFile extends JPanel implements ObjectKeeper, ActionListen
 
     public JPanel getNext() {
         OutPage out = new OutPage(parent);
+        parent.setEnable(true, true, false, true);
         out.setPrivious(this);
         return out;
     }

@@ -19,10 +19,10 @@
  -->
 
 <project>
-    <name>Axis2.0</name>
+    <name>Axis2</name>
     <pomVersion>3</pomVersion>
     <!-- a unique name for this project -->
-    <name>Apache Axis 2.0</name>
+    <name>Apache Axis2</name>
     <id>axis2</id>
     <groupId>org.apache.axis2</groupId>
     <package>org.apache.axis2</package>
@@ -91,38 +91,6 @@
             <archive>http://marc.theaimsgroup.com/?l=axis-user&amp;r=1&amp;w=2</archive>
         </mailingList>
     </mailingLists>
-    
-    <dependencies>
-       <dependency>
-        <groupId>maven</groupId>
-        <artifactId>maven-test-plugin</artifactId>
-        <type>plugin</type>
-        <version>${maven.test.plugin.version}</version>
-       </dependency>
-       
-       <dependency>
-        <groupId>maven</groupId>
-        <artifactId>maven-multiproject-plugin</artifactId>
-        <type>plugin</type>
-        <version>${maven.multiproject.plugin.version}</version>
-       </dependency>
-       
-       <dependency>
-        <groupId>maven</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <type>plugin</type>
-        <version>${maven.jar.plugin.version}</version>
-       </dependency>
-       
-       <dependency>
-        <groupId>maven</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <type>plugin</type>
-        <version>${maven.plugin.plugin.version}</version>
-       </dependency>
-    </dependencies>
-    
-    
     <!-- ========== -->
     <!-- Developers -->
     <!-- ========== -->
@@ -134,9 +102,25 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
+            <name>Rajith Attapattu</name>
+            <id>rajith</id>
+            <email>rajith AT apache.org</email>
+            <organization>Redhat - Canada</organization>
+        </developer>
+        <developer>
             <name>Afkham Azeez</name>
             <id>azeez</id>
             <email>azeez AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Jeff Barrett</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
+            <name>Keith Chapman</name>
+            <id>keith</id>
+            <email>keith AT wso2.com</email>
             <organization>WSO2</organization>
         </developer>
         <developer>
@@ -172,10 +156,15 @@
             <organization>WSO2</organization>
         </developer>
         <developer>
+            <name>Nicholas Gallardo</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
             <name>Thilina Gunarathne</name>
             <id>thilina</id>
-            <email>thilina AT opensource.lk</email>
-            <organization>Lanka Software Foundation</organization>
+            <email>thilina AT wso2.com</email>
+            <organization>WSO2</organization>
+	    <url>www.apache.org/~thilina</url>
         </developer>
         <developer>
             <name>Chathura Herath</name>
@@ -220,7 +209,7 @@
             <name>Ajith Ranabahu</name>
             <id>ajith</id>
             <email>ajith AT wso2.com</email>
-            <organization>WSO2</organization>
+            <organization>University of Georgia</organization>
             <url>http://www.apache.org/~ajith</url>
         </developer>
         <developer>
@@ -230,10 +219,27 @@
             <organization>Computer Associates</organization>
         </developer>
         <developer>
+            <name>Michael Rheinheimer</name>
+            <organization>IBM</organization>
+        </developer>
+        <developer>
             <name>Sanka Samaranayake</name>
             <id>sanka</id>
             <email>sanka AT wso2.com</email>
             <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Lahiru Sandakith</name>
+            <id>sandakith</id>
+            <email>sandakith AT wso2.com</email>
+            <organization>WSO2</organization>
+            <url>http://www.lahiru.net</url>
+        </developer>
+        <developer>
+            <name>Rich Scheuerle</name>
+            <id>scheu</id>
+            <email>scheu AT us.ibm.com</email>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Ashutosh Shahi</name>
@@ -264,6 +270,16 @@
             <id>jaya</id>
             <email>jayachandra AT gmail.com</email>
             <organization>Computer Associates</organization>
+        </developer>
+        <developer>
+            <name>Amila Suriarachchi</name>
+            <id>amilas</id>
+            <email>amila AT wso2.com</email>
+            <organization>WSO2</organization>
+        </developer>
+        <developer>
+            <name>Nikhil Thaker</name>
+            <organization>IBM</organization>
         </developer>
         <developer>
             <name>Chamil Thanthrimudalige</name>

@@ -863,6 +863,7 @@ public class Options {
      * TODO Add get method, implement handling.
      *
      * @param referenceParameter
+     * @deprecated
      */
     public void addReferenceParameter(OMElement referenceParameter) {
         if (referenceParameters == null) {

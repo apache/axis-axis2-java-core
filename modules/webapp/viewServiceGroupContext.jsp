@@ -58,14 +58,14 @@
             }   else if("DELETE".equals(type)){
                 Object obj = serviceGroupContextsMap.remove(sgID);
                 if(obj != null){
-                 %>Reomoved the context <%
+                 %>Removed the context<%
             }else {
-                %>Unable to reomove the context <%
+                %>Unable to remove the context <%
             }
             }
         }
     } else {
-%> <h4>No Service Group Context found</h4><%
+%> <h4>No service group context found</h4><%
     }
 %>
 <jsp:include page="include/adminfooter.jsp"></jsp:include>

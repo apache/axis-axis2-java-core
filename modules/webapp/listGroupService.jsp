@@ -62,7 +62,7 @@
   String moduleName;
   if (engagedModules.size() > 0) {
 %>
-<i>Engaged Modules for the axisService</i><ul>
+<i>Engaged Modules for the Axis Service</i><ul>
   <%
     for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
       AxisModule axisOperation = (AxisModule) iteratorm.next();

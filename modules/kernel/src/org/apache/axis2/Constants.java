@@ -133,7 +133,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String VIEW_GLOBAL_HANDLERS = "viewGlobalHandlers";
     public static final String SELECT_SERVICE_FOR_PARA_EDIT = "selectServiceParaEdit";
     public static final String SELECT_SERVICE = "selectService";
-    public static final String EDIR_SERVICE_PARA = "editServicepara";
+    public static final String EDIT_SERVICE_PARA = "editServicepara";
     public static final String VIEW_SERVICE_HANDLERS = "viewServiceHandlers";
     public static final String USER_NAME = "userName";
     public static final String ADMIN_SECURITY_DISABLED = "disableAdminSecurity";
@@ -190,6 +190,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final char SERVICE_NAME_SPLIT_CHAR = ':';
     public static final String SERVICE_GROUP_ID = "ServiceGroupId";
     public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
+    //To have a floag if the replyTo is not annon one
+    public static final String DIFFERENT_EPR = "DIFFERENT_EPR";
 
     /**
      * Transport Info
@@ -216,6 +218,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String ADDRESSING_ACTION = "WS-Addressing:Action";
     public static final String HTTP_FRONTEND_HOST_URL = "httpFrontendHostUrl";
+    public static final String DEFAULT_REST_PATH = "rest";
 
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
@@ -229,7 +232,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String HTTP_METHOD_GET = "GET";
         public static final String HTTP_METHOD = "HTTP_METHOD";
         public static final String HTTP_METHOD_POST = "POST";
-        
+
         public static final String ENABLE_SWA = "enableSwA";
 
         public static final String CONTENT_TYPE = "ContentType";

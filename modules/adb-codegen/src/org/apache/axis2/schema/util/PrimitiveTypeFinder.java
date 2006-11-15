@@ -43,7 +43,6 @@ public class PrimitiveTypeFinder {
     /**
      *
      * @param className
-     * @return
      */
     public static boolean isPrimitive(String className){
         //if an array type is passed, strip out the [] part

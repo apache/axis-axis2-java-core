@@ -291,7 +291,13 @@ public class ServiceClient {
      * @throws AxisFault if something goes wrong
      */
     public void engageModule(QName moduleName) throws AxisFault {
-        axisService.engageModule(axisConfig.getModule(moduleName), axisConfig);
+        AxisModule module = axisConfig.getModule(moduleName);
+        if (module != null) {
+            axisService.engageModule(module, axisConfig);
+        } else {
+            throw new AxisFault("Unable to engage module : " +
+                    moduleName.getLocalPart());
+        }
     }
 
     /**
@@ -503,31 +509,33 @@ public class ServiceClient {
     }
 
     /**
-     * Directly invoke a named operation with an In-Out MEP. This method sends
+     * Directly invoke a named operationQName with an In-Out MEP. This method sends
      * your supplied XML and receives a response. For more control, you can
-     * instead create a client for the operation and use that client to execute
+     * instead create a client for the operationQName and use that client to execute
      * the exchange.
      *
-     * @param operation name of operation to be invoked (non-<code>null</code>)
-     * @param elem
+     * @param operationQName name of operationQName to be invoked (non-<code>null</code>)
+     * @param xmlPayload
      * @return response
      * @throws AxisFault
      */
-    public OMElement sendReceive(QName operation, OMElement elem)
+    public OMElement sendReceive(QName operationQName, OMElement xmlPayload)
             throws AxisFault {
         if (options.isUseSeparateListener()) {
 
-            // This mean doing a Request-Response invocation using two channel.
-            // If the
-            // transport is two way transport (e.g. http) Only one channel is
-            // used (e.g. in http cases
-            // 202 OK is sent to say no response available). Axis2 get blocked
-            // return when the response is available.
+            // Here we are trying to do a request-response invocation using two different channels for the request
+            // and the response.
+            // For example, if the IN and OUT transports are HTTP, then two different HTTP channels will be used. The first
+            // channel will be used to send the request, which the server respond sending HTTP 200, if accepted and uses
+            // a completely different channel to send the response. This flag, informs the Axis2 client engine to
+            // keep listeners ready to receive the response.
+
+            // even if the client is blocking we use a Callback, internally, to relate the response back to the client.
             SyncCallBack callback = new SyncCallBack();
 
             // this method call two channel non blocking method to do the work
             // and wait on the callback
-            sendReceiveNonBlocking(operation, elem, callback);
+            sendReceiveNonBlocking(operationQName, xmlPayload, callback);
 
             long timeout = options.getTimeOutInMilliSeconds();
             long waitTime = timeout;
@@ -564,12 +572,12 @@ public class ServiceClient {
                     throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
             }
         } else {
-            MessageContext mc = new MessageContext();
-            fillSOAPEnvelope(mc, elem);
-            OperationClient mepClient = createClient(operation);
-            mepClient.addMessageContext(mc);
-            mepClient.execute(true);
-            MessageContext response = mepClient
+            MessageContext messageContext = new MessageContext();
+            fillSOAPEnvelope(messageContext, xmlPayload);
+            OperationClient operationClient = createClient(operationQName);
+            operationClient.addMessageContext(messageContext);
+            operationClient.execute(true);
+            MessageContext response = operationClient
                     .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             return response.getEnvelope().getBody().getFirstElement();
         }
@@ -632,37 +640,37 @@ public class ServiceClient {
      * options. This method is used internally, and also by generated client
      * stub code.
      *
-     * @param operation qualified name of operation (local name is operation
-     *                  name, namespace URI is just the empty string)
+     * @param operationQName qualified name of operation (local name is operation
+     *                       name, namespace URI is just the empty string)
      * @return client configured to talk to the given operation
      * @throws AxisFault if the operation is not found
      */
-    public OperationClient createClient(QName operation) throws AxisFault {
-        AxisOperation axisOp = axisService.getOperation(operation);
-        if (axisOp == null) {
+    public OperationClient createClient(QName operationQName) throws AxisFault {
+        AxisOperation axisOperation = axisService.getOperation(operationQName);
+        if (axisOperation == null) {
             throw new AxisFault(Messages
-                    .getMessage("operationnotfound", operation.getLocalPart()));
+                    .getMessage("operationnotfound", operationQName.getLocalPart()));
         }
 
-        OperationClient oc = axisOp.createClient(serviceContext, options);
+        OperationClient operationClient = axisOperation.createClient(serviceContext, options);
 
         // if overide options have been set, that means we need to make sure
         // those options override the options of even the operation client. So,
         // what we do is switch the parents around to make that work.
         if (overrideOptions != null) {
-            overrideOptions.setParent(oc.getOptions());
-            oc.setOptions(overrideOptions);
+            overrideOptions.setParent(operationClient.getOptions());
+            operationClient.setOptions(overrideOptions);
         }
-        return oc;
+        return operationClient;
     }
 
     /**
      * Return the SOAP factory to use depending on what options have been set.
-     * If the SOAP version has not be seen in the options, version 1.1 is the
+     * If the SOAP version can not be seen in the options, version 1.1 is the
      * default.
      *
      * @return the SOAP factory
-     * @see Options#setSoapVersionURI()
+     * @see Options#setSoapVersionURI(String)
      */
     private SOAPFactory getSOAPFactory() {
         String soapVersionURI = options.getSoapVersionURI();
@@ -677,20 +685,20 @@ public class ServiceClient {
     /**
      * Prepare a SOAP envelope with the stuff to be sent.
      *
-     * @param mc   the message context to be filled
-     * @param elem the payload content
+     * @param messageContext the message context to be filled
+     * @param xmlPayload     the payload content
      * @throws AxisFault if something goes wrong
      */
-    private void fillSOAPEnvelope(MessageContext mc, OMElement elem)
+    private void fillSOAPEnvelope(MessageContext messageContext, OMElement xmlPayload)
             throws AxisFault {
-        mc.setServiceContext(serviceContext);
+        messageContext.setServiceContext(serviceContext);
         SOAPFactory soapFactory = getSOAPFactory();
         SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
-        if (elem != null) {
-            envelope.getBody().addChild(elem);
+        if (xmlPayload != null) {
+            envelope.getBody().addChild(xmlPayload);
         }
         addHeadersToEnvelope(envelope);
-        mc.setEnvelope(envelope);
+        messageContext.setEnvelope(envelope);
     }
 
 
@@ -701,9 +709,9 @@ public class ServiceClient {
      */
     public void addHeadersToEnvelope(SOAPEnvelope envelope) {
         if (headers != null) {
-            SOAPHeader sh = envelope.getHeader();
+            SOAPHeader soapHeader = envelope.getHeader();
             for (int i = 0; i < headers.size(); i++) {
-                sh.addChild((OMElement) headers.get(i));
+                soapHeader.addChild((OMElement) headers.get(i));
             }
         }
     }
@@ -736,6 +744,7 @@ public class ServiceClient {
      */
     public void setTargetEPR(EndpointReference targetEpr) {
         serviceContext.setTargetEPR(targetEpr);
+        options.setTo(targetEpr);
     }
 
 

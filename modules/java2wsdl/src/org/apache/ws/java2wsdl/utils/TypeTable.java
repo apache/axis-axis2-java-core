@@ -86,6 +86,10 @@ public class TypeTable {
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         simpleTypetoxsd.put(List.class.getName(),
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+         simpleTypetoxsd.put(HashMap.class.getName(),
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
+         simpleTypetoxsd.put(Hashtable.class.getName(),
+                new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "anyType", "xs"));
         //byteArrat
         simpleTypetoxsd.put("base64Binary",
                 new QName(Java2WSDLConstants.URI_2001_SCHEMA_XSD, "base64Binary", "xs"));

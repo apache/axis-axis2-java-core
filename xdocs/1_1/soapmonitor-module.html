@@ -3,9 +3,10 @@
 <head>
   <meta http-equiv="content-type" content="">
   <title>The SOAP Monitor Module</title>
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
-
 <body>
+
 <h1>Using the SOAP Monitor</h1>
 
 <p>Web service developers often have the need to see the SOAP messages being
@@ -33,7 +34,7 @@ for security reasons.</p>
 
 <p>The SOAP Monitor can be engaged by inserting the following in the
 axis2.xml file.</p>
-<source><pre>    &lt;module ref="soapmonitor"/&gt;</pre>
+<source><pre>   &lt;module ref="soapmonitor"/&gt;</pre>
 </source>
 <p>Then in the axis2.xml file define your phase orders for 'soapmonitorPhase'
 referenced in the module.xml of soapmonitor.mars. Below is an example which
@@ -50,17 +51,14 @@ the 'user can add his own phases to this area' comment in the 'inflow',
                      class="org.apache.axis2.engine.AddressingBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
-
             &lt;handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
-
             &lt;handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
             &lt;/handler&gt;
-
             &lt;handler name="SOAPMessageBodyBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher"&gt;
                 &lt;order phase="Dispatch"/&gt;
@@ -98,7 +96,7 @@ the 'user can add his own phases to this area' comment in the 'inflow',
     &lt;/phaseOrder&gt;</pre>
 
 <p>To configure the servlet to communicate with the applet, add the following
-to web.xml (the SOAPMonitorPort is configurable) :</p>
+to web.xml (the SOAPMonitorPort is configurable): </p>
 <pre>    &lt;servlet&gt;
        &lt;servlet-name&gt;SOAPMonitorService&lt;/servlet-name&gt;
        &lt;display-name&gt;SOAPMonitorService&lt;/display-name&gt;
@@ -129,9 +127,10 @@ axis2-soapmonitor-*.jar from inside the expanded axis2.war under WEB-INF/lib
 classes as axis2/SOAPMonitorApplet*.class/WEB-INF.  </p>
 
 <p>Using a Web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor
-(e.g. http://localhost:8080/axis2/SOAPMonitor) substituting the correct
+(e.g.http://localhost:8080/axis2/SOAPMonitor) substituting the correct
 values for your Web application. This will show the SOAP Monitor applet for
 viewing service requests and responses. Any requests to services that have
 been configured and deployed correctly should show up in the applet.</p>
+
 </body>
 </html>

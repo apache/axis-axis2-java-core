@@ -1,10 +1,13 @@
+
 <html>
+
 <head>
-  <meta http-equiv="content-type" content="">
   <title></title>
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body>
+
 <h1>How To Write Your Own Axis2 Transport</h1>
 
 <h2>Prologue</h2>
@@ -22,7 +25,7 @@ description. </p>
   transport.</li>
   <li><b>TCP</b> - This is the most simple transport, but needs Addressing
     support to be functional.</li>
-  <li><b>SMTP</b> - This can work off a single email account or a mailserver.
+  <li><b>SMTP</b> - This can work off a single email account or a mail server.
     The Mail Transport Receiver is a thread that checks for emails in fixed
     time intervals.</li>
 </ul>
@@ -81,6 +84,7 @@ axis2xmllocation);
         log.info(e.getMessage());
 }</pre>
 </source>
+
 <p>Now we need some kind of a Listener to listen to the requests that come
 in. This you will need to implement according to the transport that you are
 trying to build. After a message is received at the Receiver you can use the
@@ -89,6 +93,7 @@ the engine using the engine.receive(msgContext) method.{Following code
 snippet is extracted from MailListener as an example}</p>
 <source><pre>AxisEngine engine = new AxisEngine(configurationContext);
 MessageContext msgContext = null;
+
 // create and initialize a message context
 try {
         TransportInDescription transportIn =
@@ -97,6 +102,7 @@ try {
                 reg.getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_NAME));
         if (transportIn != null &amp;&amp; transportOut != null) {
                 //create Message Context
+                
                 msgContext = new MessageContext(configurationContext, transportIn, transportOut);
                 msgContext.setServerSide(true);
                 msgContext.setProperty(MailSrvConstants.CONTENT_TYPE, message.getContentType());
@@ -158,11 +164,10 @@ also be done through the axis2.xml file.</p>
   </pre>
 </source>
 <p>Using a code fragment like
-Utils.getParameterValue(transportOut.getParameter(MailSrvConstants.SMTP_USER))
+<code>Utils.getParameterValue(transportOut.getParameter(MailSrvConstants.SMTP_USER))</code>
 we can extract the parameters that we insert into the axis2.xml file.</p>
 
-<p>As you can see getting a new transport receiver up and running is a task
-that requires very little effort.</p>
+<p>As you can see getting a new transport receiver up and running is a task that requires very little effort.</p>
 
 <h2>Transport Sender</h2>
 
@@ -191,21 +196,24 @@ if (epr != null) {
                 throw new AxisFault(
                         "Both the TO and Property MessageContext.TRANSPORT_WRITER is Null, No way to send response.");
         }
-}</pre>
+}
+</pre>
 </source>
-<p>Therefor, depending on if your transport is using the same channel to send
-the responce or using a different channel, you will need to implement a
+<p>Therefore, depending on if your transport is using the same channel to send
+the response or using a different channel, you will need to implement a
 sub-set of the methods from the abstract class.</p>
 
 <p>After implementing the necessary methods you can let Axis2 know about your
 new transport sender by adding an entry to the axis2.xml file like you did
 for the Transport Receiver.</p>
-<source><pre>   &lt;transportSender name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_SENDER_CLASS"&gt;
+
+<source><pre>  &lt;transportSender name="TRANSPORT_NAME" class="org.apache.Axis2.transport.TRANSPORT_NAME.TRANSPORT_SENDER_CLASS"&gt;
         &lt;parameter name="PROPERTY_NAME" locked="false"&gt;PROPERTY_VALUE&lt;/parameter&gt;
         &lt;parameter name="PROPERTY_NAME_2" locked="false"&gt;PROPERTY_VALUE_2&lt;/parameter&gt;
   &lt;/transportSender&gt;
   </pre>
 </source>
+
 <p>Have a look at org.apache.Axis2.transport.mail.MailTransportSender for a
 very simple Transport Sender. Also have a look at
 org.apache.Axis2.transport.http.CommonsHTTPTransportSender which is used to
@@ -214,5 +222,7 @@ send HTTP responses.</p>
 <p>Once we have written our transport receiver and our transport sender, and
 inserted the needed entries into the axis2.xml file, we are done. It is as
 simple as that! </p>
+
 </body>
+
 </html>

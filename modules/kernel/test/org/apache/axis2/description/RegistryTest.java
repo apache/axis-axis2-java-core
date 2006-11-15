@@ -84,7 +84,7 @@ public class RegistryTest extends AbstractTestCase {
             private static final long serialVersionUID = 196289132377245632L;
 
 			public InvocationResponse invoke(MessageContext msgContext)  {
-              return InvocationResponse.CONTINUE;
+                return InvocationResponse.CONTINUE;        
             }
         };
         handler.init(new HandlerDescription());

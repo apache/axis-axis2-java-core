@@ -17,29 +17,14 @@
 
 package org.apache.axis2.util;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.InOutAxisOperation;
-import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.PhaseRule;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.context.*;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisError;
 import org.apache.axis2.engine.Handler;
@@ -47,6 +32,13 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
+
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class Utils {
     public static void addHandler(Flow flow, Handler handler, String phaseName) {
@@ -59,14 +51,97 @@ public class Utils {
         flow.addHandler(handlerDesc);
     }
 
-    /**
-     * @deprecated (post 1.1 branch)
-     * @see org.apache.axis2.util.MessageContextBuilder.createOutMessageContext()
-     */
     public static MessageContext createOutMessageContext(MessageContext inMessageContext) throws AxisFault {
-        return MessageContextBuilder.createOutMessageContext(inMessageContext);
+        MessageContext newmsgCtx = new MessageContext();
+
+        newmsgCtx.setConfigurationContext(inMessageContext.getConfigurationContext());
+        newmsgCtx.setSessionContext(inMessageContext.getSessionContext());
+        newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
+        newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
+
+        Options oldOptions =
+                inMessageContext.getOptions();
+
+        newmsgCtx.setMessageID(UUIDGenerator.getUUID());
+        newmsgCtx.setTo(oldOptions.getReplyTo());
+        newmsgCtx.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+                inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION));
+        newmsgCtx.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
+                inMessageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES));
+
+        // do Target Resolution
+        newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(newmsgCtx);
+
+        newmsgCtx.addRelatesTo(new RelatesTo(oldOptions.getMessageId()));
+
+        AxisService axisService = inMessageContext.getAxisService();
+        if (axisService != null && Constants.SCOPE_SOAP_SESSION.equals(axisService.getScope())) {
+            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+            // add the service group id as a reference parameter
+            String serviceGroupContextId = inMessageContext.getServiceGroupContextId();
+            if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
+                EndpointReference replyToEPR = newmsgCtx.getReplyTo();
+                replyToEPR.addReferenceParameter(new QName(Constants.AXIS2_NAMESPACE_URI,
+                        Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
+            }
+        } else {
+            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+        }
+
+        AxisOperation ao = inMessageContext.getAxisOperation();
+        if (ao.getOutputAction() != null) {
+            newmsgCtx.setWSAAction(ao.getOutputAction());
+        } else {
+            newmsgCtx.setWSAAction(oldOptions.getAction());
+        }
+
+        newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
+        newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
+        newmsgCtx.setServiceContext(inMessageContext.getServiceContext());
+        newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
+                inMessageContext.getProperty(MessageContext.TRANSPORT_OUT));
+        newmsgCtx.setProperty(Constants.OUT_TRANSPORT_INFO,
+                inMessageContext.getProperty(Constants.OUT_TRANSPORT_INFO));
+
+        // Setting the charater set encoding
+        newmsgCtx.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                inMessageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+        newmsgCtx.setDoingREST(inMessageContext.isDoingREST());
+        newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
+        newmsgCtx.setServerSide(inMessageContext.isServerSide());
+        newmsgCtx.setServiceGroupContextId(inMessageContext.getServiceGroupContextId());
+
+        // write the Message to the Wire
+        TransportOutDescription transportOut = newmsgCtx.getTransportOut();
+
+        //there may be instance where you want to send the response to replyTo
+        //and this default behaviour should happen if somebody (e.g. a module) has not already provided
+        //a Sender.
+        try {
+            EndpointReference responseEPR = newmsgCtx.getTo();
+            if (newmsgCtx.isServerSide() && responseEPR != null) {
+                if (!responseEPR.hasAnonymousAddress() && !responseEPR.hasNoneAddress()) {
+                    URI uri = new URI(responseEPR.getAddress());
+                    String scheme = uri.getScheme();
+                    if (!transportOut.getName().getLocalPart().equals(scheme)) {
+                        ConfigurationContext configurationContext = newmsgCtx.getConfigurationContext();
+                        transportOut = configurationContext.getAxisConfiguration()
+                                .getTransportOut(new QName(scheme));
+                        if (transportOut == null) {
+                            throw new AxisFault("Can not find the transport sender : " + scheme);
+                        }
+                        newmsgCtx.setTransportOut(transportOut);
+                    }
+                    inMessageContext.getOperationContext().setProperty(
+                            Constants.DIFFERENT_EPR, Constants.VALUE_TRUE);
+                }
+            }
+        } catch (URISyntaxException e) {
+            throw new AxisFault(e);
+        }
+        return newmsgCtx;
     }
-    
+
     public static AxisService createSimpleService(QName serviceName, String className, QName opName)
             throws AxisFault {
         return createSimpleService(serviceName, new RawXMLINOutMessageReceiver(), className,
@@ -247,7 +322,6 @@ public class Utils {
      *
      * @param deployingModuleName
      * @param deployedModulename
-     * @return
      * @throws AxisFault
      */
     public static boolean checkVersion(QName deployingModuleName,

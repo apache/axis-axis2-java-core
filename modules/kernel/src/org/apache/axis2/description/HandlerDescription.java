@@ -124,7 +124,12 @@ public class HandlerDescription implements ParameterInclude {
      * @return Returns Parameter.
      */
     public Parameter getParameter(String name) {
-        return parameterInclude.getParameter(name);
+        Parameter parameter = parameterInclude.getParameter(name);
+        if (parameter == null && parent != null) {
+            return parent.getParameter(name);
+        } else {
+            return parameter;
+        }
     }
 
     public ArrayList getParameters() {

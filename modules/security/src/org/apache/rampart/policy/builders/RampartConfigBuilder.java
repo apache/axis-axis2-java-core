@@ -18,8 +18,6 @@ package org.apache.rampart.policy.builders;
 import org.apache.axiom.om.OMElement;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
-import org.apache.neethi.Policy;
-import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.builders.AssertionBuilder;
 import org.apache.rampart.policy.model.CryptoConfig;
 import org.apache.rampart.policy.model.RampartConfig;
@@ -58,12 +56,6 @@ public class RampartConfigBuilder implements AssertionBuilder {
         if (childElement != null) {
             rampartConfig.setSigCryptoConfig((CryptoConfig) factory
                     .build(childElement.getFirstElement()));
-        }
-
-        childElement = element.getFirstChildWithName(new QName(
-                RampartConfig.NS, RampartConfig.TOKEN_ISSUER_POLICY_LN));
-        if (childElement != null) {
-            rampartConfig.setTokenIssuerPolicy((Policy) PolicyEngine.getPolicy((childElement.getFirstElement())));
         }
 
         return rampartConfig;

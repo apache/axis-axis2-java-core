@@ -39,10 +39,10 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.codegen.extension.JiBXExtension;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
-import org.apache.bcel.generic.Type;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
@@ -91,6 +91,91 @@ public class CodeGenerationUtility {
         s_primitiveSet.add("void");
     }
     
+    private static HashMap s_wrapperMap = new HashMap();
+    static {
+        s_wrapperMap.put("boolean", "Boolean");
+        s_wrapperMap.put("byte", "Byte");
+        s_wrapperMap.put("char", "Character");
+        s_wrapperMap.put("double", "Double");
+        s_wrapperMap.put("float", "Float");
+        s_wrapperMap.put("int", "Integer");
+        s_wrapperMap.put("long", "Long");
+        s_wrapperMap.put("short", "Short");
+    }
+    
+    /** Reserved words for Java (keywords and literals). */
+    private static final HashSet s_reservedWords = new HashSet();
+    static {
+
+        // keywords
+        s_reservedWords.add("abstract");
+        s_reservedWords.add("assert");
+        s_reservedWords.add("boolean");
+        s_reservedWords.add("break");
+        s_reservedWords.add("byte");
+        s_reservedWords.add("case");
+        s_reservedWords.add("catch");
+        s_reservedWords.add("char");
+        s_reservedWords.add("class");
+        s_reservedWords.add("const");
+        s_reservedWords.add("continue");
+
+        s_reservedWords.add("default");
+        s_reservedWords.add("do");
+        s_reservedWords.add("double");
+        s_reservedWords.add("else");
+        s_reservedWords.add("enum");
+        s_reservedWords.add("extends");
+        s_reservedWords.add("final");
+        s_reservedWords.add("finally");
+        s_reservedWords.add("float");
+        s_reservedWords.add("for");
+        s_reservedWords.add("goto");
+
+        s_reservedWords.add("if");
+        s_reservedWords.add("implements");
+        s_reservedWords.add("import");
+        s_reservedWords.add("instanceof");
+        s_reservedWords.add("int");
+        s_reservedWords.add("interface");
+        s_reservedWords.add("long");
+        s_reservedWords.add("native");
+        s_reservedWords.add("new");
+        s_reservedWords.add("package");
+
+        s_reservedWords.add("private");
+        s_reservedWords.add("protected");
+        s_reservedWords.add("public");
+        s_reservedWords.add("return");
+        s_reservedWords.add("short");
+        s_reservedWords.add("static");
+        s_reservedWords.add("strictfp");
+        s_reservedWords.add("super");
+        s_reservedWords.add("switch");
+        s_reservedWords.add("synchronized");
+
+        s_reservedWords.add("this");
+        s_reservedWords.add("throw");
+        s_reservedWords.add("throws");
+        s_reservedWords.add("transient");
+        s_reservedWords.add("try");
+        s_reservedWords.add("void");
+        s_reservedWords.add("volatile");
+        s_reservedWords.add("while");
+
+        // literals
+        s_reservedWords.add("true");
+        s_reservedWords.add("false");
+        s_reservedWords.add("null");
+        
+        // variable names used by template unwrapped code generation
+        // TODO change templates to use $xxx names, block generation from WSDL
+        s_reservedWords.add("true");
+        s_reservedWords.add("uctx");
+        s_reservedWords.add("child");
+        s_reservedWords.add("wrapper");
+    }
+    
     /**
      * Constructor.
      * 
@@ -115,31 +200,48 @@ public class CodeGenerationUtility {
      * each unwrapped parameter, and the detailed information is set on the
      * message information. Sound confusing? Welcome to Axis2 code generation.
      * 
-     * @param path binding path
+     * @param path binding path (<code>null</code> if none)
      */
     public void engage(String path) {
         
-        // make sure the binding definition file is present
-        File file = new File(path);
-        if (!file.exists()) {
-            throw new RuntimeException("jibx binding definition file " + path + " not found");
-//                CodegenMessages.getMessage("extension.encodedNotSupported"));
+        // make sure the binding definition file is present, if passed
+        File file = null;
+        if (path != null) {
+            file = new File(path);
+            if (!file.exists()) {
+                throw new RuntimeException("jibx binding definition file " + path + " not found");
+            }
         }
-        
-        // Read the JiBX binding definition into memory. The binding definition
-        // is only prevalidated so as not to require the user to have all
-        // the referenced classes in the classpath, though this does make for
-        // added work in finding the namespaces.
         try {
-            ValidationContext vctx = BindingElement.newValidationContext();
-            BindingElement binding =
-                BindingElement.readBinding(new FileInputStream(file), path, vctx);
-            binding.setBaseUrl(file.toURL());
-            vctx.setBindingRoot(binding);
-            IncludePrevalidationVisitor ipv = new IncludePrevalidationVisitor(vctx);
-            vctx.tourTree(binding, ipv);
-            if (vctx.getErrorCount() != 0 || vctx.getFatalCount() != 0) {
-                throw new RuntimeException("invalid jibx binding definition file " + path);
+            
+            // set flag for unwrapping
+            boolean unwrap = !codeGenConfig.isParametersWrapped();
+            
+            // initialize the binding information
+            BindingElement binding = null;
+            if (file == null) {
+                
+                // unwrapped can be used without a binding, but wrapped requires one
+                if (!unwrap) {
+                    throw new RuntimeException("JiBX wrapped support requires a binding definition to be provided using the -E" +
+                        JiBXExtension.BINDING_PATH_OPTION + " {file-path} parameter");
+                }
+                
+            } else {
+                
+                // Read the JiBX binding definition into memory. The binding definition
+                // is only prevalidated so as not to require the user to have all
+                // the referenced classes in the classpath, though this does make for
+                // added work in finding the namespaces.
+                ValidationContext vctx = BindingElement.newValidationContext();
+                binding = BindingElement.readBinding(new FileInputStream(file), path, vctx);
+                binding.setBaseUrl(file.toURL());
+                vctx.setBindingRoot(binding);
+                IncludePrevalidationVisitor ipv = new IncludePrevalidationVisitor(vctx);
+                vctx.tourTree(binding, ipv);
+                if (vctx.getErrorCount() != 0 || vctx.getFatalCount() != 0) {
+                    throw new RuntimeException("invalid jibx binding definition file " + path);
+                }
             }
             
             // create table with all built-in format definitions
@@ -191,8 +293,15 @@ public class CodeGenerationUtility {
             // collect all the top-level mapping and format definitions
             Map elementMap = new HashMap();
             Map complexTypeMap = new HashMap();
-            collectTopLevelComponents(binding, null, elementMap,
-                complexTypeMap, simpleTypeMap);
+            if (binding != null) {
+                collectTopLevelComponents(binding, null, elementMap,
+                    complexTypeMap, simpleTypeMap);
+            }
+            
+            // make sure classes will be generated for abstract mappings
+            if (unwrap && complexTypeMap.size() > 0 && !binding.isForceClasses()) {
+                throw new RuntimeException("unwrapped binding must use force-classes='true' option in " + path);
+            }
             
             // force off inappropriate option (set by error in options handling)
             codeGenConfig.setPackClasses(false);
@@ -200,11 +309,13 @@ public class CodeGenerationUtility {
             // configure handling for all operations of service
             codeGenConfig.setTypeMapper(new NamedParameterTypeMapper());
             Iterator operations = codeGenConfig.getAxisService().getOperations();
-            boolean unwrap = !codeGenConfig.isParametersWrapped();
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
             int opindex = 0;
             Map typeMappedClassMap = new HashMap();
             String mappedclass = null;
+            Set objins = new HashSet();
+            Set objouts = new HashSet();
+            Set objfaults = new HashSet();
             while (operations.hasNext()) {
                 
                 // get the basic operation information
@@ -231,7 +342,7 @@ public class CodeGenerationUtility {
                     Element dbmethod = doc.createElement("dbmethod");
                     dbmethod.setAttribute("receiver-name", receivername);
                     dbmethod.setAttribute("method-name", op.getName().getLocalPart());
-                    Set nameset = new HashSet();
+                    Set nameset = new HashSet(s_reservedWords);
                     if (inmsg != null) {
                         dbmethod.appendChild(unwrapMessage(inmsg, false, simpleTypeMap, complexTypeMap, typeMappedClassMap, nameset, doc));
                     }
@@ -249,15 +360,24 @@ public class CodeGenerationUtility {
                     // concrete mappings, just save the mapped class name(s)
                     if (inmsg != null) {
                         mappedclass = mapMessage(inmsg, elementMap);
+                        objins.add(mappedclass);
                     }
                     if (outmsg != null) {
                         mappedclass = mapMessage(outmsg, elementMap);
+                        objouts.add(mappedclass);
                     }
                     
+                }
+                
+                // always handle faults as wrapped
+                for (Iterator iter = op.getFaultMessages().iterator(); iter.hasNext();) {
+                    mappedclass = mapMessage((AxisMessage)iter.next(), elementMap);
+                    objfaults.add(mappedclass);
                 }
             }
             
             // add type usage information as service parameter
+            List details = new ArrayList();
             Element bindinit = doc.createElement("initialize-binding");
             if (!typeMappedClassMap.isEmpty()) {
                 for (Iterator iter = typeMappedClassMap.keySet().iterator(); iter.hasNext();) {
@@ -274,8 +394,32 @@ public class CodeGenerationUtility {
                     }
                 }
             }
+            if (mappedclass == null) {
+                mappedclass = "";
+            }
             bindinit.setAttribute("bound-class", mappedclass);
-            codeGenConfig.getAxisService().addParameter(new Parameter(Constants.DATABINDING_SERVICE_DETAILS, bindinit));
+            details.add(bindinit);
+            
+            // add details for all objects used as inputs/outputs/faults
+            for (Iterator iter = objins.iterator(); iter.hasNext();) {
+                String classname = (String)iter.next();
+                Element detail = doc.createElement("object-input");
+                detail.setAttribute("type", classname);
+                details.add(detail);
+            }
+            for (Iterator iter = objouts.iterator(); iter.hasNext();) {
+                String classname = (String)iter.next();
+                Element detail = doc.createElement("object-output");
+                detail.setAttribute("type", classname);
+                details.add(detail);
+            }
+            for (Iterator iter = objfaults.iterator(); iter.hasNext();) {
+                String classname = (String)iter.next();
+                Element detail = doc.createElement("object-fault");
+                detail.setAttribute("type", classname);
+                details.add(detail);
+            }
+            codeGenConfig.getAxisService().addParameter(new Parameter(Constants.DATABINDING_SERVICE_DETAILS, details));
             
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -349,7 +493,6 @@ public class CodeGenerationUtility {
         List partNameList = new ArrayList();
         String wrappertype = "";
         if (type instanceof XmlSchemaComplexType) {
-            wrapdetail.setAttribute("empty", "false");
             XmlSchemaComplexType ctype = (XmlSchemaComplexType)type;
             if (ctype.getAttributes().getCount() != 0) {
                 throw new RuntimeException("Cannot unwrap element " +
@@ -401,18 +544,28 @@ public class CodeGenerationUtility {
                     FormatElement format = (FormatElement)simpleTypeMap.get(typename);
                     if (format == null) {
                         throw new RuntimeException("Cannot unwrap element " +
-                            qname + ": no format definition found for child element " + itemname);
+                            qname + ": no format definition found for type " +
+                            typename + " (used by element " + itemname + ')');
                     }
                     javatype = format.getTypeName();
                     param.setAttribute("form", "simple");
                     param.setAttribute("serializer", format.getSerializerName());
                     param.setAttribute("deserializer", format.getDeserializerName());
-                    String dflt = element.getDefaultValue();
-                    if (dflt == null) {
-                        dflt = format.getDefaultText();
-                    }
-                    if (dflt != null) {
-                        param.setAttribute("default", dflt);
+                    
+                    // convert primitive types to wrapper types for nillable
+                    if (element.isNillable() && s_wrapperMap.containsKey(javatype)) {
+                        param.setAttribute("wrapped-primitive", "true");
+                        param.setAttribute("value-method", javatype + "Value");
+                        javatype = (String)s_wrapperMap.get(javatype);
+                    } else {
+                        param.setAttribute("wrapped-primitive", "false");
+                        String dflt = element.getDefaultValue();
+                        if (dflt == null) {
+                            dflt = format.getDefaultText();
+                        }
+                        if (dflt != null) {
+                            param.setAttribute("default", dflt);
+                        }
                     }
                     
                 } else {
@@ -421,7 +574,8 @@ public class CodeGenerationUtility {
                     MappingElement mapping = (MappingElement)complexTypeMap.get(typename);
                     if (mapping == null) {
                         throw new RuntimeException("Cannot unwrap element " +
-                            qname + ": no abstract mapping definition found for child element " + itemname);
+                            qname + ": no abstract mapping definition found for type " +
+                            typename + " (used by element " + itemname + ')');
                     }
                     Integer tindex = (Integer)typeMappedClassMap.get(typename);
                     if (tindex == null) {
@@ -440,7 +594,7 @@ public class CodeGenerationUtility {
                     fulltype += "[]";
                     isobj = false;
                 }
-                param.setAttribute("object", Boolean.toString(isarray));
+                param.setAttribute("object", Boolean.toString(isobj));
                 if (isout) {
                     wrappertype = fulltype;
                 } else {
@@ -458,12 +612,15 @@ public class CodeGenerationUtility {
                 codeGenConfig.getTypeMapper().addTypeMappingName(partqname, fulltype);
             }
             
-        } else if (type == null) {
+        } else if (type != null) {
+            throw new RuntimeException("Cannot unwrap element " + qname +
+                ": not a complexType definition");
+        }
+        if (wrapdetail.getFirstChild() == null) {
             wrapdetail.setAttribute("empty", "true");
             wrappertype = "";
         } else {
-            throw new RuntimeException("Cannot unwrap element " + qname +
-                ": not a complexType definition");
+            wrapdetail.setAttribute("empty", "false");
         }
 
         // this magic code comes from org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension

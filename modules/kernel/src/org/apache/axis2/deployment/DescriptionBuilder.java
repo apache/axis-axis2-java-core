@@ -20,22 +20,17 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.Loader;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.Loader;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
@@ -46,10 +41,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,6 +52,8 @@ public class DescriptionBuilder implements DeploymentConstants {
 
     private static final Log log = LogFactory.getLog(DescriptionBuilder.class);
 
+    protected ConfigurationContext configCtx;
+
     protected AxisConfiguration axisConfig;
 
     protected InputStream descriptionStream;
@@ -69,7 +62,14 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     public DescriptionBuilder(InputStream serviceInputStream,
-            AxisConfiguration axisConfig) {
+                              ConfigurationContext configCtx) {
+        this.configCtx = configCtx;
+        this.descriptionStream = serviceInputStream;
+        this.axisConfig = this.configCtx.getAxisConfiguration();
+    }
+
+    public DescriptionBuilder(InputStream serviceInputStream,
+                              AxisConfiguration axisConfig) {
         this.descriptionStream = serviceInputStream;
         this.axisConfig = axisConfig;
     }
@@ -77,10 +77,10 @@ public class DescriptionBuilder implements DeploymentConstants {
     /**
      * Creates OMElement for a given description document (axis2.xml ,
      * services.xml and module.xml).
-     * 
+     *
      * @return Returns <code>OMElement</code> .
      * @throws javax.xml.stream.XMLStreamException
-     * 
+     *
      */
     public OMElement buildOM() throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils
@@ -98,14 +98,14 @@ public class DescriptionBuilder implements DeploymentConstants {
      * Loads default message receivers. First searches in Axiservice for the
      * given mepURL, if not found searches in AxisConfiguration with the given
      * mepURL.
-     * 
-     * @param mepURL :
-     *            can be null
+     *
+     * @param mepURL  :
+     *                can be null
      * @param service :
-     *            This can be null <code>AxisService</code>
+     *                This can be null <code>AxisService</code>
      */
     protected MessageReceiver loadDefaultMessageReceiver(String mepURL,
-            AxisService service) {
+                                                         AxisService service) {
         MessageReceiver messageReceiver;
         if (mepURL == null) {
             mepURL = WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
@@ -121,7 +121,7 @@ public class DescriptionBuilder implements DeploymentConstants {
     /**
      * Processes default message receivers specified either in axis2.xml or
      * services.xml.
-     * 
+     *
      * @param messageReceivers
      */
     protected HashMap processMessageReceivers(OMElement messageReceivers)
@@ -131,17 +131,8 @@ public class DescriptionBuilder implements DeploymentConstants {
                 TAG_MESSAGE_RECEIVER));
         while (msgReceivers.hasNext()) {
             OMElement msgReceiver = (OMElement) msgReceivers.next();
-            final OMElement tempMsgReceiver = msgReceiver;
-            MessageReceiver receiver = null;
-            try { 
-                receiver = (MessageReceiver) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                    public Object run() throws org.apache.axis2.deployment.DeploymentException {
-                        return loadMessageReceiver(Thread.currentThread().getContextClassLoader(), tempMsgReceiver);
-                    }
-                });
-            } catch (PrivilegedActionException e) {
-                throw (DeploymentException)e.getException();
-            }              
+            MessageReceiver receiver = loadMessageReceiver(Thread
+                    .currentThread().getContextClassLoader(), msgReceiver);
             OMAttribute mepAtt = msgReceiver.getAttribute(new QName(TAG_MEP));
             mr_mep.put(mepAtt.getAttributeValue(), receiver);
         }
@@ -151,11 +142,11 @@ public class DescriptionBuilder implements DeploymentConstants {
     /**
      * Processes default message receivers specified either in axis2.xml or
      * services.xml.
-     * 
+     *
      * @param element
      */
     protected HashMap processMessageReceivers(ClassLoader loader,
-            OMElement element) throws DeploymentException {
+                                              OMElement element) throws DeploymentException {
         HashMap meps = new HashMap();
         Iterator iterator = element.getChildrenWithName(new QName(
                 TAG_MESSAGE_RECEIVER));
@@ -171,7 +162,7 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     protected MessageReceiver loadMessageReceiver(ClassLoader loader,
-            OMElement element) throws DeploymentException {
+                                                  OMElement element) throws DeploymentException {
         OMAttribute receiverName = element.getAttribute(new QName(
                 TAG_CLASS_NAME));
         String className = receiverName.getAttributeValue();
@@ -203,12 +194,10 @@ public class DescriptionBuilder implements DeploymentConstants {
 
     /**
      * Processes flow elements in services.xml .
-     * 
-     * @param flowelement
-     *            <code>OMElement</code>
+     *
+     * @param flowelement <code>OMElement</code>
      * @return Returns Flow.
-     * @throws DeploymentException
-     *             <code>DeploymentException</code>
+     * @throws DeploymentException <code>DeploymentException</code>
      */
     protected Flow processFlow(OMElement flowelement, ParameterInclude parent)
             throws DeploymentException {
@@ -242,39 +231,37 @@ public class DescriptionBuilder implements DeploymentConstants {
         }
         return null;
     }
-    
+
     protected QName[] getLocalPolicyAssertionNames(OMElement localPolicyAssertionsElement) {
-        
+
         Iterator iterator = localPolicyAssertionsElement.getChildElements();
         if (! iterator.hasNext()) {
-            return null;            
+            return null;
         }
-                
+
         ArrayList qnames = new ArrayList();
         OMElement childElement;
-        
+
         for (; iterator.hasNext();) {
             childElement = (OMElement) iterator.next();
             qnames.add(childElement.getQName());
         }
-        
+
         QName[] buffer = new QName[qnames.size()];
         System.arraycopy(qnames.toArray(), 0, buffer, 0, qnames.size());
         return buffer;
-         
+
     }
 
     /**
      * Processes Handler element.
-     * 
-     * @param handler_element
-     *            <code>OMElement</code>
+     *
+     * @param handler_element <code>OMElement</code>
      * @return Returns HandlerDescription.
-     * @throws DeploymentException
-     *             <code>DeploymentException</code>
+     * @throws DeploymentException <code>DeploymentException</code>
      */
     protected HandlerDescription processHandler(OMElement handler_element,
-            ParameterInclude parent) throws DeploymentException {
+                                                ParameterInclude parent) throws DeploymentException {
         HandlerDescription handler = new HandlerDescription();
 
         // Setting handler name
@@ -353,7 +340,7 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     protected void processOperationModuleRefs(Iterator moduleRefs,
-            AxisOperation operation) throws DeploymentException {
+                                              AxisOperation operation) throws DeploymentException {
         try {
             while (moduleRefs.hasNext()) {
                 OMElement moduleref = (OMElement) moduleRefs.next();
@@ -374,22 +361,19 @@ public class DescriptionBuilder implements DeploymentConstants {
         } catch (AxisFault axisFault) {
             throw new DeploymentException(Messages.getMessage(
                     DeploymentErrorMsgs.MODULE_NOT_FOUND, axisFault
-                            .getMessage()), axisFault);
+                    .getMessage()), axisFault);
         }
     }
 
     /**
      * Gets the Parameter object from the OM.
-     * 
-     * @param parameters
-     *            <code>Parameter</code>
-     * @param parameterInclude
-     *            <code>ParameterInclude</code>
-     * @param parent
-     *            <code>ParameterInclude</code>
+     *
+     * @param parameters       <code>Parameter</code>
+     * @param parameterInclude <code>ParameterInclude</code>
+     * @param parent           <code>ParameterInclude</code>
      */
     protected void processParameters(Iterator parameters,
-            ParameterInclude parameterInclude, ParameterInclude parent)
+                                     ParameterInclude parameterInclude, ParameterInclude parent)
             throws DeploymentException {
         while (parameters.hasNext()) {
             // this is to check whether some one has locked the parmeter at the
@@ -434,7 +418,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                             && parent.isParameterLocked(parameter.getName())) {
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.CONFIG_NOT_FOUND, parameter
-                                        .getName()));
+                                .getName()));
                     } else {
                         parameter.setLocked(true);
                     }
@@ -461,12 +445,12 @@ public class DescriptionBuilder implements DeploymentConstants {
      * Populate the AxisOperation with details from the actionMapping,
      * outputActionMapping and faultActionMapping elements from the operation
      * element.
-     * 
+     *
      * @param operation
      * @param op_descrip
      */
     protected void processActionMappings(OMElement operation,
-            AxisOperation op_descrip) {
+                                         AxisOperation op_descrip) {
         Iterator mappingIterator = operation.getChildrenWithName(new QName(
                 Constants.ACTION_MAPPING));
         ArrayList mappingList = new ArrayList();
@@ -476,9 +460,9 @@ public class DescriptionBuilder implements DeploymentConstants {
             if (log.isTraceEnabled()) {
                 log.trace("Input Action Mapping found: " + inputActionString);
             }
-            if(!"".equals(inputActionString)){
+            if (!"".equals(inputActionString)) {
                 mappingList.add(inputActionString);
-            }else{
+            } else {
                 if (log.isTraceEnabled()) {
                     log.trace("Zero length input action string found. Not added to mapping");
                 }
@@ -514,7 +498,7 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     protected void processPolicyElements(int type, Iterator policyElements,
-            PolicyInclude policyInclude) {
+                                         PolicyInclude policyInclude) {
         while (policyElements.hasNext()) {
             Policy p = PolicyEngine
                     .getPolicy((OMElement) policyElements.next());
@@ -523,7 +507,7 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
 
     protected void processPolicyRefElements(int type,
-            Iterator policyRefElements, PolicyInclude policyInclude) {
+                                            Iterator policyRefElements, PolicyInclude policyInclude) {
 
         while (policyRefElements.hasNext()) {
             PolicyReference policyReference = PolicyEngine
@@ -534,7 +518,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
     /**
      * Gets the short file name. Short file name is the name before the dot.
-     * 
+     *
      * @param fileName
      * @return Returns String.
      */
@@ -554,7 +538,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 
     /**
      * Gets the value of an attribute. eg xsd:anyVal --> anyVal
-     * 
+     *
      * @return Returns String.
      */
     protected String getValue(String in) {

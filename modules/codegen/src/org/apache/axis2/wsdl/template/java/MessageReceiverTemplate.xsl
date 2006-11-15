@@ -39,9 +39,6 @@
         // get the implementation class for the Web Service
         Object obj = getTheImplementationObject(msgContext);
 
-        //Inject the Message Context if it is asked for
-        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext.getOperationContext());
-
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop
         org.apache.axiom.soap.SOAPEnvelope envelope = null;
@@ -71,10 +68,10 @@
                     <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="style"><xsl:value-of select="@style"/></xsl:variable>
 
-                    <xsl:variable name="returntype"><xsl:value-of select="output/param/@type"/></xsl:variable>
-                    <xsl:variable name="returnvariable"><xsl:value-of select="output/param/@name"/></xsl:variable>
+                    <xsl:variable name="returntype" select="output/param/@type"/>
+                    <xsl:variable name="returnvariable" select="output/param/@name"/>
 
-                    <xsl:if test="$returntype!=''">
+                    <xsl:if test="string-length(normalize-space($returntype)) &gt; 0">
                         <xsl:value-of select="$returntype"/>
                         <xsl:text> </xsl:text>
                         <xsl:value-of select="$returnvariable"/> = null;
@@ -106,7 +103,7 @@
                                                         <!--= get<xsl:value-of select="@partname"/>(wrappedParam);-->
                                             <!--</xsl:for-each>-->
 
-                                            <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
+                                            <xsl:if test="string-length(normalize-space($returntype)) &gt; 0"><xsl:value-of select="$returnvariable"/> =</xsl:if>
                                        skel.<xsl:value-of select="@name"/>(
                                             <xsl:for-each select="input/param[@location='body' and @type!='']/param">
                                                 <xsl:if test="position() &gt; 1">,</xsl:if>
@@ -117,19 +114,19 @@
 
                                         </xsl:when>
                                         <xsl:otherwise>
-                                            <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
+                                            <xsl:if test="string-length(normalize-space($returntype)) &gt; 0"><xsl:value-of select="$returnvariable"/> =</xsl:if>
                                              skel.<xsl:value-of select="@name"/>(wrappedParam) ;
                                         </xsl:otherwise>
                                     </xsl:choose>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                     <xsl:if test="$returntype!=''"><xsl:value-of select="$returnvariable"/> =</xsl:if>
+                                     <xsl:if test="string-length(normalize-space($returntype)) &gt; 0"><xsl:value-of select="$returnvariable"/> =</xsl:if>
                                      skel.<xsl:value-of select="@name"/>();
                                 </xsl:otherwise>
                             </xsl:choose>
 
                             <xsl:choose>
-                                <xsl:when test="$returntype!=''">
+                                <xsl:when test="string-length(normalize-space($returntype)) &gt; 0">
                                     envelope = toEnvelope(getSOAPFactory(msgContext), <xsl:value-of select="$returnvariable"/>, false);
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -230,9 +227,6 @@
         // get the implementation class for the Web Service
         Object obj = getTheImplementationObject(inMessage);
 
-        //Inject the Message Context if it is asked for
-        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, inMessage.getOperationContext());
-
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop
         org.apache.axiom.soap.SOAPEnvelope envelope = null;
@@ -288,7 +282,7 @@
                 </xsl:when>
 
                 <xsl:otherwise>
-                    <xsl:value-of select="$usedbmethod"/>(msgContext.getEnvelope().getBody().getFirstElement(), skel, null);
+                    <xsl:value-of select="$usedbmethod"/>(inMessage.getEnvelope().getBody().getFirstElement(), skel, null);
                 </xsl:otherwise>
 
             </xsl:choose>
@@ -355,9 +349,6 @@
 
         // get the implementation class for the Web Service
         Object obj = getTheImplementationObject(msgContext);
-
-        //Inject the Message Context if it is asked for
-        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext.getOperationContext());
 
         <xsl:value-of select="$skeletonname"/> skel = (<xsl:value-of select="$skeletonname"/>)obj;
         //Out Envelop

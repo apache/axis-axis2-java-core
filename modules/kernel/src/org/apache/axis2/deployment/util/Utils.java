@@ -5,7 +5,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.Loader;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
@@ -14,7 +14,10 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
@@ -49,6 +52,9 @@ import java.util.zip.ZipInputStream;
 */
 
 public class Utils {
+
+    private static Log log = LogFactory.getLog(Utils.class);
+
     public static void addFlowHandlers(Flow flow, ClassLoader clsLoader) throws AxisFault {
         int count = flow.getHandlerCount();
 
@@ -243,11 +249,16 @@ public class Utils {
                     obj = method.invoke(serviceObjectMaker.newInstance(), new Object[]{axisService});
                 }
                 if (obj == null) {
-                    throw new Exception("ServiceObjectSupplier implmentation Object could not be found");
+                    log.warn("ServiceObjectSupplier implmentation Object could not be found");
+                    throw new DeploymentException(
+                            "ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
                 }
                 serviceClass = obj.getClass().getName();
             } else {
                 return;
+                //TODO : Need to fix this
+//                 throw new DeploymentException(
+//                            "ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
             }
 
         }
@@ -265,9 +276,16 @@ public class Utils {
         if (!axisService.isElementFormDefault()) {
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
         }
+        // package to namespace map
+        schemaGenerator.setPkg2nsmap(axisService.getP2nMap());
         Collection schemas = schemaGenerator.generateSchema();
         axisService.addSchema(schemas);
         axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+        axisService.setTypeTable(schemaGenerator.getTypeTable());
+        if (Java2WSDLConstants.DEFAULT_TARGET_NAMESPACE.equals(
+                axisService.getTargetNamespace())) {
+            axisService.setTargetNamespace(schemaGenerator.getTargetNamespace());
+        }
 
         JMethod [] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();
@@ -372,8 +390,9 @@ public class Utils {
      */
 
     public static void deployModuleServices(AxisModule module,
-                                            AxisConfiguration axisConfig) throws AxisFault {
+                                            ConfigurationContext configCtx) throws AxisFault {
         try {
+            AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
             ArchiveReader archiveReader = new ArchiveReader();
             PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
             ClassLoader moduleClassLoader = module.getModuleClassLoader();
@@ -425,7 +444,7 @@ public class Utils {
                     ArrayList serviceList = archiveReader.processServiceGroup(
                             filedata.getAbsolutePath(), filedata,
                             serviceGroup, false, wsdlservice,
-                            axisConfig);
+                            configCtx);
                     for (int j = 0; j < serviceList.size(); j++) {
                         AxisService axisService = (AxisService) serviceList.get(j);
                         serviceGroup.addService(axisService);
@@ -437,6 +456,53 @@ public class Utils {
         } catch (IOException e) {
             throw new AxisFault(e);
         }
+    }
+
+    /**
+     * Normalize a uri containing ../ and ./ paths.
+     *
+     * @param uri The uri path to normalize
+     * @return The normalized uri
+     */
+    public static String normalize(String uri) {
+        if ("".equals(uri)) {
+            return uri;
+        }
+        int leadingSlashes = 0;
+        for (leadingSlashes = 0 ; leadingSlashes < uri.length()
+                && uri.charAt(leadingSlashes) == '/' ; ++leadingSlashes) {}
+        boolean isDir = (uri.charAt(uri.length() - 1) == '/');
+        StringTokenizer st = new StringTokenizer(uri, "/");
+        LinkedList clean = new LinkedList();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if ("..".equals(token)) {
+                if (! clean.isEmpty() && ! "..".equals(clean.getLast())) {
+                    clean.removeLast();
+                    if (! st.hasMoreTokens()) {
+                        isDir = true;
+                    }
+                } else {
+                    clean.add("..");
+                }
+            } else if (! ".".equals(token) && ! "".equals(token)) {
+                clean.add(token);
+            }
+        }
+        StringBuffer sb = new StringBuffer();
+        while (leadingSlashes-- > 0) {
+            sb.append('/');
+        }
+        for (Iterator it = clean.iterator() ; it.hasNext() ; ) {
+            sb.append(it.next());
+            if (it.hasNext()) {
+                sb.append('/');
+            }
+        }
+        if (isDir && sb.length() > 0 && sb.charAt(sb.length() - 1) != '/') {
+            sb.append('/');
+        }
+        return sb.toString();
     }
 
     public static String getPath(String parent, String childPath) {

@@ -4,16 +4,15 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <meta content="text/html; charset=iso-8859-1">
-  <title>How to use IDEA plug-in</title>
-  <meta name="generator" content="amaya 9.2.1, see http://www.w3.org/Amaya/">
+  <title>Axis2 Plug-in Guide for IntelliJ IDEA</title>
+  <meta name="generator" content="Bluefish 1.0.5">
+  <link href="../../../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body lang="en">
-<h1>Code Generator Wizard- IntelliJ IDEA Plug-in</h1>
+<h1>Axis2 Plug-in Guide for IntelliJ IDEA</h1>
 
-<p>This document explains installation and usage of IDEA code generation
-plug-in to create service archives and generate java class files from WSDL
-files.</p>
+<p>This document explains the installation and usage of Axis2 plug-in for IntelliJ IDEA.</p>
 
 <p><a href="http://ws.apache.org/axis2/tools/index.html">[Download
 Plug-in]</a></p>
@@ -34,28 +33,29 @@ Plug-in]</a></p>
 
 <h2>Introduction</h2>
 
-<p>Using this IntelliJ IDEA plug-in you can either create a service archive
-that can be deployed as a Web service to the Axis2 or generate a java class
-file from a WSDL file. Installation process is described first here followed
-by the above mentioned operations.</p>
+<p>The Axis2 plug-in for IntelliJ IDEA helps users to create service archives 
+which can be deployed in Axis2, and generate java classes files from WSDL
+files. The following section describes the installation procedure followed
+by the usage of the plug-in.</p>
+
 <a name="installation"></a>
 
 <h2>Installation</h2>
 
 <p>First <a href="http://ws.apache.org/axis2/tools/index.html">download</a>
-the plug-in which is a zipped file, and extract it into plugins directory in
-IDEA installation directory or plugins directory in user directory
-(user/idea/conf/plugins). If you have correctly extracted the file you would
-see a directory called Axis2 in which there should be only one directory
-called lib containing a few .jar files.</p>
+the plug-in which is a zipped file, and extract it into plugins directory 
+which is located in the directory where IDEA is installed. If a previous 
+version of the plug-in resides in this directory you will have to delete it 
+prior to extracting the new zip file. If you have extracted the file correctly 
+you would see a directory called axis2-idea-plugin.</p>
 
 <p>Next step is to restart IDEA so that the changes can take place. If the
-plug-in has been installed correctly, when you restart IDEA you will see
-following icons in IDEA .</p>
+plug-in has been installed correctly, you will see
+following icons in IDEA when it is restarted.</p>
 
 <p><img alt="Figure 1" src="images/idea-icons.jpg"></p>
 
-<p>Also if you right-click on editor page of IDEA you would see a link to the
+<p>Also if you right-click on the  IDEA editor you would see a link to the
 same plug-in.</p>
 
 <p><img alt="Figure2" src="images/idea-popup.jpg"></p>
@@ -74,33 +74,64 @@ you to select one of the following two options.</p>
 <p>If you want to create a service archive obviously you must select "Create
 a service archive" option. Like wise, if u want to generate java class file
 from a WSDL file you must select the radio button option "WSDL2Java
-codegeneration".</p>
+code generation".</p>
 
 <h2><a name="WSDL2Java_Code_Generation">WSDL2Java Code Generation</a></h2>
 
-<p>Select "WSDL2Java codegeneration" and click on the button "OK" to generate
+<p>Select "WSDL2Java code generation" and click on the button "OK" to generate
 code from a WSDL file. Then the following window will appear.</p>
 
 <p><strong>WSDL2Java Page 2:</strong></p>
 
 <p><img alt="Figure4" src="images/fig2.jpg"></p>
 
-<p>To move on to the next page the WSDL file location must be given. The
+<p>Once the WSDL file is selected you will be able to move onto the next page. The
 "Browse" button can be used to easily browse for a file rather than having to
 type the whole path.</p>
 
 <p>Once the WSDL file is selected, click on the "Next" button which will take
 you to the page below.</p>
 
+
 <p><strong>WSDL2Java Page 3:</strong></p>
+
+<p>This page gives the user the option of selecting default or custom code 
+generation options. There are three default code generation options in all. 
+The first enables the user to generate both client and server code under 
+default configurations while the second generates just the client side under 
+default configurations. The third option generates server side code under 
+default configurations.</p>
+
+<p>
+	<strong>Note: 
+	</strong>
+		<ul>
+			<li>When client side code is generated under default configurations it generates 
+the stub, compiles it, packages it as a jar (the name of the jar will be 
+&lt;service name &gt;-jar) places it in a lib folder (If there is no lib 
+folder, it is created) under the IDEA project that is opened. This jar that's 
+generated will also be added as a project library to the current active IDEA project.
+			</li>
+			
+			<li>When server code is generated under default configurations it generates the 
+			server side code and also generates a default service.xml. The user will then be taken to page 5.
+			</li>
+			
+			<li>When both server and client side is generated under default configurations the client stub is 
+			added are a jar to the current IDEA project and the user is taken to page 5.			
+			</li>
+
+	</ul>
+</p>
+
+<p><img alt="Figure5" src="images/fig19.jpg"></p>
+
+
+<p><strong>WSDL2Java Page 4:</strong></p>
 
 <p><strong>Codegen options</strong> are to be selected here. By far this is
 the most important page in this wizard, which determines the characteristics
 of the code being generated.</p>
-
-<p>Novices need not worry about these options since the most common options
-are defaulted. Advanced users will find it very easy to "turn the knobs"
-using these options.</p>
 
 <p><img alt="Figure5" src="images/fig18.jpg"></p>
 
@@ -109,21 +140,47 @@ using these options.</p>
   <li>Output language can be Java, C#. But we have not fully tested C#
     codegeneration, therefore, it is better to select Java as output
   language.</li>
-  <li>Since Axis2 supports both synchronous and asynchronous client
-    programming model, the tool has provided a way to select one of the two
-    from this page.</li>
-  <li>The default data binding type is adb (Axis2 data binding). Although the
+  <li>If the WSDL comprises of several services, the user can select the service for which the code should be generated for.</li>
+  <li>If the WSDL comprises of several ports for a particullar service, the user can select the port which the code should be generated for.</li>
+  <li>The default data binding type is adb (Axis2 Data Binding). Although the
     tool is capable of providing XML beans, due to class loading issues in
-    XML beans, current implementation only generate code with OM and adb.</li>
+    XML beans, current implementation only generate code with OM and ADB.</li>
   <li>As for the package name of the generated code, you can set the name as
     you wish.</li>
+  <li>Users can select the one out of the three options- "Generate Client Side", 
+  "Generate Server Side" and "Generate All". The user will be able to select further options based on his options selected here. These sub options are explained below.</li>
+
+  <ul>
+  <li>If user selects "Generate Client Side", he can further select the service invocation style. 
+Since Axis2 supports both synchronous and asynchronous client
+    programming model, the tool has provided a way to selecting the invocation style.</li>
+  <li>If user selects "Generate Server Side", he can also generate a default service XML file. 
+  If the user selects "Generate an interface for skeleton" option then it only generates an 
+interface for the server side. If so the user has to implement this interface. If this 
+option is not selected, the skeleton class is generated, which the user can fill in later on.</li> 
+  <li>If user selects "Generate All" option, then all the classes will be generated in the referenced schemas by the WSDL irrespective of elements referred by the WSDL, along with the client side code.</li>  
+  </ul> 
+
+  <li>The dafault behaviour of the code generator is to map namespaces to 
+package names logically, but if the user wishes to change the package 
+names of the generated classes, he can do so by changing the values in 
+the Namespace to Packagename mapping table.</li>  
+
 </ul>
 
-<p><strong>WSDL2Java Page 4:</strong></p>
+<p>With these enhanced options novices need not worry about the options that 
+can be set as the default options cover the most common cases. Advanced 
+users will find it very easy to turn the knobs using the custom generation option.</p>
+<p><strong>WSDL2Java Page 5:</strong></p>
 
 <p><img alt="Figure6" src="images/fig3.jpg"></p>
 
-<p>You can simply browse and select the output location/path (the location at
+<p>Here uses have the option of adding the generated code directly to their 
+working IDEA project or choose a custom location. If the user decides to add 
+it to the current IDEA project he/she will have to choose the module and the 
+source directory that the code should be generated to. </p>
+
+<p>Alternatively the user can browse and select the output location/path (the location at
 which the code is to be generated) using the "Browse" button. Because of the
 "Browse" button you do not need to type in the output file path.</p>
 
@@ -142,7 +199,7 @@ plug-in wizard.</p>
 
 <p><strong>Page 1:</strong></p>
 
-<p><img alt="Fig5" src="images/fig5.jpg"></p>
+<p><img alt="Fig5" src="images/fig1.jpg"></p>
 
 <p><strong>Service Archive Page 2:</strong></p>
 
@@ -180,7 +237,7 @@ in the middle of the wizard.</p>
 <p><strong>Service Archive (sub wizards 1 &amp; 2) Page 3:</strong></p>
 
 <p>From this page you have to select the location of the service classes
-directory, from where you compile output location. You do not need to type
+directory (the location of the compiled classes). You do not need to type
 path, simply browse and select.</p>
 
 <p><img alt="fig7" src="images/fig7.jpg"></p>
@@ -189,26 +246,19 @@ path, simply browse and select.</p>
 
 <p><strong>Service Archive (sub wizards 1 &amp; 2) Page 4:</strong></p>
 
-<p>Here you select service specific external libraries and service WSDL
-files. In the case of a service group you can add any number of WSDL files
-depending on the services in the service group. If you want to add multiple
-WSDL files to a single service type you can do that as well.</p>
+<p>Here you select service specific external libraries (third party libraries) and service WSDL
+files. If you want to add multiple WSDL files to a single service type you can do that as well.</p>
 
 <p><img alt="fig8" src="images/fig8.jpg"></p>
 
-<p>To add libraries first click on the small (...) button to browse for
+<p>To add libraries first click on the browse button to browse for
 library files and then click on the "Add" button. Once added the selected
 file will appear in the list box.</p>
 
-<p>To add WSDLs first click on the small (...) button to browse for WSDL file
+<p>To add WSDLs, first click on the browse button to browse for WSDL file
 and then click the "Add" button to add the file to the list.</p>
 
-<p>See page below:</p>
-
-<p><img alt="fig9" src="images/fig9.jpg"></p>
-
-<p>After adding external libraries and service WSDL files click on the "Done"
-button and then on the "Next" button to move to next page.</p>
+<p>After adding external libraries and service WSDL files click on the "Next" button to move to next page.</p>
 
 <p><strong>Service Archive (sub wizards 1 &amp; 2) Page 5:</strong></p>
 
@@ -221,19 +271,19 @@ implementation classes. This process is explained in detail below.</p>
 can select the methods that you want to publish using the check boxes.</p>
 
 <p><strong>Note : </strong>If you do not select the correct class
-path<em></em> from the "Class location selection" window, the public methods
-which are available in the selected<em></em> class file will not be
+path from the "Class location selection" window, the public methods
+which are available in the selected class file will not be
 loaded.</p>
 
 <p><img alt="fig10" src="images/fig10.jpg"></p>
 
 <p>In "Service Name" text box you can type the name of the service you want,
-but remember that the service name should be unique throughout<em></em> the
+but remember that the service name should be unique throughout the
 system.</p>
 
 <p>When you have completed this particular service click on the button
-"Done". In the case of a service group when you click on the "Done" button
-for that particular service the following dialog will appear with option to
+"Next". In the case of a service group when you click on the "Next" button
+for that particular service the following dialog box will appear with option to
 add more service(s) to a service group.</p>
 
 <p><img alt="fig11" src="images/fig11.jpg"></p>
@@ -260,8 +310,8 @@ references to any level.</p>
 
 <p><strong>Note : </strong>When you click on either the "+Parameter" or the
 "+ModuleRef" buttons remember that corresponding text will be added to the
-current mouse position. Therefore click on the location you want to add the
-parameter<em> </em>or<em> </em>module references and then click relevant
+current mouse position. Therefore, click on the location you want to add the
+parameter or module references and then click relevant
 button (+Parameter or +ModuleRef).</p>
 
 <p><strong>+Parameter button:</strong></p>
@@ -276,7 +326,7 @@ give parameter name and parameter value.</p>
 
 <p><strong>+ModuleRef button:</strong></p>
 
-<p>Like wise, adding module references can be done by clicking on the
+<p>Likewise, adding module references can be done by clicking on the
 "+ModuleRef" button in the page. You have to type the name of the module to
 be engaged as shown in the following figure.</p>
 
@@ -298,7 +348,7 @@ to place. This name will finally become the service group name.</p>
 <p><strong>Note :</strong> Do not include file extension when you type archive name.
 System will generate that for you.</p>
 
-<p>When you are done, click the Finish button. If everything has been done
+<p>When you are done, click the "Finish" button. If everything has been done
 successfully you will see following message.</p>
 
 <p><img alt="fig16" src="images/fig16.jpg"></p>
@@ -321,7 +371,7 @@ location of service classes directory. Click on the "Select" buttons and
 browse the file system to find required document and location.</p>
 
 <p>Click on the "Next" button which will take you to a page which allows you
-to edit the services.xml in the same manner as "Sub Wizard 1 &amp; Sub Wizard
+to add third party libraries and WSDL's in the same manner as "Sub Wizard 1 &amp; Sub Wizard
 2" section's <a href="#Note">Page 6 - Edit service descriptors</a>. Note that
 Sub Wizard 3 from this point takes the same pages as 6 to 7 of Sub Wizards 1
 &amp; 2.</p>

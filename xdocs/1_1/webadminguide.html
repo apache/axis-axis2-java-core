@@ -2,8 +2,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-  <meta http-equiv="content-type" content="">
   <title>Apache Axis2 Web Administrator's Guide</title>
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body lang="en">
@@ -52,7 +52,7 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
       </li>
       <li><a href="#services">Services</a>
         <ul>
-          <li><a href="#turnoffservice">Inactivate Service</a></li>
+          <li><a href="#turnoffservice">Deactivate Service</a></li>
           <li><a href="#turnonservice">Activate Service</a></li>
           <li><a href="#editservicepara">Edit service parameters</a></li>
         </ul>
@@ -65,8 +65,8 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     </ul>
   </li>
 </ul>
-
-<h3><a name="Intro">Introduction</a></h3>
+<a name="Intro"></a>
+<h3>Introduction</h3>
 
 <p>Axis2 Web application has three main sections, 'Services'- lists all the
 available services deployed in this server, 'Validate'-checks the system to
@@ -78,9 +78,7 @@ the console for administering this Axis2 installation.</p>
 dynamically. It's important to note that this dynamic configuration will NOT
 be persistent, i.e. if the servlet container is restarted then all the
 dynamic configuration changes will be lost.</p>
-
-<p><a name="login"></a></p>
-
+<a name="login"></a>
 <h4>Login into Administration Site</h4>
 
 <p>Once Axis2 is successfully installed, the Web application can be accessed
@@ -104,7 +102,8 @@ dynamically configure it.</p>
 
 <p align="center"><img alt="" src="images/admin.jpg"></p>
 
-<h3><a name="adminoptions">Administration Options</a></h3>
+<a name="adminoptions"></a>
+<h3>Administration Options</h3>
 <ul>
   <a name="tools"><b>Tools</b></a>
   <ul>
@@ -133,7 +132,7 @@ dynamically configure it.</p>
   </ul>
   <a name="services"><b>Services</b></a>
   <ul>
-    <li><a href="#turnoffservice">Inactivate service</a></li>
+    <li><a href="#turnoffservice">Deactivate service</a></li>
     <li><a href="#turnonservice">Activate service</a></li>
     <li><a href="#editservicepara">Edit service parameters</a></li>
   </ul>
@@ -143,13 +142,12 @@ dynamically configure it.</p>
   </ul>
 </ul>
 <a name="homepage"></a>
-
 <h3>Axis2 Web Application Home Page</h3>
 
 <p align="center"><strong><img alt=""
 src="images/clip_image006.jpg"></strong></p>
-
-<h3><a name="upservice">Upload Services</a></h3>
+<a name="upservice"></a>
+<h3>Upload Services</h3>
 
 <p>You can upload packaged Axis2<em> </em>service archive files using this
 page. This can be done in two simple steps:</p>
@@ -194,7 +192,6 @@ the system.</p>
 
 <p align="center"><img alt="" src="images/servicegroups.jpg"></p>
 <a name="avmodules"></a>
-
 <h3>Available Modules</h3>
 
 <p>To view the available modules in the 'modules' directory of the
@@ -204,14 +201,12 @@ available modules in the system. Those modules can be engaged dynamically.</p>
 <p align="center"><img alt="" src="images/modules.jpg"></p>
 <br>
 <a name="globalmodules"></a>
-
 <h3>Globally Engaged Modules</h3>
 
 <p>From the 'Globally Engaged Modules' link you can view globally engaged
 modules, if any. If a module was engaged globally then the handlers that
 belong to that module will be executed irrespective of the service.</p>
 <a name="phases"></a>
-
 <h3>Available Phases</h3>
 
 <p>The 'Available Phases' link will display all the available phases. In
@@ -230,7 +225,6 @@ understanding of phases and phase ordering.</p>
 <p align="center"><img alt="" src="images/viewphases.jpg"></p>
 <br>
 <a name="globalchains"></a>
-
 <h3>Global Chains</h3>
 
 <p>The 'Global Chains' link will display all the Global Execution Chains. The
@@ -245,7 +239,6 @@ this page.</p>
 <p align="center"><img alt="" src="images/globalchain.jpg"></p>
 <br>
 <a name="operationchains"></a>
-
 <h3>Operation Specific Chains</h3>
 
 <p>The 'Operation Specific Chains' link can be used to view the handlers
@@ -263,7 +256,6 @@ service handlers of service <em>version</em></p>
 <p align="center"><img alt="" src="images/serviceHandlers.jpg"></p>
 <br>
 <a name="engaginmodule"></a>
-
 <h3>Engaging Modules</h3>
 
 <p>The 'Engaging Modules' link allows to engage modules either globally (to
@@ -283,24 +275,21 @@ indicating whether it is engaged properly or not.</p>
 
 <p align="center"><img alt="" src="images/moduleengage.jpg"></p>
 
-<p>�</p>
 <a name="turnoffservice"></a>
+<h3>Deactivate Service</h3>
 
-<h3>Inactivate Service</h3>
-
-<p>The 'Inactivate Service' link under 'Services' list will lead to the page
-below. Inactivate service functionality provide a way to remove unnecessary
+<p>The 'Deactivate Service' link under 'Services' list will lead to the page
+below. Deactivate service functionality provide a way to remove unnecessary
 services from the running system, but the removal is transient which means if
 you restart the system the service will be available.</p>
 
-<p>To inactivate service, select service from list box, tick 'Inactivate
-service' check box, then click on 'Inactivate' button. 'Clear' button will
-clear the 'Inactivate service' check box</p>
+<p>To deactivate service, select service from list box, tick 'Deactivate
+service' check box, then click on 'Deactivate' button. 'Clear' button will
+clear the 'Deactivate service' check box</p>
 
 <p align="center"><img alt="" src="images/inactivate.jpg"></p>
 <br>
 <a name="turnonservice"></a>
-
 <h3>Activate Service</h3>
 
 <p>The 'Activate Service' link under 'Services' list will lead to the page
@@ -315,7 +304,6 @@ check box, then click on 'Activate' button. 'Clear' button will clear the
 <p align="center"><img alt="" src="images/activate.jpg"></p>
 <br>
 <a name="editservicepara"></a>
-
 <h3>Edit Service Parameters</h3>
 
 <p>This functionality provides a way to change parameters in a service or its
@@ -328,11 +316,8 @@ the service is selected click on the 'Edit Parameters' button. This will lead
 to the page below.</p>
 
 <p align="center"><img alt="" src="images/editserviecpara.jpg"></p>
-
-<h3></h3>
-
-<p><a name="viewhierarchy"></a></p>
-
+<br>
+<a name="viewhierarchy"></a>
 <h3>View Hierarchy</h3>
 
 <p>By listing current context hierarchy 'View Hierarchy' link provides a
@@ -340,6 +325,5 @@ means to look at the system state at run time. This will list out all the
 available service group contexts, service contexts, operation context and
 etc.</p>
 
-<p></p>
 </body>
 </html>

@@ -23,10 +23,10 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.*;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
-import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -52,15 +52,11 @@ import java.util.zip.GZIPInputStream;
 public class HTTPTransportUtils {
 
 
-    public static SOAPEnvelope
-            createEnvelopeFromGetRequest(String requestUrl,
-                                         Map map,
-                                         ConfigurationContext configCtx) throws AxisFault {
+    public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl,
+                                   Map map,ConfigurationContext configCtx) throws AxisFault {
         String[] values =
                 Utils.parseRequestURLForServiceAndOperation(requestUrl,
-                                                            configCtx.
-                                                                    getServiceContextPath());
-
+                                                        configCtx.getServiceContextPath());
         if (values == null) {
             return new SOAP11Factory().getDefaultEnvelope();
         }
@@ -192,8 +188,7 @@ public class HTTPTransportUtils {
             StAXBuilder builder = null;
 
             if (contentType != null) {
-                if (contentType.indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-
+                if (contentType.toLowerCase().indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
                     // It is MIME (MTOM or SwA)
                     builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType,true);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
@@ -350,9 +345,9 @@ public class HTTPTransportUtils {
             return true;
         }
 
-        if (msgContext.getProperty(Constants.Configuration.ENABLE_REST) != null) {
-            enableREST = JavaUtils.isTrueExplicitly(
-                    msgContext.getProperty(Constants.Configuration.ENABLE_REST));
+        Object enableRESTProperty = msgContext.getProperty(Constants.Configuration.ENABLE_REST);
+        if (enableRESTProperty != null) {
+            enableREST = JavaUtils.isTrueExplicitly(enableRESTProperty);
         }
 
         msgContext.setDoingREST(enableREST);

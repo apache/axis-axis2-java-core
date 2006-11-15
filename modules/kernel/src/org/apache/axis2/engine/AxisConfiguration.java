@@ -30,8 +30,6 @@ import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.*;
 
 /**
@@ -59,7 +57,9 @@ public class AxisConfiguration extends AxisDescription {
 
     private final HashMap policySupportedModules = new HashMap();
 
-    /** Stores the QNames of local policy assertions */
+    /**
+     * Stores the QNames of local policy assertions
+     */
     private final ArrayList localPolicyAssertions = new ArrayList();
 
     // to store AxisObserver Objects
@@ -129,13 +129,9 @@ public class AxisConfiguration extends AxisDescription {
         faultyModules = new Hashtable();
         observersList = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
-        systemClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();      
-            }
-        });
-        serviceClassLoader = systemClassLoader; 
-        moduleClassLoader = systemClassLoader;
+        systemClassLoader = Thread.currentThread().getContextClassLoader();
+        serviceClassLoader = Thread.currentThread().getContextClassLoader();
+        moduleClassLoader = Thread.currentThread().getContextClassLoader();
         this.phasesinfo = new PhasesInfo();
         targetResolvers = new ArrayList();
     }
@@ -218,14 +214,14 @@ public class AxisConfiguration extends AxisDescription {
      * @param axisService
      */
     private void isWSDLEnable(AxisService axisService) {
-        if (!axisService.isWsdlfound()) {
+        if (!axisService.isWsdlFound()) {
             Iterator operatins = axisService.getOperations();
             if (operatins.hasNext()) {
                 while (operatins.hasNext()) {
                     AxisOperation axisOperation = (AxisOperation) operatins
                             .next();
                     if (axisOperation.getMessageReceiver() == null) {
-                        axisService.setWsdlfound(false);
+                        axisService.setWsdlFound(false);
                         return;
                     }
                     String messageReceiverClass = axisOperation
@@ -235,13 +231,13 @@ public class AxisConfiguration extends AxisDescription {
                             || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
                             .equals(messageReceiverClass) || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
                             .equals(messageReceiverClass))) {
-                        axisService.setWsdlfound(false);
+                        axisService.setWsdlFound(false);
                         return;
                     }
                 }
-                axisService.setWsdlfound(true);
+                axisService.setWsdlFound(true);
             } else {
-                axisService.setWsdlfound(false);
+                axisService.setWsdlFound(false);
             }
         }
     }
@@ -515,6 +511,17 @@ public class AxisConfiguration extends AxisDescription {
 
     public Hashtable getFaultyServices() {
         return faultyServices;
+    }
+
+    public void removeFaultyService(String key) {
+        Iterator itr = faultyServices.keySet().iterator();
+        while (itr.hasNext()) {
+            String fullFileName = (String) itr.next();
+            if (fullFileName.indexOf(key) > 0) {
+                faultyServices.remove(fullFileName);
+                return;
+            }
+        }
     }
 
     // to get the out flow correpodning to the global out flow;
@@ -855,15 +862,16 @@ public class AxisConfiguration extends AxisDescription {
      * TargetResolvers, calling each one in turn when
      * resolveTarget is called
      */
-    public TargetResolver getTargetResolverChain(){
-        return new TargetResolver(){
+    public TargetResolver getTargetResolverChain() {
+        return new TargetResolver() {
             public void resolveTarget(MessageContext messageContext) {
                 Iterator iter = targetResolvers.iterator();
-                while(iter.hasNext()){
-                    TargetResolver tr = (TargetResolver)iter.next();
+                while (iter.hasNext()) {
+                    TargetResolver tr = (TargetResolver) iter.next();
                     tr.resolveTarget(messageContext);
                 }
-            }};
+            }
+        };
     }
 
     public void addTargetResolver(TargetResolver tr) {

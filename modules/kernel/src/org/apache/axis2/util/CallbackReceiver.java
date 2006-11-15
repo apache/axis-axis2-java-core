@@ -16,16 +16,17 @@
 
 package org.apache.axis2.util;
 
-import java.util.HashMap;
-
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.MessageReceiver;
+
+import java.util.HashMap;
 
 /**
  * This is a MessageReceiver which is used on the client side to accept the
@@ -44,39 +45,34 @@ public class CallbackReceiver implements MessageReceiver {
         callbackStore.put(MsgID, callback);
     }
 
-    public Callback lookupCallback(String msgID)
-    {
-      return (Callback)callbackStore.get(msgID);
-    }
-    
     public void receive(MessageContext messageCtx) throws AxisFault {
         RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
-        if(relatesTO == null){
-            throw new AxisFault("Cannot identify correct Callback object. RelatesTo is null");
-        }
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackStore.get(messageID);
-        AsyncResult result = new AsyncResult(messageCtx);
+		AsyncResult result = new AsyncResult(messageCtx);
 
-        if (callback != null) {
-        	
-        	//check weather the result is a fault.
-        	SOAPEnvelope envelope = result.getResponseEnvelope();
-        	SOAPFault fault = envelope.getBody().getFault();
-        	
-        	if (fault==null) {
-        		//if there is not fault call the onComplete method
-        		callback.onComplete(result);
-        	} else {
-        		//else call the on error method with the fault
-                AxisFault axisFault = new AxisFault(fault.getCode(), fault.getReason(),
-                		fault.getNode(), fault.getRole(), fault.getDetail());
+		if (callback != null) {
+			try {
+				// check weather the result is a fault.
+				SOAPEnvelope envelope = result.getResponseEnvelope();
+				SOAPFault fault = envelope.getBody().getFault();
 
-        		callback.onError(axisFault);
-        	}
-            callback.setComplete(true);
-        } else {
-            throw new AxisFault("The Callback relates to MessageID " + messageID + " is not found");
+				if (fault == null) {
+					// if there is not fault call the onComplete method
+					callback.onComplete(result);
+				} else {
+					// else call the on error method with the fault
+					AxisFault axisFault = new AxisFault(fault.getCode(), fault
+							.getReason(), fault.getNode(), fault.getRole(),
+							fault.getDetail());
+
+					callback.onError(axisFault);
+				}
+			} finally {
+				callback.setComplete(true);
+			}
+		} else {
+            throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }
     }
 

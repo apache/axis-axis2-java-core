@@ -25,9 +25,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.MessageReceiver;
-import org.apache.axis2.engine.ServiceLifeCycle;
+import org.apache.axis2.engine.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -43,6 +41,7 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
@@ -51,7 +50,10 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
@@ -62,8 +64,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.*;
 
 /**
@@ -97,7 +97,7 @@ public class AxisService extends AxisDescription {
     //private XmlSchema schema;
 
     //wsdl is there for this service or not (in side META-INF)
-    private boolean wsdlfound = false;
+    private boolean wsdlFound = false;
 
     //to store the scope of the service
     private String scope;
@@ -105,7 +105,7 @@ public class AxisService extends AxisDescription {
     //to store default message receivers
     private HashMap messageReceivers;
 
-// to set the handler chain available in phase info
+    // to set the handler chain available in phase info
     private boolean useDefaultChains = true;
 
     //to keep the status of the service , since service can stop at the run time
@@ -126,9 +126,11 @@ public class AxisService extends AxisDescription {
 
     private boolean enableAllTransports = true;
     private List exposedTransports = new ArrayList();
+
     //To keep reference to ServiceLifeCycle instance , if the user has
     // specified in services.xml
     private ServiceLifeCycle serviceLifeCycle;
+
 
     /**
      * Keeps track whether the schema locations are adjusted
@@ -171,6 +173,19 @@ public class AxisService extends AxisDescription {
     // Reflects the wsaw:UsingAddressing wsdl extension element
     private String wsaddressingFlag = AddressingConstants.ADDRESSING_UNSPECIFIED;
     private boolean clientSide = false;
+
+    //To keep a ref to ObjectSupplier instance
+    private ObjectSupplier objectSupplier;
+
+    // package to namespace mapping
+    private Map p2nMap;
+
+    private TypeTable typeTable;
+
+    // name of the  binding used : use in codegeneration
+    private String bindingName;
+    // name of the port type used : use in codegeneration
+    private String portTypeName;
 
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
@@ -228,11 +243,24 @@ public class AxisService extends AxisDescription {
         moduleRefs = new ArrayList();
         engagedModules = new ArrayList();
         schemaList = new ArrayList();
-        serviceClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
+        serviceClassLoader = Thread.currentThread().getContextClassLoader();
+        objectSupplier = new DefaultObjectSupplier();
+    }
+
+    public String getPortTypeName() {
+        return portTypeName;
+    }
+
+    public void setPortTypeName(String portTypeName) {
+        this.portTypeName = portTypeName;
+    }
+
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
     }
 
     /**
@@ -529,7 +557,14 @@ public class AxisService extends AxisDescription {
 
     private XmlSchema addNameSpaces(int i) {
         XmlSchema schema = (XmlSchema) schemaList.get(i);
-        schema.setNamespaceContext(nameSpacesMap);
+        NamespaceMap map = (NamespaceMap) nameSpacesMap.clone();
+        NamespacePrefixList namespaceContext = schema.getNamespaceContext();
+        String prefixes[] = namespaceContext.getDeclaredPrefixes();
+        for (int j = 0; j < prefixes.length; j++) {
+            String prefix = prefixes[j];
+            map.add(prefix, namespaceContext.getNamespaceURI(prefix));
+        }
+        schema.setNamespaceContext(map);
         return schema;
     }
 
@@ -540,12 +575,19 @@ public class AxisService extends AxisDescription {
         return null;
     }
 
+    /**
+     * @param out
+     * @param requestIP
+     * @param servicePath
+     * @throws AxisFault
+     */
     public void printWSDL(OutputStream out, String requestIP, String servicePath) throws AxisFault {
         if (isUseUserWSDL()) {
             Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
             if (wsld4jdefinition != null) {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
+                    setPortAddress(definition);
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
@@ -555,19 +597,22 @@ public class AxisService extends AxisDescription {
                 printWSDLError(out);
             }
         } else {
-            String[] eprArray = getEPRs();
+            String[] eprArray = getEPRs(requestIP);
             getWSDL(out, eprArray, servicePath);
         }
     }
 
     public String[] getEPRs() throws AxisFault {
-        //TODO: Chinthaka Handle the REST EPRs
         String requestIP;
         try {
             requestIP = HttpUtils.getIpAddress();
         } catch (SocketException e) {
             throw new AxisFault("Cannot get local IP address", e);
         }
+        return getEPRs(requestIP);
+    }
+
+    private String[] getEPRs(String requestIP) throws AxisFault {
         AxisConfiguration axisConfig = getAxisConfiguration();
         ArrayList eprList = new ArrayList();
         if (enableAllTransports) {
@@ -633,7 +678,7 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * Print the WSDL with a default URL
+     * Print the WSDL with a default URL. This will be called only during codegen time.
      *
      * @param out
      * @throws AxisFault
@@ -644,6 +689,7 @@ public class AxisService extends AxisDescription {
             if (wsld4jdefinition != null) {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
+                    setPortAddress(definition);
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
@@ -653,15 +699,32 @@ public class AxisService extends AxisDescription {
                 printWSDLError(out);
             }
         } else {
-            setWsdlfound(true);
+            setWsdlFound(true);
             //pick the endpoint and take it as the epr for the WSDL
             getWSDL(out, new String[]{this.endpoint}, "services");
         }
-
     }
 
-    private void getWSDL(OutputStream out, String [] serviceURL, String servicePath) throws AxisFault {
-        if (this.wsdlfound) {
+    private void setPortAddress(Definition definition) throws AxisFault {
+        Iterator serviceItr = definition.getServices().values().iterator();
+        while (serviceItr.hasNext()) {
+            Service serviceElement = (Service) serviceItr.next();
+            Iterator portItr = serviceElement.getPorts().values().iterator();
+            while (portItr.hasNext()) {
+                Port port = (Port) portItr.next();
+                List list = port.getExtensibilityElements();
+                for (int i = 0; i < list.size(); i++) {
+                    Object extensibilityEle = list.get(i);
+                    if (extensibilityEle instanceof SOAPAddress) {
+                        ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+                    }
+                }
+            }
+        }
+    }
+
+    private void getWSDL(OutputStream out, String[] serviceURL, String servicePath) throws AxisFault {
+        if (this.wsdlFound) {
             AxisService2OM axisService2WOM = new AxisService2OM(this,
                     serviceURL, "document", "literal", servicePath);
             try {
@@ -684,7 +747,7 @@ public class AxisService extends AxisDescription {
                     "<description>Unable to generate WSDL for this service</description>" +
                     "<reason>If you wish Axis2 to automatically generate the WSDL, then please use one of the RPC message " +
                     "receivers for the service(s)/operation(s) in services.xml. If you have added a custom WSDL in the " +
-                    "META-INF directory, then please make sure that make sure that the name of the service in services.xml " +
+                    "META-INF directory, then please make sure that the name of the service in services.xml " +
                     "(/serviceGroup/service/@name) is the same as in the " +
                     "custom wsdl's service name (/wsdl:definitions/wsdl:service/@name). </reason>" +
                     "</error>";
@@ -702,17 +765,22 @@ public class AxisService extends AxisDescription {
             Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
             if (wsld4jdefinition != null) {
                 try {
-                    Definition definition = (Definition) wsld4jdefinition.getValue();
-                    WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
-                    writer.writeWSDL(definition, out);
-                } catch (WSDLException e) {
+                    String error = "<error>" +
+                            "<description>Unable to showtwo will WSDL for this service</description>" +
+                            "<reason>WSDL 2.0 document is to be shown. But we do not support WSDL 2.0" +
+                            "serialization yet.</reason>" +
+                            "</error>";
+                    out.write(error.getBytes());
+                    out.flush();
+                    out.close();
+                } catch (IOException e) {
                     throw new AxisFault(e);
                 }
             } else {
                 printWSDLError(out);
             }
         } else {
-            setWsdlfound(true);
+            setWsdlFound(true);
             //pick the endpoint and take it as the epr for the WSDL
             getWSDL2(out, new String[]{this.endpoint});
         }
@@ -724,8 +792,8 @@ public class AxisService extends AxisDescription {
         getWSDL2(out, getEPRs());
     }
 
-    private void getWSDL2(OutputStream out, String [] serviceURL) throws AxisFault {
-        if (this.wsdlfound) {
+    private void getWSDL2(OutputStream out, String[] serviceURL) throws AxisFault {
+        if (this.wsdlFound) {
             AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
             try {
                 OMElement wsdlElement = axisService2WSDL2.generateOM();
@@ -950,10 +1018,9 @@ public class AxisService extends AxisDescription {
         if (schema != null) {
             schemaList.add(schema);
             if (schema.getTargetNamespace() != null) {
-                addSchemaNameSpace(schema.getTargetNamespace());
+                addSchemaNameSpace(schema);
             }
         }
-
     }
 
     public void addSchema(Collection schemas) {
@@ -961,16 +1028,16 @@ public class AxisService extends AxisDescription {
         while (iterator.hasNext()) {
             XmlSchema schema = (XmlSchema) iterator.next();
             schemaList.add(schema);
-            addSchemaNameSpace(schema.getTargetNamespace());
+            addSchemaNameSpace(schema);
         }
     }
 
-    public boolean isWsdlfound() {
-        return wsdlfound;
+    public boolean isWsdlFound() {
+        return wsdlFound;
     }
 
-    public void setWsdlfound(boolean wsdlfound) {
-        this.wsdlfound = wsdlfound;
+    public void setWsdlFound(boolean wsdlFound) {
+        this.wsdlFound = wsdlFound;
     }
 
     public String getScope() {
@@ -1061,6 +1128,14 @@ public class AxisService extends AxisDescription {
 
     public boolean isEnableAllTransports() {
         return enableAllTransports;
+    }
+
+    /**
+     * To eneble service to be expose in all the transport
+     * @param enableAllTransports
+     */
+    public void setEnableAllTransports(boolean enableAllTransports) {
+        this.enableAllTransports = enableAllTransports;
     }
 
     public List getExposedTransports() {
@@ -1175,13 +1250,17 @@ public class AxisService extends AxisDescription {
             Definition wsdlDefinition = reader.readWSDL(null, doc);
             return createClientSideAxisService(wsdlDefinition, wsdlServiceName, portName, options);
         } catch (IOException e) {
-            throw new AxisFault("IOException" + e.getMessage());
+            log.error(e);
+            throw new AxisFault("IOException : " + e.getMessage());
         } catch (ParserConfigurationException e) {
-            throw new AxisFault("ParserConfigurationException" + e.getMessage());
+            log.error(e);
+            throw new AxisFault("ParserConfigurationException : " + e.getMessage());
         } catch (SAXException e) {
-            throw new AxisFault("SAXException" + e.getMessage());
+            log.error(e);
+            throw new AxisFault("SAXException : " + e.getMessage());
         } catch (WSDLException e) {
-            throw new AxisFault("WSDLException" + e.getMessage());
+            log.error(e);
+            throw new AxisFault("WSDLException : " + e.getMessage());
         }
     }
 
@@ -1217,15 +1296,141 @@ public class AxisService extends AxisDescription {
     }
 
     /**
+     * messageReceiverClassMap will hold the MessageReceivers for given meps. Key will be the
+     * mep and value will be the instance of the MessageReceiver class.
+     * Ex:
+     * Map mrMap = new HashMap();
+     * mrMap.put("http://www.w3.org/2004/08/wsdl/in-only",
+     * RPCInOnlyMessageReceiver.class.newInstance());
+     * mrMap.put("http://www.w3.org/2004/08/wsdl/in-out",
+     * RPCMessageReceiver.class.newInstance());
+     *
+     * @param implClass
+     * @param axisConfiguration
+     * @param messageReceiverClassMap
+     * @param targetNamespace
+     * @param schemaNamespace
+     * @throws AxisFault
+     */
+
+    public static AxisService createService(String implClass,
+                                            AxisConfiguration axisConfiguration,
+                                            Map messageReceiverClassMap,
+                                            String targetNamespace,
+                                            String schemaNamespace) throws AxisFault {
+        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
+        OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
+        parameter.setParameterElement(paraElement);
+        AxisService axisService = new AxisService();
+        axisService.setUseDefaultChains(false);
+        axisService.addParameter(parameter);
+
+        if (schemaNamespace == null) {
+            schemaNamespace = axisService.getSchematargetNamespace();
+        }
+
+        int index = implClass.lastIndexOf(".");
+        String serviceName;
+        if (index > 0) {
+            serviceName = implClass.substring(index + 1, implClass.length());
+        } else {
+            serviceName = implClass;
+        }
+
+        axisService.setName(serviceName);
+        axisService.setClassLoader(axisConfiguration.getServiceClassLoader());
+
+        ClassLoader serviceClassLoader = axisService.getClassLoader();
+        SchemaGenerator schemaGenerator;
+        ArrayList excludeOpeartion = new ArrayList();
+
+
+        NamespaceMap map = new NamespaceMap();
+        map.put(Java2WSDLConstants.AXIS2_NAMESPACE_PREFIX,
+                Java2WSDLConstants.AXIS2_XSD);
+        map.put(Java2WSDLConstants.DEFAULT_SCHEMA_NAMESPACE_PREFIX,
+                Java2WSDLConstants.URI_2001_SCHEMA_XSD);
+        axisService.setNameSpacesMap(map);
+
+
+        try {
+            schemaGenerator = new SchemaGenerator(serviceClassLoader,
+                    implClass, schemaNamespace,
+                    axisService.getSchematargetNamespacePrefix());
+            schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
+            axisService.setElementFormDefault(false);
+            excludeOpeartion.add("init");
+            excludeOpeartion.add("setOperationContext");
+            excludeOpeartion.add("destroy");
+            excludeOpeartion.add("startUp");
+            schemaGenerator.setExcludeMethods(excludeOpeartion);
+            axisService.addSchema(schemaGenerator.generateSchema());
+            axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+            axisService.setTypeTable(schemaGenerator.getTypeTable());
+            if (targetNamespace == null) {
+                targetNamespace = schemaGenerator.getSchemaTargetNameSpace();
+            }
+            if (targetNamespace != null && !"".equals(targetNamespace)) {
+                axisService.setTargetNamespace(targetNamespace);
+            }
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+
+        JMethod[] method = schemaGenerator.getMethods();
+        TypeTable table = schemaGenerator.getTypeTable();
+
+        PhasesInfo pinfo = axisConfiguration.getPhasesInfo();
+
+        for (int i = 0; i < method.length; i++) {
+            JMethod jmethod = method[i];
+            if (!jmethod.isPublic()) {
+                // no need to expose , private and protected methods
+                continue;
+            } else if (excludeOpeartion.contains(jmethod.getSimpleName())) {
+                continue;
+            }
+            AxisOperation operation = Utils.getAxisOperationforJmethod(jmethod, table);
+            String mep = operation.getMessageExchangePattern();
+            MessageReceiver mr;
+            if (messageReceiverClassMap != null) {
+
+                if (messageReceiverClassMap.get(mep) != null) {
+                    Object obj = messageReceiverClassMap.get(mep);
+                    if (obj instanceof MessageReceiver) {
+                        mr = (MessageReceiver) obj;
+                        operation.setMessageReceiver(mr);
+                    } else {
+                        log.error("Object is not an instance of MessageReceiver, thus, default MessageReceiver has been set");
+                        mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
+                        operation.setMessageReceiver(mr);
+                    }
+                } else {
+                    log.error("Required MessageReceiver couldn't be found, thus, default MessageReceiver has been used");
+                    mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
+                    operation.setMessageReceiver(mr);
+                }
+            } else {
+                log.error("MessageRecevierClassMap couldn't be found, thus, default MessageReceiver has been used");
+                mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
+                operation.setMessageReceiver(mr);
+            }
+            pinfo.setOperationPhases(operation);
+            axisService.addOperation(operation);
+        }
+        return axisService;
+
+    }
+
+    /**
      * To create a service for a given Java class with user defined schema and target
-     * namespaces
+     * namespaces. This method should be used iff, the operations in the service class is homogeneous.
      *
      * @param implClass            : full name of the class
      * @param axisConfig           : current AxisConfgiuration
      * @param messageReceiverClass : Message receiver that you want to use
      * @param targetNameSpace      : Service namespace
      * @param schemaNameSpace      : Schema namespace
-     * @return
      * @throws AxisFault
      */
 
@@ -1282,6 +1487,10 @@ public class AxisService extends AxisDescription {
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
+            axisService.setTypeTable(schemaGenerator.getTypeTable());
+            if (targetNameSpace == null) {
+                targetNameSpace = schemaGenerator.getSchemaTargetNameSpace();
+            }
             if (targetNameSpace != null && !"".equals(targetNameSpace)) {
                 axisService.setTargetNamespace(targetNameSpace);
             }
@@ -1289,7 +1498,7 @@ public class AxisService extends AxisDescription {
             throw new AxisFault(e);
         }
 
-        JMethod [] method = schemaGenerator.getMethods();
+        JMethod[] method = schemaGenerator.getMethods();
         TypeTable table = schemaGenerator.getTypeTable();
 
         PhasesInfo pinfo = axisConfig.getPhasesInfo();
@@ -1359,13 +1568,17 @@ public class AxisService extends AxisDescription {
         this.nameSpacesMap = nameSpacesMap;
     }
 
-    private void addSchemaNameSpace(String targetNameSpace) {
+    private void addSchemaNameSpace(XmlSchema schema) {
+        String targetNameSpace = schema.getTargetNamespace();
+        String prefix = schema.getNamespaceContext().getPrefix(targetNameSpace);
+
         boolean found = false;
         if (nameSpacesMap != null && nameSpacesMap.size() > 0) {
             Iterator itr = nameSpacesMap.values().iterator();
+            Set keys = nameSpacesMap.keySet();
             while (itr.hasNext()) {
                 String value = (String) itr.next();
-                if (value.equals(targetNameSpace)) {
+                if (value.equals(targetNameSpace) && keys.contains(prefix)) {
                     found = true;
                 }
             }
@@ -1375,7 +1588,7 @@ public class AxisService extends AxisDescription {
         }
         if (!found) {
             nameSpacesMap.put("ns" + nsCount, targetNameSpace);
-            nsCount ++;
+            nsCount++;
         }
     }
 
@@ -1568,5 +1781,29 @@ public class AxisService extends AxisDescription {
 
     public void setServiceLifeCycle(ServiceLifeCycle serviceLifeCycle) {
         this.serviceLifeCycle = serviceLifeCycle;
+    }
+
+    public Map getP2nMap() {
+        return p2nMap;
+    }
+
+    public void setP2nMap(Map p2nMap) {
+        this.p2nMap = p2nMap;
+    }
+
+    public ObjectSupplier getObjectSupplier() {
+        return objectSupplier;
+    }
+
+    public void setObjectSupplier(ObjectSupplier objectSupplier) {
+        this.objectSupplier = objectSupplier;
+    }
+
+    public TypeTable getTypeTable() {
+        return typeTable;
+    }
+
+    public void setTypeTable(TypeTable typeTable) {
+        this.typeTable = typeTable;
     }
 }

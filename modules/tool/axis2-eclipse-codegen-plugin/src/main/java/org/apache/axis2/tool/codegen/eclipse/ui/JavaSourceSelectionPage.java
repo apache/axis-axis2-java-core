@@ -20,10 +20,14 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.ClassFileReader;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GCData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -39,18 +43,18 @@ import java.util.Iterator;
 
 public class JavaSourceSelectionPage extends AbstractWizardPage{
 
-   
+    private Composite container;
     private Text javaClassNameBox;
     private List javaClasspathList;
     private Label statusLabel;
 
     public JavaSourceSelectionPage() {  
-        super("page4");
+    	super("page4");
     }
 
     protected void initializeDefaultSettings() {
         settings.put(JAVA_CLASS_NAME, "");
-        settings.put(JAVA_CLASS_PATH_ENTRIES, new String[]{});
+        settings.put(JAVA_CLASS_PATH_ENTRIES, new String[]{""});
     }
 
     /*
@@ -68,7 +72,7 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
-        Composite container = new Composite(parent, SWT.NULL);
+        container = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
         container.setLayout(layout);
         layout.numColumns = 3;
@@ -135,13 +139,20 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         	}
         });
         
-        gd = new GridData(GridData.FILL_HORIZONTAL);
-        gd.horizontalSpan = 3;
-        gd.verticalSpan = 7;
-        javaClasspathList = new List(container,SWT.READ_ONLY | SWT.BORDER);
-        javaClasspathList.setLayoutData(gd);
-        javaClasspathList.setItems(settings.getArray(JAVA_CLASS_PATH_ENTRIES));
-        
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		gd.verticalSpan = 2;
+        ScrolledComposite c2 = new ScrolledComposite(container, SWT.V_SCROLL);
+        c2.setExpandHorizontal(false);
+        c2.setExpandVertical(false);
+		c2.setLayoutData(gd);
+		javaClasspathList = new List(c2,SWT.READ_ONLY |SWT.BORDER | SWT.V_SCROLL);
+		javaClasspathList.setLayoutData(gd);
+        settings.put(JAVA_CLASS_PATH_ENTRIES, new String[]{});
+		javaClasspathList.setItems(settings.getArray(JAVA_CLASS_PATH_ENTRIES));
+		javaClasspathList.setSize(600, 250);
+		c2.setContent(javaClasspathList);
+
         gd = new GridData(GridData.FILL_HORIZONTAL);
         Button tryLoadButton = new Button(container,SWT.PUSH);
         tryLoadButton.setLayoutData(gd);
@@ -163,9 +174,9 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         			}
         			
         		}else{
-        			updateStatus(null);
         			updateStatusTextField(true,CodegenWizardPlugin
 			                .getResourceString("page4.successLoading.label"));
+        			updateStatus(null);
         		}
         	}
         });
@@ -175,13 +186,30 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         statusLabel = new Label(container,SWT.NULL);
         statusLabel.setLayoutData(gd);
         
+		//filling label 
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		Label fillLabel3 = new Label(container, SWT.HORIZONTAL | SWT.SEPARATOR);
+		fillLabel3.setLayoutData(gd);
+		
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3; 
+		Label hintLabel = new Label(container, SWT.NULL);
+		hintLabel
+				.setText(CodegenWizardPlugin
+						.getResourceString("page4.hint.caption"));
+		hintLabel.setLayoutData(gd);
+//		hintLabel.setFont(new Font(new Device() {
+//			public int internal_new_GC(GCData data) {return 0;}
+//			public void internal_dispose_GC(int handle, GCData data) {}
+//											},"hintFont",8,SWT.NORMAL));
+        
         setPageComplete(false);
+        setControl(container);
         
         if (restoredFromPreviousSettings){
             handleClassNameTextChange();
         }
-        
-        setControl(container);
 
     }
 
@@ -194,8 +222,10 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         DirectoryDialog fileDialog = new DirectoryDialog(this.getShell());
         String dirName = fileDialog.open();
         if (dirName != null) {
-        	javaClasspathList.add(dirName);
-        	updateListEntries();
+        	if (!checkFilenameExistsInList(dirName)){  
+        		javaClasspathList.add(dirName);
+        		updateListEntries();
+        	}
         }
         updateStatusTextField(false,"");
     }
@@ -224,19 +254,38 @@ public class JavaSourceSelectionPage extends AbstractWizardPage{
         fileDialog.setFilterExtensions(new String[]{"*.jar"});
         String fileName = fileDialog.open();
         if (fileName != null) {
-        	javaClasspathList.add(fileName);
-        	updateListEntries();
+        	if (!checkFilenameExistsInList(fileName)){
+            	javaClasspathList.add(fileName);
+            	updateListEntries();
+        	}
         }
         updateStatusTextField(false,"");
+    }
+    
+    /**
+     * Method checks the list antries and compare that to the file name 
+     * return the results of the comparison
+     * @param filename
+     * @return
+     */
+    private boolean checkFilenameExistsInList(String filename){
+    	String[] array = javaClasspathList.getItems();
 
+    	for (int i = 0; i < array.length; i++) {
+			if (array[i].equals(filename)) {
+				return true;
+			}
+		}
+    	return false;
     }
     
     private void updateStatusTextField(boolean success,String text){
     	if (success){
     		getCodegenWizard().setDefaultNamespaces(javaClassNameBox.getText());
     	}
-    	statusLabel.setText(text);
+     	statusLabel.setText(text);
     }
+    
     private void updateListEntries(){
     	settings.put(JAVA_CLASS_PATH_ENTRIES,javaClasspathList.getItems());
     }

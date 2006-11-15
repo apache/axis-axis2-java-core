@@ -19,14 +19,14 @@ package org.apache.axis2.wsdl.codegen;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
+import org.apache.axis2.util.CommandLineOption;
+import org.apache.axis2.util.CommandLineOptionConstants;
+import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.codegen.emitter.Emitter;
 import org.apache.axis2.wsdl.codegen.extension.CodeGenExtension;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.axis2.wsdl.util.CommandLineOption;
-import org.apache.axis2.wsdl.util.CommandLineOptionConstants;
-import org.apache.axis2.wsdl.util.CommandLineOptionParser;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -231,7 +231,6 @@ public class CodeGenerationEngine {
     /**
      * Read the WSDL file
      * @param uri
-     * @return
      * @throws WSDLException
      */
     private Definition readInTheWSDLFile(String uri) throws WSDLException {
@@ -284,7 +283,6 @@ public class CodeGenerationEngine {
      * gets a object from the class
      *
      * @param className
-     * @return
      */
     private Object getObjectFromClassName(String className) throws CodeGenerationException {
         try {
@@ -310,7 +308,6 @@ public class CodeGenerationEngine {
      * calculates the base URI
      * Needs improvement but works fine for now ;)
      * @param currentURI
-     * @return
      */
     private String getBaseURI(String currentURI){
         String baseURI;

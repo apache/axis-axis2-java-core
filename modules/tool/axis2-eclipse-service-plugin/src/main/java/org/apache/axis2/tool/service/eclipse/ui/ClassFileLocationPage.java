@@ -124,7 +124,7 @@ public class ClassFileLocationPage extends AbstractServiceWizardPage{
         ((ServiceArchiveWizard)this.getWizard()).setClassFileLocation(classLocationText);
         
         if ("".equals(classLocationText)){
-            updateStatus("page1.error.filemissing");
+            updateStatus(ServiceArchiver.getResourceString("page1.error.filemissing"));
         }else{    
             updateStatus(null);
         }
@@ -142,4 +142,10 @@ public class ClassFileLocationPage extends AbstractServiceWizardPage{
         }
         return pageBean;
     }
+
+
+
+	protected boolean getWizardComplete() {
+		return false;
+	}
 }

@@ -20,11 +20,11 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.ParameterInclude;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 
 import javax.xml.namespace.QName;
@@ -37,10 +37,11 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
     private HashMap wsdlServices;
 
     public ServiceGroupBuilder(OMElement service, HashMap wsdlServices,
-                               AxisConfiguration axisConfig) {
+                               ConfigurationContext configCtx) {
         this.serviceElement = service;
         this.wsdlServices = wsdlServices;
-        this.axisConfig = axisConfig;
+        this.configCtx = configCtx;
+        this.axisConfig = this.configCtx.getAxisConfiguration();
     }
 
     public ArrayList populateServiceGroup(AxisServiceGroup axisServiceGroup)
@@ -69,9 +70,13 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
             while (serviceitr.hasNext()) {
                 OMElement service = (OMElement) serviceitr.next();
                 OMAttribute serviceNameatt = service.getAttribute(new QName(ATTRIBUTE_NAME));
+                if (serviceNameatt == null) {
+                    throw new DeploymentException(
+                            Messages.getMessage(DeploymentErrorMsgs.SERVICE_NAME_ERROR));
+                }
                 String serviceName = serviceNameatt.getAttributeValue();
 
-                if (serviceName == null) {
+                if (serviceName == null || "".equals(serviceName)) {
                     throw new DeploymentException(
                             Messages.getMessage(DeploymentErrorMsgs.SERVICE_NAME_ERROR));
                 } else {
@@ -80,14 +85,14 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                     if (axisService == null) {
                         axisService = new AxisService(serviceName);
                     } else {
-                        axisService.setWsdlfound(true);
+                        axisService.setWsdlFound(true);
                     }
 
                     // the service that has to be deployed
                     axisService.setParent(axisServiceGroup);
                     axisService.setClassLoader(axisServiceGroup.getServiceGroupClassLoader());
 
-                    ServiceBuilder serviceBuilder = new ServiceBuilder(axisConfig, axisService);
+                    ServiceBuilder serviceBuilder = new ServiceBuilder(configCtx, axisService);
                     AxisService as = serviceBuilder.populateService(service);
                     serviceList.add(as);
                 }

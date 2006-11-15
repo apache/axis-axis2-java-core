@@ -103,7 +103,6 @@ public abstract class AbstractDispatcher extends AbstractHandler {
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE));
             }
         }
-        
         return InvocationResponse.CONTINUE;
     }
 }

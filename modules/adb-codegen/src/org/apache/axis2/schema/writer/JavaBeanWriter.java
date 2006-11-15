@@ -23,6 +23,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
 
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -106,6 +107,9 @@ public class JavaBeanWriter implements BeanWriter {
 
     public void init(CompilerOptions options) throws SchemaCompilationException {
         try {
+	    modelMap = new HashMap();
+	    ns2packageNameMap = new HashMap();	
+
             initWithFile(options.getOutputLocation());
             packageName = options.getPackageName();
             writeClasses = options.isWriteOutput();
@@ -583,7 +587,7 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
             }
             // add an attribute that says the type is default
-            if (isDefault(javaClassNameForElement)) {
+            if (metainf.getDefaultStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "default", "yes", property);
             }
 
@@ -901,7 +905,6 @@ public class JavaBeanWriter implements BeanWriter {
      * Test whether the given class name matches the default
      *
      * @param javaClassNameForElement
-     * @return
      */
     private boolean isDefault(String javaClassNameForElement) {
         return SchemaCompiler.DEFAULT_CLASS_NAME
@@ -1058,8 +1061,6 @@ public class JavaBeanWriter implements BeanWriter {
     /**
      * Get the mapper class name - there is going to be only one
      * mapper class for the whole
-     *
-     * @return
      */
     private String getFullyQualifiedMapperClassName() {
         if (wrapClasses || !writeClasses) {
@@ -1072,8 +1073,6 @@ public class JavaBeanWriter implements BeanWriter {
     /**
      * get the mapper class package name
      * May be ignored by the implementer
-     *
-     * @return
      */
     public String getExtensionMapperPackageName() {
         return mappingClassPackage;
@@ -1094,7 +1093,6 @@ public class JavaBeanWriter implements BeanWriter {
      * the hierarchy of classes
      *
      * @param metainfArray
-     * @return
      */
     public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException {
         //generate the element

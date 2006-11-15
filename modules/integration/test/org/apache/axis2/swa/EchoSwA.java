@@ -20,12 +20,10 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -35,13 +33,8 @@ import javax.xml.namespace.QName;
  */
 
 public class EchoSwA {
-    private OperationContext operationContext;
 
     public EchoSwA() {
-    }
-
-    public void setOperationContext(OperationContext oc) throws AxisFault {
-        operationContext = oc;
     }
 
     public OMElement echoAttachment(OMElement omEle) throws AxisFault {
@@ -52,9 +45,10 @@ public class EchoSwA {
         if (contentID.substring(0, 3).equalsIgnoreCase("cid")) {
             contentID = contentID.substring(4);
         }
-        
-        Attachments attachment = (Attachments) (operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)).getAttachmentMap();
- 
+
+        MessageContext msgCtx = MessageContext.getCurrentMessageContext();
+        Attachments attachment = (msgCtx).getAttachmentMap();
+
         DataHandler dataHandler = attachment.getDataHandler(contentID);
         OMText textNode = new OMTextImpl(dataHandler, omEle.getOMFactory());
         omEle.build();
@@ -62,12 +56,14 @@ public class EchoSwA {
         omEle.addChild(textNode);
         return omEle;
     }
-    
+
     public OMElement echoOMElement(OMElement omEle) throws AxisFault {
         OMElement child = (OMElement) omEle.getFirstOMChild();
-        Attachments attachment = (Attachments) (operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)).getAttachmentMap();
-        operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE).setAttachmentMap(attachment);
-        
+        MessageContext msgCtx = MessageContext.getCurrentMessageContext();
+        Attachments attachment = (msgCtx).getAttachmentMap();
+        msgCtx.getOperationContext().getMessageContext(
+                WSDLConstants.MESSAGE_LABEL_OUT_VALUE).setAttachmentMap(attachment);
+
         omEle.build();
         return omEle;
     }

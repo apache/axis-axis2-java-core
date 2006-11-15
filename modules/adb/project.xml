@@ -46,6 +46,11 @@
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
               <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>

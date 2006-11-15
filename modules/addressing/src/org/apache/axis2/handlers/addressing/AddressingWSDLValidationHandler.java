@@ -41,7 +41,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
         checkUsingAddressing(msgContext);
         // Check that if anonymous flag is in effect that the replyto and faultto are valid
         //checkAnonymous(msgContext);
-        return InvocationResponse.CONTINUE;
+        return InvocationResponse.CONTINUE;        
     }
     
     /**

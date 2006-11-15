@@ -42,7 +42,6 @@ public class NamedStaxOMBuilder {
 
     /**
      *
-     * @return
      */
     public OMElement getOMElement(){
         //force to build within the given QName

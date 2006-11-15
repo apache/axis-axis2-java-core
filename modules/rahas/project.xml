@@ -178,22 +178,14 @@
             <version>${XmlSchema.version}</version>
         </dependency>
 	<!-- For WS-Policy support -->
-	 <dependency>
-            <groupId>org.apache.ws.commons.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>1.0.1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
 	<dependency>
-            <groupId>org.apache.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>2.0</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
+		<groupId>org.apache.neethi</groupId>
+		<artifactId>neethi</artifactId>
+		<version>${neethi.version}</version>
+		<properties>
+			<module>true</module>
+		</properties>
+	</dependency>
 	<dependency>
             <groupId>incubator-woden</groupId>
             <artifactId>woden</artifactId>

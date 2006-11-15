@@ -67,7 +67,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             }
             else {
                 //Don't send the message.
-                return InvocationResponse.CONTINUE;
+              return InvocationResponse.CONTINUE;        
             }
         }
         else if (msgContext.isServerSide()){
@@ -172,7 +172,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                 } catch (JMSException e) {} // ignore
             }
         }
-        return InvocationResponse.CONTINUE;
+        return InvocationResponse.CONTINUE;        
     }
 
     public void cleanup(MessageContext msgContext) throws AxisFault {

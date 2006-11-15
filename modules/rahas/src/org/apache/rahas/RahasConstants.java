@@ -88,16 +88,16 @@ public class RahasConstants {
 
     //RST actions
     public static final String RST_ACTION_ISSUE = "/RST" + REQ_TYPE_ISSUE;
-    public static final String RST_ACTOIN_VALIDATE = "/RST" + REQ_TYPE_VALIDATE;
-    public static final String RST_ACTOIN_RENEW = "/RST" + REQ_TYPE_RENEW;
+    public static final String RST_ACTION_VALIDATE = "/RST" + REQ_TYPE_VALIDATE;
+    public static final String RST_ACTION_RENEW = "/RST" + REQ_TYPE_RENEW;
     public static final String RST_ACTION_CANCEL = "/RST" + REQ_TYPE_CANCEL;
     public static final String RST_ACTION_SCT = "/RST/SCT";
     public static final String RST_ACTION_CANCEL_SCT = "/RST/SCT" + REQ_TYPE_CANCEL;
 
     //RSTR actions
-    public static final String RSTR_ACTON_ISSUE = "/RSTR" + REQ_TYPE_ISSUE;
-    public static final String RSTR_ACTON_VALIDATE = "/RSTR" + REQ_TYPE_VALIDATE;
-    public static final String RSTR_ACTON_RENEW = "/RSTR" + REQ_TYPE_RENEW;
+    public static final String RSTR_ACTION_ISSUE = "/RSTR" + REQ_TYPE_ISSUE;
+    public static final String RSTR_ACTION_VALIDATE = "/RSTR" + REQ_TYPE_VALIDATE;
+    public static final String RSTR_ACTION_RENEW = "/RSTR" + REQ_TYPE_RENEW;
     public static final String RSTR_ACTION_CANCEL = "/RSTR" + REQ_TYPE_CANCEL;
     public static final String RSTR_ACTION_SCT = "/RSTR/SCT";
     public static final String RSTR_ACTION_CANCEL_SCT = "/RSTR/SCT" + REQ_TYPE_CANCEL;

@@ -50,7 +50,6 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
     JButton butaddwsdl;
     JList listwsdl;
     JScrollPane sp_listwsdl;
-    JButton butDone;
     private DefaultListModel listModellibs;
     private DefaultListModel listModellwsdls;
     private JPanel previous;
@@ -75,7 +74,7 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
         butLoad.addActionListener(this);
         add(butLoad);
 
-        butselect = new JButton("...");
+        butselect = new JButton("Browse...");
         butselect.addActionListener(this);
         add(butselect);
 
@@ -90,7 +89,7 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
         txtwsdl = new JTextField("");
         add(txtwsdl);
 
-        butSelectwsdl = new JButton("...");
+        butSelectwsdl = new JButton("Browse...");
         butSelectwsdl.addActionListener(this);
         add(butSelectwsdl);
 
@@ -103,17 +102,22 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
         sp_listwsdl = new JScrollPane(listwsdl);
         add(sp_listwsdl);
 
-        butDone = new JButton("Done");
-        butDone.addActionListener(this);
-        add(butDone);
-        setSize(getPreferredSize());
+   setSize(getPreferredSize());
 
     }
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
         if (obj == butLoad) {
+            File lib = new File(txtLibs.getText());
+            if (lib.isFile() ) {
+                if( !listModellibs.contains(txtLibs.getText()))
             listModellibs.addElement(txtLibs.getText());
+            }
+            else{
+                JOptionPane.showMessageDialog(parent, "The file selected is not a valid jar file",
+                    "Axis2 ServiceArchieve creation", JOptionPane.ERROR_MESSAGE);
+            }
         } else if (obj == butselect) {
             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int returnVal = fc.showOpenDialog(this);
@@ -135,9 +139,15 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
                 txtwsdl.setText("");
             }
         } else if (obj == butaddwsdl) {
+            File wsdl = new File(txtwsdl.getText());
+            if (wsdl.isFile()){
+                if(!listModellwsdls.contains(txtwsdl.getText()))
             listModellwsdls.addElement(txtwsdl.getText());
-        } else if (obj == butDone) {
-            parent.setEnable(false, true, false, true);
+            }
+            else{
+                JOptionPane.showMessageDialog(parent, "The file selected is not a valid jar file",
+                    "Axis2 ServiceArchieve creation", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -161,7 +171,7 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
             count++;
         }
         try {
-            urllist[count] = bean.getClassLocation().toURL();
+            urllist[count] = bean.getClassLoc().toURL();
         } catch (MalformedURLException e) {
 
         }
@@ -173,14 +183,14 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
 //            String s = (String) enumerator.nextElement();
 //            libs.add(s);
 //        }
-        bean.setLibs(libs);
+        bean.setTempLibs(libs);
         enumerator = listModellwsdls.elements();
         ArrayList wsdls = new ArrayList();
         while (enumerator.hasMoreElements()) {
             String s = (String) enumerator.nextElement();
             wsdls.add(s);
         }
-        bean.setWsdls(wsdls);
+        bean.setTempWsdls(wsdls);
     }
 
 
@@ -198,15 +208,25 @@ public class ResourceChooser extends JPanel implements ObjectKeeper, ActionListe
     }
 
     public JPanel getNext() {
+
+
+
+
         if (parent.generateServiceXML) {
-            SelectPanel sp = new SelectPanel(parent, parent.bean.getClassLocation());
+            parent.setEnable(true, false, false, true);
+            SelectPanel sp = new SelectPanel(parent, parent.bean.getClassLoc());
+            
+            
             sp.setPrivious(this);
             return sp;
         } else {
             DescriptorFile dis = new DescriptorFile(parent, parent.bean.getServiceXML());
+            parent.setEnable(true, true, false, true);
             dis.setPrivious(this);
             return dis;
         }
+
+
 //        OutPage op = new OutPage(parent);
 //        op.setPrivious(this);
 //        return op;
@@ -254,47 +274,43 @@ class ResourceChooserLayout implements LayoutManager {
         Component c;
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 16, insets.top + 16, 128, 24);
+            c.setBounds(insets.left + 16, insets.top + 16, 100, 24);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 152, insets.top + 16, 312, 24);
+            c.setBounds(insets.left + 120, insets.top + 16, 300, 24);
         }
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 496, insets.top + 16, 72, 24);
+            c.setBounds(insets.left + 530, insets.top + 16, 60, 24);
         }
         c = parent.getComponent(3);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 472, insets.top + 16, 16, 24);
+            c.setBounds(insets.left + 430, insets.top + 16, 90, 24);
         }
         c = parent.getComponent(4);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 152, insets.top + 48, 312, 72);
+            c.setBounds(insets.left + 120, insets.top + 48, 300, 72);
         }
         c = parent.getComponent(5);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 16, insets.top + 128, 128, 24);
+            c.setBounds(insets.left + 16, insets.top + 128, 100, 24);
         }
         c = parent.getComponent(6);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 152, insets.top + 128, 312, 24);
+            c.setBounds(insets.left + 120, insets.top + 128, 300, 24);
         }
         c = parent.getComponent(7);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 472, insets.top + 128, 16, 24);
+            c.setBounds(insets.left + 430, insets.top + 128, 90, 24);
         }
         c = parent.getComponent(8);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 496, insets.top + 128, 72, 24);
+            c.setBounds(insets.left + 530, insets.top + 128, 60, 24);
         }
         c = parent.getComponent(9);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 152, insets.top + 160, 312, 64);
-        }
-        c = parent.getComponent(10);
-        if (c.isVisible()) {
-            c.setBounds(insets.left + 248, insets.top + 225, 72, 24);
+            c.setBounds(insets.left + 120, insets.top + 160, 300, 72);
         }
     }
 }

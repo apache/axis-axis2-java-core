@@ -30,7 +30,7 @@ public class FileSet
     private File directory;
     private String outputDirectory;
     private String[] includes, excludes;
-    private boolean suppressDefaultExcludes;
+    private boolean skipDefaultExcludes;
 
     /**
      * Returns the file sets base directory. May be omitted, in which
@@ -104,17 +104,17 @@ public class FileSet
      * Returns, whether the default excludes should be used. Defaults
      * to true.
      */
-    public boolean isSuppressDefaultExcludes()
+    public boolean isSkipDefaultExcludes()
     {
-        return suppressDefaultExcludes;
+        return skipDefaultExcludes;
     }
 
     /**
      * Sets, whether the default excludes should be used. Defaults to
      * true.
      */
-    public void setSuppressDefaultExcludes( boolean suppressDefaultExcludes )
+    public void setSkipDefaultExcludes( boolean skipDefaultExcludes )
     {
-        this.suppressDefaultExcludes = suppressDefaultExcludes;
+        this.skipDefaultExcludes = skipDefaultExcludes;
     }
 }

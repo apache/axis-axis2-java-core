@@ -26,7 +26,7 @@ import server.EchoServiceSkeleton;
         Object obj = getTheImplementationObject(msgContext);
 
         //Inject the Message Context if it is asked for
-        org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext.getOperationContext());
+        //org.apache.axis2.engine.DependencyManager.configureBusinessLogicProvider(obj, msgContext.getOperationContext());
 
         EchoServiceSkeleton skel = (EchoServiceSkeleton)obj;
         //Out Envelop

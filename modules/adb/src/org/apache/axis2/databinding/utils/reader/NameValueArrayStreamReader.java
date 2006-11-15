@@ -63,7 +63,6 @@ public class NameValueArrayStreamReader implements ADBXMLStreamReader {
     }
 
     /**
-     * @return
      * @throws XMLStreamException
      */
     public int next() throws XMLStreamException {
@@ -407,8 +406,6 @@ public class NameValueArrayStreamReader implements ADBXMLStreamReader {
 
     /**
      * Test whether the xsi namespace is present
-     *
-     * @return
      */
     private boolean isXsiNamespacePresent() {
         return (namespaceContext.getNamespaceURI(NIL_QNAME.getPrefix()) != null);

@@ -150,7 +150,7 @@ public class AxisServiceGroup extends AxisDescription {
         AxisService service = getService(name);
 
         if (service != null) {
-            ((AxisConfiguration) getParent()).notifyObservers(AxisEvent.SERVICE_DEPLOY, service);
+            ((AxisConfiguration) getParent()).notifyObservers(AxisEvent.SERVICE_REMOVE, service);
         }
 
 //        services.remove(name);

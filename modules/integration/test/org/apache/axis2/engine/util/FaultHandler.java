@@ -76,7 +76,6 @@ public class FaultHandler extends AbstractHandler {
         } else if (ERR_HANDLING_WITH_AXIS_FAULT.equals(firstElement.getLocalName())) {
             throw new AxisFault(new QName(M_FAULT_EXCEPTION), FAULT_REASON, null, null, detailEntry);
         }
-
-        return InvocationResponse.CONTINUE;
+        return InvocationResponse.CONTINUE;        
     }
 }

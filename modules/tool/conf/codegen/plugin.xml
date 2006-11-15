@@ -11,85 +11,52 @@
       <library name="Axis2CodegenWizard.jar">
          <export name="*"/>
       </library>
-      <library name="lib/annogen-0.1.0.jar">
+      <library name="lib/activation-@activation.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-dom-1.0.jar">
+      <library name="lib/annogen-@annogen.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axiom-impl-1.0.jar">
+      <library name="lib/ant-@ant.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-adb-1.0.jar">
+      <library name="lib/axiom-api-@axiom.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-codegen-1.0.jar">
+      <library name="lib/axiom-dom-@axiom.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-common-1.0.jar">
+      <library name="lib/axiom-impl-@axiom.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-core-1.0.jar">
+      <library name="lib/commons-logging-@commons.logging.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-java2wsdl-1.0.jar">
+      <library name="lib/axis2-@axis2_version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-jibx-1.0.jar">
+      <library name="lib/log4j-@log4j.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-xmlbeans-1.0.jar">
+      <library name="lib/neethi-@neethi.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/commons-logging-1.0.4.jar">
+      <library name="lib/stax-api-@stax.api.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/geronimo-spec-activation-1.0.2-rc4.jar">
+      <library name="lib/wsdl4j-@wsdl4j.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/jakarta-oro-2.0.8.jar">
+      <library name="lib/wstx-@stax.impl.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/jalopy-1.0b11.jar">
+      <library name="lib/xbean-@xbean.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/jaxme2-0.5.1.jar">
+      <library name="lib/XmlSchema-@XmlSchema.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/jaxmeapi-0.5.1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/jdom.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/jibx-bind-1.1-beta3.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/jibx-run-1.1-beta3.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/log4j-1.2.8.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/neethi-1.0.1.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/stax-api-1.0.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/wsdl4j-1.5.2.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/wstx-asl-2.9.3.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/xbean-2.1.0.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/XmlSchema-1.0.2.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/axiom-api-1.0.jar">
+      <library name="lib/woden-@woden.version@.jar">
          <export name="*"/>
       </library>
    </runtime>

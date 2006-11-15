@@ -19,13 +19,11 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,50 +38,13 @@ import java.util.Iterator;
  */
 public class DependencyManager {
     private static final Log log = LogFactory.getLog(DependencyManager.class);
-    public final static String MESSAGE_CONTEXT_INJECTION_METHOD = "setOperationContext";
     public final static String SERVICE_INIT_METHOD = "init";
     public final static String SERVICE_START_METHOD = "startUp";
     public final static String SERVICE_DESTROY_METHOD = "destroy";
 
-    public static void configureBusinessLogicProvider(Object obj,
-                                                      OperationContext opCtx)
-            throws AxisFault {
-        try {
-
-            Class classToLoad = obj.getClass();
-
-            // We can not call classToLoad.getDeclaredMethed() , since there
-            //  can be insatnce where mutiple services extends using one class
-            // just for init and other reflection methods
-            Method[] methods = classToLoad.getMethods();
-
-            for (int i = 0; i < methods.length; i++) {
-                if (MESSAGE_CONTEXT_INJECTION_METHOD.equals(methods[i].getName())
-                        && (methods[i].getParameterTypes().length == 1)
-                        && (methods[i].getParameterTypes()[0] == OperationContext.class)) {
-                    methods[i].invoke(obj, new Object[]{opCtx});
-                    break;
-                }
-            }
-        } catch (SecurityException e) {
-            log.info("Exception trying to call " + MESSAGE_CONTEXT_INJECTION_METHOD, e);
-            throw new AxisFault(e);
-        } catch (IllegalArgumentException e) {
-            log.info("Exception trying to call " + MESSAGE_CONTEXT_INJECTION_METHOD, e);
-            throw new AxisFault(e);
-        } catch (IllegalAccessException e) {
-            log.info("Exception trying to call " + MESSAGE_CONTEXT_INJECTION_METHOD, e);
-            throw new AxisFault(e);
-        } catch (InvocationTargetException e) {
-            log.info("Exception trying to call " + MESSAGE_CONTEXT_INJECTION_METHOD, e);
-            throw new AxisFault(e);
-        }
-    }
-
     public static void initServiceClass(Object obj,
                                         ServiceContext serviceContext) throws AxisFault {
         try {
-
             Class classToLoad = obj.getClass();
             // We can not call classToLoad.getDeclaredMethed() , since there
             //  can be insatnce where mutiple services extends using one class
@@ -139,11 +100,14 @@ public class DependencyManager {
                 } catch (Exception e) {
                     new AxisFault(e);
                 }
-            } else {
-                throw new AxisFault(Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
             }
         }
     }
+
+    /**
+     * To startup service when user puts load-on-startup parameter
+     */
+
 
     public static void destroyServiceObject(ServiceContext serviceContext) throws AxisFault {
         try {
@@ -179,4 +143,6 @@ public class DependencyManager {
             throw new AxisFault(e);
         }
     }
+
+
 }

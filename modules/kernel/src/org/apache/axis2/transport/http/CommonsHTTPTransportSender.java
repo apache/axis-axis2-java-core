@@ -178,8 +178,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
             if (transportURL != null) {
                 epr = new EndpointReference(transportURL);
-            }
-            else if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
+            } else if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
                 epr = msgContext.getTo();
             }
 
@@ -208,8 +207,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             } else {
                 if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
                     sendUsingOutputStream(msgContext, format, dataOut);
-                }
-                else {
+                } else {
                     throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
                 }
             }
@@ -226,7 +224,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         } catch (IOException e) {
             throw new AxisFault(e);
         }
-        
         return InvocationResponse.CONTINUE;
     }
 
@@ -248,7 +245,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 Object contentTypeObject = msgContext.getProperty(Constants.Configuration.CONTENT_TYPE);
                 if (contentTypeObject != null) {
                     contentType = (String) contentTypeObject;
-                } else if (msgContext.isDoingREST()) {
+                } else if (msgContext.isDoingREST() && !(format.isOptimized())) {
                     contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
                 } else {
                     contentType = format.getContentType();
@@ -267,53 +264,65 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
         }
 
         format.setDoOptimize(msgContext.isDoingMTOM());
-		format.setDoingSWA(msgContext.isDoingSwA());
-		if (!(msgContext.isDoingMTOM()) & (msgContext.isDoingSwA())
-				& !(msgContext.isDoingREST())) {
-			StringWriter bufferedSOAPBody = new StringWriter();
-			dataOut.serializeAndConsume(bufferedSOAPBody, format);
-			MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,
-					out, msgContext.getAttachmentMap(), format);
-		} else {
-			dataOut.serializeAndConsume(out, format);
-		}
+        format.setDoingSWA(msgContext.isDoingSwA());
+        if (!(msgContext.isDoingMTOM()) & (msgContext.isDoingSwA())
+                & !(msgContext.isDoingREST())) {
+            StringWriter bufferedSOAPBody = new StringWriter();
+            dataOut.serializeAndConsume(bufferedSOAPBody, format);
+            MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,
+                    out, msgContext.getAttachmentMap(), format);
+        } else {
+            dataOut.serializeAndConsume(out, format);
+        }
     }
 
-    public void writeMessageWithCommons(MessageContext msgContext,
+    public void writeMessageWithCommons(MessageContext messageContext,
                                         EndpointReference toEPR,
                                         OMElement dataout,
                                         OMOutputFormat format)
             throws AxisFault {
         try {
             URL url = new URL(toEPR.getAddress());
-            String soapActionString = msgContext.getSoapAction();
 
-            if ((soapActionString == null) || (soapActionString.length() == 0)) {
-                soapActionString = msgContext.getWSAAction();
-            }
+            String soapActionString = "\"\"";
 
             Object disableSoapAction =
-                msgContext.getOptions().getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
-            
-            if (soapActionString == null || JavaUtils.isTrueExplicitly(disableSoapAction)) {
+                    messageContext.getOptions().getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+
+            if (!JavaUtils.isTrueExplicitly(disableSoapAction)) {
+                // first try to get the SOAP action from message context
+                soapActionString = messageContext.getSoapAction();
+                if ((soapActionString == null) || (soapActionString.length() == 0)) {
+                    // now let's try to get WSA action
+                    soapActionString = messageContext.getWSAAction();
+                    if (messageContext.getAxisOperation() != null && ((soapActionString == null) || (soapActionString.length() == 0))) {
+                        // last option is to get it from the axis operation
+                        soapActionString = messageContext.getAxisOperation().getSoapAction();
+                    }
+                }
+
+            }
+
+
+            if (soapActionString == null) {
                 soapActionString = "\"\"";
-            } 
+            }
 
             // select the Message Sender depending on the REST status
             AbstractHTTPSender sender;
 
-            if (!msgContext.isDoingREST()) {
+            if (!messageContext.isDoingREST()) {
                 sender = new SOAPOverHTTPSender();
             } else {
                 sender = new RESTSender();
             }
-            if (msgContext.getProperty(HTTPConstants.CHUNKED) != null) {
-                chunked = JavaUtils.isTrueExplicitly(msgContext.getProperty(
+            if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
+                chunked = JavaUtils.isTrueExplicitly(messageContext.getProperty(
                         HTTPConstants.CHUNKED));
             }
 
-            if (msgContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION) != null) {
-                httpVersion = (String) msgContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION);
+            if (messageContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION) != null) {
+                httpVersion = (String) messageContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION);
             }
 
             // Following order needed to be preserved because,
@@ -322,7 +331,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             sender.setHttpVersion(httpVersion);
             sender.setFormat(format);
 
-            sender.send(msgContext, dataout, url, soapActionString);
+            sender.send(messageContext, dataout, url, soapActionString);
         } catch (MalformedURLException e) {
             throw new AxisFault(e);
         } catch (HttpException e) {

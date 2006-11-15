@@ -20,11 +20,12 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
@@ -37,9 +38,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Builds a service description from OM
@@ -48,14 +47,15 @@ public class ServiceBuilder extends DescriptionBuilder {
     private static final Log log = LogFactory.getLog(ServiceBuilder.class);
     private AxisService service;
 
-    public ServiceBuilder(AxisConfiguration axisConfig, AxisService service) {
+    public ServiceBuilder(ConfigurationContext configCtx, AxisService service) {
         this.service = service;
-        this.axisConfig = axisConfig;
+        this.configCtx = configCtx;
+        this.axisConfig = this.configCtx.getAxisConfiguration();
     }
 
-    public ServiceBuilder(InputStream serviceInputStream, AxisConfiguration axisConfig,
+    public ServiceBuilder(InputStream serviceInputStream, ConfigurationContext configCtx,
                           AxisService service) {
-        super(serviceInputStream, axisConfig);
+        super(serviceInputStream, configCtx);
         this.service = service;
     }
 
@@ -66,7 +66,8 @@ public class ServiceBuilder extends DescriptionBuilder {
         try {
             // Processing service level parameters
             Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
-            processParameters(itr, service, service.getParent());
+            processParameters(itr, service, service.getParent());            
+            
             // process service description
             OMElement descriptionElement =
                     service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION));
@@ -91,12 +92,20 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
             OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
-
+            
+            // If the service name is explicitly specified in the services.xml
+            // then use that as the service name
             if (serviceNameatt != null) {
                 if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
+                    service.setName(serviceNameatt.getAttributeValue());
                     service.setServiceDescription(serviceNameatt.getAttributeValue());
                 }
             }
+            
+            if (service.getParameter("ServiceClass") == null){
+                log.info("The Service " + service.getName() + " does not specify a Service Class");
+            }
+            
             // Process WS-Addressing flag attribute
             OMAttribute addressingRequiredatt = service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
             if (addressingRequiredatt != null) {
@@ -119,23 +128,12 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
 
-            
-
             //Processing service lifecycle attribute
             OMAttribute serviceLifeCycleClass = service_element.
                     getAttribute(new QName(TAG_CLASS_NAME));
             if (serviceLifeCycleClass != null) {
                 String className = serviceLifeCycleClass.getAttributeValue();
-                if (className != null) {
-                    try {
-                        ClassLoader loader = service.getClassLoader();
-                        Class serviceLifeCycleClassImpl = Loader.loadClass(loader, className);
-                        service.setServiceLifeCycle(
-                                (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance());
-                    } catch (Exception e) {
-                        throw new DeploymentException(e.getMessage(), e);
-                    }
-                }
+                loadServiceLifeCycleClass(className);
             }
             //Setting schema namespece if any
             OMElement schemaElement = service_element.getFirstChildWithName(new QName(SCHEMA));
@@ -158,6 +156,38 @@ public class ServiceBuilder extends DescriptionBuilder {
                         service.setElementFormDefault(false);
                     }
                 }
+
+                //package to namespace mapping. This will be an element that maps pkg names to a namespace
+                //when this is doing AxisService.getSchematargetNamespace will be overridden
+                //This will be <mapping/>  with @namespace and @package
+                Iterator mappingIterator = schemaElement.getChildrenWithName(new QName(MAPPING));
+                if (mappingIterator != null) {
+                    Map pkg2nsMap = new Hashtable();
+                    while (mappingIterator.hasNext()) {
+                        OMElement mappingElement = (OMElement) mappingIterator.next();
+                        OMAttribute namespaceAttribute =
+                                mappingElement.getAttribute(new QName(ATTRIBUTE_NAMESPACE));
+                        OMAttribute packageAttribute =
+                                mappingElement.getAttribute(new QName(ATTRIBUTE_PACKAGE));
+                        if (namespaceAttribute != null && packageAttribute != null) {
+                            String namespaceAttributeValue = namespaceAttribute.getAttributeValue();
+                            String packageAttributeValue = packageAttribute.getAttributeValue();
+                            if (namespaceAttributeValue != null && packageAttributeValue != null) {
+                                pkg2nsMap.put(packageAttributeValue.trim(),
+                                        namespaceAttributeValue.trim());
+                            } else {
+                                log.warn(
+                                        "Either value of @namespce or @packagename not available. Thus, generated will be selected.");
+                            }
+                        } else {
+                            log.warn(
+                                    "Either @namespce or @packagename not available. Thus, generated will be selected.");
+                        }
+                    }
+                    service.setP2nMap(pkg2nsMap);
+
+                }
+
             }
 
             //processing Default Message receivers
@@ -251,9 +281,13 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
+            String objectSupplierValue = (String) service.getParameterValue(TAG_OBJECT_SUPPLIER);
+            if (objectSupplierValue != null) {
+                loadObjectSupplierClass(objectSupplierValue);
+            }
             if (!service.isUseUserWSDL()) {
                 // Generating schema for the service if the impl class is Java
-                if (!service.isWsdlfound()) {
+                if (!service.isWsdlFound()) {
                     //trying to generate WSDL for the service using JAM  and Java reflection
                     try {
                         if (generateWsdl(service)) {
@@ -267,14 +301,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                             }
                         }
                     } catch (Exception e) {
-                        /**
-                         * I have log here if some error occurs , since service impl
-                         * class can alos be non-Java class , so in that case
-                         * it is not possible to generate schema, so no pint of throwing that
-                         * error ,  I know we have to handle this , until that I have
-                         * to log this
-                         */
-                        log.error(Messages.getMessage("errorinschemagen", e.getMessage()), e);
+                        throw new DeploymentException(
+                                Messages.getMessage("errorinschemagen", e.getMessage()), e);
                     }
                 }
             }
@@ -305,6 +333,33 @@ public class ServiceBuilder extends DescriptionBuilder {
         return service;
     }
 
+    private void loadObjectSupplierClass(String objectSupplierValue) throws AxisFault {
+        try {
+            ClassLoader loader = service.getClassLoader();
+            Class objectSupplierImpl = Loader.loadClass(loader, objectSupplierValue.trim());
+            ObjectSupplier objectSupplier = (ObjectSupplier) objectSupplierImpl.newInstance();
+            service.setObjectSupplier(
+                    objectSupplier);
+        } catch (Exception e) {
+            throw new AxisFault(e);
+        }
+    }
+
+    private void loadServiceLifeCycleClass(String className) throws DeploymentException {
+        if (className != null) {
+            try {
+                ClassLoader loader = service.getClassLoader();
+                Class serviceLifeCycleClassImpl = Loader.loadClass(loader, className);
+                ServiceLifeCycle serviceLifeCycle = (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance();
+                serviceLifeCycle.startUp(configCtx, service);
+                service.setServiceLifeCycle(
+                        serviceLifeCycle);
+            } catch (Exception e) {
+                throw new DeploymentException(e.getMessage(), e);
+            }
+        }
+    }
+
 
     private boolean generateWsdl(AxisService axisService) {
         Iterator operatins = axisService.getOperations();
@@ -333,7 +388,7 @@ public class ServiceBuilder extends DescriptionBuilder {
     /**
      * To get the methods which dose not use RPC* Message Recievers
      *
-     * @return
+     * @return ArrayList
      */
     private ArrayList getNonPRCMethods(AxisService axisService) {
         ArrayList excludeOperations = new ArrayList();
@@ -385,13 +440,13 @@ public class ServiceBuilder extends DescriptionBuilder {
             throws DeploymentException {
         while (messages.hasNext()) {
             OMElement messageElement = (OMElement) messages.next();
-            OMAttribute lable = messageElement.getAttribute(new QName(TAG_LABEL));
+            OMAttribute label = messageElement.getAttribute(new QName(TAG_LABEL));
 
-            if (lable == null) {
+            if (label == null) {
                 throw new DeploymentException(Messages.getMessage("messagelabelcannotfound"));
             }
 
-            AxisMessage message = operation.getMessage(lable.getAttributeValue());
+            AxisMessage message = operation.getMessage(label.getAttributeValue());
 
             Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
@@ -516,7 +571,6 @@ public class ServiceBuilder extends DescriptionBuilder {
                         WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
                         WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
                         WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
                         WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage outAxisMessage = op_descrip
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);

@@ -3,12 +3,15 @@ package org.apache.axis2.deployment.resolver;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.xml.sax.InputSource;
 
 import javax.wsdl.xml.WSDLLocator;
 import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.net.URI;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -35,11 +38,16 @@ import java.util.zip.ZipInputStream;
  */
 public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocator {
 
+    protected static final Log log = LogFactory
+            .getLog(AARBasedWSDLLocator.class);
+
     private File aarFile;
     private InputStream baseInputStream;
-    private String lastImportLocation = "";
+    private URI lastImportLocation;
+    private String baseURI;
 
-    public AARBasedWSDLLocator(File zipFile, InputStream baseInputStream) {
+    public AARBasedWSDLLocator(String baseURI, File zipFile, InputStream baseInputStream) {
+        this.baseURI = baseURI;
         this.baseInputStream = baseInputStream;
         this.aarFile = zipFile;
     }
@@ -53,14 +61,8 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
      * @param importLocation
      */
     public InputSource getImportInputSource(String parentLocation, String importLocation) {
-        //setting current import location.
-        if (importLocation != null && importLocation.length() > 0) {
-            int speindex = importLocation.lastIndexOf("/");
-            if (speindex > 0) {
-                lastImportLocation = importLocation.substring(0, speindex);
-            }
+        lastImportLocation = URI.create(parentLocation).resolve(importLocation);
 
-        }
         if (isAbsolute(importLocation)) {
             return super.resolveEntity(
                     null, importLocation, parentLocation);
@@ -74,13 +76,9 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
                 byte[] buf = new byte[1024];
                 int read;
                 ByteArrayOutputStream out;
-                String searchingStr;
-                if (parentLocation != null && parentLocation.length() > 0) {
-                    importLocation = Utils.getPath(parentLocation, importLocation);
-                }
+                String searchingStr = lastImportLocation.toString();
                 while ((entry = zin.getNextEntry()) != null) {
                     String entryName = entry.getName().toLowerCase();
-                    searchingStr = (DeploymentConstants.META_INF + "/" + importLocation).toLowerCase();
                     if (entryName.equalsIgnoreCase(searchingStr)) {
                         out = new ByteArrayOutputStream();
                         while ((read = zin.read(buf)) > 0) {
@@ -90,19 +88,18 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
                         return new InputSource(in);
                     }
                 }
-
-
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
                 try {
                     if (zin != null) zin.close();
                 } catch (IOException e) {
-                    //log this error
+                    log.debug(e);
                 }
             }
         }
 
+        log.info("AARBasedWSDLLocator: Unable to resolve" + lastImportLocation);
         return null;
     }
 
@@ -112,7 +109,7 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
      */
     public String getBaseURI() {
         // we don't care
-        return "";
+        return baseURI;
     }
 
     /**
@@ -120,7 +117,7 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
      */
     public String getLatestImportURI() {
         //we don't care about this either
-        return lastImportLocation;
+        return lastImportLocation.toString();
     }
     
     public void close() {

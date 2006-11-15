@@ -173,7 +173,7 @@
         status = true;
     }
     if (!status) {
-%> There seems to be no services listed! Try hitting refresh <%
+%> No services listed! Try hitting refresh. <%
     }
 %>
 <jsp:include page="include/adminfooter.jsp" />

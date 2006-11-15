@@ -18,7 +18,6 @@ package org.apache.rampart.policy.model;
 
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Constants;
-import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
 
 import javax.xml.namespace.QName;
@@ -59,7 +58,7 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class RampartConfig implements Assertion {
 
-    private static final String DEFAULT_TIMESTAMP_TTL = "300000";
+    public static final int DEFAULT_TIMESTAMP_TTL = 300000;
 
     public final static String NS = "http://ws.apache.org/rampart/policy";
 
@@ -83,8 +82,6 @@ public class RampartConfig implements Assertion {
 
     public final static String TOKEN_STORE_CLASS_LN = "tokenStoreClass";
 
-    public final static String TOKEN_ISSUER_POLICY_LN = "tokenIssuerPolicy";
-
     private String user;
 
     private String encryptionUser;
@@ -97,11 +94,9 @@ public class RampartConfig implements Assertion {
 
     private CryptoConfig decCryptoConfig;
 
-    private String timestampTTL = DEFAULT_TIMESTAMP_TTL;
+    private String timestampTTL = Integer.toString(DEFAULT_TIMESTAMP_TTL);
 
     private String tokenStoreClass;
-
-    private Policy tokenIssuerPolicy;
 
     /**
      * @return Returns the tokenStoreClass.
@@ -265,21 +260,6 @@ public class RampartConfig implements Assertion {
      */
     public void setTimestampTTL(String timestampTTL) {
         this.timestampTTL = timestampTTL;
-    }
-
-    /**
-     * @return Returns the tokenIssuerPolicy.
-     */
-    public Policy getTokenIssuerPolicy() {
-        return tokenIssuerPolicy;
-    }
-
-    /**
-     * @param tokenIssuerPolicy
-     *            The tokenIssuerPolicy to set.
-     */
-    public void setTokenIssuerPolicy(Policy tokenIssuerPolicy) {
-        this.tokenIssuerPolicy = tokenIssuerPolicy;
     }
 
 }

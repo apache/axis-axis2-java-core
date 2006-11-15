@@ -44,7 +44,6 @@ import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -192,7 +191,7 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
                 msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer.getOutputStream());
                 msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
 
-                MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
+                MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
                 // If the fault is not going along the back channel we should be 202ing
                 if (AddressingHelper.isFaultRedirected(msgContext)) {
                     response.setStatusLine(new StatusLine(ver, 202, "Accepted"));

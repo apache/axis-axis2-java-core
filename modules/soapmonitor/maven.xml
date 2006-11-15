@@ -39,7 +39,7 @@
         </jar>
 
         <copy file="target/soapmonitor-${soapmonitor_version}.mar" tofile="target/modules/soapmonitor-${soapmonitor_version}.mar"/>
-        <copy file="target/soapmonitor-${soapmonitor_version}.mar" tofile="${maven.repo.local}/axis2/mars/soapmonitor-${soapmonitor_version}.mar"/>
+        <copy file="target/soapmonitor-${soapmonitor_version}.mar" tofile="${maven.repo.local}/org.apache.axis2/mars/soapmonitor-${soapmonitor_version}.mar"/>
 
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>

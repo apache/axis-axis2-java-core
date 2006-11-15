@@ -136,18 +136,10 @@
                 <module>true</module>
             </properties>
         </dependency>
-         <dependency>
-            <groupId>org.apache.ws.commons.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>1.0.1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-	<dependency>
+        <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
-            <version>2.0</version>
+            <version>${neethi.version}</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -157,6 +149,14 @@
     <reports/>
     <!-- add the build properties-->
     <build>
+        <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>
+        <sourceDirectory>src</sourceDirectory>
+        <unitTestSourceDirectory>test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+        </unitTest>
         <resources>
             <resource>
                 <directory>src</directory>

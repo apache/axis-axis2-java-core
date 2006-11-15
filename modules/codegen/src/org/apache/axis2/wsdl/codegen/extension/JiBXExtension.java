@@ -46,10 +46,6 @@ public class JiBXExtension extends AbstractDBProcessingExtension {
 
         // check the JiBX binding definition file specified
         String path = (String)configuration.getProperties().get(BINDING_PATH_OPTION);
-        if (path == null) {
-            throw new RuntimeException("jibx binding option currently requires -E" +
-                    BINDING_PATH_OPTION + " {file-path} parameter");
-        }
         try {
 
             // try dummy load of framework class first to check missing jars

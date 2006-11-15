@@ -303,18 +303,10 @@
                 <module>true</module>
             </properties>
         </dependency>
-         <dependency>
-            <groupId>org.apache.ws.commons.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>1.0.1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-	<dependency>
+        <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
-            <version>2.0</version>
+            <version>${neethi.version}</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -346,7 +338,7 @@
           <version>4.0.1</version>
         </dependency>
         <dependency>
-            <groupId>springframework</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
             <properties>
@@ -354,7 +346,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>springframework</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
             <properties>
@@ -362,7 +354,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>springframework</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
             <properties>
@@ -370,7 +362,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>springframework</groupId>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
             <properties>
@@ -405,6 +397,7 @@
                 <exclude>**/*Abstract*.class</exclude>
                 <exclude>**/*Util*.class</exclude>
                 <exclude>**/*InteropStubTest.class</exclude>
+                <exclude>**/*EchoRawSwAFileInputTest.class</exclude>
                 <exclude>**org/apache/axis2/mail/*.class</exclude>
 		<exclude>**org/apache/axis2/transport/DualChannelRequestResponseRawXMLTest.class</exclude>
                 <exclude>**org/apache/axis2/soap12testing/soap12testsuite/*.class</exclude>

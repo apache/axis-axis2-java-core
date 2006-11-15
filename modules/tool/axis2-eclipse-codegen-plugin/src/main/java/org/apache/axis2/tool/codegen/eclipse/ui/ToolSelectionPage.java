@@ -20,6 +20,9 @@ import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GCData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -79,6 +82,14 @@ public void createControl(Composite parent) {
            }
         });
         
+        Label fillLabel = new Label(container, SWT.NULL);
+
+        Label hintLabel = new Label(container, SWT.NULL);
+        hintLabel.setText(CodegenWizardPlugin.getResourceString("page0.hint.desc"));
+//        hintLabel.setFont(new Font(new Device() {
+//			public int internal_new_GC(GCData data) {return 0;}
+//			public void internal_dispose_GC(int handle, GCData data) {}
+//											},"hintFont",8,SWT.NORMAL));
         ///////////////////////////////////////
         //java2WSDLRadioButton.setEnabled(false);
         //////////////////////////////////////

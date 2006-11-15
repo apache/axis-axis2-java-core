@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.axis2</groupId>
     <artifactId>axis2-parent</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <relativePath>../parent/pom.xml</relativePath>    
   </parent>
 
@@ -67,26 +67,48 @@
     </dependency>
     <!-- Added this to support WS Policy in Axis2 -->
     <dependency>
-      <groupId>org.apache.ws.commons.schema</groupId>
+      <groupId>org.apache.neethi</groupId>
       <artifactId>neethi</artifactId>
     </dependency>
     <dependency>
-      <groupId>incubator-woden</groupId>
+      <groupId>org.apache.woden</groupId>
       <artifactId>woden</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
+      <version>1.0.1</version>
     </dependency>
   </dependencies>
   <build>
-  <testResources>
-   <testResource>
-    <targetPath>../test-resources</targetPath>
-    <directory>test-resources</directory>
-    <includes>
-     <include>**/**</include>
-    </includes>
-   </testResource>
-  </testResources>
-  <plugins>
-  	<plugin>
+    <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>test</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>conf</directory>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+        </excludes>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>src</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <targetPath>../test-resources</targetPath>
+        <directory>test-resources</directory>
+        <includes>
+          <include>**/**</include>
+        </includes>
+      </testResource>
+    </testResources>
+    <plugins>
+  	  <plugin>
   		<artifactId>maven-surefire-plugin</artifactId>
   		<inherited>true</inherited>
   		<configuration>
@@ -100,8 +122,8 @@
                 <include>**/*Test.java</include>
             </includes>
   		</configuration>
-  	</plugin>
-  	<plugin>
+  	  </plugin>
+  	  <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>1.1</version>
@@ -138,6 +160,6 @@
           </dependency>
         </dependencies>
       </plugin>
-  </plugins>
+    </plugins>
   </build>
 </project>

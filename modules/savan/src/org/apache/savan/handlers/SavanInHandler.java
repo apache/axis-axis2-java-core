@@ -72,7 +72,7 @@ public class SavanInHandler extends AbstractHandler  {
 		} else if (messageType==SavanConstants.MessageTypes.RENEW_MESSAGE) {
 			processor.renewSubscription(smc);
 		}
-        return InvocationResponse.CONTINUE;
+        return InvocationResponse.CONTINUE;        
 	}
 	
 	private void setSubscriberStore (SavanMessageContext smc) throws SavanException {

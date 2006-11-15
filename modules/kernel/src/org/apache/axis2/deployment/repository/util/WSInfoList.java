@@ -192,11 +192,7 @@ public class WSInfoList implements DeploymentConstants {
     public void update() {
         synchronized (deployer) {
             checkForUndeployedServices();
-
-            if (deployer.isHotUpdate()) {
-                deployer.unDeploy();
-            }
-
+            deployer.unDeploy();
             deployer.doDeploy();
         }
     }

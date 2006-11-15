@@ -159,6 +159,6 @@ public class SOAP12InFlowHandlerDefaultC extends AbstractHandler implements Head
             headerBlockPresent = new Integer(0);
             msgContext.getOperationContext().setProperty("HEADER_BLOCK_PRESENT", headerBlockPresent);
         }
-        return InvocationResponse.CONTINUE;        
+        return InvocationResponse.CONTINUE;
     }
 }

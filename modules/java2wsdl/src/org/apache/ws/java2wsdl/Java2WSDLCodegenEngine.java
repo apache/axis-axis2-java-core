@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
 /*
@@ -31,6 +32,7 @@ import java.util.Vector;
 public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
     private Java2WSDLBuilder java2WsdlBuilder;
     public static final String WSDL_FILENAME_SUFFIX = ".wsdl";
+    public static final String COMMA = ",";
 
     public Java2WSDLCodegenEngine(Map optionsMap) throws Exception {
         //create a new  Java2WSDLBuilder and populate it
@@ -183,6 +185,16 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         option = loadOption(Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION,
                             Java2WSDLConstants.EXTRA_CLASSES_DEFAULT_OPTION_LONG, optionsMap);
         java2WsdlBuilder.setExtraClasses(option == null ? new ArrayList() : option.getOptionValues());
+        
+        option = loadOption(Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION,
+                            Java2WSDLConstants.NAMESPACE_GENERATOR_OPTION_LONG, optionsMap);
+        if ( option != null ) {
+            java2WsdlBuilder.setNsGenClassName(option.getOptionValue());
+        }
+        
+        option = loadOption(Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION,
+                            Java2WSDLConstants.JAVA_PKG_2_NSMAP_OPTION_LONG, optionsMap);
+        java2WsdlBuilder.setPkg2nsMap(loadJavaPkg2NamespaceMap(option));
     }
     
      /**
@@ -204,5 +216,33 @@ public class Java2WSDLCodegenEngine implements Java2WSDLConstants {
         }
 
         return option;
+    }
+    
+    protected void addToSchemaLocationMap(String optionValue) throws Exception
+    {
+        
+        
+        
+    }
+    
+    protected Map loadJavaPkg2NamespaceMap(Java2WSDLCommandLineOption option) 
+    { 
+        Map pkg2nsMap = new Hashtable();
+        if (option != null) 
+        {
+            ArrayList optionValues = option.getOptionValues();
+            String anOptionValue = "";
+            for ( int count = 0 ; count < optionValues.size() ; ++count )
+            {
+                anOptionValue = ((String)optionValues.get(count)).trim();
+                
+                //an option value will be of the form [java package, namespace]
+                //hence we take the two substrings starting after '[' and upto ',' and
+                //starting after ',' and upto ']'
+                pkg2nsMap.put(anOptionValue.substring(1, anOptionValue.indexOf(COMMA)).trim(),
+                                        anOptionValue.substring(anOptionValue.indexOf(COMMA) + 1, anOptionValue.length() - 1).trim()); 
+            }
+        }
+        return pkg2nsMap;
     }
 }

@@ -10,20 +10,27 @@
                  org.apache.axis2.client.ServiceClient,
                  org.apache.axis2.context.ConfigurationContext,
                  org.apache.axis2.context.ConfigurationContextFactory,
-                 org.apache.axis2.transport.http.AxisServlet,
                  javax.servlet.ServletContext,
                  javax.servlet.http.HttpServletRequest,
                  javax.servlet.http.HttpServletResponse,
                  javax.servlet.jsp.JspWriter,
-                 javax.xml.parsers.SAXParser"
+                 javax.xml.parsers.SAXParser,
+                 javax.xml.parsers.SAXParserFactory"
          session="false" %>
-<%@ page import="javax.xml.parsers.SAXParserFactory" %>
 <%@ page import="javax.xml.stream.XMLOutputFactory" %>
 <%@ page import="javax.xml.stream.XMLStreamException" %>
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.io.InputStream" %>
 <%@ page import="java.io.StringWriter" %>
-<%@ page import="org.apache.axis2.deployment.WarBasedAxisConfigurator"%>
+<%@ page import="java.lang.Class" %>
+<%@ page import="java.lang.ClassNotFoundException"%>
+<%@ page import="java.lang.Exception" %>
+<%@ page import="java.lang.Integer" %>
+<%@ page import="java.lang.NoClassDefFoundError" %>
+<%@ page import="java.lang.SecurityException" %>
+<%@ page import="java.lang.String" %>
+<%@ page import="java.lang.System" %>
+<%@ page import="java.lang.Throwable" %>
 
 <%
    /*
@@ -68,8 +75,8 @@
     public String getInstallHints(HttpServletRequest request) {
 
         return "<B><I>Note:</I></B> On Tomcat 4.x and Java1.4, you may need to put libraries that contain "
-                        + "java.* or javax.* packages into CATALINA_HOME/common/lib"
-                        + "<br>jaxrpc.jar and saaj.jar are two such libraries.";
+                + "java.* or javax.* packages into CATALINA_HOME/common/lib"
+                + "<br>jaxrpc.jar and saaj.jar are two such libraries.";
     }
 
     /**
@@ -137,9 +144,9 @@
             } else {
                 String location = getLocation(out, clazz);
                 if (location == null) {
-                    out.write("Found " + axisOperation + " (" + classname + ")<br>");
+                    out.write("Found " + axisOperation + " (" + classname + ")<br/>");
                 } else {
-                    out.write("Found " + axisOperation + " (" + classname + ") at " + location + "<br>");
+                    out.write("Found " + axisOperation + " (" + classname + ") <br/> &nbsp;&nbsp;at " + location + "<br/>");
                 }
                 return 0;
             }
@@ -330,7 +337,7 @@
         return method;
     }
 
-    public boolean inVokeTheService() {
+    public boolean invokeTheService() {
         try {
             // since this one is an internal request we do not use public frontendHostUrl
             // for it
@@ -338,12 +345,12 @@
             IP = IP.substring(0, lastindex);
             ///axis2/axis2-web/services/version
             IP = IP.replaceAll("axis2-web", "");
-            
+
             OMElement payload = createEnvelope();
             ConfigurationContext configctx =
                     ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
             ServiceClient client = new ServiceClient(configctx, null);
-            EndpointReference targetEPR = new EndpointReference(IP + configctx.getServicePath() + "/version");
+            EndpointReference targetEPR = new EndpointReference(IP + configctx.getServicePath() + "/Version");
             Options options = new Options();
             client.setOptions(options);
             options.setTo(targetEPR);
@@ -356,12 +363,16 @@
             value = writer.toString();
             return true;
         } catch (AxisFault axisFault) {
-            System.out.println( value);
+            System.out.println(value);
             return false;
         } catch (XMLStreamException e) {
             value = e.getMessage();
             return false;
         }
+    }
+    
+    public String getFormatedSystemProperty(String systemProperty){
+    	return  systemProperty.replaceAll(":", ": ");
     }
 %>
 
@@ -369,9 +380,10 @@
 
 <h2>Examining webapp configuration</h2>
 
-<p>
+<blockquote>
 
-<h3>Essential Components</h3>
+<h4>Essential Components</h4>
+
 <%
     int needed = 0,wanted = 0;
 
@@ -389,18 +401,17 @@
             "Axis2 will not work",
             "http://jakarta.apache.org/commons/logging.html");
     needed += needClass(out, "javax.xml.stream.XMLStreamReader",
-            "stax-api-1.0.jar",
+            "stax-api-1.0.1.jar",
             "Streaming API for XML",
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");
     needed += needClass(out, "org.codehaus.stax2.XMLStreamWriter2",
-            "wstx-asl-2.8.jar",
-            "Streaming Impl for XML implementation",
+            "wstx-asl-3.0.1.jar",
+            "Streaming API for XML implementation",
             "Axis2 will not work",
             "http://dist.codehaus.org/stax/jars/");
 
 %>
-
 <%
     /*
     * resources on the classpath path
@@ -412,55 +423,50 @@
     */
     /* add more libraries here */
 
-    out.write("<h3>");
-    //is everythng we need here
+    //is everything we need here
     if (needed == 0) {
         //yes, be happy
-        out.write("<i>The core axis2 libraries are present. </i>");
+        out.write("<p><font color='green'><strong>The core axis2 libraries are present.</strong></font></p>");
     } else {
         //no, be very unhappy
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        out.write("<i>"
+        out.write("<font color='red'><i>"
                 + needed
                 + " core axis2 librar"
                 + (needed == 1 ? "y is" : "ies are")
-                + " missing</i>");
+                + " missing</i></font>");
     }
     //now look at wanted stuff
-
-    out.write("</h3>");
 %>
 <p>
     <B><I>Note:</I></B> Even if everything this page probes for is present,
-    there is no guarantee
-    your
-    web axisService will work, because there are many configuration options that
-    we do
-    not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
-
+    there is no guarantee your Axis Service will work, because there are many configuration options
+    that we do not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
+</p>
+</blockquote>
 <h2>Examining Version Service</h2>
 <%
-    boolean serviceStatus = inVokeTheService();
+    boolean serviceStatus = invokeTheService();
     if (serviceStatus) {
 %>
-<p>
-    <font color="blue">
-        Found the Axis2 default Version service and Axis2 is working
-        properly.Now you can drop a service archive in axis2/WEB-INF/services.
-
-        Following output was produced while invoking the version axisService:
-        <br>
-        <%= value%></font>
-</p>
+<blockquote>
+    <font color="green"><strong>
+        Found Axis2 default Version service and Axis2 is working
+        properly.</strong></font>
+    <p>Now you can drop a service archive in axis2/WEB-INF/services.
+        Following output was produced while invoking Axis2 version service
+        </p>
+        <p><%= value%></p>
+</blockquote>
 
 <%
 } else {
 %>
 <p>
-    <font color="brown"> There was a problem of examine Version service , may be
+    <font color="brown"> There was a problem in Axis2 version service , may be
         the service not available or some thing has gone wrong. But this does
-        not mean system does not working !
-        Try to upload a some other service and check to see whether it is
+        not mean system is not working !
+        Try to upload some other service and check to see whether it is
         working.
         <br>
     </font>
@@ -470,13 +476,14 @@
     }
 %>
 <h2>Examining Application Server</h2>
+<blockquote>
 <table>
     <tr><td>Servlet version</td><td><%=getServletVersion()%></td></tr>
     <tr><td>Platform</td>
         <td><%=getServletConfig().getServletContext().getServerInfo()%></td>
     </tr>
 </table>
-
+</blockquote>
 <h2>Examining System Properties</h2>
 <%
     /**
@@ -489,10 +496,15 @@
     }
     if (e != null) {
         out.write("<pre>");
+        out.write("<table cellpadding='5px' cellspacing='0px' style='border: .5px blue solid;'>");
         for (; e.hasMoreElements();) {
+            out.write("<tr>");
             String key = (String) e.nextElement();
-            out.write(key + "=" + System.getProperty(key) + "\n");
+            out.write("<th style='border: .5px #A3BBFF solid;'>" + key + "</th>");
+            out.write("<td style='border: .5px #A3BBFF solid;'>" + getFormatedSystemProperty(System.getProperty(key)) + "&nbsp;</td>");
+            out.write("<tr>");
         }
+        out.write("</table>");
         out.write("</pre><p>");
     } else {
         out.write("System properties are not accessible<p>");
