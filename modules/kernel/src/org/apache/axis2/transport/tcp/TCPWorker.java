@@ -30,6 +30,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -103,7 +104,7 @@ public class TCPWorker implements Runnable {
                 if (msgContext != null) {
                     msgContext.setProperty(MessageContext.TRANSPORT_OUT, socket.getOutputStream());
 
-                    MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+                    MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
 
                     engine.sendFault(faultContext);
                 }

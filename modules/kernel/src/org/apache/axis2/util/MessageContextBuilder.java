@@ -232,6 +232,8 @@ public class MessageContextBuilder {
                         }
                         context.setTransportOut(transportOut);
                     }
+                    context.getOperationContext().setProperty(
+                            Constants.DIFFERENT_EPR, Constants.VALUE_TRUE);
                 }
             }
         } catch (URISyntaxException urise) {
