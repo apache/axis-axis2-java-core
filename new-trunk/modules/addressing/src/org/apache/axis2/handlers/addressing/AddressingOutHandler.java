@@ -19,7 +19,6 @@ package org.apache.axis2.handlers.addressing;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.ElementHelper;
-import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
@@ -34,6 +33,7 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
 
@@ -48,7 +48,7 @@ public class AddressingOutHandler extends AddressingHandler {
         Object property = msgContext.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         if (property != null && JavaUtils.isTrueExplicitly(property)) {
             log.debug("Addressing is disabled .....");
-            return InvocationResponse.CONTINUE;        
+            return InvocationResponse.CONTINUE;
         }
 
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
@@ -117,29 +117,56 @@ public class AddressingOutHandler extends AddressingHandler {
         
         // process mustUnderstand attribute, if required.
         processMustUnderstandProperty(envelope, msgContext, addressingNamespaceObject);
-
-        return InvocationResponse.CONTINUE;        
+        
+        return InvocationResponse.CONTINUE;
     }
 
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,
-                                  MessageContext msgCtxt, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) {
+                                  MessageContext msgCtxt, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) throws AxisFault {
         String action = messageContextOptions.getAction();
+        
+        if(log.isTraceEnabled()){
+            log.trace("processWSAAction: action from messageContext: "+action);
+        }
         if(action == null || "".equals(action)){
             if(msgCtxt.getAxisOperation()!=null){
                 action = msgCtxt.getAxisOperation().getOutputAction();
+                if(log.isTraceEnabled()){
+                    log.trace("processWSAAction: action from AxisOperation: "+action);
+                }
             }
         }
         
+        // Use the correct fault action for the selected namespace
         if (Final.WSA_FAULT_ACTION.equals(action) || Submission.WSA_FAULT_ACTION.equals(action)) {
             action = isFinalAddressingNamespace ? Final.WSA_FAULT_ACTION : Submission.WSA_FAULT_ACTION;
         }
-        else if (Final.WSA_SOAP_FAULT_ACTION.equals(action) && !isFinalAddressingNamespace) {
+        else if (!isFinalAddressingNamespace && Final.WSA_SOAP_FAULT_ACTION.equals(action)) {
             action = Submission.WSA_FAULT_ACTION;
         }
-        
-        if (action != null && !isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
-                addressingNamespaceObject, replaceHeaders)) {
-            processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
+
+        // If we need to add a wsa:Action header
+        if(!isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
+                addressingNamespaceObject, replaceHeaders)){
+            if(log.isTraceEnabled()){
+                log.trace("processWSAAction: No existing wsa:Action header found");
+            }
+            // If we don't have an action to add,
+            if(action == null || "".equals(action)){
+                if(log.isTraceEnabled()){
+                    log.trace("processWSAAction: No action to add to header");
+                }
+                // Fault unless validation has been explictily turned off
+                if(!Utils.isExplicitlyTrue(msgCtxt, AddressingConstants.DISABLE_OUTBOUND_ADDRESSING_VALIDATION)){
+                    throw new AxisFault("Unable to determine wsa:Action for outbound message");
+                }
+            }else{
+                if(log.isTraceEnabled()){
+                    log.trace("processWSAAction: Adding action to header: "+action);
+                }
+                // Otherwise just add the header
+                processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
+            }
         }
     }
 
@@ -147,18 +174,18 @@ public class AddressingOutHandler extends AddressingHandler {
         OMElement detailElement = AddressingFaultsHelper.getDetailElementForAddressingFault(msgContext, addressingNamespaceObject);
         if(detailElement != null){
             //The difference between SOAP 1.1 and SOAP 1.2 fault messages is explained in the WS-Addressing Specs.
-            if(msgContext.isSOAP11() && isFinalAddressingNamespace){
+            if(isFinalAddressingNamespace && msgContext.isSOAP11()){
                 // Add detail as a wsa:FaultDetail header
                 if (!isAddressingHeaderAlreadyAvailable(Final.FAULT_HEADER_DETAIL, envelope, addressingNamespaceObject, replaceHeaders)) {
                     SOAPHeaderBlock faultDetail = envelope.getHeader().addHeaderBlock(Final.FAULT_HEADER_DETAIL, addressingNamespaceObject);
-                    faultDetail.addChild(detailElement);
+                    faultDetail.addChild(ElementHelper.importOMElement(detailElement, envelope.getOMFactory()));
                 }
             }
             else if (!msgContext.isSOAP11()) {
                 // Add detail to the Fault in the SOAP Body
                 SOAPFault fault = envelope.getBody().getFault();
                 if (fault != null && fault.getDetail() != null) {
-                    fault.getDetail().addDetailEntry(detailElement);
+                    fault.getDetail().addDetailEntry(ElementHelper.importOMElement(detailElement, envelope.getOMFactory()));
                 }
             }
         }
@@ -176,6 +203,9 @@ public class AddressingOutHandler extends AddressingHandler {
                     String relationshipType = relatesTo[i].getRelationshipType();
 
                     if (relatesToHeader != null) {
+                        
+                        // I think that if it's one of these two constants we can just not add the attribute
+                        // which would save some small amount of bandwidth and processing.
                         if (Final.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType) ||
                             Submission.WSA_DEFAULT_RELATIONSHIP_TYPE.equals(relationshipType)) {
                             relationshipType = isFinalAddressingNamespace ?
@@ -262,7 +292,7 @@ public class AddressingOutHandler extends AddressingHandler {
         if (epr == null) {
             epr = new EndpointReference(anonymous);
         }
-        else if (epr.hasNoneAddress() && !isFinalAddressingNamespace) {
+        else if (!isFinalAddressingNamespace && epr.hasNoneAddress()) {
             return; //Omit the header.
         }
         else if (epr.hasAnonymousAddress()) {
@@ -329,22 +359,10 @@ public class AddressingOutHandler extends AddressingHandler {
         Object flag = msgContext.getProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS);
         if (JavaUtils.isTrueExplicitly(flag)) {
             List headers = envelope.getHeader().getHeaderBlocksWithNSURI(addressingNamespaceObject.getNamespaceURI());
-            Iterator iterator = headers.iterator();
 
-            while (iterator.hasNext()) {
-                OMElement elem = (OMElement)iterator.next();
-                if(elem instanceof SOAPHeaderBlock) {
-                    SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) elem;
-                    soapHeaderBlock.setMustUnderstand(true);  
-                } else {
-//                  Temp workaround to aviod hitting -  https://issues.apache.org/jira/browse/WSCOMMONS-103 
-//                  since Axis2 next release (1.1) will be based on Axiom 1.1 
-//                  We can get rid of this fix with the Axiom SNAPSHOT
-                    elem.addAttribute(SOAPConstants.ATTR_MUSTUNDERSTAND,
-                             "1",
-                            envelope.getNamespace());
-                }
-                
+            for (int i = 0, size = headers.size(); i < size; i++) {
+                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headers.get(i);
+                soapHeaderBlock.setMustUnderstand(true);  
             }
         }
     }

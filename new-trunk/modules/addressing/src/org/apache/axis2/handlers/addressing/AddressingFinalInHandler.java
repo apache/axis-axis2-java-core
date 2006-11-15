@@ -1,6 +1,7 @@
 package org.apache.axis2.handlers.addressing;
 
 import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
@@ -47,10 +48,16 @@ public class AddressingFinalInHandler extends AddressingInHandler {
     protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header, String namespace) {
         Iterator headerBlocks = header.getChildElements();
         while (headerBlocks.hasNext()) {
-            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headerBlocks.next();
-            OMAttribute isRefParamAttr = soapHeaderBlock.getAttribute(new QName(namespace, "IsReferenceParameter"));
+            OMElement headerElement = (OMElement) headerBlocks.next();
+            OMAttribute isRefParamAttr = headerElement.getAttribute(new QName(namespace, "IsReferenceParameter"));
+            if (log.isTraceEnabled()){
+                log.trace("extractToEprReferenceParameters: Checking header: "+headerElement.getQName());
+            }
             if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
-                toEPR.addReferenceParameter(soapHeaderBlock.getQName(), soapHeaderBlock.getText());
+                toEPR.addReferenceParameter(headerElement.getQName(), headerElement.getText());
+                if (log.isTraceEnabled()){
+                    log.trace("extractToEprReferenceParameters: Header: "+headerElement.getQName()+" has IsReferenceParameter attribute. Adding to toEPR.");
+                }
             }
         }
     }
