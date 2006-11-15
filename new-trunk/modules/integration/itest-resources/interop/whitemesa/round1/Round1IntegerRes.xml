@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?><E:Envelope xmlns:E="http://schemas.xmlsoap.org/soap/envelope/" E:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:y="http://www.w3.org/2001/XMLSchema" xmlns:A="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://www.w3.org/2001/XMLSchema-instance">
-<E:Body>
-<m:echoIntegerResponse xmlns:m="http://soapinterop.org/">
-<return s:type="y:int">52</return>
-</m:echoIntegerResponse>
-</E:Body>
-</E:Envelope>

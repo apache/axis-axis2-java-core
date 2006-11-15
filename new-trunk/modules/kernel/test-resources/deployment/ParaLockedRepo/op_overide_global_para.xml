@@ -1,9 +1,0 @@
-<service name="Service1">
-    <description>
-        This is a testing service , to test the system is working or not
-    </description>
-    <parameter name="ServicePara2" locked="true">org.apache.axis2.sample.echo.EchoImpl</parameter>
-    <operation name="echoString">
-       <parameter name="ServicePara2" locked="true">org.apache.axis2.sample.echo.EchoImpl</parameter>
-    </operation>
-</service>

@@ -1,8 +1,0 @@
-<service name="axisversion">
-    <description>
-           This service echo the given input , and this was developed to text the axis system working
-            correctly
-    </description>
-    <parameter name="ServiceClass" locked="false">org.apache.axis2.echo.Echo</parameter>
-    <operation name="viewVersion"/>
-</service>

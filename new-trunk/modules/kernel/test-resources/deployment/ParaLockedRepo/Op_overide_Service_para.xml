@@ -1,7 +1,0 @@
-<service name="Service1">
-    <parameter name="Servicep" locked="true">org.apache.axis2.sample.echo.EchoImpl</parameter>
-    <parameter name="ServicePara2" locked="true">org.apache.axis2.sample.echo.EchoImpl</parameter>
-    <operation name="echoString">
-       <parameter name="Servicep" locked="true">value</parameter>
-    </operation>
-</service>

@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?><E:Envelope xmlns:E="http://schemas.xmlsoap.org/soap/envelope/" E:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:y="http://www.w3.org/2001/XMLSchema" xmlns:A="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://www.w3.org/2001/XMLSchema-instance">
-<E:Body>
-<m:echoVoidResponse xmlns:m="http://soapinterop.org/"></m:echoVoidResponse>
-</E:Body>
-</E:Envelope>

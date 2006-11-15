@@ -1,1 +1,0 @@
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Body><m:echoStringResponse xmlns:m="http://soapinterop.org/WSDLInteropTestRpcEnc" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><return xmlns="">strss fdfing1</return></m:echoStringResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>

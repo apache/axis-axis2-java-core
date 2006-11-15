@@ -1,8 +1,0 @@
-<SOAP-ENV:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:clr="http://schemas.microsoft.com/soap/encoding/clr/1.0" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-   <SOAP-ENV:Header>
-      <h4:__CallContext href="#ref-3" xmlns:h4="http://schemas.microsoft.com/clr/soap/messageProperties" SOAP-ENC:root="1"/>
-      <a1:LogicalCallContext id="ref-3" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Runtime.Remoting.Messaging"></a1:LogicalCallContext>
-   </SOAP-ENV:Header>
-   <SOAP-ENV:Body>
-      <i5:echoVoid id="ref-1" xmlns:i5="http://soapinterop.org/"></i5:echoVoid>
-   </SOAP-ENV:Body></SOAP-ENV:Envelope>

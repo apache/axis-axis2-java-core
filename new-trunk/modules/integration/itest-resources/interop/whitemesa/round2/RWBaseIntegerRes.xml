@@ -1,7 +1,0 @@
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<env:Body>
-<ns1:echoIntegerResponse xmlns:ns1="http://soapinterop.org/" env:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-<return xmlns="" xsi:type="xsd:int">52</return>
-</ns1:echoIntegerResponse>
-</env:Body>
-</env:Envelope>
