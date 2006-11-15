@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.axis2</groupId>
   <artifactId>axis2-parent</artifactId>
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Axis 2.0 Parent Project</name>
   <inceptionYear>2004</inceptionYear>
