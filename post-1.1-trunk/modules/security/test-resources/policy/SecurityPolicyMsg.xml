@@ -1,0 +1,19 @@
+<!-- Example Endpoint Policy --> 
+<wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+            xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"
+            xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+
+ <!-- Example Message Policy -->
+
+ <sp:SignedParts>
+   <sp:Header Name="Header1" Namespace="uri:namespace_1" />
+   <sp:Header Name="Header2" Namespace="uri:namespace_2" /> 
+   <sp:Body/>
+ </sp:SignedParts>
+ <sp:EncryptedParts>
+   <sp:Header Name="Header2" Namespace="uri:namespace_2" />
+   <sp:Body/>
+ </sp:EncryptedParts>
+
+ </wsp:Policy>
+ 

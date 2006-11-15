@@ -1,0 +1,88 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * Copyright 2006 International Business Machines Corp.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+package org.apache.axis2.jaxws.description;
+
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.description.AxisService;
+/**
+ * An EndpointDescription corresponds to a particular Service Implementation. It
+ * can correspond to either either a client to that impl or the actual service
+ * impl.
+ * 
+ * The EndpointDescription contains information that is relevant to both a
+ * Provider-based and SEI-based (aka Endpoint-based or Java-based) enpdoints.
+ * SEI-based endpoints (whether they have an explicit or implcit SEI) will have
+ * addtional metadata information in an EndpointInterfaceDescription class and
+ * sub-hierachy; Provider-based endpoitns do not have such a hierachy.
+ * 
+ * <pre>
+ * <b>EndpointDescription details</b>
+ * 
+ *     CORRESPONDS TO:      The endpoint (both Client and Server)      
+ *         
+ *     AXIS2 DELEGATE:      AxisService
+ *     
+ *     CHILDREN:            0..1 EndpointInterfaceDescription
+ *     
+ *     ANNOTATIONS:
+ *         WebService [181]
+ *         WebServiceProvider [224]
+ *             ServicMode [224]
+ *         BindingType [224]   
+ *     
+ *     WSDL ELEMENTS:
+ *         port
+ *         
+ *  </pre>       
+ */
+
+public interface EndpointDescription {
+
+    public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.EndpointDescription";
+    public abstract AxisService getAxisService();
+    public abstract ServiceClient getServiceClient();
+    
+    public abstract ServiceDescription getServiceDescription();
+    public abstract EndpointInterfaceDescription getEndpointInterfaceDescription();
+    
+    public abstract boolean isProviderBased();
+    public abstract boolean isEndpointBased();
+    
+    public abstract String getName();
+    public abstract String getTargetNamespace();
+    public abstract String getBindingType();
+    public abstract List<String> getHandlerList();
+    public abstract QName getPortQName();
+    public abstract QName getServiceQName();
+    public abstract Service.Mode getServiceMode();
+
+    /**
+     * Returns the packages that are needed to marshal/unmarshal the 
+     * data objects.  Example: This set of packages is used to construct a 
+     * JAXBContext.
+     * @return Set<Package>
+     */
+    public Set<Package> getPackages();
+}
