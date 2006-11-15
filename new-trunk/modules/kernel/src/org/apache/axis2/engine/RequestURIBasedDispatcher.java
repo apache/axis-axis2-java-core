@@ -27,8 +27,6 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-
 /**
  * Dispatches the service based on the information from the target endpoint URL.
  */
@@ -43,25 +41,9 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
      */
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-
-        EndpointReference toEPR = messageContext.getTo();
-        if (toEPR != null) {
-            String filePart = toEPR.getAddress();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                    messageContext.getConfigurationContext().getServiceContextPath());
-
-            if ((values.length >= 2) && (values[1] != null)) {
-                QName operationName = new QName(values[1]);
-                log.debug("Checking for Operation using QName(target endpoint URI fragment) : " + operationName);
-                return service.getOperation(operationName);
-            } else {
-                log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
+        // This Dispatcher does not need to resolve the operation, as that is handled
+    	// by the RequestURIOperationDispatcher.
                 return null;
-            }
-        } else {
-            log.debug("Attempted to check for Operation using null target endpoint URI");
-            return null;
-        }
     }
 
     /*
