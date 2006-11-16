@@ -32,8 +32,11 @@ import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -41,8 +44,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class AddressingOutHandler extends AddressingHandler {
+public class AddressingOutHandler extends AbstractHandler implements AddressingConstants {
 
+    private static final Log log = LogFactory.getLog(AddressingOutHandler.class);
+    
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // it should be able to disable addressing by some one.
         Object property = msgContext.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);

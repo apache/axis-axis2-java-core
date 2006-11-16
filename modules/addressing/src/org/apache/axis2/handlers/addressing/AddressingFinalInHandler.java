@@ -1,21 +1,20 @@
 package org.apache.axis2.handlers.addressing;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
@@ -37,13 +36,11 @@ import java.util.Iterator;
 public class AddressingFinalInHandler extends AddressingInHandler {
 
     private static final Log log = LogFactory.getLog(AddressingFinalInHandler.class);
-    private static final long serialVersionUID = -4020680449342946484L;
-
+    
     public AddressingFinalInHandler() {
         addressingNamespace = Final.WSA_NAMESPACE;
         addressingVersion = "WS-Addressing Final";
     }
-
 
     protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header, String namespace) {
         Iterator headerBlocks = header.getChildElements();

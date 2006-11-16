@@ -29,10 +29,9 @@ import java.util.ArrayList;
  */
 
 public class AddressingSubmissionInHandler extends AddressingInHandler {
-
+    
     private static final Log log = LogFactory.getLog(AddressingSubmissionInHandler.class);
-    private static final long serialVersionUID = 365417374773955107L;
-
+    
     public AddressingSubmissionInHandler() {
         addressingNamespace = Submission.WSA_NAMESPACE;
         addressingVersion = "WS-Addressing Submission";

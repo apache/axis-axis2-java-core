@@ -16,32 +16,32 @@
 
 package org.apache.axis2.handlers.addressing;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
-import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
+public abstract class AddressingInHandler extends AbstractHandler implements AddressingConstants {
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-public abstract class AddressingInHandler extends AddressingHandler implements AddressingConstants {
-
-    private static final long serialVersionUID = 3907988439637261572L;
-
+    protected String addressingNamespace = Final.WSA_NAMESPACE;  // defaulting to final version
+    protected String addressingVersion = null;
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
 
 
