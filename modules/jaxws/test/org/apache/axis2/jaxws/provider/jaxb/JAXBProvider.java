@@ -35,7 +35,7 @@ import org.test.mtom.SendImageResponse;
  * A JAXWS Source Provider implementation
  *
  */
-@WebServiceProvider
+@WebServiceProvider()
 public class JAXBProvider implements Provider<Source> {
     
     /**

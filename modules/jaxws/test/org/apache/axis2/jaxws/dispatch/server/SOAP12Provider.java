@@ -23,7 +23,7 @@ import javax.xml.ws.WebServiceProvider;
  * A Provider&lt;String&gt; implementation used to test sending and 
  * receiving SOAP 1.2 messages.
  */
-@WebServiceProvider
+@WebServiceProvider()
 public class SOAP12Provider implements Provider<String> {
 
     private static final String sampleResponse = 
