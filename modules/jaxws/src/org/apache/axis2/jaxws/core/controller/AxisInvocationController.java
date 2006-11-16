@@ -601,10 +601,11 @@ public class AxisInvocationController extends InvocationController {
             
             // Invoke the OperationClient
             opClient.execute(block);
-        } catch (Exception e) {
-            // Catch all exceptions (including runtime exceptions) and
+        } catch (Throwable e) {
+            // Catch all Throwable (including runtime exceptions and Errors) and
             // throw as AxisFault.
-            throw AxisFault.makeFault(e);
+            // Since e could be a Throwable (or Error) instead of an Exception, we'll have to wrap it:
+            throw AxisFault.makeFault(ExceptionFactory.makeWebServiceException(e));
         } finally {
             // Post-Execute logging and setup
             postExecute(opClient, block, msgContext);

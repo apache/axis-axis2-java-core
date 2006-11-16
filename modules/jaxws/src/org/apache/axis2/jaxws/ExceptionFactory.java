@@ -17,12 +17,11 @@
 
 package org.apache.axis2.jaxws;
 
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.http.HTTPException;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -30,6 +29,8 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.ibm.jvm.util.ByteArrayOutputStream;
 
 /**
   * ExceptionFactory is used to create exceptions within the JAX-WS implementation.
@@ -216,6 +217,15 @@ public class ExceptionFactory {
 		} 
 		rootCause = rootCause==null ? t :rootCause;
 		WebServiceException e = null;
+        
+        String enhancedMessage = enhanceMessage(rootCause);
+        if (enhancedMessage != null) {
+            if (message != null)
+                message.concat(": " + enhancedMessage);
+            else
+                message = enhancedMessage;
+        }
+        
         if (message != null) {
         	e =new WebServiceException(message, rootCause);
         } else {
@@ -368,6 +378,30 @@ public class ExceptionFactory {
     		}
     	}
     	return t;
+    }
+    
+    /**
+     * Other developers may add additional criteria to give better
+     * error messages back to the user.
+     * 
+     * @param t Throwable
+     * @return String a message that helps the user understand what caused the exception
+     */
+    private static String enhanceMessage(Throwable t) {
+        if (t == null)
+            return null;
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos, true);
+        t.printStackTrace(ps);
+        String stackTrace = baos.toString();
+
+        // TODO better criteria
+        if ((t instanceof StackOverflowError) && (stackTrace.contains("JAXB")))
+            // TODO better message
+            return "The system threw a StackOverflowError at the JAXB level.  This usually means there is a circular type reference in the WSDL.";
+        
+        return null;
     }
 
 }
