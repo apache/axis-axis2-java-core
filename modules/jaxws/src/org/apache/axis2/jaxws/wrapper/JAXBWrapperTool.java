@@ -17,7 +17,7 @@
 
 package org.apache.axis2.jaxws.wrapper;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
@@ -34,9 +34,9 @@ public interface JAXBWrapperTool {
      * @param jaxbObject that is the wrapper element (JAXBElement or object with @XMLRootElement)
      * @param jaxbContext JAXBContext
      * @param childNames list of xml child names as String
-     * @return list of Objects in the same order as the element names.
+     * @return list of Objects in the same order as the element names.  
      */
-   public Object[] unWrap(Object jaxbObject, ArrayList<String> childNames) throws JAXBWrapperException;
+   public Object[] unWrap(Object jaxbObject, List<String> childNames) throws JAXBWrapperException;
 
 
     /**
@@ -46,11 +46,10 @@ public interface JAXBWrapperTool {
      * Note that the jaxbClass must be the class the represents the complexType. (It should never be JAXBElement)
      * 
      * @param jaxbClass 
-     * @param childObjects, component objects
+     * @param childObjects, component type objects
      * @param childNames list of xml child names as String
-     * @return list of Objects in the same order as the element names.
      */ 
-    public Object wrap(Class jaxbClass, ArrayList<String> childNames, Map<String, Object> childObjects) throws JAXBWrapperException;
+    public Object wrap(Class jaxbClass, List<String> childNames, Map<String, Object> childObjects) throws JAXBWrapperException;
     
     
 }

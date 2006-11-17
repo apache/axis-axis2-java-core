@@ -124,7 +124,6 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
             }
 
         } catch (Exception e) {
-        	// TODO NLS
             ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
             throw ExceptionFactory.makeWebServiceException(e);
         } 

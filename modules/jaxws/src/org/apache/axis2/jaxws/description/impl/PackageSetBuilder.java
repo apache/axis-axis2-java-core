@@ -28,8 +28,8 @@ import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.jaxws.util.JavaUtils;
+import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -239,7 +239,7 @@ public class PackageSetBuilder {
      * @return Class or null
      */
     private static Class getElement(Class cls) {
-        if (!ClassUtils.isXmlRootElementDefined(cls)) {
+        if (!XMLRootElementUtil.isElementEnabled(cls)) {
             return null;
         } 
         return cls;

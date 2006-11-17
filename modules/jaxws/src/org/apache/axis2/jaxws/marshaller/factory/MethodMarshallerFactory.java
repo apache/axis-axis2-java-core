@@ -36,9 +36,15 @@ import org.apache.axis2.jaxws.message.Protocol;
  */
 public class MethodMarshallerFactory {
 
-    private static final boolean ALT_RPCLIT = false;
-    private static final boolean ALT_DOCLIT_WRAPPED = false;
-    private static final boolean ALT_DOCLIT_BARE = false;
+    // The following flags are for testing only.
+    // The allow us to test the old implementation against the new implementation.
+    private static final boolean ALT_RPCLIT_CLIENT         = true;
+    private static final boolean ALT_DOCLIT_WRAPPED_CLIENT = true;
+    private static final boolean ALT_DOCLIT_BARE_CLIENT    = true;
+    
+    private static final boolean ALT_RPCLIT_SERVER         = true;
+    private static final boolean ALT_DOCLIT_WRAPPED_SERVER = true;
+    private static final boolean ALT_DOCLIT_BARE_SERVER    = true;
     
 	/**
 	 * Intentionally private
@@ -60,21 +66,22 @@ public class MethodMarshallerFactory {
             ServiceDescription serviceDesc, 
             EndpointDescription endpointDesc, 
             OperationDescription operationDesc, 
-            Protocol protocol){
+            Protocol protocol, 
+            boolean isClient){  // This flag is for testing only !
 		if (style == SOAPBinding.Style.RPC) {
-            if (ALT_RPCLIT) {
+            if (ALT_RPCLIT_CLIENT && isClient || ALT_RPCLIT_SERVER && !isClient ) {
                 return new RPCLitMethodMarshaller(serviceDesc, endpointDesc, operationDesc, protocol);  
             } else {
                 return new RPCLitMethodMarshallerImpl(serviceDesc, endpointDesc, operationDesc, protocol);
             }
         } else if (paramStyle == SOAPBinding.ParameterStyle.WRAPPED){
-            if (ALT_DOCLIT_WRAPPED) {
+            if (ALT_DOCLIT_WRAPPED_CLIENT && isClient || ALT_DOCLIT_WRAPPED_SERVER && !isClient) {
                 return new DocLitWrappedMethodMarshaller(serviceDesc, endpointDesc, operationDesc, protocol);
             } else {
                 return new DocLitWrappedMethodMarshallerImpl(serviceDesc, endpointDesc, operationDesc, protocol);
             }
 		} else if (paramStyle == SOAPBinding.ParameterStyle.BARE){
-            if (ALT_DOCLIT_BARE) {
+            if (ALT_DOCLIT_BARE_CLIENT && isClient || ALT_DOCLIT_BARE_SERVER && !isClient) {
                 return new DocLitBareMethodMarshaller(serviceDesc, endpointDesc, operationDesc, protocol);
             } else {
                 return new DocLitBareMethodMarshallerImpl(serviceDesc, endpointDesc, operationDesc, protocol);

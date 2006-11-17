@@ -80,6 +80,19 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         	response = target.invoke(serviceInstance, methodInputParams);
         } catch (Exception e) {
         	response = e;
+            if (log.isDebugEnabled()) {
+                log.debug("Exception invoking a method of " + 
+                        serviceImplClass.toString() + " of instance " +
+                        serviceInstance.toString());
+                        
+                log.debug("Method = " + target.toGenericString());
+              
+                for (int i=0; i<methodInputParams.length; i++) {
+                    String value = (methodInputParams[i] == null) ? "null" :
+                        methodInputParams[i].getClass().toString();
+                    log.debug(" Argument[" + i +"] is " + value);
+                }
+            }
         }
         
         Message message = null;
@@ -203,12 +216,12 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 			parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 		}
         return cf.createMethodMarshaller(Style.DOCUMENT, parameterStyle, 
-                serviceDesc, endpointDesc, operationDesc, protocol);
+                serviceDesc, endpointDesc, operationDesc, protocol, false);
 	}
 	
 	private MethodMarshaller createRPCLitMessageConvertor(MethodMarshallerFactory cf, Protocol protocol){
         return cf.createMethodMarshaller(Style.RPC, ParameterStyle.WRAPPED, 
-                serviceDesc, endpointDesc, operationDesc, protocol);
+                serviceDesc, endpointDesc, operationDesc, protocol, false);
 	}
 	
     

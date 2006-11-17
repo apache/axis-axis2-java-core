@@ -18,19 +18,24 @@
  */
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
-import javax.xml.namespace.QName;
+import java.util.List;
+import java.util.Set;
+
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
-import org.apache.axis2.jaxws.marshaller.impl.MethodMarshallerImpl;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 
 
 public class DocLitBareMethodMarshaller implements MethodMarshaller {
@@ -50,12 +55,42 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         this.protocol = protocol;
     }
 
-    public Object demarshalResponse(Message message, Object[] inputArgs)
+    public Object demarshalResponse(Message message, Object[] signatureArgs)
             throws WebServiceException {
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            // TODO Add Real Code
-            throw new UnsupportedOperationException();
+            // Sample Document message
+            // ..
+            // <soapenv:body>
+            //    <m:return ... >...</m:param>
+            // </soapenv:body>
+            //
+            // Important points.
+            //   1) There is no operation element in the message
+            //   2) The data blocks are located underneath the operation element. 
+            //   3) The name of the data blocks (m:param) are defined by the schema.
+            //      (SOAP indicates that the name of the element is not important, but
+            //      for document processing, we will assume that the name corresponds to 
+            //      a schema root element)
+            //   4) The type of the data block is defined by schema; thus in most cases
+            //      an xsi:type will not be present
+            ParameterDescription[] pds =operationDesc.getParameterDescriptions();
+            Set<Package> packages = endpointDesc.getPackages();
+              
+            // Get the return value.
+            Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
+            Object returnValue = null;
+            if (returnType != void.class) {
+                returnValue = MethodMarshallerUtils.getReturnValue(packages, message);
+            }
+            
+            // Unmarshall the ParamValues from the Message
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, false, false);
+            
+            // Populate the response Holders
+            MethodMarshallerUtils.updateResponseSignatureArgs(pds, pvList, signatureArgs);
+            
+            return returnValue;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -65,29 +100,125 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             throws WebServiceException {
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            // TODO Add Real Code
-            throw new UnsupportedOperationException();
+            // Sample Document message
+            // ..
+            // <soapenv:body>
+            //    <m:param .. >...</m:param>
+            // </soapenv:body>
+            //
+            // Important points.
+            //   1) There is no operation element under the body.
+            //   2) The data blocks are located underneath the body.  
+            //   3) The name of the data blocks (m:param) are defined by the schema
+            //   4) The type of the data block (data:foo) is defined by schema (and probably
+            //      is not present in the message
+            ParameterDescription[] pds =operationDesc.getParameterDescriptions();
+            Set<Package> packages = endpointDesc.getPackages();
+            
+            
+            // Unmarshal the ParamValues from the message
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, true, false);
+            
+            // Build the signature arguments
+            Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
+            
+            return sigArguments;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
-    public Message marshalResponse(Object returnObject, Object[] holderObjects)
+    public Message marshalResponse(Object returnObject, Object[] signatureArgs)
             throws WebServiceException {
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            // TODO Add Real Code
-            throw new UnsupportedOperationException();
+            // Sample Document message
+            // ..
+            // <soapenv:body>
+            //    <m:return ... >...</m:param>
+            // </soapenv:body>
+            //
+            // Important points.
+            //   1) There is no operation element in the message
+            //   2) The data blocks are located underneath the operation element. 
+            //   3) The name of the data blocks (m:param) are defined by the schema.
+            //      (SOAP indicates that the name of the element is not important, but
+            //      for document processing, we will assume that the name corresponds to 
+            //      a schema root element)
+            //   4) The type of the data block is defined by schema; thus in most cases
+            //      an xsi:type will not be present
+            
+            // Get the operation information
+            ParameterDescription[] pds =operationDesc.getParameterDescriptions();
+            Set<Package> packages = endpointDesc.getPackages();
+            
+            // Create the message 
+            MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+            Message m = mf.create(protocol);
+            
+            // Put the return object onto the message
+            Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
+            if (returnType != void.class) {
+                MethodMarshallerUtils.toMessage(returnObject, returnType,
+                        operationDesc.getResultTargetNamespace(),
+                        operationDesc.getResultName(), packages, m, 
+                        false); // don't force xsi:type for doc/lit
+            }
+            
+            // Convert the holder objects into a list of JAXB objects for marshalling
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
+                    signatureArgs, 
+                    false, // output
+                    false, // use name (element name) not wsd:part name
+                    false); // don't force xsi:type for doc/lit
+
+            // Put values onto the message
+            MethodMarshallerUtils.toMessage(pvList, m, packages);
+            
+            return m;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
-    public Message marshalRequest(Object[] object) throws WebServiceException {
+    public Message marshalRequest(Object[] signatureArguments) throws WebServiceException {
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            // TODO Add Real Code
-            throw new UnsupportedOperationException();
+            // Sample Document message
+            // ..
+            // <soapenv:body>
+            //    <m:param .. >...</m:param>
+            // </soapenv:body>
+            //
+            // Important points.
+            //   1) There is no operation element under the body.
+            //   2) The data blocks are located underneath the body.  
+            //   3) The name of the data blocks (m:param) are defined by the schema
+            //   4) The type of the data block (data:foo) is defined by schema (and probably
+            //      is not present in the message
+            
+            
+            // Get the operation information
+            ParameterDescription[] pds =operationDesc.getParameterDescriptions();
+            Set<Package> packages = endpointDesc.getPackages();
+            
+            // Create the message 
+            MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+            Message m = mf.create(protocol);
+            
+            // The input object represent the signature arguments.
+            // Signature arguments are both holders and non-holders
+            // Convert the signature into a list of JAXB objects for marshalling
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
+                    signatureArguments, 
+                    true,  // input
+                    false, // use name (element name) not wsd:part name
+                    false); // don't force xsi:type for doc/lit
+            
+            // Put values onto the message
+            MethodMarshallerUtils.toMessage(pvList, m, packages);
+            
+            return m;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -96,18 +227,27 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
     public Message marshalFaultResponse(Throwable throwable) throws WebServiceException {
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            // TODO Add Real Code
-            throw new UnsupportedOperationException();
+            // Create the message 
+            MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+            Message m = mf.create(protocol);
+            
+            // Put the fault onto the message
+            MethodMarshallerUtils.marshalFaultResponse(throwable, 
+                    operationDesc, 
+                    endpointDesc.getPackages(), 
+                    m, 
+                    false); // don't force xsi:type for doc/lit
+            return m;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
 
-    public Object demarshalFaultResponse(Message message) throws WebServiceException {
+    public Throwable demarshalFaultResponse(Message message) throws WebServiceException {
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            // TODO Add Real Code
-            throw new UnsupportedOperationException();
+            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, endpointDesc.getPackages(), message, false);
+            return t;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }

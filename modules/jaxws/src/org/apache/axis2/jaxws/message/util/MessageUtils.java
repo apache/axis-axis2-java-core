@@ -96,7 +96,7 @@ public class MessageUtils {
                     equals(e.getNamespace().getNamespaceURI())) {
                 return OMAbstractFactory.getSOAP11Factory();
             } else {
-                return OMAbstractFactory.getSOAP11Factory();
+                return OMAbstractFactory.getSOAP12Factory();
             }
         }
         return null;

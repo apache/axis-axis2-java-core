@@ -25,76 +25,86 @@ import org.apache.axis2.jaxws.message.Message;
 /**
  * This class marshals and unmarshals method invocations.
  * 
+ * Here is the high-level view of marshalling:
+ * SIGNATURE_ARGS ---> Type Enabled Object  -----> Element Enabled Object ---> MESSAGE (XML)
+ * 
+ * The Signature objects are the objects from the SEI method signature.  They may be values or holders of values.
+ * The values are "type enabled objects" (i.e. String), which means that they cannot be marshalled or unmarshalled.
+ * @see org.apache.axis2.jaxws.util.XMLRootElementUtils for details on Type Enabled and Element Enabled objects.
+ * 
+ * The values are enhanced (if necessary) into Element Enabled Objects.  These can be marshalled or unmarshalled using JAXB.
+ * @see org.apache.axis2.jaxws.marshaller.impl.alt.PDElement
+ * 
+ * The element enabled objects are put onto the message.
+ * 
+ * The high-level view of unmarshalling is the reverse.
+ * SIGNATURE_ARGS <---- Type Enabled Object  <----- Element Enabled Object <---- MESSAGE (XML)
+ * 
+ * See the specific MethodMarshaller implementations to see how doc/lit wrapped, doc/lit bare and rpc/lit affect
+ * the process of going from SIGNATURE_ARGS to the element enabled objects.
+ * 
  * If there are any problems, a WebServiceException is thrown.  (Each of the methods is guranteed to catch any unchecked exception and wrap
  * it in a WebServiceException).
  */
 public interface MethodMarshaller {
 	
 	/**
-	 * This method converts java Objects in to a Message. Used on Client side to convert input method object to Message that is sent on wire.
-	 * 
-	 * NONWRAP CASE:
-	 * creates a request message. The input object to a non wrapped wsdl will be a object (mainly a JAXB Object) that will
-	 * have all the payload data or method parameter data already setup. So the message will be created by converting input object in to a JAXBBlock and
-	 * attaching the Block Message to soap body.
-	 * 
-	 * WRAP CASE:
-	 * 
-	 * create request message. It reads RequestWrapper annotation from OperationDescription and reads the class name, then reads
-	 * all the webParam annotation on the method and uses JAXBWrapTool to wrap the request as jaxbObject. Create JAXBblock from the jaxbObject
-	 * reads Biniding provider properties and set them on request message and return request message.
-	 * @param object
-	 * @return
+	 * This method converts SIGNATURE_ARGS into a Message. 
+     * It is used on the client
+     *
+	 * @param signatureArgs
+	 * @return Message
 	 */
-	public Message marshalRequest(Object[] object) throws WebServiceException; 
+	public Message marshalRequest(Object[] signatureArgs) throws WebServiceException; 
 	
 	/**
-	 * This method creates Message from a returnObject and input parameters of holder type. This is a case where we have method with return
-	 * type and input parameters as holders. Used on Server side to convert service methods return type to Message that is then sent on wire.
-	 * @param jaxbObject
-	 * @return
+	 * This method converts the SIGNATURE_ARGS and RETURN object into a Message.
+     * It is used on the server
+     * 
+	 * @param returnObject
+     * @param signatureArgs
+	 * @return Message
 	 */
-	public Message marshalResponse(Object returnObject, Object[] holderObjects)throws WebServiceException;
+	public Message marshalResponse(Object returnObject, Object[] signatureArgs)throws WebServiceException;
 	
-	/**
-	 * This method creates Fault Message from a Throbale input parameter. 
-	 * Used on Server side to convert Exceptions to Fault Message that is then sent on wire.
-	 * @param jaxbObject
-	 * @return
-	 */
-	public Message marshalFaultResponse(Throwable throwable) throws WebServiceException;
-	/**
-	 * This method converts Message to java objects. Used on Server Side to this extract method input parameters from message and invokes method on service
-	 * with found input parameters on ServiceEndpoint.
-	 * @param message
-	 * @return
-	 */
-	public Object[] demarshalRequest(Message message)throws WebServiceException;
-	
-	/**
-	 * This method converts Message to Object. Used on Client side when converting response message from Server to ResponseWrapper/return type of method that
-	 * Client uses to map.
-	 * 
-	 * NONWRAP CASE:
-	 * creates return result that client expects from the method call. This method reads the method return type
-	 * or uses webResult annotation and creates JAXBBlock from the response context and returns the business object associated with the JAXBBlock.
-	 * 
-	 * WRAP CASE:
-	 * creates return result that client expects from the method call. It reads response wrapper annotation then reads OM from the
-	 * response message context and creates JAXBBlock from the OMElement on messageContext. It then reads the webresult annotation to gather the return parameter
-	 * name and creates the result object for it by reading the property object from JAXBBlock's business object using PropertyDescriptor. 
-	 * 
-	 * @param message
-	 * @return
-	 */
-	public Object demarshalResponse(Message message, Object[] inputArgs) throws WebServiceException;
 	
     /**
-	 * This method converts Fault Message to fault java objects. Used on Client Side to extract Fault Object expected by client from message.
+     * This method converts the Message into a SIGNATURE_ARGS
+     * It is used on the server
+     * 
+     * @param message
+     * @return signature args
+     */
+    public Object[] demarshalRequest(Message message)throws WebServiceException;
+    
+	/**
+	 * This method gets the objects from the Message and sets them onto the SIGNATURE_ARGS
+     * It also returns the RETURN object.
+     * Called on client
+     * 
 	 * @param message
-	 * @return
+     * @param signatureAgs (same array of args that were used for marshalRequest.  The out/inout holders are populated with new values)
+	 * @return returnObject
 	 */
-	public Object demarshalFaultResponse(Message message) throws WebServiceException;
+	public Object demarshalResponse(Message message, Object[] signatureArgs) throws WebServiceException;
+	
+    /**
+	 * This method converts a Message (containing a fault) into a JAX-WS Service or WebServiceException.
+     * Used on the client.
+	 * @param message
+     * @param Message
+	 * @return Throwable
+	 */
+	public Throwable demarshalFaultResponse(Message message) throws WebServiceException;
+    
+    /**
+     * This method creates a Message from a Throwbale input parameter. 
+     * Used on the server.
+     * @param jaxbObject
+     * @return
+     */
+    public Message marshalFaultResponse(Throwable throwable) throws WebServiceException;
+    
 	
 	
 }

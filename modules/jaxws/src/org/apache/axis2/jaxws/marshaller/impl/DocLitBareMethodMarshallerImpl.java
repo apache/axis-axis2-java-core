@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -33,7 +32,6 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.marshaller.DocLitBareMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -41,7 +39,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl implements DocLitBareMethodMarshaller {
+public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
     
 	private static int SIZE = 1;
 	private static Log log = LogFactory.getLog(DocLitBareMethodMarshallerImpl.class);

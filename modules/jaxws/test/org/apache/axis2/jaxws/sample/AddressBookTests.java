@@ -49,6 +49,7 @@ public class AddressBookTests extends TestCase {
      * Test the endpoint by invoking it with a JAX-WS Dispatch.  
      */
     public void testAddressBookWithDispatch() throws Exception {
+        try {
         System.out.println("----------------------------------");
         System.out.println("test: " + getName());
         
@@ -80,6 +81,10 @@ public class AddressBookTests extends TestCase {
         assertTrue(response.isStatus());
         System.out.println("[pass]     - valid response received");
         System.out.println("[response] - " + response.isStatus());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
     
     /**

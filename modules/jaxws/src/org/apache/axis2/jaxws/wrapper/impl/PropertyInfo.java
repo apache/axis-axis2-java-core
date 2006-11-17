@@ -25,30 +25,44 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
+/**
+ * A PropertyInfo is constructed with a PropertyDescriptor and
+ * exposes get/set methods to access the object on a bean that matches the PropertyDescriptor
+ *
+ */
 public class PropertyInfo {
-	String propertyName;
 	PropertyDescriptor descriptor;
 	private static Log log = LogFactory.getLog(PropertyInfo.class);
 	/**
 	 * @param propertyName
 	 * @param descriptor
 	 */
-	public PropertyInfo(String propertyName, PropertyDescriptor descriptor) {
+	public PropertyInfo(PropertyDescriptor descriptor) {
 		super();
-		
-		this.propertyName = propertyName;
 		this.descriptor = descriptor;
 	}
 	
-	public String getPropertyName(){
-		return this.propertyName;
-	}
 	
+	/**
+     * Get the object 
+	 * @param targetBean
+	 * @return Object for this property or null
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
 	public Object get(Object targetBean)throws InvocationTargetException, IllegalAccessException{
 		Method method = descriptor.getReadMethod();
 		return method.invoke(targetBean, null);
 	}
 	
+	/** 
+     * Set the object
+	 * @param targetBean
+	 * @param propValue
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws JAXBWrapperException
+	 */
 	public void set(Object targetBean, Object propValue)throws InvocationTargetException, IllegalAccessException, JAXBWrapperException{
 		Method method = descriptor.getWriteMethod();
 		Object[] object = new Object[]{propValue};

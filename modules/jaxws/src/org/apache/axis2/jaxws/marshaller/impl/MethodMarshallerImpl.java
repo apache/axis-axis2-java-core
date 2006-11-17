@@ -33,8 +33,6 @@ import javax.jws.WebParam.Mode;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -63,9 +61,10 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
@@ -114,7 +113,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#demarshalFaultResponse(org.apache.axis2.jaxws.message.Message)
 	 */
-	public Object demarshalFaultResponse(Message message) throws WebServiceException {
+	public Throwable demarshalFaultResponse(Message message) throws WebServiceException {
 		
 		Exception exception = null;
         
@@ -153,7 +152,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
                     faultQName = ((JAXBElement)obj).getName();
                     obj = ((JAXBElement)obj).getValue();
                 } else {
-                    faultQName = ClassUtils.getXmlRootElementQName(obj);
+                    faultQName = XMLRootElementUtil.getXmlRootElementQName(obj);
                 }
                 
 				// Find the JAX-WS exception using a qname match
@@ -190,6 +189,12 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		try {
 			Throwable t = ClassUtils.getRootCause(throwable);
 
+			//  Get the root cause of the throwable object
+            if (log.isDebugEnabled()) {
+                log.debug("Marshal Throwable =" + throwable.getClass().getName());
+                log.debug("  message=" + throwable.getMessage());
+                log.debug("  stack=" + MessageUtils.stackToString(throwable));
+            }
 			XMLFault xmlfault = null;
 			
 			Message message = createEmptyMessage();
@@ -211,9 +216,9 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
                 // a JAXBElement or has the XMLRootElement annotation
                 // The actual faultBean object's class is used (because
                 // the actual object may be a derived type of the formal declaration)
-            	if (!ClassUtils.isXmlRootElementDefined(faultBean.getClass())) {
-                    QName faultQName = new QName(fd.getTargetNamespace(), fd.getName());
-                    faultBean = new JAXBElement(faultQName, faultBean.getClass(), faultBean);
+            	if (!XMLRootElementUtil.isElementEnabled(faultBean.getClass())) {
+                    faultBean = XMLRootElementUtil.getElementEnabledObject(fd.getTargetNamespace(), fd.getName(),
+                            faultBean.getClass(), faultBean, false);
                 }
             	detailBlocks[0] = createJAXBBlock(faultBean, context);
                 text = t.getMessage();
@@ -655,11 +660,6 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		
 	}
 	
-	protected Block createJAXBBlock(OMElement om, JAXBBlockContext context)throws  XMLStreamException, MessageException {
-		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
-		return factory.createFrom(om,context,null);
-		
-	}
 	
 	protected String readXMLTypeName(Class jaxbClazz){
 		XmlType type = (XmlType)jaxbClazz.getAnnotation(XmlType.class);
@@ -803,7 +803,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			if (log.isDebugEnabled()) {
 	            log.debug("Attempting to create Block");
 	        }
-			if(ClassUtils.isXmlRootElementDefined(objectType)){
+			if(XMLRootElementUtil.isElementEnabled(objectType)){
 				block = createJAXBBlock(object, ctx);
 			}
 			else{

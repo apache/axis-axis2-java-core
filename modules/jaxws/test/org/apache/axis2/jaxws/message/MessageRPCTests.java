@@ -300,7 +300,11 @@ public class MessageRPCTests extends TestCase {
         
         // Check to make sure the right object was returned
         assertNotNull(bo);
+        if (bo instanceof JAXBElement) {
+            bo = ((JAXBElement) bo).getValue();
+        }
         assertTrue(bo instanceof StockPrice);
+        
         
         // Check to make sure the content of that object is correct
         StockPrice obj = (StockPrice) bo;

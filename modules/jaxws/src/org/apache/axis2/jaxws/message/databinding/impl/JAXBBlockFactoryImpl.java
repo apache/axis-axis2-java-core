@@ -29,7 +29,7 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
-import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 
 /**
  * JAXBBlockFactoryImpl
@@ -77,7 +77,7 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
         
         // The business object must be either a JAXBElement or a block with an @XmlRootElement qname.  The best way
         // to verify this is to get the QName from the business object.
-        QName bQName = ClassUtils.getXmlRootElementQName(businessObject);
+        QName bQName = XMLRootElementUtil.getXmlRootElementQName(businessObject);
         if (bQName == null) {
             throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr2", businessObject.getClass().getName()), null);
         }

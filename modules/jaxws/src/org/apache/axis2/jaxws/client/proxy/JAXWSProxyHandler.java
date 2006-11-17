@@ -411,12 +411,14 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		//FIXME: The protocol should actually come from the binding information included in
 	    // either the WSDL or an annotation.
 		return cf.createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, 
-                serviceDesc, endpointDesc, operationDesc, Protocol.soap11);
+                serviceDesc, endpointDesc, operationDesc, Protocol.soap11, true);
 	}
 	
 	private MethodMarshaller createRPCLitMethodMarshaller(MethodMarshallerFactory cf){
-		return cf.createMethodMarshaller(SOAPBinding.Style.DOCUMENT, SOAPBinding.ParameterStyle.WRAPPED,
-                serviceDesc, endpointDesc, operationDesc, Protocol.soap11);
+        //    FIXME: The protocol should actually come from the binding information included in
+        // either the WSDL or an annotation.
+        return cf.createMethodMarshaller(SOAPBinding.Style.DOCUMENT, SOAPBinding.ParameterStyle.WRAPPED,
+                serviceDesc, endpointDesc, operationDesc, Protocol.soap11, true);
 	}
 	protected boolean isDocLitBare(){
 		SOAPBinding.ParameterStyle methodParamStyle = operationDesc.getSoapBindingParameterStyle();

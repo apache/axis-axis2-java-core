@@ -44,7 +44,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
-import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -110,7 +110,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             jaxb = u.unmarshal(reader);
             
             // Set the qname 
-            QName qName = ClassUtils.getXmlRootElementQName(jaxb);
+            QName qName = XMLRootElementUtil.getXmlRootElementQName(jaxb);
             if (qName != null) {  // qname should always be non-null
                 setQName(qName); 
             }
