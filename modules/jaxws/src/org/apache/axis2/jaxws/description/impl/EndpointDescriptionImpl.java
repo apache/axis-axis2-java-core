@@ -55,6 +55,7 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.description.builder.WsdlComposite;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.commons.logging.Log;
@@ -241,17 +242,24 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         
         buildDescriptionHierachy();
         
-        //Invoke the callback for generating the wsdl
+    	WsdlComposite wsdlComposite = null;
+        
+    	//Invoke the callback for generating the wsdl
         if (composite.getCustomWsdlGenerator() != null) {
-        	Definition wsdlDef = 
-        		composite.getCustomWsdlGenerator().generateWsdl((Class)axisService.getParameterValue(MDQConstants.SERVICE_CLASS));
+        	wsdlComposite = 
+        		composite.getCustomWsdlGenerator().generateWsdl((String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS));
    					
+        	Definition wsdlDef = wsdlComposite.getWsdlDefinition();
+        	
         	try {
     			WSDL4JWrapper wsdl4jWrapper = new WSDL4JWrapper(composite.getWsdlURL(), wsdlDef);
     			getServiceDescriptionImpl().setGeneratedWsdlWrapper(wsdl4jWrapper);
             } catch (Exception e) {
                 throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: WSDLException thrown when attempting to instantiate WSDL4JWrapper ");
             }
+        } else {
+        	//TODO:Determine if we should always throw an exception on this, or at this point
+            //throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: Unable to find custom WSDL generator");
         }
 
         //Save the WSDL Definition
@@ -276,9 +284,33 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         wsdlLocationParameter.setName(MDQConstants.WSDL_LOCATION);
         wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
 
+        //Save the WSDL File Name
+        //REVIEW: is it possible this won't always be set
+        Parameter wsdlFileName = new Parameter();
+        wsdlFileName.setName(MDQConstants.WSDL_FILE_NAME);
+        
+        //Save the Schema Doc
+        //REVIEW: is it possible this won't always be set
+        Parameter schemaDocs = new Parameter();
+        schemaDocs.setName(MDQConstants.SCHEMA_DOCS);
+        
+        //Save the WSDL Composite
+        //REVIEW: is it possible this won't always be set
+        Parameter wsdlCompositeParameter = new Parameter();
+        wsdlCompositeParameter.setName(MDQConstants.WSDL_COMPOSITE);
+        wsdlCompositeParameter.setValue(wsdlComposite);
+        
+        if (wsdlComposite != null) {
+        	wsdlFileName.setValue(wsdlComposite.getWsdlFileName());
+        	schemaDocs.setValue(wsdlComposite.getSchemaMap());
+        }
+        
         try {
         	axisService.addParameter(wsdlDefParameter);
         	axisService.addParameter(wsdlLocationParameter);                        
+        	axisService.addParameter(wsdlFileName);
+        	axisService.addParameter(schemaDocs); 
+        	axisService.addParameter(wsdlCompositeParameter);
         } catch (Exception e) {
         	throw ExceptionFactory.makeWebServiceException("EndpointDescription: Unable to add parms. to AxisService");
         }

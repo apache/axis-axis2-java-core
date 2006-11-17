@@ -1,8 +1,8 @@
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.wsdl.Definition;
+import javax.xml.ws.WebServiceException;
 
 public interface WsdlGenerator {
 
-	public Definition generateWsdl(Class implClass);
+	public WsdlComposite generateWsdl(String implClass)throws WebServiceException;
 }
