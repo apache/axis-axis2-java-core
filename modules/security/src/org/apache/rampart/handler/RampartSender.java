@@ -67,6 +67,10 @@ public class RampartSender implements Handler {
         return InvocationResponse.CONTINUE;        
     }
 
+    public void flowComplete(MessageContext msgContext)
+    {
+    }
+    
     public HandlerDescription getHandlerDesc() {
         return this.handlerDesc;
     }

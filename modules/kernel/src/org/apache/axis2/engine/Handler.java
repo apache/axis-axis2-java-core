@@ -26,6 +26,7 @@ import org.apache.axis2.description.Parameter;
  * Interface Handler
  */
 public interface Handler {
+
     /**
      * Since this might change the whole behavior of Axis2 handlers, and since this is still under discussion 
      * (http://marc.theaimsgroup.com/?l=axis-dev&m=114504084929285&w=2) implementation of this method is deferred.
@@ -41,21 +42,39 @@ public interface Handler {
     public void init(HandlerDescription handlerdesc);
 
     /**
-     * Invoke is called to do the actual work of the Handler object.
-     * If there is a fault during the processing of this method it is
-     * invoke's job to catch the exception and undo any partial work
-     * that has been completed.
+     * This method will be called on each registered handler when a message
+     * needs to be processed.  If the message processing is paused by the
+     * handler, then this method will be called again for the handler that
+     * paused the processing once it is resumed.
      * 
-     * N.B. This method may be called concurrently from multiple threads.
+     * This method may be called concurrently from multiple threads.
+     * 
+     * Handlers that want to determine the type of message that is to be
+     * processed (e.g. response vs request, inbound vs. outbound, etc.) can
+     * retrieve that information from the MessageContext via
+     * MessageContext.getFLOW() and
+     * MessageContext.getAxisOperation().getMessageExchangePattern() APIs.
      *
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.
-     * @return An InvocationResponse that indicates what
+     * @return An InvocationResponse that indicates what 
      *         the next step in the message processing should be.
      * @throws AxisFault if the handler encounters an error
      */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault;
 
+    /**
+     * This method will be called on each registered handler that had its
+     * invoke(...) method called during the processing of the message, once
+     * the message processing has completed.  During execution of the
+     * flowComplete's, handlers are invoked in the opposite order that they
+     * were invoked originally.
+     * 
+     * @param msgContext the <code>MessageContext</code> to process with this
+     *                   <code>Handler</code>.
+     */
+    public void flowComplete(MessageContext msgContext);
+    
     /**
      * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler.
      *
@@ -107,5 +126,4 @@ public interface Handler {
         return instructionID;
       }
     }
-    
 }
