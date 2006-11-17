@@ -55,9 +55,9 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
-import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -429,8 +429,7 @@ class MethodMarshallerUtils  {
         // Get the root cause of the throwable object
         if (log.isDebugEnabled()) {
             log.debug("Marshal Throwable =" + throwable.getClass().getName());
-            log.debug("  message=" + throwable.getMessage());
-            log.debug("  stack=" + MessageUtils.stackToString(throwable));
+            log.debug("  exception=" + throwable.toString());
         }
         Throwable t = ClassUtils.getRootCause(throwable);
 

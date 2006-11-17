@@ -61,9 +61,9 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
@@ -192,8 +192,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			//  Get the root cause of the throwable object
             if (log.isDebugEnabled()) {
                 log.debug("Marshal Throwable =" + throwable.getClass().getName());
-                log.debug("  message=" + throwable.getMessage());
-                log.debug("  stack=" + MessageUtils.stackToString(throwable));
+                log.debug("  message=" + throwable.toString());
             }
 			XMLFault xmlfault = null;
 			

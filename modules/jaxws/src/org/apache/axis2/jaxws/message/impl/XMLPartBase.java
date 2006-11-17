@@ -42,7 +42,7 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
-import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -585,8 +585,8 @@ public abstract class XMLPartBase implements XMLPart {
 		if (consume) {
 			this.consumed = true;
 			if (log.isDebugEnabled()) {
-				log.debug("The follow stack trace indicates where the Block is consumed");
-				log.debug(MessageUtils.stackToString(new RuntimeException()));
+				log.debug("Debug Monitoring When Block is Consumed");
+				log.debug(JavaUtils.stackToString());
 			}
 		} else {
 			consumed = false;

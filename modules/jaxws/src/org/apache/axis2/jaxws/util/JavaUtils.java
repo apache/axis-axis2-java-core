@@ -17,6 +17,9 @@
 
 package org.apache.axis2.jaxws.util;
 
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -166,4 +169,22 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
 
         return new String(sb);
     }
+
+    /**
+     * Get a string containing the stack of the specified exception
+     * @return String
+     */
+    public static String stackToString(){
+        Exception e = new RuntimeException();
+        java.io.StringWriter sw= new java.io.StringWriter(); 
+        java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);
+        java.io.PrintWriter pw= new java.io.PrintWriter(bw); 
+        e.printStackTrace(pw);
+        pw.close();
+        String text = sw.getBuffer().toString();
+        // Jump past the "RuntimeException"
+        text = text.substring(text.indexOf("at"));
+        text = replace(text, "at ", "DEBUG_FRAME = ");
+        return text;
+      }
 }

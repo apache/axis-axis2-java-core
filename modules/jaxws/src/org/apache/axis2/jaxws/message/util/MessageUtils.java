@@ -326,18 +326,4 @@ public class MessageUtils {
             }
         }
     }
-    
-    /**
-     * Get a string containing the stack of the specified exception
-     * @param e Throwable
-     * @return String
-     */
-    public static String stackToString(Throwable e){
-        java.io.StringWriter sw= new java.io.StringWriter(); 
-        java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);
-        java.io.PrintWriter pw= new java.io.PrintWriter(bw); 
-        e.printStackTrace(pw);
-        pw.close();
-        return sw.getBuffer().toString();
-      }
 }
