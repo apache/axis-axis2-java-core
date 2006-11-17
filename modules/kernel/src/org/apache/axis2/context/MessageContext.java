@@ -123,6 +123,14 @@ public class MessageContext extends AbstractContext {
     public static final String TRANSPORT_NON_BLOCKING = "transportNonBlocking";
 
     /**
+     * This property allows someone (e.g. RM) to disable an async callback from
+     * being invoked if a fault occurs during message transmission.  If this is
+     * not set, it can be assumed that the fault will be delivered via
+     * Callback.onError(...).
+     */
+    public static final String DISABLE_ASYNC_CALLBACK_ON_TRANSPORT_ERROR = "disableTransmissionErrorCallback";
+
+    /**
      * Field processingFault
      */
     private boolean processingFault;

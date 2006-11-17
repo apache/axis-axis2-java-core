@@ -44,6 +44,11 @@ public class CallbackReceiver implements MessageReceiver {
         callbackStore.put(MsgID, callback);
     }
 
+    public Callback lookupCallback(String msgID)
+    {
+      return (Callback)callbackStore.get(msgID);
+    }
+
     public void receive(MessageContext messageCtx) throws AxisFault {
         RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
         if(relatesTO == null){

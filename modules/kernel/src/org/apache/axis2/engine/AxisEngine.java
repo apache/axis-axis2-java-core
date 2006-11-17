@@ -617,7 +617,23 @@ public class AxisEngine {
             try {
                 sender.invoke(msgctx);
             } catch (Exception e) {
-                log.info(e.getMessage());
+              log.info(e.getMessage());
+              if (msgctx.getProperty(MessageContext.DISABLE_ASYNC_CALLBACK_ON_TRANSPORT_ERROR) == null)
+              {
+                AxisOperation axisOperation = msgctx.getAxisOperation();
+                if (axisOperation != null)
+                {
+                  MessageReceiver msgReceiver = axisOperation.getMessageReceiver();
+                  if ((msgReceiver != null) && (msgReceiver instanceof CallbackReceiver))
+                  {
+                    Callback callback = ((CallbackReceiver)msgReceiver).lookupCallback(msgctx.getMessageID());
+                    if (callback != null)
+                    {
+                      callback.onError(e);
+                    }
+                  }
+                }
+              }
             }
         }
     }
