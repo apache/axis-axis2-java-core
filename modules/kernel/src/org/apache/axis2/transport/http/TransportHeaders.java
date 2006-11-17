@@ -105,7 +105,7 @@ public class TransportHeaders implements Map {
         if (headerMap == null) {
             init();
         }
-        return headerMap.entrySet();
+        return headerMap.keySet();
     }
 
     public Object get(Object key) {

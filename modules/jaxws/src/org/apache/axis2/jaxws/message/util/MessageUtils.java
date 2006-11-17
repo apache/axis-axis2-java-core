@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -52,6 +53,7 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.transport.http.TransportHeaders;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -168,7 +170,7 @@ public class MessageUtils {
             
             // Add all the MimeHeaders from the Axis2 MessageContext
             MimeHeaders mhs = message.getMimeHeaders();
-            HashMap headerMap = (HashMap) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+            Map headerMap = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
             if (headerMap != null) {
                 Iterator it = headerMap.keySet().iterator();
                 while (it.hasNext()) {
@@ -259,7 +261,7 @@ public class MessageUtils {
         
         // Put the Headers onto the MessageContext
         // TODO: Merge with latest TransportHeaders impl.
-        HashMap headerMap = new HashMap();
+        Map headerMap = new HashMap();
         for (Iterator it = message.getMimeHeaders().getAllHeaders(); it.hasNext();) {
             MimeHeader mh = (MimeHeader) it.next();
             headerMap.put(mh.getName(), mh.getValue());

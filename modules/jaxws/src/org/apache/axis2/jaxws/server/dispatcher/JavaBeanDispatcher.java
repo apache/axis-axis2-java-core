@@ -191,9 +191,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 		if(styleOnMethod!=null && styleOnSEI!=styleOnMethod){
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
 		}
-		if(styleOnSEI == javax.jws.soap.SOAPBinding.Style.RPC){
-			throw new UnsupportedOperationException("RPC/LIT not supported.");
-		}
+		
 		
 		MethodMarshallerFactory cf = (MethodMarshallerFactory) FactoryRegistry.getFactory(MethodMarshallerFactory.class);
 		

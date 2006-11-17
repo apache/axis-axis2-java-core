@@ -56,6 +56,7 @@ import org.apache.axis2.jaxws.provider.StringMessageProviderTests;
 import org.apache.axis2.jaxws.provider.StringProviderTests;
 import org.apache.axis2.jaxws.proxy.ProxyNonWrappedTests;
 import org.apache.axis2.jaxws.proxy.ProxyTests;
+import org.apache.axis2.jaxws.proxy.RPCProxyTests;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
 import org.apache.axis2.jaxws.sample.BareTests;
@@ -117,6 +118,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);
         suite.addTestSuite(ProxyNonWrappedTests.class);
+        suite.addTestSuite(RPCProxyTests.class);
         suite.addTestSuite(ExceptionFactoryTests.class);
         suite.addTestSuite(BasicAuthSecurityTests.class);
 
