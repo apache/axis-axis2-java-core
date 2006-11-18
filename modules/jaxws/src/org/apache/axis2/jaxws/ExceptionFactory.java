@@ -213,6 +213,22 @@ public class ExceptionFactory {
 	 * @return WebServiceException
 	 */
 	private static WebServiceException createWebServiceException(String message, Throwable t) {
+        
+        // We might have an embedded MessageException that has a good message on it
+        MessageException me = (MessageException) findException(t, MessageException.class);
+        if (me != null) {
+            String meMessage = me.getMessage();
+            if (meMessage != null) {
+                if (message == null) {
+                    message = meMessage;
+                } else {
+                    message = message + ": " + meMessage;
+                }
+            }
+        }
+        
+        // Get the root cause.  We want to strip out the intermediate exceptions (like AxisFault) because
+        // these won't make sense to the user.
 		Throwable rootCause = null;
 		if (t != null) {
 			rootCause = getRootCause(t);
@@ -220,10 +236,11 @@ public class ExceptionFactory {
 		rootCause = rootCause==null ? t :rootCause;
 		WebServiceException e = null;
         
+        // The root cause may not have a good message.  We might want to enhance it
         String enhancedMessage = enhanceMessage(rootCause);
         if (enhancedMessage != null) {
             if (message != null)
-                message.concat(": " + enhancedMessage);
+                message = message + ": " + enhancedMessage;
             else
                 message = enhancedMessage;
         }
@@ -296,6 +313,7 @@ public class ExceptionFactory {
 	 * @return MessageException
 	 */
 	private static MessageInternalException createMessageInternalException(String message, Throwable t) {
+        
 		Throwable rootCause = null;
 		if (t != null) {
 			rootCause = getRootCause(t);
@@ -400,8 +418,7 @@ public class ExceptionFactory {
 
         // TODO better criteria
         if ((t instanceof StackOverflowError) && (stackTrace.contains("JAXB")))
-            // TODO better message
-            return "The system threw a StackOverflowError at the JAXB level.  This usually means there is a circular type reference in the WSDL.";
+            return Messages.getMessage("JABGraphProblem");
         
         return null;
     }

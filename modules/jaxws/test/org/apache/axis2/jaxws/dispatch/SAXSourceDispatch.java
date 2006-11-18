@@ -28,6 +28,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 
@@ -315,4 +316,26 @@ public class SAXSourceDispatch extends TestCase{
 		System.out.println(">> Invoking One Way Dispatch");
 		dispatch.invokeOneWay(request);
 	}
+    
+    public void testBadSAXSource() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.MESSAGE);
+        
+        // Create an empty (invalid) SAXSource
+        Source request = new SAXSource();
+        
+        try {
+            dispatch.invokeOneWay(request);
+            fail("WebServiceException was expected");
+        } catch (WebServiceException e) {
+            System.out.println("A Web Service Exception was expected: " + e.toString());
+            assertTrue(e.getMessage() != null);
+        }
+    }
 }

@@ -135,42 +135,47 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	}
 
 	@Override
-	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException  {
-		// TODO not sure if this is always the most performant way to do this.
-		if (busObj instanceof DOMSource) {
-			// Let's use our own DOMReader for now...
-			Element element = null;
-			
-			// Business Object msut be a Document or Element
-			Node node = ((DOMSource)busObj).getNode();
-			if(node instanceof Document){
-				element = ((Document)node).getDocumentElement();
-			}else{
-				element = (Element) ((DOMSource)busObj).getNode();
-			}
-			
-			// We had some problems with testers producing DOMSources w/o Namespaces.  
-			// It's easy to catch this here.
-			if (element.getLocalName() == null) {
-				throw new XMLStreamException(ExceptionFactory.makeMessageException(Messages.getMessage("JAXBSourceNamespaceErr")));
-			}
-			
-			return new DOMReader(element);
-		} 
-		
-		if(busObj instanceof StreamSource){
-			XMLInputFactory f = StAXUtils.getXMLInputFactory();
-			
-			XMLStreamReader reader = f.createXMLStreamReader((Source) busObj);
-			StAXUtils.releaseXMLInputFactory(f);
-			return reader;
-		}
-		//TODO: For GM we need to only use this approach when absolutely necessary.  
-        // For example, we don't want to do this if this is a (1.6) StaxSource or if the installed parser provides 
-        // a better solution.
-		//TODO: Uncomment this code if woodstock parser handles JAXBSource and SAXSource correctly.
-		//return inputFactory.createXMLStreamReader((Source) busObj);
-		return _slow_getReaderFromSource((Source)busObj);
+	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, MessageException  {
+	    try {
+	        // TODO not sure if this is always the most performant way to do this.
+	        if (busObj instanceof DOMSource) {
+	            // Let's use our own DOMReader for now...
+	            Element element = null;
+	            
+	            // Business Object msut be a Document or Element
+	            Node node = ((DOMSource)busObj).getNode();
+	            if(node instanceof Document){
+	                element = ((Document)node).getDocumentElement();
+	            }else{
+	                element = (Element) ((DOMSource)busObj).getNode();
+	            }
+	            
+	            // We had some problems with testers producing DOMSources w/o Namespaces.  
+	            // It's easy to catch this here.
+	            if (element.getLocalName() == null) {
+	                throw new XMLStreamException(ExceptionFactory.makeMessageException(Messages.getMessage("JAXBSourceNamespaceErr")));
+	            }
+	            
+	            return new DOMReader(element);
+	        } 
+	        
+	        if(busObj instanceof StreamSource){
+	            XMLInputFactory f = StAXUtils.getXMLInputFactory();
+	            
+	            XMLStreamReader reader = f.createXMLStreamReader((Source) busObj);
+	            StAXUtils.releaseXMLInputFactory(f);
+	            return reader;
+	        }
+	        //TODO: For GM we need to only use this approach when absolutely necessary.  
+	        // For example, we don't want to do this if this is a (1.6) StaxSource or if the installed parser provides 
+	        // a better solution.
+	        //TODO: Uncomment this code if woodstock parser handles JAXBSource and SAXSource correctly.
+	        //return inputFactory.createXMLStreamReader((Source) busObj);
+	        return _slow_getReaderFromSource((Source)busObj);
+	    } catch (Exception e) {
+            String className = (busObj == null) ? "none" : busObj.getClass().getName();
+	        throw ExceptionFactory.makeMessageException(Messages.getMessage("SourceReadErr", className), e);
+	    }
 	}
 	
 	/**
@@ -191,7 +196,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
    }
 
 	@Override
-	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException {
+	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, MessageException {
 		// There is no fast way to output the Source to a writer, so get the reader
 		// and pass use the default reader->writer.
 		XMLStreamReader reader = _getReaderFromBO(busObject, busContext);

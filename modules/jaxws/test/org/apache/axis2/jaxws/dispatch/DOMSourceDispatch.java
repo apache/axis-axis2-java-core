@@ -30,6 +30,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 
@@ -281,6 +282,28 @@ public class DOMSourceDispatch extends TestCase{
         dispatch.invokeOneWay(request);
 	}
     
+    public void testBadDOMSource() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<Source> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                Source.class, Service.Mode.PAYLOAD);
+
+        // Create the DOMSource
+        DOMSource request = new DOMSource();
+
+        try {
+            dispatch.invokeOneWay(request);
+            fail("WebServiceException was expected");
+        } catch (WebServiceException e) {
+            System.out.println("A Web Service Exception was expected: " + e.toString());
+            assertTrue(e.getMessage() != null);
+        }
+        
+    }
 	/**
      * Create a DOMSource with the provided String as the content
      * @param input
