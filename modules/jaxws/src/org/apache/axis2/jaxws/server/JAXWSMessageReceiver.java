@@ -17,6 +17,8 @@
 
 package org.apache.axis2.jaxws.server;
 
+import javax.xml.ws.WebServiceException;
+
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
@@ -125,7 +127,13 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
 
         } catch (Exception e) {
             ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
-            throw ExceptionFactory.makeWebServiceException(e);
+            
+            // Make a webservice exception (which will strip out a unnecessary stuff)
+            WebServiceException wse = ExceptionFactory.makeWebServiceException(e);
+            
+            // The AxisEngine expects an AxisFault
+            throw AxisFault.makeFault(wse);
+            
         } 
 
         //This assumes that we are on the ultimate execution thread

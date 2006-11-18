@@ -24,8 +24,10 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
+import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
 
 import junit.framework.TestCase;
@@ -56,6 +58,20 @@ public class RPCProxyTests extends TestCase {
     }
     
     /**
+     * Utility Method to get a Dispatch<String>
+     * @return
+     * @throws MalformedURLException
+     */
+    public Dispatch<String> getDispatch() throws MalformedURLException {
+        File wsdl= new File(wsdlLocation); 
+        URL wsdlUrl = wsdl.toURL(); 
+        Service service = Service.create(null, serviceName);
+        service.addPort(portName, null, axisEndpoint);
+        Dispatch<String> dispatch = service.createDispatch(portName, String.class, Service.Mode.PAYLOAD);
+        return dispatch;
+    }
+    
+    /**
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
     public void testSimple() throws Exception {
@@ -64,7 +80,74 @@ public class RPCProxyTests extends TestCase {
             String request = "This is a test...";
            
             String response = proxy.testSimple(request);
-            assert(response != null);
+            assertTrue(response != null);
+            assert(response.equals(request));
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
+    
+    public void testSimple_Dispatch() throws Exception {
+        // Send a payload that simulates
+        // the rpc message
+        String request = "<tns:testSimple xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
+        "<tns:simpleIn xsi:type='xsd:string' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>" +
+        "PAYLOAD WITH XSI:TYPE" +
+        "</tns:simpleIn></tns:testSimple>";
+        Dispatch<String> dispatch = getDispatch();
+        String response = dispatch.invoke(request);
+
+        assertNotNull("dispatch invoke returned null", response);
+        System.out.println(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(!response.contains("Fault"));
+        assertTrue(response.contains("simpleOut"));
+        assertTrue(response.contains("testSimpleResponse"));
+        assertTrue(response.contains("PAYLOAD WITH XSI:TYPE"));
+    }
+    
+    public void _testSimple_DispatchWithoutXSIType() throws Exception {
+        // Send a payload that simulates
+        // the rpc message
+        String request = "<tns:testSimple xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
+        "<tns:simpleIn>" +
+        "PAYLOAD WITH XSI:TYPE" +
+        "</tns:simpleIn></tns:testSimple>";
+        Dispatch<String> dispatch = getDispatch();
+        String response = dispatch.invoke(request);
+        
+
+        assertNotNull("dispatch invoke returned null", response);
+        System.out.println(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(!response.contains("Fault"));
+        assertTrue(response.contains("simpleOut"));
+        assertTrue(response.contains("testSimpleResponse"));
+        assertTrue(response.contains("PAYLOAD WITH XSI:TYPE"));
+    }
+    
+    /**
+     * Simple test that ensures that we can echo a string to an rpc/lit web service
+     */
+    public void testStringList() throws Exception {
+        try{ 
+            RPCLit proxy = getProxy();
+            String[] request = new String[] {"Hello" , "World"};
+           
+            String[] response = proxy.testStringList2(request);
+            assertTrue(response != null);
+            assertTrue(response.length==2);
+            assertTrue(response[0].equals("Hello"));
+            assertTrue(response[1].equals("World"));
             assert(response.equals(request));
         }catch(Exception e){ 
             e.printStackTrace(); 
