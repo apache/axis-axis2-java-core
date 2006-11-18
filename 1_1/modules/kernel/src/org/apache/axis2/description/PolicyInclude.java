@@ -16,16 +16,15 @@
 
 package org.apache.axis2.description;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+
 import org.apache.axiom.om.util.UUIDGenerator;
-import org.apache.axis2.i18n.Messages;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
 import org.apache.neethi.PolicyRegistry;
 import org.apache.neethi.PolicyRegistryImpl;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
 
 public class PolicyInclude {
 
@@ -73,11 +72,7 @@ public class PolicyInclude {
 	
 	// private ArrayList wrapperElements = new ArrayList();
 
-	private boolean useCacheP = false;
-	
-	private boolean useCacheE = false;
-	
-	private Hashtable wrapperElements = new Hashtable();
+    private Hashtable wrapperElements = new Hashtable();
 
 	public PolicyInclude() {
 		reg = new PolicyRegistryImpl();
@@ -115,9 +110,7 @@ public class PolicyInclude {
         } else {
             wrapperElements.put(policy.getId(), wrapper);
         }
-        
-		useCacheP = false;
-	}
+     }
 	
 	public void updatePolicy(Policy policy) {
 		String key;
@@ -129,8 +122,6 @@ public class PolicyInclude {
 		
 		Wrapper wrapper = (Wrapper) wrapperElements.get(key);
 		wrapper.value = policy;
-		
-		useCacheP = false;		
 	}
 	
 	public void setEffectivePolicy(Policy effectivePolicy) {
@@ -150,6 +141,7 @@ public class PolicyInclude {
 		if (description != null && description.getParent() != null) {
 			return description.getParent().getPolicyInclude();
 		}
+        
 		return null;
 	}
 
@@ -179,7 +171,6 @@ public class PolicyInclude {
         }
         
 		this.policy = result;
-		useCacheP(true);
 	}
 
 	private void calculateEffectivePolicy() {
@@ -204,25 +195,16 @@ public class PolicyInclude {
 		} else {
 			result = getPolicy();
 		}
-		setEffectivePolicy(result);
-		useCacheE(true);		
+		setEffectivePolicy(result);		
 	}
 	
 	public Policy getPolicy() {
-		
-		if (! useCacheP) {
-			calculatePolicy();
-			useCacheP(true);
-		}
+		calculatePolicy();
 		return policy;
 	}
 
 	public Policy getEffectivePolicy() {
-		
-		if (! useCacheE) {
-			calculateEffectivePolicy();		
-			useCacheE(true);
-		}
+        calculateEffectivePolicy();		
 		return effectivePolicy;
 	}
 
@@ -272,7 +254,7 @@ public class PolicyInclude {
         
 		Wrapper wrapper = new Wrapper(type, policy);
 		wrapperElements.put(key, wrapper);
-        reg.register(key, policy);
+        reg.register(key, policy);        
 	}
 
 	public void addPolicyRefElement(int type, PolicyReference policyReference) {
@@ -280,37 +262,6 @@ public class PolicyInclude {
 		wrapperElements.put(policyReference.getURI(), wrapper);
 	}
 
-	public void invalidate() {
-		
-		if (description != null) {
-            //FIXME
-//			Iterator children = description.getChildren();
-//			
-//			if (children != null) {
-//				AxisDescription axisDescription;
-//				
-//				while (children.hasNext()) {
-//					axisDescription = (AxisDescription) children.next();
-//					axisDescription.getPolicyInclude().invalidate();
-//				}				
-//			}
-		}
-		useCache(false);
-	}
-	
-	private void useCacheP(boolean useCache) {
-		this.useCacheP = useCache;
-	}
-	
-	private void useCacheE(boolean useCacheE) {
-		this.useCacheE = useCacheE;
-	}
-	
-	private void useCache(boolean useCache) {
-		this.useCacheP = useCache;
-		this.useCacheE = useCache;
-	}
-	
 	class Wrapper {
 		private int type;
 		private Object value;
