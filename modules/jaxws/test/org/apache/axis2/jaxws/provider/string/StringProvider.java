@@ -17,6 +17,7 @@
 package org.apache.axis2.jaxws.provider.string;
 
 import javax.xml.ws.Provider;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
 
 @WebServiceProvider()
@@ -27,6 +28,12 @@ public class StringProvider implements Provider<String> {
     
     public String invoke(String obj) {
         if (obj != null) {
+            
+            // TODO probably not the ideal place for a provider fault scenario test, but it serves its purpose
+            if (obj.equals("<invoke>throwException</invoke>")) {
+                throw new WebServiceException("provider");
+            }
+            
             String str = (String) obj;
             System.out.println(">> StringProvider received a new request");
             System.out.println(">> request [" + str + "]");

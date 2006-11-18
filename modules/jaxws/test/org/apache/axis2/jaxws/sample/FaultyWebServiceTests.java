@@ -39,7 +39,7 @@ public class FaultyWebServiceTests extends TestCase {
 		System.out.println("----------------------------------");
 		
 		assertNotNull(exception);
-		assertEquals("custom exception", exception.getMessage());
+		assertEquals("org.apache.axis2.jaxws.sample.faults.FaultyWebServiceFault_Exception: custom exception", exception.getMessage());
 		assertNotNull(exception.getFaultInfo());
 		assertEquals("bean custom fault info", exception.getFaultInfo().getFaultInfo());
 		assertEquals("bean custom message", exception.getFaultInfo().getMessage());

@@ -203,7 +203,6 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			// If not found, this is a System Exception
 			FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getName());
 
-			String text = null;
 			if (fd != null) {
 				// Service Exception.  Create an XMLFault with the fault bean
             	Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
@@ -220,12 +219,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
                             faultBean.getClass(), faultBean, false);
                 }
             	detailBlocks[0] = createJAXBBlock(faultBean, context);
-                text = t.getMessage();
-                xmlfault = new XMLFault(null, new XMLFaultReason(text), detailBlocks);
+                xmlfault = new XMLFault(null, new XMLFaultReason(t.toString()), detailBlocks);
             } else {
                 // System Exception
             	xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                        new XMLFaultReason(text));  // Assumes text is the language supported by the current Locale
+                        new XMLFaultReason(t.toString()));  // Assumes text is the language supported by the current Locale
             }
 			// Add the fault to the message
             message.setXMLFault(xmlfault);

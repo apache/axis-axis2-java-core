@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 
@@ -44,6 +45,7 @@ public class StringProviderTests extends ProviderTestCase {
     }
     
     public void testProviderString() throws Exception {
+
         System.out.println("---------------------------------------");
         System.out.println("test: " + getName());
         
@@ -56,6 +58,16 @@ public class StringProviderTests extends ProviderTestCase {
         System.out.println(">> Invoking Dispatch<String> StringProviderService");
         String retVal = dispatch.invoke(xmlString);
         System.out.println(">> Response [" + retVal + "]");
+        Exception ex = null;
+        try {
+            String re = dispatch.invoke("<invoke>throwException</invoke>");
+        } catch (Exception e) {
+            ex = e;
+            assertTrue(e instanceof WebServiceException);
+            String dfse = e.toString();
+            assertTrue(e.toString().equals("javax.xml.ws.WebServiceException: javax.xml.ws.WebServiceException: provider"));
+        }
+        assertNotNull(ex);
     }
     
     public void testSyncPayloadModeWithNull() throws Exception {

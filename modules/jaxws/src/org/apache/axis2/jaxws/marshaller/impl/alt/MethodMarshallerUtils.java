@@ -440,7 +440,6 @@ class MethodMarshallerUtils  {
         // If not found, this is a System Exception
         FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getName());
 
-        String text = null;
         if (fd != null) {
             // Service Exception.  
             
@@ -458,12 +457,11 @@ class MethodMarshallerUtils  {
             detailBlocks[0] = factory.createFrom(faultBeanObject,context,null);
             
             // Now make a XMLFault containing the detailblock
-            text = t.getMessage();
-            xmlfault = new XMLFault(null, new XMLFaultReason(text), detailBlocks);
+            xmlfault = new XMLFault(null, new XMLFaultReason(t.toString()), detailBlocks);
         } else {
             // System Exception
             xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                    new XMLFaultReason(text));  // Assumes text is the language supported by the current Locale
+                    new XMLFaultReason(t.toString()));  // Assumes text is the language supported by the current Locale
         }
         // Add the fault to the message
         message.setXMLFault(xmlfault);

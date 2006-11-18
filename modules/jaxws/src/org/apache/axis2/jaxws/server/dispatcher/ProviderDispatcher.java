@@ -19,7 +19,6 @@ package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 import javax.activation.DataSource;
@@ -41,6 +40,9 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.XMLFaultCode;
+import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
@@ -176,7 +178,8 @@ public class ProviderDispatcher extends JavaDispatcher{
             });
         } catch (Exception e) {
             e.printStackTrace();
-            throw ExceptionFactory.makeWebServiceException(e);
+            //throw ExceptionFactory.makeWebServiceException(e);
+            responseParamValue = new XMLFault(XMLFaultCode.RECEIVER, new XMLFaultReason(e.toString()));
         }
 
         // If we have a one-way operation, then we cannot create a MessageContext 
@@ -252,7 +255,12 @@ public class ProviderDispatcher extends JavaDispatcher{
         
         if (value != null) {
             BlockFactory factory = createBlockFactory(providerType);
-            if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
+            
+            if (value instanceof XMLFault) {
+                message = msgFactory.create(messageProtocol);
+                message.setXMLFault((XMLFault)value);
+            }
+            else if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
                 // For MESSAGE mode, work with the entire message, Headers and Body
                 // This is based on logic in org.apache.axis2.jaxws.client.XMLDispatch.createMessageFromBundle()
                 if (value instanceof SOAPMessage) {
