@@ -140,7 +140,7 @@ public class AsyncServiceWithTransportFailureTest extends
         {
           throw new AxisFault("Server was shutdown, as the async response took too long to complete");
         }
-        if (!wasError)
+        if (finish && !wasError)
         {
           fail("An error occurred during the transmission of the async request but the callback was not notified");
         }
