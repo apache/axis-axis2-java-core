@@ -262,7 +262,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
             Object returnValue = null;
             if (returnType != void.class) {
-                returnValue = MethodMarshallerUtils.getReturnValue(packages, message);
+                returnValue = MethodMarshallerUtils.getReturnValue(packages, message, returnType);
             }
             
             // Unmarshall the ParamValues from the Message

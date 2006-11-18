@@ -169,21 +169,23 @@ class MethodMarshallerUtils  {
                 //    continue;
                 //}
                 
-                // Unmarshal the object into a JAXB object or JAXBElement
                 Block block = null;
+                JAXBBlockContext context = new JAXBBlockContext(packages);
+                
+                // RPC is type based, so unfortuately the type of 
+                // object must be provided
+                if (message.getStyle() == Style.RPC) {
+                    context.setRPCType(pd.getParameterActualType());
+                }
+                
+                // Unmarshal the object into a JAXB object or JAXBElement
                 if (pd.isHeader()) {
 
                     // Get the Block from the header
-                    if (message.getStyle() == Style.RPC) {
-                        // TODO add xsi type
-                    }
                     String localName = (usePartName) ? pd.getPartName() : pd.getParameterName();
-                    block = message.getHeaderBlock(pd.getTargetNamespace(), localName, new JAXBBlockContext(packages), factory);
+                    block = message.getHeaderBlock(pd.getTargetNamespace(), localName, context, factory);
                 } else {
-                    if (message.getStyle() == Style.RPC) {
-                        // TODO add xsi type
-                    }
-                    block = message.getBodyBlock(index, new JAXBBlockContext(packages), factory);
+                    block = message.getBodyBlock(index, context, factory);
                 }
                 
                 // The object is now ready for marshalling
@@ -353,19 +355,21 @@ class MethodMarshallerUtils  {
      * Unmarshal the return object from the message
      * @param packages
      * @param message
+     * @param rpcType RPC Declared Type class (only used for RPC processing
      * @return type enabled object
      * @throws MessageException
      * @throws XMLStreamException
      */
-    static Object getReturnValue(Set<Package> packages, Message message) 
+    static Object getReturnValue(Set<Package> packages, Message message, Class rpcType) 
         throws MessageException, XMLStreamException {
         
         
         // The return object is the first block in the body
-        if (message.getStyle() == Style.RPC) {
-            // TODO add xsi type
+        JAXBBlockContext context = new JAXBBlockContext(packages);
+        if (rpcType != null) {
+            context.setRPCType(rpcType);  // RPC is type-based, so the unmarshalled type must be provided
         }
-        Block block = message.getBodyBlock(0, new JAXBBlockContext(packages), factory);
+        Block block = message.getBodyBlock(0, context, factory);
         
         // Get the business object.  We want to return the object that represents the type.
         Object returnValue = block.getBusinessObject(true);
@@ -510,7 +514,27 @@ class MethodMarshallerUtils  {
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             
             if (isRPC) {
-                //TODO add xsi:type
+                // RPC is problem ! We have a chicken and egg problem.
+                // Since RPC is type based, JAXB needs the declared type
+                // to unmarshal the object.  But we don't know the declared
+                // type without knowing the name of the type (sigh)
+                
+                // First get the QName...this might cause a parse
+                QName elementName = detailBlocks[0].getQName();
+                
+                // Now search the FaultDescriptors to find the right 
+                // declared type
+                Class rpcType = null;
+                for(int i=0; i<operationDesc.getFaultDescriptions().length && rpcType == null; i++) {
+                    FaultDescription fd = operationDesc.getFaultDescriptions()[i];
+                    String tryName = fd.getName();
+                    if (elementName.getLocalPart().equals(tryName)) {
+                        rpcType = fd.getClass();
+                    }
+                }
+                // Now set it on the context
+                blockContext.setRPCType(rpcType);
+                
             }
             Block jaxbBlock = factory.createFrom(detailBlocks[0], blockContext);
             Object faultBeanObject = jaxbBlock.getBusinessObject(true); 

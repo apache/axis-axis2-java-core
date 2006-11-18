@@ -107,7 +107,13 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             Object jaxb = null;
             
             // Unmarshal into the business object.
-            jaxb = u.unmarshal(reader);
+            if (ctx.getRPCType() == null) {
+                jaxb = u.unmarshal(reader); // preferred and always used for style=document
+            } else {
+                // Unfortunately RPC is type based.  Thus a
+                // declared type must be used to unmarshal the xml.
+                jaxb = u.unmarshal(reader, ctx.getRPCType());
+            }
             
             // Set the qname 
             QName qName = XMLRootElementUtil.getXmlRootElementQName(jaxb);

@@ -39,6 +39,15 @@ public class JAXBBlockContext {
     
 	private Set<Package> contextPackages;  // List of packages needed by the context
 	private JAXBContext jaxbContext = null;
+    
+    // For RPC processing only
+    // In RPC processing, JAXB needs to unmarshal using the
+    // "declared type unmarshalling" approach because the
+    // element is not known by schema.  If this block will be 
+    // unmarshalled in this fashion, use RPCType to set the 
+    // declared type.  Please do not use this property for 
+    // document style processing.
+    private Class RPCType = null;
 	
 	/**
 	 * Normal Constructor JAXBBlockContext
@@ -51,6 +60,7 @@ public class JAXBBlockContext {
     /**
      * Normal Constructor JAXBBlockContext
      * @param contextPackage
+     * @deprecated
      */
     public JAXBBlockContext(Package contextPackage) {
         this.contextPackages = new HashSet();
@@ -92,4 +102,20 @@ public class JAXBBlockContext {
         }
 		return jaxbContext;
 	}
+
+    /**
+     * @return RPC Declared Type
+     */
+    public Class getRPCType() {
+        return RPCType;
+    }
+
+    /**
+     * Set RPC Declared Type.  Please do not 
+     * use this property if the message is style=document
+     * @param type
+     */
+    public void setRPCType(Class type) {
+        RPCType = type;
+    }
 }

@@ -66,9 +66,9 @@ public class RPCLitImpl implements RPCLit {
 
     public String[] testStringList2(String[] arg20) {
 
-        assert(arg20.length==2);
-        assert(arg20[0].equals("Hello"));
-        assert(arg20[1].equals("World"));
+        assertTrue(arg20.length==2);
+        assertTrue(arg20[0].equals("Hello"));
+        assertTrue(arg20[1].equals("World"));
         return arg20;
     }
 
@@ -78,18 +78,18 @@ public class RPCLitImpl implements RPCLit {
     }
 
     public Long[] testLongList4(Long[] longs) {
-        assert(longs.length==3);
-        assert(longs[0] == 0);
-        assert(longs[1] == 1);
-        assert(longs[2] == 2);
+        assertTrue(longs.length==3);
+        assertTrue(longs[0] == 0);
+        assertTrue(longs[1] == 1);
+        assertTrue(longs[2] == 2);
         return longs;
     }
 
     public Enum[] testEnumList5(Enum[] enums) {
-        assert(enums.length==3);
-        assert(enums[0] == Enum.ONE);
-        assert(enums[1] == Enum.TWO);
-        assert(enums[2] == Enum.THREE);
+        assertTrue(enums.length==3);
+        assertTrue(enums[0] == Enum.ONE);
+        assertTrue(enums[1] == Enum.TWO);
+        assertTrue(enums[2] == Enum.THREE);
         return enums;
     }
 
@@ -103,4 +103,9 @@ public class RPCLitImpl implements RPCLit {
         return null;
     }
 
+    private void assertTrue(boolean value) throws RuntimeException {
+        if (!value) {
+            throw new RuntimeException();
+        }
+    }
 }

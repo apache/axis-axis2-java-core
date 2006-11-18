@@ -111,12 +111,12 @@ public class RPCProxyTests extends TestCase {
         assertTrue(response.contains("PAYLOAD WITH XSI:TYPE"));
     }
     
-    public void _testSimple_DispatchWithoutXSIType() throws Exception {
+    public void testSimple_DispatchWithoutXSIType() throws Exception {
         // Send a payload that simulates
         // the rpc message
         String request = "<tns:testSimple xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
         "<tns:simpleIn>" +
-        "PAYLOAD WITH XSI:TYPE" +
+        "PAYLOAD WITHOUT XSI:TYPE" +
         "</tns:simpleIn></tns:testSimple>";
         Dispatch<String> dispatch = getDispatch();
         String response = dispatch.invoke(request);
@@ -132,11 +132,11 @@ public class RPCProxyTests extends TestCase {
         assertTrue(!response.contains("Fault"));
         assertTrue(response.contains("simpleOut"));
         assertTrue(response.contains("testSimpleResponse"));
-        assertTrue(response.contains("PAYLOAD WITH XSI:TYPE"));
+        assertTrue(response.contains("PAYLOAD WITHOUT XSI:TYPE"));
     }
     
     /**
-     * Simple test that ensures that we can echo a string to an rpc/lit web service
+     * Simple test that ensures that we can echo a string to an rpc/lit web service.
      */
     public void testStringList() throws Exception {
         try{ 
@@ -154,4 +154,35 @@ public class RPCProxyTests extends TestCase {
             fail("Exception received" + e);
         }
     }
+    
+    // TODO 
+    // Commented out while fixing this test.  The above test succeeds, but sends the message in an incorrect format.
+    // This test sends the message in the correct format, but currently fails.  
+    // We need to investigate the @XmlList processing.
+    //
+    public void _testStringList_Dispatch() throws Exception {
+        // Send a payload that simulates
+        // the rpc message
+        String request = "<tns:testStringList2 xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
+        //"<tns:arg_2_0 xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:type='tns:StringList' >" +
+        "<tns:arg_2_0>" +
+        "Hello World" +
+        "</tns:arg_2_0></tns:testStringList2>";
+        Dispatch<String> dispatch = getDispatch();
+        String response = dispatch.invoke(request);
+
+        assertNotNull("dispatch invoke returned null", response);
+        System.out.println(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(!response.contains("Fault"));
+        assertTrue(response.contains("testStringList2Return"));
+        assertTrue(response.contains("testStringList2Response"));
+        assertTrue(response.contains("Hello World"));
+    }
+    
+    
 }
