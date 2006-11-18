@@ -17,6 +17,7 @@
 
 package org.apache.axis2.jaxws;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
@@ -32,7 +33,6 @@ import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.ibm.jvm.util.ByteArrayOutputStream;
 
 /**
   * ExceptionFactory is used to create exceptions within the JAX-WS implementation.
