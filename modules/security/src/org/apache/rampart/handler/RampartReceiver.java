@@ -17,7 +17,6 @@
 package org.apache.rampart.handler;
 
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
@@ -79,11 +78,7 @@ public class RampartReceiver implements Handler {
         } catch (RampartException e) {
             e.printStackTrace();
             throw new AxisFault(e);
-        } finally {
-            // Reset the document builder factory
-            DocumentBuilderFactoryImpl.setDOOMRequired(false);
-            Axis2Util.useDOOM(false);
-        }
+        } 
         
         if(wsResult == null) {
           return InvocationResponse.CONTINUE;        
