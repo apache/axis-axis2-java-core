@@ -17,7 +17,6 @@
 package org.apache.rampart;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -131,8 +130,6 @@ public class RampartMessageData {
     private ClassLoader customClassLoader;
 
     public RampartMessageData(MessageContext msgCtx, boolean sender) throws RampartException {
-        
-        DocumentBuilderFactoryImpl.setDOOMRequired(true);
         
         this.msgContext = msgCtx;
         
