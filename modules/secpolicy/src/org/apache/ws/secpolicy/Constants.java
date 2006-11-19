@@ -156,11 +156,11 @@ public class Constants {
 
     public final static String TRIPLE_DES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 
-    public final static String KW_AES128 = "http://www.w3.org/2001/04/xmlenc#kw-aes256";
+    public final static String KW_AES128 = "http://www.w3.org/2001/04/xmlenc#kw-aes128";
 
     public final static String KW_AES192 = "http://www.w3.org/2001/04/xmlenc#kw-aes192";
 
-    public final static String KW_AES256 = "http://www.w3.org/2001/04/xmlenc#kw-aes128";
+    public final static String KW_AES256 = "http://www.w3.org/2001/04/xmlenc#kw-aes256";
 
     public final static String KW_TRIPLE_DES = "http://www.w3.org/2001/04/xmlenc#kw-tripledes";
 

@@ -17,7 +17,6 @@
 package org.apache.rampart.handler;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
@@ -73,14 +72,6 @@ public class WSDoAllSender extends WSDoAllHandler {
         String disableDoomValue = (String)msgContext.getProperty(WSSHandlerConstants.DISABLE_DOOM);
         boolean disableDoom = disableDoomValue != null && Constants.VALUE_TRUE.equalsIgnoreCase(disableDoomValue);
         
-        if(!disableDoom) {
-            /*
-             * Temporary solution until DOOM's DocumentBuilder module is done.
-             * Use ThreadLocal to determine whether or not DOOM implementation is required.
-             */
-            // Set the DOM impl to DOOM
-            DocumentBuilderFactoryImpl.setDOOMRequired(true);
-        }
         RequestData reqData = new RequestData();
         try {
             Parameter param = ConversationConfiguration.getParameter(msgContext);
@@ -102,13 +93,6 @@ public class WSDoAllSender extends WSDoAllHandler {
                 reqData.clear();
                 reqData = null;
             }
-            
-            /**
-             * Temporary solution until DOOM's DocumentBuilder module is done.
-             * Use ThreadLocal to determine whether or not DOOM implementation is required.
-             */
-            //Reset the document builder factory
-            DocumentBuilderFactoryImpl.setDOOMRequired(false);
         }     
     }
 

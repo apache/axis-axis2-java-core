@@ -17,7 +17,6 @@
 package org.apache.rampart;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.dom.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
@@ -132,8 +131,6 @@ public class RampartMessageData {
 
     public RampartMessageData(MessageContext msgCtx, boolean sender) throws RampartException {
         
-        DocumentBuilderFactoryImpl.setDOOMRequired(true);
-        
         this.msgContext = msgCtx;
         
         try {
@@ -208,6 +205,12 @@ public class RampartMessageData {
             if(this.policyData != null) {
                 //Check for RST and RSTR for an SCT
                 RampartConfig rampartConfig = this.policyData.getRampartConfig();
+                
+                if(rampartConfig == null) {
+                    //We'r missing the extra info rampart needs
+                    throw new RampartException("rampartConigMissing");
+                }
+                
                 if((WSSHandlerConstants.RST_ACTON_SCT.equals(msgContext.getWSAAction())
                         || WSSHandlerConstants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) &&
                         this.policyData.getIssuerPolicy() != null) {
