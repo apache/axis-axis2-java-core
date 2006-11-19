@@ -144,8 +144,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                     value = XMLRootElementUtil.getElementEnabledObject(pd.getTargetNamespace(),
                             pd.getPartName(), 
                             pd.getParameterActualType(), 
-                            value,
-                            false); // don't force xsi:type for doc/lit
+                            value); 
      
                 }
                 pvList.add(new PDElement(pd, value));
@@ -230,8 +229,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                     value = XMLRootElementUtil.getElementEnabledObject(pd.getTargetNamespace(),
                             pd.getPartName(), 
                             pd.getParameterActualType(), 
-                            value, 
-                            false);  // don't force xsi:type for doc/lit
+                            value);
      
                 }
                 pvList.add(new PDElement(pd, value));
@@ -281,8 +279,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 MethodMarshallerUtils.getPDElements(pds,
                         signatureArgs, 
                         false,  // output
-                        true,   // use partNames (which are child names)
-                        false);  // don't force xis:type for doc/lit
+                        true);   // use partNames (which are child names)
+                        
 
             // Now we want to create a single JAXB element that contains the 
             // ParameterValues.  We will use the wrapper tool to do this.
@@ -321,8 +319,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                         operationDesc.getResponseWrapperTargetNamespace(), 
                         operationDesc.getResponseWrapperLocalName(), 
                         cls, 
-                        object, 
-                        false);  // don't force xsitype for doc/lit
+                        object);
             }
             
             
@@ -372,8 +369,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     signatureArguments, 
                     true,   // input
-                    true,   // use partName (which are the child element names)
-                    false); // we don't force xsi:type for doc/lit
+                    true);   // use partName (which are the child element names)
             
             // Now we want to create a single JAXB element that contains the 
             // ParameterValues.  We will use the wrapper tool to do this.
@@ -404,8 +400,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                         operationDesc.getRequestWrapperTargetNamespace(), 
                         operationDesc.getRequestWrapperLocalName(), 
                         cls, 
-                        object, 
-                        false);  // for doc/lit we don't want to force xsi:type
+                        object);
             }
             
             // Put the object into the message

@@ -169,11 +169,11 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     signatureArgs, 
                     false, // output
-                    false, // use name (element name) not wsd:part name
-                    false); // don't force xsi:type for doc/lit
+                    false); // use name (element name) not wsd:part name
+                   
 
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages);
+            MethodMarshallerUtils.toMessage(pvList, m, packages, false);
             
             return m;
         } catch(Exception e) {
@@ -212,11 +212,11 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     signatureArguments, 
                     true,  // input
-                    false, // use name (element name) not wsd:part name
-                    false); // don't force xsi:type for doc/lit
+                    false);// use name (element name) not wsd:part name
+                    
             
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages);
+            MethodMarshallerUtils.toMessage(pvList, m, packages, false);
             
             return m;
         } catch(Exception e) {

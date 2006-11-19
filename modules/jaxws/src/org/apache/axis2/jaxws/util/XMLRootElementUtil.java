@@ -137,17 +137,12 @@ public class XMLRootElementUtil {
      * @param type element or type enabled object
      * @return
      */
-    public static Object getElementEnabledObject(String namespace, String localPart, Class cls, Object obj, boolean forceXSIType) {
+    public static Object getElementEnabledObject(String namespace, String localPart, Class cls, Object obj) {
         if (obj != null && isElementEnabled(obj.getClass())) {
             return obj;
         }
         
         QName qName = new QName(namespace, localPart);
-        
-        // I think the way to force an xsi:type is to use Object as the class
-        if (forceXSIType) {
-            cls = Object.class;
-        }
         JAXBElement element = new JAXBElement(qName, cls, obj);
         return element;
     }

@@ -216,7 +216,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
                 // the actual object may be a derived type of the formal declaration)
             	if (!XMLRootElementUtil.isElementEnabled(faultBean.getClass())) {
                     faultBean = XMLRootElementUtil.getElementEnabledObject(fd.getTargetNamespace(), fd.getName(),
-                            faultBean.getClass(), faultBean, false);
+                            faultBean.getClass(), faultBean);
                 }
             	detailBlocks[0] = createJAXBBlock(faultBean, context);
                 xmlfault = new XMLFault(null, new XMLFaultReason(t.toString()), detailBlocks);

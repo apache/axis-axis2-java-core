@@ -89,10 +89,9 @@ class MethodMarshallerUtils  {
      * @param isInput indicates if input or output  params(input args on client, output args on server)
      * @param usePartName indicates whether to use the partName or name for the name of the xml element
      *        partName is used for RPC and doc/lit wrapped, name is used for doc/lit bare
-     * @param forceXSIType if upgrading a type to an element
      * @return PDElements
      */
-    static List<PDElement> getPDElements(ParameterDescription[] params, Object[] sigArguments, boolean isInput, boolean usePartName, boolean forceXSIType) {
+    static List<PDElement> getPDElements(ParameterDescription[] params, Object[] sigArguments, boolean isInput, boolean usePartName) {
         List<PDElement> pvList = new ArrayList<PDElement>();
         
         int index = 0;
@@ -124,7 +123,7 @@ class MethodMarshallerUtils  {
                 // Otherwise make an element enabled value
                 if (!XMLRootElementUtil.isElementEnabled(formalType)) {
                     String localName = (usePartName) ? pd.getPartName() : pd.getParameterName();
-                    value = XMLRootElementUtil.getElementEnabledObject(pd.getTargetNamespace(), localName, formalType, value, forceXSIType);
+                    value = XMLRootElementUtil.getElementEnabledObject(pd.getTargetNamespace(), localName, formalType, value);
                 }
                 
                 // The object is now ready for marshalling
@@ -289,20 +288,28 @@ class MethodMarshallerUtils  {
      * @param pvList element enabled objects
      * @param message Message
      * @param packages Packages needed to do a JAXB Marshal
+     * @param isRPC 
      * @throws MessageException
      */
-    static void toMessage(List<PDElement> pvList, Message message, Set<Package> packages) throws MessageException {
+    static void toMessage(List<PDElement> pvList, Message message, Set<Package> packages, boolean isRPC) throws MessageException {
         
         int index = message.getNumBodyBlocks();
         for (int i=0; i<pvList.size(); i++) {
             PDElement pv = pvList.get(i);
             
+            // Create the JAXBBlockContext
+            // RPC uses type marshalling, so recored the rpcType
+            JAXBBlockContext context = new JAXBBlockContext(packages);
+            if (isRPC) {
+                context.setRPCType(pv.getParam().getParameterActualType());
+            }
+                
             // Create a JAXBBlock out of the value.
             // (Note that the PDElement.getValue always returns an object
             // that has an element rendering...ie. it is either a JAXBElement o
             // has @XmlRootElement defined
             Block block = factory.createFrom(pv.getElementValue(), 
-                    new JAXBBlockContext(packages), 
+                    context, 
                     null);  // The factory will get the qname from the value
             
             if (pv.getParam().isHeader()) {
@@ -327,7 +334,7 @@ class MethodMarshallerUtils  {
      * @param returnLocalPart
      * @param packages
      * @param message
-     * @param forceXSIType if upgrading type to an element
+     * @param isRPC
      * @throws MessageException
      */
     static void toMessage(Object returnValue, 
@@ -336,17 +343,25 @@ class MethodMarshallerUtils  {
             String returnLocalPart, 
             Set<Package> packages, 
             Message message, 
-            boolean forceXSIType) 
+            boolean isRPC) 
             throws MessageException {
+        
+        // Create the JAXBBlockContext
+        // RPC uses type marshalling, so recored the rpcType
+        JAXBBlockContext context = new JAXBBlockContext(packages);
+        if (isRPC) {
+            context.setRPCType(returnType);
+        }
+        
         // If this type is an element rendering, then we are okay
         // If it is a type rendering then make a JAXBElement 
         if (!XMLRootElementUtil.isElementEnabled(returnType)) {
-            returnValue = XMLRootElementUtil.getElementEnabledObject(returnNS, returnLocalPart,returnType, returnValue, forceXSIType);
+            returnValue = XMLRootElementUtil.getElementEnabledObject(returnNS, returnLocalPart,returnType, returnValue);
         }
         
         //  Create a JAXBBlock out of the value.
         Block block = factory.createFrom(returnValue, 
-                new JAXBBlockContext(packages), 
+                context, 
                 null);  // The factory will get the qname from the value
         message.setBodyBlock(0, block);
     }
@@ -420,14 +435,13 @@ class MethodMarshallerUtils  {
      * @param operationDesc OperationDescription
      * @param packages Packages needed to marshal the object
      * @param message Message
-     * @param forceXSIType if the faultbean 
+     * @param isRPC
      * @throws MessageException
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    static void marshalFaultResponse(Throwable throwable, OperationDescription operationDesc,  Set<Package> packages, Message message, 
-            boolean forceXSIType)
+    static void marshalFaultResponse(Throwable throwable, OperationDescription operationDesc,  Set<Package> packages, Message message, boolean isRPC)
      throws MessageException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         
         // Get the root cause of the throwable object
@@ -452,11 +466,18 @@ class MethodMarshallerUtils  {
             Object faultBeanObject = getFaultInfo.invoke(t, null);
             if (!XMLRootElementUtil.isElementEnabled(faultBeanObject.getClass())) {
                 faultBeanObject = XMLRootElementUtil.getElementEnabledObject(fd.getTargetNamespace(), fd.getName(), 
-                        faultBeanObject.getClass(), faultBeanObject, forceXSIType);
+                        faultBeanObject.getClass(), faultBeanObject);
+            }
+            
+            
+            // Create the JAXBBlockContext
+            // RPC uses type marshalling, so recored the rpcType
+            JAXBBlockContext context = new JAXBBlockContext(packages);
+            if (isRPC) {
+                context.setRPCType(faultBeanObject.getClass());
             }
             
             // Create a detailblock representing the faultBeanObject
-            JAXBBlockContext context = new JAXBBlockContext(packages);
             Block[] detailBlocks = new Block[1];
             detailBlocks[0] = factory.createFrom(faultBeanObject,context,null);
             

@@ -101,11 +101,11 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 MethodMarshallerUtils.getPDElements(pds, 
                         signatureArguments,
                         true,  // input
-                        true, // use partName since this is rpc/lit
-                        true); // always force xsi:type since this is rpc/lit
+                        true); // use partName since this is rpc/lit
+                        
             
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages);
+            MethodMarshallerUtils.toMessage(pvList, m, packages, true);
             
             return m;
         } catch(Exception e) {
@@ -215,11 +215,10 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 MethodMarshallerUtils.getPDElements(pds, 
                         signatureArgs, 
                         false,  // output
-                        true,   // use partName since this is rpc/lit
-                        true);  // forceXSI since this is rpc/lit
+                        true);   // use partName since this is rpc/lit
 
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages);
+            MethodMarshallerUtils.toMessage(pvList, m, packages, true);
             
             return m;
         } catch(Exception e) {
@@ -289,7 +288,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                     operationDesc, 
                     endpointDesc.getPackages(), 
                     m, 
-                    true);  // always marshal xsi:type if rpc/lit
+                    true);  // isRPC=true
             return m;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

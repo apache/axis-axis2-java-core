@@ -210,7 +210,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
             // the appropriate JAXBElement
             if (!XMLRootElementUtil.isElementEnabled(wrapperClazz)) {
                 wrapper = XMLRootElementUtil.getElementEnabledObject(wrapperTNS, 
-                        wrapperLocalName, wrapperClazz, wrapper, false);
+                        wrapperLocalName, wrapperClazz, wrapper);
             }
 			Message message = createMessage(wrapper);
 
@@ -252,7 +252,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
                     XMLRootElementUtil.getElementEnabledObject(wrapperTNS, 
                             wrapperLocalName,
                             wrapperClazz, 
-                            jaxbObject, false);
+                            jaxbObject);
             }
 			Message message = createMessage(jaxbObject);
 

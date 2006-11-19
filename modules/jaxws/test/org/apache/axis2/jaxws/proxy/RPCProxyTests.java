@@ -18,10 +18,16 @@
  */
 package org.apache.axis2.jaxws.proxy;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
@@ -29,6 +35,8 @@ import javax.xml.ws.Service;
 
 import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
+import org.test.proxy.rpclit.ObjectFactory;
+import org.test.proxy.rpclit.Enum;
 
 import junit.framework.TestCase;
 
@@ -160,7 +168,7 @@ public class RPCProxyTests extends TestCase {
     // This test sends the message in the correct format, but currently fails.  
     // We need to investigate the @XmlList processing.
     //
-    public void _testStringList_Dispatch() throws Exception {
+    public void testStringList_Dispatch() throws Exception {
         // Send a payload that simulates
         // the rpc message
         String request = "<tns:testStringList2 xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
@@ -183,6 +191,4 @@ public class RPCProxyTests extends TestCase {
         assertTrue(response.contains("testStringList2Response"));
         assertTrue(response.contains("Hello World"));
     }
-    
-    
 }
