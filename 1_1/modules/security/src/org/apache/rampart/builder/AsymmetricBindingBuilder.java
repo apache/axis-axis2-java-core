@@ -62,6 +62,10 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
     private Vector signatureValues = new Vector();
 
     private Element encrTokenElement;
+    
+    private Element sigDKTElement;
+    
+    private Element encrDKTElement;
 
     private Vector sigParts = new Vector();
     
@@ -122,7 +126,8 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     dkEncr.prepare(doc);
 
                     // Get and add the DKT element
-                    encrDKTokenElem = RampartUtil.appendChildToSecHeader(rmd, dkEncr.getdktElement());
+                    this.encrDKTElement = dkEncr.getdktElement();
+                    encrDKTokenElem = RampartUtil.appendChildToSecHeader(rmd, this.encrDKTElement);
 
                     refList = dkEncr.encryptForExternalRef(null, encrParts);
 
@@ -341,14 +346,20 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     dkEncr.setExternalKey(this.encryptedKeyValue, this.encryptedKeyId);
                     dkEncr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
                     dkEncr.prepare(doc);
-                    Element encrDKTokenElem = null;
-                    encrDKTokenElem = dkEncr.getdktElement();
-                    RampartUtil.insertSiblingAfter(rmd, this.encrTokenElement, encrDKTokenElem);
+                    
+                    
+                    if(this.encrTokenElement != null) {
+                        this.encrDKTElement = RampartUtil.insertSiblingAfter(
+                                rmd, this.encrTokenElement, dkEncr.getdktElement());
+                    } else {
+                        this.encrDKTElement = RampartUtil.insertSiblingBefore(
+                                rmd, this.sigDKTElement, dkEncr.getdktElement());
+                    }
                     
                     refList = dkEncr.encryptForExternalRef(null, encrParts);
                     
                     RampartUtil.insertSiblingAfter(rmd, 
-                                                    encrDKTokenElem, 
+                                                    this.encrDKTElement, 
                                                     refList);
                                                     
                 } catch (WSSecurityException e) {
@@ -447,9 +458,11 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                 // Do signature
                 dkSign.computeSignature();
 
+                 ;
                 // Add elements to header
-                this.setInsertionLocation(RampartUtil.insertSiblingAfter(rmd,
-                        this.getInsertionLocation(), dkSign.getdktElement()));
+                 this.sigDKTElement = RampartUtil.insertSiblingAfter(rmd,
+                        this.getInsertionLocation(), dkSign.getdktElement());
+                this.setInsertionLocation(this.sigDKTElement);
 
                 this.setInsertionLocation(RampartUtil.insertSiblingAfter(rmd,
                         this.getInsertionLocation(), dkSign
