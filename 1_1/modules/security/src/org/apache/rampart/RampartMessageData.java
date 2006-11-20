@@ -473,8 +473,7 @@ public class RampartMessageData {
             return this.tokenStorage;
         }
 
-        TokenStorage storage = (TokenStorage) this.msgContext
-                .getConfigurationContext().getProperty(
+        TokenStorage storage = (TokenStorage) this.msgContext.getProperty(
                         TokenStorage.TOKEN_STORAGE_KEY);
 
         if (storage != null) {
@@ -506,7 +505,7 @@ public class RampartMessageData {
                 
             }
             
-//            /Set the storage instance
+            //Set the storage instance
             this.msgContext.getConfigurationContext().setProperty(
                     TokenStorage.TOKEN_STORAGE_KEY, this.tokenStorage);
         }
