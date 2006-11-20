@@ -91,7 +91,7 @@ public interface OperationDescription {
     
     public String[] getParamNames();
     
-    // TODO: (JLB) These should return Enums defined on this interface, not from the Annotation
+    // TODO: These should return Enums defined on this interface, not from the Annotation
     public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
     public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle();
     public javax.jws.soap.SOAPBinding.Use getSoapBindingUse();

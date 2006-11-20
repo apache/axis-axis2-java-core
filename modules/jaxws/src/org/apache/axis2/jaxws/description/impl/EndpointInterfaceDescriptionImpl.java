@@ -428,7 +428,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     }
 
     public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
-        // TODO: (JLB) Implement WSDL/Anno merge
+        // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingStyle();
     }
     
@@ -445,7 +445,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     }
     
     public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
-        // TODO: (JLB) Implement WSDL/Anno merge
+        // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingUse();
     }
     
@@ -462,7 +462,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     }
     
     public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle(){
-        // TODO: (JLB) Implement WSDL/Anno merge
+        // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingParameterStyle();
     }
     public javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {

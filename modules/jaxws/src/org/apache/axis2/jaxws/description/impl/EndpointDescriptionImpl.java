@@ -30,11 +30,15 @@ import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
+import javax.xml.ws.handler.PortInfo;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
@@ -58,6 +62,7 @@ import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.WsdlComposite;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 /**
@@ -76,6 +81,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     private AxisService axisService;
 
     private QName portQName;
+    private QName serviceQName;
 
     // Corresponds to a port that was added dynamically via addPort and is not declared (either in WSDL or annotations)
     private boolean isDynamicPort;
@@ -103,6 +109,15 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
  
     // Set of packages that are needed to marshal/unmashal data (used to set JAXBContext)
     Set<Package> packages = null;
+    
+    // The JAX-WS Handler port information corresponding to this endpoint
+    private PortInfo portInfo;
+    
+    private String clientBindingID = DEFAULT_CLIENT_BINDING_ID;
+    // The effective endpoint address.  It could be set by the client or come from the WSDL SOAP address
+    private String endpointAddress;
+    // The endpoint address from the WSDL soap:address extensibility element if present.
+    private String wsdlSOAPAddress;
     
     private static final Log log = LogFactory.getLog(EndpointDescriptionImpl.class);
 
@@ -226,7 +241,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         	webServiceProviderAnnotation = composite.getWebServiceProviderAnnot();
         
         // REVIEW: Maybe this should be an error if the name has already been set and it doesn't match
-        getServiceDescriptionImpl().setServiceQName(getServiceQName());
+        // Note that on the client side, the service QN should be set; on the server side it will not be.
+        if (DescriptionUtils.isEmpty(getServiceDescription().getServiceQName())) {
+            getServiceDescriptionImpl().setServiceQName(getServiceQName());
+        }
         //Call the getter to insure the qualified port name is set. 
         getPortQName();
 		
@@ -449,7 +467,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     }
     
     public QName getPortQName() {
-        // TODO: (JLB) Implement WSDL/Annotation merge? May be OK as is; not sure how would know WHICH port Qname to get out of the WSDL if 
+        // REVIEW: Implement WSDL/Annotation merge? May be OK as is; not sure how would know WHICH port Qname to get out of the WSDL if 
         //       we didn't use annotations.
         if (portQName == null) {
             // The name was not set by the constructors, so get it from the
@@ -464,10 +482,20 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     }
     
     public QName getServiceQName() {
-        // REVIEW: Does this need to be cached in an instance variable like the others?
-        String localPart = getAnnoWebServiceServiceName();
-        String tns = getAnnoWebServiceTargetNamespace();
-        return new QName(tns, localPart);
+        if (serviceQName == null) {
+            // If the service name has been set on the Service, use that.  Otherwise
+            // get the name off the annotations
+            QName serviceDescQName = getServiceDescription().getServiceQName();
+            if (!DescriptionUtils.isEmpty(serviceDescQName)) {
+                serviceQName = serviceDescQName;
+            }
+            else {
+                String localPart = getAnnoWebServiceServiceName();
+                String tns = getAnnoWebServiceTargetNamespace();
+                serviceQName = new QName(tns, localPart);
+            }
+        }
+        return serviceQName;
     }
     
     public ServiceDescription getServiceDescription() {
@@ -1104,7 +1132,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     }
     
     public Service.Mode getServiceMode() {
-        // TODO: (JLB) WSDL/Anno Merge
+        // REVIEW: WSDL/Anno Merge
         return getAnnoServiceModeValue();
     }
     
@@ -1139,7 +1167,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     }
     
     public String getBindingType() {
-        // TODO: (JLB) Implement WSDL/Anno merge
+        // REVIEW: Implement WSDL/Anno merge?
         return getAnnoBindingTypeValue();
     }
     
@@ -1244,6 +1272,88 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         }
         return packages;
     }
+    public PortInfo getPortInfo() {
+        if (portInfo == null) {
+            portInfo = new PortInfoImpl(getServiceQName(), getPortQName(), getBindingType());
+        }
+        return portInfo;
+    }
+    public void setClientBindingID(String clientBindingID) {
+        
+        if (clientBindingID == null) {
+            this.clientBindingID = DEFAULT_CLIENT_BINDING_ID;
+        }
+        else if (validateClientBindingID(clientBindingID)) {
+            this.clientBindingID = clientBindingID;
+        }
+        else {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr0", getPortQName().toString()));
+        }
+    }
+    private boolean validateClientBindingID(String bindingId) {
+        boolean isValid = true;
+        if (bindingId != null && !(bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
+                bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
+                bindingId.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+                bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr0", getPortQName().toString()));
+        }
+        return isValid;
+    }
+    public String getClientBindingID() {
+        return clientBindingID;
+    }
+    public void setEndpointAddress(String endpointAddress) {
+        // REVIEW: Should this be called whenever BindingProvider.ENDPOINT_ADDRESS_PROPERTY is set by the client?
+        if (!DescriptionUtils.isEmpty(endpointAddress)) {
+            this.endpointAddress = endpointAddress;
+        }
+        else {
+            // Since a port can be added without setting an endpoint address, this is not an error.
+            if (log.isDebugEnabled())
+                log.debug("A null or empty endpoint address was attempted to be set", new Throwable("Stack Traceback"));
+        }
+    }
+    
+    public String getEndpointAddress() {
+        if (endpointAddress == null) {
+            // If the endpointAddress has not been set explicitly by a call to setEndpointAddress()
+            // then try to get it from the WSDL
+            endpointAddress = getWSDLSOAPAddress();
+        }
+        return endpointAddress;
+    }
+    
+    public String getWSDLSOAPAddress() {
+        if (wsdlSOAPAddress == null) {
+            Port wsdlPort = getWSDLPort();
+            if (wsdlPort != null) {
+                // The port is in the WSDL, so see if it has a SOAP address extensibility element specified.
+                List extElementList = wsdlPort.getExtensibilityElements();
+                for (Object listElement : extElementList) {
+                    ExtensibilityElement extElement = (ExtensibilityElement) listElement;
+                    if (isSOAPAddressElement(extElement)) {
+                        String soapAddress = ((SOAPAddress) extElement).getLocationURI();
+                        if (!DescriptionUtils.isEmpty(soapAddress)) {
+                            wsdlSOAPAddress = soapAddress;
+                        }
+                    }
+                }
+            }
+        }
+        return wsdlSOAPAddress;
+    }
+    
+    private static boolean isSOAPAddressElement(ExtensibilityElement exElement){
+        boolean isAddress = false;
+        // TODO: Add soap12 support later
+        // || WSDLWrapper.SOAP_12_ADDRESS.equals(exElement.getElementType());
+        if (exElement != null) {
+            isAddress = (SOAP_11_ADDRESS_ELEMENT.equals(exElement.getElementType()));
+        }
+        return isAddress;
+    }
+
 }
 
 

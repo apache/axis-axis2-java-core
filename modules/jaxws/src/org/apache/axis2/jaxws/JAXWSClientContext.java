@@ -24,15 +24,15 @@ import java.util.concurrent.ExecutorService;
 import javax.xml.bind.JAXBContext;
 import javax.xml.ws.Service.Mode;
 
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
-import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
 
 public class JAXWSClientContext<T> {
-	private PortData port = null;
-	private Mode serviceMode = null;
+    private EndpointDescription endpointDesc = null;
+    private Mode serviceMode = null;
 	private ExecutorService executor = null;
     private ServiceDescription serviceDescription;
 	private Class<T> clazz = null; //SEI class for Proxy or Implementation type for Dispatch
@@ -44,12 +44,13 @@ public class JAXWSClientContext<T> {
 	public void setExecutor(Executor executor) {
 		this.executor = (ExecutorService)executor;
 	}
-	public PortData getPort() {
-		return port;
-	}
-	public void setPort(PortData port) {
-		this.port = port;
-	}
+    
+    public EndpointDescription getEndpointDescription() {
+        return endpointDesc;
+    }
+    public void setEndpointDescription(EndpointDescription epDesc) {
+        this.endpointDesc = epDesc;
+    }
 	public Mode getServiceMode() {
 		return serviceMode;
 	}

@@ -47,10 +47,10 @@ import org.apache.axis2.jaxws.client.JAXBDispatch;
 import org.apache.axis2.jaxws.client.XMLDispatch;
 import org.apache.axis2.jaxws.client.proxy.JAXWSProxyHandler;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
-import org.apache.axis2.jaxws.handler.PortData;
-import org.apache.axis2.jaxws.handler.PortInfoImpl;
+import org.apache.axis2.jaxws.description.impl.PortInfoImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
@@ -61,18 +61,14 @@ import org.apache.axis2.jaxws.util.WSDLWrapper;
  */
 public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     private Executor executor;
-    private Map<QName, org.apache.axis2.jaxws.handler.PortData> ports;
 
     private ServiceDescription serviceDescription;
     private QName serviceQname;
     private ServiceClient serviceClient = null;
-    // If no binding ID is available, use this one
-    private static String DEFAULT_BINDING_ID = SOAPBinding.SOAP11HTTP_BINDING;
     
     public ServiceDelegate(URL url, QName qname, Class clazz) throws WebServiceException{
     	super();
     	this.serviceQname = qname;
-    	ports = new Hashtable<QName, PortData>();
 
         if(!isValidServiceName()){
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", ""));
@@ -82,7 +78,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             if(!isServiceDefined(serviceQname)){
             	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", serviceQname.toString(), url.toString()));
             }
-            readPorts();
         }
     }
     
@@ -99,46 +94,12 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     public void addPort(QName portName, String bindingId, String endpointAddress)
         throws WebServiceException {
         
-        addPortData(portName, bindingId, endpointAddress);
-        DescriptionFactory.updateEndpoint(serviceDescription, null, portName, ServiceDescription.UpdateType.ADD_PORT);
+        EndpointDescription endpointDesc = 
+            DescriptionFactory.updateEndpoint(serviceDescription, null, portName, ServiceDescription.UpdateType.ADD_PORT);
+        // TODO: Need to set endpointAddress and set or check bindingId on the EndpointDesc
+        endpointDesc.setEndpointAddress(endpointAddress);
+        endpointDesc.setClientBindingID(bindingId);
     }
-    /**
-     * Add a new port (either endpoint based or dispatch based) to the portData table.
-     * @param portName
-     * @param bindingId
-     * @param endpointAddress
-     */
-    private void addPortData(QName portName, String bindingId, String endpointAddress) {
-        if(portName == null ){
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr2"));
-        }
-        
-        if(bindingId != null && !(bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
-           bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
-           bindingId.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-           bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {
-            // TODO Is this the correct exception. Shouldn't this be a WebServiceException ?
-            throw new UnsupportedOperationException(Messages.getMessage("addPortErr0", portName.toString()));
-        }
-        
-        if (bindingId == null) {
-            bindingId = DEFAULT_BINDING_ID;
-        }
-
-        if(!ports.containsKey(portName)){   
-            PortData port = new PortInfoImpl(serviceQname, portName, bindingId, endpointAddress);
-            ports.put(portName, port);
-        }
-        else{
-            //TODO: Can same port have two different set of SOAPAddress
-            /*PortInfoImpl port =(PortInfoImpl) ports.get(portName);
-            port.setBindingID(bindingId);
-            port.setEndPointAddress(endpointAddress);
-            */
-            throw new WebServiceException(Messages.getMessage("addPortDup", portName.toString()));
-        }
-    }
-
     /*
      * (non-Javadoc)
      * @see javax.xml.ws.spi.ServiceDelegate#createDispatch(javax.xml.namespace.QName, java.lang.Class, javax.xml.ws.Service.Mode)
@@ -150,21 +111,17 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	if(!isValidDispatchType(clazz)){
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("dispatchInvalidType"));
     	}
-    	if(!isPortValid(qname)){
-    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail1", qname.toString()));
-    	}
     	
-        PortData portData = (PortData) ports.get(qname);
-        if(portData == null){
-        	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail2", qname.toString())); 
-    	}
-        
-        DescriptionFactory.updateEndpoint(serviceDescription, null, qname, ServiceDescription.UpdateType.CREATE_DISPATCH);
+        EndpointDescription endpointDesc = 
+            DescriptionFactory.updateEndpoint(serviceDescription, null, qname, ServiceDescription.UpdateType.CREATE_DISPATCH);
+        if (endpointDesc == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail2", qname.toString()));
+        }
 
         // FIXME: This call needs to be revisited.  Not really sure what we're trying to do here. 
-        addBinding(portData.getBindingID());
+        addBinding(endpointDesc.getClientBindingID());
     	
-        XMLDispatch<T> dispatch = new XMLDispatch<T>(portData);
+        XMLDispatch<T> dispatch = new XMLDispatch<T>(this, endpointDesc);
         if (mode != null) {
             dispatch.setMode(mode);
         }
@@ -176,7 +133,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             serviceClient = getServiceClient(qname);
         
         dispatch.setServiceClient(serviceClient);
-        dispatch.setServiceDelegate(this);
     	dispatch.setType(clazz);
         return dispatch;        
     }
@@ -190,19 +146,18 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail0"));
         }
         
-        if (!isPortValid(qname)) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail1", qname.toString()));
+        EndpointDescription endpointDesc = 
+            DescriptionFactory.updateEndpoint(serviceDescription, null, qname, ServiceDescription.UpdateType.CREATE_DISPATCH);
+        if (endpointDesc == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail2", qname.toString()));
         }
-
-        DescriptionFactory.updateEndpoint(serviceDescription, null, qname, ServiceDescription.UpdateType.CREATE_DISPATCH);
         
-        PortData portData = (PortData) ports.get(qname);
-        addBinding(portData.getBindingID());
+        addBinding(endpointDesc.getClientBindingID());
         
-        JAXWSClientContext clientCtx = createClientContext(portData, Object.class, mode);
+        JAXWSClientContext clientCtx = createClientContext(endpointDesc, Object.class, mode);
         clientCtx.setJAXBContext(context);
         
-        JAXBDispatch<Object> dispatch = new JAXBDispatch(portData);
+        JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc);
         
         if (mode != null) {
             dispatch.setMode(mode);
@@ -216,7 +171,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         
         dispatch.setJAXBContext(context);
         dispatch.setServiceClient(serviceClient);
-        dispatch.setServiceDelegate(this);
         
         return dispatch;
     }
@@ -248,23 +202,15 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	if(sei == null){
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("getPortInvalidSEI", portName.toString(), "null"));
     	}
-    	/*TODO: if portQname is null then fetch it from annotation. 
-    	 * if portQname is provided then add that to the ports table.
-    	 */
-        // TODO: Move the annotation processing to the DescriptionFactory
-        DescriptionFactory.updateEndpoint(serviceDescription, sei, portName, ServiceDescription.UpdateType.GET_PORT);
 
+        EndpointDescription endpointDesc = 
+            DescriptionFactory.updateEndpoint(serviceDescription, sei, portName, ServiceDescription.UpdateType.GET_PORT);
+        if (endpointDesc == null) {
+            // TODO: NLS
+            throw ExceptionFactory.makeWebServiceException("Unable to getPort for port QName " + portName.toString());
+        }
         
-    	if(portName!=null){
-    		String address = "";
-    		if(isValidWSDLLocation()){
-    			address = getWSDLWrapper().getSOAPAddress(serviceQname, portName);
-    		}
-    		if(ports.get(portName)==null){
-                addPortData(portName, null, address);
-    		}
-    	}
-    	JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, sei, ports.get(portName));
+    	JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, sei, endpointDesc);
     	
     	Class[] seiClazz = new Class[]{sei, BindingProvider.class};
     	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
@@ -361,20 +307,16 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         return Executors.newFixedThreadPool(3);
     }
 
-    private <T> JAXWSClientContext<T> createClientContext(PortData portData, Class<T> clazz, Mode mode){
+    private <T> JAXWSClientContext<T> createClientContext(EndpointDescription epDesc, Class<T> clazz, Mode mode){
         JAXWSClientContext<T> clientContext = new JAXWSClientContext<T>();
         clientContext.setServiceDescription(serviceDescription);
-        clientContext.setPort(portData);
+        clientContext.setEndpointDescription(epDesc);
         clientContext.setClazz(clazz);
         clientContext.setServiceMode(mode);
         clientContext.setExecutor(this.getExecutor());  
         return clientContext;
     }
     
-    private boolean isPortValid(QName portName){
-    	return ports!=null && ports.size() >0 && ports.containsKey(portName);
-    }
-
     private boolean isValidServiceName(){
     	return serviceQname != null && !"".equals(serviceQname.toString().trim());	
     }
@@ -382,18 +324,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     private boolean isValidWSDLLocation(){
         URL wsdlLocation = getWSDLDocumentLocation();
     	return wsdlLocation != null && !"".equals(wsdlLocation.toString().trim());
-    }
-    
-    private void readPorts(){
-    	String[] portNames = getWSDLWrapper().getPorts(serviceQname);
-    	String targetNamespace = getWSDLWrapper().getTargetNamespace();
-    	for(String portName: portNames){
-    		QName portQname = new QName(targetNamespace, portName);
-    		String address = getWSDLWrapper().getSOAPAddress(serviceQname, portQname);
-    		//TODO: get Binding ID from WSDL and add it here.
-    		PortData portInfo = new PortInfoImpl(serviceQname, portQname, DEFAULT_BINDING_ID, address);
-    		ports.put(portQname, portInfo);
-    	}
     }
     
     // TODO: Remove this method and put the WSDLWrapper methods on the ServiceDescriptor directly

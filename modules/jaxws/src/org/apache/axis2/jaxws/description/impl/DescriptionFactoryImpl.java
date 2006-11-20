@@ -21,21 +21,19 @@ package org.apache.axis2.jaxws.description.impl;
 /**
  * 
  */
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.jws.WebService;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 
 /**
@@ -106,12 +104,12 @@ public class DescriptionFactoryImpl {
      *            Can be null
      * @return
      */
-    public static ServiceDescription updateEndpoint(
+    public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
             ServiceDescription.UpdateType updateType) {
-        ((ServiceDescriptionImpl) serviceDescription)
-                .updateEndpointDescription(sei, portQName, updateType);
-        return serviceDescription;
+        EndpointDescription endpointDesc = 
+            ((ServiceDescriptionImpl) serviceDescription).updateEndpointDescription(sei, portQName, updateType);
+        return endpointDesc;
     }
 
     /**

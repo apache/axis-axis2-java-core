@@ -26,7 +26,7 @@ import javax.xml.ws.Service.Mode;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
-import org.apache.axis2.jaxws.handler.PortData;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,8 +47,8 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     private Class type;
     private Class blockFactoryType;
     
-    public XMLDispatch(PortData pd) {
-        super(pd);
+    public XMLDispatch(ServiceDelegate svcDelegate, EndpointDescription enpdointDesc) {
+        super(svcDelegate, enpdointDesc);
     }
     
     public Class getType() {
@@ -83,7 +84,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     		}
     		try{
     			blockFactoryType = getBlockFactory();
-    			return createEmptyMessage(Protocol.getProtocolForBinding(port.getBindingID()));
+    			return createEmptyMessage(Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()));
     			
     		}catch(MessageException e){
     			throw ExceptionFactory.makeWebServiceException(e);
@@ -107,7 +108,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 
                 // The protocol of the Message that is created should be based
                 // on the binding information available.
-                Protocol proto = Protocol.getProtocolForBinding(port.getBindingID());               
+                Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());               
                 message = mf.create(proto);
                 message.setBodyBlock(0, block);
             } catch (Exception e) {

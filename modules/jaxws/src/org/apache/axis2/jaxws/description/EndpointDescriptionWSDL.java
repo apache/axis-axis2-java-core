@@ -32,6 +32,7 @@ public interface EndpointDescriptionWSDL {
     public Port getWSDLPort();
     public Binding getWSDLBinding();
     public String getWSDLBindingType();
+    public String getWSDLSOAPAddress();
     
     /**
      * Is the WSDL definition fully specified for the endpoint (WSDL 1.1 port)

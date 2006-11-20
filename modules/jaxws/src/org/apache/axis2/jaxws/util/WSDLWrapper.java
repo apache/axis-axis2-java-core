@@ -28,7 +28,6 @@ public interface WSDLWrapper {
     public static final QName POLICY = new QName(Constants.POLICY, "Policy");
     public static final QName POLICY_REFERENCE = new QName(Constants.POLICY_REFERENCE, "PolicyReference");
     public static final QName SCHEMA = new QName(Constants.SCHEMA, "schema");
-    public static final QName SOAP_11_ADDRESS = new QName(Constants.URI_WSDL_SOAP11, "address");
     public static final QName SOAP_11_BINDING = new QName(Constants.URI_WSDL_SOAP11_BINDING, "binding");
     public static final QName SOAP_11_BODY = new QName(Constants.URI_WSDL_SOAP11_BODY, "body");
     public static final QName SOAP_11_HEADER = new QName(Constants.URI_WSDL_SOAP11_HEADER, "header");
@@ -48,7 +47,6 @@ public interface WSDLWrapper {
 	public String getSOAPAction(QName serviceQname);
 	public String getSOAPAction(QName serviceQname, QName portQname);
 	public String getSOAPAction(QName serviceQname, QName portQName, QName operationQname);
-	public String getSOAPAddress(QName serviceQname, QName portQname);
 	public URL getWSDLLocation();
 	public String getTargetNamespace();
 	public Definition getDefinition();

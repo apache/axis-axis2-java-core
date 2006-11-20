@@ -27,6 +27,7 @@ import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationProviderImplDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationServiceImplWithDBCTests;
+import org.apache.axis2.jaxws.description.GetDescFromBindingProvider;
 import org.apache.axis2.jaxws.description.PartialWSDLTests;
 import org.apache.axis2.jaxws.description.ServiceAnnotationTests;
 import org.apache.axis2.jaxws.description.ValidateWSDLTests;
@@ -72,8 +73,8 @@ import org.apache.log4j.BasicConfigurator;
 public class JAXWSTest extends TestCase {
     
     static {
-        // Enable debug
-        BasicConfigurator.configure();
+        // Uncomment the followign line to enable debug
+//        BasicConfigurator.configure();
     }
     
     /**
@@ -106,6 +107,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(AnnotationServiceImplWithDBCTests.class);
         suite.addTestSuite(PartialWSDLTests.class);
         suite.addTestSuite(ValidateWSDLTests.class);
+        suite.addTestSuite(GetDescFromBindingProvider.class);
         
         suite.addTestSuite(HandlerChainProcessorTests.class);
         suite.addTestSuite(JaxwsMessageBundleTests.class);

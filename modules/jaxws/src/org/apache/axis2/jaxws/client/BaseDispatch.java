@@ -16,7 +16,6 @@
  */
 package org.apache.axis2.jaxws.client;
 
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
@@ -36,14 +35,11 @@ import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
-import org.apache.axis2.jaxws.handler.PortData;
-import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.impl.AsyncListener;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -53,15 +49,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
     private Log log = LogFactory.getLog(BaseDispatch.class);
     
     protected InvocationController ic;
-    protected ServiceDelegate serviceDelegate;
     protected ServiceClient serviceClient;
     protected Mode mode;
-    protected PortData port;
     
-    protected BaseDispatch(PortData p) {
-        super();
+    protected BaseDispatch(ServiceDelegate svcDelgate, EndpointDescription epDesc) {
+        super(svcDelgate, epDesc);
         
-        port = p;
         ic = new AxisInvocationController();
         setRequestContext();
     }
@@ -312,7 +305,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
     //FIXME: This needs to be moved up to the BindingProvider and should actually
     //be called "initRequestContext()" or something like that.
     protected void setRequestContext(){
-        String endPointAddress = port.getEndpointAddress();
+        String endPointAddress = endpointDesc.getEndpointAddress();
         //WSDLWrapper wsdl =  axisController.getWSDLContext();
         //QName serviceName = axisController.getServiceName();
         //QName portName = axisController.getPortName();
@@ -331,15 +324,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
         //    getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, soapAction);
         //}
     }
-    
-    public ServiceDelegate getServiceDelegate() {
-        return serviceDelegate;
-    }
-    
-    public void setServiceDelegate(ServiceDelegate sd) {
-        serviceDelegate = sd;
-    }
-    
     public void setServiceClient(ServiceClient sc) {
         serviceClient = sc;
     }
@@ -352,10 +336,6 @@ public abstract class BaseDispatch<T> extends BindingProvider
         mode = m;
     }
 
-    public PortData getPort() {
-        return port;
-    }
-    
     /*
      * Configure any properties that will be needed on the Message
      */
@@ -370,7 +350,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         
         // Check if the user enabled MTOM using the SOAP binding 
         // properties for MTOM
-        String bindingID = this.port.getBindingID();
+        String bindingID = endpointDesc.getClientBindingID();
         if((bindingID.equalsIgnoreCase(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
         	bindingID.equalsIgnoreCase(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) &&
         	!msg.isMTOMEnabled()){
@@ -384,7 +364,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
      * a violation.
      */
     private boolean isValidInvocationParam(Object object){
-        String bindingId = port.getBindingID();
+        String bindingId = endpointDesc.getClientBindingID();
         
         // If no bindingId was found, use the default.
         if (bindingId == null) {

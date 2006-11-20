@@ -461,7 +461,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String getOperationName() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebMethodOperationName();
     }
     public String getAnnoWebMethodOperationName() {
@@ -475,7 +475,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String getAction() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebMethodAction();
     }
     
@@ -492,7 +492,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public boolean isExcluded() {
-        // TODO: (JLB) WSDL/Annotation merge
+        // REVIEW: WSDL/Annotation merge
         return getAnnoWebMethodExclude();
     }
     public boolean getAnnoWebMethodExclude() {
@@ -527,7 +527,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String getRequestWrapperLocalName() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoRequestWrapperLocalName();
     }
     
@@ -554,7 +554,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         return requestWrapperLocalName;
     }
     public String getRequestWrapperTargetNamespace() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoRequestWrapperTargetNamespace();
     }
     /**
@@ -581,7 +581,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String getRequestWrapperClassName() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoRequestWrapperClassName();
     }
     /**
@@ -656,7 +656,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String getResponseWrapperTargetNamespace() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoResponseWrapperTargetNamespace();
     }
     /**
@@ -684,7 +684,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String getResponseWrapperClassName() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoResponseWrapperClassName();
     }
     /**
@@ -787,7 +787,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String[] getParamNames() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamNames();
     }
     public String[] getAnnoWebParamNames() {
@@ -829,7 +829,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             ArrayList<Mode> buildModes = new ArrayList<Mode>();
             ParameterDescription[] paramDescs = getParameterDescriptions();
             for (ParameterDescription currentParamDesc:paramDescs) {
-                // TODO: (JLB) Consider new ParamDesc.Mode vs WebParam.Mode
+                // TODO: Consider new ParamDesc.Mode vs WebParam.Mode
                 buildModes.add(((ParameterDescriptionJava) currentParamDesc).getAnnoWebParamMode());
             }
              webParamMode = buildModes.toArray(new Mode[0]);
@@ -880,7 +880,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
 
     public String getResultName() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebResultName();
     }
     
@@ -907,7 +907,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String getResultPartName() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebResultPartName();
     }
     public String getAnnoWebResultPartName() {
@@ -927,7 +927,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public String getResultTargetNamespace() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebResultTargetNamespace();
     }
     public String getAnnoWebResultTargetNamespace() {
@@ -955,7 +955,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public boolean isResultHeader() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebResultHeader();
     }
     public boolean getAnnoWebResultHeader() {
@@ -991,7 +991,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         return soapBindingAnnotation;
     }
     public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoSoapBindingStyle();
     }
     public javax.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle() {
@@ -1008,7 +1008,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoSoapBindingUse();
     }
     public javax.jws.soap.SOAPBinding.Use getAnnoSoapBindingUse() {
@@ -1025,7 +1025,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
 
     public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoSoapBindingParameterStyle();
     }
     public javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
@@ -1061,7 +1061,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
 
     public boolean isOneWay() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return isAnnoOneWay();
     }
     

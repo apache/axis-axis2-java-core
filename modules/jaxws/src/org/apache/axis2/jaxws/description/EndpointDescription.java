@@ -23,9 +23,12 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.PortInfo;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.util.Constants;
 /**
  * An EndpointDescription corresponds to a particular Service Implementation. It
  * can correspond to either either a client to that impl or the actual service
@@ -61,18 +64,48 @@ import org.apache.axis2.description.AxisService;
 public interface EndpointDescription {
 
     public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.EndpointDescription";
+    public static final String DEFAULT_CLIENT_BINDING_ID = SOAPBinding.SOAP11HTTP_BINDING;
+    public static final QName SOAP_11_ADDRESS_ELEMENT = new QName(Constants.URI_WSDL_SOAP11, "address");
+
     public abstract AxisService getAxisService();
     public abstract ServiceClient getServiceClient();
     
     public abstract ServiceDescription getServiceDescription();
     public abstract EndpointInterfaceDescription getEndpointInterfaceDescription();
     
+    /**
+     * Returns the JAX-WS handler PortInfo object for this endpoint.
+     * @return PortInfo
+     */
+    public abstract PortInfo getPortInfo();
+    
     public abstract boolean isProviderBased();
     public abstract boolean isEndpointBased();
     
     public abstract String getName();
     public abstract String getTargetNamespace();
+    /**
+     * Returns the binding type FOR A SERVER.  This is based on the BindingType annotation and/or the WSDL.
+     * This will return NULL if called on a client.
+     * @return
+     */
     public abstract String getBindingType();
+    /**
+     * Set the binding type FOR A CLIENT.  The BindingType annotation is not valid on the client per
+     * the JAX-WS spec.  The value can be set via addPort(...) for a Dispatch client or via TBD for
+     * a Proxy client.
+     */
+    public abstract void setClientBindingID(String clientBindingID);
+    /**
+     * Return the binding type FOR A CLIENT.  This will return NULL if called on the server.
+     * @see setClientBindingID();
+     * @return String representing the client binding type
+     */
+    public abstract String getClientBindingID();
+    
+    public void setEndpointAddress(String endpointAddress);
+    public abstract String getEndpointAddress();
+    
     public abstract List<String> getHandlerList();
     public abstract QName getPortQName();
     public abstract QName getServiceQName();

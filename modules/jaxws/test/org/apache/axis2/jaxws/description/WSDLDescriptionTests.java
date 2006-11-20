@@ -160,6 +160,19 @@ public class WSDLDescriptionTests extends TestCase {
         }
     }
     
+    public void testInvalidAddPortNull() {
+        try {
+            service.addPort(null, null, null);
+            fail("Shouldn't be able to add a port with a null QName");
+        }
+        catch (WebServiceException e) {
+            // Expected path
+        }
+        catch (Exception e) {
+            fail("Unexpected exception caught " + e);
+        }
+    }
+    
     public void testValidAddAndGetPort() {
         QName dispatchPortQN = new QName(VALID_NAMESPACE, "dispatchPort");
         service.addPort(dispatchPortQN, null, null);

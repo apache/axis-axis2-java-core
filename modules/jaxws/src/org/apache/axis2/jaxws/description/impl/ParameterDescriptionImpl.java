@@ -143,7 +143,7 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
     }
     
     public String getParameterName() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamName();
     }
     
@@ -168,7 +168,7 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
         return webParamName;
     }
     public String getPartName() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamPartName();
     }
     public String getAnnoWebParamPartName() {
@@ -185,7 +185,7 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
     }
 
     public String getTargetNamespace() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamTargetNamespace();
     }
     public String getAnnoWebParamTargetNamespace() {
@@ -209,7 +209,7 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
     
 //    public Mode getMode() {
     public WebParam.Mode getMode() {
-        // TODO: (JLB) WSDL/Anno merge.  Problem is that OpDesc is expecting WebParam.Mode
+        // REVIEW: WSDL/Anno merge.  Problem is that OpDesc is expecting WebParam.Mode
         return getAnnoWebParamMode();
     }
     
@@ -245,7 +245,7 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
     }
     
     public boolean isHeader() {
-        // TODO: (JLB) WSDL/Anno merge
+        // REVIEW: WSDL/Anno merge
         return getAnnoWebParamHeader();
     }
     public boolean getAnnoWebParamHeader() {

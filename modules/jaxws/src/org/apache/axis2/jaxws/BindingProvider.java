@@ -23,17 +23,22 @@ import java.util.Map;
 
 import javax.xml.ws.Binding;
 
+
 import org.apache.axis2.jaxws.binding.SOAPBinding;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.transport.http.HTTPConstants;
 
-public class BindingProvider implements javax.xml.ws.BindingProvider {
+public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvider {
 
 	protected Map<String, Object> requestContext;
     protected Map<String, Object> responseContext;
     protected Binding binding;
+    protected EndpointDescription endpointDesc;
+    protected ServiceDelegate serviceDelegate;
     
-    public BindingProvider() {
+    private BindingProvider() {
         requestContext = new Hashtable<String,Object>();
         responseContext = new Hashtable<String,Object>();
         
@@ -44,6 +49,19 @@ public class BindingProvider implements javax.xml.ws.BindingProvider {
         
         //The default Binding is the SOAPBinding
         binding = new SOAPBinding();
+    }
+    
+    public BindingProvider(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
+        this();
+        endpointDesc = epDesc;
+        serviceDelegate = svcDelegate;
+    }
+    
+    public ServiceDelegate getServiceDelegate() {
+        return serviceDelegate;
+    }
+    public EndpointDescription getEndpointDescription() {
+        return endpointDesc;
     }
     
     public Binding getBinding() {

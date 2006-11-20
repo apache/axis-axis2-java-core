@@ -39,10 +39,10 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
-import org.apache.axis2.jaxws.handler.PortData;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
@@ -92,23 +92,16 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	private static Log log = LogFactory.getLog(JAXWSProxyHandler.class);
 
 	//Reference to ServiceDelegate instance that was used to create the Proxy
-	private ServiceDelegate delegate = null;
 	protected ServiceDescription serviceDesc = null;
-	protected EndpointDescription endpointDesc = null;
 	protected OperationDescription operationDesc = null;
 	protected MethodMarshaller methodMarshaller = null;
-	private PortData port = null;
 	private Class seiClazz = null;
 	private Method method = null;
 	
-	public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, PortData port) {
-		super();
-		this.delegate = delegate;
+	public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, EndpointDescription epDesc) {
+		super(delegate, epDesc);
 		this.seiClazz = seiClazz;
-		this.port = port;
 		this.serviceDesc=delegate.getServiceDescription();
-//		FIXME: This probably needs to be more robust; can there be > 1 endpoints; if so, how choose which one?
-		this.endpointDesc = serviceDesc.getEndpointDescription(seiClazz)[0];
 		initRequestContext();
 	}
 	
@@ -180,7 +173,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         requestContext.setOperationDescription(operationDesc);
 		requestIC.setRequestMessageContext(requestContext);
 		InvocationController controller = new AxisInvocationController();
-		requestIC.setServiceClient(delegate.getServiceClient(port.getPortName()));
+		requestIC.setServiceClient(serviceDelegate.getServiceClient(endpointDesc.getPortQName()));
 		
 		//check if the call is OneWay, Async or Sync
 		//if(operationDesc.isOneWay() || method.getReturnType().getName().equals("void")){
@@ -215,7 +208,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			}
 			AsyncResponse listener = createProxyListener(args);
 			requestIC.setAsyncResponseListener(listener);
-			requestIC.setExecutor(delegate.getExecutor());
+			requestIC.setExecutor(serviceDelegate.getExecutor());
 				        
 	        Future<?> future = controller.invokeAsync(requestIC, asyncHandler);
 	        
@@ -235,7 +228,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			}
 			AsyncResponse listener = createProxyListener(args);
 			requestIC.setAsyncResponseListener(listener);
-			requestIC.setExecutor(delegate.getExecutor());
+			requestIC.setExecutor(serviceDelegate.getExecutor());
 	        
 			Response response = controller.invokeAsync(requestIC);
 			
@@ -342,42 +335,27 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		return false;
 	}
 	
-	public void setDelegate(ServiceDelegate delegate) {
-		this.delegate = delegate;
-	}
-	
 	protected void initRequestContext() {
 		String soapAddress = null;
 		String soapAction = null;
-		String endPointAddress = port.getEndpointAddress();
-		WSDLWrapper wsdl = ((ServiceDescriptionWSDL) delegate.getServiceDescription()).getWSDLWrapper();
-		QName serviceName = delegate.getServiceName();
-		QName portName = port.getPortName();
+		String endPointAddress = endpointDesc.getEndpointAddress();
+		WSDLWrapper wsdl = ((ServiceDescriptionWSDL) serviceDelegate.getServiceDescription()).getWSDLWrapper();
+		QName serviceName = serviceDelegate.getServiceName();
+		QName portName = endpointDesc.getPortQName();
+        soapAddress = ((EndpointDescriptionWSDL) endpointDesc).getWSDLSOAPAddress();
 		if (wsdl != null) {
-			soapAddress = wsdl.getSOAPAddress(serviceName, portName);
+            // FIXME: This is getting the Action from the FIRST operation; that seems wrong!
 			soapAction = wsdl.getSOAPAction(serviceName, portName);
 		}
 		super.initRequestContext(endPointAddress, soapAddress, soapAction);
 	}
 
-	protected ServiceDelegate getDelegate() {
-		return delegate;
-	}
-	
 	private boolean isPublic(Method method){
 		return Modifier.isPublic(method.getModifiers());
 	}
 	
 	private boolean isMethodExcluded(){
 		return operationDesc.isExcluded();
-	}
-
-	public PortData getPort() {
-		return port;
-	}
-
-	public void setPort(PortData port) {
-		this.port = port;
 	}
 
 	public Class getSeiClazz() {

@@ -20,23 +20,22 @@ import javax.xml.bind.JAXBContext;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
-import org.apache.axis2.jaxws.handler.PortData;
-import org.apache.axis2.jaxws.impl.AsyncListener;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
-import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 public class JAXBDispatch<T> extends BaseDispatch<T> {
 
     private JAXBContext jaxbContext;
     
-    public JAXBDispatch(PortData pd) {
-        super(pd);
+    public JAXBDispatch(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
+        super(svcDelegate, epDesc);
     }
     
     public JAXBContext getJAXBContext() {
@@ -70,7 +69,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             
             // The protocol of the Message that is created should be based
             // on the binding information available.
-            Protocol proto = Protocol.getProtocolForBinding(port.getBindingID());
+            Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
             
             MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
             message = mf.create(proto);

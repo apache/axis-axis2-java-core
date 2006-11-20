@@ -32,7 +32,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -191,12 +190,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
      *            port or a pre-existing dynamic port.
      */
 
-    void updateEndpointDescription(Class sei, QName portQName, UpdateType updateType) {
-        
-        // TODO: Add support: portQName can be null when called from Service.getPort(Class)
-        if (portQName == null) {
-            throw new UnsupportedOperationException("ServiceDescription.updateEndpointDescription null PortQName not supported");
-        }
+    EndpointDescription updateEndpointDescription(Class sei, QName portQName, UpdateType updateType) {
         
         EndpointDescriptionImpl endpointDescription = getEndpointDescriptionImpl(portQName);
         boolean isPortDeclared = isPortDeclared(portQName);
@@ -207,9 +201,12 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             // Port must NOT be declared (e.g. can not already exist in WSDL)
             // If an EndpointDesc doesn't exist; create it as long as it doesn't exist in the WSDL
             // TODO: This test can be simplified once isPortDeclared(QName) understands annotations and WSDL as ways to declare a port.
+            if (DescriptionUtils.isEmpty(portQName)) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortErr2"));
+            }
             if (getWSDLWrapper() != null && isPortDeclared) {
                 // TODO: RAS & NLS
-                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do an addPort with a PortQN that exists in the WSDL.  PortQN: " + portQName.toString());
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("addPortDup", portQName.toString()));
             }
             else if (endpointDescription == null) {
                 // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
@@ -223,6 +220,11 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             break;
 
         case GET_PORT:
+            // TODO: Add support: portQName can be null when called from Service.getPort(Class)
+            // TODO: I think this is the only place we need to handle a null portQName (not for create Dispatch or addPort)
+            if (DescriptionUtils.isEmpty(portQName)) {
+                throw new UnsupportedOperationException("ServiceDescription.updateEndpointDescription null PortQName not supported");
+            }
             // If an endpointDesc doesn't exist, and the port exists in the WSDL, create it
             // If an endpointDesc already exists and has an associated SEI already, make sure they match
             // If an endpointDesc already exists and was created for Dispatch (no SEI), update that with the SEI provided on the getPort
@@ -230,7 +232,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             // Port must be declared (e.g. in WSDL or via annotations)
             // TODO: Once isPortDeclared understands annotations and not just WSDL, the 2nd part of this check can possibly be removed.
             //       Although consider the check below that updates an existing EndpointDescritpion with an SEI.
-            if (!isPortDeclared || (endpointDescription != null && endpointDescription.isDynamicPort())) {
+            else if (!isPortDeclared || (endpointDescription != null && endpointDescription.isDynamicPort())) {
                 // This guards against the case where an addPort was done previously and now a getPort is done on it.
                 // TODO: RAS & NLS
                 throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " + portQName.toString());
@@ -264,7 +266,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             // Port may or may not exist in WSDL.  
             // If an endpointDesc doesn't exist and it is in the WSDL, it can be created
             // Otherwise, it is an error.
-            if (endpointDescription != null) {
+            if (DescriptionUtils.isEmpty(portQName)) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail0"));
+            }
+            else if (endpointDescription != null) {
                 // The EndpoingDescription already exists; nothing needs to be done
             }
             else if (sei != null) {
@@ -283,11 +288,11 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             else {
                 // The port is not a declared port and it does not have an EndpointDescription, meaning an addPort has not been done for it
                 // This is an error.
-                // TODO: RAS & NLS
-                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Attempt to create a Dispatch for a non-existant Dynamic por  PortQN: " + portQName);
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail1", portQName.toString()));
             }
             break;
         }
+        return endpointDescription;
     }
 
     private Class getEndpointSEI(QName portQName) {
@@ -303,16 +308,18 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         // TODO: This needs to account for declaration of the port via annotations in addition to just WSDL
         // TODO: Add logic to check the portQN namespace against the WSDL Definition NS
         boolean portIsDeclared = false;
-        if (getWSDLWrapper() != null) {
-            Definition wsdlDefn = getWSDLWrapper().getDefinition();
-            Service wsdlService = wsdlDefn.getService(serviceQName);
-            Port wsdlPort = wsdlService.getPort(portQName.getLocalPart());
-            portIsDeclared = (wsdlPort != null);
-        }
-        else {
-            // TODO: Add logic to determine if port is declared via annotations when no WSDL is present.  For now, we have to assume it is declared 
-            // so getPort(...) and createDispatch(...) calls work when there is no WSDL.
-            portIsDeclared = true;
+        if (!DescriptionUtils.isEmpty(portQName)) {
+            if (getWSDLWrapper() != null) {
+                Definition wsdlDefn = getWSDLWrapper().getDefinition();
+                Service wsdlService = wsdlDefn.getService(serviceQName);
+                Port wsdlPort = wsdlService.getPort(portQName.getLocalPart());
+                portIsDeclared = (wsdlPort != null);
+            }
+            else {
+                // TODO: Add logic to determine if port is declared via annotations when no WSDL is present.  For now, we have to assume it is declared 
+                // so getPort(...) and createDispatch(...) calls work when there is no WSDL.
+                portIsDeclared = true;
+            }
         }
         return portIsDeclared;
     }
@@ -328,7 +335,11 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
      * @see org.apache.axis2.jaxws.description.ServiceDescription#getEndpointDescription(javax.xml.namespace.QName)
      */
     public EndpointDescription getEndpointDescription(QName portQName) {
-        return endpointDescriptions.get(portQName);
+        EndpointDescription returnDesc = null;
+        if (!DescriptionUtils.isEmpty(portQName)) {
+            returnDesc = endpointDescriptions.get(portQName);
+        }
+        return returnDesc;
     }
     
     EndpointDescriptionImpl getEndpointDescriptionImpl(QName portQName) {

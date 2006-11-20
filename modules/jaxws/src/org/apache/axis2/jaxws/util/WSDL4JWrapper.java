@@ -243,30 +243,10 @@ public class WSDL4JWrapper implements WSDLWrapper {
 		
 		return null;
 	}
-	public String getSOAPAddress(QName serviceQname, QName eprQname) {
-		// TODO Auto-generated method stub
-		List list =getPort(serviceQname, eprQname).getExtensibilityElements();
-		for(Object obj : list){
-			ExtensibilityElement element = (ExtensibilityElement)obj;
-			if(isSoapAddress(element)){
-				SOAPAddress address = (SOAPAddress)element;
-				return address.getLocationURI();
-			}
-		}
-		
-		return null;
-	}
-	
-	
 	
 	public URL getWSDLLocation() {
 		// TODO Auto-generated method stub
 		return this.wsdlURL;
-	}
-	private boolean isSoapAddress(ExtensibilityElement exElement){
-		return WSDLWrapper.SOAP_11_ADDRESS.equals(exElement.getElementType()); 
-		//TODO: Add soap12 support later
-		//|| WSDLWrapper.SOAP_12_ADDRESS.equals(exElement.getElementType());
 	}
 	
 	private boolean isSoapOperation(ExtensibilityElement exElement){

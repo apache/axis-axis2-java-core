@@ -61,7 +61,7 @@ public interface EndpointInterfaceDescription {
     
     public abstract Class getSEIClass();
 
-    // TODO: (JLB) These should return a locally defined Enums
+    // TODO: These should return a locally defined Enums
     public abstract javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
     public abstract javax.jws.soap.SOAPBinding.Style getSoapBindingStyle();
     public abstract javax.jws.soap.SOAPBinding.Use getSoapBindingUse();
