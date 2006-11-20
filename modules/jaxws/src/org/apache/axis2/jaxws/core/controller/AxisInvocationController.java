@@ -45,6 +45,7 @@ import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.client.async.CallbackFuture;
+import org.apache.axis2.jaxws.client.async.PollingFuture;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -306,7 +307,8 @@ public class AxisInvocationController extends InvocationController {
         }
         
         AsyncResponse resp = ic.getAsyncResponseListener(); 
-        opClient.setCallback(resp);
+        PollingFuture pf = new PollingFuture(resp);
+        opClient.setCallback(pf);
         
         org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
         try {

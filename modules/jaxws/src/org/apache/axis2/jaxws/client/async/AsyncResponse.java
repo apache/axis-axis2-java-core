@@ -28,14 +28,10 @@ import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.client.async.AsyncResult;
-import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.util.Constants;
-import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -47,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  * object that is returned as the response along with a <link>java.util.Map</link>
  * with the context information of the response.  
  */
-public class AsyncResponse extends Callback implements Response {
+public class AsyncResponse implements Response {
 
     private static final Log log = LogFactory.getLog(AsyncResponse.class);
     
@@ -58,57 +54,14 @@ public class AsyncResponse extends Callback implements Response {
     private Map<String, Object> responseContext;
     private Throwable fault;
     
-    //-------------------------------------
-    // org.apache.axis2.client.async.Callback APIs
-    //-------------------------------------
-    
-    /**
-     * This method will be called when the asynchronous invocation has completed
-     * and the response is delivered from Axis2.
-     */    
-    @Override
-    public void onComplete(AsyncResult result) {
-        boolean debug = log.isDebugEnabled();
-        if (debug) {
-            log.debug("JAX-WS async response listener received the response");
-        }
-        
-        try {
-            if (debug) {
-                log.debug("Creating response MessageContext");
-            }
-            
-            // Create the JAX-WS response MessageContext from the Axis2 response
-            org.apache.axis2.context.MessageContext axisResponse = result.getResponseMessageContext();
-            response = new MessageContext(axisResponse);
-            
-            // REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
-            // TODO: Remove workaround for WS-Addressing running in thin client (non-server) environment
-            try {
-                ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponse);
-            }
-            catch (Throwable t) {
-                fault = t;
-                
-                if (debug) {
-                    log.debug("JAX-WS AxisCallback caught throwable from ThreadContextMigratorUtil " + t);
-                    log.debug("...caused by " + t.getCause());
-                }
-                t.printStackTrace();
-            }
-        } catch (MessageException e) {
-            fault = e;
-            if (debug) {
-                log.debug("An error occured while processing the async response.  " + e.getMessage());
-            }
-        }
-        
+    protected void onError(Throwable t) {
+        fault = t;
         done = true;
     }
-
-    @Override
-    public void onError(Exception e) {
-        fault = e;
+    
+    protected void onComplete(MessageContext mc) {
+        response = mc;
+        done = true;
     }
     
     //-------------------------------------

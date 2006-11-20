@@ -22,6 +22,7 @@ import java.util.HashMap;
 
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+import javax.xml.ws.Service;
 import javax.xml.ws.WebFault;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceProvider;
@@ -272,6 +273,11 @@ public class ClassUtils {
         
         // Check for Holder
         if (Holder.class.isAssignableFrom(cls)) {
+            return true;
+        }
+        
+        // Check for a javax.xml.ws.Service class instance
+        if (Service.class.isAssignableFrom(cls)) {
             return true;
         }
         

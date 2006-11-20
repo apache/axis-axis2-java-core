@@ -28,6 +28,8 @@ import javax.xml.ws.AsyncHandler;
 
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -60,7 +62,26 @@ public class CallbackFuture extends Callback {
     
     @Override
     public void onComplete(AsyncResult result) {
-        cft.setResult(result);
+        boolean debug = log.isDebugEnabled();
+        if (debug) {
+            log.debug("JAX-WS async response listener received the response");
+        }
+        
+        MessageContext response = null;
+        try {
+            response = AsyncUtils.createMessageContext(result);
+        } catch (MessageException e) {
+            cft.setError(e);
+            if (debug) {
+                log.debug("An error occured while processing the async response.  " + e.getMessage());
+            }
+        }
+        
+        if (response == null) {
+            // TODO: throw an exception
+        }
+        
+        cft.setMessageContext(response);
         execute();
     }
 
@@ -90,7 +111,7 @@ class CallbackFutureTask implements Callable {
     private static final Log log = LogFactory.getLog(CallbackFutureTask.class);
     
     AsyncResponse response;
-    AsyncResult result;
+    MessageContext responseMsgCtx;
     AsyncHandler handler;
     Exception error;
     
@@ -99,8 +120,8 @@ class CallbackFutureTask implements Callable {
         handler = h;
     }
     
-    void setResult(AsyncResult r) {
-        result = r;
+    void setMessageContext(MessageContext mc) {
+        responseMsgCtx = mc;
     }
     
     void setError(Exception e) {
@@ -109,8 +130,8 @@ class CallbackFutureTask implements Callable {
     
     @SuppressWarnings("unchecked")
     public Object call() throws Exception {
-        if (result != null) {
-            response.onComplete(result);    
+        if (responseMsgCtx != null) {
+            response.onComplete(responseMsgCtx);    
         }
         else if (error != null) {
             response.onError(error);
