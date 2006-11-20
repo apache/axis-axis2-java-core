@@ -45,8 +45,8 @@
      }
 
         <xsl:for-each select="method">
-            <xsl:variable name="outParamType"><xsl:value-of select="output/param/@type"/></xsl:variable>
-            <xsl:variable name="outParamName"><xsl:value-of select="output/param/@name"/></xsl:variable>
+            <xsl:variable name="outParamType" select="output/param/@type"></xsl:variable>
+            <xsl:variable name="outParamName" select="output/param/@name"></xsl:variable>
             <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
             <xsl:choose>
                 <!-- Code generation for in-out only. Need to consider the other meps also
@@ -57,7 +57,7 @@
             *
             */
            public void receiveResult<xsl:value-of select="@name"/>(
-                    <xsl:if test="$outParamType!=''"><xsl:value-of select="$outParamType"/><xsl:text> </xsl:text><xsl:value-of select="$outParamName"/></xsl:if>) {
+                    <xsl:if test="string-length(normalize-space($outParamType)) > 0"><xsl:value-of select="$outParamType"/><xsl:text> </xsl:text><xsl:value-of select="$outParamName"/></xsl:if>) {
            }
 
           /**

@@ -120,8 +120,24 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                             }
+
                          </xsl:if>
                     </xsl:for-each>
+                    <!-- to support for backword compatiblity we have to add and wrapp method-->
+                    <xsl:if test="generate-id($inputElement) = generate-id(key('paramsIn', $inputElementType)[1])">
+                        <xsl:if test="string-length(normalize-space($inputElementComplexType)) > 0">
+                            private <xsl:value-of select="$inputElementComplexType"/> get<xsl:value-of select="$opname"/>(
+                            <xsl:value-of select="$inputElementType"/> wrappedType){
+                                return wrappedType.get<xsl:value-of select="$inputElementShortType"/>();
+                            }
+                            private <xsl:value-of select="$inputElementType"/> wrap<xsl:value-of select="$opname"/>(
+                            <xsl:value-of select="$inputElementComplexType"/> innerType){
+                                <xsl:value-of select="$inputElementType"/> wrappedElement = new <xsl:value-of select="$inputElementType"/>();
+                                wrappedElement.set<xsl:value-of select="$inputElementShortType"/>(innerType);
+                                return wrappedElement;
+                            }
+                        </xsl:if>
+                    </xsl:if>
                 </xsl:if>
         </xsl:for-each>
 

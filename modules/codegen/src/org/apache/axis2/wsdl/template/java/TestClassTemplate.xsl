@@ -10,6 +10,7 @@
     <xsl:variable name="stubname"><xsl:value-of select="@stubname"/></xsl:variable>
     <xsl:variable name="isSync"><xsl:value-of select="@isSync"/></xsl:variable>
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
+    <xsl:variable name="isbackcompatible" select="@isbackcompatible"/>
 
     /**
      * <xsl:value-of select="@name"/>.java
@@ -52,10 +53,15 @@
                         <xsl:for-each select="input/param[@type!='']">
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
+                             <xsl:variable name="complexType" select="@complextype"/>
+
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>
 
                              <xsl:choose>
-                                 <xsl:when test="$paramcount > 0">
+                                 <xsl:when test="($isbackcompatible='true') and string-length(normalize-space($complexType)) > 0">
+                                       <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>get<xsl:value-of select="@opname"/>(<xsl:value-of select="@name"/>)</xsl:if>
+                                 </xsl:when>
+                                 <xsl:when test="($paramcount > 0) and not($isbackcompatible='true')">
                                       <xsl:for-each select="param[@type!='' and @opname=$opname]">
                                             <xsl:if test="position()>1">,</xsl:if>get<xsl:value-of select="@partname"/>(<xsl:value-of select="$paramname"/>)
                                       </xsl:for-each>
@@ -72,10 +78,14 @@
 
                              <xsl:variable name="opname" select="@opname"/>
                              <xsl:variable name="paramname" select="@name"/>
+                             <xsl:variable name="complexType" select="@complextype"/>
                              <xsl:variable name="paramcount" select="count(param[@type!='' and @opname=$opname])"/>
 
                              <xsl:choose>
-                                 <xsl:when test="$paramcount > 0">
+                                 <xsl:when test="($isbackcompatible='true') and string-length(normalize-space($complexType)) > 0">
+                                       <xsl:if test="@type!=''"><xsl:if test="position()>1">,</xsl:if>get<xsl:value-of select="@opname"/>(<xsl:value-of select="@name"/>)</xsl:if>
+                                 </xsl:when>
+                                 <xsl:when test="($paramcount > 0) and not($isbackcompatible='true')">
                                       <xsl:for-each select="param[@type!='' and @opname=$opname]">
                                             <xsl:if test="position()>1">,</xsl:if>get<xsl:value-of  select="@partname"/>(<xsl:value-of select="$paramname"/>)
                                       </xsl:for-each>

@@ -164,14 +164,21 @@
 				<ant:echo>Running codegen for eBaySvc WSDL</ant:echo>
 					<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 						<classpath refid="maven.dependency.classpath"/>
-						<arg line="-ss -sd -g -b -o target/eBaySvc -s -uri test-resources/eBaySvc.wsdl"/>
+						<arg line="-ss -sd -g -u -ssi -t -o target/eBaySvc -uri test-resources/eBaySvc.wsdl"/>
 					</java>
 				 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvc"
+							 target="jar.server"/>
+				<ant:echo>Running codegen for eBaySvc WSDL Back word compatibiliy</ant:echo>
+					<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+						<classpath refid="maven.dependency.classpath"/>
+						<arg line="-ss -sd -g -t -u -ssi -b -s -o target/eBaySvcB -uri test-resources/eBaySvc.wsdl"/>
+					</java>
+				 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcB"
 							 target="jar.server"/>
                 <ant:echo>Running codegen for eBaySvc WSDL with un wrapping </ant:echo>
 					<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 						<classpath refid="maven.dependency.classpath"/>
-						<arg line="-ss -sd -g -b -o target/eBaySvcUW -s -t -uw -uri test-resources/eBaySvc.wsdl"/>
+						<arg line="-ss -sd -ssi -u -g -t -uw  -o target/eBaySvcUW -uri test-resources/eBaySvc.wsdl"/>
 					</java>
 				 <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/eBaySvcUW"
 							 target="jar.server"/>

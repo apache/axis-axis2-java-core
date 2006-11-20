@@ -119,7 +119,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         XmlSchemaElement schemaElement = message.getSchemaElement();
         XmlSchemaType schemaType = schemaElement.getSchemaType();
 
-        String complexType = handleAllCasesOfComplexTypes(schemaType, message, partNameList);
+        handleAllCasesOfComplexTypes(schemaType, message, partNameList);
 
         try {
             //set in the axis message that the unwrapping was success
@@ -137,8 +137,6 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             message.addParameter(
                     getParameter(Constants.UNWRAPPED_DETAILS,
                             infoHolder));
-            // store the complex type name for this message
-            message.addParameter(getParameter(Constants.COMPLEX_TYPE, complexType));
 
         } catch (AxisFault axisFault) {
             throw new CodeGenerationException(axisFault);
@@ -146,20 +144,13 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
     }
 
-    private String handleAllCasesOfComplexTypes(XmlSchemaType schemaType, AxisMessage message, List partNameList) throws CodeGenerationException {
+    private void handleAllCasesOfComplexTypes(XmlSchemaType schemaType, AxisMessage message, List partNameList) throws CodeGenerationException {
 
         // if a complex type name exits for a element then
         // we keep that complex type to support unwrapping
         String complexType = "";
         if (schemaType instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
-            if ((cmplxType.getName() != null) && (cmplxType.getName().length() != 0)) {
-                if ((cmplxType.getQName() != null) && (cmplxType.getQName().getNamespaceURI() != null) && (cmplxType.getQName().getNamespaceURI().length() != 0))
-                {
-                    complexType = URLProcessor.makePackageName(cmplxType.getQName().getNamespaceURI()) + ".";
-                }
-                complexType += cmplxType.getName();
-            }
             if (cmplxType.getContentModel() == null) {
                 if (cmplxType.getParticle() != null){
                     processXMLSchemaSequence(cmplxType.getParticle(), message, partNameList);
@@ -175,7 +166,6 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
                     "unknown", "complexType"));
         }
-        return complexType;
     }
 
     private void processComplexContentModel(XmlSchemaComplexType cmplxType, AxisMessage message, List partNameList) throws CodeGenerationException {

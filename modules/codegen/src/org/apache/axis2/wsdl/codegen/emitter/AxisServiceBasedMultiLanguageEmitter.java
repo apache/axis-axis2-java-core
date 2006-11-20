@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.woden.internal.util.dom.DOM2Writer;
 //import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -68,6 +69,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     // keep a seperate variable for  SKELETON_INTERFACE_SUFFIX_BACK although it is
     // "" to accomadate any future changes easily.
     protected static final String SKELETON_INTERFACE_SUFFIX_BACK = "";
+    protected static final String STUB_INTERFACE_SUFFIX_BACK = "Stub";
     protected static final String MESSAGE_RECEIVER_SUFFIX = "MessageReceiver";
     protected static final String FAULT_SUFFIX = "Exception";
     protected static final String DATABINDING_SUPPORTER_NAME_SUFFIX = "DatabindingSupporter";
@@ -379,7 +381,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
         addAttribute(doc, "interfaceName", coreClassName, rootElement);
         addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
-        addAttribute(doc, "stubname", coreClassName + STUB_SUFFIX, rootElement);
+        if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
+           addAttribute(doc, "stubname", makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX, rootElement);
+        } else {
+           addAttribute(doc, "stubname", coreClassName + STUB_SUFFIX, rootElement);
+        }
+
+        //add backwordcompatibility attribute
+        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+                rootElement);
 
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
@@ -427,12 +437,26 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("class");
 
         addAttribute(doc, "package", packageName, rootElement);
-        addAttribute(doc, "name", stubName, rootElement);
+
         addAttribute(doc, "servicename", localPart, rootElement);
         //The target nemespace is added as the namespace for this service
         addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
-        addAttribute(doc, "interfaceName", localPart, rootElement);
+        if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
+            addAttribute(doc, "interfaceName",
+                    makeJavaClassName(axisService.getPortTypeName()) + STUB_INTERFACE_SUFFIX_BACK,
+                    rootElement);
+            addAttribute(doc, "name", makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX, 
+                    rootElement);
+        } else {
+            addAttribute(doc, "interfaceName", localPart, rootElement);
+            addAttribute(doc, "name", stubName, rootElement);
+        }
+
         addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        //add backwordcompatibility attribute
+        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+                rootElement);
+
 
         // add the wrap classes flag
         if (codeGenConfiguration.isPackClasses()) {
@@ -541,6 +565,95 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
         return rootElement;
     }
+
+    /**
+     * add the qNames of the operation fault message names to faultMessages Mep
+     *
+     * @param operationFaultMessages
+     * @param faultMessagesToMep
+     */
+
+    private void addFaultMessages(List operationFaultMessages, Set faultMessagesToMep) {
+
+        AxisMessage faultMessage;
+        for (Iterator iter = operationFaultMessages.iterator(); iter.hasNext();) {
+            faultMessage = (AxisMessage) iter.next();
+            faultMessagesToMep.add(faultMessage.getElementQName());
+        }
+
+    }
+
+    /**
+     * A util method that returns a unique list of faults for a given mep
+     *
+     * @param doc
+     * @return DOM element
+     */
+    protected Element getUniqueListofFaultsofMep(Document doc, String mep) {
+
+        //  list to keep fault message qnames for this mep
+        Set faultListForMep = new HashSet();
+
+        Iterator iter = this.axisService.getOperations();
+        AxisOperation axisOperation;
+
+        for (; iter.hasNext();) {
+            axisOperation = (AxisOperation) iter.next();
+            if (mep == null) {
+                // add the fault messages
+                addFaultMessages(axisOperation.getFaultMessages(),faultListForMep);
+            } else {
+                if (mep.equals(axisOperation.getMessageExchangePattern())){
+                   // add the fault messages
+                   addFaultMessages(axisOperation.getFaultMessages(),faultListForMep);
+                }
+            }
+        }
+
+        Element rootElement = doc.createElement("fault-list");
+        Element faultElement;
+        QName key;
+        Iterator iterator = faultListForMep.iterator();
+        while (iterator.hasNext()) {
+            faultElement = doc.createElement("fault");
+            key = (QName) iterator.next();
+
+            //as for the name of a fault, we generate an exception
+            addAttribute(doc, "name",
+                    (String) fullyQualifiedFaultClassNameMap.get(key),
+                    faultElement);
+            addAttribute(doc, "shortName",
+                    (String) faultClassNameMap.get(key),
+                    faultElement);
+
+            //the type represents the type that will be wrapped by this
+            //name
+            String typeMapping =
+                    this.mapper.getTypeMappingName(key);
+            addAttribute(doc, "type", (typeMapping == null)
+                    ? ""
+                    : typeMapping, faultElement);
+            String attribValue = (String) instantiatableMessageClassNames.
+                    get(key);
+
+            addAttribute(doc, "instantiatableType",
+                    attribValue == null ? "" : attribValue,
+                    faultElement);
+
+            // add an extra attribute to say whether the type mapping is
+            // the default
+            if (mapper.getDefaultMappingName().equals(typeMapping)) {
+                addAttribute(doc, "default", "yes", faultElement);
+            }
+            addAttribute(doc, "value", getParamInitializer(typeMapping),
+                    faultElement);
+
+
+            rootElement.appendChild(faultElement);
+        }
+        return rootElement;
+    }
+
 
     /**
      * Adds the endpoint to the document.
@@ -727,7 +840,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("interface");
         String localPart = null;
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
-            localPart = makeJavaClassName(axisService.getPortTypeName());
+            localPart = makeJavaClassName(axisService.getPortTypeName() + STUB_INTERFACE_SUFFIX_BACK);
         } else {
             localPart = makeJavaClassName(axisService.getName());
         }
@@ -735,6 +848,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         addAttribute(doc, "name", localPart, rootElement);
         addAttribute(doc, "callbackname", makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX,
+                rootElement);
+        //add backwordcompatibility attribute
+        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
@@ -1007,6 +1123,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = makeJavaClassName(axisService.getName());
 
         addAttribute(doc, "name", localPart + mepToSuffixMap.get(mep), rootElement);
+        //add backwordcompatibility attribute
+        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+                rootElement);
+        
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
             addAttribute(doc, "skeletonname", makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK, rootElement);
             if (isServerSideInterface) {
@@ -1051,7 +1171,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         rootElement.appendChild(createDOMElementforDatabinders(doc,true));
 
         //attach a list of faults
-        rootElement.appendChild(getUniqueListofFaults(doc));
+        rootElement.appendChild(getUniqueListofFaultsofMep(doc,mep));
 
         doc.appendChild(rootElement);
 
@@ -1452,6 +1572,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
         addAttribute(doc, "callbackname", serviceName + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
+        //add backwordcompatibility attribute
+        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+                rootElement);
         if (isSkeletonInterface) {
             if (this.codeGenConfiguration.isBackwordCompatibilityMode()){
                 addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(axisService.getPortTypeName()) + SKELETON_INTERFACE_SUFFIX_BACK,
@@ -1492,6 +1615,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "callbackname", serviceName + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
 
+        //add backwordcompatibility attribute
+        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+                rootElement);
+
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
 
@@ -1499,6 +1626,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         rootElement.appendChild(getUniqueListofFaults(doc));
 
         doc.appendChild(rootElement);
+        //////////////////////////////////////////////////////////
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
+        ////////////////////////////////////////////////////////////
         return doc;
 
     }
@@ -1819,29 +1949,29 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element inputElt = doc.createElement("input");
         String MEP = operation.getMessageExchangePattern();
 
-        /*
-         * Setting the input message policy as an attribute of the input element.
-         */
-        AxisMessage inputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        if (inputMessage != null) {
-            PolicyInclude policyInclude = inputMessage.getPolicyInclude();
-            Policy policy = policyInclude.getPolicy();
+        if (WSDLUtil.isInputPresentForMEP(MEP)) {
 
-            if (policy != null) {
-                policy = (Policy) policy.normalize(policyInclude.getPolicyRegistry(), false);
-                try {
-                    String policyString = PolicyUtil.policyComponentToString(policy);
-                    policyString = PolicyUtil.getSafeString(policyString);
-                    addAttribute(doc, "policy", policyString, inputElt);
+            /*
+             * Setting the input message policy as an attribute of the input element.
+             */
+            AxisMessage inputMessage = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            if (inputMessage != null) {
+                PolicyInclude policyInclude = inputMessage.getPolicyInclude();
+                Policy policy = policyInclude.getPolicy();
 
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                if (policy != null) {
+                    policy = (Policy) policy.normalize(policyInclude.getPolicyRegistry(), false);
+                    try {
+                        String policyString = PolicyUtil.policyComponentToString(policy);
+                        policyString = PolicyUtil.getSafeString(policyString);
+                        addAttribute(doc, "policy", policyString, inputElt);
+
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-        }
 
-
-        if (WSDLUtil.isInputPresentForMEP(MEP)) {
             Element[] param = getInputParamElement(doc, operation);
             for (int i = 0; i < param.length; i++) {
                 inputElt.appendChild(param[i]);
@@ -2016,16 +2146,20 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             paramElementList.add(mainParameter);
 
+            //if the unwrapping or backWordCompatibility flag is on then we have to
+            //put the element complex type if it exits
+            if (this.codeGenConfiguration.isBackwordCompatibilityMode() ||
+                    !this.codeGenConfiguration.isParametersWrapped()){
+                 if (inputMessage.getParameter(Constants.COMPLEX_TYPE) != null){
+                    Parameter parameter = inputMessage.getParameter(Constants.COMPLEX_TYPE);
+                    addAttribute(doc,"complextype",(String)parameter.getValue(),mainParameter);
+                }
+            }
+
             // this message has been unwrapped - find the correct references of the
             // the message by looking at the unwrapped details object and attach the
             // needed parameters inside main parameter element
             if (inputMessage.getParameter(Constants.UNWRAPPED_KEY) != null) {
-
-                // we put the complex type only if unWrapped key present
-                if (inputMessage.getParameter(Constants.COMPLEX_TYPE) != null){
-                    Parameter parameter = inputMessage.getParameter(Constants.COMPLEX_TYPE);
-                    addAttribute(doc,"complextype",(String)parameter.getValue(),mainParameter);
-                }
 
                 //we have this unwrapped earlier. get the info holder
                 //and then look at the parameters
@@ -2190,6 +2324,16 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // add this as a body parameter
         addAttribute(doc, "location", "body", paramElement);
         addAttribute(doc, "opname", operation.getName().getLocalPart(), paramElement);
+
+        //if the unwrapping or backWordCompatibility flag is on then we have to
+        //put the element complex type if it exits
+        if (this.codeGenConfiguration.isBackwordCompatibilityMode() ||
+                !this.codeGenConfiguration.isParametersWrapped()){
+             if (outputMessage.getParameter(Constants.COMPLEX_TYPE) != null){
+                Parameter parameter = outputMessage.getParameter(Constants.COMPLEX_TYPE);
+                addAttribute(doc,"complextype",(String)parameter.getValue(),paramElement);
+            }
+        }
 
         return paramElement;
     }

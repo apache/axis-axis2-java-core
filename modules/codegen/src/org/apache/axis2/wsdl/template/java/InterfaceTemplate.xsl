@@ -15,6 +15,7 @@
     <xsl:variable name="isAsync"><xsl:value-of select="@isAsync"/></xsl:variable>
     <xsl:variable name="callbackname"><xsl:value-of select="@callbackname"/></xsl:variable>
     <xsl:variable name="package"><xsl:value-of select="@package"/></xsl:variable>
+    <xsl:variable name="isbackcompatible" select="@isbackcompatible"/>
 
     /**
      * <xsl:value-of select="@name"/>.java
@@ -33,6 +34,7 @@
             <!-- Code for in-out mep -->
          <xsl:if test="@mep='12'">
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
+         <xsl:variable name="outputcomplextype"><xsl:value-of select="output/param/@complextype"></xsl:value-of></xsl:variable>
 
         <!-- start of the sync block -->                                          
          <xsl:if test="$isSync='1'">
@@ -43,34 +45,69 @@
                     * @param <xsl:value-of select="@name"></xsl:value-of><xsl:text>
                 </xsl:text></xsl:for-each>
          */
-         public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
-        <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
 
-                <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
-                <xsl:choose>
-                    <xsl:when test="$inputcount=1">
-                        <!-- Even when the parameters are 1 we have to see whether we have the
-                      wrapped parameters -->
-                        <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+         <xsl:choose>
+             <xsl:when test="$isbackcompatible='true'">
+                    public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when>
+                      <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0"><xsl:value-of select="$outputcomplextype"/></xsl:when>
+                      <xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
+                        <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
+
+                        <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
                         <xsl:choose>
-                            <xsl:when test="$inputWrappedCount &gt; 0">
-                               <xsl:for-each select="input/param[@location='body' and @type!='']/param">
-            <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-          </xsl:for-each>             
+                            <xsl:when test="$inputcount=1">
+                                <xsl:variable name="inputComplexType" select="input/param[@location='body' and @type!='']/@complextype"/>
+                                <xsl:choose>
+                                    <xsl:when test="string-length(normalize-space($inputComplexType)) > 0">
+                                       <xsl:value-of select="$inputComplexType"/><xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/><xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
+                        </xsl:choose>
+
+                        <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
+                        <xsl:for-each select="input/param[not(@location='body') and @type!='']">
+                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                        </xsl:for-each>)
+                        throws java.rmi.RemoteException
              </xsl:when>
              <xsl:otherwise>
-                                <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/><xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
-                </xsl:choose>
+                     public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise>
+                     <xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
+                        <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
 
-                <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
-                <xsl:for-each select="input/param[not(@location='body') and @type!='']">
-            <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
-                </xsl:for-each>)
-                throws java.rmi.RemoteException
+                        <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
+                        <xsl:choose>
+                            <xsl:when test="$inputcount=1">
+                                <!-- Even when the parameters are 1 we have to see whether we have the
+                              wrapped parameters -->
+                                <xsl:variable name="inputWrappedCount" select="count(input/param[@location='body' and @type!='']/param)"/>
+                                <xsl:choose>
+                                    <xsl:when test="$inputWrappedCount &gt; 0">
+                                       <xsl:for-each select="input/param[@location='body' and @type!='']/param">
+                                            <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                                       </xsl:for-each>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="input/param[@location='body' and @type!='']/@type"/><xsl:text> </xsl:text><xsl:value-of select="input/param[@location='body' and @type!='']/@name"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise><!-- Just leave it - nothing we can do here --></xsl:otherwise>
+                        </xsl:choose>
+
+                        <xsl:if test="$inputcount=1 and input/param[not(@location='body') and @type!='']">,</xsl:if>
+                        <xsl:for-each select="input/param[not(@location='body') and @type!='']">
+                    <xsl:if test="position()>1">,</xsl:if><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                        </xsl:for-each>)
+                        throws java.rmi.RemoteException
+             </xsl:otherwise>
+         </xsl:choose>
+
           <!--add the faults-->
           <xsl:for-each select="fault/param[@type!='']">
           ,<xsl:value-of select="@name"/>

@@ -90,7 +90,16 @@ public abstract class TypeMappingAdapter implements TypeMapper {
         if (counter == UPPER_PARAM_LIMIT) {
             counter = 0;
         }
-        return PARAMETER_NAME_SUFFIX + counter++;
+        if ((qname != null) && (qname.getLocalPart().length() != 0)) {
+            String paramName = qname.getLocalPart();
+            //make the first letter lower case - java coding convention
+            if (paramName.length() > 1){
+                paramName = paramName.substring(0,1).toLowerCase() + paramName.substring(1);
+            }
+            return paramName + counter++;
+        } else {
+            return PARAMETER_NAME_SUFFIX + counter++;
+        }
     }
 
     /**

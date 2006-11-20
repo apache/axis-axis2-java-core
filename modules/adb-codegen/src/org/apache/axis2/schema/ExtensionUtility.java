@@ -3,6 +3,7 @@ package org.apache.axis2.schema;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -10,6 +11,8 @@ import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.Constants;
+import org.apache.axis2.util.URLProcessor;
+import org.apache.axis2.AxisFault;
 import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
@@ -135,8 +138,47 @@ public class ExtensionUtility {
             }
         }
 
+        //put the complext types for the top level elements having them
+        // this is needed in unwrapping and to provide backwordCompatibility
+        if(!configuration.isParametersWrapped() || configuration.isBackwordCompatibilityMode()){
+           AxisService axisService = configuration.getAxisService();
+           AxisOperation axisOperation;
+           AxisMessage axisMessage;
+           for (Iterator operators = axisService.getOperations(); operators.hasNext();){
+               axisOperation = (AxisOperation) operators.next();
+               if (WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())){
+                   axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                   setComplexTypeName(axisMessage);
+               }
+               if (WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())){
+                   axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                   setComplexTypeName(axisMessage);
+               }
+           }
+        }
+
         //set the type mapper to the config
         configuration.setTypeMapper(mapper);
+
+    }
+
+    /**
+     * set the complext type class name as an message parameter if it exits
+     * @param axisMessage
+     */
+    private static void setComplexTypeName(AxisMessage axisMessage) throws AxisFault {
+
+        XmlSchemaType schemaType = axisMessage.getSchemaElement().getSchemaType();
+        if (schemaType instanceof XmlSchemaComplexType){
+            XmlSchemaComplexType complexType = (XmlSchemaComplexType) schemaType;
+            if ((complexType.getName() != null) && (complexType.getQName() != null)) {
+                Map metaInfo = complexType.getMetaInfoMap();
+                String complexTypeName = (String)
+                        metaInfo.get(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY);
+                // store the complext type name to process later
+               axisMessage.addParameter(new Parameter(Constants.COMPLEX_TYPE, complexTypeName));
+            }
+        }
 
     }
 
