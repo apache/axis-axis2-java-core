@@ -37,6 +37,7 @@ import org.apache.rampart.policy.model.RampartConfig;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
+import org.apache.ws.security.SOAPConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSConfig;
 import org.apache.ws.security.WSSecurityEngineResult;
@@ -46,6 +47,7 @@ import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.handler.WSHandlerResult;
 import org.apache.ws.security.message.WSSecHeader;
 import org.apache.ws.security.util.Loader;
+import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
@@ -128,6 +130,8 @@ public class RampartMessageData {
     private boolean sender;
     
     private ClassLoader customClassLoader;
+    
+    private SOAPConstants soapConstants;
 
     public RampartMessageData(MessageContext msgCtx, boolean sender) throws RampartException {
         
@@ -141,6 +145,8 @@ public class RampartMessageData {
              */
             this.document = Axis2Util.getDocumentFromSOAPEnvelope(msgCtx.getEnvelope(), false);
             msgCtx.setEnvelope((SOAPEnvelope)this.document.getDocumentElement());
+            
+            this.soapConstants = WSSecurityUtil.getSOAPConstants(this.document.getDocumentElement());
             
             //Extract known properties from the msgCtx
             
@@ -606,5 +612,9 @@ public class RampartMessageData {
 
     public ClassLoader getCustomClassLoader() {
         return customClassLoader;
+    }
+
+    public SOAPConstants getSoapConstants() {
+        return soapConstants;
     }
 }
