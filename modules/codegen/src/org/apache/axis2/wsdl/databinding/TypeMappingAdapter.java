@@ -46,7 +46,6 @@ public abstract class TypeMappingAdapter implements TypeMapper {
 
     //counter variable to generate unique parameter ID's
     protected int counter = 0;
-
     protected boolean isObject = false;
 
     //Upper limit for the paramete count
