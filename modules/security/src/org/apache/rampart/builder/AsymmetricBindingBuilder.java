@@ -19,6 +19,7 @@ package org.apache.rampart.builder;
 import org.apache.axiom.om.OMElement;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.rahas.TrustException;
 import org.apache.rampart.RampartException;
 import org.apache.rampart.RampartMessageData;
 import org.apache.rampart.policy.RampartPolicyData;
@@ -31,6 +32,7 @@ import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.conversation.ConversationException;
+import org.apache.ws.security.handler.WSHandlerConstants;
 import org.apache.ws.security.message.WSSecDKEncrypt;
 import org.apache.ws.security.message.WSSecDKSign;
 import org.apache.ws.security.message.WSSecEncrypt;
@@ -52,6 +54,10 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
     private WSSecSignature sig;
 
     private WSSecEncryptedKey encrKey;
+    
+    private String encryptedKeyId;
+    
+    private byte[] encryptedKeyValue;
 
     private Vector signatureValues = new Vector();
 
@@ -107,26 +113,12 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
         if (encryptionToken != null && encrParts.size() > 0) {
             if (encryptionToken.isDerivedKeys()) {
                 try {
-                    // Set up the encrypted key to use
-                    encrKey = this.getEncryptedKeyBuilder(rmd, encryptionToken);
-
-                    Element bstElem = encrKey.getBinarySecurityTokenElement();
-                    if (bstElem != null) {
-                        // If a BST is available then use it
-                        RampartUtil.appendChildToSecHeader(rmd, bstElem);
-                    }
-
-
-                    // Add the EncryptedKey
-                    encrTokenElement = encrKey.getEncryptedKeyElement();
-                    this.encrTokenElement = RampartUtil.appendChildToSecHeader(rmd,
-                            encrTokenElement);
-
+                    this.setupEncryptedKey(rmd, encryptionToken);
                     // Create the DK encryption builder
                     dkEncr = new WSSecDKEncrypt();
                     dkEncr.setParts(encrParts);
-                    dkEncr.setExternalKey(encrKey.getEphemeralKey(), encrKey
-                            .getId());
+                    dkEncr.setExternalKey(this.encryptedKeyValue, 
+                            this.encryptedKeyId);
                     dkEncr.prepare(doc);
 
                     // Get and add the DKT element
@@ -343,10 +335,10 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                     WSSecDKEncrypt dkEncr = new WSSecDKEncrypt();
                     
                     if(this.encrKey == null) {
-                        this.setupEncryptedKey(rmd);
+                        this.setupEncryptedKey(rmd, encrToken);
                     }
                     
-                    dkEncr.setExternalKey(encrKey.getEphemeralKey(), encrKey.getId());
+                    dkEncr.setExternalKey(this.encryptedKeyValue, this.encryptedKeyId);
                     dkEncr.setSymmetricEncAlgorithm(rpd.getAlgorithmSuite().getEncryption());
                     dkEncr.prepare(doc);
                     Element encrDKTokenElem = null;
@@ -429,11 +421,11 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
         if (sigToken.isDerivedKeys()) {
             // Set up the encrypted key to use
             if(this.encrKey == null) {
-                setupEncryptedKey(rmd);
+                setupEncryptedKey(rmd, sigToken);
             }
             
             WSSecDKSign dkSign = new WSSecDKSign();
-            dkSign.setExternalKey(encrKey.getEphemeralKey(), encrKey.getId());
+            dkSign.setExternalKey(this.encryptedKeyValue, this.encryptedKeyId);
 
             // Set the algo info
             dkSign.setSignatureAlgorithm(rpd.getAlgorithmSuite()
@@ -512,19 +504,53 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
      * @param rmd
      * @throws RampartException
      */
-    private void setupEncryptedKey(RampartMessageData rmd) throws RampartException {
-        encrKey = this.getEncryptedKeyBuilder(rmd, sigToken);
-        
-        Element bstElem = encrKey.getBinarySecurityTokenElement();
-        if (bstElem != null) {
-            // If a BST is available then use it
-            this.setInsertionLocation(RampartUtil.insertSiblingAfter(rmd,
-                    this.getInsertionLocation(), bstElem));
-        }
+    private void setupEncryptedKey(RampartMessageData rmd, Token token) 
+    throws RampartException {
+        if(!rmd.isClientSide() && token.isDerivedKeys()) {
+                
+                //If we already have them, simply return
+                if(this.encryptedKeyId != null && this.encryptedKeyValue != null) {
+                    return;
+                }
+                
+                //Use the secret from the incoming EncryptedKey element
+                Object resultsObj = rmd.getMsgContext().getProperty(WSHandlerConstants.RECV_RESULTS);
+                if(resultsObj != null) {
+                    encryptedKeyId = RampartUtil.getRequestEncryptedKeyId((Vector)resultsObj);
+                    encryptedKeyValue = RampartUtil.getRequestEncryptedKeyValue((Vector)resultsObj);
+                    if(encryptedKeyId == null || encryptedKeyValue == null) {
+                        throw new RampartException("missingEncryptedKeyInRequest");
+                    }
+                } else {
+                    throw new RampartException("noSecurityResults");
+                }
+            } else {
+                //Set up the encrypted key to use
+                encrKey = this.getEncryptedKeyBuilder(rmd, token);
 
-        // Add the EncryptedKey
-        this.encrTokenElement = encrKey.getEncryptedKeyElement();
-        this.setInsertionLocation(RampartUtil.insertSiblingAfter(rmd,
-                this.getInsertionLocation(), encrTokenElement));
+                Element bstElem = encrKey.getBinarySecurityTokenElement();
+                if (bstElem != null) {
+                    // If a BST is available then use it
+                    RampartUtil.appendChildToSecHeader(rmd, bstElem);
+                }
+                
+                // Add the EncryptedKey
+                encrTokenElement = encrKey.getEncryptedKeyElement();
+                this.encrTokenElement = RampartUtil.appendChildToSecHeader(rmd,
+                        encrTokenElement);
+                encryptedKeyValue = encrKey.getEphemeralKey();
+                encryptedKeyId = encrKey.getId();
+
+                //Store the token for client - response verification 
+                // and server - response creation
+                try {
+                    org.apache.rahas.Token tok = new org.apache.rahas.Token(
+                            encryptedKeyId, (OMElement)encrTokenElement , null, null);
+                    tok.setSecret(encryptedKeyValue);
+                    rmd.getTokenStorage().add(tok);
+                } catch (TrustException e) {
+                    throw new RampartException("errorInAddingTokenIntoStore", e);
+                }
+            }
     }
 }

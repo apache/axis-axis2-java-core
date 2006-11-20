@@ -627,6 +627,8 @@ public class RampartUtil {
             Object resultsObj = rmd.getMsgContext().getProperty(WSHandlerConstants.RECV_RESULTS);
             if(resultsObj != null) {
                 encrKeyBuilder.setUseThisCert(getReqSigCert((Vector)resultsObj));
+            } else {
+                throw new RampartException("noSecurityResults");
             }
         } else {
             encrKeyBuilder.setUserInfo(encrUser);
@@ -660,4 +662,53 @@ public class RampartUtil {
         return null;
     }
     
+    public static String getRequestEncryptedKeyId(Vector results) {
+        
+        for (int i = 0; i < results.size(); i++) {
+            WSHandlerResult rResult =
+                    (WSHandlerResult) results.get(i);
+
+            Vector wsSecEngineResults = rResult.getResults();
+            /*
+            * Scan the results for the first Signature action. Use the
+            * certificate of this Signature to set the certificate for the
+            * encryption action :-).
+            */
+            for (int j = 0; j < wsSecEngineResults.size(); j++) {
+                WSSecurityEngineResult wser =
+                        (WSSecurityEngineResult) wsSecEngineResults.get(j);
+                if (wser.getAction() == WSConstants.ENCR && 
+                        wser.getEncryptedKeyId() != null) {
+                    return wser.getEncryptedKeyId();
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    public static byte[] getRequestEncryptedKeyValue(Vector results) {
+        
+        for (int i = 0; i < results.size(); i++) {
+            WSHandlerResult rResult =
+                    (WSHandlerResult) results.get(i);
+
+            Vector wsSecEngineResults = rResult.getResults();
+            /*
+            * Scan the results for the first Signature action. Use the
+            * certificate of this Signature to set the certificate for the
+            * encryption action :-).
+            */
+            for (int j = 0; j < wsSecEngineResults.size(); j++) {
+                WSSecurityEngineResult wser =
+                        (WSSecurityEngineResult) wsSecEngineResults.get(j);
+                if (wser.getAction() == WSConstants.ENCR && 
+                        wser.getDecryptedKey() != null) {
+                    return wser.getDecryptedKey();
+                }
+            }
+        }
+        
+        return null;
+    }
 }
