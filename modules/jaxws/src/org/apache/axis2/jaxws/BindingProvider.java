@@ -109,7 +109,7 @@ public class BindingProvider implements javax.xml.ws.BindingProvider {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NoMaintainSessionProperty"));
         }
 
-        if(sessionValue != null){
+        if(sessionValue == null){
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullValueForMaintainSessionProperty",sessionKey));
         }
     }

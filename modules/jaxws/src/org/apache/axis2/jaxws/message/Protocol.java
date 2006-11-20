@@ -43,7 +43,7 @@ public enum Protocol {
             return Protocol.soap11;
         }
         else if (url.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
-        		 url.equals(SOAPBinding.SOAP12HTTP_BINDING)) {
+        		 url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
             return Protocol.soap12;
         }
         else {
