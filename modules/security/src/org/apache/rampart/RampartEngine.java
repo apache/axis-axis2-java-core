@@ -71,7 +71,7 @@ public class RampartEngine {
         } else {
             results = engine.processSecurityHeader(rmd.getDocument(),
                       null, 
-                      RampartUtil.getPasswordCB(rmd),
+                      new TokenCallbackHandler(rmd.getTokenStorage(), RampartUtil.getPasswordCB(rmd)),
                       RampartUtil.getSignatureCrypto(rpd.getRampartConfig(), 
                               msgCtx.getAxisService().getClassLoader()), 
                       RampartUtil.getEncryptionCrypto(rpd.getRampartConfig(), 

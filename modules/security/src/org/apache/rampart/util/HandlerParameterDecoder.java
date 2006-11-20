@@ -94,7 +94,7 @@ public class HandlerParameterDecoder {
 			Iterator childElements = actionElem.getChildElements();
 			while (childElements.hasNext()) {
 				OMElement element = (OMElement) childElements.next();
-				msgCtx.setProperty(element.getLocalName(), element.getText());
+				msgCtx.setProperty(element.getLocalName(), element.getText().trim());
 			}
 
 		}
@@ -126,7 +126,7 @@ public class HandlerParameterDecoder {
 				while (paramElements.hasNext()) {
 					OMElement elem = (OMElement) paramElements.next();
                     String localName = elem.getLocalName();
-                    String text = elem.getText();
+                    String text = elem.getText().trim();
                     if(localName.equals(WSSHandlerConstants.SIGN_ALL_HEADERS)) {
                         signAllHeaders = true;
                     } else if(localName.equals(WSSHandlerConstants.SIGN_BODY)) {
@@ -171,18 +171,19 @@ public class HandlerParameterDecoder {
                 OMElement element = (OMElement) childElements.next();
                 
                 String localName = element.getLocalName();
+                String text = element.getText().trim();
                 if(localName.equals(WSHandlerConstants.PW_CALLBACK_CLASS)) {
-                    outflowConfiguration.setPasswordCallbackClass(element.getText());
+                    outflowConfiguration.setPasswordCallbackClass(text);
                 } else if(localName.equals(WSHandlerConstants.SIG_PROP_FILE)) {
-                    outflowConfiguration.setSignaturePropFile(element.getText());
+                    outflowConfiguration.setSignaturePropFile(text);
                 } else if(localName.equals(WSHandlerConstants.ENC_PROP_FILE)) {
-                    outflowConfiguration.setEncryptionPropFile(element.getText());
+                    outflowConfiguration.setEncryptionPropFile(text);
                 } else if(localName.equals(WSHandlerConstants.ENC_CALLBACK_CLASS)) {
-                    outflowConfiguration.setEmbeddedKeyCallbackClass(element.getText());
+                    outflowConfiguration.setEmbeddedKeyCallbackClass(text);
                 } else if(localName.equals(WSHandlerConstants.USER)) {
-                    outflowConfiguration.setUser(element.getText());
+                    outflowConfiguration.setUser(text);
                 } else if(localName.equals(WSHandlerConstants.ENCRYPTION_USER)) {
-                    outflowConfiguration.setEncryptionUser(element.getText());
+                    outflowConfiguration.setEncryptionUser(text);
                 }
             }
             return outflowConfiguration;
@@ -210,16 +211,18 @@ public class HandlerParameterDecoder {
                 OMElement element = (OMElement) childElements.next();
                 
                 String localName = element.getLocalName();
+                String text = element.getText().trim();
+                
                 if(localName.equals(WSHandlerConstants.PW_CALLBACK_CLASS)) {
-                    inflowConfiguration.setPasswordCallbackClass(element.getText());
+                    inflowConfiguration.setPasswordCallbackClass(text);
                 } else if(localName.equals(WSHandlerConstants.SIG_PROP_FILE)) {
-                    inflowConfiguration.setSignaturePropFile(element.getText());
+                    inflowConfiguration.setSignaturePropFile(text);
                 } else if(localName.equals(WSHandlerConstants.DEC_PROP_FILE)) {
-                    inflowConfiguration.setDecryptionPropFile(element.getText());
+                    inflowConfiguration.setDecryptionPropFile(text);
                 } else if (WSHandlerConstants.ENABLE_SIGNATURE_CONFIRMATION
                         .equals(localName)) {
-                    if ("false".equals(element.getText())
-                            || "0".equals(element.getText())) {
+                    if ("false".equals(text)
+                            || "0".equals(text)) {
                         inflowConfiguration
                                 .setEnableSignatureConfirmation(false);
                     }
