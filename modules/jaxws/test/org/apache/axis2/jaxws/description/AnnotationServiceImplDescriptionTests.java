@@ -376,7 +376,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getRequestWrapperTargetNamespace());
         assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getResponseWrapperTargetNamespace());
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
-        assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getResponseWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.WrappedParamsResponse", operationDesc.getResponseWrapperClassName());
         // Test WebResult annotation defaults
         assertNull(((OperationDescriptionJava) operationDesc).getAnnoWebResult());
         assertFalse(((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified());
@@ -412,7 +412,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getRequestWrapperTargetNamespace());
         assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getResponseWrapperTargetNamespace());
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
-        assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getResponseWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.WrappedParamsResponse", operationDesc.getResponseWrapperClassName());
 
         operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("bareParams")[0];
         assertNotNull(operationDesc);
@@ -441,7 +441,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("http://a.b.c.method2ReqTNS", operationDesc.getRequestWrapperTargetNamespace());
         assertEquals("http://a.b.c.method2RspTNS", operationDesc.getResponseWrapperTargetNamespace());
         assertEquals("org.apache.axis2.jaxws.description.method2ReqWrapper", operationDesc.getRequestWrapperClassName());
-        assertEquals("org.apache.axis2.jaxws.description.Method2", operationDesc.getResponseWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.Method2Response", operationDesc.getResponseWrapperClassName());
     }
     
     public void testWebMethod() {

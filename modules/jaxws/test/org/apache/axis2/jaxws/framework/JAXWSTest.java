@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.description.ServiceAnnotationTests;
 import org.apache.axis2.jaxws.description.ValidateWSDLTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
+import org.apache.axis2.jaxws.description.WrapperPackageTests;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderTests;
 import org.apache.axis2.jaxws.description.impl.ServiceDescriptionTests;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
@@ -108,6 +109,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(PartialWSDLTests.class);
         suite.addTestSuite(ValidateWSDLTests.class);
         suite.addTestSuite(GetDescFromBindingProvider.class);
+        suite.addTestSuite(WrapperPackageTests.class);
         
         suite.addTestSuite(HandlerChainProcessorTests.class);
         suite.addTestSuite(JaxwsMessageBundleTests.class);

@@ -610,6 +610,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                     String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
                     requestWrapperClassName = packageName + "." + className;
                 }
+                requestWrapperClassName = determineActualAritfactPackage(requestWrapperClassName);
             }
         }
         return requestWrapperClassName;
@@ -708,10 +709,11 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                     Class clazz = seiMethod.getDeclaringClass();
                     String packageName = clazz.getPackage().getName();
                     String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
-                    responseWrapperClassName = packageName + "." + className;
+                    responseWrapperClassName = packageName + "." + className + "Response";
                 } else {
-                    responseWrapperClassName = methodComposite.getDeclaringClass();
+                    responseWrapperClassName = methodComposite.getDeclaringClass() + "Response";
                 }
+                responseWrapperClassName = determineActualAritfactPackage(responseWrapperClassName);
             }
         }
         return responseWrapperClassName;
@@ -1083,4 +1085,58 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         else
             return false;
     }
+
+    /**
+     * Determine the actual packager name for the generated artifacts by trying to load the class from one of two
+     * packages.  This is necessary because the RI implementations of WSGen and WSImport generate the artifacts 
+     * in different packages:
+     * - WSImport generates the artifacts in the same package as the SEI
+     * - WSGen generates the artifacts in a "jaxws" sub package under the SEI package.
+     * Note that from reading the JAX-WS spec, it seems that WSGen is doing that correctly; See
+     * the conformance requirement in JAX-WS 2.0 Spec Section 3.6.2.1 Document Wrapped on page 36:
+     *     Conformance (Default wrapper bean package): In the absence of customizations, the wrapper beans package
+     *     MUST be a generated jaxws subpackage of the SEI package.
+     *                         ^^^^^^^^^^^^^^^^
+     * @param requestWrapperClassName
+     * @return
+     */
+    private static final String JAXWS_SUBPACKAGE = "jaxws";
+    private static String determineActualAritfactPackage(String wrapperClassName) {
+        String returnWrapperClassName = null;
+
+        // Try to load the class that was passed in
+        try {
+            DescriptionUtils.loadClass(wrapperClassName);
+            returnWrapperClassName = wrapperClassName;
+        }
+        catch (ClassNotFoundException e) {
+            // Couldn't load the class; we'll try another one below.
+        }
+
+        // If the original class couldn't be loaded, try adding ".jaxws." to the package
+        if (returnWrapperClassName == null) {
+            String originalPackage = DescriptionUtils.getJavaPackageName(wrapperClassName);
+            if (originalPackage != null) {
+                String alternatePackage = originalPackage + "." + JAXWS_SUBPACKAGE;
+                String className = DescriptionUtils.getSimpleJavaClassName(wrapperClassName);
+                String alternateWrapperClass = alternatePackage + "." + className;
+                try {
+                    DescriptionUtils.loadClass(alternateWrapperClass);
+                    returnWrapperClassName = alternateWrapperClass;
+                }
+                catch (ClassNotFoundException e) {
+                    // Couldn't load the class
+                }
+            }
+        }
+        
+        if (returnWrapperClassName == null){
+            // Couldn't load either class, so stick with the original wrapper class name
+            // REVIEW: Is this correct behavior?  Note that some of the annotation unit tests don't have the actual
+            //         classes available, and so will fail if this is changed.
+            returnWrapperClassName = wrapperClassName;
+        }
+        return returnWrapperClassName;
+    }
+
 }
