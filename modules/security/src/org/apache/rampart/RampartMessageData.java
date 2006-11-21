@@ -208,15 +208,16 @@ public class RampartMessageData {
                 this.policyData = RampartPolicyBuilder.build(it);
             }
             
+            RampartConfig rampartConfig = this.policyData.getRampartConfig();
+            
+            if(isClientSide && rampartConfig == null) {
+                //We'r missing the extra info rampart needs
+                throw new RampartException("rampartConigMissing");
+            }
+            
             if(this.policyData != null) {
+                
                 //Check for RST and RSTR for an SCT
-                RampartConfig rampartConfig = this.policyData.getRampartConfig();
-                
-                if(rampartConfig == null) {
-                    //We'r missing the extra info rampart needs
-                    throw new RampartException("rampartConigMissing");
-                }
-                
                 if((WSSHandlerConstants.RST_ACTON_SCT.equals(msgContext.getWSAAction())
                         || WSSHandlerConstants.RSTR_ACTON_SCT.equals(msgContext.getWSAAction())) &&
                         this.policyData.getIssuerPolicy() != null) {
