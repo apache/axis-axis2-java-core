@@ -20,7 +20,6 @@ package org.apache.axis2.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
@@ -145,6 +144,9 @@ public class AxisEngine {
      * @see Handler
      */
     public void receive(MessageContext msgContext) throws AxisFault {
+        if(log.isTraceEnabled()){
+            log.trace("receive:"+msgContext.getMessageID());
+        }
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
                 confContext.getAxisConfiguration().getGlobalInFlow();
@@ -307,6 +309,9 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public InvocationResponse resumeReceive(MessageContext msgContext) throws AxisFault {
+        if(log.isTraceEnabled()){
+            log.trace("resumeReceive:"+msgContext.getMessageID());
+        }
       //REVIEW: This name is a little misleading, as it seems to indicate that there should be a resumeReceiveFault as well, when, in fact, this does both 
       //REVIEW: Unlike with receive, there is no wrapping try/catch clause which would
       //fire off the flowComplete on an error, as we have to assume that the
@@ -342,6 +347,9 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public InvocationResponse resumeSend(MessageContext msgContext) throws AxisFault {
+        if(log.isTraceEnabled()){
+            log.trace("resumeSend:"+msgContext.getMessageID());
+        }
       //REVIEW: This name is a little misleading, as it seems to indicate that there should be a resumeSendFault as well, when, in fact, this does both 
       //REVIEW: Unlike with send, there is no wrapping try/catch clause which would
       //fire off the flowComplete on an error, as we have to assume that the
@@ -371,7 +379,6 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void receiveFault(MessageContext msgContext) throws AxisFault {
-
     	log.debug(Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
@@ -431,6 +438,9 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public InvocationResponse resume(MessageContext msgctx) throws AxisFault {
+        if(log.isTraceEnabled()){
+            log.trace("resume:"+msgctx.getMessageID());
+        }
         msgctx.setPaused(false);
         if (msgctx.getFLOW() == MessageContext.IN_FLOW) {
             return resumeReceive(msgctx);
@@ -451,7 +461,9 @@ public class AxisEngine {
      * @see Handler
      */
     public void send(MessageContext msgContext) throws AxisFault {
-
+        if(log.isTraceEnabled()){
+            log.trace("send:"+msgContext.getMessageID());
+        }
         // find and invoke the Phases
         OperationContext operationContext = msgContext.getOperationContext();
         ArrayList executionChain = operationContext.getAxisOperation().getPhasesOutFlow();
@@ -518,6 +530,9 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void sendFault(MessageContext msgContext) throws AxisFault {
+        if(log.isTraceEnabled()){
+            log.trace("sendFault:"+msgContext.getMessageID());
+        }
         OperationContext opContext = msgContext.getOperationContext();
 
         //FIXME: If this gets paused in the operation-specific phases, the resume is not going to function correctly as the phases will not have all been set 
