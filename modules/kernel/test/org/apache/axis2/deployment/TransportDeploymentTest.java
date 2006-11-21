@@ -16,16 +16,16 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.AbstractTestCase;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.phaseresolver.PhaseException;
+import java.io.File;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
+
+import org.apache.axis2.AbstractTestCase;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.phaseresolver.PhaseException;
 
 public class TransportDeploymentTest extends AbstractTestCase {
     /**
@@ -39,9 +39,9 @@ public class TransportDeploymentTest extends AbstractTestCase {
             PhaseException,
             DeploymentException,
             XMLStreamException {
-        String repositoryName = testResourceDir + "/deployment";
+        String repositoryName  = System.getProperty("basedir")+"/target/test-resources/deployment";
         File repo = new File(repositoryName);
-        String xmlFile = testResourceDir + "/deployment/server-transport.xml";
+        String xmlFile = repositoryName + "/server-transport.xml";
         File xml = new File(xmlFile);
         FileSystemConfigurator fsc = new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
         AxisConfiguration er = fsc.getAxisConfiguration();
