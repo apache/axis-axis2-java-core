@@ -573,9 +573,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             }
             else {
                 // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.3, p. 80]
-                // TODO: Implement getting the TNS from the SEI 
-//                requestWrapperTargetNamespace = getEndpointInterfaceDescription().getWebServiceTargetNamespace();
-                throw new UnsupportedOperationException("RequestWrapper.targetNamespace default not implented yet");            }
+                requestWrapperTargetNamespace = getEndpointInterfaceDescription().getTargetNamespace();
+            }
         }
         return requestWrapperTargetNamespace;
     }
@@ -676,8 +675,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             else {
                 // The default value for targetNamespace is the target namespace of the SEI. [JAX-WS Sec 7.3, p. 80]
                 // TODO: Implement getting the TNS from the SEI 
-//                responseWrapperTargetNamespace = getEndpointInterfaceDescription().getWebServiceTargetNamespace();
-                throw new UnsupportedOperationException("RequestWrapper.targetNamespace default not implented yet");
+                responseWrapperTargetNamespace = getEndpointInterfaceDescription().getTargetNamespace();
             }
         }
         return responseWrapperTargetNamespace;

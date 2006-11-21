@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -66,6 +67,11 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     // ===========================================
     // ANNOTATION related information
     // ===========================================
+    
+    // ANNOTATION: @WebService
+    private WebService          webServiceAnnotation;
+    private String              webServiceTargetNamespace;
+    
     
     // ANNOTATION: @SOAPBinding
     // Note this is the Type-level annotation.  See OperationDescription for the Method-level annotation
@@ -638,6 +644,48 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
             portType = wsdlDefn.getPortType(new QName(tns, localPart));
         }
         return portType;
+    }
+
+    
+    public String getTargetNamespace() {
+        // REVIEW: WSDL/Anno mertge
+        return getAnnoWebServiceTargetNamespace();
+    }
+
+    public WebService getAnnoWebService() {
+        // TODO Auto-generated method stub
+        if (webServiceAnnotation == null) {
+            if (dbc != null) {
+                webServiceAnnotation = dbc.getWebServiceAnnot();
+            } else {
+                if (seiClass != null) {
+                    webServiceAnnotation = (WebService) seiClass.getAnnotation(WebService.class);                
+                }
+            }
+        }
+        return webServiceAnnotation;
+    }
+
+    public String getAnnoWebServiceTargetNamespace() {
+        if (webServiceTargetNamespace == null) {
+            if (getAnnoWebService() != null 
+                    && !DescriptionUtils.isEmpty(getAnnoWebService().targetNamespace())) {
+                webServiceTargetNamespace = getAnnoWebService().targetNamespace();
+            }
+            else {
+                // Default value per JSR-181 MR Sec 4.1 pg 15 defers to "Implementation defined, 
+                // as described in JAX-WS 2.0, section 3.2" which is JAX-WS 2.0 Sec 3.2, pg 29.
+                // FIXME: Hardcoded protocol for namespace
+                if (dbc != null)
+                    webServiceTargetNamespace = 
+                        DescriptionUtils.makeNamespaceFromPackageName(DescriptionUtils.getJavaPackageName(dbc.getClassName()), "http");
+                else
+                    webServiceTargetNamespace = 
+                        DescriptionUtils.makeNamespaceFromPackageName(DescriptionUtils.getJavaPackageName(seiClass), "http");
+
+            }
+        }
+        return webServiceTargetNamespace;
     }
 
 }

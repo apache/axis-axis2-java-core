@@ -850,9 +850,9 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                 // Default value is the "simple name" of the class or interface + "Service"
                 // Per JSR-181 MR Sec 4.1, pg 15
             	if (getServiceDescriptionImpl().isDBCMap()) {
-                	annotation_ServiceName = getSimpleJavaClassName(composite.getClassName()) + "Service";
+                	annotation_ServiceName = DescriptionUtils.getSimpleJavaClassName(composite.getClassName()) + "Service";
             	} else {
-                    annotation_ServiceName = getSimpleJavaClassName(implOrSEIClass) + "Service";
+                    annotation_ServiceName = DescriptionUtils.getSimpleJavaClassName(implOrSEIClass) + "Service";
             	}
             }
         }
@@ -882,8 +882,8 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                     // name element on the WebServiceProvider annotation
                 	
                 	annotation_PortName = (getServiceDescriptionImpl().isDBCMap()) ?
-                 			getSimpleJavaClassName(composite.getClassName()) + "Port"
-                 			: getSimpleJavaClassName(implOrSEIClass) + "Port";
+                            DescriptionUtils.getSimpleJavaClassName(composite.getClassName()) + "Port"
+                 			: DescriptionUtils.getSimpleJavaClassName(implOrSEIClass) + "Port";
                }
                 else {
                     // This is the @WebService annotation path
@@ -912,10 +912,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                 // FIXME: Hardcoded protocol for namespace
             	if (getServiceDescriptionImpl().isDBCMap())
             		annotation_TargetNamespace = 
-            			makeNamespaceFromPackageName(getJavaPackageName(composite.getClassName()), "http");
+                        DescriptionUtils.makeNamespaceFromPackageName(DescriptionUtils.getJavaPackageName(composite.getClassName()), "http");
             	else
             		annotation_TargetNamespace = 
-            			makeNamespaceFromPackageName(getJavaPackageName(implOrSEIClass), "http");
+                        DescriptionUtils.makeNamespaceFromPackageName(DescriptionUtils.getJavaPackageName(implOrSEIClass), "http");
 
             }
         }
@@ -923,127 +923,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     }
     
     
-    /**
-     * Return the name of the class without any package qualifier.
-     * This method should be DEPRECATED when DBC support is complete
-     * @param theClass
-     * @return the name of the class sans package qualification.
-     */
-    private static String getSimpleJavaClassName(Class theClass) {
-        String returnName = null;
-        if (theClass != null) {
-            String fqName = theClass.getName();
-            // We need the "simple name", so strip off any package information from the name
-            int endOfPackageIndex = fqName.lastIndexOf('.');
-            int startOfClassIndex = endOfPackageIndex + 1;
-            returnName = fqName.substring(startOfClassIndex);
-        }
-        else {
-            // TODO: RAS and NLS
-            throw new UnsupportedOperationException("Java class is null");
-        }
-        return returnName;
-    }
-    
-    /**
-     * Return the name of the class without any package qualifier.
-     * @param theClass
-     * @return the name of the class sans package qualification.
-     */
-    private static String getSimpleJavaClassName(String name) {
-        String returnName = null;
-        
-        if (name != null) {
-            String fqName = name;
-            
-            // We need the "simple name", so strip off any package information from the name
-            int endOfPackageIndex = fqName.lastIndexOf('.');
-            int startOfClassIndex = endOfPackageIndex + 1;
-            returnName = fqName.substring(startOfClassIndex);
-        }
-        else {
-            // TODO: RAS and NLS
-            throw new UnsupportedOperationException("Java class is null");
-        }
-        return returnName;
-    }
-    
-    /**
-     * Returns the package name from the class.  If no package, then returns null
-     * This method should be DEPRECATED when DBC support is complete
-     * @param theClass
-     * @return
-     */
-    private static String getJavaPackageName(Class theClass) {
-        String returnPackage = null;
-        if (theClass != null) {
-            String fqName = theClass.getName();
-            // Get the package name, if there is one
-            int endOfPackageIndex = fqName.lastIndexOf('.');
-            if (endOfPackageIndex >= 0) {
-                returnPackage = fqName.substring(0, endOfPackageIndex);
-            }
-        }
-        else {
-            // TODO: RAS and NLS
-            throw new UnsupportedOperationException("Java class is null");
-        }
-        return returnPackage;
-    }
-    
-    /**
-     * Returns the package name from the class.  If no package, then returns null
-     * @param theClassName
-     * @return
-     */
-    private static String getJavaPackageName(String theClassName) {
-        String returnPackage = null;
-        if (theClassName != null) {
-            String fqName = theClassName;
-            // Get the package name, if there is one
-            int endOfPackageIndex = fqName.lastIndexOf('.');
-            if (endOfPackageIndex >= 0) {
-                returnPackage = fqName.substring(0, endOfPackageIndex);
-            }
-        }
-        else {
-            // TODO: RAS and NLS
-            throw new UnsupportedOperationException("Java class is null");
-        }
-        return returnPackage;
-    }
-    
-    /**
-     * Create a JAX-WS namespace based on the package name
-     * @param packageName
-     * @param protocol
-     * @return
-     */
-    private static final String NO_PACKAGE_HOST_NAME = "DefaultNamespace";
-
-    private static String makeNamespaceFromPackageName(String packageName, String protocol) {
-        if (DescriptionUtils.isEmpty(protocol)) {
-            protocol = "http";
-        }
-        if (DescriptionUtils.isEmpty(packageName)) {
-            return protocol + "://" + NO_PACKAGE_HOST_NAME;
-        }
-        StringTokenizer st = new StringTokenizer( packageName, "." );
-        String[] words = new String[ st.countTokens() ];
-        for(int i = 0; i < words.length; ++i)
-            words[i] = st.nextToken();
-
-        StringBuffer sb = new StringBuffer(80);
-        for(int i = words.length-1; i >= 0; --i) {
-            String word = words[i];
-            // seperate with dot
-            if( i != words.length-1 )
-                sb.append('.');
-            sb.append( word );
-        }
-        return protocol + "://" + sb.toString() + "/";
-    }
-
     // ===========================================
     // ANNOTATION: WebServiceProvider
     // ===========================================
@@ -1097,10 +976,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     			else {
     				if (getServiceDescriptionImpl().isDBCMap()) {
     					//The name is the simple name of the class or interface
-    					webService_Name = getSimpleJavaClassName(composite.getClassName());
+    					webService_Name = DescriptionUtils.getSimpleJavaClassName(composite.getClassName());
     				} else {
     					// Default per JSR-181 Sec 4.1, pg 15
-    					webService_Name = getSimpleJavaClassName(implOrSEIClass);
+    					webService_Name = DescriptionUtils.getSimpleJavaClassName(implOrSEIClass);
     				}
     			}                	
     		}

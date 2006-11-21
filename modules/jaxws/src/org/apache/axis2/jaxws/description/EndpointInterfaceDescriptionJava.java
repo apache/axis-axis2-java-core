@@ -18,9 +18,13 @@
 */
 package org.apache.axis2.jaxws.description;
 
+import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
 public interface EndpointInterfaceDescriptionJava {
+    public abstract WebService getAnnoWebService();
+    public abstract String getAnnoWebServiceTargetNamespace();
+    
     public SOAPBinding getAnnoSoapBinding();
     public abstract javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle();
     public abstract javax.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle();

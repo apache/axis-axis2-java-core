@@ -150,7 +150,7 @@ public class WSDLDescriptionTests extends TestCase {
         assertNull(endpointInterfaceDesc);
     }
     
-    public void testInvalidAddPort() {
+    public void testInvalidAddPortExists() {
         try {
             service.addPort(validPortQName, null, null);
             fail("Shouldn't be able to add a port that exists in the WSDL");
@@ -160,7 +160,8 @@ public class WSDLDescriptionTests extends TestCase {
         }
     }
     
-    public void testInvalidAddPortNull() {
+    public void testInvalidAddPort() {
+        // Null portQname
         try {
             service.addPort(null, null, null);
             fail("Shouldn't be able to add a port with a null QName");
@@ -171,6 +172,43 @@ public class WSDLDescriptionTests extends TestCase {
         catch (Exception e) {
             fail("Unexpected exception caught " + e);
         }
+        
+        // Empty Port QName
+        try {
+            service.addPort(new QName("", ""), null, null);
+            fail("Shouldn't be able to add an empty port QName");
+        }
+        catch (WebServiceException e) {
+            // Expected path
+        }
+        catch (Exception e) {
+            fail("Unexpected exception caught " + e);
+        }
+
+        // Empty binding ID
+        try {
+            service.addPort(new QName(VALID_NAMESPACE, "dispatchPort2"), "", null);
+            fail("Shouldn't be able to add a port with an empty binding type");
+        }
+        catch (WebServiceException e) {
+            // Expected path
+        }
+        catch (Exception e) {
+            fail("Unexpected exception caught " + e);
+        }
+
+        // Invalid binding ID
+        try {
+            service.addPort(new QName(VALID_NAMESPACE, "dispatchPort3"), "InvalidBindingType", null);
+            fail("Shouldn't be able to add a port with an invalid binding type");
+        }
+        catch (WebServiceException e) {
+            // Expected path
+        }
+        catch (Exception e) {
+            fail("Unexpected exception caught " + e);
+        }
+
     }
     
     public void testValidAddAndGetPort() {

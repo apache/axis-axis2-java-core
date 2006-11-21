@@ -53,6 +53,8 @@ import javax.xml.namespace.QName;
 public interface EndpointInterfaceDescription {
     public abstract EndpointDescription getEndpointDescription();
     
+    public abstract String getTargetNamespace();
+    
     public abstract OperationDescription getOperation(Method seiMethod);
     public abstract OperationDescription[] getOperation(QName operationQName);
     public abstract OperationDescription getOperation(String operationName);

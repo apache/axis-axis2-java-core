@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
@@ -123,5 +124,124 @@ class DescriptionUtils {
     	}
     	return className;
     }
+    /**
+     * Return the name of the class without any package qualifier.
+     * This method should be DEPRECATED when DBC support is complete
+     * @param theClass
+     * @return the name of the class sans package qualification.
+     */
+    static String getSimpleJavaClassName(Class theClass) {
+        String returnName = null;
+        if (theClass != null) {
+            String fqName = theClass.getName();
+            // We need the "simple name", so strip off any package information from the name
+            int endOfPackageIndex = fqName.lastIndexOf('.');
+            int startOfClassIndex = endOfPackageIndex + 1;
+            returnName = fqName.substring(startOfClassIndex);
+        }
+        else {
+            // TODO: RAS and NLS
+            throw new UnsupportedOperationException("Java class is null");
+        }
+        return returnName;
+    }
+    
+    /**
+     * Return the name of the class without any package qualifier.
+     * @param theClass
+     * @return the name of the class sans package qualification.
+     */
+    static String getSimpleJavaClassName(String name) {
+        String returnName = null;
+        
+        if (name != null) {
+            String fqName = name;
+            
+            // We need the "simple name", so strip off any package information from the name
+            int endOfPackageIndex = fqName.lastIndexOf('.');
+            int startOfClassIndex = endOfPackageIndex + 1;
+            returnName = fqName.substring(startOfClassIndex);
+        }
+        else {
+            // TODO: RAS and NLS
+            throw new UnsupportedOperationException("Java class is null");
+        }
+        return returnName;
+    }
+    
+    /**
+     * Returns the package name from the class.  If no package, then returns null
+     * This method should be DEPRECATED when DBC support is complete
+     * @param theClass
+     * @return
+     */
+    static String getJavaPackageName(Class theClass) {
+        String returnPackage = null;
+        if (theClass != null) {
+            String fqName = theClass.getName();
+            // Get the package name, if there is one
+            int endOfPackageIndex = fqName.lastIndexOf('.');
+            if (endOfPackageIndex >= 0) {
+                returnPackage = fqName.substring(0, endOfPackageIndex);
+            }
+        }
+        else {
+            // TODO: RAS and NLS
+            throw new UnsupportedOperationException("Java class is null");
+        }
+        return returnPackage;
+    }
+    
+    /**
+     * Returns the package name from the class.  If no package, then returns null
+     * @param theClassName
+     * @return
+     */
+    static String getJavaPackageName(String theClassName) {
+        String returnPackage = null;
+        if (theClassName != null) {
+            String fqName = theClassName;
+            // Get the package name, if there is one
+            int endOfPackageIndex = fqName.lastIndexOf('.');
+            if (endOfPackageIndex >= 0) {
+                returnPackage = fqName.substring(0, endOfPackageIndex);
+            }
+        }
+        else {
+            // TODO: RAS and NLS
+            throw new UnsupportedOperationException("Java class is null");
+        }
+        return returnPackage;
+    }
+    
+    /**
+     * Create a JAX-WS namespace based on the package name
+     * @param packageName
+     * @param protocol
+     * @return
+     */
+    static final String NO_PACKAGE_HOST_NAME = "DefaultNamespace";
 
+    static String makeNamespaceFromPackageName(String packageName, String protocol) {
+        if (DescriptionUtils.isEmpty(protocol)) {
+            protocol = "http";
+        }
+        if (DescriptionUtils.isEmpty(packageName)) {
+            return protocol + "://" + NO_PACKAGE_HOST_NAME;
+        }
+        StringTokenizer st = new StringTokenizer( packageName, "." );
+        String[] words = new String[ st.countTokens() ];
+        for(int i = 0; i < words.length; ++i)
+            words[i] = st.nextToken();
+
+        StringBuffer sb = new StringBuffer(80);
+        for(int i = words.length-1; i >= 0; --i) {
+            String word = words[i];
+            // seperate with dot
+            if( i != words.length-1 )
+                sb.append('.');
+            sb.append( word );
+        }
+        return protocol + "://" + sb.toString() + "/";
+    }
 }

@@ -373,7 +373,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNotNull(operationDesc);
         assertEquals("wrappedParams", operationDesc.getRequestWrapperLocalName());
         assertEquals("wrappedParamsResponse", operationDesc.getResponseWrapperLocalName());
-        // TODO: Tests for request and response wrapper namespace; currently throws UnsupportedOperationException
+        assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getRequestWrapperTargetNamespace());
+        assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getResponseWrapperTargetNamespace());
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getResponseWrapperClassName());
         // Test WebResult annotation defaults
@@ -408,7 +409,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertNotNull(operationDesc);
         assertEquals("wrappedParams", operationDesc.getRequestWrapperLocalName());
         assertEquals("wrappedParamsResponse", operationDesc.getResponseWrapperLocalName());
-        // TODO: Tests for request and response wrapper namespace; currently throws UnsupportedOperationException
+        assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getRequestWrapperTargetNamespace());
+        assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getResponseWrapperTargetNamespace());
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
         assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getResponseWrapperClassName());
 
