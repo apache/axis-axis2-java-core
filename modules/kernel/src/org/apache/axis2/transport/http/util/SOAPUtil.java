@@ -71,7 +71,10 @@ public class SOAPUtil {
                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
             return true;
-        } catch (IOException ioException) {
+        } catch (AxisFault axisFault) {
+            throw axisFault;
+        }
+        catch (IOException ioException) {
             throw new AxisFault(ioException);
         }
     }

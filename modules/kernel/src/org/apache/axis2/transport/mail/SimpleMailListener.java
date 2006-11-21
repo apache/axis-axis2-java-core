@@ -299,6 +299,25 @@ public class SimpleMailListener implements Runnable, TransportListener {
             if (msg.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
                 > -1) {
                 soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                // set the soapAction if available
+                int index = msg.getContentType().indexOf("action");
+                if (index > -1) {
+                    String transientString = msg.getContentType().substring(index, msg.getContentType().length());
+                    int equal = transientString.indexOf("=");
+                    int firstSemiColon = transientString.indexOf(";");
+                    if (firstSemiColon > -1) {
+                        soapAction = transientString.substring(equal + 1, firstSemiColon);
+                    } else {
+                        soapAction = transientString.substring(equal + 1, transientString.length());
+                    }
+                    if ((soapAction != null) && soapAction.startsWith("\"")
+                        && soapAction.endsWith("\"")) {
+                        soapAction = soapAction
+                                .substring(1, soapAction.length() - 1);
+                    }
+                    msgContext.setSoapAction(soapAction);
+
+                }
             } else if (msg.getContentType().indexOf(
                     SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                 soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;

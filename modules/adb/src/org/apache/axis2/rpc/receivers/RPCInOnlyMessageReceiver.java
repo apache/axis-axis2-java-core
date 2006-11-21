@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.receivers.AbstractInMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -88,14 +87,20 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
             }
         } catch (InvocationTargetException e) {
             String msg = null;
-            if (e.getCause() != null) {
-                msg = e.getCause().getMessage();
+
+            Throwable cause = e.getCause();
+
+            if (cause != null) {
+                msg = cause.getMessage();
+                if (msg == null) {
+                    msg = "Exception occurred while trying to invoke service method " +
+                          method.getName();
+                }
+                log.error(msg, e);
+                if (cause instanceof AxisFault) {
+                    throw (AxisFault) cause;
+                }
             }
-            if (msg == null) {
-                msg = "Exception occurred while trying to invoke service method " +
-                        method.getName();
-            }
-            log.error(msg, e);
             throw new AxisFault(msg);
         } catch (Exception e) {
             String msg = "Exception occurred while trying to invoke service method " +

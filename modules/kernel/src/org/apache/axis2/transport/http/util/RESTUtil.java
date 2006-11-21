@@ -102,7 +102,7 @@ public class RESTUtil {
             invokeAxisEngine(msgContext);
 
         } catch (AxisFault axisFault) {
-            throw new AxisFault(axisFault);
+            throw axisFault;
         } catch (IOException ioException) {
             throw new AxisFault(ioException);
         }
@@ -142,7 +142,10 @@ public class RESTUtil {
 
             invokeAxisEngine(msgContext);
 
-        } catch (IOException e) {
+        } catch (AxisFault axisFault) {
+            throw axisFault;
+        }
+        catch (IOException e) {
             throw new AxisFault(e);
         }
         return true;
