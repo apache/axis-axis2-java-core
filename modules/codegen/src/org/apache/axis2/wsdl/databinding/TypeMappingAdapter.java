@@ -23,6 +23,8 @@ import org.apache.axiom.om.OMElement;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 public abstract class TypeMappingAdapter implements TypeMapper {
 
@@ -46,6 +48,10 @@ public abstract class TypeMappingAdapter implements TypeMapper {
 
     //counter variable to generate unique parameter ID's
     protected int counter = 0;
+
+    // this is to keep generated parameter names
+    protected List parameterNameList = new ArrayList();
+
     protected boolean isObject = false;
 
     //Upper limit for the paramete count
@@ -95,7 +101,11 @@ public abstract class TypeMappingAdapter implements TypeMapper {
             if (paramName.length() > 1){
                 paramName = paramName.substring(0,1).toLowerCase() + paramName.substring(1);
             }
-            return paramName + counter++;
+            if (parameterNameList.contains(paramName)){
+                paramName = paramName + counter++;
+            }
+            parameterNameList.add(paramName);
+            return paramName;
         } else {
             return PARAMETER_NAME_SUFFIX + counter++;
         }
@@ -157,7 +167,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     }
 
     /**
-     * @see TypeMapper#setDefaultMappingName(String) 
+     * @see TypeMapper#setDefaultMappingName(String)
      * @param defaultMapping
      */
     public void setDefaultMappingName(String defaultMapping) {
@@ -174,7 +184,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     }
 
     /**
-     * @see TypeMapper#getTypeMappingStatus(javax.xml.namespace.QName) 
+     * @see TypeMapper#getTypeMappingStatus(javax.xml.namespace.QName)
      * @param qName
      */
     public Object getTypeMappingStatus(QName qName) {
