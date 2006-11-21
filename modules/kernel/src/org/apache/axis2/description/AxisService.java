@@ -64,6 +64,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 import java.net.URL;
+import java.security.PrivilegedAction;
 import java.util.*;
 
 /**
@@ -243,7 +244,11 @@ public class AxisService extends AxisDescription {
         moduleRefs = new ArrayList();
         engagedModules = new ArrayList();
         schemaList = new ArrayList();
-        serviceClassLoader = Thread.currentThread().getContextClassLoader();
+        serviceClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
+          public Object run() {
+            return Thread.currentThread().getContextClassLoader();
+          }
+        });
         objectSupplier = new DefaultObjectSupplier();
     }
 

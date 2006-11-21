@@ -30,6 +30,7 @@ import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
+import java.security.PrivilegedAction;
 import java.util.*;
 
 /**
@@ -129,9 +130,14 @@ public class AxisConfiguration extends AxisDescription {
         faultyModules = new Hashtable();
         observersList = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
-        systemClassLoader = Thread.currentThread().getContextClassLoader();
-        serviceClassLoader = Thread.currentThread().getContextClassLoader();
-        moduleClassLoader = Thread.currentThread().getContextClassLoader();
+        systemClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
+          public Object run() {
+            return Thread.currentThread().getContextClassLoader();      
+          }
+        });
+        serviceClassLoader = systemClassLoader; 
+        moduleClassLoader = systemClassLoader;
+        
         this.phasesinfo = new PhasesInfo();
         targetResolvers = new ArrayList();
     }

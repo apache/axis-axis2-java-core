@@ -41,6 +41,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -131,8 +133,17 @@ public class DescriptionBuilder implements DeploymentConstants {
                 TAG_MESSAGE_RECEIVER));
         while (msgReceivers.hasNext()) {
             OMElement msgReceiver = (OMElement) msgReceivers.next();
-            MessageReceiver receiver = loadMessageReceiver(Thread
-                    .currentThread().getContextClassLoader(), msgReceiver);
+            final OMElement tempMsgReceiver = msgReceiver;
+            MessageReceiver receiver = null;
+            try { 
+              receiver = (MessageReceiver) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                public Object run() throws org.apache.axis2.deployment.DeploymentException {
+                  return loadMessageReceiver(Thread.currentThread().getContextClassLoader(), tempMsgReceiver);
+                }
+              });
+            } catch (PrivilegedActionException e) {
+              throw (DeploymentException)e.getException();
+            }              
             OMAttribute mepAtt = msgReceiver.getAttribute(new QName(TAG_MEP));
             mr_mep.put(mepAtt.getAttributeValue(), receiver);
         }

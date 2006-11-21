@@ -39,6 +39,8 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -205,15 +207,22 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 OMElement observerelement = (OMElement) oservers.next();
                 AxisObserver observer;
                 OMAttribute trsClas = observerelement.getAttribute(new QName(TAG_CLASS_NAME));
-                String clasName;
-                if (trsClas != null) {
-                    clasName = trsClas.getAttributeValue();
-                } else {
+                if (trsClas == null) {
                     log.info(Messages.getMessage(DeploymentErrorMsgs.OBSERVER_ERROR));
                     return;
                 }
+                final String clasName = trsClas.getAttributeValue();
 
-                Class observerclass = Loader.loadClass(clasName);
+                Class observerclass;
+                try {
+                  observerclass = (Class) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                    public Object run() throws ClassNotFoundException {
+                      return Loader.loadClass(clasName);      
+                    }
+                  });  
+                } catch (PrivilegedActionException e) {
+                  throw (ClassNotFoundException)e.getException();
+                }
                 observer = (AxisObserver) observerclass.newInstance();
                 // processing Parameters
                 // Processing service level parameters
