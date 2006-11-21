@@ -20,6 +20,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.rampart.util.RampartUtil;
+import org.apache.ws.secpolicy.Constants;
+import org.apache.ws.secpolicy.model.SupportingToken;
+import org.apache.ws.secpolicy.model.Token;
+import org.apache.ws.secpolicy.model.UsernameToken;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
@@ -55,7 +59,14 @@ public class PolicyBasedResultsValidator {
             
         }
         
+        //sig/encr
+        
+        validateProtectionOrder(data, results);
+        
         validateEncryptedParts(data, results);
+
+        //supporting tokens - UT 
+        validateSupportingTokens(data, results);
         
         /*
          * Now we can check the certificate used to sign the message. In the
@@ -104,8 +115,108 @@ public class PolicyBasedResultsValidator {
         }
     }
     
+    /**
+     * @param data
+     * @param results
+     */
+    private void validateSupportingTokens(ValidatorData data, Vector results) 
+    throws RampartException {
+        
+        //Check for UsernameToken
+        RampartPolicyData rpd = data.getRampartMessageData().getPolicyData();
+        SupportingToken suppTok = rpd.getSupportingTokens();
+        handleSupportingTokens(results, suppTok);
+        
+    }
+
+    /**
+     * @param results
+     * @param suppTok
+     * @throws RampartException
+     */
+    private void handleSupportingTokens(Vector results, SupportingToken suppTok) throws RampartException {
+        
+        if(suppTok == null) {
+            return;
+        }
+        
+        ArrayList tokens = suppTok.getTokens();
+        for (Iterator iter = tokens.iterator(); iter.hasNext();) {
+            Token token = (Token) iter.next();
+            if(token instanceof UsernameToken) {
+                //Check presence of a UsernameToken
+                WSSecurityEngineResult utResult = WSSecurityUtil.fetchActionResult(results, WSConstants.UT);
+                if(utResult == null) {
+                    throw new RampartException("usernameTokenMissing");
+                }
+                
+            }
+        }
+    }
     
     
+    
+
+    /**
+     * @param data
+     * @param results
+     */
+    private void validateProtectionOrder(ValidatorData data, Vector results) 
+    throws RampartException {
+        
+        String protectionOrder = data.getRampartMessageData().getPolicyData().getProtectionOrder();
+        ArrayList sigEncrActions = this.getSigEncrActions(results);
+        
+        if(sigEncrActions.size() < 2) {
+            //There are no results to COMPARE
+            return;
+        }
+        boolean done = false;
+        if(Constants.SIGN_BEFORE_ENCRYPTING.equals(protectionOrder)) {
+            boolean sigfound = false;
+            for (Iterator iter = sigEncrActions.iterator(); 
+                iter.hasNext() || !done;) {
+                Integer act = (Integer) iter.next();
+                if(act.intValue() == WSConstants.SIGN) {
+                    sigfound = true;
+                } else if(sigfound) {
+                    //We have an ENCR action after sig
+                    done = true;
+                }
+            }
+            
+        } else {
+            boolean encrFound = false;
+            for (Iterator iter = sigEncrActions.iterator(); 
+                iter.hasNext() || !done;) {
+                Integer act = (Integer) iter.next();
+                if(act.intValue() == WSConstants.ENCR) {
+                    encrFound = true;
+                } else if(encrFound) {
+                    //We have an ENCR action after sig
+                    done = true;
+                }
+            }
+        }
+        
+        if(!done) {
+            throw new RampartException("protectionOrderMismatch");
+        }
+    }
+
+
+    private ArrayList getSigEncrActions(Vector results) {
+        ArrayList sigEncrActions = new ArrayList();
+        for (Iterator iter = results.iterator(); iter.hasNext();) {
+            int action = ((WSSecurityEngineResult) iter.next()).getAction();
+            if(WSConstants.SIGN == action || WSConstants.ENCR == action) {
+                sigEncrActions.add(new Integer(action));
+            }
+            
+        }
+        return sigEncrActions;
+    }
+
     private void validateEncryptedParts(ValidatorData data, Vector results) 
     throws RampartException {
         
