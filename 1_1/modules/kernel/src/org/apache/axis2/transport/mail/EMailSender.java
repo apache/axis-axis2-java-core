@@ -27,6 +27,8 @@ import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.activation.MailcapCommandMap;
+import javax.activation.CommandMap;
 import java.util.Properties;
 
 public class EMailSender {
@@ -34,11 +36,21 @@ public class EMailSender {
     private MessageContext messageContext;
     private PasswordAuthentication passwordAuthentication;
 
-    public EMailSender() {}
+    static {
+        //Initializing the proper mime types
+        MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+        mc.addMailcap(
+                "application/soap+xml;;x-java-content-handler=com.sun.mail.handlers.text_xml");
+        CommandMap.setDefaultCommandMap(mc);
+    }
+
+    public EMailSender() {
+    }
 
     public void setMessageContext(MessageContext messageContext) {
         this.messageContext = messageContext;
     }
+
     public void setProperties(Properties properties) {
         this.properties = properties;
     }
@@ -75,7 +87,7 @@ public class EMailSender {
                 if (messageContext.getSoapAction() != null) {
                     msg.setContent(message,
                                    contentType + "; charset=" + format.getCharSetEncoding() +
-                                   " ; action=" + messageContext.getSoapAction());
+                                   " ; action=\"" + messageContext.getSoapAction() + "\"");
                 }
             } else {
                 msg.setContent(message, contentType + "; charset=" + format.getCharSetEncoding());
