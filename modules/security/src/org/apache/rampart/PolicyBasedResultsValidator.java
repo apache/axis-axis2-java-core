@@ -65,8 +65,10 @@ public class PolicyBasedResultsValidator {
         
         validateEncryptedParts(data, results);
 
-        //supporting tokens - UT 
-        validateSupportingTokens(data, results);
+        //Supporting tokens
+        if(!rmd.isClientSide()) {
+            validateSupportingTokens(data, results);
+        }
         
         /*
          * Now we can check the certificate used to sign the message. In the
@@ -126,7 +128,12 @@ public class PolicyBasedResultsValidator {
         RampartPolicyData rpd = data.getRampartMessageData().getPolicyData();
         SupportingToken suppTok = rpd.getSupportingTokens();
         handleSupportingTokens(results, suppTok);
-        
+        SupportingToken signedSuppToken = rpd.getSignedSupportingTokens();
+        handleSupportingTokens(results, signedSuppToken);
+        SupportingToken signedEndSuppToken = rpd.getSignedEndorsingSupportingTokens();
+        handleSupportingTokens(results, signedEndSuppToken);
+        SupportingToken endSuppToken = rpd.getEndorsingSupportingTokens();
+        handleSupportingTokens(results, endSuppToken);
     }
 
     /**
