@@ -48,7 +48,7 @@
         }
 
         java.lang.String methodName;
-        if(op.getName() != null &amp; (methodName = op.getName().getLocalPart()) != null){
+        if(op.getName() != null &amp; (methodName = org.apache.axis2.util.JavaUtils.xmlNameToJava(op.getName().getLocalPart())) != null){
 
         <xsl:for-each select="method">
 
@@ -284,7 +284,7 @@
         }
 
         java.lang.String methodName;
-        if(op.getName() != null &amp; (methodName = op.getName().getLocalPart()) != null){
+        if(op.getName() != null &amp; (methodName = org.apache.axis2.util.JavaUtils.xmlNameToJava(op.getName().getLocalPart())) != null){
 
         <xsl:for-each select="method">
 
@@ -405,7 +405,7 @@
         }
 
         java.lang.String methodName;
-        if(op.getName() != null &amp; (methodName = op.getName().getLocalPart()) != null){
+        if(op.getName() != null &amp; (methodName = org.apache.axis2.util.JavaUtils.xmlNameToJava(op.getName().getLocalPart())) != null){
 
         <xsl:for-each select="method">
 

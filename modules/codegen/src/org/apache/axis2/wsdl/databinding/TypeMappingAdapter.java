@@ -18,6 +18,7 @@ package org.apache.axis2.wsdl.databinding;
 
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axiom.om.OMElement;
 
 import javax.xml.namespace.QName;
@@ -96,11 +97,8 @@ public abstract class TypeMappingAdapter implements TypeMapper {
             counter = 0;
         }
         if ((qname != null) && (qname.getLocalPart().length() != 0)) {
-            String paramName = qname.getLocalPart();
-            //make the first letter lower case - java coding convention
-            if (paramName.length() > 1){
-                paramName = paramName.substring(0,1).toLowerCase() + paramName.substring(1);
-            }
+            String paramName = JavaUtils.xmlNameToJavaIdentifier(qname.getLocalPart());
+
             if (parameterNameList.contains(paramName)){
                 paramName = paramName + counter++;
             }

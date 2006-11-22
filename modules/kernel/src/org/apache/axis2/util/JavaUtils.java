@@ -182,6 +182,22 @@ public class JavaUtils {
     }    // capitalizeFirstChar
 
     /**
+     * converts an xml name to a java identifier
+     * @param name
+     * @return java identifier
+     */
+
+    public static String xmlNameToJavaIdentifier(String name){
+        String javaName = xmlNameToJava(name);
+        // convert the first letter to lowercase
+        if ((javaName != null) && (javaName.length() > 0)){
+            javaName = javaName.substring(0,1).toLowerCase() + javaName.substring(1);
+        }
+
+        return javaName;
+    }
+
+    /**
      * Tests the String 'value':
      *   return 'false' if its 'false', '0', or 'no' - else 'true'
      * 

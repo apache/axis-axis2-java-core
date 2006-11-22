@@ -176,6 +176,7 @@
           
             <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
             <xsl:variable name="outputcomplextype"><xsl:value-of select="output/param/@complextype"/></xsl:variable>
+            <xsl:variable name="outputopname"><xsl:value-of select="output/param/@opname"/></xsl:variable>
             <xsl:variable name="style"><xsl:value-of select="@style"></xsl:value-of></xsl:variable>
             <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
             <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
@@ -382,7 +383,7 @@
                            _messageContext.getTransportOut().getSender().cleanup(_messageContext);
                           <xsl:choose>
                               <xsl:when test="($isbackcompatible='true') and (string-length(normalize-space($outputcomplextype)) > 0)">
-                                   return get<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>)object);
+                                   return get<xsl:value-of select="$outputopname"/>((<xsl:value-of select="$outputtype"/>)object);
                               </xsl:when>
                               <xsl:otherwise>
                                    return (<xsl:value-of select="$outputtype"/>)object;
