@@ -14,7 +14,7 @@
         <wsa:ReplyTo>
             <wsa:Address>http://www.replyTo.org/service/</wsa:Address>
         </wsa:ReplyTo>
-        <wsa:RelatesTo wsa:RelationshipType="TestRelation">http://www.relatesTo.org/service/</wsa:RelatesTo>
+        <wsa:RelatesTo RelationshipType="TestRelation">http://www.relatesTo.org/service/</wsa:RelatesTo>
     </soapenv:Header>
     <soapenv:Body></soapenv:Body>
 </soapenv:Envelope>

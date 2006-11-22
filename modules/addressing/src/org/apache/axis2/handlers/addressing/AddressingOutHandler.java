@@ -219,7 +219,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                         
                         relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
                                 relationshipType,
-                                addressingNamespaceObject);
+                                null);
                     }
                 }
             }
