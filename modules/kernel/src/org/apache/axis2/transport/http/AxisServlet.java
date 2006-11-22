@@ -86,6 +86,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             // We need to create this only if transport session is enabled.
             Object sessionContext = getSessionContext(req);
             msgContext.setSessionContext((SessionContext) sessionContext);
+            msgContext.setProperty(SESSION_ID, req.getSession().getId());
         }
 
         msgContext.setConfigurationContext(configContext);
@@ -99,7 +100,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
                 getTransportHeaders(req));
-        msgContext.setProperty(SESSION_ID, req.getSession().getId());
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, req.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
