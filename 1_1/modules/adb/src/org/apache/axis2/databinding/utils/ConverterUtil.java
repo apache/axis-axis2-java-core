@@ -52,35 +52,35 @@ public class ConverterUtil {
 
     /* String conversion methods */
     public static String convertToString(int i) {
-        return i + "";
+        return Integer.toString(i);
     }
 
     public static String convertToString(float i) {
-        return i + "";
+        return Float.toString(i);
     }
 
     public static String convertToString(long i) {
-        return i + "";
+        return Long.toString(i);
     }
 
     public static String convertToString(double i) {
-        return i + "";
+        return Double.toString(i);
     }
 
     public static String convertToString(byte i) {
-        return ((int) i) + "";
+        return Byte.toString(i);
     }
 
     public static String convertToString(char i) {
-        return new String(new char[]{i});
+        return Character.toString(i);
     }
 
     public static String convertToString(short i) {
-        return i + "";
+        return Short.toString(i);
     }
 
     public static String convertToString(boolean i) {
-        return i + "";
+        return Boolean.toString(i);
     }
 
     public static String convertToString(Date value) {
