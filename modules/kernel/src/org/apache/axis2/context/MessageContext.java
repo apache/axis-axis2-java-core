@@ -1149,6 +1149,10 @@ public class MessageContext extends AbstractContext {
      * @return boolean
      */
     public boolean isHeaderPresent() {
+        // If there's no envelope there can't be a header.
+        if(this.envelope == null){
+            return false;
+        }
         OMElement node = this.envelope.getFirstElement();
         if (node == null) {
             return false;
