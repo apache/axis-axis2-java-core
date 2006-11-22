@@ -208,9 +208,8 @@ public class RampartMessageData {
                 this.policyData = RampartPolicyBuilder.build(it);
             }
             
-            RampartConfig rampartConfig = this.policyData.getRampartConfig();
             
-            if(isClientSide && rampartConfig == null) {
+            if(isClientSide && this.policyData != null && this.policyData.getRampartConfig() == null) {
                 //We'r missing the extra info rampart needs
                 throw new RampartException("rampartConigMissing");
             }
@@ -224,6 +223,7 @@ public class RampartMessageData {
                     
                     this.servicePolicy = this.policyData.getIssuerPolicy();
                     
+                    RampartConfig rampartConfig = policyData.getRampartConfig();
                     /*
                      * Copy crypto info from the into the new issuer policy 
                      */
