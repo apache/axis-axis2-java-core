@@ -309,13 +309,21 @@ public class Utils {
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 if (inMessage != null) {
                     inMessage.setName(opName + Java2WSDLConstants.MESSAGE_SUFFIX);
-                    inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
+                    QName complexSchemaType = table.getComplexSchemaType(jmethod.getSimpleName());
+                    inMessage.setElementQName(complexSchemaType);
+                    if (complexSchemaType != null) {
+                        axisService.addmessageNameToOperationMapping(complexSchemaType.getLocalPart(), operation);
+                    }
                 }
                 if (!jmethod.getReturnType().isVoidType()) {
                     AxisMessage outMessage = operation.getMessage(
                             WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                    outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +
-                            Java2WSDLConstants.RESPONSE));
+                    QName qNamefortheType = table.getQNamefortheType(jmethod.getSimpleName() +
+                            Java2WSDLConstants.RESPONSE);
+                    outMessage.setElementQName(qNamefortheType);
+                    if (qNamefortheType != null) {
+                        axisService.addmessageNameToOperationMapping(qNamefortheType.getLocalPart(), operation);
+                    }
                     outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
                 }
                 if (jmethod.getExceptionTypes().length > 0) {

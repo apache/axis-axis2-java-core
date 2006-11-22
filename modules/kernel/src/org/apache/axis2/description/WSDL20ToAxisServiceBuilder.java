@@ -1,33 +1,25 @@
 package org.apache.axis2.description;
 
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.woden.WSDLException;
-import org.apache.woden.WSDLFactory;
-import org.apache.woden.WSDLReader;
-import org.apache.woden.WSDLSource;
+import org.apache.woden.*;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.schema.Schema;
-import org.apache.woden.wsdl20.Binding;
-import org.apache.woden.wsdl20.Description;
-import org.apache.woden.wsdl20.Endpoint;
-import org.apache.woden.wsdl20.Interface;
-import org.apache.woden.wsdl20.InterfaceFaultReference;
-import org.apache.woden.wsdl20.InterfaceMessageReference;
-import org.apache.woden.wsdl20.InterfaceOperation;
-import org.apache.woden.wsdl20.Service;
+import org.apache.woden.types.NCName;
+import org.apache.woden.wsdl20.*;
 import org.apache.woden.wsdl20.enumeration.Direction;
+import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.woden.wsdl20.extensions.ExtensionElement;
 import org.apache.woden.wsdl20.extensions.UnknownExtensionElement;
-import org.apache.woden.wsdl20.xml.BindingElement;
-import org.apache.woden.wsdl20.xml.DescriptionElement;
-import org.apache.woden.wsdl20.xml.InterfaceElement;
-import org.apache.woden.wsdl20.xml.InterfaceFaultReferenceElement;
-import org.apache.woden.wsdl20.xml.InterfaceMessageReferenceElement;
-import org.apache.woden.wsdl20.xml.InterfaceOperationElement;
-import org.apache.woden.wsdl20.xml.TypesElement;
+import org.apache.woden.wsdl20.extensions.soap.SOAPBindingMessageReferenceExtensions;
+import org.apache.woden.wsdl20.extensions.soap.SOAPBindingOperationExtensions;
+import org.apache.woden.wsdl20.extensions.soap.SOAPHeaderBlock;
+import org.apache.woden.wsdl20.xml.*;
+import org.apache.woden.xml.XMLAttr;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.w3c.dom.Document;
@@ -38,11 +30,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.net.URISyntaxException;
+import java.util.*;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -75,10 +64,11 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private String savedTargetNamespace;
 
     private Map namespacemap;
-    
+
     private NamespaceMap stringBasedNamespaceMap;
-    
+
     private boolean setupComplete = false;
+    private Service wsdlService;
 
     public WSDL20ToAxisServiceBuilder(InputStream in, QName serviceName,
                                       String interfaceName) {
@@ -90,7 +80,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     public WSDL20ToAxisServiceBuilder(String wsdlUri,
-                                      String name, String interfaceName)  throws Exception  {
+                                      String name, String interfaceName) throws Exception {
         WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
         DescriptionElement descriptionElement = wsdlReader.readWSDL(wsdlUri);
         savedTargetNamespace = descriptionElement.getTargetNamespace()
@@ -98,7 +88,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         namespacemap = descriptionElement.getNamespaces();
         this.description = descriptionElement.toComponent();
         this.serviceName = null;
-        if(name != null) {
+        if (name != null) {
             serviceName = new QName(descriptionElement.getTargetNamespace().toString(), name);
         }
         this.interfaceName = interfaceName;
@@ -133,7 +123,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // setting target name space
             axisService.setTargetNamespace(savedTargetNamespace);
 
-            // if there are documentation elements in the root. Lets add them as the service description
+            // if there are documentation elements in the root. Lets add them as the wsdlService description
             // but since there can be multiple documentation elements, lets only add the first one
 //            DocumentationElement[] documentationElements = description.toElement().getDocumentationElements();
 //            if (documentationElements != null && documentationElements.length > 0) {
@@ -159,7 +149,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // axisService.addSchema(getXMLSchema((Element)typeDefinitions[i].getContent(),
             // null));
             // }
-            //                
+            //
             // }
 
             TypesElement typesElement = description.toElement()
@@ -169,47 +159,35 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 for (int i = 0; i < schemas.length; i++) {
                     XmlSchema schemaDefinition = schemas[i].getSchemaDefinition();
 
-
                     // WSDL 2.0 spec requires that even the built-in schema should be returned
                     // once asked for schema definitions. But for data binding purposes we can ignore that
-                    if (schemaDefinition != null && !Constants.URI_2001_SCHEMA_XSD.equals(schemaDefinition.getTargetNamespace())) {
+                    if (schemaDefinition != null && !Constants.URI_2001_SCHEMA_XSD.equals(schemaDefinition.getTargetNamespace()))
+                    {
                         axisService.addSchema(schemaDefinition);
                     }
                 }
             }
 
             Binding binding = findBinding(description);
-            // //////////////////(1.2) /////////////////////////////
-            // // create new Schema extensions element for wrapping
-            // Element[] schemaElements =
-            // generateWrapperSchema(descriptionElement,
-            // binding);
-            // if (schemaElements != null && schemaElements.length > 0) {
-            // for (int i = 0; i < schemaElements.length; i++) {
-            // Element schemaElement = schemaElements[i];
-            // if (schemaElement != null) {
-            // axisService.addSchema(getXMLSchema(schemaElement, null));
-            // }
-            // }
-            // }
-            processBinding(binding, description);
+            processBinding(binding);
+
             return axisService;
         } catch (Exception e) {
             throw new AxisFault(e);
         }
     }
-    
+
     /**
-     * contains all code which gathers non-service specific information from the
+     * contains all code which gathers non-wsdlService specific information from the
      * wsdl.
-     * <p>
+     * <p/>
      * After all the setup completes successfully, the setupComplete field is
      * set so that any subsequent calls to setup() will result in a no-op. Note
      * that subclass WSDL20ToAllAxisServicesBuilder will call populateService
-     * for each endpoint in the WSDL. Separating the non-service specific
+     * for each endpoint in the WSDL. Separating the non-wsdlService specific
      * information here allows WSDL20ToAllAxisServicesBuilder to only do this
-     * work 1 time per WSDL, instead of for each endpoint on each service.
-     * 
+     * work 1 time per WSDL, instead of for each endpoint on each wsdlService.
+     *
      * @throws AxisFault
      */
     protected void setup() throws AxisFault {
@@ -260,23 +238,105 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw new AxisFault(e);
         }
     }
-    
-    private void processBinding(Binding binding, Description description)
+
+    private void processBinding(Binding binding)
             throws Exception {
         if (binding != null) {
 
-            // TODO @author Chathura have to copy policy elements.
-            // copyExtensibleElements(binding.getExtensibilityElements(), dif,
-            // axisService, BINDING);
+            Interface serviceInterface;
 
-            Interface serviceInterface = binding.getInterface();
+            if (wsdlService != null) {
+                serviceInterface = wsdlService.getInterface();
+            } else {
+                // we don't need this as wsdlService can not be null. But keeping for early stages
+                serviceInterface = binding.getInterface();
+            }
 
-            processInterface(serviceInterface, description);
+            determineSOAPVersion(binding);
 
+            processInterface(serviceInterface);
+
+            BindingOperation[] bindingOperations = binding.getBindingOperations();
+            for (int i = 0; i < bindingOperations.length; i++) {
+                BindingOperation bindingOperation = bindingOperations[i];
+
+                AxisOperation operation = axisService.getOperation(bindingOperation.getInterfaceOperation().getName());
+
+                BindingMessageReference[] bindingMessageReferences = bindingOperation.getBindingMessageReferences();
+                for (int j = 0; j < bindingMessageReferences.length; j++) {
+                    BindingMessageReference bindingMessageReference = bindingMessageReferences[j];
+
+                    NCName messageLabel = bindingMessageReference.getInterfaceMessageReference().getMessageLabel();
+                    AxisMessage message = operation.getMessage(messageLabel.toString());
+
+
+                    SOAPBindingMessageReferenceExtensions soapHeaderExt = (SOAPBindingMessageReferenceExtensions) bindingMessageReference.getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
+
+                    if (soapHeaderExt != null) {
+                        SOAPHeaderBlock[] soapHeaders = soapHeaderExt.getSoapHeaders();
+
+                        for (int k = 0; k < soapHeaders.length; k++) {
+                            SOAPHeaderBlock soapHeader = soapHeaders[j];
+
+                            ElementDeclaration elementDeclaration = soapHeader.getElementDeclaration();
+
+                            if (elementDeclaration != null) {
+                                QName name = elementDeclaration.getName();
+                                SOAPHeaderMessage soapHeaderMessage = new SOAPHeaderMessage(name);
+                                soapHeaderMessage.setRequired(soapHeader.isRequired().booleanValue());
+                                message.addSoapHeader(soapHeaderMessage);
+                            }
+                        }
+                    }
+
+                }
+
+
+                SOAPBindingOperationExtensions soapBindingExtension = ((SOAPBindingOperationExtensions)
+                        bindingOperation.getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP)));
+                String soapAction = soapBindingExtension.getSoapAction().toString();
+
+                operation.setSoapAction(soapAction == null ? "" : soapAction);
+            }
         }
     }
 
-    private void processInterface(Interface serviceInterface, Description dif)
+    /**
+     * This method has a flaw in it which needs to be fixed.
+     * IIUC, the protocol URI should match with the soap version attribute. But I need to confirm this.
+     * Basically the question is wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP and
+     * version wsoap:version="1.1" are valid combinations or not. (Refer page 37 and 38 of WSDL primer)
+     * <p/>
+     * UntiL I fixed it, just checking the version attribute.
+     *
+     * @param binding
+     * @throws URISyntaxException
+     */
+    private void determineSOAPVersion(Binding binding) throws URISyntaxException {
+        BindingElement bindingElement = binding.toElement();
+
+        boolean soapNSFound = false;
+        XMLAttr[] wsoapAttributes = bindingElement.getExtensionAttributesForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
+
+        for (int i = 0; i < wsoapAttributes.length; i++) {
+            XMLAttr wsoapAttribute = wsoapAttributes[i];
+            if (wsoapAttribute.getAttributeType().getLocalPart().equals(WSDL2Constants.ATTR_VERSION))
+            {
+                String soapVersion = wsoapAttribute.toExternalForm();
+                if ("1.1".equals(soapVersion)) {
+                    axisService.setSoapNsUri(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                    soapNSFound = true;
+                }
+            }
+        }
+
+        if (!soapNSFound) {
+            axisService.setSoapNsUri(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        }
+
+    }
+
+    private void processInterface(Interface serviceInterface)
             throws Exception {
 
         // TODO @author Chathura copy the policy elements
@@ -290,6 +350,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     description));
         }
 
+        Interface[] extendedInterfaces = serviceInterface.getExtendedInterfaces();
+        for (int i = 0; i < extendedInterfaces.length; i++) {
+            Interface extendedInterface = extendedInterfaces[i];
+            processInterface(extendedInterface);
+        }
+
     }
 
     private AxisOperation populateOperations(InterfaceOperation operation,
@@ -297,82 +363,55 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         QName opName = operation.getName();
         // Copy Name Attribute
         AxisOperation axisOperation = axisService.getOperation(opName);
+
         if (axisOperation == null) {
             String MEP = operation.getMessageExchangePattern().toString();
             axisOperation = AxisOperationFactory.getOperationDescription(MEP);
             axisOperation.setName(opName);
 
-            // All policy includes must share same registry
-            PolicyInclude pi = axisOperation.getPolicyInclude();
-            if (pi == null) {
-                pi = new PolicyInclude();
-                axisOperation.setPolicyInclude(pi);
-            }
-            pi.setPolicyRegistry(registry);
         }
 
-        // assuming the style of the operations of WSDL 2.0 is always document.
+        // assuming the style of the operations of WSDL 2.0 is always document, for the time being :)
         axisOperation.setStyle("document");
-
-        // copyExtensibleElements(wsdl4jOperation.getExtensibilityElements(),
-        // dif,
-        // axisOperation, PORT_TYPE_OPERATION);
 
         InterfaceMessageReference[] interfaceMessageReferences = operation
                 .getInterfaceMessageReferences();
         for (int i = 0; i < interfaceMessageReferences.length; i++) {
-            InterfaceMessageReferenceElement messageReference = interfaceMessageReferences[i].toElement();
+            InterfaceMessageReference messageReference = interfaceMessageReferences[i];
             if (messageReference.getMessageLabel().equals(
-                    messageReference.getMessageLabel().IN)) {
+                    MessageLabel.IN)) {
                 // Its an input message
 
                 if (isServerSide) {
-                    AxisMessage inMessage = axisOperation
-                            .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-
-                    inMessage.setElementQName(messageReference.getElementName());
-                    inMessage.setName(messageReference.getElementName().getLocalPart());
-                    // TODO copy policy elements
+                    createAxisMessage(axisOperation, messageReference, WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 } else {
-                    AxisMessage inMessage = axisOperation
-                            .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-
-                    inMessage.setElementQName(messageReference.getElementName());
-                    inMessage.setName(messageReference.getElementName().getLocalPart());
-                    // TODO copy policy elements
+                    createAxisMessage(axisOperation, messageReference, WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                 }
             } else if (messageReference.getMessageLabel().equals(
-                    messageReference.getMessageLabel().OUT)) {
+                    MessageLabel.OUT)) {
                 if (isServerSide) {
-                    AxisMessage outMessage = axisOperation
-                            .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-
-                    outMessage.setElementQName(messageReference.getElementName());
-                    outMessage.setName(messageReference.getElementName().getLocalPart());
-//                  TODO copy policy elements
+                    createAxisMessage(axisOperation, messageReference, WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                 } else {
-                    AxisMessage outMessage = axisOperation
-                            .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-
-                    outMessage.setElementQName(messageReference.getElementName());
-                    outMessage.setName(messageReference.getElementName().getLocalPart());
-//                  TODO copy policy elements
+                    createAxisMessage(axisOperation, messageReference, WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 }
             }
 
         }
 
-
         // add operation level faults
+
         InterfaceFaultReference[] faults = operation.getInterfaceFaultReferences();
         for (int i = 0; i < faults.length; i++) {
             AxisMessage faultMessage = new AxisMessage();
 
-            InterfaceFaultReferenceElement interfaceFaultReferenceElement = faults[i].toElement();
-            faultMessage.setDirection(interfaceFaultReferenceElement.getDirection().toString());
+            InterfaceFaultReference interfaceFaultReference = faults[i];
+            faultMessage.setDirection(interfaceFaultReference.getDirection().toString());
 
-            faultMessage.setElementQName(interfaceFaultReferenceElement.getInterfaceFaultElement().getElementName());
-            faultMessage.setName(interfaceFaultReferenceElement.getRef().getLocalPart());
+            InterfaceFault interfaceFault = interfaceFaultReference.getInterfaceFault();
+
+            faultMessage.setElementQName(interfaceFault.getElementDeclaration().getName());
+            faultMessage.setName(interfaceFault.getName().getLocalPart());
+
             axisOperation.setFaultMessages(faultMessage);
         }
 
@@ -380,6 +419,44 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return axisOperation;
     }
 
+    private void createAxisMessage(AxisOperation axisOperation, InterfaceMessageReference messageReference, String messageLabel) throws Exception {
+        AxisMessage message = axisOperation
+                .getMessage(messageLabel);
+
+        String messageContentModelName = messageReference.getMessageContentModel();
+        QName elementQName = null;
+
+        if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_ELEMENT.equals(messageContentModelName)) {
+            elementQName = messageReference.getElementDeclaration().getName();
+        } else if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_ANY.equals(messageContentModelName)) {
+            // TODO : Need to improve this
+//           elementQName = SchemaConstants.XSD_ANY;
+        } else
+        if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_NONE.equals(messageContentModelName)) {
+            // TODO : Need to improve this
+//           elementQName = new QName("None");
+        } else {
+            throw new Exception("Sorry we do not support " + messageContentModelName + ". We do only support #any, #none and #element as message content models.");
+        }
+
+        message.setElementQName(elementQName);
+        message.setName(elementQName != null ? elementQName.getLocalPart() : null);
+        axisOperation.addMessage(message, messageLabel);
+
+        // populate this map so that this can be used in SOAPBody based dispatching
+        if (elementQName != null) {
+            axisService.addmessageNameToOperationMapping(elementQName.getLocalPart(), axisOperation);
+        }
+    }
+
+    /**
+     * CAUTION : Do not call this method. This is just for reference and will be deleted, ASAP.
+     *
+     * @param extensionElement
+     * @param descriptionElement
+     * @param description
+     * @param originOfExtensibilityElements
+     */
     private void copyExtensibleElements(ExtensionElement[] extensionElement,
                                         DescriptionElement descriptionElement, AxisDescription description,
                                         String originOfExtensibilityElements) {
@@ -394,41 +471,29 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // TODO this is wrong. Compare this with WSDL 2.0 QName
                 if (WSDLConstants.WSDL11Constants.SOAP_12_OPERATION.equals(unknown
                         .getExtensionType())) {
-                    Element unknownElement = unknown.getElement();
+                    XMLElement unknownElement = unknown.getElement();
                     if (description instanceof AxisOperation) {
                         AxisOperation axisOperation = (AxisOperation) description;
-                        String style = unknownElement.getAttribute("style");
+                        String style = unknownElement.getAttributeValue("style");
                         if (style != null) {
                             axisOperation.setStyle(style);
                         }
                         axisOperation.setSoapAction(unknownElement
-                                .getAttribute("soapAction"));
+                                .getAttributeValue("soapAction"));
                     }
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_HEADER.equals(unknown
                         .getExtensionType())) {
                     // TODO : implement thid
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_BINDING.equals(unknown
                         .getExtensionType())) {
-                    style = unknown.getElement().getAttribute("style");
+                    style = unknown.getElement().getAttributeValue("style");
                     axisService.setSoapNsUri(element.getExtensionType()
                             .getNamespaceURI());
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_ADDRESS.equals(unknown
                         .getExtensionType())) {
-                    axisService.setEndpoint(unknown.getElement().getAttribute(
+                    axisService.setEndpoint(unknown.getElement().getAttributeValue(
                             "location"));
-                } else if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
-                        .getExtensionType())) {
-                    // TODO
 
-
-                } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE.equals(unknown
-                        .getExtensionType())) {
-                    // TODO
-
-                    
-
-                } else {
-                    // TODO : we are ignored that.
                 }
 
                 // } else if (element instanceof SOAPAddress) {
@@ -490,38 +555,35 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private Binding findBinding(Description discription) throws AxisFault {
         Service[] services = discription.getServices();
-        Service service = null;
+        wsdlService = null;
         Endpoint endpoint = null;
         Binding binding = null;
 
         if (services.length == 0) {
-            throw new AxisFault("No service found in the WSDL");
+            throw new AxisFault("No wsdlService found in the WSDL");
         }
 
         if (serviceName != null) {
             for (int i = 0; i < services.length; i++) {
                 if (serviceName.equals(services[i].getName())) {
-                    service = services[i];
+                    wsdlService = services[i];
                     break;  // found it. Stop looking.
                 }
             }
-            if (service == null) {
+            if (wsdlService == null) {
                 throw new AxisFault("Service not found the WSDL "
                         + serviceName.getLocalPart());
             }
         } else {
-            // If no particular service is mentioned select the first one.
-            service = services[0];
+            // If no particular wsdlService is mentioned select the first one.
+            wsdlService = services[0];
         }
-        // FIXME @author Chathura get the policy stuff to be copied
-        // copyExtensibleElements(service.getExtensibilityElements(), dif,
-        // axisService, SERVICE);
-        Endpoint[] endpoints = service.getEndpoints();
+        Endpoint[] endpoints = wsdlService.getEndpoints();
         if (this.interfaceName != null) {
 
             if (endpoints.length == 0) {
-                throw new AxisFault("No Endpoints/Ports found in the service:"
-                        + service.getName().getLocalPart());
+                throw new AxisFault("No Endpoints/Ports found in the wsdlService:"
+                        + wsdlService.getName().getLocalPart());
             }
 
             for (int i = 0; i < endpoints.length; ++i) {
@@ -539,11 +601,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             endpoint = endpoints[0];
 
         }
-        axisService.setName(service.getName().getLocalPart());
+        axisService.setName(wsdlService.getName().getLocalPart());
         if (endpoint != null) {
-            // FIXME @author Chathura copy in the policy stuff
-            // copyExtensibleElements(port.getExtensibilityElements(), dif,
-            // axisService, PORT);
             axisService.setEndpoint(endpoint.getAddress().toString());
             binding = endpoint.getBinding();
         }

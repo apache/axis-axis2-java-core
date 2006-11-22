@@ -47,6 +47,11 @@ public interface WSDL2Constants {
     String HTTP_PROTOCAL = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String SERVICE_LOCAL_NAME = "service";
     
+    String URI_HTTP_SOAP12 = "http://www.w3.org/2003/05/soap/bindings/HTTP";
+    String URI_HTTP_SOAP11 = "http://www.w3.org/2006/01/soap11/bindings/HTTP";
+    String ATTR_PROTOCOL = "protocol";
+    String ATTR_VERSION = "version";
+
     String MESSAGE_LABEL_IN = "In";
     String MESSAGE_LABEL_OUT = "Out";
 }

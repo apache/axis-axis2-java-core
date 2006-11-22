@@ -72,6 +72,8 @@ import java.util.*;
  */
 public class AxisService extends AxisDescription {
 
+    private Map messageNameToOperationsMap = new HashMap();
+
     private int nsCount = 0;
     private static final Log log = LogFactory.getLog(AxisService.class);
     private URL fileName;
@@ -1810,5 +1812,22 @@ public class AxisService extends AxisDescription {
 
     public void setTypeTable(TypeTable typeTable) {
         this.typeTable = typeTable;
+    }
+
+    /**
+     * When we are trying to find out the operation by the QName of the SOAPBody first child, this
+     * map will help to retrieve that data very fast.
+     * @param messageQNameToOperationMap
+     */
+    public void setMessageNameToOperationsMap(Map messageQNameToOperationMap) {
+        this.messageNameToOperationsMap = messageQNameToOperationMap;
+    }
+
+    public AxisOperation getOperationByMessageName(String messageName) {
+            return (AxisOperation) messageNameToOperationsMap.get(messageName);
+    }
+
+    public void addmessageNameToOperationMapping(String messageName, AxisOperation operation) {
+        messageNameToOperationsMap.put(messageName, operation);
     }
 }

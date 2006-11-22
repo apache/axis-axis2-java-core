@@ -184,5 +184,11 @@ public interface WSDLConstants {
         // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-opt-in
         String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2006/01/wsdl/out-opt-in";
         String DEFAULT_NAMESPACE_URI = "http://www.w3.org/2006/01/wsdl";
+
+        String NMTOKEN_ANY = "#any";
+        String NMTOKEN_NONE = "#none";
+        String NMTOKEN_OTHER = "#other";
+        String NMTOKEN_ELEMENT = "#element";
+
     }
 }

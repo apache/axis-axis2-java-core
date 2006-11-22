@@ -16,6 +16,8 @@ import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1809,13 +1811,24 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             } else if (wsdl4jElement instanceof SOAPBinding) {
                 SOAPBinding soapBinding = (SOAPBinding) wsdl4jElement;
                 style = soapBinding.getStyle();
-                axisService.setSoapNsUri(soapBinding.getElementType()
-                        .getNamespaceURI());
+                String wsdl11SOAPNSURI = soapBinding.getElementType()
+                        .getNamespaceURI();
+                if (org.apache.axis2.namespace.Constants.URI_WSDL11_SOAP.equals(wsdl11SOAPNSURI)) {
+                    axisService.setSoapNsUri(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                } else {
+                    axisService.setSoapNsUri(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                }
             } else if (wsdl4jElement instanceof SOAP12Binding) {
                 SOAP12Binding soapBinding = (SOAP12Binding) wsdl4jElement;
+
                 style = soapBinding.getStyle();
-                axisService.setSoapNsUri(soapBinding.getElementType()
-                        .getNamespaceURI());
+                String wsdl11SOAPNSURI = soapBinding.getElementType()
+                        .getNamespaceURI();
+                if (org.apache.axis2.namespace.Constants.URI_WSDL11_SOAP.equals(wsdl11SOAPNSURI)) {
+                    axisService.setSoapNsUri(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                } else {
+                    axisService.setSoapNsUri(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                }
             }
         }
     }

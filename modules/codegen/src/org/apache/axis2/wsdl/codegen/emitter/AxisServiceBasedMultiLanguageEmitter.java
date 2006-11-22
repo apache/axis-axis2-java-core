@@ -20,6 +20,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.woden.internal.util.dom.DOM2Writer;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAP11Constants;
 //import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -694,9 +696,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // loop through the extensibility elements to get to the bindings element
 
         String soapNsUri = axisService.getSoapNsUri();
-        if (org.apache.axis2.namespace.Constants.URI_WSDL11_SOAP.equals(soapNsUri)) {
+        if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNsUri)) {
             addAttribute(doc, "soap-version", "1.1", rootElement);
-        } else if (org.apache.axis2.namespace.Constants.URI_WSDL12_SOAP.equals(soapNsUri)) {
+        } else if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNsUri)) {
             addAttribute(doc, "soap-version", "1.2", rootElement);
         }
 
@@ -1026,13 +1028,17 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                 equals(codeGenConfiguration.getWSDLVersion())) {
 
-            WSDL20Writer wsdl20Writer = new WSDL20Writer(
-                    codeGenConfiguration.isFlattenFiles() ?
-                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                            getOutputDirectory(codeGenConfiguration.getOutputLocation(),
-                                    codeGenConfiguration.getResourceLocation())
-            );
-            wsdl20Writer.writeWSDL(axisService);
+//            WSDL20Writer wsdl20Writer = new WSDL20Writer(
+//                    codeGenConfiguration.isFlattenFiles() ?
+//                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
+//                            getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+//                                    codeGenConfiguration.getResourceLocation())
+//            );
+//            wsdl20Writer.writeWSDL(axisService);
+
+            // TODO : We can not write WSDL 2.0 documents. Even WSDL20Writer implementation is wrong.
+            // wait till Woden implements it.
+
         } else {
 
             WSDL11Writer wsdl11Writer = new WSDL11Writer(
