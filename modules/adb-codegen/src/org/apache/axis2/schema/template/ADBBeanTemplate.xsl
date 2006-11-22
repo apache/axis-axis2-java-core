@@ -519,6 +519,20 @@
 
         </xsl:for-each>
 
+     /**
+     * isReaderMTOMAware
+     * @return true if the reader supports MTOM
+     */
+   public boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
+        boolean isReaderMTOMAware = false;
+        <!-- workaround for the issues in the wstx reader!-->
+        try{
+          isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
+        }catch(java.lang.IllegalArgumentException e){
+          isReaderMTOMAware = false;
+        }
+        return isReaderMTOMAware;
+   }
      <!-- ######################################################################################### -->
      <!-- get OMElement methods that allows direct writing -->
      /**
@@ -948,7 +962,14 @@
                                                 } else {
                                                     xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
                                                 }
-                                                xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+                                            <xsl:choose>
+                                                <xsl:when test="$propertyType='java.lang.String[]'">
+                                                    xmlWriter.writeCharacters(<xsl:value-of select="$varName"/>[i]);
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                                 xmlWriter.writeEndElement();
 
                                             } else {
@@ -1121,6 +1142,9 @@
                                             <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
                                                 <xsl:value-of select="$varName"/>.serialize(xmlWriter);
                                             </xsl:when>
+                                            <xsl:when test="$propertyType='java.lang.String'">
+                                                   xmlWriter.writeCharacters(<xsl:value-of select="$varName"/>);
+                                            </xsl:when>
                                             <xsl:otherwise>
                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
                                             </xsl:otherwise>
@@ -1255,6 +1279,9 @@
                                             </xsl:when>
                                             <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
                                                 <xsl:value-of select="$varName"/>.serialize(xmlWriter);
+                                            </xsl:when>
+                                            <xsl:when test="$propertyType='java.lang.String'">
+                                                       xmlWriter.writeCharacters(<xsl:value-of select="$varName"/>);
                                             </xsl:when>
                                             <xsl:otherwise>
                                                        xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
@@ -1749,15 +1776,6 @@
 
                 </xsl:for-each>
 
-                boolean isReaderMTOMAware = false;
-                <!-- workaround for the issues in the wstx reader!-->
-                try{
-                  isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
-                }catch(java.lang.IllegalArgumentException e){
-                  isReaderMTOMAware = false;
-                }
-
-
                 <xsl:if test="($isType or $anon) and not($simple)">
                     <!-- Skip the outer start element in order to process the subelements. -->
                     reader.next();
@@ -1963,7 +1981,7 @@
                                                   } else {
                                                 </xsl:if>
 
-                                                    if (isReaderMTOMAware
+                                                    if (isReaderMTOMAware(reader)
                                                             &amp;&amp;
                                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
                                                     {
@@ -2018,7 +2036,7 @@
                                                             </xsl:if>
 
                                                                 <xsl:if test="not($simple)">reader.next();</xsl:if>
-                                                                if (isReaderMTOMAware
+                                                                if (isReaderMTOMAware(reader)
                                                                         &amp;&amp;
                                                                         java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
                                                                 {
@@ -2216,7 +2234,7 @@
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
                                     <xsl:if test="not($simple)">reader.next();</xsl:if>
-                                    if (isReaderMTOMAware
+                                    if (isReaderMTOMAware(reader)
                                             &amp;&amp;
                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
                                     {
@@ -3053,15 +3071,6 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
                 </xsl:for-each>
 
-                boolean isReaderMTOMAware = false;
-                <!-- workaround for the issues in the wstx reader!-->
-                try{
-                  isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
-                }catch(java.lang.IllegalArgumentException e){
-                  isReaderMTOMAware = false;
-                }
-
-
                 <xsl:if test="$isType or $anon">
                     <!-- Skip the outer start element in order to process the subelements. -->
                     reader.next();
@@ -3330,7 +3339,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 <!-- end of OMelement handling -->
                                 <!-- start of the simple types handling for binary content-->
                                 <xsl:when test="@binary">
-                                    if (isReaderMTOMAware
+                                    if (isReaderMTOMAware(reader)
                                             &amp;&amp;
                                             java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_BINARY)))
                                     {
@@ -3432,6 +3441,21 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
             return object;
         }
+
+        /**
+        * isReaderMTOMAware
+        * @return true if the reader supports MTOM
+        */
+      public boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
+           boolean isReaderMTOMAware = false;
+           <!-- workaround for the issues in the wstx reader!-->
+           try{
+             isReaderMTOMAware = java.lang.Boolean.TRUE.equals(reader.getProperty(org.apache.axiom.om.OMConstants.IS_DATA_HANDLERS_AWARE));
+           }catch(java.lang.IllegalArgumentException e){
+             isReaderMTOMAware = false;
+           }
+           return isReaderMTOMAware;
+      }
 
      public static javax.xml.stream.XMLStreamReader getPullParser(java.lang.Object beanObject, javax.xml.namespace.QName qName){
 
