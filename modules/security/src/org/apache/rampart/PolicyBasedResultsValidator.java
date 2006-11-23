@@ -25,6 +25,7 @@ import org.apache.ws.secpolicy.model.SupportingToken;
 import org.apache.ws.secpolicy.model.Token;
 import org.apache.ws.secpolicy.model.UsernameToken;
 import org.apache.ws.security.WSConstants;
+import org.apache.ws.security.WSEncryptionPart;
 import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.message.token.Timestamp;
@@ -60,6 +61,14 @@ public class PolicyBasedResultsValidator {
         }
         
         //sig/encr
+        Vector encryptedParts = RampartUtil.getEncryptedParts(rmd);
+        if(rpd.isSignatureProtection() && isSignatureRequired(rpd)) {
+            encryptedParts.add(new WSEncryptionPart(WSConstants.SIG_LN, 
+                    WSConstants.SIG_NS, "Element"));
+        }
+        
+        Vector signatureParts = RampartUtil.getSignedParts(rmd);
+        validateEncrSig(encryptedParts, signatureParts, results);
         
         validateProtectionOrder(data, results);
         
@@ -117,6 +126,56 @@ public class PolicyBasedResultsValidator {
         }
     }
     
+    /**
+     * @param encryptedParts
+     * @param signatureParts
+     */
+    private void validateEncrSig(Vector encryptedParts, Vector signatureParts, Vector results) 
+    throws RampartException {
+        ArrayList actions = getSigEncrActions(results);
+        boolean sig = false; 
+        boolean encr = false;
+        for (Iterator iter = actions.iterator(); iter.hasNext();) {
+            Integer act = (Integer) iter.next();
+            if(act.intValue() == WSConstants.SIGN) {
+                sig = true;
+            } else if(act.intValue() == WSConstants.ENCR) {
+                encr = true;
+            }
+        }
+        
+        if(sig && signatureParts.size() == 0) {
+            
+            //Unexpected signature
+            throw new RampartException("unexprectedSignature");
+        } else if(!sig && signatureParts.size() > 0) {
+            
+            //required signature missing
+            throw new RampartException("signatureMissing");
+        }
+        
+        if(encr && encryptedParts.size() == 0) {
+            
+            //Check whether its just an encrypted key
+            ArrayList list = this.getResults(results, WSConstants.ENCR);
+            boolean encrDataFound = false;
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                WSSecurityEngineResult result = (WSSecurityEngineResult) iter.next();
+                if(result.getDataRefUris() != null) {
+                    encrDataFound = true;
+                }
+            }
+            if(encrDataFound) {
+                //Unexpected encryption
+                throw new RampartException("unexprectedEncryptedPart");
+            }
+        } else if(!encr && encryptedParts.size() > 0) {
+            
+            //required signature missing
+            throw new RampartException("encryptionMissing");
+        }
+    }
+
     /**
      * @param data
      * @param results
@@ -236,20 +295,13 @@ public class PolicyBasedResultsValidator {
         //Check for encrypted body
         if(rpd.isEncryptBody()) {
             
-            if(!encrRefs.remove(data.getBodyEncrDataId())){
+            if(!encrRefs.contains(data.getBodyEncrDataId())){
                 throw new RampartException("encryptedPartMissing", 
                         new String[]{data.getBodyEncrDataId()});
             }
         }
         
         int refCount = 0;
-        
-        if(rpd.isSignatureProtection() && 
-                ((rpd.isSymmetricBinding() && rpd.getSignatureToken() != null) ||
-                (!rpd.isSymmetricBinding() && !rpd.isTransportBinding() && 
-                        rpd.getInitiatorToken() != null))) {
-            refCount ++;
-        }
         
         refCount += rpd.getEncryptedParts().size();
         
@@ -258,6 +310,12 @@ public class PolicyBasedResultsValidator {
                     new String[]{Integer.toString(refCount)});
         }
         
+    }
+
+    private boolean isSignatureRequired(RampartPolicyData rpd) {
+        return (rpd.isSymmetricBinding() && rpd.getSignatureToken() != null) ||
+                (!rpd.isSymmetricBinding() && !rpd.isTransportBinding() && 
+                        rpd.getInitiatorToken() != null);
     }
     
 
