@@ -105,15 +105,17 @@ public interface Handler {
      */
     public class InvocationResponse
     {
-      public static InvocationResponse CONTINUE = new InvocationResponse(0);
-      public static InvocationResponse SUSPEND = new InvocationResponse(1);
-      public static InvocationResponse ABORT = new InvocationResponse(2);
+      public static InvocationResponse CONTINUE = new InvocationResponse(0, "InvocationResponse.CONTINUE");
+      public static InvocationResponse SUSPEND = new InvocationResponse(1, "InvocationResponse.SUSPEND");
+      public static InvocationResponse ABORT = new InvocationResponse(2, "InvocationResponse.ABORT");
 
       private int instructionID;
+      private String description;
         
-      private InvocationResponse(int instructionID)
+      private InvocationResponse(int instructionID, String description)
       {
         this.instructionID = instructionID;
+        this.description = description;
       }
         
       public boolean equals(InvocationResponse instruction)
@@ -124,6 +126,10 @@ public interface Handler {
       public int hashCode()
       {
         return instructionID;
+      }
+      
+      public String toString() {
+    	  return description;
       }
     }
 }
