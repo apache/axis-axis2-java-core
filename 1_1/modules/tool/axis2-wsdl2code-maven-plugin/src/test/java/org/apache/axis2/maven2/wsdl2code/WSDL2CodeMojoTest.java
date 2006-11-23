@@ -24,7 +24,6 @@ import org.apache.axis2.maven2.wsdl2code.WSDL2CodeMojo;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Test class for running the wsdl2code mojo.
