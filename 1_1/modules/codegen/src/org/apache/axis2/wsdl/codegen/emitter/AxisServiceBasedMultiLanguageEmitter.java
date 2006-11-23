@@ -2011,7 +2011,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                             inputMessage.getElementQName()),
                     this.mapper.getTypeMappingName(
                             inputMessage.getElementQName()),
-                    operation.getName()
+                    operation.getName(),
+                    inputMessage.getElementQName()
             );
 
             paramElementList.add(mainParameter);
@@ -2045,6 +2046,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                             this.mapper.getTypeMappingName(
                                     qName),
                             operation.getName(),
+                            qName,
                             qName.getLocalPart(),
                             (this.mapper.getTypeMappingStatus(qName)!=null),
                             Constants.ARRAY_TYPE.equals(this.mapper.getTypeMappingStatus(qName)))
@@ -2076,8 +2078,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Element generateParamComponent(Document doc,
                                              String paramName,
                                              String paramType,
-                                             QName operationName) {
-        return generateParamComponent(doc,paramName,paramType,operationName,null,false,false);
+                                             QName operationName,
+                                             QName paramQName) {
+        return generateParamComponent(doc,paramName,paramType,operationName, paramQName, null,false,false);
 
     }
 
@@ -2091,8 +2094,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected Element generateParamComponent(Document doc,
                                              String paramName,
-                                             String paramType) {
-        return generateParamComponent(doc,paramName,paramType,null,null,false,false);
+                                             String paramType,
+                                             QName paramQName) {
+        return generateParamComponent(doc,paramName,paramType,null, paramQName, null,false,false);
 
     }
     /**
@@ -2109,6 +2113,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                              String paramName,
                                              String paramType,
                                              QName opName,
+                                             QName paramQName,
                                              String partName,
                                              boolean isPrimitive,
                                              boolean isArray) {
@@ -2134,8 +2139,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //if the opName and partName are present , add them
         if (opName!=null){
             addAttribute(doc,"opname",opName.getLocalPart(),paramElement);
-
         }
+
+        if (paramQName!=null){
+            Element qNameElement = doc.createElement("qname");
+            addAttribute(doc,"nsuri", paramQName.getNamespaceURI(), qNameElement);
+            qNameElement.setTextContent(paramQName.getLocalPart());
+            paramElement.appendChild(qNameElement);
+        }
+
         if (partName!= null){
             addAttribute(doc,"partname",
                     JavaUtils.capitalizeFirstChar(partName),
@@ -2190,6 +2202,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // add this as a body parameter
         addAttribute(doc, "location", "body", paramElement);
         addAttribute(doc, "opname", operation.getName().getLocalPart(), paramElement);
+
+        QName paramQName = outputMessage.getElementQName();
+        if (paramQName!=null){
+            Element qNameElement = doc.createElement("qname");
+            addAttribute(doc,"nsuri", paramQName.getNamespaceURI(), qNameElement);
+            qNameElement.setTextContent(paramQName.getLocalPart());
+            paramElement.appendChild(qNameElement);
+        }
 
         return paramElement;
     }
