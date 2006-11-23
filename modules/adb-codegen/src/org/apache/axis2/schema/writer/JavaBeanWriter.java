@@ -11,6 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMAttribute;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -23,22 +25,21 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
 
-
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 /**
  * Java Bean writer for the schema compiler.
@@ -86,6 +87,16 @@ public class JavaBeanWriter implements BeanWriter {
 
     public static final String EXTENSION_MAPPER_CLASSNAME = "ExtensionMapper";
 
+    // a list of externally identified QNames to be processed. This becomes
+    // useful when  only a list of external elements need to be processed
+
+    public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
+    public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.axiom.om.OMElement[]";
+
+    public static final String DEFAULT_ATTRIB_CLASS_NAME = OMAttribute.class.getName();
+    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.axiom.om.OMAttribute[]";
+
+
     /**
      * Default constructor
      */
@@ -105,10 +116,26 @@ public class JavaBeanWriter implements BeanWriter {
         return modelMap;
     }
 
+    public String getDefaultClassName() {
+        return DEFAULT_CLASS_NAME;
+    }
+
+    public String getDefaultClassArrayName() {
+        return DEFAULT_CLASS_ARRAY_NAME;
+    }
+
+    public String getDefaultAttribClassName() {
+        return DEFAULT_ATTRIB_CLASS_NAME;
+    }
+
+    public String getDefaultAttribArrayClassName() {
+        return DEFAULT_ATTRIB_ARRAY_CLASS_NAME;
+    }
+
     public void init(CompilerOptions options) throws SchemaCompilationException {
         try {
-	    modelMap = new HashMap();
-	    ns2packageNameMap = new HashMap();	
+            modelMap = new HashMap();
+            ns2packageNameMap = new HashMap();
 
             initWithFile(options.getOutputLocation());
             packageName = options.getPackageName();
@@ -571,7 +598,7 @@ public class JavaBeanWriter implements BeanWriter {
             }
 
             if (javaClassNameForElement == null) {
-                javaClassNameForElement = SchemaCompiler.DEFAULT_CLASS_NAME;
+                javaClassNameForElement = getDefaultClassName();
                 log.warn(SchemaCompilerMessages
                         .getMessage("schema.typeMissing", name.toString()));
             }
@@ -653,7 +680,8 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "rewrite", "yes", property);
                 XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
             } else if (metainf.isRestriction() && !missingQNames.contains(name) &&
-                    (minOccursChanged(name, missingQNames, metainf) || maxOccursChanged(name, missingQNames, metainf))) {
+                    (minOccursChanged(name, missingQNames, metainf) || maxOccursChanged(name, missingQNames, metainf)))
+            {
 
                 XSLTUtils.addAttribute(model, "restricted", "yes", property);
                 XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
@@ -826,11 +854,13 @@ public class JavaBeanWriter implements BeanWriter {
 
                     if (!javaClassForParentElement.equals(javaClassForElement)) {
                         if (javaClassForParentElement.endsWith("[]")) {
-                            if ((javaClassForParentElement.substring(0, javaClassForParentElement.indexOf('['))).equals(javaClassForElement)) {
+                            if ((javaClassForParentElement.substring(0, javaClassForParentElement.indexOf('['))).equals(javaClassForElement))
+                            {
                                 continue;
                             }
                         } else if (javaClassForElement.endsWith("[]")) {
-                            if ((javaClassForElement.substring(0, javaClassForElement.indexOf('['))).equals(javaClassForParentElement)) {
+                            if ((javaClassForElement.substring(0, javaClassForElement.indexOf('['))).equals(javaClassForParentElement))
+                            {
                                 continue;
                             }
                         } else {
@@ -907,9 +937,9 @@ public class JavaBeanWriter implements BeanWriter {
      * @param javaClassNameForElement
      */
     private boolean isDefault(String javaClassNameForElement) {
-        return SchemaCompiler.DEFAULT_CLASS_NAME
+        return getDefaultClassName()
                 .equals(javaClassNameForElement)
-                || SchemaCompiler.DEFAULT_CLASS_ARRAY_NAME
+                || getDefaultClassArrayName()
                 .equals(javaClassNameForElement);
     }
 

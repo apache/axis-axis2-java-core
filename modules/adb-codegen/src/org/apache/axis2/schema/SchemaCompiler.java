@@ -127,17 +127,7 @@ public class SchemaCompiler {
     public static final String ANY_ELEMENT_FIELD_NAME = "extraElement";
     public static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
-    public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
-    public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.axiom.om.OMElement[]";
-
-    public static final String DEFAULT_ATTRIB_CLASS_NAME = OMAttribute.class.getName();
-    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.axiom.om.OMAttribute[]";
-
-
     private static int typeCounter = 0;
-
-
-
 
     /**
      * @return the processes element map
@@ -462,7 +452,7 @@ public class SchemaCompiler {
             log.warn(SchemaCompilerMessages.getMessage("schema.elementWithNoType", xsElt.getQName().toString()));
             metainf.registerMapping(xsElt.getQName(),
                     null,
-                    DEFAULT_CLASS_NAME,
+                    writer.getDefaultClassName(),
                     SchemaConstants.ANY_TYPE);
         }
 
@@ -615,7 +605,7 @@ public class SchemaCompiler {
         }else if (xsElt.getRefName()!=null){
 
             if(xsElt.getRefName().equals(SchemaConstants.XSD_SCHEMA)){
-                innerElementMap.put(xsElt.getQName(), SchemaCompiler.DEFAULT_CLASS_NAME);
+                innerElementMap.put(xsElt.getQName(), writer.getDefaultClassName());
                 return;
             }
             //process the referenced type. It could be thought that the referenced element replaces this
@@ -824,7 +814,7 @@ public class SchemaCompiler {
             //contained schema type. We better set the default then
             //however it's better if the default can be set through the
             //property file
-            className = DEFAULT_CLASS_NAME;
+            className = writer.getDefaultClassName();
             log.warn(SchemaCompilerMessages
                     .getMessage("schema.typeMissing", qName.toString()));
         }
@@ -1039,7 +1029,7 @@ public class SchemaCompiler {
             processParticle(extension.getParticle(),metaInfHolder,parentSchema);
             String className = findClassName(extension.getBaseTypeName(), false);
 
-            if (!SchemaCompiler.DEFAULT_CLASS_NAME.equals(className)) {
+            if (!writer.getDefaultClassName().equals(className)) {
                 //the particle has been processed, However since this is an extension we need to
                 //add the basetype as an extension to the complex type class.
                 // The basetype has been processed already
@@ -1075,7 +1065,7 @@ public class SchemaCompiler {
             processParticle(restriction.getParticle(),metaInfHolder,parentSchema);
             String className = findClassName(restriction.getBaseTypeName(), false);
 
-            if (!SchemaCompiler.DEFAULT_CLASS_NAME.equals(className)) {
+            if (!writer.getDefaultClassName().equals(className)) {
                 metaInfHolder.setRestriction(true);
                 metaInfHolder.setRestrictionClassName(findClassName(restriction.getBaseTypeName(), false));
                 //Note  - this is no array! so the array boolean is false
@@ -1351,7 +1341,7 @@ public class SchemaCompiler {
         QName qName = new QName(EXTRA_ATTRIBUTE_FIELD_NAME);
         metainf.registerMapping(qName,
                 null,
-                DEFAULT_ATTRIB_ARRAY_CLASS_NAME,//always generate an array of
+                writer.getDefaultAttribClassName(),//always generate an array of
                 //OMAttributes
                 SchemaConstants.ANY_TYPE);
         metainf.addtStatus(qName, SchemaConstants.ATTRIBUTE_TYPE);
@@ -1559,7 +1549,7 @@ public class SchemaCompiler {
                         if(referencedQName.equals(SchemaConstants.XSD_SCHEMA)) {
                             metainfHolder.registerMapping(referencedQName,
                                     null,
-                                    DEFAULT_CLASS_NAME,
+                                    writer.getDefaultClassName(),
                                     SchemaConstants.ANY_TYPE);
                         } else {
                             throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.referencedElementNotFound",referencedQName.toString()));
@@ -1605,7 +1595,7 @@ public class SchemaCompiler {
                 boolean isArray =  ((Boolean) processedElementArrayStatusMap.get(any)).booleanValue();
                 metainfHolder.registerMapping(anyElementFieldName,
                         null,
-                        isArray?DEFAULT_CLASS_ARRAY_NAME:DEFAULT_CLASS_NAME,
+                        isArray?writer.getDefaultClassArrayName():writer.getDefaultClassName(),
                         SchemaConstants.ANY_TYPE);
                 //if it's an array register an extra status flag with the system
                 if (isArray){

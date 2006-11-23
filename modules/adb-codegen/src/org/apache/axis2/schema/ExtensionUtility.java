@@ -7,9 +7,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
-import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
-import org.apache.axis2.wsdl.databinding.TypeMapper;
+import org.apache.axis2.wsdl.databinding.*;
 import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.AxisFault;
@@ -78,7 +76,15 @@ public class ExtensionUtility {
         //First try to take the one that is already there
         TypeMapper mapper = configuration.getTypeMapper();
         if (mapper == null) {
-            mapper = new JavaTypeMapper();
+            if (configuration.getOutputLanguage() != null &&
+                    !configuration.getOutputLanguage().trim().equals("") &&
+                    configuration.getOutputLanguage().toLowerCase().equals("c")) {
+                mapper = new CTypeMapper();
+
+            }  else {
+                mapper = new JavaTypeMapper();
+            }
+
         }
 
         if (options.isWriteOutput()) {

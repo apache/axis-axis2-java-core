@@ -59,7 +59,7 @@ public class CStructWriter implements BeanWriter {
     private List namesList;
     private static int count = 0;
     private boolean wrapClasses = false;
-    private boolean writeClasses=false;
+    private boolean writeClasses = false;
 
     protected File rootDir;
 
@@ -71,6 +71,16 @@ public class CStructWriter implements BeanWriter {
     private static final String DEFAULT_C_CLASS_NAME = "axiom_node_t*";
 
     private Map baseTypeMap = new JavaTypeMap().getTypeMap();
+
+    // a list of externally identified QNames to be processed. This becomes
+    // useful when  only a list of external elements need to be processed
+
+    public static final String DEFAULT_CLASS_NAME = "axiom_node_t*";
+    public static final String DEFAULT_CLASS_ARRAY_NAME = "axis2_array_list_t";
+
+    public static final String DEFAULT_ATTRIB_CLASS_NAME = "axiom_attribute_t*";
+    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "axis2_array_list_t";
+
 
 
     /**
@@ -84,21 +94,36 @@ public class CStructWriter implements BeanWriter {
      * obtain the raw DOMmodels used to write the classes.
      * This has no meaning when the classes are supposed to be wrapped  so the
      *
-     * @see BeanWriter#getModelMap()
      * @return Returns Map.
+     * @see BeanWriter#getModelMap()
      */
-    public Map getModelMap(){
+    public Map getModelMap() {
         return modelMap;
     }
 
+    public String getDefaultClassName() {
+        return DEFAULT_CLASS_NAME;
+    }
+
+    public String getDefaultClassArrayName() {
+        return DEFAULT_CLASS_ARRAY_NAME;
+    }
+
+    public String getDefaultAttribClassName() {
+        return DEFAULT_ATTRIB_CLASS_NAME;
+    }
+
+    public String getDefaultAttribArrayClassName() {
+        return DEFAULT_ATTRIB_ARRAY_CLASS_NAME;
+    }
     public void init(CompilerOptions options) throws SchemaCompilationException {
         try {
             initWithFile(options.getOutputLocation());
 
             writeClasses = options.isWriteOutput();
-            if (!writeClasses){
+            if (!writeClasses) {
                 wrapClasses = false;
-            }else{
+            } else {
                 wrapClasses = options.isWrapClasses();
             }
 
@@ -131,6 +156,7 @@ public class CStructWriter implements BeanWriter {
      * @param metainf
      * @return Returns String.
      * @throws org.apache.axis2.schema.SchemaCompilationException
+     *
      */
     public String write(XmlSchemaElement element, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
 
@@ -179,8 +205,8 @@ public class CStructWriter implements BeanWriter {
         try {
             if (wrapClasses) {
 
-                File outSource = createOutFile(CStructWriter.WRAPPED_DATABINDING_CLASS_NAME,".c");
-                File outHeader = createOutFile(CStructWriter.WRAPPED_DATABINDING_CLASS_NAME,".h");
+                File outSource = createOutFile(CStructWriter.WRAPPED_DATABINDING_CLASS_NAME, ".c");
+                File outHeader = createOutFile(CStructWriter.WRAPPED_DATABINDING_CLASS_NAME, ".h");
                 //parse with the template and create the files
                 parseSource(globalWrappedSourceDocument, outSource);
                 parseHeader(globalWrappedHeaderDocument, outHeader);
@@ -196,7 +222,8 @@ public class CStructWriter implements BeanWriter {
      * @param metainf
      * @return Returns String.
      * @throws org.apache.axis2.schema.SchemaCompilationException
-     * @see org.apache.axis2.schema.writer.BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
+     *
+     * @see BeanWriter#write(org.apache.ws.commons.schema.XmlSchemaSimpleType, java.util.Map, org.apache.axis2.schema.BeanWriterMetaInfoHolder)
      */
     public String write(XmlSchemaSimpleType simpleType, Map typeMap, BeanWriterMetaInfoHolder metainf) throws SchemaCompilationException {
         try {
@@ -230,7 +257,9 @@ public class CStructWriter implements BeanWriter {
     }
 
 
-    /** Make the fully qualified class name for an element or named type
+    /**
+     * Make the fully qualified class name for an element or named type
+     *
      * @param qName the qualified Name for this element or type in the schema
      * @return the appropriate fully qualified class name to use in generated code
      */
@@ -283,10 +312,10 @@ public class CStructWriter implements BeanWriter {
             Document modelSource = XSLTUtils.getDocument();
             Document modelHeader = XSLTUtils.getDocument();
             //make the XML
-            modelSource.appendChild(getBeanElement(modelSource, className, originalName,  qName, isElement, metainf, propertyNames, typeMap));
-            modelHeader.appendChild(getBeanElement(modelHeader, className, originalName,  qName, isElement, metainf, propertyNames, typeMap));
+            modelSource.appendChild(getBeanElement(modelSource, className, originalName, qName, isElement, metainf, propertyNames, typeMap));
+            modelHeader.appendChild(getBeanElement(modelHeader, className, originalName, qName, isElement, metainf, propertyNames, typeMap));
 
-            if (writeClasses){
+            if (writeClasses) {
                 //create the file
                 File outSource = createOutFile(className, ".c");
                 File outHeader = createOutFile(className, ".h");
@@ -297,11 +326,11 @@ public class CStructWriter implements BeanWriter {
 
             //add the model to the model map
             modelMap.put(
-                    new QName(qName.getNamespaceURI(),className)
-                    ,modelSource);
+                    new QName(qName.getNamespaceURI(), className)
+                    , modelSource);
             modelMap.put(
-                    new QName(qName.getNamespaceURI(),className)
-                    ,modelHeader);
+                    new QName(qName.getNamespaceURI(), className)
+                    , modelHeader);
 
 
         }
@@ -323,6 +352,7 @@ public class CStructWriter implements BeanWriter {
      * @param typeMap
      * @return Returns Element.
      * @throws org.apache.axis2.schema.SchemaCompilationException
+     *
      */
     private Element getBeanElement(
             Document model, String className, String originalName,
@@ -346,7 +376,7 @@ public class CStructWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "unwrapped", "yes", rootElt);
         }
 
-        if (!writeClasses){
+        if (!writeClasses) {
             XSLTUtils.addAttribute(model, "skip-write", "yes", rootElt);
         }
 
@@ -376,41 +406,41 @@ public class CStructWriter implements BeanWriter {
         }
 
         //populate all the information
-        populateInfo(metainf, model, rootElt, propertyNames, typeMap,false);
+        populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
 
 
         return rootElt;
     }
 
     /**
-     *
      * @param metainf
      * @param model
      * @param rootElt
      * @param propertyNames
      * @param typeMap
      * @throws org.apache.axis2.schema.SchemaCompilationException
+     *
      */
     private void populateInfo(BeanWriterMetaInfoHolder metainf,
                               Document model,
                               Element rootElt,
                               ArrayList propertyNames,
-                              Map typeMap,boolean isInherited)throws SchemaCompilationException{
-        if (metainf.getParent()!=null){
-            populateInfo(metainf.getParent(),model,rootElt,propertyNames,typeMap,true);
+                              Map typeMap, boolean isInherited) throws SchemaCompilationException {
+        if (metainf.getParent() != null) {
+            populateInfo(metainf.getParent(), model, rootElt, propertyNames, typeMap, true);
         }
-        addPropertyEntries(metainf, model, rootElt, propertyNames, typeMap,isInherited);
+        addPropertyEntries(metainf, model, rootElt, propertyNames, typeMap, isInherited);
 
     }
 
     /**
-     *
      * @param metainf
      * @param model
      * @param rootElt
      * @param propertyNames
      * @param typeMap
      * @throws org.apache.axis2.schema.SchemaCompilationException
+-     *
      */
     private void addPropertyEntries(BeanWriterMetaInfoHolder metainf, Document model, Element rootElt, ArrayList propertyNames,
                                     Map typeMap,
@@ -443,11 +473,10 @@ public class CStructWriter implements BeanWriter {
             if (CClassNameForElement == null) {
                 CClassNameForElement = CStructWriter.DEFAULT_C_CLASS_NAME;
             }
-            CClassNameForElement=   getShortTypeName(CClassNameForElement);
+            CClassNameForElement = getShortTypeName(CClassNameForElement);
 
 
             XSLTUtils.addAttribute(model, "type", CClassNameForElement, property);
-
 
             /**
              * Caps for use in C macros
@@ -455,14 +484,14 @@ public class CStructWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "caps-cname", xmlName.toUpperCase(), property);
             XSLTUtils.addAttribute(model, "caps-type", CClassNameForElement.toUpperCase(), property);
 
-            if (PrimitiveTypeFinder.isPrimitive(CClassNameForElement)){
+            if (PrimitiveTypeFinder.isPrimitive(CClassNameForElement)) {
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
             }
             //add an attribute that says the type is default
-            if (isDefault(CClassNameForElement)){
+            if (isDefault(CClassNameForElement)) {
                 XSLTUtils.addAttribute(model, "default", "yes", property);
             }
-            
+
             if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
                 XSLTUtils.addAttribute(model, "ours", "yes", property);
             }
@@ -471,24 +500,24 @@ public class CStructWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "attribute", "yes", property);
             }
 
-            if (metainf.isNillable(name)){
+            if (metainf.isNillable(name)) {
                 XSLTUtils.addAttribute(model, "nillable", "yes", property);
             }
 
             String shortTypeName;
             if (metainf.getSchemaQNameForQName(name) != null) {
                 //see whether the QName is a basetype
-                if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))){
-                    shortTypeName= metainf.getSchemaQNameForQName(name).getLocalPart();
-                }else{
-                    shortTypeName =  getShortTypeName(CClassNameForElement);
+                if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+                    shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
+                } else {
+                    shortTypeName = getShortTypeName(CClassNameForElement);
                 }
-            }else{
-                shortTypeName =  getShortTypeName(CClassNameForElement);
+            } else {
+                shortTypeName = getShortTypeName(CClassNameForElement);
             }
             XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
 
-            if (isInherited){
+            if (isInherited) {
                 XSLTUtils.addAttribute(model, "inherited", "yes", property);
             }
 
@@ -511,9 +540,8 @@ public class CStructWriter implements BeanWriter {
 
             if (metainf.getArrayStatusForQName(name)) {
                 String attrName = name.getLocalPart();
-                int arrayTokenStart=attrName.indexOf("Array");
-                if ( arrayTokenStart >= 0 )
-                {
+                int arrayTokenStart = attrName.indexOf("Array");
+                if (arrayTokenStart >= 0) {
                     String arrayEle = attrName.substring(0, arrayTokenStart);
                     XSLTUtils.addAttribute(model, "arrayele", arrayEle, property);
                 }
@@ -536,12 +564,13 @@ public class CStructWriter implements BeanWriter {
 
     /**
      * Test whether the given class name matches the default
+     *
      * @param javaClassNameForElement
      * @return bool
      */
     private boolean isDefault(String javaClassNameForElement) {
-        return SchemaCompiler.DEFAULT_CLASS_NAME.equals(javaClassNameForElement)||
-                SchemaCompiler.DEFAULT_CLASS_ARRAY_NAME.equals(javaClassNameForElement);
+        return getDefaultClassName().equals(javaClassNameForElement) ||
+                getDefaultClassArrayName().equals(javaClassNameForElement);
     }
 
 
@@ -549,6 +578,7 @@ public class CStructWriter implements BeanWriter {
      * Given the xml name, make a unique class name taking into account that some
      * file systems are case sensitive and some are not.
      * -Consider the Jax-WS spec for this
+     *
      * @param listOfNames
      * @param xmlName
      * @return Returns String.
@@ -584,11 +614,11 @@ public class CStructWriter implements BeanWriter {
         String templateName = javaBeanTemplateName;
         if (templateName != null) {
             try {
-                String sourceTemplateName = templateName + "Source.xsl" ;
+                String sourceTemplateName = templateName + "Source.xsl";
                 xslStream = clazz.getResourceAsStream(sourceTemplateName);
                 sourceTemplateCache = TransformerFactory.newInstance().newTemplates(new StreamSource(xslStream));
 
-                String headerTemplateName =  templateName + "Header.xsl";
+                String headerTemplateName = templateName + "Header.xsl";
                 xslStream = clazz.getResourceAsStream(headerTemplateName);
                 headerTemplateCache = TransformerFactory.newInstance().newTemplates(new StreamSource(xslStream));
 
@@ -653,6 +683,7 @@ public class CStructWriter implements BeanWriter {
         outStream.close();
 
     }
+
     /**
      * Get a prefix for a namespace URI.  This method will ALWAYS
      * return a valid prefix - if the given URI is already mapped in this
@@ -703,9 +734,9 @@ public class CStructWriter implements BeanWriter {
         return prefix;
     }
 
-    private String getShortTypeName(String typeClassName){
-        if (typeClassName.endsWith("[]")){
-            typeClassName = typeClassName.substring(0,typeClassName.lastIndexOf("["));
+    private String getShortTypeName(String typeClassName) {
+        if (typeClassName.endsWith("[]")) {
+            typeClassName = typeClassName.substring(0, typeClassName.lastIndexOf("["));
         }
         return typeClassName;
 
@@ -713,8 +744,9 @@ public class CStructWriter implements BeanWriter {
 
     /**
      * Keep unimplemented
-     * @see BeanWriter#registerExtensionMapperPackageName(String)
+     *
      * @param mapperPackageName
+     * @see BeanWriter#registerExtensionMapperPackageName(String)
      */
     public void registerExtensionMapperPackageName(String mapperPackageName) {
         //unimplemented
@@ -722,16 +754,18 @@ public class CStructWriter implements BeanWriter {
 
     /**
      * Keep unimplemented
-     * @see BeanWriter#writeExtensionMapper(org.apache.axis2.schema.BeanWriterMetaInfoHolder[])
+     *
      * @param metainfArray
+     * @see BeanWriter#writeExtensionMapper(org.apache.axis2.schema.BeanWriterMetaInfoHolder[])
      */
-    public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException{
+    public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException {
         //unimplemented
     }
 
     /**
      * Keep unimplemented
-     * @see org.apache.axis2.schema.writer.BeanWriter#getExtensionMapperPackageName() 
+     *
+     * @see BeanWriter#getExtensionMapperPackageName()
      */
     public String getExtensionMapperPackageName() {
         return null;

@@ -118,4 +118,13 @@ public interface BeanWriter {
      * @param namespaceToUse
      */
     public void writeExtensionMapper(BeanWriterMetaInfoHolder[] metainfArray) throws SchemaCompilationException;
+
+    public String getDefaultClassName();
+
+    public String getDefaultClassArrayName();
+
+    public String getDefaultAttribClassName();
+
+    public String getDefaultAttribArrayClassName();
+
 }

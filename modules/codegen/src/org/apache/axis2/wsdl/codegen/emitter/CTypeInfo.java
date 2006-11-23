@@ -42,14 +42,14 @@ public class CTypeInfo extends Constants{
 
         // The XSD Primitives are mapped to java primitives.
         CTypeInfo.addTypemapping(XSD_BOOLEAN,"axis2_bool_t");
-        //CTypeMap.addTypemapping(XSD_DOUBLE, double.class.getName());
+        CTypeInfo.addTypemapping(XSD_DOUBLE, "double");
         CTypeInfo.addTypemapping(XSD_FLOAT, "float");
         CTypeInfo.addTypemapping(XSD_INT, "int");
         CTypeInfo.addTypemapping(XSD_INTEGER,
                 "int");
         CTypeInfo.addTypemapping(XSD_LONG, "long");
         CTypeInfo.addTypemapping(XSD_SHORT, "short");
-        CTypeInfo.addTypemapping(XSD_BYTE, "byte");
+        CTypeInfo.addTypemapping(XSD_BYTE, "axis2_byte_t");
         CTypeInfo.addTypemapping(XSD_ANY,  "axiom_node_t*");
         CTypeInfo.addTypemapping(XSD_DECIMAL, "int");
 
@@ -92,11 +92,11 @@ public class CTypeInfo extends Constants{
                 "int");
 
         // xsd:token
-        CTypeInfo.addTypemapping(XSD_TOKEN, Token.class.getName());
+        CTypeInfo.addTypemapping(XSD_TOKEN, "axiom_node_t*");
 
         // a xsd:normalizedString
         CTypeInfo.addTypemapping(XSD_NORMALIZEDSTRING,
-                "axis2_char*");
+                "axis2_char_t*");
 
         // a xsd:unsignedLong
         CTypeInfo.addTypemapping(XSD_UNSIGNEDLONG,
@@ -112,11 +112,11 @@ public class CTypeInfo extends Constants{
 
         // a xsd:unsignedByte
         CTypeInfo.addTypemapping(XSD_UNSIGNEDBYTE,
-                "unsinged char");
+                "unsigned char");
 
         // a xsd:nonNegativeInteger
         CTypeInfo.addTypemapping(XSD_NONNEGATIVEINTEGER,
-                "unsinged int");
+                "unsigned int");
 
         // a xsd:negativeInteger
         CTypeInfo.addTypemapping(XSD_NEGATIVEINTEGER,
@@ -124,53 +124,54 @@ public class CTypeInfo extends Constants{
 
         // a xsd:positiveInteger
         CTypeInfo.addTypemapping(XSD_POSITIVEINTEGER,
-                "unsinged int");
+                "unsigned int");
 
         // a xsd:nonPositiveInteger
         CTypeInfo.addTypemapping(XSD_NONPOSITIVEINTEGER,
                 "int");
 
         // a xsd:Name
-        CTypeInfo.addTypemapping(XSD_NAME, Name.class.getName());
+        CTypeInfo.addTypemapping(XSD_NAME, "axiom_node_t*");
 
         // a xsd:NCName
-        CTypeInfo.addTypemapping(XSD_NCNAME, NCName.class.getName());
+        CTypeInfo.addTypemapping(XSD_NCNAME, "axiom_node_t*");
 
         // a xsd:ID
-        CTypeInfo.addTypemapping(XSD_ID, Id.class.getName());
+        CTypeInfo.addTypemapping(XSD_ID, "axiom_node_t*");
 
         // a xml:lang
         // addTypemapping(XML_LANG,Language.class.getName());
 
         // a xsd:language
-        CTypeInfo.addTypemapping(XSD_LANGUAGE, Language.class.getName());
+        CTypeInfo.addTypemapping(XSD_LANGUAGE, "axiom_node_t*");
 
         // a xsd:NmToken
-        CTypeInfo.addTypemapping(XSD_NMTOKEN, NMToken.class.getName());
+        CTypeInfo.addTypemapping(XSD_NMTOKEN, "axiom_node_t*");
 
         // a xsd:NmTokens
-        CTypeInfo.addTypemapping(XSD_NMTOKENS, NMTokens.class.getName());
+        CTypeInfo.addTypemapping(XSD_NMTOKENS, "axiom_node_t*");
 
         // a xsd:NOTATION
-        CTypeInfo.addTypemapping(XSD_NOTATION, Notation.class.getName());
+        CTypeInfo.addTypemapping(XSD_NOTATION, "axiom_node_t*");
 
         // a xsd:XSD_ENTITY
-        CTypeInfo.addTypemapping(XSD_ENTITY, Entity.class.getName());
+        CTypeInfo.addTypemapping(XSD_ENTITY, "axiom_node_t*");
 
         // a xsd:XSD_ENTITIES
-        CTypeInfo.addTypemapping(XSD_ENTITIES, Entities.class.getName());
+        CTypeInfo.addTypemapping(XSD_ENTITIES, "axiom_node_t*");
 
         // a xsd:XSD_IDREF
-        CTypeInfo.addTypemapping(XSD_IDREF, IDRef.class.getName());
+        CTypeInfo.addTypemapping(XSD_IDREF, "axiom_node_t*");
 
         // a xsd:XSD_XSD_IDREFS
-        CTypeInfo.addTypemapping(XSD_IDREFS, IDRefs.class.getName());
+        CTypeInfo.addTypemapping(XSD_IDREFS, "axiom_node_t*");
 
         // a xsd:Duration
-        CTypeInfo.addTypemapping(XSD_DURATION, Duration.class.getName());
+        CTypeInfo.addTypemapping(XSD_DURATION, "axiom_node_t*");
 
         // a xsd:anyURI
-        CTypeInfo.addTypemapping(XSD_ANYURI, URI.class.getName());
+        CTypeInfo.addTypemapping(XSD_ANYURI,
+                "axis2_uri_t*");
 
 
     }
