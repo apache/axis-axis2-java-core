@@ -91,6 +91,13 @@ public abstract class AbstractMarMojo
     private FileSet[] fileSets;
 
     /**
+     * Whether the dependency jars should be included in the mar
+     * 
+     * @parameter expression="${includeDependencies}" default-value="true"
+     */
+    private boolean includeDependencies;
+    
+    /**
      * Builds the exploded mar file.
      * @throws MojoExecutionException
      */
@@ -125,34 +132,36 @@ public abstract class AbstractMarMojo
             
             copyMetaInfFile( moduleXmlFile, moduleFileTarget, existsBeforeCopyingClasses, "module.xml file" );
 
-            Set artifacts = project.getArtifacts();
-
-            List duplicates = findDuplicates( artifacts );
-
-            for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
-            {
-            	Artifact artifact = (Artifact) iter.next();
-            	String targetFileName = getDefaultFinalName( artifact );
-
-            	getLog().debug( "Processing: " + targetFileName );
-
-            	if ( duplicates.contains( targetFileName ) )
-            	{
-            		getLog().debug( "Duplicate found: " + targetFileName );
-            		targetFileName = artifact.getGroupId() + "-" + targetFileName;
-            		getLog().debug( "Renamed to: " + targetFileName );
-            	}
-
-            	// TODO: utilise appropriate methods from project builder
-            	ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
-            	if ( !artifact.isOptional() && filter.include( artifact ) )
-            	{
-            		String type = artifact.getType();
-            		if ( "jar".equals( type ) )
-            		{
-            			copyFileIfModified( artifact.getFile(), new File( libDir, targetFileName ) );
-            		}
-            	}
+            if(includeDependencies){
+                Set artifacts = project.getArtifacts();
+    
+                List duplicates = findDuplicates( artifacts );
+    
+                for ( Iterator iter = artifacts.iterator(); iter.hasNext(); )
+                {
+                	Artifact artifact = (Artifact) iter.next();
+                	String targetFileName = getDefaultFinalName( artifact );
+    
+                	getLog().debug( "Processing: " + targetFileName );
+    
+                	if ( duplicates.contains( targetFileName ) )
+                	{
+                		getLog().debug( "Duplicate found: " + targetFileName );
+                		targetFileName = artifact.getGroupId() + "-" + targetFileName;
+                		getLog().debug( "Renamed to: " + targetFileName );
+                	}
+    
+                	// TODO: utilise appropriate methods from project builder
+                	ScopeArtifactFilter filter = new ScopeArtifactFilter( Artifact.SCOPE_RUNTIME );
+                	if ( !artifact.isOptional() && filter.include( artifact ) )
+                	{
+                		String type = artifact.getType();
+                		if ( "jar".equals( type ) )
+                		{
+                			copyFileIfModified( artifact.getFile(), new File( libDir, targetFileName ) );
+                		}
+                	}
+                }
             }
         }
         catch ( IOException e )
