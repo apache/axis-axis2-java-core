@@ -370,10 +370,6 @@ class OutInAxisOperationClient implements OperationClient {
         responseMessageContext.setTransportIn(msgctx.getTransportIn());
         responseMessageContext.setTransportOut(msgctx.getTransportOut());
 
-        // Options object reused above so soapAction needs to be removed so
-        // that soapAction+wsa:Action on response don't conflict
-        responseMessageContext.setSoapAction("");
-
         if (responseMessageContext.getEnvelope() == null) {
             // If request is REST we assume the responseMessageContext is REST, so
             // set the variable
