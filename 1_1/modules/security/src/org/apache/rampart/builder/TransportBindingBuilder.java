@@ -77,7 +77,7 @@ public class TransportBindingBuilder extends BindingBuilder {
                     Token token = (Token) iter.next();
                     if(token instanceof UsernameToken) {
                         WSSecUsernameToken utBuilder = addUsernameToken(rmd);
-                        utBuilder.setPasswordType(WSConstants.PW_TEXT);
+                        utBuilder.setPasswordType(WSConstants.PASSWORD_TEXT);
                         
                         utBuilder.prepare(rmd.getDocument());
                         
