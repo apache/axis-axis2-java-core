@@ -523,7 +523,7 @@
      * isReaderMTOMAware
      * @return true if the reader supports MTOM
      */
-   public boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
+   public static boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
         boolean isReaderMTOMAware = false;
         <!-- workaround for the issues in the wstx reader!-->
         try{
@@ -3446,7 +3446,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
         * isReaderMTOMAware
         * @return true if the reader supports MTOM
         */
-      public boolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
+      public static oolean isReaderMTOMAware(javax.xml.stream.XMLStreamReader reader) {
            boolean isReaderMTOMAware = false;
            <!-- workaround for the issues in the wstx reader!-->
            try{
