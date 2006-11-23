@@ -187,7 +187,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     public void testDifferentSoapActionProcessing() {
         String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        
+        mc.setServerSide(true); 
         try {
             mc.setSoapAction("http://ws.apache.org/tests/differentAction");
             basicExtractAddressingInformationFromHeaders(testfile, mc);
@@ -206,7 +206,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     public void testSameSoapAction() {
         String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        
+        mc.setServerSide(true);
         try {
             mc.setSoapAction("http://ws.apache.org/tests/action");
             basicExtractAddressingInformationFromHeaders(testfile, mc);
