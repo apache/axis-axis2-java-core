@@ -253,8 +253,7 @@ public class PolicyBasedResultsValidator {
             
         } else {
             boolean encrFound = false;
-            for (Iterator iter = sigEncrActions.iterator(); 
-                iter.hasNext() || !done;) {
+            for (Iterator iter = sigEncrActions.iterator(); iter.hasNext();) {
                 Integer act = (Integer) iter.next();
                 if(act.intValue() == WSConstants.ENCR) {
                     encrFound = true;
