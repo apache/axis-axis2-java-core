@@ -51,11 +51,15 @@
                         javax.xml.bind.JAXBContext context = <xsl:value-of select="translate(@type,'.','_')"/>;
                         javax.xml.bind.Marshaller marshaller = context.createMarshaller();
                         marshaller.setProperty(javax.xml.bind.Marshaller.JAXB_FRAGMENT, Boolean.TRUE);            
-        
-                        JaxbRIDataSource source = new JaxbRIDataSource(<xsl:value-of select="@type"/>.class, param, marshaller);
-                        javax.xml.namespace.QName elementName = context.createJAXBIntrospector().getElementName(param);
-                        org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(elementName.getNamespaceURI(), null);
-                        return factory.createOMElement(source, elementName.getNamespaceURI(), namespace);
+
+                        JaxbRIDataSource source = new JaxbRIDataSource( <xsl:value-of select="@type"/>.class,
+                                                                        param,
+                                                                        marshaller,
+                                                                        "<xsl:value-of select='current()/qname/@nsuri'/>",
+                                                                        "<xsl:value-of select='current()/qname/text()'/>");
+                        org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace("<xsl:value-of select='current()/qname/@nsuri'/>",
+                                                                           null);
+                        return factory.createOMElement(source, "<xsl:value-of select='current()/qname/text()'/>", namespace);
                     } catch (javax.xml.bind.JAXBException bex){
                         throw new RuntimeException(bex);
                     }
@@ -110,20 +114,33 @@
             private final javax.xml.bind.Marshaller marshaller;
 
             /**
+             * Namespace
+             */
+            private String nsuri;
+
+            /**
+             * Local name
+             */
+            private String name;
+
+            /**
              * Constructor from object and marshaller.
              *
              * @param obj
              * @param marshaller
              */
-            public JaxbRIDataSource(Class clazz, Object obj, javax.xml.bind.Marshaller marshaller) {
+            public JaxbRIDataSource(Class clazz, Object obj, javax.xml.bind.Marshaller marshaller, String nsuri, String name) {
                 this.outClazz = clazz;
                 this.outObject = obj;
                 this.marshaller = marshaller;
+                this.nsuri = nsuri;
+                this.name = name;
             }
 
             public void serialize(java.io.OutputStream output, org.apache.axiom.om.OMOutputFormat format) throws javax.xml.stream.XMLStreamException {
                 try {
-                    marshaller.marshal(outObject, output);
+                    marshaller.marshal(new javax.xml.bind.JAXBElement(
+                            new javax.xml.namespace.QName(nsuri, name), outObject.getClass(), outObject), output);
                 } catch (javax.xml.bind.JAXBException e) {
                     throw new javax.xml.stream.XMLStreamException("Error in JAXB marshalling", e);
                 }
@@ -131,7 +148,8 @@
 
             public void serialize(java.io.Writer writer, org.apache.axiom.om.OMOutputFormat format) throws javax.xml.stream.XMLStreamException {
                 try {
-                    marshaller.marshal(outObject, writer);
+                    marshaller.marshal(new javax.xml.bind.JAXBElement(
+                            new javax.xml.namespace.QName(nsuri, name), outObject.getClass(), outObject), writer);
                 } catch (javax.xml.bind.JAXBException e) {
                     throw new javax.xml.stream.XMLStreamException("Error in JAXB marshalling", e);
                 }
@@ -139,7 +157,8 @@
 
             public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
                 try {
-                    marshaller.marshal(outObject, xmlWriter);
+                    marshaller.marshal(new javax.xml.bind.JAXBElement(
+                            new javax.xml.namespace.QName(nsuri, name), outObject.getClass(), outObject), xmlWriter);
                 } catch (javax.xml.bind.JAXBException e) {
                     throw new javax.xml.stream.XMLStreamException("Error in JAXB marshalling", e);
                 }
@@ -150,7 +169,8 @@
                     javax.xml.bind.JAXBContext context = classContextMap.get(outClazz);
                     org.apache.axiom.om.impl.builder.SAXOMBuilder builder = new org.apache.axiom.om.impl.builder.SAXOMBuilder();
                     javax.xml.bind.Marshaller marshaller = context.createMarshaller();
-                    marshaller.marshal(outObject, builder);
+                    marshaller.marshal(new javax.xml.bind.JAXBElement(
+                            new javax.xml.namespace.QName(nsuri, name), outObject.getClass(), outObject), builder);
 
                     return builder.getRootElement().getXMLStreamReader();
                 } catch (javax.xml.bind.JAXBException e) {
