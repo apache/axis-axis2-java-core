@@ -124,7 +124,11 @@ public class PWCallback implements CallbackHandler {
 
                         return;
 
-                    }                   
+                    }       
+                    
+                    if(pc.getIdentifer().equals("alice") && pc.getPassword().equals("password")) {
+                        return;
+                    }
 
                     throw new UnsupportedCallbackException(callbacks[i],
 
