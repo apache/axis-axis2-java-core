@@ -98,7 +98,10 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (serviceNameatt != null) {
                 if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
                     service.setName(serviceNameatt.getAttributeValue());
-                    service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    //To be on the safe side
+                    if (service.getServiceDescription() == null) {
+                        service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    }
                 }
             }
             
