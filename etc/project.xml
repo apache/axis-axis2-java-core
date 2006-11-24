@@ -206,6 +206,12 @@
             <url>www.apache.org/~chathura</url>
         </developer>
         <developer>
+            <name>David Illsley</name>
+            <id>davidillsley</id>
+            <organization>IBM</organization>
+            <url>http://www.illsley.org</url>
+        </developer>
+        <developer>
             <name>Deepal Jayasinghe</name>
             <id>deepal</id>
             <email>deepal AT wso2.com</email>
