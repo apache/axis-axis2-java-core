@@ -168,13 +168,44 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
             }
 
-            Binding binding = findBinding(description);
+            processService();
+
+            Endpoint [] endpoints = wsdlService.getEndpoints();
+
+            for (int i = 0; i < endpoints.length; i++)
+            {
+                processEndpoint(endpoints[i]);
+            }
+
+
+
+            Binding binding = findBinding();
+
+
             processBinding(binding);
 
             return axisService;
         } catch (Exception e) {
             throw new AxisFault(e);
         }
+    }
+
+    private void processService() throws AxisFault {
+
+        Service[] services = description.getServices();
+        if (services.length == 0) {
+            throw new AxisFault("No wsdlService found in the WSDL");
+        }
+
+        if (serviceName != null) {
+            wsdlService = services[0];
+        }
+    }
+
+    private void processEndpoint(Endpoint endpoint){
+
+
+
     }
 
     /**
@@ -553,8 +584,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
-    private Binding findBinding(Description discription) throws AxisFault {
-        Service[] services = discription.getServices();
+
+
+    private Binding findBinding() throws AxisFault {
+        Service[] services = description.getServices();
         wsdlService = null;
         Endpoint endpoint = null;
         Binding binding = null;
