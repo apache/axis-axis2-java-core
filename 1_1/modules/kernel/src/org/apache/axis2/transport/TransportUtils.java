@@ -161,10 +161,6 @@ public class TransportUtils {
             value = value.replaceAll("\"", "");
         }
 
-        if ("null".equalsIgnoreCase(value)) {
-            return null;
-        }
-
         return value.trim();
     }
 
