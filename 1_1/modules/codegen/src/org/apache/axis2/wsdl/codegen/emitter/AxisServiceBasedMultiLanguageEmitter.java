@@ -2144,8 +2144,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (paramQName!=null){
             Element qNameElement = doc.createElement("qname");
             addAttribute(doc,"nsuri", paramQName.getNamespaceURI(), qNameElement);
-            
-            qNameElement.appendChild(doc.createTextNode(paramQName.getLocalPart()));
+            addAttribute(doc,"localname", paramQName.getLocalPart(), qNameElement);
             paramElement.appendChild(qNameElement);
         }
 
@@ -2208,7 +2207,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (paramQName!=null){
             Element qNameElement = doc.createElement("qname");
             addAttribute(doc,"nsuri", paramQName.getNamespaceURI(), qNameElement);
-            qNameElement.appendChild(doc.createTextNode(paramQName.getLocalPart()));
+            addAttribute(doc,"localname", paramQName.getLocalPart(), qNameElement);
             paramElement.appendChild(qNameElement);
         }
 
