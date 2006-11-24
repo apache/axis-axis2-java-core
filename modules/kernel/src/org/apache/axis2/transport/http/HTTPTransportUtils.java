@@ -156,10 +156,15 @@ public class HTTPTransportUtils {
         }
     }
 
+    private static final int VERSION_UNKNOWN = 0;
+    private static final int VERSION_SOAP11 = 1;
+    private static final int VERSION_SOAP12 = 2;
+
     public static void processHTTPPostRequest(MessageContext msgContext, InputStream in,
                                               OutputStream out, String contentType, String soapActionHeader, String requestURI)
             throws AxisFault {
-        boolean soap11 = false;
+
+        int soapVersion = VERSION_UNKNOWN;
 
         try {
 
@@ -173,7 +178,7 @@ public class HTTPTransportUtils {
             }
 
             // remove the starting and trailing " from the SOAP Action
-            if ((soapActionHeader != null) && soapActionHeader.startsWith("\"")
+            if ((soapActionHeader != null) && soapActionHeader.charAt(0) == '\"'
                 && soapActionHeader.endsWith("\"")) {
                 soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
             }
@@ -188,7 +193,13 @@ public class HTTPTransportUtils {
             StAXBuilder builder = null;
 
             if (contentType != null) {
-                if (contentType.toLowerCase().indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
+
+                if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+                    soapVersion = VERSION_SOAP12;
+                } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                    soapVersion = VERSION_SOAP11;
+                }
+                if (soapVersion == VERSION_UNKNOWN && contentType.toLowerCase().indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
                     // It is MIME (MTOM or SwA)
                     builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType,true);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
@@ -217,9 +228,7 @@ public class HTTPTransportUtils {
                         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
                     }
 
-                    if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-                        soap11 = false;
-
+                    if (soapVersion == VERSION_SOAP12) {
                         //Check for action header and set it in as soapAction in MessageContext
                         int index = contentType.indexOf("action");
                         if (index > -1) {
@@ -246,9 +255,7 @@ public class HTTPTransportUtils {
                                 new StAXSOAPModelBuilder(xmlreader,
                                                          SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                         envelope = (SOAPEnvelope) builder.getDocumentElement();
-                    } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-                        soap11 = true;
-
+                    } else if (soapVersion == VERSION_SOAP11) {
                         /**
                          * Configuration via Deployment
                          */
@@ -331,7 +338,7 @@ public class HTTPTransportUtils {
         } catch (FactoryConfigurationError e) {
             throw new AxisFault(e);
         } finally {
-            if ((msgContext.getEnvelope() == null) && !soap11) {
+            if ((msgContext.getEnvelope() == null) && soapVersion != VERSION_SOAP11) {
                 msgContext.setEnvelope(new SOAP12Factory().getDefaultEnvelope());
             }
         }
