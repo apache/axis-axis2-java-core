@@ -28,6 +28,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -327,7 +328,10 @@ class OutOnlyAxisOperationClient implements OperationClient {
         mc.setAxisMessage(axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
         // do Target Resolution
-        cc.getAxisConfiguration().getTargetResolverChain().resolveTarget(mc);
+        TargetResolver targetResolver = cc.getAxisConfiguration().getTargetResolverChain();
+        if(targetResolver != null){
+            targetResolver.resolveTarget(mc);
+        }
 
         // setting message ID if it null
         // if the transport to use for sending is not specified, try to find it

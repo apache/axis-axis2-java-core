@@ -70,7 +70,10 @@ public class Utils {
                 inMessageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES));
 
         // do Target Resolution
-        newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(newmsgCtx);
+        TargetResolver targetResolver = newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain();
+        if(targetResolver != null){
+            targetResolver.resolveTarget(newmsgCtx);
+        }
 
         newmsgCtx.addRelatesTo(new RelatesTo(oldOptions.getMessageId()));
 

@@ -35,6 +35,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -235,7 +236,10 @@ class OutInAxisOperationClient implements OperationClient {
         mc.setOptions(options);
 
         // do Target Resolution
-        cc.getAxisConfiguration().getTargetResolverChain().resolveTarget(mc);
+        TargetResolver targetResolver = cc.getAxisConfiguration().getTargetResolverChain();
+        if(targetResolver != null){
+            targetResolver.resolveTarget(mc);
+        }
 
         // if the transport to use for sending is not specified, try to find it
         // from the URL

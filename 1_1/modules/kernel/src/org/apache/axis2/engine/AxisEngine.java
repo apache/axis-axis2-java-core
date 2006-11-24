@@ -39,6 +39,7 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.util.TargetResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -206,7 +207,10 @@ public class AxisEngine {
         }
 
         // do Target Resolution
-        faultContext.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(faultContext);
+        TargetResolver targetResolver = faultContext.getConfigurationContext().getAxisConfiguration().getTargetResolverChain();
+        if(targetResolver != null){
+            targetResolver.resolveTarget(faultContext);
+        }
 
         //Determine that we have the correct transport available.
         TransportOutDescription transportOut = faultContext.getTransportOut();
