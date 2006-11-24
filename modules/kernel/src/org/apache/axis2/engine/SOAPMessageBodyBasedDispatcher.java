@@ -43,6 +43,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
     private static final Log log = LogFactory.getLog(SOAPMessageBodyBasedDispatcher.class);
     String serviceName = null;
     QName operationName = null;
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
@@ -51,9 +52,11 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
         if (bodyFirstChild == null) {
             return null;
         } else {
+            if(isDebugEnabled){
             log.debug(
                     "Checking for Operation using SOAP message body's first child's local name : "
                             + bodyFirstChild.getLocalName());
+            }
             operationName = new QName(bodyFirstChild.getLocalName());
         }
 
@@ -80,10 +83,11 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             if (ns != null) {
                 String filePart = ns.getNamespaceURI();
 
+                if(isDebugEnabled){
                 log.debug(
                         "Checking for Service using SOAP message body's first child's namespace : "
                                 + filePart);
-
+                }
                 String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
                         messageContext.getConfigurationContext().getServiceContextPath());
 

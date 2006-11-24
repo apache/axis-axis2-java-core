@@ -44,13 +44,15 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
      */
     public static final String NAME = "AddressingBasedDispatcher";
     private static final Log log = LogFactory.getLog(AddressingBasedDispatcher.class);
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
+        if(isDebugEnabled){
         log.debug(Messages.getMessage("checkingoperation",
                 messageContext.getWSAAction()));
-
+        }
         String action = messageContext.getWSAAction();
 
         if (action != null) {
@@ -70,8 +72,9 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             }
             
             String address = toEPR.getAddress();
+            if(isDebugEnabled){
             log.debug(Messages.getMessage("checkingserviceforepr", address));
-
+            }
             QName serviceName;
             String[] values = Utils.parseRequestURLForServiceAndOperation(address,
                     messageContext.getConfigurationContext().getServiceContextPath());
@@ -79,8 +82,9 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                 return null;
             }
 
+            if(isDebugEnabled){
             log.debug(Messages.getMessage("checkingserviceforepr", values[0]));
-
+            }
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
 
@@ -108,9 +112,10 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         if (msgctx.getRelatesTo() != null) {
             String relatesTo = msgctx.getRelatesTo().getValue();
 
+            if(isDebugEnabled){
             log.debug(Messages.getMessage("checkingrelatesto",
                     relatesTo));
-
+            }
             if ((relatesTo != null) || "".equals(relatesTo)) {
                 OperationContext operationContext =
                         msgctx.getConfigurationContext().getOperationContext(msgctx.getRelatesTo().getValue());
