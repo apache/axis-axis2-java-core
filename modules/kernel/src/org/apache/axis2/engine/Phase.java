@@ -90,6 +90,8 @@ public class Phase implements Handler {
         this(null);
     }
 
+    public static boolean isDebugEnabled = log.isDebugEnabled();
+    
     /**
      * Constructor Phase.
      *
@@ -355,7 +357,6 @@ public class Phase implements Handler {
      * @throws org.apache.axis2.AxisFault
      */
     public final InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
-        boolean isDebugEnabled = log.isDebugEnabled();
         if (isDebugEnabled) {
             log.debug("Checking pre-condition for Phase \"" + phaseName + "\"");
         }
