@@ -106,7 +106,10 @@ public class MessageContextBuilder {
         newmsgCtx.setTo(inMessageContext.getReplyTo());
 
         // do Target Resolution
-        newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(newmsgCtx);
+        TargetResolver targetResolver = newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain();
+        if(targetResolver != null) {
+            targetResolver.resolveTarget(newmsgCtx);
+        }
 
         // Determine ReplyTo for respome message. Normally 'None URI' but has a value if SOAP Session support is in use
         AxisService axisService = inMessageContext.getAxisService();
@@ -198,7 +201,10 @@ public class MessageContextBuilder {
         }
         
         // do Target Resolution
-        faultContext.getConfigurationContext().getAxisConfiguration().getTargetResolverChain().resolveTarget(faultContext);
+        TargetResolver targetResolver = faultContext.getConfigurationContext().getAxisConfiguration().getTargetResolverChain();
+        if(targetResolver != null) {
+            targetResolver.resolveTarget(faultContext);
+        }
 
         // Ensure transport settings match the scheme for the To EPR
         setupCorrectTransportOut(faultContext);

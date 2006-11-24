@@ -869,6 +869,9 @@ public class AxisConfiguration extends AxisDescription {
      * resolveTarget is called
      */
     public TargetResolver getTargetResolverChain() {
+        if(targetResolvers.isEmpty()){
+            return null;
+        }
         return new TargetResolver() {
             public void resolveTarget(MessageContext messageContext) {
                 Iterator iter = targetResolvers.iterator();
