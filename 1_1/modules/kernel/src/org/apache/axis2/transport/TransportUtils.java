@@ -157,7 +157,9 @@ public class TransportUtils {
         }
 
         // There might be "" around the value - if so remove them
-        value = value.replaceAll("\"", "");
+        if(value.indexOf('\"')!=-1){
+            value = value.replaceAll("\"", "");
+        }
 
         if ("null".equalsIgnoreCase(value)) {
             return null;
