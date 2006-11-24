@@ -42,6 +42,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
      */
     public static final String NAME = "AbstractDispatcher";
     private static final Log log = LogFactory.getLog(AbstractDispatcher.class);
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     public AbstractDispatcher() {
         init(new HandlerDescription(NAME));
@@ -80,7 +81,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
             axisService = findService(msgctx);
 
             if (axisService != null) {
-                if (log.isDebugEnabled()) {
+                if (isDebugEnabled) {
                     log.debug(Messages.getMessage("servicefound",
                             axisService.getName()));
                 }
@@ -92,7 +93,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
             AxisOperation axisOperation = findOperation(axisService, msgctx);
 
             if (axisOperation != null) {
-                if (log.isDebugEnabled()) {
+                if (isDebugEnabled) {
                     log.debug(Messages.getMessage("operationfound",
                             axisOperation.getName().getLocalPart()));
                 }

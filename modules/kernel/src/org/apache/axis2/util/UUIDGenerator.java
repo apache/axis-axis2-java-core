@@ -43,11 +43,12 @@ public class UUIDGenerator {
     public static String getUUID() {
         if (baseUUID == null) {
             baseUUID = getInitialUUID();
+            baseUUID = "urn:uuid:" + baseUUID;
         }
         if(++incrementingValue >= Long.MAX_VALUE){
             incrementingValue = 0;
         }
-        return "urn:uuid:" + baseUUID + new Date().getTime() + incrementingValue;
+        return  baseUUID + (System.currentTimeMillis() + incrementingValue);
     }
 
     protected static String getInitialUUID() {

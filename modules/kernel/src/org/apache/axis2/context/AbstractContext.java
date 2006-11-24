@@ -126,7 +126,7 @@ public abstract class AbstractContext {
      * it will go and update operationCOntext -> serviceContext -> serviceGroupContext.
      */
     protected void touch() {
-        lastTouchedTime = new Date().getTime();
+        lastTouchedTime = System.currentTimeMillis();
         if (parent != null) {
             parent.touch();
         }
