@@ -152,6 +152,14 @@
 
     </xsl:template>
     <!-- #################################################################################  -->
+    <!-- ############################   Jaxbri template   ###################################  -->
+    <xsl:template match="databinders[@dbtype='jaxbri']">
+        //Create an object and provide it as the test object
+        public Object getTestObject(java.lang.Class type) throws Exception{
+           return type.newInstance();
+        }
+    </xsl:template>
+    <!-- #################################################################################  -->
     <!-- ############################   none template!!!   ###############################  -->
     <xsl:template match="databinders[@dbtype='none']">
         //Create an OMElement and provide it as the test object
