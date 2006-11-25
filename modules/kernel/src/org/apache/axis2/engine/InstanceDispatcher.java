@@ -38,7 +38,8 @@ import javax.xml.namespace.QName;
  * This will then try to find the Contexts of ServiceGroup, Service and the Operation.
  */
 public class InstanceDispatcher extends AbstractHandler {
-
+    private static final QName SERVICE_GROUP_QNAME = new QName(Constants.AXIS2_NAMESPACE_URI,
+            Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX);
 
     /**
      * Post Condition : All the Contexts must be populated.
@@ -153,8 +154,7 @@ public class InstanceDispatcher extends AbstractHandler {
         }
         SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
         if (soapHeader != null) {
-            OMElement serviceGroupId = soapHeader.getFirstChildWithName(new QName(Constants.AXIS2_NAMESPACE_URI,
-                    Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX));
+            OMElement serviceGroupId = soapHeader.getFirstChildWithName(SERVICE_GROUP_QNAME);
             if (serviceGroupId != null) {
                 String groupId = serviceGroupId.getText();
                 ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().
