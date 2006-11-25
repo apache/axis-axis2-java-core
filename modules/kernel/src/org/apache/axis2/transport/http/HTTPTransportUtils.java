@@ -199,7 +199,7 @@ public class HTTPTransportUtils {
                 } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                     soapVersion = VERSION_SOAP11;
                 }
-                if (contentType.toLowerCase().indexOf(HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
+                if (JavaUtils.indexOfIgnoreCase(contentType, HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
                     // It is MIME (MTOM or SwA)
                     builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType,true);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
