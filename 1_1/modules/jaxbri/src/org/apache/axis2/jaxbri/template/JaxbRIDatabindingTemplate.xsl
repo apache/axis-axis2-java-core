@@ -13,8 +13,6 @@
             };
         </xsl:if>
 
-        <xsl:variable name="firstType"><xsl:value-of select="param[1]/@type"/></xsl:variable>
-
         <xsl:for-each select="param[not(@type = preceding-sibling::param/@type)]">
             <xsl:if test="@type!=''">
                 private static final javax.xml.bind.JAXBContext <xsl:value-of select="translate(@type,'.','_')"/>;
@@ -55,11 +53,11 @@
                         JaxbRIDataSource source = new JaxbRIDataSource( <xsl:value-of select="@type"/>.class,
                                                                         param,
                                                                         marshaller,
-                                                                        "<xsl:value-of select='current()/qname/@nsuri'/>",
-                                                                        "<xsl:value-of select='current()/qname/@localname'/>");
-                        org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace("<xsl:value-of select='current()/qname/@nsuri'/>",
+                                                                        "<xsl:value-of select="qname/@nsuri"/>",
+                                                                        "<xsl:value-of select="qname/@localname"/>");
+                        org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace("<xsl:value-of select="qname/@nsuri"/>",
                                                                            null);
-                        return factory.createOMElement(source, "<xsl:value-of select='current()/qname/text()'/>", namespace);
+                        return factory.createOMElement(source, "<xsl:value-of select="qname/@localname"/>", namespace);
                     } catch (javax.xml.bind.JAXBException bex){
                         throw new RuntimeException(bex);
                     }
