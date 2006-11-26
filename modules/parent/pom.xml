@@ -283,7 +283,22 @@
       <organization>Lanka Software Foundation / University of Moratuwa</organization>
     </contributor>
   </contributors>
-
+  
+  <repositories>
+    <repository>
+      <id>ws-zones</id>
+      <name>Apache WS project zone repo.</name>
+      <layout>legacy</layout>
+      <url>http://ws.zones.apache.org/repository</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+      	<enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -403,9 +418,9 @@
         <version>2.2</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.woden</groupId>
+        <groupId>incubator-woden</groupId>
         <artifactId>woden</artifactId>
-        <version>1.0.0M6</version>
+        <version>SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>xmlunit</groupId>

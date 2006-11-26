@@ -71,7 +71,7 @@
       <artifactId>neethi</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.woden</groupId>
+      <groupId>incubator-woden</groupId>
       <artifactId>woden</artifactId>
     </dependency>
     <dependency>
@@ -141,6 +141,19 @@
 	            <ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/serviceModule"/>
 	            <copy file="${basedir}/test-resources/deployment/axis2.xml" tofile="${basedir}/target/test-resources/deployment/axis2.xml"/>
               </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <phase>test-compile</phase>
+            <configuration>
+              <tasks>
+				<property name="maven.build.dir" location="${basedir}/target"/>
+	            <ant antfile="j2secbuild.xml" inheritall="true" inheritrefs="true" dir="test-resources/"/>
+	         </tasks>
             </configuration>
             <goals>
               <goal>run</goal>
