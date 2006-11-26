@@ -535,13 +535,37 @@
    }
      <!-- ######################################################################################### -->
      <!-- get OMElement methods that allows direct writing -->
+        /**
+        *
+        * @param parentQName
+        * @param factory
+        * @return org.apache.axiom.om.OMElement
+        */
+       public org.apache.axiom.om.OMElement getOMElement(
+               final javax.xml.namespace.QName parentQName,
+               final org.apache.axiom.om.OMFactory factory){
+
+        org.apache.axiom.om.OMDataSource dataSource = getOMDataSource(parentQName, factory);
+
+        <xsl:choose>
+            <xsl:when test="@type">
+               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
+               parentQName,factory,dataSource);
+            </xsl:when>
+            <xsl:otherwise>
+               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
+               MY_QNAME,factory,dataSource);
+            </xsl:otherwise>
+       </xsl:choose>
+       }
+
      /**
      *
      * @param parentQName
      * @param factory
      * @return org.apache.axiom.om.OMElement
      */
-    public org.apache.axiom.om.OMElement getOMElement(
+    public org.apache.axiom.om.OMDataSource getOMDataSource(
             final javax.xml.namespace.QName parentQName,
             final org.apache.axiom.om.OMFactory factory){
 
@@ -666,7 +690,7 @@
                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
                                       xmlWriter.writeEndElement();
                                     }else{
-                                     <xsl:value-of select="$varName"/>.getOMElement(
+                                     <xsl:value-of select="$varName"/>.getOMDataSource(
                                        new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
                                         factory).serialize(xmlWriter);
                                     }
@@ -675,7 +699,7 @@
                                     if (<xsl:value-of select="$varName"/>==null){
                                          throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     }
-                                   <xsl:value-of select="$varName"/>.getOMElement(
+                                   <xsl:value-of select="$varName"/>.getOMDataSource(
                                        new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
                                        factory).serialize(xmlWriter);
                                 </xsl:otherwise>
@@ -685,7 +709,7 @@
                              if (<xsl:value-of select="$varName"/>!=null){
                                     for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                         if (<xsl:value-of select="$varName"/>[i] != null){
-                                         <xsl:value-of select="$varName"/>[i].getOMElement(
+                                         <xsl:value-of select="$varName"/>[i].getOMDataSource(
                                                    new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
                                                    factory).serialize(xmlWriter);
                                         } else {
@@ -1208,7 +1232,7 @@
                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
                                         xmlWriter.writeEndElement();
                                        }else{
-                                         <xsl:value-of select="$varName"/>.getOMElement(
+                                         <xsl:value-of select="$varName"/>.getOMDataSource(
                                          MY_QNAME,
                                          factory).serialize(xmlWriter);
                                        }
@@ -1217,7 +1241,7 @@
                                  if (<xsl:value-of select="$varName"/>==null){
                                    throw new RuntimeException("Property cannot be null!");
                                  }
-                                 <xsl:value-of select="$varName"/>.getOMElement(
+                                 <xsl:value-of select="$varName"/>.getOMDataSource(
                                          MY_QNAME,
                                          factory).serialize(xmlWriter);
                             </xsl:otherwise>
@@ -1359,16 +1383,7 @@
           }
         };
 
-        <xsl:choose>
-            <xsl:when test="@type">
-               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-               parentQName,factory,dataSource);
-            </xsl:when>
-            <xsl:otherwise>
-               return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
-               MY_QNAME,factory,dataSource);
-            </xsl:otherwise>
-       </xsl:choose>
+        return dataSource;
     }
 
   <!-- ######################################################################################### -->
