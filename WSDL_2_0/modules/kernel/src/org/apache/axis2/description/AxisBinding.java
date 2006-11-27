@@ -27,14 +27,25 @@ import java.util.HashMap;
 
 public class AxisBinding extends AxisDescription{
 
-    private String name;
+    private QName name;
 
     private String type;
 
     private Map options;
 
+    private Map faults;
+
+    public AxisBindingMessage getFault(String name) {
+        return (AxisBindingMessage)faults.get(name);
+    }
+
+    public void addFault(AxisBindingMessage fault) {
+        this.faults.put(fault.getName(),fault);
+    }
+
     public AxisBinding() {
         options = new HashMap();
+        faults = new HashMap();
     }
 
 
@@ -55,11 +66,11 @@ public class AxisBinding extends AxisDescription{
         return null;
     }
 
-    public String getName() {
+    public QName getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(QName name) {
         this.name = name;
     }
 

@@ -27,11 +27,21 @@ import java.util.HashMap;
 
 public class AxisBindingMessage extends AxisDescription{
 
+    private String name;
+
     private String direction;
 
     private Map options;
 
     private AxisMessage axisMessage;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public AxisMessage getAxisMessage() {
         return axisMessage;

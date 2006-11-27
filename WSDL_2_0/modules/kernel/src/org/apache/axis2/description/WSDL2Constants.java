@@ -49,8 +49,23 @@ public interface WSDL2Constants {
     
     String URI_HTTP_SOAP12 = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String URI_HTTP_SOAP11 = "http://www.w3.org/2006/01/soap11/bindings/HTTP";
-    String ATTR_PROTOCOL = "protocol";
-    String ATTR_VERSION = "version";
+
+    String ATTR_WSOAP_PROTOCOL = "wsoap:protocol";
+    String ATTR_WSOAP_VERSION = "wsoap:version";
+    String ATTR_WSOAP_CODE = "wsoap:code";
+    String ATTR_WSOAP_MEP = "wsoap:mep";
+    String ATTR_WSOAP_MODULE = "wsoap:module";
+    String ATTR_WSOAP_SUBCODES = "wsoap:subcodes";
+    String ATTR_WSOAP_HEADER = "wsoap:header";
+    String ATTR_WSOAP_ACTION = "wsoap:action";
+
+    String ATTR_WHTTP_TRANSFER_CODING = "whttp:transferCoding";
+    String ATTR_WHTTP_LOCATION = "whttp:location";
+    String ATTR_WHTTP_HEADER = "whttp:header";
+
+    String SOAP_VERSION_1_1 = "1.1";
+    String SOAP_VERSION_1_2 = "1.2";
+
 
     String MESSAGE_LABEL_IN = "In";
     String MESSAGE_LABEL_OUT = "Out";

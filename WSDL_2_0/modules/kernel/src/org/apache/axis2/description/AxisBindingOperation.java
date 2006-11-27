@@ -29,6 +29,26 @@ public class AxisBindingOperation extends AxisDescription{
 
     private AxisOperation axisOperation;
 
+    private QName name;
+
+    private Map faults;
+
+    public AxisBindingMessage getFault(String name) {
+        return (AxisBindingMessage)faults.get(name);
+    }
+
+    public void addFault(AxisBindingMessage fault) {
+        this.faults.put(fault.getName(),fault);
+    }
+
+    public QName getName() {
+        return name;
+    }
+
+    public void setName(QName name) {
+        this.name = name;
+    }
+
     public AxisOperation getAxisOperation() {
         return axisOperation;
     }
@@ -41,6 +61,7 @@ public class AxisBindingOperation extends AxisDescription{
 
     public AxisBindingOperation() {
         options = new HashMap();
+        faults = new HashMap();
     }
 
 

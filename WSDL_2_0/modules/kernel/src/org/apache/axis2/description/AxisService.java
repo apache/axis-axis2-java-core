@@ -72,6 +72,8 @@ import java.util.*;
  */
 public class AxisService extends AxisDescription {
 
+    private Map endpoitMap = new HashMap();
+
     private Map messageNameToOperationsMap = new HashMap();
 
     private int nsCount = 0;
@@ -189,6 +191,14 @@ public class AxisService extends AxisDescription {
     private String bindingName;
     // name of the port type used : use in codegeneration
     private String portTypeName;
+
+    public AxisEndpoint getEndpoit(String key) {
+        return (AxisEndpoint)endpoitMap.get(key);
+    }
+
+    public void addEndpoit(String key,AxisEndpoint axisEndpoint) {
+        this.endpoitMap.put(key,axisEndpoint);
+    }
 
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
