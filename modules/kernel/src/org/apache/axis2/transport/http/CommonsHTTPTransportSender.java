@@ -265,6 +265,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
         format.setDoOptimize(msgContext.isDoingMTOM());
         format.setDoingSWA(msgContext.isDoingSwA());
+        format.setAutoCloseWriter(true);
         if (!(msgContext.isDoingMTOM()) & (msgContext.isDoingSwA())
                 & !(msgContext.isDoingREST())) {
             StringWriter bufferedSOAPBody = new StringWriter();
