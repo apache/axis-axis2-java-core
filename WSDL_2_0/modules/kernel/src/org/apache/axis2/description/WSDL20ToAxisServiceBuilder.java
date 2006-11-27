@@ -9,6 +9,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.woden.*;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
+import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.types.NCName;
 import org.apache.woden.wsdl20.*;
@@ -16,6 +17,10 @@ import org.apache.woden.wsdl20.enumeration.Direction;
 import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.woden.wsdl20.extensions.ExtensionElement;
 import org.apache.woden.wsdl20.extensions.UnknownExtensionElement;
+import org.apache.woden.wsdl20.extensions.http.HTTPEndpointExtensions;
+import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
+import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
+import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
 import org.apache.woden.wsdl20.extensions.soap.*;
 import org.apache.woden.wsdl20.xml.*;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -225,6 +230,16 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisEndpoint.setBinding(processBinding(endpoint.getBinding()));
         }
 
+        HTTPEndpointExtensions httpEndpointExtensions = null;
+        try {
+            httpEndpointExtensions = (HTTPEndpointExtensions)endpoint.getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_HTTP));
+        } catch (URISyntaxException e) {
+            throw new AxisFault("HTTP Binding Extention not found");
+        }
+
+        axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE,httpEndpointExtensions.getHttpAuthenticationScheme());
+        axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM,httpEndpointExtensions.getHttpAuthenticationRealm());
+
         return axisEndpoint;
 
     }
@@ -303,10 +318,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         axisBinding.setName(binding.getName());
 
-        if (binding.getType().toString().equals(WSDL2Constants.URI_WSDL2_SOAP)) {
-            processSoapBindingExtention(binding, axisBinding);
-        } else {
-            //ToDo implement other bindings
+        String bindingType = binding.getType().toString();
+
+        if (bindingType.equals(WSDL2Constants.URI_WSDL2_SOAP)) {
+            processSOAPBindingExtention(binding, axisBinding);
+        } else if (bindingType.equals(WSDL2Constants.URI_WSDL2_HTTP)) {
+            processHTTPBindingExtention(binding, axisBinding);
         }
 
         // We should process the interface based on the service not on a binding
@@ -327,7 +344,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return axisBinding;
     }
 
-    private void processSoapBindingExtention(Binding binding, AxisBinding axisBinding)
+    private void processSOAPBindingExtention(Binding binding, AxisBinding axisBinding)
             throws AxisFault {
 
         // Capture all the binding specific properties
@@ -539,6 +556,144 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         soapBindingFaultReferenceExtensions.getSoapModules());
 
                 axisBindingOperation.addFault(axisBindingMessageFault);
+
+            }
+
+            axisBinding.addChild(axisBindingOperation.getName(),axisBindingOperation);
+
+
+        }
+    }
+
+    private void processHTTPBindingExtention(Binding binding, AxisBinding axisBinding)
+            throws AxisFault {
+
+        // Capture all the binding specific properties
+
+        HTTPBindingExtensionsImpl httpBindingExtensions = null;
+        try {
+            httpBindingExtensions = (HTTPBindingExtensionsImpl) binding
+                    .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_HTTP));
+        } catch (URISyntaxException e) {
+            throw new AxisFault("HTTP Binding Extention not found");
+        }
+
+        axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD,httpBindingExtensions.getHttpMethodDefault());
+        axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,httpBindingExtensions.getHttpQueryParameterSeparatorDefault());
+        axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,httpBindingExtensions.getHttpTransferCodingDefault());
+
+        // Capture all the fault specific properties
+
+        BindingFault[] bindingFaults = binding.getBindingFaults();
+        for (int i = 0; i < bindingFaults.length; i++) {
+            BindingFault bindingFault = bindingFaults[i];
+            InterfaceFault interfaceFault = bindingFault.getInterfaceFault();
+
+            AxisBindingMessage axisBindingFault = new AxisBindingMessage();
+            axisBindingFault.setName(interfaceFault.getName().getLocalPart());
+            axisBindingFault.setParent(axisBinding);
+
+            HTTPBindingFaultExtensions httpBindingFaultExtensions = null;
+
+            try {
+                httpBindingFaultExtensions = (HTTPBindingFaultExtensions) bindingFault
+                        .getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_HTTP));
+            } catch (URISyntaxException e) {
+                throw new AxisFault("HTTP Binding Extention not found");
+            }
+
+            axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_CODE,
+                    httpBindingFaultExtensions.getHttpErrorStatusCode());
+            axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
+                    httpBindingFaultExtensions.getHttpHeaders());
+            axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
+                    httpBindingFaultExtensions.getHttpTransferCoding());
+
+            axisBinding.addFault(axisBindingFault);
+
+        }
+
+        // Capture all the binding operation specific properties
+
+        BindingOperation[] bindingOperations = binding.getBindingOperations();
+        for (int i = 0; i < bindingOperations.length; i++) {
+            BindingOperation bindingOperation = bindingOperations[i];
+
+            AxisBindingOperation axisBindingOperation = new AxisBindingOperation();
+            AxisOperation axisOperation =
+                    axisService.getOperation(bindingOperation.getInterfaceOperation().getName());
+
+            axisBindingOperation.setAxisOperation(axisOperation);
+            axisBindingOperation.setParent(axisBinding);
+            axisBindingOperation.setName(axisOperation.getName());
+
+            HTTPBindingOperationExtensions httpBindingOperationExtensions = null;
+            try {
+                httpBindingOperationExtensions = ((HTTPBindingOperationExtensions)
+                        bindingOperation.getComponentExtensionsForNamespace(
+                                new URI(WSDL2Constants.URI_WSDL2_HTTP)));
+            } catch (URISyntaxException e) {
+                throw new AxisFault("HTTP Binding Extention not found");
+            }
+
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_FAULT_SERIALIZATION,httpBindingOperationExtensions.getHttpFaultSerialization());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,httpBindingOperationExtensions.getHttpInputSerialization());
+            URI httpLocation = httpBindingOperationExtensions.getHttpLocation();
+            if (httpLocation != null) {
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION,httpLocation);
+            }
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD,httpBindingOperationExtensions.getHttpMethod());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION,httpBindingOperationExtensions.getHttpOutputSerialization());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,httpBindingOperationExtensions.getHttpQueryParameterSeparator());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,httpBindingOperationExtensions.getHttpTransferCodingDefault());
+
+            BindingMessageReference[] bindingMessageReferences =
+                    bindingOperation.getBindingMessageReferences();
+            for (int j = 0; j < bindingMessageReferences.length; j++) {
+                BindingMessageReference bindingMessageReference = bindingMessageReferences[j];
+
+                AxisBindingMessage axisBindingMessage = new AxisBindingMessage();
+                axisBindingMessage.setParent(axisBindingOperation);
+
+                AxisMessage axisMessage = axisOperation.getMessage(bindingMessageReference
+                        .getInterfaceMessageReference().getMessageLabel().toString());
+
+                axisBindingMessage.setAxisMessage(axisMessage);
+                axisBindingMessage.setName(axisMessage.getName());
+                axisBindingMessage.setDirection(axisMessage.getDirection());
+
+
+                HTTPBindingMessageReferenceExtensions httpBindingMessageReferenceExtensions = null;
+                try {
+                    httpBindingMessageReferenceExtensions =
+                            (HTTPBindingMessageReferenceExtensions) bindingMessageReference
+                                    .getComponentExtensionsForNamespace(
+                                            new URI(WSDL2Constants.URI_WSDL2_HTTP));
+                } catch (URISyntaxException e) {
+                    throw new AxisFault("HTTP Binding Extention not found");
+                }
+
+                axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,httpBindingMessageReferenceExtensions.getHttpHeaders());
+                axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,httpBindingMessageReferenceExtensions.getHttpTransferCoding());
+
+
+//                    SOAPHeaderBlock[] soapHeaders = soapHeaderExt.getSoapHeaders();
+//
+//                        for (int k = 0; k < soapHeaders.length; k++) {
+//                            SOAPHeaderBlock soapHeader = soapHeaders[j];
+//
+//                            ElementDeclaration elementDeclaration = soapHeader.getElementDeclaration();
+//
+//                            if (elementDeclaration != null) {
+//                                QName name = elementDeclaration.getName();
+//                                SOAPHeaderMessage soapHeaderMessage = new SOAPHeaderMessage(name);
+//                                soapHeaderMessage.setRequired(soapHeader.isRequired().booleanValue());
+//                                message.addSoapHeader(soapHeaderMessage);
+//                            }
+//                        }
+
+                axisBindingOperation.addChild(axisBindingMessage.getName(),axisBindingMessage);
+
 
             }
 

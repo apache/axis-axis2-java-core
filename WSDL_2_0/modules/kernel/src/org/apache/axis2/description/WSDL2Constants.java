@@ -23,6 +23,7 @@ public interface WSDL2Constants {
     String DEFAULT_WSDL_NAMESPACE_PREFIX = "wsdl2";
     String DESCRIPTION = "description";
     String URI_WSDL2_SOAP = "http://www.w3.org/2006/01/wsdl/soap";
+    String URI_WSDL2_HTTP = "http://www.w3.org/2006/01/wsdl/http";
     String SOAP_PREFIX = "wsoap";
     String URI_WSDL2_SOAP_ENV = "http://www.w3.org/2003/05/soap-envelope";
     String SOAP_ENV_PREFIX = "soap";
@@ -62,6 +63,14 @@ public interface WSDL2Constants {
     String ATTR_WHTTP_TRANSFER_CODING = "whttp:transferCoding";
     String ATTR_WHTTP_LOCATION = "whttp:location";
     String ATTR_WHTTP_HEADER = "whttp:header";
+    String ATTR_WHTTP_METHOD = "whttp:method";
+    String ATTR_WHTTP_CODE = "whttp:code";
+    String ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR = "whttp:queryParameterSeparator";
+    String ATTR_WHTTP_INPUT_SERIALIZATION = "whttp:inputSerialization";
+    String ATTR_WHTTP_OUTPUT_SERIALIZATION = "whttp:outputSerialization";
+    String ATTR_WHTTP_FAULT_SERIALIZATION = "whttp:faultSerialization";
+    String ATTR_WHTTP_AUTHENTICATION_TYPE = "whttp:authenticationType";
+    String ATTR_WHTTP_AUTHENTICATION_REALM = "whttp:authenticationRealm";
 
     String SOAP_VERSION_1_1 = "1.1";
     String SOAP_VERSION_1_2 = "1.2";

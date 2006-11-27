@@ -22,6 +22,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.AxisFault;
 
 import javax.xml.namespace.QName;
+import java.util.Map;
+import java.util.HashMap;
 
 public class AxisEndpoint extends AxisDescription{
 
@@ -33,6 +35,29 @@ public class AxisEndpoint extends AxisDescription{
 
     // The alias used for the endpoint
     private String alias;
+
+    private Map options;
+
+    public AxisEndpoint() {
+            options = new HashMap();
+    }
+
+    public void setProperty(String name, Object value) {
+        options.put(name, value);
+    }
+
+    /**
+     * @param name name of the property to search for
+     * @return the value of the property, or null if the property is not found
+     */
+    public Object getProperty(String name) {
+        Object obj = options.get(name);
+        if (obj != null) {
+            return obj;
+        }
+
+        return null;
+    }
 
     public String getAlias() {
         return alias;
