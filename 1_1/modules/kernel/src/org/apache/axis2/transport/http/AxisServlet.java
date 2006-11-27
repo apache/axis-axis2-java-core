@@ -39,6 +39,7 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -291,6 +292,19 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 } else {
                     throw new ServletException(t);
                 }
+            }
+        }
+        boolean closeReader = true;
+        String closeReaderParameter = servletConfig.getInitParameter("axis2.close.reader");
+        if (closeReaderParameter != null) {
+            closeReaderParameter = closeReaderParameter.trim();
+            closeReader = JavaUtils.isTrue(closeReaderParameter);
+        }
+        if(closeReader){
+            try {
+                ((StAXBuilder)msgContext.getEnvelope().getBuilder()).close();
+            } catch (Exception e){
+                log.debug(e);
             }
         }
     }
