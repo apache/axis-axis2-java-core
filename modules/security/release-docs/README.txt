@@ -1,5 +1,5 @@
 ======================================================
-Apache Rampart-1.1-RC1 build  (Month Day, 2006)
+Apache Rampart-1.1-RC1 build  (November 27, 2006)
 
 http://ws.apache.org/axis2/modules/rampart/
 ------------------------------------------------------
@@ -15,6 +15,9 @@ lib      - This directory contains all the libraries required by rampart
 
 rampart-1.1.mar   - WS-Security and WS-SecureConversation support for Axis2
 rahas-1.1.mar     - STS module - to be used to add STS operations to a service
+				IMPORTANT: Note that the module versions are set to 1.1 enven 
+				though this release is 1.1-RC1
+
 rahas-1.1-RC1.zip - STS zip - you can use this to create your own configured STS
 
 samples  - This contains samples on using Apache Rampart and configuring

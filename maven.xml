@@ -1069,6 +1069,9 @@
             <ant:fileset file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar"/>
             <ant:fileset file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar"/>
             <ant:fileset file="${maven.repo.local}/bouncycastle/jars/bcprov-${bcprov.version}.jar"/>
+            <ant:fileset file="${maven.repo.local}/org.apache.ws.commons.axiom/jars/axiom-api-${axiom.version}.jar"/>
+            <ant:fileset file="${maven.repo.local}/org.apache.ws.commons.axiom/jars/axiom-impl-${axiom.version}.jar"/>
+            <ant:fileset file="${maven.repo.local}/org.apache.ws.commons.axiom/jars/axiom-dom-${axiom.version}.jar"/>
             <ant:fileset
                     file="${maven.repo.local}/commons-codec/jars/commons-codec-${commons.codec.version}.jar"/>
 
