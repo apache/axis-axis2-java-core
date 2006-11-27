@@ -72,12 +72,12 @@
 	<copy file="src/META-INF/services/org.apache.neethi.builders.AssertionBuilder"
 	    tofile="target/temp-mar/META-INF/services/org.apache.neethi.builders.AssertionBuilder" overwrite="true" />
 
-        <jar jarfile="target/rampart-${rampart_version}.mar" basedir="target/temp-mar/">
+        <jar jarfile="target/rampart-${rampart_module_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
         </jar>
 
-        <copy file="target/rampart-${rampart_version}.mar" tofile="target/modules/rampart-${rampart_version}.mar"/>
-        <copy file="target/rampart-${rampart_version}.mar" tofile="${maven.repo.local}/org.apache.axis2/mars/rampart-${rampart_version}.mar"/>
+        <copy file="target/rampart-${rampart_module_version}.mar" tofile="target/modules/rampart-${rampart_module_version}.mar"/>
+        <copy file="target/rampart-${rampart_module_version}.mar" tofile="${maven.repo.local}/org.apache.axis2/mars/rampart-${rampart_module_version}.mar"/>
 		
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>
