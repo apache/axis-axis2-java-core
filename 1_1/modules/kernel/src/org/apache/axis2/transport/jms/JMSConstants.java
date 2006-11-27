@@ -47,6 +47,15 @@ public class JMSConstants {
     public static final String CONFAC_PARAM = "transport.jms.ConnectionFactory";
     /** The Parameter name indicating the JMS connection factory JNDI name */
     public static final String CONFAC_JNDI_NAME_PARAM = "transport.jms.ConnectionFactoryJNDIName";
+    /** The Parameter name indicating the operation to dispatch non SOAP/XML messages */
+    public static final String OPERATION_PARAM = "transport.jms.Operation";
+    /** The Parameter name indicating the wrapper element for non SOAP/XML messages */
+    public static final String WRAPPER_PARAM = "transport.jms.Wrapper";
+    /** The default operation name to be used for non SOAP/XML messages
+     if the operation cannot be determined*/
+    public static final QName DEFAULT_OPERATION = new QName("urn:mediate");
+    /** The name of the element which wraps non SOAP/XML content into a SOAP envelope */
+    public static final QName DEFAULT_WRAPPER = new QName(Constants.AXIS2_NAMESPACE_URI, "jmsMessage");
     /** The local (Axis2) JMS connection factory name of the default connection
      * factory to be used, if a service does not explicitly state the connection
      * factory it should be using by a Parameter named JMSConstants.CONFAC_PARAM
