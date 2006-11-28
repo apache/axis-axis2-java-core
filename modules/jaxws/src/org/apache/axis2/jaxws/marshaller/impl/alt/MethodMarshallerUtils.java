@@ -185,6 +185,7 @@ class MethodMarshallerUtils  {
                     block = message.getHeaderBlock(pd.getTargetNamespace(), localName, context, factory);
                 } else {
                     block = message.getBodyBlock(index, context, factory);
+                    index++;
                 }
                 
                 // The object is now ready for marshalling

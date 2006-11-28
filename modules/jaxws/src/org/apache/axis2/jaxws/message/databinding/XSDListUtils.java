@@ -19,9 +19,16 @@ package org.apache.axis2.jaxws.message.databinding;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.jaxws.i18n.Messages;
 
 
 /**
@@ -66,7 +73,7 @@ public class XSDListUtils {
      * @param container Object
      * @return xsd:list String
      */
-    public static String toXSDListString(Object container) {
+    public static String toXSDListString(Object container) throws NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
         // TODO only supports arrays right now.  Need to implement this for List
         if (container.getClass().isArray()) {
             String xsdString = "";
@@ -118,8 +125,19 @@ public class XSDListUtils {
      * @param obj
      * @return xml text for this object
      */
-    private static String getAsText(Object obj) {
+    private static String getAsText(Object obj) throws NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
         // TODO Need to upgrade to handle more complicated objects like calendar and qname
+        if (obj instanceof QName) {
+            throw new RuntimeException(Messages.getMessage("XSDListNotSupported", QName.class.getName()));
+        } else if (obj instanceof XMLGregorianCalendar) {
+            throw new RuntimeException(Messages.getMessage("XSDListNotSupported", XMLGregorianCalendar.class.getName()));   
+        } else if (obj.getClass().isEnum()) {
+            // TODO Method should be cached for performance
+            Method method = 
+                obj.getClass().getDeclaredMethod("value", new Class[] {} );
+           return (String) method.invoke(obj, new Object[] {} );
+
+        }
         return obj.toString();
     }
     
@@ -137,6 +155,22 @@ public class XSDListUtils {
         // TODO This needs to be upgraded to handle more complicated objects (enum, calendar, primitive, etc.)
         if (componentType == String.class) {
             return value;
+        }
+        if (componentType.isEnum()) {
+            // If you get an exception here, consider adding the code to convert the String value to the required component object
+            // Default: Call the constructor
+            // TODO Method should be cached for performance
+            Method method = 
+                componentType.getDeclaredMethod("fromValue", new Class[] {String.class} );
+            Object obj = method.invoke(null, new Object[] {value} );
+            return obj;
+        }
+        if (componentType.equals(QName.class)) {
+            // TODO Missing Support
+            throw new IllegalArgumentException(Messages.getMessage("XSDListNotSupported", componentType.getName()));
+        } else if (componentType.equals(XMLGregorianCalendar.class)) {
+            // TODO Missing Support
+            throw new IllegalArgumentException(Messages.getMessage("XSDListNotSupported", componentType.getName()));   
         }
         
         // If you get an exception here, consider adding the code to convert the String value to the required component object

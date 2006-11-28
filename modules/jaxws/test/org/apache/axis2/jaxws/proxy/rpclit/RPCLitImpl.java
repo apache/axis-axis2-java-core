@@ -21,6 +21,8 @@ import java.math.BigInteger;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlList;
+import javax.xml.datatype.DatatypeConstants;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
@@ -37,6 +39,22 @@ import org.test.proxy.rpclit.Enum;
         endpointInterface="org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit")
 public class RPCLitImpl implements RPCLit {
 
+    public static DatatypeFactory df ;
+    public static XMLGregorianCalendar bday;
+    public static XMLGregorianCalendar holiday;
+    public static BigInteger bigInt1 = new BigInteger("1");
+    public static BigInteger bigInt2 = new BigInteger("2");
+    public static QName qname1 = new QName("urn://sample", "hello" );
+    public static QName qname2 = new QName("urn://sample", "world" );
+    
+    static {
+        try {
+            df = DatatypeFactory.newInstance();
+            bday = df.newXMLGregorianCalendarDate(1964, 12, 3,  DatatypeConstants.FIELD_UNDEFINED);
+            holiday = bday = df.newXMLGregorianCalendarDate(2007, 1, 1,  DatatypeConstants.FIELD_UNDEFINED);
+        } catch (Exception e) {}
+    }
+    
     
     
     /**
@@ -55,13 +73,19 @@ public class RPCLitImpl implements RPCLit {
             Enum[] enums,
             String[] text2,
             ComplexAll all) {
-        // TODO Auto-generated method stub
-        return null;
+        assertTrue(qNames.length==2);
+        assertTrue(qNames[0].equals(qname1));
+        assertTrue(qNames[1].equals(qname2));
+        
+        return qNames;
     }
 
     public XMLGregorianCalendar[] testCalendarList1(XMLGregorianCalendar[] cals) {
-        // TODO Auto-generated method stub
-        return null;
+       assertTrue(cals.length == 2);
+       assertTrue(cals[0].compare(bday) == 0);
+       assertTrue(cals[1].compare(holiday) == 0);
+       return cals;
+       
     }
 
     public String[] testStringList2(String[] arg20) {
@@ -73,8 +97,10 @@ public class RPCLitImpl implements RPCLit {
     }
 
     public BigInteger[] testBigIntegerList3(BigInteger[] arg30) {
-        // TODO Auto-generated method stub
-        return null;
+        assertTrue(arg30.length==2);
+        assertTrue(arg30[0].compareTo(bigInt1) == 0);
+        assertTrue(arg30[1].compareTo(bigInt2) == 0);
+        return arg30;
     }
 
     public Long[] testLongList4(Long[] longs) {
@@ -99,13 +125,17 @@ public class RPCLitImpl implements RPCLit {
     }
     
     public String[] testEnumList7(String[] arg70) {
-        // TODO Auto-generated method stub
-        return null;
+        assertTrue(arg70.length==2);
+        assertTrue(arg70[0].equals("Apple"));
+        assertTrue(arg70[0].equals("Orange"));
+        return arg70;
     }
 
     private void assertTrue(boolean value) throws RuntimeException {
         if (!value) {
-            throw new RuntimeException();
+            RuntimeException re = new RuntimeException();
+            System.out.println("Test FAILURE=" +re);
+            throw re;
         }
     }
 }
