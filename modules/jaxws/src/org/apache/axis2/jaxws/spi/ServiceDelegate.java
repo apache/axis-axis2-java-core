@@ -74,6 +74,8 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", ""));
     	}
         serviceDescription = DescriptionFactory.createServiceDescription(url, serviceQname, clazz);
+        // TODO: This check should be done when the Service Description is created above; that should throw this exception.
+        // That is because we (following the behavior of the RI) require the WSDL be fully specified (not partial) on the client
         if (isValidWSDLLocation()) {
             if(!isServiceDefined(serviceQname)){
             	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDelegateConstruct0", serviceQname.toString(), url.toString()));
@@ -240,7 +242,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * @see javax.xml.ws.spi.ServiceDelegate#getPorts()
      */
     public Iterator<QName> getPorts() {
-        return null;
+        return getServiceDescription().getPorts().iterator();
     }
     
     /*

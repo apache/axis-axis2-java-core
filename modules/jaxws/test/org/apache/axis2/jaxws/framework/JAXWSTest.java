@@ -29,13 +29,14 @@ import org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationServiceImplWithDBCTests;
 import org.apache.axis2.jaxws.description.GetDescFromBindingProvider;
 import org.apache.axis2.jaxws.description.PartialWSDLTests;
+import org.apache.axis2.jaxws.description.ServiceTests;
 import org.apache.axis2.jaxws.description.ServiceAnnotationTests;
 import org.apache.axis2.jaxws.description.ValidateWSDLTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
 import org.apache.axis2.jaxws.description.WrapperPackageTests;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderTests;
-import org.apache.axis2.jaxws.description.impl.ServiceDescriptionTests;
+import org.apache.axis2.jaxws.description.impl.ServiceDescriptionImplTests;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
@@ -100,7 +101,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ServiceAnnotationTests.class);
         suite.addTestSuite(WSDLTests.class);
         suite.addTestSuite(DescriptionBuilderTests.class);
-        suite.addTestSuite(ServiceDescriptionTests.class);
+        suite.addTestSuite(ServiceDescriptionImplTests.class);
         suite.addTestSuite(WSDLDescriptionTests.class);
         suite.addTestSuite(AnnotationDescriptionTests.class);
         suite.addTestSuite(AnnotationServiceImplDescriptionTests.class);
@@ -110,6 +111,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ValidateWSDLTests.class);
         suite.addTestSuite(GetDescFromBindingProvider.class);
         suite.addTestSuite(WrapperPackageTests.class);
+        suite.addTestSuite(ServiceTests.class);
         
         suite.addTestSuite(HandlerChainProcessorTests.class);
         suite.addTestSuite(JaxwsMessageBundleTests.class);

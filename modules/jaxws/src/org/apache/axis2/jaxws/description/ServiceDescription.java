@@ -1,5 +1,7 @@
 package org.apache.axis2.jaxws.description;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.client.ServiceClient;
@@ -63,6 +65,13 @@ public interface ServiceDescription {
 
     public abstract QName getServiceQName();
     
-
+    /**
+     * Returns a list of the ports for this serivce.  The ports returned are the
+     * - Ports declared ports for this Service.  They can be delcared in the WSDL
+     *   or via annotations.
+     * - Dynamic ports added to the service
+     * @return
+     */
+    public List<QName> getPorts();
 
 }

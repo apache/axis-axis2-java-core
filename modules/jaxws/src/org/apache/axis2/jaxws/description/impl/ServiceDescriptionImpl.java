@@ -22,6 +22,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
@@ -97,6 +99,9 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("serviceDescErr1", serviceClass.getName()));
         }
         
+        // TODO: On the client side, we should not support partial WSDL; i.e. if the WSDL is specified it must be
+        //       complete and must contain the ServiceQName.  This is how the Sun RI behaves on the client.
+        //       When this is fixed, the check in ServiceDelegate(URL, QName, Class) should be removed
         this.wsdlURL = wsdlURL;
         // TODO: The serviceQName needs to be verified between the argument/WSDL/Annotation
         this.serviceQName = serviceQName;
@@ -804,5 +809,56 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             defn = getWSDLWrapper().getDefinition();
         }
         return defn;
+    }
+    
+    public Service getWSDLService() {
+        Service returnWSDLService = null;
+        Definition defn = getWSDLDefinition();
+        if (defn != null) {
+            returnWSDLService = defn.getService(getServiceQName());
+        }
+        return returnWSDLService;
+    }
+    
+    public Map getWSDLPorts() {
+        Service wsdlService = getWSDLService();
+        if (wsdlService != null) {
+            return wsdlService.getPorts();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public List<QName> getPorts() {
+        ArrayList<QName> portList = new ArrayList<QName>();
+        // Note that we don't cache these results because the list of ports can be added
+        // to via getPort(...) and addPort(...).
+
+        // If the WSDL is specified, get the list of ports under this service
+        Map wsdlPortsMap = getWSDLPorts();
+        if (wsdlPortsMap != null) {
+            Iterator wsdlPortsIterator = wsdlPortsMap.values().iterator();
+            // Note that the WSDL Ports do not have a target namespace associated with them.
+            // JAXWS says to use the TNS from the Service.
+            String serviceTNS = getServiceQName().getNamespaceURI();
+            for (Port wsdlPort = null; wsdlPortsIterator.hasNext(); ) {
+                wsdlPort = (Port) wsdlPortsIterator.next();
+                String wsdlPortLocalPart = wsdlPort.getName();
+                portList.add(new QName(serviceTNS, wsdlPortLocalPart));
+            }
+        }
+
+        // Go through the list of Endpoints that have been created and add any
+        // not already in the list.  This will include ports added to the Service
+        // via getPort(...) and addPort(...)
+        EndpointDescription[] endpointDescArray = getEndpointDescriptions();
+        for (EndpointDescription endpointDesc : endpointDescArray) {
+            QName endpointPortQName = endpointDesc.getPortQName();
+            if (!portList.contains(endpointPortQName)) {
+                portList.add(endpointPortQName);
+            }
+        }
+        return portList;
     }
 }
