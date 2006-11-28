@@ -190,15 +190,37 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void processEndpoints() throws AxisFault {
         Endpoint [] endpoints = wsdlService.getEndpoints();
 
-        if (endpoints == null) {
+        if (endpoints.length == 0) {
             throw new AxisFault("No endpoints found in the WSDL");
         }
 
         processedBindings = new HashMap();
 
+        if (this.interfaceName != null) {
+
+            Endpoint endpoint = null;
+
+            for (int i = 0; i < endpoints.length; ++i) {
+                if (this.interfaceName.equals(endpoints[i].getName().toString())) {
+                    endpoint = endpoints[i];
+                    break;  // found it.  Stop looking
+                }
+            }
+            if (endpoint == null) {
+                throw new AxisFault("No endpoint found for the given name :"
+                        + this.interfaceName);
+            }
+
+            axisService
+                    .addEndpoit(endpoint.getName().toString(), processEndpoint(endpoint));
+        }
+        else{
+
+
         for (int i = 0; i < endpoints.length; i++) {
             axisService
                     .addEndpoit(endpoints[i].getName().toString(), processEndpoint(endpoints[i]));
+        }
         }
 
 
@@ -211,7 +233,22 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw new AxisFault("No wsdlService found in the WSDL");
         }
 
+        if (serviceName != null) {
+            for (int i = 0; i < services.length; i++) {
+                if (serviceName.equals(services[i].getName())) {
+                    wsdlService = services[i];
+                    break;  // found it. Stop looking.
+                }
+            }
+            if (wsdlService == null) {
+                throw new AxisFault("Service with the specified name not found in the WSDL : "
+                        + serviceName.getLocalPart());
+            }
+        }
+
         wsdlService = services[0];
+
+        axisService.setName(wsdlService.getName().getLocalPart().toString());
 
         processInterface(wsdlService.getInterface());
 
@@ -230,15 +267,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisEndpoint.setBinding(processBinding(endpoint.getBinding()));
         }
 
-        HTTPEndpointExtensions httpEndpointExtensions = null;
+        SOAPEndpointExtensions soapEndpointExtensions = null;
         try {
-            httpEndpointExtensions = (HTTPEndpointExtensions)endpoint.getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_HTTP));
+            soapEndpointExtensions = (SOAPEndpointExtensions)endpoint.getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_SOAP));
         } catch (URISyntaxException e) {
             throw new AxisFault("HTTP Binding Extention not found");
         }
 
-        axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE,httpEndpointExtensions.getHttpAuthenticationScheme());
-        axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM,httpEndpointExtensions.getHttpAuthenticationRealm());
+//        axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE,soapEndpointExtensions.getHttpAuthenticationScheme());
+//        axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM,soapEndpointExtensions.getHttpAuthenticationRealm());
 
         return axisEndpoint;
 
