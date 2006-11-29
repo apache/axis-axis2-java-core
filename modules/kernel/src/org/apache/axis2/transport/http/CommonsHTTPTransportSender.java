@@ -218,10 +218,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                                 Constants.VALUE_TRUE);
             }
         } catch (XMLStreamException e) {
+            log.debug(e);
             throw new AxisFault(e);
         } catch (FactoryConfigurationError e) {
+            log.debug(e);
             throw new AxisFault(e);
         } catch (IOException e) {
+            log.debug(e);
             throw new AxisFault(e);
         }
         return InvocationResponse.CONTINUE;
@@ -334,10 +337,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
             sender.send(messageContext, dataout, url, soapActionString);
         } catch (MalformedURLException e) {
+            log.debug(e);
             throw new AxisFault(e);
         } catch (HttpException e) {
+            log.debug(e);
             throw new AxisFault(e);
         } catch (IOException e) {
+            log.debug(e);
             throw new AxisFault(e);
         }
     }

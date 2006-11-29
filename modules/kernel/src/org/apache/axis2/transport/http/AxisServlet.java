@@ -77,7 +77,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected boolean disableSeperateEndpointForREST = false;
     private static final String LIST_SERVICES_SUFIX = "/services/listServices";
     private static final String LIST_FAUKT_SERVICES_SUFIX = "/services/ListFaultyServices";
-
+    private boolean closeReader = true;
 
     protected MessageContext
     createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
@@ -294,12 +294,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 }
             }
         }
-        boolean closeReader = true;
-        String closeReaderParameter = servletConfig.getInitParameter("axis2.close.reader");
-        if (closeReaderParameter != null) {
-            closeReaderParameter = closeReaderParameter.trim();
-            closeReader = JavaUtils.isTrue(closeReaderParameter);
-        }
         if(closeReader){
             try {
                 ((StAXBuilder)msgContext.getEnvelope().getBuilder()).close();
@@ -368,6 +362,11 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             disableSeperateEndpointForREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
         }
 
+        // Should we close the reader(s)
+        parameter = axisConfiguration.getParameter("axis2.close.reader");
+        if (parameter != null) {
+            closeReader = JavaUtils.isTrueExplicitly(parameter.getValue());
+        }
     }
 
     public void init() throws ServletException {
