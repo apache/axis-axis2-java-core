@@ -32,6 +32,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
@@ -98,6 +99,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 new ServletBasedOutTransportInfo(resp));
+        msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
+                               new ServletRequestResponseTransport(resp));
         msgContext.setProperty(MessageContext.REMOTE_ADDR, req.getRemoteAddr());
         msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
@@ -539,5 +542,31 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         return ((soapActionHeader == null) ||
                 (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
+    }
+    
+    class ServletRequestResponseTransport implements RequestResponseTransport
+    {
+      private HttpServletResponse response;
+      
+      ServletRequestResponseTransport(HttpServletResponse response)
+      {
+        this.response = response;
+      }
+      
+      public void acknowledgeMessage(MessageContext msgContext) throws AxisFault
+      {
+        response.setContentType("text/xml; charset="
+                                + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+        
+        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        try
+        {
+          response.flushBuffer();
+        }
+        catch (IOException e)
+        {
+          throw new AxisFault("Error sending acknowledgement", e);
+        }
+      }
     }
 }
