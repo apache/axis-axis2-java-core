@@ -28,44 +28,44 @@ public class AxisOperationFactory implements WSDLConstants {
         AxisOperation abOpdesc;
 
         switch (mepURI) {
-            case WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY : {
+            case WSDLConstants.MEP_CONSTANT_IN_ONLY : {
                 abOpdesc = new InOnlyAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_IN_ONLY);
+                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_ONLY);
                 break;
             }
-            case WSDL20_2004Constants.MEP_CONSTANT_OUT_ONLY : {
+            case WSDLConstants.MEP_CONSTANT_OUT_ONLY : {
                 abOpdesc = new OutOnlyAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_OUT_ONLY);
+                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_ONLY);
                 break;
             }
-            case WSDL20_2004Constants.MEP_CONSTANT_IN_OUT : {
+            case WSDLConstants.MEP_CONSTANT_IN_OUT : {
                 abOpdesc = new InOutAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_IN_OUT);
+                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_OUT);
                 break;
             }
-            case WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT : {
+            case WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT : {
                 abOpdesc = new InOutAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT);
+                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT);
                 break;
             }
-            case WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY : {
+            case WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY : {
                 abOpdesc = new InOutAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY);
+                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY);
                 break;
             }
-            case WSDL20_2004Constants.MEP_CONSTANT_OUT_IN : {
+            case WSDLConstants.MEP_CONSTANT_OUT_IN : {
                 abOpdesc = new OutInAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_OUT_IN);
+                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_IN);
                 break;
             }
-            case WSDL20_2004Constants.MEP_CONSTANT_OUT_OPTIONAL_IN : {
+            case WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN : {
                 abOpdesc = new OutInAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN);
+                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN);
                 break;
             }
-            case WSDL20_2004Constants.MEP_CONSTANT_ROBUST_OUT_ONLY : {
+            case WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY : {
                 abOpdesc = new RobustOutOnlyAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY);
+                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY);
                 break;
             }
             default : {
@@ -78,21 +78,21 @@ public class AxisOperationFactory implements WSDLConstants {
     //FIXME add in the latest MEP URIs
     public static AxisOperation getOperationDescription(String mepURI) throws AxisFault {
         AxisOperation abOpdesc;
-        if (WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
+        if (WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOnlyAxisOperation();
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
+        } else if (WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutOnlyAxisOperation();
-        } else if (WSDL20_2004Constants.MEP_URI_IN_OUT.equals(mepURI) || WSDL20_2004Constants.MEP_URI_IN_OUT_03.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI)) {
+        } else if (WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
-        } else if (WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
+        } else if (WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI)) {
+        } else if (WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
+        } else if (WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
+        } else if (WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
+        } else if (WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOnlyAxisOperation();
         }else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));

@@ -19,8 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAP11Constants;
 //import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -118,20 +116,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //populate the MEP -> class map
         mepToClassMap = new HashMap();
-        mepToClassMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
         mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
-        mepToClassMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY, "org.apache.axis2.receivers.AbstractRobustInMessageReceiver");
         mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, "org.apache.axis2.receivers.AbstractRobustInMessageReceiver");
-        mepToClassMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
         mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
 
         //populate the MEP -> suffix map
         mepToSuffixMap = new HashMap();
-        mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
-        mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
-        mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
         //register the other types as necessary
     }
@@ -1662,7 +1654,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected boolean loadOperations(Document doc, Element rootElement, String mep) {
         Element methodElement;
-        String portTypeName = makeJavaClassName(axisService.getName());
+        String serviceName = makeJavaClassName(axisService.getName());
 
         Iterator operations = axisService.getOperations();
         boolean opsFound = false;
@@ -1675,6 +1667,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,
 
+
             String messageExchangePattern = axisOperation.getMessageExchangePattern();
             if (infoHolder.get(messageExchangePattern) == null) {
                 infoHolder.put(messageExchangePattern, Boolean.TRUE);
@@ -1683,7 +1676,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             if (mep == null) {
 
                 opsFound = true;
+<<<<<<< .mine
+                methodElement = generateMethodElement(doc, serviceName, axisOperation);
+=======
                 methodElement = generateMethodElement(doc, portTypeName, axisOperation, axisBindingOperation);
+>>>>>>> .r480545
                 rootElement.appendChild(methodElement);
 
             } else {
@@ -1692,8 +1689,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 if (mep.equals(axisOperation.getMessageExchangePattern())) {
                     //at this point we know it's true
                     opsFound = true;
-                    methodElement = generateMethodElement(doc, portTypeName, axisOperation,axisBindingOperation);
-
+                    methodElement = generateMethodElement(doc, serviceName, axisOperation, axisBindingOperation);
                     rootElement.appendChild(methodElement);
                     //////////////////////
                 }

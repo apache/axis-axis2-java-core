@@ -354,9 +354,9 @@ public class Utils {
         AxisOperation operation;
         String opName = jmethod.getSimpleName();
         if (jmethod.getReturnType().isVoidType()) {
-            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY);
+            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
         } else {
-            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OUT);
+            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
             AxisMessage outMessage = operation.getMessage(
                     WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
             outMessage.setElementQName(table.getQNamefortheType(jmethod.getSimpleName() +

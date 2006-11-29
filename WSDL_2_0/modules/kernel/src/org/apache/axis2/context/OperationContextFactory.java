@@ -37,11 +37,11 @@ public class OperationContextFactory implements WSDLConstants {
      */
     public static OperationContext createOperationContext(int mepURI, AxisOperation axisOp)
             throws AxisFault {
-        if ((WSDL20_2004Constants.MEP_CONSTANT_IN_OUT == mepURI) || (WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY == mepURI)
-                || (WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI)
-                || (WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY == mepURI) || (WSDL20_2004Constants.MEP_CONSTANT_OUT_ONLY == mepURI)
-                || (WSDL20_2004Constants.MEP_CONSTANT_OUT_IN == mepURI) || (WSDL20_2004Constants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
-                || (WSDL20_2004Constants.MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI)) {
+        if ((WSDLConstants.MEP_CONSTANT_IN_OUT == mepURI) || (WSDLConstants.MEP_CONSTANT_IN_ONLY == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_ONLY == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_OUT_IN == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI)) {
             return new OperationContext(axisOp);
         } else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
@@ -51,11 +51,11 @@ public class OperationContextFactory implements WSDLConstants {
     public static OperationContext createOperationContext(int mepURI, AxisOperation axisOp,
                                                           ServiceContext serviceContext)
             throws AxisFault {
-        if ((WSDL20_2004Constants.MEP_CONSTANT_IN_OUT == mepURI) || (WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY == mepURI)
-                || (WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI)
-                || (WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY == mepURI) || (WSDL20_2004Constants.MEP_CONSTANT_OUT_ONLY == mepURI)
-                || (WSDL20_2004Constants.MEP_CONSTANT_OUT_IN == mepURI) || (WSDL20_2004Constants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
-                || (WSDL20_2004Constants.MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI)) {
+        if ((WSDLConstants.MEP_CONSTANT_IN_OUT == mepURI) || (WSDLConstants.MEP_CONSTANT_IN_ONLY == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_ONLY == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_OUT_IN == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI)) {
             return new OperationContext(axisOp, serviceContext);
         } else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));

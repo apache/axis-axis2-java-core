@@ -2054,35 +2054,35 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         if (isServerSide) {
             if (null != operationType) {
                 if (operationType.equals(OperationType.REQUEST_RESPONSE))
-                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
+                    return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT;
 
                 if (operationType.equals(OperationType.ONE_WAY)) {
                     if (operation.getFaults().size() > 0) {
-                        return WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY;
+                        return WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY;
                     }
-                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY;
+                    return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY;
                 }
 
                 if (operationType.equals(OperationType.NOTIFICATION))
-                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY;
+                    return WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY;
 
                 if (operationType.equals(OperationType.SOLICIT_RESPONSE))
-                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_IN;
+                    return WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN;
                 throw new Exception("Cannot Determine the MEP");
             }
         } else {
             if (null != operationType) {
                 if (operationType.equals(OperationType.REQUEST_RESPONSE))
-                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_IN;
+                    return WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN;
 
                 if (operationType.equals(OperationType.ONE_WAY))
-                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY;
+                    return WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY;
 
                 if (operationType.equals(OperationType.NOTIFICATION))
-                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY;
+                    return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY;
 
                 if (operationType.equals(OperationType.SOLICIT_RESPONSE))
-                    return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
+                    return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT;
                 throw new Exception("Cannot Determine the MEP");
             }
         }

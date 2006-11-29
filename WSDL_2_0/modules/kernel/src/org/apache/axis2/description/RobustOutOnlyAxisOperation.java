@@ -33,12 +33,12 @@ import java.io.InputStream;
 public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
     public RobustOutOnlyAxisOperation() {
         super();
-        setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY);
+        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY);
     }
 
     public RobustOutOnlyAxisOperation(QName name) {
         super(name);
-        setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY);
+        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY);
     }
 
     public OperationClient createClient(ServiceContext sc, Options options) {
