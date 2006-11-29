@@ -1736,7 +1736,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "usdbimpl", "false", methodElement);
         }
 
-        addSOAPAction(doc, methodElement, axisOperation);
+        addSOAPAction(doc, methodElement, axisBindingOperation);
         addOutputAndFaultActions(doc, methodElement, axisOperation);
         addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
         addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
@@ -1890,10 +1890,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      *
      * @param doc
      * @param rootElement
-     * @param axisOperation
+     * @param axisBindingOperation
      */
-    protected void addSOAPAction(Document doc, Element rootElement, AxisOperation axisOperation) {
-        addAttribute(doc, "soapaction", axisOperation.getInputAction(), rootElement);
+    protected void addSOAPAction(Document doc, Element rootElement, AxisBindingOperation axisBindingOperation) {
+        addAttribute(doc, "soapaction", (String)axisBindingOperation.getProperty(WSDL2Constants.ATTR_WSOAP_ACTION), rootElement);
     }
 
     /**

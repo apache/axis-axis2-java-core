@@ -24,6 +24,7 @@ import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.neethi.Policy;
 import org.apache.axiom.om.OMFactory;
 import org.w3c.dom.Document;
@@ -341,6 +342,9 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
 
+            // Get the correct AxisBindingOperation coresponding to the AxisOperation
+            AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(axisOperation.getName());
+
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,
 
@@ -377,7 +381,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
 
 
-                addSOAPAction(doc, methodElement, axisOperation);
+                addSOAPAction(doc, methodElement, axisBindingOperation);
                 //add header ops for input
                 addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                 //add header ops for output
@@ -424,7 +428,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
 
 
-                    addSOAPAction(doc, methodElement, axisOperation);
+                    addSOAPAction(doc, methodElement, axisBindingOperation);
                     addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                     addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
 
