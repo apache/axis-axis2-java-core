@@ -73,6 +73,8 @@ public interface WSDL2Constants {
     String ATTR_WHTTP_AUTHENTICATION_TYPE = "whttp:authenticationType";
     String ATTR_WHTTP_AUTHENTICATION_REALM = "whttp:authenticationRealm";
 
+
+
     String SOAP_VERSION_1_1 = "1.1";
     String SOAP_VERSION_1_2 = "1.2";
 

@@ -189,8 +189,6 @@ public class AxisService extends AxisDescription {
 
     // name of the  binding used : use in codegeneration
     private String bindingName;
-    // name of the port type used : use in codegeneration
-    private String portTypeName;
 
     public AxisEndpoint getEndpoit(String key) {
         return (AxisEndpoint)endpoitMap.get(key);
@@ -264,12 +262,20 @@ public class AxisService extends AxisDescription {
         objectSupplier = new DefaultObjectSupplier();
     }
 
+    /**
+     * @deprecated use AxisService#getEndpointName() instead.
+     * @return name of the port type
+     */
     public String getPortTypeName() {
-        return portTypeName;
+        return endpoint;
     }
 
+    /**
+     * @deprecated use AxisService#setEndpointName() instead
+     * @param portTypeName
+     */
     public void setPortTypeName(String portTypeName) {
-        this.portTypeName = portTypeName;
+        this.endpoint = portTypeName;
     }
 
     public String getBindingName() {

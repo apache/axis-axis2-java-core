@@ -889,7 +889,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisService, PORT_TYPE);
 
         // set port the type name
-        axisService.setPortTypeName(wsdl4jPortType.getQName().getLocalPart());
+        axisService.setEndpointName(wsdl4jPortType.getQName().getLocalPart());
 
         Iterator wsdl4JOperationsIterator = wsdl4jPortType.getOperations()
                 .iterator();

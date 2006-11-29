@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 import java.util.Map;
 import java.util.HashMap;
 
-public class AxisBindingOperation extends AxisDescription{
+public class AxisBindingOperation extends AxisDescription {
 
     private AxisOperation axisOperation;
 
@@ -33,12 +33,19 @@ public class AxisBindingOperation extends AxisDescription{
 
     private Map faults;
 
+    private Map options;
+
+    public AxisBindingOperation() {
+        options = new HashMap();
+        faults = new HashMap();
+    }
+
     public AxisBindingMessage getFault(String name) {
-        return (AxisBindingMessage)faults.get(name);
+        return (AxisBindingMessage) faults.get(name);
     }
 
     public void addFault(AxisBindingMessage fault) {
-        this.faults.put(fault.getName(),fault);
+        this.faults.put(fault.getName(), fault);
     }
 
     public QName getName() {
@@ -57,21 +64,27 @@ public class AxisBindingOperation extends AxisDescription{
         this.axisOperation = axisOperation;
     }
 
-    private Map options;
-
-    public AxisBindingOperation() {
-        options = new HashMap();
-        faults = new HashMap();
-    }
-
-
     public void setProperty(String name, Object value) {
         options.put(name, value);
     }
 
+    public Object getProperty(String name) {
+        Object property = this.options.get(name);
+
+        AxisBinding parent;
+        if (property == null && (parent = (AxisBinding) this.getParent()) != null) {
+            property = parent.getProperty(name);
+        }
+
+        if (property == null) {
+            property = WSDL20DefaultValueHolder.getDefaultValue(name);
+        }
+
+        return property;
+    }
 
     //todo faults
-    
+
     public Object getKey() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -84,4 +97,6 @@ public class AxisBindingOperation extends AxisDescription{
         throw new UnsupportedOperationException("axisMessage.isEngaged(qName) is not supported");
 
     }
+
+
 }
