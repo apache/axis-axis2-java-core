@@ -426,6 +426,10 @@ public class ExtensionUtility {
         if (configuration.isBackwordCompatibilityMode()) {
             options.setBackwordCompatibilityMode(true);
         }
+
+        if (configuration.isSuppressPrefixesMode()) {
+            options.setSuppressPrefixesMode(true);
+        }
     }
 
 }
