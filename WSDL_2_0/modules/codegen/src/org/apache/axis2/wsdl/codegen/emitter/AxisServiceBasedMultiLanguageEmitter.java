@@ -1669,6 +1669,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
 
+            // Get the correct AxisBindingOperation coresponding to the AxisOperation
+            AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(axisOperation.getName());
+
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,
 
