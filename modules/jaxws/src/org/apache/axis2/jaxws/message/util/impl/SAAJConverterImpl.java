@@ -44,19 +44,13 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
+import org.apache.axis2.jaxws.util.SAAJFactory;
 
 /**
  * SAAJConverterImpl
  * Provides an conversion methods between OM<->SAAJ
  */
 public class SAAJConverterImpl implements SAAJConverter {
-
-	private static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
-	private static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
-	
-	public static final String SOAP_1_1_PROTOCOL = "SOAP 1.1 Protocol"; 
-	public static final String SOAP_1_2_PROTOCOL = "SOAP 1.2 Protocol";
-	public static final String DYNAMIC_PROTOCOL  = "Dynamic Protocol"; 
 	
 	/**
 	 * Constructed via SAAJConverterFactory
@@ -181,49 +175,6 @@ public class SAAJConverterImpl implements SAAJConverter {
 		return buildSOAPTree(nc, null, parent, reader, false);
 	}
 
-	/**
-	 * Create MessageFactory using information from the envelope namespace 
-	 * @param namespace
-	 * @return
-	 */
-	public MessageFactory createMessageFactory(String namespace) throws MessageException, SOAPException {
-		Method m = getNewInstanceProtocolMethod();
-		MessageFactory mf = null;
-		if (m == null) {
-			if (namespace.equals(SOAP11_ENV_NS)) {
-				mf = MessageFactory.newInstance();
-			} else {
-				throw ExceptionFactory.makeMessageException(Messages.getMessage("SOAP12WithSAAJ12Err"));
-			}
-		} else {
-			String protocol = DYNAMIC_PROTOCOL;
-			if (namespace.equals(SOAP11_ENV_NS)) {
-				protocol = SOAP_1_1_PROTOCOL;
-			} else if (namespace.equals(SOAP12_ENV_NS)) {
-				protocol = SOAP_1_2_PROTOCOL;
-			} 
-			try {
-				mf = (MessageFactory) m.invoke(null, new Object[] {protocol});
-			} catch (Exception e) {
-				throw ExceptionFactory.makeMessageException(e);
-			}
-		}
-		return mf;
-	}
-	
-	private Method newInstanceProtocolMethod = null;
-	private Method getNewInstanceProtocolMethod() {
-		if (newInstanceProtocolMethod == null) {
-			try {
-				newInstanceProtocolMethod = MessageFactory.class.getMethod("newInstance", new Class[] {String.class});
-			} catch (Exception e) {
-				// TODO Might want to log this.
-				// Flow to here indicates that the installed SAAJ model does not support version 1.3
-				newInstanceProtocolMethod = null;
-			}
-		}
-		return newInstanceProtocolMethod;
-	}
 	
 	/**
 	 * Build SOAPTree
@@ -496,4 +447,8 @@ public class SAAJConverterImpl implements SAAJConverter {
 		}
 		
 	}
+
+    public MessageFactory createMessageFactory(String namespace) throws SOAPException, MessageException {
+        return SAAJFactory.createMessageFactory(namespace);
+    }
 }

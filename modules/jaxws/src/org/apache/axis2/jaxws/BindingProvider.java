@@ -21,8 +21,8 @@ package org.apache.axis2.jaxws;
 import java.util.Hashtable;
 import java.util.Map;
 
+import javax.xml.soap.SOAPFactory;
 import javax.xml.ws.Binding;
-
 
 import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -34,7 +34,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
 
 	protected Map<String, Object> requestContext;
     protected Map<String, Object> responseContext;
-    protected Binding binding;
+    private Binding binding;  // force subclasses to use the lazy getter
     protected EndpointDescription endpointDesc;
     protected ServiceDelegate serviceDelegate;
     
@@ -47,8 +47,6 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, new Boolean(false));
         requestContext.put(BindingProvider.SOAPACTION_URI_PROPERTY, "");
         
-        //The default Binding is the SOAPBinding
-        binding = new SOAPBinding();
     }
     
     public BindingProvider(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
@@ -65,6 +63,17 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
     }
     
     public Binding getBinding() {
+        
+        // TODO support HTTP binding when available
+        
+        // The default Binding is the SOAPBinding
+        if (binding == null) {
+            String bindingType = endpointDesc.getBindingType();
+            if (bindingType == null) { // we must be on the client
+                bindingType = endpointDesc.getClientBindingID();
+            }
+            binding = new SOAPBinding(bindingType);
+        }
         return binding;
     }
 

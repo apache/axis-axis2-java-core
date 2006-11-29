@@ -20,6 +20,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.Binding;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
@@ -342,6 +343,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
     private void setupMessageProperties(Message msg) {
         // If the user has enabled MTOM on the SOAPBinding, we need
         // to make sure that gets pushed to the Message object.
+        Binding binding = getBinding();
         if (binding != null && binding instanceof SOAPBinding) {
             SOAPBinding soapBinding = (SOAPBinding) binding;
             if (soapBinding.isMTOMEnabled())

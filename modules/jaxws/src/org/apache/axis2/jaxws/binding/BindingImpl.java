@@ -17,8 +17,10 @@
 
 package org.apache.axis2.jaxws.binding;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
@@ -33,7 +35,17 @@ public class BindingImpl implements Binding {
 
 	// an unsorted list of handlers
 	private List<Handler> handlers;
+    
+    protected String bindingId = null;
+    protected Set<URI> roles = null;
 
+    protected static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
+    protected static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
+    
+    public BindingImpl(String bindingId) {
+        this.bindingId = bindingId;
+    }
+    
 	public List<Handler> getHandlerChain() {
 		return handlers;
 	}
