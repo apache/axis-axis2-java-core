@@ -652,9 +652,9 @@ public class SchemaCompiler {
                     //processedAnonymousComplexTypesMap.remove(referencedElement);
 
                     //add this to the processed ref type map
-                    this.processedElementRefMap.put(referenceEltQName,findClassName(
-                            referenceSchemaType.getQName(), isArray(referencedElement)
-                    ));
+                    String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(generatedTypeName);
+                    processedTypemap.put(generatedTypeName, fullyQualifiedClassName);
+                    this.processedElementRefMap.put(referenceEltQName, fullyQualifiedClassName);
                 }
             }
             // schema type name is present but not the schema type object
