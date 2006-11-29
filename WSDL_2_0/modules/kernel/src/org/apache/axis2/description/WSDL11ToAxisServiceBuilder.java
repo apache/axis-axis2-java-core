@@ -1710,10 +1710,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // the items directly
             } else if (wsdl4jElement instanceof SOAP12Address) {
                 SOAP12Address soapAddress = (SOAP12Address) wsdl4jElement;
-                axisService.setEndpointName(soapAddress.getLocationURI());
+                axisService.setEndpointURL(soapAddress.getLocationURI());
             } else if (wsdl4jElement instanceof SOAPAddress) {
                 SOAPAddress soapAddress = (SOAPAddress) wsdl4jElement;
-                axisService.setEndpointName(soapAddress.getLocationURI());
+                axisService.setEndpointURL(soapAddress.getLocationURI());
             } else if (wsdl4jElement instanceof Schema) {
                 Schema schema = (Schema) wsdl4jElement;
                 // just add this schema - no need to worry about the imported

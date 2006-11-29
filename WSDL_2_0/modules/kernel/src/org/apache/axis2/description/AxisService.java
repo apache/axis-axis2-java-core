@@ -172,7 +172,8 @@ public class AxisService extends AxisDescription {
     private NamespaceMap nameSpacesMap;
 
     private String soapNsUri;
-    private String endpoint;
+    private String endpointName;
+    private String endpointURL;
 
     // Flag representing whether WS-Addressing is required to use this service.
     // Reflects the wsaw:UsingAddressing wsdl extension element
@@ -267,7 +268,7 @@ public class AxisService extends AxisDescription {
      * @return name of the port type
      */
     public String getPortTypeName() {
-        return endpoint;
+        return endpointName;
     }
 
     /**
@@ -275,7 +276,7 @@ public class AxisService extends AxisDescription {
      * @param portTypeName
      */
     public void setPortTypeName(String portTypeName) {
-        this.endpoint = portTypeName;
+        this.endpointName = portTypeName;
     }
 
     public String getBindingName() {
@@ -298,14 +299,14 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * get the endpoint
+     * get the endpointName
      */
     public String getEndpointName() {
-        return endpoint;
+        return endpointName;
     }
 
     public void setEndpointName(String endpoint) {
-        this.endpoint = endpoint;
+        this.endpointName = endpoint;
     }
 
     /**
@@ -723,8 +724,8 @@ public class AxisService extends AxisDescription {
             }
         } else {
             setWsdlFound(true);
-            //pick the endpoint and take it as the epr for the WSDL
-            getWSDL(out, new String[]{this.endpoint}, "services");
+            //pick the endpointName and take it as the epr for the WSDL
+            getWSDL(out, new String[]{this.endpointName}, "services");
         }
     }
 
@@ -804,8 +805,8 @@ public class AxisService extends AxisDescription {
             }
         } else {
             setWsdlFound(true);
-            //pick the endpoint and take it as the epr for the WSDL
-            getWSDL2(out, new String[]{this.endpoint});
+            //pick the endpointName and take it as the epr for the WSDL
+            getWSDL2(out, new String[]{this.endpointName});
         }
     }
 
@@ -1845,5 +1846,13 @@ public class AxisService extends AxisDescription {
 
     public void addmessageNameToOperationMapping(String messageName, AxisOperation operation) {
         messageNameToOperationsMap.put(messageName, operation);
+    }
+
+    public String getEndpointURL() {
+        return endpointURL;
+    }
+
+    public void setEndpointURL(String endpointURL) {
+        this.endpointURL = endpointURL;
     }
 }

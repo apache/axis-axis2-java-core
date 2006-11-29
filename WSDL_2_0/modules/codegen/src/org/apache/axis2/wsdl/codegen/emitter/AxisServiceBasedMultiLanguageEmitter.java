@@ -682,7 +682,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         Element endpointElement = doc.createElement("endpoint");
 
-        String endpoint = axisService.getEndpointName();
+        String endpoint = axisService.getEndpointURL();
         Text text = doc.createTextNode((endpoint != null)
                 ? endpoint
                 : "");
