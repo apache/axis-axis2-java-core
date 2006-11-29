@@ -1668,19 +1668,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // message receiver to use, etc.,
 
 
-            String messageExchangePattern = axisOperation.getMessageExchangePattern();
+            String messageExchangePattern = (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WSOAP_MEP);
             if (infoHolder.get(messageExchangePattern) == null) {
                 infoHolder.put(messageExchangePattern, Boolean.TRUE);
             }
 
             if (mep == null) {
-
                 opsFound = true;
-<<<<<<< .mine
-                methodElement = generateMethodElement(doc, serviceName, axisOperation);
-=======
-                methodElement = generateMethodElement(doc, portTypeName, axisOperation, axisBindingOperation);
->>>>>>> .r480545
+                methodElement = generateMethodElement(doc, serviceName, axisOperation, axisBindingOperation);
                 rootElement.appendChild(methodElement);
 
             } else {
@@ -1704,12 +1699,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * Common code to generate a <method> element from an operation.
      *
      * @param doc
-     * @param portTypeName
+     * @param endpointName
      * @param axisOperation
      * @return generated element
      * @throws DOMException
      */
-    private Element generateMethodElement(Document doc, String portTypeName, AxisOperation axisOperation, AxisBindingOperation axisBindingOperation) throws DOMException {
+    private Element generateMethodElement(Document doc, String endpointName, AxisOperation axisOperation, AxisBindingOperation axisBindingOperation) throws DOMException {
         Element methodElement;
         List soapHeaderInputParameterList = new ArrayList();
         List soapHeaderOutputParameterList = new ArrayList();
@@ -1719,10 +1714,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "name", JavaUtils.xmlNameToJava(localPart), methodElement);
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
-        addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+        addAttribute(doc, "dbsupportname", endpointName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                 methodElement);
-        addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(axisOperation.getMessageExchangePattern()) + "", methodElement);
-        addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
+        String messageExchangePattern = (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WSOAP_MEP);
+        addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(messageExchangePattern) + "", methodElement);
+        addAttribute(doc, "mepURI", messageExchangePattern, methodElement);
 
         // check for this operation to be handled directly by databinding code generation
         Parameter dbmethname = axisOperation.getParameter(Constants.DATABINDING_GENERATED_RECEIVER);
@@ -1756,11 +1752,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
 
-        if (WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
+        if (WSDLUtil.isInputPresentForMEP(messageExchangePattern)) {
             methodElement.appendChild(getInputElement(doc,
                     axisOperation, soapHeaderInputParameterList));
         }
-        if (WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())) {
+        if (WSDLUtil.isOutputPresentForMEP(messageExchangePattern)) {
             methodElement.appendChild(getOutputElement(doc,
                     axisOperation, soapHeaderOutputParameterList));
         }
