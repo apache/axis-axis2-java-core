@@ -1683,7 +1683,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             if (mep == null) {
 
                 opsFound = true;
-                methodElement = generateMethodElement(doc, portTypeName, axisOperation);
+                methodElement = generateMethodElement(doc, portTypeName, axisOperation, axisBindingOperation);
                 rootElement.appendChild(methodElement);
 
             } else {
@@ -1692,7 +1692,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 if (mep.equals(axisOperation.getMessageExchangePattern())) {
                     //at this point we know it's true
                     opsFound = true;
-                    methodElement = generateMethodElement(doc, portTypeName, axisOperation);
+                    methodElement = generateMethodElement(doc, portTypeName, axisOperation,axisBindingOperation);
 
                     rootElement.appendChild(methodElement);
                     //////////////////////
@@ -1713,7 +1713,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return generated element
      * @throws DOMException
      */
-    private Element generateMethodElement(Document doc, String portTypeName, AxisOperation axisOperation) throws DOMException {
+    private Element generateMethodElement(Document doc, String portTypeName, AxisOperation axisOperation, AxisBindingOperation axisBindingOperation) throws DOMException {
         Element methodElement;
         List soapHeaderInputParameterList = new ArrayList();
         List soapHeaderOutputParameterList = new ArrayList();
