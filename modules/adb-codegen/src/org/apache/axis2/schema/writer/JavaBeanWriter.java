@@ -80,6 +80,8 @@ public class JavaBeanWriter implements BeanWriter {
 
     private boolean isHelperMode = false;
 
+    private boolean isSuppressPrefixesMode = false;
+
     /**
      * package for the mapping class
      */
@@ -173,6 +175,9 @@ public class JavaBeanWriter implements BeanWriter {
             this.ns2packageNameMap = options.getNs2PackageMap();
             //set helper mode
             this.isHelperMode = options.isHelperMode();
+            // set suppress prefixes mode
+            this.isSuppressPrefixesMode = options.isSuppressPrefixesMode();
+
             //set mapper class package if present
             if (options.isMapperClassPackagePresent()) {
                 this.mappingClassPackage = options.getMapperClassPackage();
@@ -469,7 +474,7 @@ public class JavaBeanWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "package", packageName, rootElt);
         XSLTUtils
                 .addAttribute(model, "nsuri", qName.getNamespaceURI(), rootElt);
-        XSLTUtils.addAttribute(model, "nsprefix", getPrefixForURI(qName
+        XSLTUtils.addAttribute(model, "nsprefix", isSuppressPrefixesMode ? "" : getPrefixForURI(qName
                 .getNamespaceURI(), qName.getPrefix()), rootElt);
 
         if (!wrapClasses) {

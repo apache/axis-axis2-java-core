@@ -168,4 +168,17 @@ public class CompilerOptions {
 	public void setBackwordCompatibilityMode(boolean backwordCompatibilityMode) {
 		this.backwordCompatibilityMode = backwordCompatibilityMode;
 	}
+
+    /**
+     * Should we suppress namespace prefixes
+     */
+    private boolean suppressPrefixesMode = false;
+
+    public boolean isSuppressPrefixesMode() {
+        return suppressPrefixesMode;
+    }
+
+    public void setSuppressPrefixesMode(boolean suppressPrefixesMode) {
+        this.suppressPrefixesMode = suppressPrefixesMode;
+    }
 }
