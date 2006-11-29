@@ -196,7 +196,7 @@ public class AxisService extends AxisDescription {
         return (AxisEndpoint)endpoitMap.get(key);
     }
 
-    public void addEndpoit(String key,AxisEndpoint axisEndpoint) {
+    public void addEndpoint(String key,AxisEndpoint axisEndpoint) {
         this.endpoitMap.put(key,axisEndpoint);
     }
 
@@ -294,11 +294,11 @@ public class AxisService extends AxisDescription {
     /**
      * get the endpoint
      */
-    public String getEndpoint() {
+    public String getEndpointName() {
         return endpoint;
     }
 
-    public void setEndpoint(String endpoint) {
+    public void setEndpointName(String endpoint) {
         this.endpoint = endpoint;
     }
 
@@ -1289,7 +1289,7 @@ public class AxisService extends AxisDescription {
                 new WSDL11ToAxisServiceBuilder(wsdlDefinition, wsdlServiceName, portName);
         serviceBuilder.setServerSide(false);
         AxisService axisService = serviceBuilder.populateService();
-        options.setTo(new EndpointReference(axisService.getEndpoint()));
+        options.setTo(new EndpointReference(axisService.getEndpointName()));
         options.setSoapVersionURI(axisService.getSoapNsUri());
         return axisService;
     }

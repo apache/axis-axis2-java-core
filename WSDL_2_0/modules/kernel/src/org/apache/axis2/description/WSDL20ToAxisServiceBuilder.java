@@ -4,20 +4,17 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.woden.*;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
 import org.apache.woden.schema.Schema;
-import org.apache.woden.types.NCName;
 import org.apache.woden.wsdl20.*;
 import org.apache.woden.wsdl20.enumeration.Direction;
 import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.woden.wsdl20.extensions.ExtensionElement;
 import org.apache.woden.wsdl20.extensions.UnknownExtensionElement;
-import org.apache.woden.wsdl20.extensions.http.HTTPEndpointExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
@@ -203,6 +200,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             for (int i = 0; i < endpoints.length; ++i) {
                 if (this.interfaceName.equals(endpoints[i].getName().toString())) {
                     endpoint = endpoints[i];
+                    axisService.setEndpointName(endpoint.getName().toString());
+                    axisService.setBindingName(endpoint.getBinding().getName().getLocalPart());
                     break;  // found it.  Stop looking
                 }
             }
@@ -212,14 +211,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             axisService
-                    .addEndpoit(endpoint.getName().toString(), processEndpoint(endpoint));
+                    .addEndpoint(endpoint.getName().toString(), processEndpoint(endpoint));
         }
         else{
 
 
         for (int i = 0; i < endpoints.length; i++) {
             axisService
-                    .addEndpoit(endpoints[i].getName().toString(), processEndpoint(endpoints[i]));
+                    .addEndpoint(endpoints[i].getName().toString(), processEndpoint(endpoints[i]));
         }
         }
 
@@ -776,6 +775,19 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // assuming the style of the operations of WSDL 2.0 is always document, for the time being :)
         axisOperation.setStyle("document");
 
+
+        // The following can be used to capture the wsdlx:safe attribute
+
+//        InterfaceOperationExtensionsImpl interfaceOperationExtensions;
+//        try {
+//            interfaceOperationExtensions = (InterfaceOperationExtensionsImpl)operation.getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_EXTENSIONS));
+//        } catch (URISyntaxException e) {
+//            throw new AxisFault("WSDL2 extensions not defined for this operation");
+//        }
+//
+//        interfaceOperationExtensions.isSafety();
+
+
         InterfaceMessageReference[] interfaceMessageReferences = operation
                 .getInterfaceMessageReferences();
         for (int i = 0; i < interfaceMessageReferences.length; i++) {
@@ -902,14 +914,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                             .getNamespaceURI());
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_ADDRESS.equals(unknown
                         .getExtensionType())) {
-                    axisService.setEndpoint(unknown.getElement().getAttributeValue(
+                    axisService.setEndpointName(unknown.getElement().getAttributeValue(
                             "location"));
 
                 }
 
                 // } else if (element instanceof SOAPAddress) {
                 // SOAPAddress soapAddress = (SOAPAddress) wsdl4jElement;
-                // axisService.setEndpoint(soapAddress.getLocationURI());
+                // axisService.setEndpointName(soapAddress.getLocationURI());
                 // } else if (wsdl4jElement instanceof Schema) {
                 // Schema schema = (Schema) wsdl4jElement;
                 // //just add this schema - no need to worry about the imported
@@ -1015,7 +1027,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
         axisService.setName(wsdlService.getName().getLocalPart());
         if (endpoint != null) {
-            axisService.setEndpoint(endpoint.getAddress().toString());
+            axisService.setEndpointName(endpoint.getAddress().toString());
             binding = endpoint.getBinding();
         }
         return binding;

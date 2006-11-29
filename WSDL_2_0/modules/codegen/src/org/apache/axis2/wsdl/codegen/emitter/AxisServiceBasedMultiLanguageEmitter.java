@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAP11Constants;
 //import org.apache.woden.internal.util.dom.DOM2Writer;
@@ -78,6 +77,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected static Map mepToClassMap;
     protected static Map mepToSuffixMap;
+
+    protected AxisBinding axisBinding;
 
     protected int uniqueFaultNameCounter = 0;
     /**
@@ -171,6 +172,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.codeGenConfiguration = configuration;
         this.axisService = codeGenConfiguration.getAxisService();
+        this.axisBinding = axisService.getEndpoit(axisService.getEndpointName()).getBinding();
         resolver = new XSLTIncludeResolver(codeGenConfiguration);
     }
 
@@ -676,7 +678,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         Element endpointElement = doc.createElement("endpoint");
 
-        String endpoint = axisService.getEndpoint();
+        String endpoint = axisService.getEndpointName();
         Text text = doc.createTextNode((endpoint != null)
                 ? endpoint
                 : "");
@@ -1200,6 +1202,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         for (Iterator operationsIterator = axisService.getOperations();operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+
+            // Get the correct AxisBindingOperation coresponding to the AxisOperation
+            AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(axisOperation.getName());
             // Add the parameters to a map with their type as the key
             // this step is needed to remove repetitions
 

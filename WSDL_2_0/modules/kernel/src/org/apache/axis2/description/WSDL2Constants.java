@@ -24,6 +24,7 @@ public interface WSDL2Constants {
     String DESCRIPTION = "description";
     String URI_WSDL2_SOAP = "http://www.w3.org/2006/01/wsdl/soap";
     String URI_WSDL2_HTTP = "http://www.w3.org/2006/01/wsdl/http";
+    String URI_WSDL2_EXTENSIONS = "http://www.w3.org/2006/01/wsdl-extensions";
     String SOAP_PREFIX = "wsoap";
     String URI_WSDL2_SOAP_ENV = "http://www.w3.org/2003/05/soap-envelope";
     String SOAP_ENV_PREFIX = "soap";
