@@ -1978,9 +1978,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
         Element inputElt = doc.createElement("input");
-        String MEP = operation.getMessageExchangePattern();
+        String mep = operation.getMessageExchangePattern();
 
-        if (WSDLUtil.isInputPresentForMEP(MEP)) {
+        if (WSDLUtil.isInputPresentForMEP(mep)) {
 
             /*
              * Setting the input message policy as an attribute of the input element.
