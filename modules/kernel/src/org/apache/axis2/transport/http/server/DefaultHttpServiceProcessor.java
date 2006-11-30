@@ -57,6 +57,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.StatusLine;
 import org.apache.http.UnsupportedHttpVersionException;
+import org.apache.http.impl.DefaultHttpServerConnection;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.ResponseConnControl;
@@ -73,6 +74,7 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
     private final SessionManager sessionManager;
     private final Worker worker;
     private final IOProcessorCallback callback;
+    private HttpServerConnection conn;
 
     private HttpContext httpcontext = null;
 
@@ -83,6 +85,7 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
             final Worker worker,
             final IOProcessorCallback callback) {
         super(conn);
+        this.conn = conn;
         if (worker == null) {
             throw new IllegalArgumentException("Worker may not be null");
         }
@@ -148,6 +151,14 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
 
         MessageContext msgContext = new MessageContext();
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+
+        if (conn instanceof DefaultHttpConnectionFactory.Axis2HttpServerConnection) {
+            DefaultHttpConnectionFactory.Axis2HttpServerConnection axis2Con =
+                (DefaultHttpConnectionFactory.Axis2HttpServerConnection) conn;
+            msgContext.setProperty(MessageContext.REMOTE_ADDR, axis2Con.getRemoteIPAddress());
+            LOG.debug("Remote address of the connection : " + axis2Con.getRemoteIPAddress());
+        }
+
         try {
             TransportOutDescription transportOut = this.configurationContext.getAxisConfiguration()
                     .getTransportOut(new QName(Constants.TRANSPORT_HTTP));

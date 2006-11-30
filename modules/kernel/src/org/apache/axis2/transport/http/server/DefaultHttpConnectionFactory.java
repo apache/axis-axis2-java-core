@@ -50,9 +50,33 @@ public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
     
     public HttpServerConnection newConnection(final Socket socket)
             throws IOException {
-        DefaultHttpServerConnection conn = new DefaultHttpServerConnection();
+        DefaultHttpServerConnection conn = new Axis2HttpServerConnection();
         conn.bind(socket, this.params);
         return conn;
     }
     
+    public class Axis2HttpServerConnection extends DefaultHttpServerConnection {
+        public Axis2HttpServerConnection() {
+            super();
+        }
+
+        public String getRemoteIPAddress() {
+            java.net.SocketAddress sa = socket.getRemoteSocketAddress();
+            if (sa instanceof java.net.InetSocketAddress) {
+            	return ((java.net.InetSocketAddress) sa).getAddress().getHostAddress();
+            } else {
+            	return sa.toString();
+            }
+        }
+
+        public String getRemoteHostName() {
+        	java.net.SocketAddress sa = socket.getRemoteSocketAddress();
+        	if (sa instanceof java.net.InetSocketAddress) {
+          	return ((java.net.InetSocketAddress) sa).getHostName();
+          } else {
+          	return sa.toString(); // fail-safe and fall back to something which one can use in place of the host name
+          }
+        }
+    }
+
 }
