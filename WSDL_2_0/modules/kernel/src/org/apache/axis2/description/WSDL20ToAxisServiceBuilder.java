@@ -5,9 +5,11 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.woden.*;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
+import org.apache.woden.internal.wsdl20.extensions.soap.SOAPHeaderBlockImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.*;
@@ -465,7 +467,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WSOAP_SUBCODES,
                     soapBindingFaultExtensions.getSoapFaultSubcodes());
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WSOAP_HEADER,
-                    soapBindingFaultExtensions.getSoapHeaders());
+                    createSoapHeaders(soapBindingFaultExtensions.getSoapHeaders()));
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WSOAP_MODULE,
                     soapBindingFaultExtensions.getSoapModules());
 
@@ -553,7 +555,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                         soapBindingMessageReferenceExtensions.getHttpTransferCoding());
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WSOAP_HEADER,
-                        soapBindingMessageReferenceExtensions.getSoapHeaders());
+                        createSoapHeaders(soapBindingMessageReferenceExtensions.getSoapHeaders()));
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WSOAP_MODULE,
                         soapBindingMessageReferenceExtensions.getSoapModules());
 
@@ -572,7 +574,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 //                            }
 //                        }
 
-                axisBindingOperation.addChild(axisMessage.getKey(), axisBindingMessage);
+                axisBindingOperation.addChild(axisMessage.getDirection(), axisBindingMessage);
 
 
             }
@@ -738,7 +740,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 //                            }
 //                        }
 
-                axisBindingOperation.addChild(axisBindingMessage.getName(),axisBindingMessage);
+                axisBindingOperation.addChild(axisMessage.getDirection(),axisBindingMessage);
 
 
             }
@@ -1254,5 +1256,26 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 //        reader.setFeature(WSDLReader.FEATURE_VERBOSE, false);
         return reader.readWSDL(wsdlURI);
     }
+
+    private ArrayList createSoapHeaders(SOAPHeaderBlock soapHeaderBlocks[]) {
+
+        ArrayList soapHeaderMessages = new ArrayList();
+
+        for (int i = 0; i < soapHeaderBlocks.length; i++) {
+            SOAPHeaderBlock soapHeaderBlock = soapHeaderBlocks[i];
+            ElementDeclaration elementDeclaration = soapHeaderBlock.getElementDeclaration();
+
+            if (elementDeclaration != null) {
+                QName name = elementDeclaration.getName();
+                SOAPHeaderMessage soapHeaderMessage = new SOAPHeaderMessage(name);
+                soapHeaderMessage.setRequired(soapHeaderBlock.isRequired().booleanValue());
+                soapHeaderMessages.add(soapHeaderMessage);
+            }
+        }
+
+        return soapHeaderMessages;
+    }
+
+
 
 }

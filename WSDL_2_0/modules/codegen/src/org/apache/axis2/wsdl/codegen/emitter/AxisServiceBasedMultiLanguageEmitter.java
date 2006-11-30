@@ -1979,23 +1979,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (input) {
             if (WSDLUtil.isInputPresentForMEP(MEP)) {
 
-                Object header = getBindingPropertyFromMessage(WSDL2Constants.ATTR_WHTTP_HEADER,axisOperation.getName(),WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-//                AxisMessage inaxisMessage = axisOperation
-//                        .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-//                if (inaxisMessage != null) {
-//                    headerparamList = inaxisMessage.getSoapHeaders();
-//
-//                }
-                System.out.println("ok");
-            }
+                headerparamList = (ArrayList) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_HEADER,axisOperation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+
+        }
         } else {
             if (WSDLUtil.isOutputPresentForMEP(MEP)) {
-                AxisMessage outAxisMessage = axisOperation
-                        .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                if (outAxisMessage != null) {
-                    headerparamList = outAxisMessage.getSoapHeaders();
-                }
-            }
+                headerparamList = (ArrayList)getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_HEADER,axisOperation.getName(),WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+          }
         }
 
         for (Iterator iterator = headerparamList.iterator(); iterator.hasNext();) {
