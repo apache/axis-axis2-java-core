@@ -185,8 +185,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
         Object property = null;
 
-        if (axisBindingOperation != null)
-        {
+        if (axisBindingOperation != null) {
             property = axisBindingOperation.getProperty(name);
         }
 
@@ -209,11 +208,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         AxisBindingMessage axisBindingMessage = null;
         if (axisBindingOperation != null) {
-        axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
+            axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
         }
 
         if (axisBindingMessage != null) {
-        property = axisBindingMessage.getProperty(name);
+            property = axisBindingMessage.getProperty(name);
         }
 
         if (property == null) {
@@ -1979,13 +1978,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (input) {
             if (WSDLUtil.isInputPresentForMEP(MEP)) {
 
-                headerparamList = (ArrayList) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_HEADER,axisOperation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                headerparamList = (ArrayList) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 
-        }
+            }
         } else {
             if (WSDLUtil.isOutputPresentForMEP(MEP)) {
-                headerparamList = (ArrayList)getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_HEADER,axisOperation.getName(),WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
-          }
+                headerparamList = (ArrayList) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+            }
         }
 
         for (Iterator iterator = headerparamList.iterator(); iterator.hasNext();) {
