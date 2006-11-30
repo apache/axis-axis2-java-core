@@ -58,6 +58,7 @@ public class AXIOMClient {
 
             sender.fireAndForget(updatePayload);
             System.err.println("done");
+            Thread.sleep(3000);
             OMElement result = sender.sendReceive(getPricePayload);
 
             String response = result.getFirstElement().getText();
