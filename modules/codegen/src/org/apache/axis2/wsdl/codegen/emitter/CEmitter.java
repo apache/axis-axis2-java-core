@@ -18,6 +18,7 @@ package org.apache.axis2.wsdl.codegen.emitter;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.*;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.databinding.CUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.PolicyUtil;
@@ -317,10 +318,11 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     protected String makeCClassName(String word) {
         //currently avoid only java key words and service names with '.' characters
 
-        if (JavaUtils.isJavaKeyword(word)) {
-            return JavaUtils.makeNonJavaKeyword(word);
+        if (CUtils.isCKeyword(word)) {
+            return CUtils.makeNonCKeyword(word);
         }
-        return word.replace('.', '_');
+        String outWord = word.replace('.', '_');
+        return outWord.replace('-','_') ;
     }
 
 
@@ -333,7 +335,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
      */
     protected boolean loadOperations(Document doc, Element rootElement, String mep) {
         Element methodElement;
-        String portTypeName = makeJavaClassName(axisService.getName());
+        String portTypeName = makeCClassName(axisService.getName());
 
         Iterator operations = axisService.getOperations();
         boolean opsFound = false;

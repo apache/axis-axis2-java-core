@@ -74,7 +74,7 @@ public class CTypeInfo extends Constants{
         //as for the base 64 encoded binary stuff we map it to a javax.
         // activation.Datahandler object
         CTypeInfo.addTypemapping(XSD_BASE64,
-                "void*");
+                "axis2_base64_binary_t*");
 
         CTypeInfo.addTypemapping(XSD_HEXBIN,
                 "void*");
@@ -92,7 +92,7 @@ public class CTypeInfo extends Constants{
                 "int");
 
         // xsd:token
-        CTypeInfo.addTypemapping(XSD_TOKEN, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_TOKEN, "axis2_char_t*");
 
         // a xsd:normalizedString
         CTypeInfo.addTypemapping(XSD_NORMALIZEDSTRING,
@@ -143,7 +143,7 @@ public class CTypeInfo extends Constants{
         // addTypemapping(XML_LANG,Language.class.getName());
 
         // a xsd:language
-        CTypeInfo.addTypemapping(XSD_LANGUAGE, "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_LANGUAGE, "axis2_char_t*");
 
         // a xsd:NmToken
         CTypeInfo.addTypemapping(XSD_NMTOKEN, "axiom_node_t*");
