@@ -193,16 +193,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         processedBindings = new HashMap();
 
+        Endpoint endpoint = null;
+
         if (this.interfaceName != null) {
 
-            Endpoint endpoint = null;
+
 
             for (int i = 0; i < endpoints.length; ++i) {
                 if (this.interfaceName.equals(endpoints[i].getName().toString())) {
                     endpoint = endpoints[i];
-                    axisService.setEndpointName(endpoint.getName().toString());
-                    axisService.setBindingName(endpoint.getBinding().getName().getLocalPart());
-                    axisService.setEndpointURL(endpoint.getAddress().toString());
                     break;  // found it.  Stop looking
                 }
             }
@@ -221,6 +220,16 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisService
                     .addEndpoint(endpoints[i].getName().toString(), processEndpoint(endpoints[i]));
         }
+        }
+
+        if (endpoints.length != 0)
+        {
+
+        endpoint = endpoints[0];
+
+        axisService.setEndpointName(endpoint.getName().toString());
+        axisService.setBindingName(endpoint.getBinding().getName().getLocalPart());
+        axisService.setEndpointURL(endpoint.getAddress().toString());
         }
 
 
