@@ -563,7 +563,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 //                            }
 //                        }
 
-                axisBindingOperation.addChild(axisBindingMessage.getName(),axisBindingMessage);
+                axisBindingOperation.addChild(axisMessage.getKey(), axisBindingMessage);
 
 
             }

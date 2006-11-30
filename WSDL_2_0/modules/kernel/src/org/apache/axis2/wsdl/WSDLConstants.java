@@ -131,7 +131,7 @@ public interface WSDLConstants {
 
 
 
-    public static interface WSDL20_2006Constants {
+    public static interface WSDL20_2006Constants {                                  
 
         // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-only
         String MEP_URI_IN_ONLY = "http://www.w3.org/2006/01/wsdl/in-only";
