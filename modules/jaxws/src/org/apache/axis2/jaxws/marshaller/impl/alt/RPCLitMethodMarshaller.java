@@ -199,7 +199,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             m.setOperationElement(responseOp);
             
             // Put the return object onto the message
-            Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
+            Class returnType = operationDesc.getResultActualType();
             if (returnType != void.class) {
                 MethodMarshallerUtils.toMessage(returnObject, 
                         returnType, 
@@ -258,7 +258,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             message.setStyle(Style.RPC);
             
             // Get the return value.
-            Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
+            Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
             if (returnType != void.class) {
                 returnValue = MethodMarshallerUtils.getReturnValue(packages, message, returnType);

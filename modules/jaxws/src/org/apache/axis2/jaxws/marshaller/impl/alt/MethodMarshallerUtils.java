@@ -395,41 +395,6 @@ class MethodMarshallerUtils  {
     }
     
     /**
-     * Utility method to get the Class representing the actual return type
-     * 
-     * @param operationDesc
-     * @return actual return type
-     */
-    static Class getActualReturnType(OperationDescription operationDesc){
-        Method seiMethod = operationDesc.getSEIMethod();
-        Class returnType = seiMethod.getReturnType();
-        if(isAsync(operationDesc)){
-            //pooling implementation
-            if(Response.class == returnType){
-                Type type = seiMethod.getGenericReturnType();
-                ParameterizedType pType = (ParameterizedType) type;
-                return (Class)pType.getActualTypeArguments()[0];    
-            }
-            //Callback Implementation
-            else{
-                Type[] type = seiMethod.getGenericParameterTypes();
-                Class parameters[]= seiMethod.getParameterTypes();
-                int i=0;
-                for(Class param:parameters){
-                    if(AsyncHandler.class.isAssignableFrom(param)){
-                        ParameterizedType pType = (ParameterizedType)type[i];
-                        return (Class)pType.getActualTypeArguments()[0];
-                    }
-                    i++;
-                }
-            }
-            
-        }
-        
-        return returnType;  
-    }
-    
-    /**
      * Marshaling a fault is essentially the same for rpc/lit and doc/lit.
      * This method is used by all of the MethodMarshallers
      * @param throwable Throwable to marshal
@@ -595,19 +560,7 @@ class MethodMarshallerUtils  {
         return exception;
     }
     
-    /**
-     * @param operationDesc
-     * @return if asyc operation
-     */
-    static boolean isAsync(OperationDescription operationDesc){
-        Method method = operationDesc.getSEIMethod();
-        if(method == null){
-            return false;
-        }
-        String methodName = method.getName();
-        Class returnType = method.getReturnType();
-        return methodName.endsWith("Async") && (returnType.isAssignableFrom(Response.class) || returnType.isAssignableFrom(Future.class));
-    }
+    
    
     
     /**

@@ -78,7 +78,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             Set<Package> packages = endpointDesc.getPackages();
               
             // Get the return value.
-            Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
+            Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
             if (returnType != void.class) {
                 returnValue = MethodMarshallerUtils.getReturnValue(packages, message, null);
@@ -157,7 +157,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             Message m = mf.create(protocol);
             
             // Put the return object onto the message
-            Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
+            Class returnType = operationDesc.getResultActualType();
             if (returnType != void.class) {
                 MethodMarshallerUtils.toMessage(returnObject, returnType,
                         operationDesc.getResultTargetNamespace(),

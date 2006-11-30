@@ -74,12 +74,29 @@ public interface OperationDescription {
     public String getAction();
     public boolean isOneWay();
     public boolean isExcluded();
+    public boolean isAsync();
     public boolean isOperationReturningResult();
 
     public String getResultName();
     public String getResultTargetNamespace();
     public String getResultPartName();
     public boolean isResultHeader();
+   
+    
+    
+    /**
+     * Return the Class of the type
+     * @return Class
+     */
+    public Class getResultType();
+    
+    /**
+     * Return the actual Class of the type.
+     * This method returns the actual Class that may be embedded
+     * inside a Response or Callback
+     * @return actual Class
+     */
+    public Class getResultActualType();
     
     public String getRequestWrapperClassName();
     public String getRequestWrapperTargetNamespace();

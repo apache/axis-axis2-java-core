@@ -158,6 +158,15 @@ public class PackageSetBuilder {
        if (pkg != null) {
            set.add(pkg);
        }
+       
+       // Finally consider the result type
+       Class cls = opDesc.getResultActualType();
+       if (cls != null && cls != void.class && cls != Void.class) {
+           pkg = cls.getPackage();
+           if (pkg != null) {
+               set.add(pkg);
+           }
+       }
     }
     
     /**

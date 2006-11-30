@@ -20,10 +20,12 @@ package org.apache.axis2.jaxws.description.impl;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.Future;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
@@ -31,7 +33,9 @@ import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
+import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.Response;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
@@ -1139,4 +1143,56 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         return returnWrapperClassName;
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.OperationDescription#getResultType()
+     */
+    public Class getResultType() {
+        Method seiMethod = this.getSEIMethod();
+        return seiMethod.getReturnType();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.OperationDescription#getResultActualType()
+     */
+    public Class getResultActualType() {
+       Class returnType = getResultType();
+       if(isAsync()){
+           //pooling implementation
+           if(Response.class == returnType){
+               Type type = seiMethod.getGenericReturnType();
+               ParameterizedType pType = (ParameterizedType) type;
+               return (Class)pType.getActualTypeArguments()[0];    
+           }
+           //Callback Implementation
+           else{
+               Type[] type = seiMethod.getGenericParameterTypes();
+               Class parameters[]= seiMethod.getParameterTypes();
+               int i=0;
+               for(Class param:parameters){
+                   if(AsyncHandler.class.isAssignableFrom(param)){
+                       ParameterizedType pType = (ParameterizedType)type[i];
+                       return (Class)pType.getActualTypeArguments()[0];
+                   }
+                   i++;
+               }
+           }
+           
+       }
+       
+       return returnType;  
+    }
+
+    /**
+     * @param operationDesc
+     * @return if asyc operation
+     */
+    public boolean isAsync(){
+        Method method = this.getSEIMethod();
+        if(method == null){
+            return false;
+        }
+        String methodName = method.getName();
+        Class returnType = method.getReturnType();
+        return methodName.endsWith("Async") && (returnType.isAssignableFrom(Response.class) || returnType.isAssignableFrom(Future.class));
+    }
 }

@@ -93,7 +93,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // The wrapper element 
             // or null
             Object returnValue = null;
-            Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
+            Class returnType = operationDesc.getResultActualType();
             boolean isChildReturn = (operationDesc instanceof OperationDescriptionJava) &&
                 ((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified();
             boolean isNoReturn = (returnType == void.class);
@@ -301,7 +301,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             }
             
             // Add the return object to the nameList and objectList
-            Class returnType = MethodMarshallerUtils.getActualReturnType(operationDesc);
+            Class returnType = operationDesc.getResultActualType();
             if (returnType != void.class) {
                 String name = operationDesc.getResultName();
                 nameList.add(name);
