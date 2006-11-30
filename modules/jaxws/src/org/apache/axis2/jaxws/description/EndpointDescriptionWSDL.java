@@ -22,18 +22,23 @@ import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.jaxws.util.Constants;
 
 /**
  * 
  */
 public interface EndpointDescriptionWSDL {
+    public static final QName SOAP_11_ADDRESS_ELEMENT = new QName(Constants.URI_WSDL_SOAP11, "address");
+    public static final QName SOAP_12_ADDRESS_ELEMENT = new QName(Constants.URI_WSDL_SOAP12, "address");
     
     public Service getWSDLService();
     public Port getWSDLPort();
     public Binding getWSDLBinding();
     public String getWSDLBindingType();
     public String getWSDLSOAPAddress();
-    
     /**
      * Is the WSDL definition fully specified for the endpoint (WSDL 1.1 port)
      * represented by this EndpointDescription.  If the WSDL is Partial, that means

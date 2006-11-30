@@ -1,10 +1,13 @@
 package org.apache.axis2.jaxws.description;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.Definition;
+import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.xml.namespace.QName;
 
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
@@ -15,6 +18,20 @@ public interface ServiceDescriptionWSDL {
 
     public Service getWSDLService();
     public Map getWSDLPorts();
+    /**
+     * Return a collection of WSDL ports under this service which use
+     * the portType QName.
+     * @param portTypeQN
+     * @return
+     */
+    public List<Port> getWSDLPortsUsingPortType(QName portTypeQN);
+    /**
+     * Return a subset of the collection of WSDL ports which specify a 
+     * SOAP 1.1 or 1.2 address.
+     * @param wsdlPorts
+     * @return
+     */
+    public List<Port> getWSDLPortsUsingSOAPAddress(List<Port> wsdlPorts);
     
     public abstract URL getWSDLLocation();
     

@@ -87,14 +87,11 @@ public class WSDLDescriptionTests extends TestCase {
     // ========================================================================
     
     public void testValidGetPortWithClass() {
-        // TODO: This is currently not supported (in Beta) but needs to be supported; this test tests the unsupported behavior
-        //       The try/catch should be removed and the pass/fail criteria changed.
         try {
             EchoPort echoPort = service.getPort(EchoPort.class);
-            fail("BETA ONLY: didn't catch expected exception");
         }
-        catch (UnsupportedOperationException e) {
-            // FOR BETA ONLY: expect this exception
+        catch (Exception e) {
+            fail("Caught unexpected exception");
         }
     }
     

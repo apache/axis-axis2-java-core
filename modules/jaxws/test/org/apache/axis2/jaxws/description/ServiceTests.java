@@ -34,7 +34,7 @@ import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import junit.framework.TestCase;
 
 public class ServiceTests extends TestCase {
-    private static String VALID_SERVICE_NAMESPACE = "http://org/test/wsdlmultitests";
+    private static String VALID_SERVICE_NAMESPACE = "http://org/test/addnumbers";
     private static String VALID_SERVICE_LOCALPART_1 = "AddNumbersService1";
     private static String VALID_SERVICE_LOCALPART_2 = "AddNumbersService2";
     private static String VALID_PORT_S1P1 = "AddNumbersPortS1P1";

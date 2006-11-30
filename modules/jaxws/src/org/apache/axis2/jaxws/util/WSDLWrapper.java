@@ -32,7 +32,6 @@ public interface WSDLWrapper {
     public static final QName SOAP_11_BODY = new QName(Constants.URI_WSDL_SOAP11_BODY, "body");
     public static final QName SOAP_11_HEADER = new QName(Constants.URI_WSDL_SOAP11_HEADER, "header");
     public static final QName SOAP_11_OPERATION = new QName(Constants.URI_WSDL_SOAP11, "operation");
-    public static final QName SOAP_12_ADDRESS = new QName(Constants.URI_WSDL_SOAP12, "address");
     public static final QName SOAP_12_BINDING = new QName(Constants.URI_WSDL_SOAP12_BINDING, "binding");
     public static final QName SOAP_12_BODY = new QName(Constants.URI_WSDL_SOAP12_BODY, "body");
     public static final QName SOAP_12_HEADER = new QName(Constants.URI_WSDL_SOAP12_HEADER, "header");

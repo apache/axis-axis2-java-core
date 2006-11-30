@@ -27,8 +27,12 @@ import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.client.ServiceClient;
@@ -225,11 +229,6 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             break;
 
         case GET_PORT:
-            // TODO: Add support: portQName can be null when called from Service.getPort(Class)
-            // TODO: I think this is the only place we need to handle a null portQName (not for create Dispatch or addPort)
-            if (DescriptionUtils.isEmpty(portQName)) {
-                throw new UnsupportedOperationException("ServiceDescription.updateEndpointDescription null PortQName not supported");
-            }
             // If an endpointDesc doesn't exist, and the port exists in the WSDL, create it
             // If an endpointDesc already exists and has an associated SEI already, make sure they match
             // If an endpointDesc already exists and was created for Dispatch (no SEI), update that with the SEI provided on the getPort
@@ -237,14 +236,16 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             // Port must be declared (e.g. in WSDL or via annotations)
             // TODO: Once isPortDeclared understands annotations and not just WSDL, the 2nd part of this check can possibly be removed.
             //       Although consider the check below that updates an existing EndpointDescritpion with an SEI.
-            else if (!isPortDeclared || (endpointDescription != null && endpointDescription.isDynamicPort())) {
+            if (!isPortDeclared || (endpointDescription != null && endpointDescription.isDynamicPort())) {
                 // This guards against the case where an addPort was done previously and now a getPort is done on it.
                 // TODO: RAS & NLS
-                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " + portQName.toString());
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do a getPort on a port added via addPort().  PortQN: " +
+                        portQName != null ? portQName.toString() : "not specified");
             }
             else if (sei == null) {
                 // TODO: RAS & NLS
-                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do a getPort with a null SEI.  PortQN: " + portQName.toString());
+                throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not do a getPort with a null SEI.  PortQN: " + 
+                        portQName != null ? portQName.toString() : "not specified");
             }
             else if (endpointDescription == null) {
                 // Use the SEI Class and its annotations to finish creating the Description hierachy: Endpoint, EndpointInterface, Operations, Parameters, etc.
@@ -325,6 +326,11 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
                 // so getPort(...) and createDispatch(...) calls work when there is no WSDL.
                 portIsDeclared = true;
             }
+        }
+        else {
+            // PortQName is null, so the runtime gets to choose which one to use.  Since there's no WSDL
+            // we'll use annotations, so it is implicitly declared
+            portIsDeclared = true;
         }
         return portIsDeclared;
     }
@@ -860,5 +866,38 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             }
         }
         return portList;
+    }
+
+    public List<Port> getWSDLPortsUsingPortType(QName portTypeQN) {
+        ArrayList<Port> portList = new ArrayList<Port>();
+        if (!DescriptionUtils.isEmpty(portTypeQN)) {
+            Map wsdlPortMap = getWSDLPorts();
+            if (wsdlPortMap != null && !wsdlPortMap.isEmpty()) {
+                for (Object mapElement : wsdlPortMap.values()) {
+                    Port wsdlPort = (Port) mapElement;
+                    PortType wsdlPortType = wsdlPort.getBinding().getPortType();
+                    QName wsdlPortTypeQN = wsdlPortType.getQName();
+                    if (portTypeQN.equals(wsdlPortTypeQN)) {
+                        portList.add(wsdlPort);
+                    }
+                }
+            }
+        }
+        return portList;
+    }
+
+    public List<Port> getWSDLPortsUsingSOAPAddress(List<Port> wsdlPorts) {
+        ArrayList<Port> portsUsingAddress = new ArrayList<Port>();
+        if (wsdlPorts != null && !wsdlPorts.isEmpty()) {
+            for (Port checkPort : wsdlPorts) {
+                List extensibilityElementList = checkPort.getExtensibilityElements();
+                for (Object checkElement : extensibilityElementList) {
+                    if (EndpointDescriptionImpl.isSOAPAddressElement((ExtensibilityElement) checkElement)) {
+                        portsUsingAddress.add(checkPort);
+                    }
+                }
+            }
+        }
+        return portsUsingAddress;
     }
 }

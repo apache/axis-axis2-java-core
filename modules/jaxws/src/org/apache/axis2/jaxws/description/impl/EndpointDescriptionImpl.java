@@ -32,6 +32,7 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
@@ -177,9 +178,26 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         // TODO: This and the other constructor will (eventually) take the same args, so the logic needs to be combined
         // TODO: If there is WSDL, could compare the namespace of the defn against the portQName.namespace
         this.parentServiceDescription = parent;
-        this.portQName = portName;
         this.implOrSEIClass = theClass;
+        // REVIEW: setting these should probably be done in the getters!  It needs to be done before we try to select a 
+        //         port to use if one wasn't specified because we'll try to get to the annotations to get the PortType
+        if (this.implOrSEIClass != null) {
+            webServiceAnnotation = (WebService) implOrSEIClass.getAnnotation(WebService.class);
+            webServiceProviderAnnotation = (WebServiceProvider) implOrSEIClass.getAnnotation(WebServiceProvider.class);
+        }
         this.isDynamicPort = dynamicPort;
+        if (DescriptionUtils.isEmpty(portName)) {
+            // If the port name is null, then per JAX-WS 2.0 spec p. 55, the runtime is responsible for selecting the port.
+            this.portQName = selectPortToUse();
+        }
+        else {
+            this.portQName = portName;
+        }
+        // At this point, there must be a port QName set, either as passed in, or determined from the WSDL and/or annotations.
+        // If not, that is an error.
+        if (this.portQName == null) {
+            throw ExceptionFactory.makeWebServiceException("EndpointDescription.EndpointDescription: portQName could not be determined");
+        }
         
         // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
         setupAxisService();
@@ -1203,6 +1221,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         return endpointAddress;
     }
     
+    /**
+     * Return the SOAP Address from the WSDL for this port.
+     * @return The SOAP Address from the WSDL for this port or null.
+     */
     public String getWSDLSOAPAddress() {
         if (wsdlSOAPAddress == null) {
             Port wsdlPort = getWSDLPort();
@@ -1212,7 +1234,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                 for (Object listElement : extElementList) {
                     ExtensibilityElement extElement = (ExtensibilityElement) listElement;
                     if (isSOAPAddressElement(extElement)) {
-                        String soapAddress = ((SOAPAddress) extElement).getLocationURI();
+                        String soapAddress = getSOAPAddressFromElement(extElement);
                         if (!DescriptionUtils.isEmpty(soapAddress)) {
                             wsdlSOAPAddress = soapAddress;
                         }
@@ -1223,16 +1245,101 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         return wsdlSOAPAddress;
     }
     
-    private static boolean isSOAPAddressElement(ExtensibilityElement exElement){
+    /**
+     * Determine if the WSDL Extensibility element corresponds to the SOAP Address element.
+     * @param exElement
+     * @return
+     */
+    static boolean isSOAPAddressElement(ExtensibilityElement exElement){
         boolean isAddress = false;
-        // TODO: Add soap12 support later
-        // || WSDLWrapper.SOAP_12_ADDRESS.equals(exElement.getElementType());
         if (exElement != null) {
-            isAddress = (SOAP_11_ADDRESS_ELEMENT.equals(exElement.getElementType()));
+            isAddress = (SOAP_11_ADDRESS_ELEMENT.equals(exElement.getElementType())
+                        ||
+                        (SOAP_12_ADDRESS_ELEMENT.equals(exElement.getElementType())));
         }
         return isAddress;
     }
+    
+    static String getSOAPAddressFromElement(ExtensibilityElement extElement) {
+        String returnAddress = null;
+        
+        if (extElement != null) {
+            if (SOAP_11_ADDRESS_ELEMENT.equals(extElement.getElementType())) {
+                returnAddress = ((SOAPAddress) extElement).getLocationURI();
+            }
+            else if (SOAP_12_ADDRESS_ELEMENT.equals(extElement.getElementType())) {
+                returnAddress = ((SOAP12Address) extElement).getLocationURI();
+            }
+        }
+        
+        return returnAddress;
+    }
+    
+    /**
+     * Selects a port to use in the case where a portQName was not specified by the client on the
+     * Service.getPort(Class) call.  If WSDL is present, then an appropriate port is looked for under
+     * the service element, and an exception is thrown if none can be found.  If WSDL is not present,
+     * then the selected port is simply the one determined by annotations.
+     * @return A QName representing the port that is to be used.
+     */
+    private QName selectPortToUse() {
+        QName portToUse = null;
+        // If WSDL Service for this port is present, then we'll find an appropriate port defined in there and set 
+        // the name accordingly.  If no WSDL is present, the the PortQName getter will use annotations to set the value.
+        if (getWSDLService() != null) {
+            portToUse = selectWSDLPortToUse();
+        }
+        else {
+            // No WSDL, so the port to use is the one defined by the annotations.
+            portToUse = getPortQName();
+        }
+        return portToUse;
+    }
+    
+    /**
+     * Look through the WSDL Service for a port that should be used.  If none can be
+     * found, then throw an exception.
+     * @param wsdlService
+     * @return A QName representing the port from the WSDL that should be used.
+     */
+    private QName selectWSDLPortToUse() {
+        QName wsdlPortToUse = null;
+        
+        // To select which WSDL Port to use, we do the following
+        // 1) Find the subset of all ports under the service that use the PortType represented by the SEI
+        // 2) From the subset in (1) find all those ports that specify a SOAP Address
+        // 3) Use the first port from (2)
+        // REVIEW: Should we be looking at the binding type or something else to determin which subset of ports to use;
+        //         i.e. instead of just finding ports that specify a SOAP Address?
+        
+        // Per JSR-181, 
+        // - The portType name corresponds to the WebService.name annotation value, which is
+        //   returned by getName()
+        // - The portType namespace corresponds to the WebService.targetNamespace annotation, which
+        //   is returned by getTargetNamespace()
+        String portTypeLP = getName();
+        String portTypeTNS = getTargetNamespace();
+        QName portTypeQN = new QName(portTypeTNS, portTypeLP);
 
+        ServiceDescriptionWSDL serviceDescWSDL = (ServiceDescriptionWSDL) getServiceDescription();
+
+        List<Port> wsdlPortsUsingPortType = serviceDescWSDL.getWSDLPortsUsingPortType(portTypeQN);
+        List<Port> wsdlPortsUsingSOAPAddresses = serviceDescWSDL.getWSDLPortsUsingSOAPAddress(wsdlPortsUsingPortType);
+        if (wsdlPortsUsingSOAPAddresses != null && !wsdlPortsUsingSOAPAddresses.isEmpty()) {
+            // We return the first port that uses the particluar PortType and has a SOAP address.
+            // HOWEVER, that is not necessarily the first one in the WSDL that meets that criteria!  
+            // The problem is that WSDL4J Service.getPorts(), which is used to get a Map of ports under the service 
+            // DOES NOT return the ports in the order they are defined in the WSDL.  
+            // Therefore, we can't necessarily predict which one we'll get back as the "first" one in the collection.
+            // REVIEW: Note the above comment; is there anything more predictible and determinstic we can do?
+            Port portToUse = (Port) wsdlPortsUsingSOAPAddresses.toArray()[0];
+            String portLocalPart = portToUse.getName();
+            String portNamespace = serviceDescWSDL.getWSDLService().getQName().getNamespaceURI();
+            wsdlPortToUse = new QName(portNamespace, portLocalPart); 
+        }
+
+        return wsdlPortToUse;
+    }
 }
 
 
