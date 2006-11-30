@@ -342,9 +342,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
 
-            // Get the correct AxisBindingOperation coresponding to the AxisOperation
-            AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(axisOperation.getName());
-
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,
 
@@ -381,7 +378,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
 
 
-                addSOAPAction(doc, methodElement, axisBindingOperation);
+                addSOAPAction(doc, methodElement, axisOperation.getName());
                 //add header ops for input
                 addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                 //add header ops for output
@@ -428,7 +425,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
 
 
-                    addSOAPAction(doc, methodElement, axisBindingOperation);
+                    addSOAPAction(doc, methodElement, axisOperation.getName());
                     addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                     addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
 
