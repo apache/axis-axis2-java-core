@@ -3,6 +3,7 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
@@ -77,7 +78,18 @@ public class DispatchPhase extends Phase {
           {
             ((RequestResponseTransport)requestResponseTransport).acknowledgeMessage(msgContext);
           }
-        }
+        }else if (msgContext.getAxisOperation().getMessageExchangePattern().equals(WSDL20_2004Constants.MEP_URI_IN_OUT))
+        {   // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
+            // then we don't need to keep the transport waiting.
+            Object requestResponseTransport = msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
+            if (requestResponseTransport != null)
+            {
+                if(AddressingHelper.isReplyRedirected(msgContext) && AddressingHelper.isFaultRedirected(msgContext)){
+                    ((RequestResponseTransport)requestResponseTransport).acknowledgeMessage(msgContext);
+                }
+            }
+          }
+
 
         ArrayList operationChain = msgContext.getAxisOperation().getRemainingPhasesInFlow();
         msgContext.setExecutionChain((ArrayList) operationChain.clone());
