@@ -183,7 +183,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
         AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
-        Object property = axisBindingOperation.getProperty(name);
+        Object property = null;
+
+        if (axisBindingOperation != null)
+        {
+            property = axisBindingOperation.getProperty(name);
+        }
 
         if (property == null) {
             property = axisBinding.getProperty(name);
@@ -198,10 +203,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     private Object getBindingPropertyFromMessage(String name, QName qName, String key) {
 
+        Object property = null;
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
         AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
-        AxisBindingMessage axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
-        Object property = axisBindingMessage.getProperty(name);
+
+        AxisBindingMessage axisBindingMessage = null;
+        if (axisBindingOperation != null) {
+        axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
+        }
+
+        if (axisBindingMessage != null) {
+        property = axisBindingMessage.getProperty(name);
+        }
 
         if (property == null) {
             property = axisBindingOperation.getProperty(name);
