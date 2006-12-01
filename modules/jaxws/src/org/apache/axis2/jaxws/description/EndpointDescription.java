@@ -116,5 +116,5 @@ public interface EndpointDescription {
      * JAXBContext.
      * @return Set<Package>
      */
-    public Set<Package> getPackages();
+    public Set<String> getPackages();
 }

@@ -52,6 +52,7 @@ import org.apache.axis2.jaxws.message.SAAJConverterTests;
 import org.apache.axis2.jaxws.message.SOAP12Tests;
 import org.apache.axis2.jaxws.message.XMLStreamReaderSplitterTests;
 import org.apache.axis2.jaxws.nonanonymous.complextype.NonAnonymousComplexTypeTests;
+import org.apache.axis2.jaxws.polymorphic.shape.tests.PolymorphicTests;
 import org.apache.axis2.jaxws.provider.JAXBProviderTests;
 import org.apache.axis2.jaxws.provider.SoapMessageProviderTests;
 import org.apache.axis2.jaxws.provider.SourceMessageProviderTests;
@@ -144,7 +145,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(EndpointLifecycleTests.class);
         suite.addTestSuite(ResourceInjectionTests.class);
         suite.addTestSuite(AnyTypeTests.class);
-
+        suite.addTestSuite(PolymorphicTests.class);
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {

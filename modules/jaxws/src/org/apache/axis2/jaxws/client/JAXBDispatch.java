@@ -63,7 +63,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             if (jaxbContext != null) {
                 context = new JAXBBlockContext(jaxbContext);
             } else {
-                context = new JAXBBlockContext(clazz.getPackage());
+                context = new JAXBBlockContext(clazz.getPackage().getName());
             }
             Block block = factory.createFrom(value, context, null);
             

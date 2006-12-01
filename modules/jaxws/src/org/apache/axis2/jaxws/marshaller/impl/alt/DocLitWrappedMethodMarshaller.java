@@ -86,7 +86,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block is defined by schema; thus in most cases
             //      an xsi:type will not be present
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<Package> packages = endpointDesc.getPackages();
+            Set<String> packages = endpointDesc.getPackages();
             
             // Determine if a returnValue is expected.
             // The return value may be an child element
@@ -185,7 +185,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block (data:foo) is defined by schema (and probably
             //      is not present in the message
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<Package> packages = endpointDesc.getPackages();
+            Set<String> packages = endpointDesc.getPackages();
                         
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block

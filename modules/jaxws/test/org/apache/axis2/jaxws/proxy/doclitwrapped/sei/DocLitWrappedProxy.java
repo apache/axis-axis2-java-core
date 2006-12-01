@@ -27,25 +27,25 @@ import org.test.proxy.doclitwrapped.TwoWayHolder;
  * Generated source version: 2.0
  * 
  */
-@WebService(name = "DocLitWrappedProxy", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped")
+@WebService(name = "DocLitWrappedProxy", targetNamespace = "http://doclitwrapped.proxy.test.org")
 public interface DocLitWrappedProxy {
 
 
     /**
      * 
      */
-    @WebMethod(action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
+    @WebMethod(action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
     @Oneway
-    @RequestWrapper(localName = "oneWayVoid", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.OneWayVoid")
+    @RequestWrapper(localName = "oneWayVoid", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.OneWayVoid")
     public void oneWayVoid();
 
     /**
      * 
      * @param onewayStr
      */
-    @WebMethod(action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
+    @WebMethod(action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
     @Oneway
-    @RequestWrapper(localName = "oneWay", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.sei.OneWay")
+    @RequestWrapper(localName = "oneWay", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.sei.OneWay")
     public void oneWay(
         @WebParam(name = "oneway_str", targetNamespace = "")
         String onewayStr);
@@ -55,11 +55,11 @@ public interface DocLitWrappedProxy {
      * @param twoWayHolderInt
      * @param twoWayHolderStr
      * @return
-     *     returns javax.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.TwoWayHolder>
+     *     returns javax.xml.ws.Response<doclitwrapped.proxy.test.org.sei.TwoWayHolder>
      */
-    @WebMethod(operationName = "twoWayHolder", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
-    @RequestWrapper(localName = "twoWayHolder", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
-    @ResponseWrapper(localName = "twoWayHolder", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
+    @WebMethod(operationName = "twoWayHolder", action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
+    @RequestWrapper(localName = "twoWayHolder", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
+    @ResponseWrapper(localName = "twoWayHolder", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
     public Response<TwoWayHolder> twoWayHolderAsync(
         @WebParam(name = "twoWayHolder_str", targetNamespace = "")
         String twoWayHolderStr,
@@ -74,9 +74,9 @@ public interface DocLitWrappedProxy {
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "twoWayHolder", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
-    @RequestWrapper(localName = "twoWayHolder", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
-    @ResponseWrapper(localName = "twoWayHolder", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
+    @WebMethod(operationName = "twoWayHolder", action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
+    @RequestWrapper(localName = "twoWayHolder", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
+    @ResponseWrapper(localName = "twoWayHolder", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
     public Future<?> twoWayHolderAsync(
         @WebParam(name = "twoWayHolder_str", targetNamespace = "")
         String twoWayHolderStr,
@@ -90,9 +90,9 @@ public interface DocLitWrappedProxy {
      * @param twoWayHolderInt
      * @param twoWayHolderStr
      */
-    @WebMethod(action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
-    @RequestWrapper(localName = "twoWayHolder", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
-    @ResponseWrapper(localName = "twoWayHolder", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
+    @WebMethod(action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
+    @RequestWrapper(localName = "twoWayHolder", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
+    @ResponseWrapper(localName = "twoWayHolder", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWayHolder")
     public void twoWayHolder(
         @WebParam(name = "twoWayHolder_str", targetNamespace = "", mode = Mode.INOUT)
         Holder<String> twoWayHolderStr,
@@ -103,11 +103,11 @@ public interface DocLitWrappedProxy {
      * 
      * @param twowayStr
      * @return
-     *     returns javax.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.ReturnType>
+     *     returns javax.xml.ws.Response<doclitwrapped.proxy.test.org.sei.ReturnType>
      */
-    @WebMethod(operationName = "twoWay", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
-    @RequestWrapper(localName = "twoWay", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWay")
-    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.sei.ReturnType")
+    @WebMethod(operationName = "twoWay", action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
+    @RequestWrapper(localName = "twoWay", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWay")
+    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.sei.ReturnType")
     public Response<ReturnType> twoWayAsync(
         @WebParam(name = "twoway_str", targetNamespace = "")
         String twowayStr);
@@ -119,9 +119,9 @@ public interface DocLitWrappedProxy {
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "twoWay", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
-    @RequestWrapper(localName = "twoWay", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWay")
-    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.ReturnType")
+    @WebMethod(operationName = "twoWay", action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
+    @RequestWrapper(localName = "twoWay", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWay")
+    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.ReturnType")
     public Future<?> twoWayAsync(
         @WebParam(name = "twoway_str", targetNamespace = "")
         String twowayStr,
@@ -134,10 +134,10 @@ public interface DocLitWrappedProxy {
      * @return
      *     returns java.lang.String
      */
-    @WebMethod(action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
+    @WebMethod(action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
     @WebResult(name = "return_str", targetNamespace = "")
-    @RequestWrapper(localName = "twoWay", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.TwoWay")
-    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.ReturnType")
+    @RequestWrapper(localName = "twoWay", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.TwoWay")
+    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.ReturnType")
     public String twoWay(
         @WebParam(name = "twoway_str", targetNamespace = "")
         String twowayStr);
@@ -149,9 +149,9 @@ public interface DocLitWrappedProxy {
      * @return
      *     returns javax.xml.ws.Response<org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ReturnType>
      */
-    @WebMethod(operationName = "invoke", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
-    @RequestWrapper(localName = "invoke", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.Invoke")
-    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.ReturnType")
+    @WebMethod(operationName = "invoke", action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
+    @RequestWrapper(localName = "invoke", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.Invoke")
+    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.ReturnType")
     public Response<ReturnType> invokeAsync(
         @WebParam(name = "invoke_str", targetNamespace = "")
         String invokeStr);
@@ -163,9 +163,9 @@ public interface DocLitWrappedProxy {
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "invoke", action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
-    @RequestWrapper(localName = "invoke", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.Invoke")
-    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.ReturnType")
+    @WebMethod(operationName = "invoke", action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
+    @RequestWrapper(localName = "invoke", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.Invoke")
+    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.ReturnType")
     public Future<?> invokeAsync(
         @WebParam(name = "invoke_str", targetNamespace = "")
         String invokeStr,
@@ -178,10 +178,10 @@ public interface DocLitWrappedProxy {
      * @return
      *     returns java.lang.String
      */
-    @WebMethod(action = "http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn")
+    @WebMethod(action = "http://doclitwrapped.proxy.test.org/twoWayReturn")
     @WebResult(name = "return_str", targetNamespace = "")
-    @RequestWrapper(localName = "invoke", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.Invoke")
-    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.ReturnType")
+    @RequestWrapper(localName = "invoke", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.Invoke")
+    @ResponseWrapper(localName = "ReturnType", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.ReturnType")
     public String invoke(
         @WebParam(name = "invoke_str", targetNamespace = "")
         String invokeStr);
@@ -190,11 +190,11 @@ public interface DocLitWrappedProxy {
      * 
      * @param op
      * @return
-     *     returns javax.xml.ws.Response<org.apache.axis2.proxy.doclitwrapped.sei.FinOpResponse>
+     *     returns javax.xml.ws.Response<doclitwrapped.proxy.test.org.sei.FinOpResponse>
      */
-    @WebMethod(operationName = "finOp", action = "http://org.apache.axis2.proxy.doclitwrapped/finOp")
-    @RequestWrapper(localName = "finOp", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.FinOp")
-    @ResponseWrapper(localName = "finOpResponse", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.FinOpResponse")
+    @WebMethod(operationName = "finOp", action = "http://doclitwrapped.proxy.test.org/finOp")
+    @RequestWrapper(localName = "finOp", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.FinOp")
+    @ResponseWrapper(localName = "finOpResponse", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.FinOpResponse")
     public Response<FinOpResponse> finOpAsync(
         @WebParam(name = "op", targetNamespace = "")
         FinancialOperation op);
@@ -206,9 +206,9 @@ public interface DocLitWrappedProxy {
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "finOp", action = "http://org.apache.axis2.proxy.doclitwrapped/finOp")
-    @RequestWrapper(localName = "finOp", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.FinOp")
-    @ResponseWrapper(localName = "finOpResponse", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.FinOpResponse")
+    @WebMethod(operationName = "finOp", action = "http://doclitwrapped.proxy.test.org/finOp")
+    @RequestWrapper(localName = "finOp", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.FinOp")
+    @ResponseWrapper(localName = "finOpResponse", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.FinOpResponse")
     public Future<?> finOpAsync(
         @WebParam(name = "op", targetNamespace = "")
         FinancialOperation op,
@@ -219,12 +219,12 @@ public interface DocLitWrappedProxy {
      * 
      * @param op
      * @return
-     *     returns org.apache.axis2.proxy.doclitwrapped.sei.FinancialOperation
+     *     returns doclitwrapped.proxy.test.org.sei.FinancialOperation
      */
-    @WebMethod(action = "http://org.apache.axis2.proxy.doclitwrapped/finOp")
+    @WebMethod(action = "http://doclitwrapped.proxy.test.org/finOp")
     @WebResult(name = "response", targetNamespace = "")
-    @RequestWrapper(localName = "finOp", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.FinOp")
-    @ResponseWrapper(localName = "finOpResponse", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", className = "org.test.proxy.doclitwrapped.FinOpResponse")
+    @RequestWrapper(localName = "finOp", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.FinOp")
+    @ResponseWrapper(localName = "finOpResponse", targetNamespace = "http://doclitwrapped.proxy.test.org", className = "org.test.proxy.doclitwrapped.FinOpResponse")
     public FinancialOperation finOp(
         @WebParam(name = "op", targetNamespace = "")
         FinancialOperation op);

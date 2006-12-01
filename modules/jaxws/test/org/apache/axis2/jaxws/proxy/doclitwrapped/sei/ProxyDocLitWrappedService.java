@@ -18,7 +18,7 @@ import javax.xml.ws.WebServiceClient;
  * 
  */
 
-@WebServiceClient(name = "ProxyDocLitWrappedService", targetNamespace = "http://org.apache.axis2.proxy.doclitwrapped", wsdlLocation = "ProxyDocLitWrapped.wsdl")
+@WebServiceClient(name = "ProxyDocLitWrappedService", targetNamespace = "http://doclitwrapped.proxy.test.org", wsdlLocation = "ProxyDocLitWrapped.wsdl")
 public class ProxyDocLitWrappedService
     extends Service
 {
@@ -48,7 +48,7 @@ public class ProxyDocLitWrappedService
     }
 
     public ProxyDocLitWrappedService() {
-        super(PROXYDOCLITWRAPPEDSERVICE_WSDL_LOCATION, new QName("http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedService"));
+        super(PROXYDOCLITWRAPPEDSERVICE_WSDL_LOCATION, new QName("http://doclitwrapped.proxy.test.org", "ProxyDocLitWrappedService"));
     }
 
     /**
@@ -58,7 +58,7 @@ public class ProxyDocLitWrappedService
      */
     @WebEndpoint(name = "ProxyDocLitWrappedPort")
     public DocLitWrappedProxy getProxyDocLitWrappedPort() {
-        return (DocLitWrappedProxy)super.getPort(new QName("http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedPort"), DocLitWrappedProxy.class);
+        return (DocLitWrappedProxy)super.getPort(new QName("http://doclitwrapped.proxy.test.org", "ProxyDocLitWrappedPort"), DocLitWrappedProxy.class);
     }
 
 }

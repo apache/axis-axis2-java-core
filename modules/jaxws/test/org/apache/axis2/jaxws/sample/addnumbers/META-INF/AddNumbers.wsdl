@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<definitions name="AddNumbers" targetNamespace="http://duke/org"
-	xmlns:tns="http://duke/org" xmlns="http://schemas.xmlsoap.org/wsdl/"
+<definitions name="AddNumbers" targetNamespace="http://org/test/addnumbers"
+	xmlns:tns="http://org/test/addnumbers" xmlns="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
 
 
 	<types>
 		<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
-			elementFormDefault="qualified" targetNamespace="http://duke/org">
+			elementFormDefault="qualified" targetNamespace="http://org/test/addnumbers">
 			<element name="addNumbersResponse">
 				<complexType>
 					<sequence>

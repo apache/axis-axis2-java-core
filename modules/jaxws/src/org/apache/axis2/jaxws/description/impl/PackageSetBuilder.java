@@ -16,20 +16,35 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.xml.WSDLWriter;
 import javax.xml.bind.JAXBElement;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.util.JavaUtils;
+import org.apache.axis2.jaxws.util.WSDL4JWrapper;
+import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
+import org.apache.axis2.jaxws.wsdl.SchemaReader;
+import org.apache.axis2.jaxws.wsdl.SchemaReaderException;
+import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -73,17 +88,55 @@ public class PackageSetBuilder {
      * @param serviceDesc ServiceDescription
      * @return Set of Packages
      */
-    public static Set<Package> getPackagesFromSchema(ServiceDescription serviceDesc) {
-        // TODO Missing Support
-        throw new UnsupportedOperationException("PackageSetBuilder.getPackagesFromSchema");
+    public static Set<String> getPackagesFromSchema(ServiceDescription serviceDesc) {
+    	boolean annotationWalking = true;
+    	Set<String> set = new HashSet<String>();
+    	//If we are on client side we will get wsdl definition from ServiceDescription. If we are on server side we will have to 
+    	//read wsdlLocation from @WebService Annotation.
+    	ServiceDescriptionWSDL sdw = (ServiceDescriptionWSDL) serviceDesc;
+    	Definition wsdlDefinition = sdw.getWSDLDefinition(); 
+    	EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
+    	if (endpointDescs != null) {
+            for (int i=0; i< endpointDescs.length; i++) {
+            	EndpointDescriptionImpl ed = (EndpointDescriptionImpl)endpointDescs[i];
+            	if(wsdlDefinition == null){
+            		//Let see if we can get wsdl definition from endpoint @WebService annotation.
+	            	String wsdlLocation = ed.getAnnoWebServiceWSDLLocation();
+	            	wsdlDefinition = getWSDLDefinition(wsdlLocation);
+            	}
+            	//So at this point either we got wsdl definition from ServiceDescription (which means we are running this code
+            	//on client side) or we got it from the @WebService annotation (which means we are running this code on server side)
+           		if(wsdlDefinition !=null){
+           			SchemaReader sr = new SchemaReaderImpl();
+           			try{
+           				Set<String> pkgSet = sr.readPackagesFromSchema(wsdlDefinition);
+           				set.addAll(pkgSet);
+           			}catch(SchemaReaderException e){
+           				ExceptionFactory.makeWebServiceException(e);
+           			}
+           			//FIXME: For now lets read packages from Annotation too. We will remove this once we are confident that 
+           			//Schema Walk thru works.
+           			if(annotationWalking){
+           				set.addAll(getPackagesFromAnnotations(serviceDesc));
+           			}
+           		}
+           		//if on client side, there is no wsdl provided by client application. if on server side there is no WSDLLocation on @WebService. 
+           		//let read all the required package from SEI Annotation.
+           		else{
+           			set.addAll(getPackagesFromAnnotations(serviceDesc));
+           		}    
+              
+            }
+    	}
+    	return set;
     }
     
     /**
      * @param serviceDescription ServiceDescription
      * @return Set of Packages
      */
-    public static Set<Package> getPackagesFromAnnotations(ServiceDescription serviceDesc) {
-        HashSet<Package> set = new HashSet<Package>();
+    public static Set<String> getPackagesFromAnnotations(ServiceDescription serviceDesc) {
+        HashSet<String> set = new HashSet<String>();
         EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
         
         // Build a set of packages from all of the endpoints
@@ -99,11 +152,11 @@ public class PackageSetBuilder {
      * @param endpointDesc EndpointDescription
      * @return Set of Packages
      */
-    public static Set<Package> getPackagesFromAnnotations(EndpointDescription endpointDesc) {
+    public static Set<String> getPackagesFromAnnotations(EndpointDescription endpointDesc) {
         EndpointInterfaceDescription endpointInterfaceDesc = 
             endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc == null) {
-            return new HashSet<Package>(); 
+            return new HashSet<String>(); 
         } else {
             return getPackagesFromAnnotations(endpointInterfaceDesc);
         }
@@ -113,8 +166,8 @@ public class PackageSetBuilder {
      * @param endpointInterfaceDescription EndpointInterfaceDescription
      * @return Set of Packages
      */
-    public static Set<Package> getPackagesFromAnnotations(EndpointInterfaceDescription endpointInterfaceDesc) {
-        HashSet<Package> set = new HashSet<Package>();
+    public static Set<String> getPackagesFromAnnotations(EndpointInterfaceDescription endpointInterfaceDesc) {
+        HashSet<String> set = new HashSet<String>();
         OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
         
         // Build a set of packages from all of the opertions
@@ -131,7 +184,7 @@ public class PackageSetBuilder {
      * @param opDesc OperationDescription
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(OperationDescription opDesc, Set<Package> set) {
+    private static void getPackagesFromAnnotations(OperationDescription opDesc, Set<String> set) {
        
        // Walk the parameter information
        ParameterDescription[] parameterDescs = opDesc.getParameterDescriptions();
@@ -150,7 +203,7 @@ public class PackageSetBuilder {
        }
        
        // Also consider the request and response wrappers
-       Package pkg = getPackageFromClassName(opDesc.getRequestWrapperClassName());
+       String pkg = getPackageFromClassName(opDesc.getRequestWrapperClassName());
        if (pkg != null) {
            set.add(pkg);
        }
@@ -162,8 +215,9 @@ public class PackageSetBuilder {
        // Finally consider the result type
        Class cls = opDesc.getResultActualType();
        if (cls != null && cls != void.class && cls != Void.class) {
-           pkg = cls.getPackage();
-           if (pkg != null) {
+           Package returnTypePkg = cls.getPackage();
+           if (returnTypePkg != null) {
+           	   pkg = returnTypePkg.getName();
                set.add(pkg);
            }
        }
@@ -174,7 +228,7 @@ public class PackageSetBuilder {
      * @param paramDesc ParameterDesc
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(ParameterDescription paramDesc, Set<Package> set) {
+    private static void getPackagesFromAnnotations(ParameterDescription paramDesc, Set<String> set) {
        
        // Get the type that defines the actual data.  (this is never a holder )
        Class paramClass = paramDesc.getParameterActualType();
@@ -190,7 +244,7 @@ public class PackageSetBuilder {
      * @param faultDesc FaultDescription
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(FaultDescription faultDesc, Set<Package> set) {
+    private static void getPackagesFromAnnotations(FaultDescription faultDesc, Set<String> set) {
       
       Class faultBean = loadClass(faultDesc.getFaultBean());  
       if (faultBean != null) {
@@ -205,7 +259,7 @@ public class PackageSetBuilder {
      * @param localPart of the element
      * @param set with both type and element packages set
      */
-    private static void setTypeAndElementPackages(Class cls, String namespace, String localPart, Set<Package> set) {
+    private static void setTypeAndElementPackages(Class cls, String namespace, String localPart, Set<String> set) {
         
         // Get the element and type classes
         Class eClass = getElement(cls);
@@ -213,7 +267,10 @@ public class PackageSetBuilder {
         
         // Set the package for the type
         if (tClass != null) {
-            Package pkg = tClass.getPackage();
+        	Package typePkg = tClass.getPackage();
+        	//For primitive types there is no package
+        	String pkg = (typePkg!=null) ? typePkg.getName() : null;
+        	
             if (pkg != null) {
                 set.add(pkg);
             }
@@ -227,13 +284,14 @@ public class PackageSetBuilder {
                 // in doc/lit wrapped.  The package is determined from the wrapper element in such casses.
                 if (namespace != null && namespace.length() > 0) {
                     // Use default namespace to package algorithm
-                    Package pkg = makePackage(namespace);
+                    String pkg = makePackage(namespace);
                     if (pkg != null) {
                         set.add(pkg);
                     }
                 }
             } else {
-                Package pkg = eClass.getPackage();
+            	Package elementPkg = eClass.getPackage();
+                String pkg = (elementPkg!=null) ? elementPkg.getName() : null;
                 if (pkg != null) {
                     set.add(pkg);
                 }
@@ -281,13 +339,9 @@ public class PackageSetBuilder {
      * @param ns
      * @return
      */
-    private static Package makePackage(String ns) {
+    private static String makePackage(String ns) {
         String pkgName = JavaUtils.getPackageFromNamespace(ns);
-        Package pkg = null;
-        if (pkgName != null) {
-            pkg = Package.getPackage(pkgName);
-        }
-        return pkg;
+        return pkgName;
     }
     
     /**
@@ -296,9 +350,9 @@ public class PackageSetBuilder {
      * @param className String (may be null or empty)
      * @return Package or null if problems occur
      */
-    private static Package getPackageFromClassName(String className) {
+    private static String getPackageFromClassName(String className) {
         Class clz = loadClass(className);
-        Package pkg = (clz == null) ? null : clz.getPackage();
+        String pkg = (clz == null) ? null : clz.getPackage().getName();
         return pkg;
     }
     
@@ -325,5 +379,29 @@ public class PackageSetBuilder {
         return null;
     }
     
-   
+   private static Definition getWSDLDefinition(String wsdlLocation){
+	   Definition wsdlDefinition = null;
+	   if(wsdlLocation !=null && wsdlLocation.trim().length()>0){
+		   try{
+	  	       	String baseDir = new File(".").getCanonicalPath();
+	  	       	wsdlLocation = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
+	  	       	File file = new File(wsdlLocation);
+	  	       	URL url = file.toURL();
+	  	       	if(log.isDebugEnabled()){
+	  	       		log.debug("Reading WSDL from URL:" +url.toString());
+	  	       	}
+	          	WSDLWrapper wsdlWrapper = new WSDL4JWrapper(url);
+	         	wsdlDefinition = wsdlWrapper.getDefinition();
+	          	
+		   }catch(MalformedURLException e){
+	   	   		ExceptionFactory.makeWebServiceException(e);
+		   }catch(IOException e){
+	    	  ExceptionFactory.makeWebServiceException(e);
+		   }catch(WSDLException e){
+	    	  ExceptionFactory.makeWebServiceException(e);
+		   }
+	  }
+	  	  
+      return wsdlDefinition;
+   }
 }

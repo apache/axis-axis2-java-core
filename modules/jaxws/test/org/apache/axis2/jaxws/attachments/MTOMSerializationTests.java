@@ -117,7 +117,7 @@ public class MTOMSerializationTests extends TestCase {
         imageDepot.setImageData(dataHandler);
         
         //JAXBContext jbc = JAXBContext.newInstance("org.test.mtom");
-        JAXBBlockContext context = new JAXBBlockContext(SendImage.class.getPackage());
+        JAXBBlockContext context = new JAXBBlockContext(SendImage.class.getPackage().getName());
         
         //Create a request bean with imagedepot bean as value
         ObjectFactory factory = new ObjectFactory();

@@ -109,7 +109,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     DescriptionBuilderComposite composite = null;
  
     // Set of packages that are needed to marshal/unmashal data (used to set JAXBContext)
-    Set<Package> packages = null;
+    Set<String> packages = null;
     
     // The JAX-WS Handler port information corresponding to this endpoint
     private PortInfo portInfo;
@@ -1146,7 +1146,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      * JAXBContext.
      * @return Set<Package>
      */
-    public Set<Package> getPackages() {
+    public Set<String> getPackages() {
         // @REVIEW Currently the package set is stored on the
         // EndpointDescription.  We may consider moving this to 
         // ServiceDescription. 
@@ -1159,7 +1159,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                 // The Schema walk requires an existing or generated schema.
                 // For now, we will force the use of annotation walk
                 // @See PackageSetBuilder for details
-                boolean useSchemaWalk = false;
+                boolean useSchemaWalk = true;
                 if (useSchemaWalk) {
                     packages = PackageSetBuilder.getPackagesFromSchema(this.getServiceDescription());
                 } else {

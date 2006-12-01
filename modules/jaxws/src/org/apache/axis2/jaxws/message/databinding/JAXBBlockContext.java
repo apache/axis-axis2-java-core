@@ -37,7 +37,7 @@ public class JAXBBlockContext {
     
     private static final Log log = LogFactory.getLog(JAXBBlockContext.class);
     
-	private Set<Package> contextPackages;  // List of packages needed by the context
+	private Set<String> contextPackages;  // List of packages needed by the context
 	private JAXBContext jaxbContext = null;
     
     // For RPC processing only
@@ -53,7 +53,7 @@ public class JAXBBlockContext {
 	 * Normal Constructor JAXBBlockContext
 	 * @param packages Set of packages needed by the JAXBContext.
 	 */
-	public JAXBBlockContext(Set<Package> packages) {
+	public JAXBBlockContext(Set<String> packages) {
         this.contextPackages = packages;
 	}
     
@@ -62,7 +62,7 @@ public class JAXBBlockContext {
      * @param contextPackage
      * @deprecated
      */
-    public JAXBBlockContext(Package contextPackage) {
+    public JAXBBlockContext(String contextPackage) {
         this.contextPackages = new HashSet();
         this.contextPackages.add(contextPackage);
     }
@@ -80,7 +80,7 @@ public class JAXBBlockContext {
 	/**
 	 * @return Class representing type of the element
 	 */
-	public Set<Package> getContextPackages() {
+	public Set<String> getContextPackages() {
 		return contextPackages;
 	}
     

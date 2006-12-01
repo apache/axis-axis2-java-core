@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.message.databinding;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -52,8 +53,8 @@ public class JAXBUtils {
     private static final Log log = LogFactory.getLog(JAXBUtils.class);
     
 	// Create a synchronized weak hashmap key=set contextPackages, value= JAXBContext
-	private static Map<Set<Package>, JAXBContext> map =
-			Collections.synchronizedMap(new WeakHashMap<Set<Package>, JAXBContext>());
+	private static Map<Set<String>, JAXBContext> map =
+			Collections.synchronizedMap(new WeakHashMap<Set<String>, JAXBContext>());
 	private static JAXBContext genericJAXBContext = null;
 	
 	private static Map<JAXBContext,Unmarshaller> umap = 
@@ -95,7 +96,7 @@ public class JAXBUtils {
 	 * @return JAXBContext
 	 * @throws JAXBException
 	 */
-	public static JAXBContext getJAXBContext(Set<Package> contextPackages) throws JAXBException {
+	public static JAXBContext getJAXBContext(Set<String> contextPackages) throws JAXBException {
 		// JAXBContexts for the same class can be reused and are supposed to be thread-safe
         if (contextPackages == null || contextPackages.isEmpty()) {
             return getGenericJAXBContext();
@@ -136,10 +137,10 @@ public class JAXBUtils {
                         if (log.isDebugEnabled()) {
                             log.debug("Attempting to create JAXBContext with Class[]");
                         }
-                        Iterator<Package> it = contextPackages.iterator();
+                        Iterator<String> it = contextPackages.iterator();
                         List<Class> fullList = new ArrayList<Class>();
                         while (it.hasNext()) {
-                            Package pkg = it.next();
+                            String pkg = it.next();
                     		fullList.addAll(JAXBUtils.getAllClassesFromPackage(pkg));
                     	}
                     	Class[] classArray = fullList.toArray(new Class[0]);
@@ -351,12 +352,12 @@ public class JAXBUtils {
      * @return
      * @throws ClassNotFoundException
      */
-    private static List<Class> getAllClassesFromPackage(Package pkg) throws ClassNotFoundException {
+    private static List<Class> getAllClassesFromPackage(String pkg) throws ClassNotFoundException {
         if (pkg == null) {
             return new ArrayList<Class>();
         }   
         // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
-        String pckgname = pkg.getName();
+        String pckgname = pkg;
         ArrayList<File> directories = new ArrayList<File>();
         try {
             ClassLoader cld = Thread.currentThread().getContextClassLoader();
@@ -406,7 +407,7 @@ public class JAXBUtils {
                             // Don't add any interfaces or JAXWS specific classes.  
                             // Only classes that represent data and can be marshalled 
                             // by JAXB should be added.
-                            if(!clazz.isInterface() 
+                            if(!clazz.isInterface()
                                     && ClassUtils.getDefaultPublicConstructor(clazz) != null
                                     && !ClassUtils.isJAXWSClass(clazz)){
                                 if (log.isDebugEnabled()) {

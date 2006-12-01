@@ -46,8 +46,11 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
         
         // Step 1: Scan off the host name
         String hostname = null;
+        String path = null;
         try {
-            hostname = new URL(namespace).getHost();
+        	URL url = new URL(namespace);
+            hostname = url.getHost();
+            path = url.getPath();
         }
         catch (MalformedURLException e) {
                // No FFDC code needed
@@ -62,16 +65,28 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
         
         // Step 3: Tokenize the host name using ":" and "/"
         StringTokenizer st = new StringTokenizer( hostname, ":/" );
-        String[] words = new String[ st.countTokens() ];
-        for(int i = 0; i < words.length; ++i) {
-            words[i] = st.nextToken();
-        }
         
+        ArrayList<String> wordList = new ArrayList<String>();
+        
+        //Read Hostname first.
+        for(int i = 0; st !=null &&  i < st.countTokens(); ++i) {
+        	wordList.add(st.nextToken());
+        }
+        //Read rest Of the path now
+        if(path!=null){
+	        StringTokenizer pathst = new StringTokenizer(path,"/");
+	        while(pathst!=null && pathst.hasMoreTokens()){
+	        	wordList.add(pathst.nextToken());
+	        }
+        }
+        String[] words = wordList.toArray(new String[0]);
         // Now do step 2: Strip off the trailing "." (i.e. strip off .html)
-        String lastWord = words[words.length-1];
-        int index = lastWord.lastIndexOf('.');
-        if (index > 0) {
-            words[words.length-1] = lastWord.substring(0,index);
+        if(words !=null && words.length > 1 ){
+	        String lastWord = words[words.length-1];
+	        int index = lastWord.lastIndexOf('.');
+	        if (index > 0) {
+	            words[words.length-1] = lastWord.substring(0,index);
+	        }
         }
         
         
@@ -126,7 +141,7 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
             if (i == 0) {
                 name = list.get(0);
             } else {
-                name = "." + list.get(i);
+                name =name + "." + list.get(i);
             }
         }
         return name;

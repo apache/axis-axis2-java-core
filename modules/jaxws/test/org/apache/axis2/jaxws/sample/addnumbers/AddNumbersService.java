@@ -16,7 +16,7 @@ import javax.xml.ws.WebServiceClient;
  * Generated source version: 2.0
  * 
  */
-@WebServiceClient(name = "AddNumbersService", targetNamespace = "http://duke/org", wsdlLocation = "AddNumbers1.wsdl")
+@WebServiceClient(name = "AddNumbersService", targetNamespace = "http://org/test/addnumbers", wsdlLocation = "AddNumbers1.wsdl")
 public class AddNumbersService
     extends Service
 {
@@ -45,7 +45,7 @@ public class AddNumbersService
     }
 
     public AddNumbersService() {
-        super(ADDNUMBERSSERVICE_WSDL_LOCATION, new QName("http://duke/org", "AddNumbersService"));
+        super(ADDNUMBERSSERVICE_WSDL_LOCATION, new QName("http://org/test/addnumbers", "AddNumbersService"));
     }
 
     /**
@@ -55,7 +55,7 @@ public class AddNumbersService
      */
     @WebEndpoint(name = "AddNumbersPort")
     public AddNumbersPortType getAddNumbersPort() {
-        return (AddNumbersPortType)super.getPort(new QName("http://duke/org", "AddNumbersPort"), AddNumbersPortType.class);
+        return (AddNumbersPortType)super.getPort(new QName("http://org/test/addnumbers", "AddNumbersPort"), AddNumbersPortType.class);
     }
 
 }

@@ -158,6 +158,21 @@
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl"/>
     	 </java>
 
+    	<ant:echo>Generating java from WSDLMultiTests.wsdl</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/WSDLMultiTests.wsdl"/>
+    	 </java>
+    	 
+    	<ant:echo>Generating java from Polymorphic shapes.wsdl for javabean endpoint support</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/shapes.wsdl"/>
+    	</java>
     	<!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>
         <javac destdir="${schema.generated.classes.dir}" srcdir="${schema.generated.src.dir}">
@@ -430,6 +445,19 @@
 			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>
+		
+		<ant:copy toDir="target/test-classes/services/PolymorphicShapeService/">
+			<ant:fileset dir="target/test-classes">
+			   <ant:include name="org/apache/axis2/jaxws/polymorphic/shape/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/polymorphic/shape">
+			   <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>	
+
 	</postGoal>
 
     <!-- Create the API and Impl jars --> 

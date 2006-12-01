@@ -36,9 +36,9 @@ import org.test.proxy.doclitwrapped.ReturnType;
 
 public class ProxyTests extends TestCase {
     private QName serviceName = new QName(
-            "http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedService");
+            "http://doclitwrapped.proxy.test.org", "ProxyDocLitWrappedService");
     private String axisEndpoint = "http://localhost:8080/axis2/services/ProxyDocLitWrappedService";
-    private QName portName = new QName("http://org.apache.axis2.proxy.doclitwrapped",
+    private QName portName = new QName("http://doclitwrapped.proxy.test.org",
             "ProxyDocLitWrappedPort");
     private String wsdlLocation = "test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
     private boolean runningOnAxis = true;

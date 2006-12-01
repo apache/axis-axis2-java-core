@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://resourceinjection.sample.test.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ResourceInjection" targetNamespace="http://resourceinjection.sample.test.org">
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://resourceinjection.sample.test.org" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="ResourceInjection" targetNamespace="http://resourceinjection.sample.test.org">
   <wsdl:types>
     <xsd:schema targetNamespace="http://resourceinjection.sample.test.org" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <xsd:element name="echoResponse">

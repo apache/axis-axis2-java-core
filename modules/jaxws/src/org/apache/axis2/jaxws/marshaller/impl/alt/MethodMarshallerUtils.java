@@ -147,7 +147,7 @@ class MethodMarshallerUtils  {
      */
     static List<PDElement> getPDElements(ParameterDescription[] params, 
             Message message, 
-            Set<Package> packages, 
+            Set<String> packages, 
             boolean isInput, 
             boolean usePartName) throws MessageException, XMLStreamException {
         
@@ -292,7 +292,7 @@ class MethodMarshallerUtils  {
      * @param isRPC 
      * @throws MessageException
      */
-    static void toMessage(List<PDElement> pvList, Message message, Set<Package> packages, boolean isRPC) throws MessageException {
+    static void toMessage(List<PDElement> pvList, Message message, Set<String> packages, boolean isRPC) throws MessageException {
         
         int index = message.getNumBodyBlocks();
         for (int i=0; i<pvList.size(); i++) {
@@ -342,7 +342,7 @@ class MethodMarshallerUtils  {
             Class returnType, 
             String returnNS, 
             String returnLocalPart, 
-            Set<Package> packages, 
+            Set<String> packages, 
             Message message, 
             boolean isRPC) 
             throws MessageException {
@@ -376,7 +376,7 @@ class MethodMarshallerUtils  {
      * @throws MessageException
      * @throws XMLStreamException
      */
-    static Object getReturnValue(Set<Package> packages, Message message, Class rpcType) 
+    static Object getReturnValue(Set<String> packages, Message message, Class rpcType) 
         throws MessageException, XMLStreamException {
         
         
@@ -407,7 +407,7 @@ class MethodMarshallerUtils  {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
-    static void marshalFaultResponse(Throwable throwable, OperationDescription operationDesc,  Set<Package> packages, Message message, boolean isRPC)
+    static void marshalFaultResponse(Throwable throwable, OperationDescription operationDesc,  Set<String> packages, Message message, boolean isRPC)
      throws MessageException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         
         // Get the root cause of the throwable object
@@ -474,7 +474,7 @@ class MethodMarshallerUtils  {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    static Throwable demarshalFaultResponse(OperationDescription operationDesc, Set<Package> packages,Message message, boolean isRPC) 
+    static Throwable demarshalFaultResponse(OperationDescription operationDesc, Set<String> packages,Message message, boolean isRPC) 
         throws MessageException, ClassNotFoundException, IllegalAccessException,
                InstantiationException, XMLStreamException, InvocationTargetException, NoSuchMethodException {
         

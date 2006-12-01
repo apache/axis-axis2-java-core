@@ -83,7 +83,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<Package> packages = endpointDesc.getPackages();
+            Set<String> packages = endpointDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -137,7 +137,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //   5) We always send an xsi:type, but other vendor's may not.
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<Package> packages = endpointDesc.getPackages();
+            Set<String> packages = endpointDesc.getPackages();
             
             // Indicate that the style is RPC.  This is important so that the message understands
             // that the data blocks are underneath the operation element
@@ -183,7 +183,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<Package> packages = endpointDesc.getPackages();
+            Set<String> packages = endpointDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -251,7 +251,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //   5) We always send an xsi:type, but other vendor's may not.
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<Package> packages = endpointDesc.getPackages();
+            Set<String> packages = endpointDesc.getPackages();
             
             // Indicate that the style is RPC.  This is important so that the message understands
             // that the data blocks are underneath the operation element

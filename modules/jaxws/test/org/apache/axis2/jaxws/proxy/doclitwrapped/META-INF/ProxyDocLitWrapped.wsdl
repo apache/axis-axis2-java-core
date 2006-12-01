@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-	xmlns:tns="http://org.apache.axis2.proxy.doclitwrapped"
+	xmlns:tns="http://doclitwrapped.proxy.test.org"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="proxy"
-	targetNamespace="http://org.apache.axis2.proxy.doclitwrapped">
+	targetNamespace="http://doclitwrapped.proxy.test.org">
 
 	<wsdl:types>
 		<xsd:schema
-			targetNamespace="http://org.apache.axis2.proxy.doclitwrapped"
-			xmlns:tns="http://org.apache.axis2.proxy.doclitwrapped"
+			targetNamespace="http://doclitwrapped.proxy.test.org"
+			xmlns:tns="http://doclitwrapped.proxy.test.org"
 			xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
 			<xsd:element name="MyFault" type="xsd:string" />
@@ -207,7 +207,7 @@
 
 		<wsdl:operation name="oneWayVoid">
 			<soap:operation
-				soapAction="http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn" />
+				soapAction="http://doclitwrapped.proxy.test.org/twoWayReturn" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -215,7 +215,7 @@
 
 		<wsdl:operation name="oneWay">
 			<soap:operation
-				soapAction="http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn" />
+				soapAction="http://doclitwrapped.proxy.test.org/twoWayReturn" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -223,7 +223,7 @@
 
 		<wsdl:operation name="twoWayHolder">
 			<soap:operation
-				soapAction="http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn" />
+				soapAction="http://doclitwrapped.proxy.test.org/twoWayReturn" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -235,7 +235,7 @@
 
 		<wsdl:operation name="twoWay">
 			<soap:operation
-				soapAction="http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn" />
+				soapAction="http://doclitwrapped.proxy.test.org/twoWayReturn" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -247,7 +247,7 @@
 		
 		<wsdl:operation name="invoke">
 			<soap:operation
-				soapAction="http://org.apache.axis2.proxy.doclitwrapped/twoWayReturn" />
+				soapAction="http://doclitwrapped.proxy.test.org/twoWayReturn" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -259,7 +259,7 @@
 		
 		<wsdl:operation name="finOp">
 			<soap:operation
-				soapAction="http://org.apache.axis2.proxy.doclitwrapped/finOp" />
+				soapAction="http://doclitwrapped.proxy.test.org/finOp" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>

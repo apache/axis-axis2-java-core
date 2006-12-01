@@ -837,7 +837,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return m;
 	}
 	
-	protected Object createBOFromHeaderBlock(Set<Package> contextPackages, Message message, String targetNamespace, String localPart) throws JAXBException, MessageException, XMLStreamException{
+	protected Object createBOFromHeaderBlock(Set<String> contextPackages, Message message, String targetNamespace, String localPart) throws JAXBException, MessageException, XMLStreamException{
 		
 		JAXBBlockContext blockContext = createJAXBBlockContext(contextPackages);
 		
@@ -848,12 +848,12 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         return block.getBusinessObject(true);
 	}
 	
-	protected Object createBOFromBodyBlock(Set<Package> contextPackages, Message message) throws JAXBException, MessageException, XMLStreamException{
+	protected Object createBOFromBodyBlock(Set<String> contextPackages, Message message) throws JAXBException, MessageException, XMLStreamException{
 		return createBusinessObject(contextPackages, message);
 	}
 
 	
-	protected Object createBusinessObject(Set<Package> contextPackages, Message message) throws JAXBException, MessageException, XMLStreamException{
+	protected Object createBusinessObject(Set<String> contextPackages, Message message) throws JAXBException, MessageException, XMLStreamException{
 		JAXBBlockContext blockContext = createJAXBBlockContext(contextPackages);
 		
 		// Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
@@ -864,7 +864,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         return block.getBusinessObject(true);
 	}
 	
-	private JAXBBlockContext createJAXBBlockContext(Set<Package> contextPackages) throws JAXBException, MessageException {
+	private JAXBBlockContext createJAXBBlockContext(Set<String> contextPackages) throws JAXBException, MessageException {
 		JAXBBlockContext blockContext = new JAXBBlockContext(contextPackages);
 		return blockContext;
 	}
@@ -916,7 +916,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
      * @param cls
      * @return
      */
-    protected Set<Package> createContextPackageSet() {
+    protected Set<String> createContextPackageSet() {
          return operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getPackages();
     }
 	

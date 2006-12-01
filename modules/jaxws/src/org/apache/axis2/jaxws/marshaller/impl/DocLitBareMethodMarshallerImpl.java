@@ -135,10 +135,10 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 	        Object bo = null;
             // Create a set of context packages that will be needed to demarshal
             // the jaxb object.  For now just consider the actualType
-            Set<Package> contextPackages = createContextPackageSet();
+            Set<String> contextPackages = createContextPackageSet();
             
             // Create the business object
-	        if(isHeader){
+            if(isHeader){
 	            bo = createBOFromHeaderBlock(contextPackages, message, paramTNS, paramName);
 	        }
 	        else{
