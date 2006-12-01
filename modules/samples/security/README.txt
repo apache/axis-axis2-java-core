@@ -9,5 +9,3 @@ This directory contains three sub directories:
 
     - policy - A set of samples that uses rampart with WS-SecurityPolicy
 
-    - rahas - A set of samples demonstrating WS-Trust features provided by Rahas
-

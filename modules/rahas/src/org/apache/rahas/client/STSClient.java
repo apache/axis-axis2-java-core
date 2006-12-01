@@ -87,6 +87,8 @@ public class STSClient {
     private String addressingNs = AddressingConstants.Final.WSA_NAMESPACE;
 
     private int keySize;
+    
+    private String soapVersion = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 
     /**
      * Life time in seconds
@@ -117,8 +119,7 @@ public class STSClient {
             ServiceClient client = getServiceClient(rstQn, issuerAddress);
             
             client.getOptions().setProperty(RAMPART_POLICY, issuerPolicy);
-            client.getOptions().setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI); 
-            //TODO : Get the soap version from config 
+            client.getOptions().setSoapVersionURI(this.soapVersion); 
 
             //Process the STS and service policy policy
             this.processPolicy(issuerPolicy, servicePolicy);
@@ -146,8 +147,6 @@ public class STSClient {
                                String action) throws TrustException {
         try {
             QName rstQn = new QName("cancelSecurityToken");
-            String requestType =
-                    TrustUtil.getWSTNamespace(version) + RahasConstants.REQ_TYPE_CANCEL;
             ServiceClient client = getServiceClient(rstQn, issuerAddress);
             if(action != null) {
                 client.getOptions().setAction(action);
@@ -610,6 +609,10 @@ public class STSClient {
      */
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public void setSoapVersion(String soapVersion) {
+        this.soapVersion = soapVersion;
     }
 
 }
