@@ -117,7 +117,7 @@ public class JAXBUtils {
                     //          performant
                     //          most dynamic
                     //    Cons: Each package in context path must have an ObjectFactory
-                    //          Problems with RPC types
+                    //        
                     //
                     // USE CLASS[]:
                     //    Pros: Doesn't require ObjectFactory in each package
@@ -129,13 +129,17 @@ public class JAXBUtils {
                     //  choose one of the two constructions above (prefer USE A CONTEXT_PATH)
                     //
                     
-                    // REVIEW: DISABLE UNTIL ARRAY PROBLEMS WITH RPC ARE DIAGNOSED
-                    //context = createJAXBContextUsingContextPath(contextPackages);
+                    if (log.isDebugEnabled()) {
+                        log.debug("First try to create JAXBContext with contextPath");
+                    }
+                    if (useJAXBContextWithContextPath(contextPackages)) {   
+                        context = createJAXBContextUsingContextPath(contextPackages);
+                    }
                     
                     if (context == null) {
                         // Unsuccessful, USE CLASS[]
                         if (log.isDebugEnabled()) {
-                            log.debug("Attempting to create JAXBContext with Class[]");
+                            log.debug("Unsuccessful.. Now attempting to create JAXBContext with Class[]");
                         }
                         Iterator<String> it = contextPackages.iterator();
                         List<Class> fullList = new ArrayList<Class>();
@@ -145,9 +149,9 @@ public class JAXBUtils {
                     	}
                     	Class[] classArray = fullList.toArray(new Class[0]);
                         context = JAXBContext.newInstance(classArray);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Successfully created JAXBContext with Class[] = " + context.toString());
-                        }
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("Successfully created JAXBContext " + context.toString());
                     }
                     map.put(contextPackages, context);	
                 }catch(ClassNotFoundException e){
@@ -293,12 +297,45 @@ public class JAXBUtils {
         imap.put(context, introspector);
 	}
     
+    private static boolean useJAXBContextWithContextPath(Set<String> packages) {
+        // Do we want to use the current class loader, or get it from a loaded class ?
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        
+        // Each package must have 
+        Iterator<String> it = packages.iterator();
+        while(it.hasNext()) {
+            String p = it.next();
+            if (p.startsWith("java.") ||
+                    p.startsWith("javax.")) {
+                   ; // Assume that these packages don't need an object factory
+            } else {
+                try {
+                    Class cls = Class.forName(p + ".ObjectFactory",false, cl);
+                    if (cl == null) {
+                        return false;
+                    }
+                    // REVIEW: Do we need to check for .package-info
+                    //cls = Class.forName(p + ".package-info",false, cl);
+                    //if (cl == null) {
+                    //    return false;
+                    //}
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(e);
+                    }
+                    return false;
+                }
+                
+            }
+        }
+        return true;
+    }
     /**
      * Create a JAXBContext using the contextpath approach
      * @param packages
      * @return JAXBContext or null if unsuccessful
      */
-    private static JAXBContext createJAXBContextUsingContextPath(Set<Package> packages) {
+    private static JAXBContext createJAXBContextUsingContextPath(Set<String> packages) {
         JAXBContext context = null;
         String contextpath = "";
         
@@ -307,26 +344,17 @@ public class JAXBUtils {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         
         // Iterate through the classes and build the contextpath
-        Iterator<Package> it = packages.iterator();
+        Iterator<String> it = packages.iterator();
         while(it.hasNext()) {
-            Package p = it.next();
-            if (p.getName().startsWith("java.") ||
-                p.getName().startsWith("javax.")) {
+            String p = it.next();
+            if (p.startsWith("java.") ||
+                p.startsWith("javax.")) {
                ; // Assume that these packages don't have an object factory
             } else {
-                // REVIEW 
-                // There are two paths here.
-                // A) We could blindly add this package to the contextpath
-                //    The JAXBContext construction will fail if the ObjectFactory is 
-                //    not found
-                // B) We can look for an ObjectFactory in the package and only
-                //    add the package if the ObjectFactory is found
-                // I am choosing (A) because choosing (B) may delay an exception 
-                // until we are marshalling/unmarshalling an object.  
                 if (contextpath.length() != 0) {
                     contextpath +=":";
                 }
-                contextpath += p.getName();
+                contextpath += p;
             }
         }
         try {
@@ -356,6 +384,9 @@ public class JAXBUtils {
         if (pkg == null) {
             return new ArrayList<Class>();
         }   
+        
+        // TODO This code does not work if the classes are in a jar !
+        
         // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
         String pckgname = pkg;
         ArrayList<File> directories = new ArrayList<File>();
@@ -421,10 +452,10 @@ public class JAXBUtils {
                                 
                                 // The arrayName and loadable name are different.  Get the loadable
                                 // name, load the array class, and add it to our list
-                                className += "[]";
-                                String loadableName = ClassUtils.getLoadableClassName(className);
+                                //className += "[]";
+                                //String loadableName = ClassUtils.getLoadableClassName(className);
                                 
-                                Class aClazz = Class.forName(loadableName, false, Thread.currentThread().getContextClassLoader());
+                                //Class aClazz = Class.forName(loadableName, false, Thread.currentThread().getContextClassLoader());
                             }
                         } catch (Exception e) {
                             if (log.isDebugEnabled()) {
@@ -440,7 +471,7 @@ public class JAXBUtils {
                 // REVIEW Load and add the common array classes
                 // Support of RPC list (and possibly other scenarios) requires that the array classes should also be present.
                 // This is a hack until we can determine how to get this information.
-                addCommonArrayClasses(classes);
+                //addCommonArrayClasses(classes);
             }
         }
         return classes;
@@ -485,5 +516,7 @@ public class JAXBUtils {
             }
         }
     }
+    
+    
     
 }
