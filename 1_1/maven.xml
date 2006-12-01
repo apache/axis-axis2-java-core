@@ -1024,7 +1024,7 @@
     <!-- ================================================================ -->
     <!--- Create Apache Rampart Release Artifacts                         -->
     <!-- ================================================================ -->
-    <goal name="rampart-release" prereqs="jar">
+    <goal name="rampart-release">
 
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Rampart Release</ant:echo>
@@ -1062,9 +1062,6 @@
         </ant:copy>
 
         <ant:copy toDir="${libdir}">
-            <ant:fileset file="modules/security/target/axis2-security-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/rahas/target/axis2-rahas-${pom.currentVersion}.jar"/>
-            <ant:fileset file="modules/secpolicy/target/axis2-secpolicy-${pom.currentVersion}.jar"/>
             <ant:fileset file="${maven.repo.local}/wss4j/jars/wss4j-${wss4j.version}.jar"/>
             <ant:fileset file="${maven.repo.local}/xml-security/jars/xmlsec-${xmlsec.version}.jar"/>
             <ant:fileset file="${maven.repo.local}/opensaml/jars/opensaml-${opensaml.version}.jar"/>
@@ -1085,11 +1082,13 @@
 
         </ant:copy>
     
-    		<!-- copy axis2-security.jar and axis2-rahas.jar -->
+    		<!-- copy axis2-security.jar, axis2-secpolicy.jar and axis2-rahas.jar -->
         <copy file="modules/security/target/axis2-security-${axis2_version}.jar"
             tofile="${libdir}/axis2-security-${rampart_version}.jar" overwrite="true"/>
         <copy file="modules/rahas/target/axis2-rahas-${axis2_version}.jar"
             tofile="${libdir}/axis2-rahas-${rahas_version}.jar" overwrite="true"/>
+        <copy file="modules/secpolicy/target/axis2-secpolicy-${axis2_version}.jar"
+            tofile="${libdir}/axis2-secpolicy-${secpolicy_version}.jar" overwrite="true"/>
 
         <ant:copy toDir="${samplesdir}">
             <ant:fileset dir="modules/samples/security/"/>
