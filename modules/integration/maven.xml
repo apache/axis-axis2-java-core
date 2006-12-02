@@ -220,6 +220,9 @@
             <copy file="../addressing/target/addressing-${addressing_version}.mar"
                   tofile="target/test-resources/rampart_service_repo/modules/addressing-${addressing_version}.mar"/>
 
+		    <ant:path id="ramp.interop.test.classes" location="../security/target/interop/classes"/>
+            <maven:addPath id="maven.dependency.classpath" refid="ramp.interop.test.classes"/>
+        	
 		    <!-- Service 1 -->
 			<copy overwrite="yes" file="test-resources/rampart/services-1.xml"
                   tofile="target/temp-ramp/META-INF/services.xml"/>
