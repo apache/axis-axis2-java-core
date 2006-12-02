@@ -90,11 +90,14 @@ public class GorillaDLWProxyTests extends TestCase {
     public void testEchoString() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
+            
+            // Straight Forward Test
             String request = "Hello World";
            
             String response = proxy.echoString(request);
             assertTrue(response != null);
             assert(response.equals(request));
+            
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -115,5 +118,129 @@ public class GorillaDLWProxyTests extends TestCase {
             e.printStackTrace(); 
             fail("Exception received" + e);
         }
+    }
+    
+    /**
+     * Testing of StringList (xsd:list of string)
+     */
+    public void testEchoStringList() throws Exception {
+        try{ 
+            GorillaInterface proxy = getProxy();
+            
+            // Test sending Hello World
+            List<String> request1 = new ArrayList<String>();
+            request1.add("Hello");
+            request1.add("World");
+            List<String> response1 = proxy.echoStringList(request1);
+            assertTrue(response1 != null);
+            assertTrue(compareLists(request1, response1));
+            
+            // Test with empty list
+            List<String> request2 = new ArrayList<String>();
+            List<String> response2 = proxy.echoStringList(request2);
+            assertTrue(response2 != null);
+            assertTrue(compareLists(request2, response2));
+            
+            // Test with null
+            // Note that the response will be an empty array because
+            // the JAXB bean will never represent List<String> as a null.  This is expected.
+            List<String> request3 = null;
+            List<String> response3 = proxy.echoStringList(request3);
+            assertTrue(response3 != null && response3.size() == 0);
+            
+            // Test sending Hello null World
+            // Note that the null is purged by JAXB.  This is expected.
+            List<String> request4 = new ArrayList<String>();
+            request4.add("Hello");
+            request4.add(null);
+            request4.add("World");
+            List<String> response4 = proxy.echoStringList(request4);
+            assertTrue(response4!= null);
+            assertTrue(compareLists(request1, response4));  // Response 4 should be the same as Request 1
+            
+            // Test sending "Hello World"
+            // Note that the Hello World is divided into two items.
+            // This is due to the xsd:list serialization. This is expected.
+            List<String> request5 = new ArrayList<String>();
+            request5.add("Hello World");
+            List<String> response5 = proxy.echoStringList(request5);
+            assertTrue(response5!= null);
+            assertTrue(compareLists(request1, response5)); // Response 5 should be the same as Request 1
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
+    
+    /**
+     * Test of String Array (string maxOccurs=unbounded)
+     * @throws Exception
+     */
+    public void testEchoStringArray() throws Exception {
+        try{ 
+            GorillaInterface proxy = getProxy();
+            
+            // Test sending Hello World
+            List<String> request1 = new ArrayList<String>();
+            request1.add("Hello");
+            request1.add("World");
+            List<String> response1 = proxy.echoStringArray(request1);
+            assertTrue(response1 != null);
+            assertTrue(compareLists(request1, response1));
+            
+            // Test with empty list
+            List<String> request2 = new ArrayList<String>();
+            List<String> response2 = proxy.echoStringList(request2);
+            assertTrue(response2 != null);
+            assertTrue(compareLists(request2, response2));
+            
+            // Test with null
+            // Note that the response will be an empty array because
+            // the JAXB bean will never represent List<String> as a null.  This is expected.
+            List<String> request3 = null;
+            List<String> response3 = proxy.echoStringArray(request3);
+            assertTrue(response3 != null && response3.size() == 0);
+            
+            // Test sending Hello null World
+            // Note that the null is preserved and the request and response
+            // are the same..note that this is different than the xsd:list processing (see testStringList above)
+            // This is expected.
+            List<String> request4 = new ArrayList<String>();
+            request4.add("Hello");
+            request4.add(null);
+            request4.add("World");
+            List<String> response4 = proxy.echoStringArray(request4);
+            assertTrue(response4!= null);
+            assertTrue(compareLists(request4, response4));  // Response 4 should be the same as Request 1
+            
+            // Test sending "Hello World"
+            // Note that the Hello World remains one item.
+            List<String> request5 = new ArrayList<String>();
+            request5.add("Hello World");
+            List<String> response5 = proxy.echoStringArray(request5);
+            assertTrue(response5!= null);
+            assertTrue(compareLists(request5, response5)); // Response 5 should be the same as Request 1
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
+    
+    private boolean compareLists(List in, List out) {
+        if (in.size() != out.size()) {
+            System.out.println("Size mismatch " + in.size() + "!=" + out.size());
+            return false;
+        }
+        for (int i=0; i<in.size(); i++) {
+            Object inItem = in.get(i);
+            Object outItem = out.get(i);
+            if (inItem != null && !inItem.equals(outItem) ||
+                (inItem == null && inItem != outItem)) {
+                System.out.println("Item " + i + " mismatch " + inItem + "!=" + outItem);
+                return false;
+            }
+                
+        }
+        return true;
     }
 }
