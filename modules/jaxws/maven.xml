@@ -85,6 +85,13 @@
 			<classpath location="${compiled.classes.dir}"/>
 			<arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl"/>
 		</java>
+		<ant:echo>Generating java from gorilla_dlw.wsdl</ant:echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+			<jvmarg line="${maven.junit.jvmargs}"/>
+			<classpath refid="maven.dependency.classpath"/>
+			<classpath location="${compiled.classes.dir}"/>
+			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/gorilla_dlw.wsdl"/>
+		</java>
     	<ant:echo>Generating java from AddNumbers.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
     	    <jvmarg line="${maven.junit.jvmargs}"/>
@@ -317,6 +324,17 @@
 						<ant:include name="org/apache/axis2/jaxws/proxy/rpclit/**"/>
 					</ant:fileset>
 					<ant:fileset dir="test/org/apache/axis2/jaxws/proxy/rpclit">
+		                <ant:include name="META-INF/**"/>
+					</ant:fileset>
+					<ant:fileset dir="target/classes">
+		                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+					</ant:fileset>
+		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/gorilla_dlw/">
+					<ant:fileset dir="target/test-classes">
+						<ant:include name="org/apache/axis2/jaxws/proxy/gorilla_dlw/**"/>
+					</ant:fileset>
+					<ant:fileset dir="test/org/apache/axis2/jaxws/proxy/gorilla_dlw">
 		                <ant:include name="META-INF/**"/>
 					</ant:fileset>
 					<ant:fileset dir="target/classes">

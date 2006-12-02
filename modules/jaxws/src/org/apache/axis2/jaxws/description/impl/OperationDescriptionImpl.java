@@ -1170,7 +1170,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
            if(Response.class == returnType){
                Type type = seiMethod.getGenericReturnType();
                ParameterizedType pType = (ParameterizedType) type;
-               Type aType = (Class) pType.getActualTypeArguments()[0];
+               Type aType = pType.getActualTypeArguments()[0];
                if (aType != null && ParameterizedType.class.isInstance(aType)) {
                    return (Class) ((ParameterizedType) aType).getRawType();
                }
@@ -1184,7 +1184,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                for(Class param:parameters){
                    if(AsyncHandler.class.isAssignableFrom(param)){
                        ParameterizedType pType = (ParameterizedType)type[i];
-                       Type aType = (Class) pType.getActualTypeArguments()[0];
+                       Type aType = pType.getActualTypeArguments()[0];
                        if (aType != null && ParameterizedType.class.isInstance(aType)) {
                            return (Class) ((ParameterizedType) aType).getRawType();
                        }

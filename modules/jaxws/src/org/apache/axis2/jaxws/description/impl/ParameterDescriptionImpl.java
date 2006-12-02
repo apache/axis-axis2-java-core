@@ -125,7 +125,7 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
             // OperationDesc.getResultActualType
             
             // For types of Holder<T>, return the class associated with T
-            Type type = (Class) parameterGenericType.getActualTypeArguments()[0];
+            Type type = parameterGenericType.getActualTypeArguments()[0];
             if (type != null && ParameterizedType.class.isInstance(type)) {
                 return (Class) ((ParameterizedType) type).getRawType();
             }
