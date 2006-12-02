@@ -71,7 +71,6 @@ public abstract class BindingBuilder {
     
     /**
      * @param rmd
-     * @param doc
      */
     protected void addTimestamp(RampartMessageData rmd) {
         log.debug("Adding timestamp");
@@ -97,8 +96,6 @@ public abstract class BindingBuilder {
     /**
      * Add a UsernameToken to the security header
      * @param rmd
-     * @param rpd
-     * @param doc
      * @return The <code>WSSecUsernameToken</code> instance
      * @throws RampartException
      */
@@ -381,7 +378,7 @@ public abstract class BindingBuilder {
         return endSuppTokMap;
     }
     /**
-     * @param sigSuppTokMap
+     * @param tokenMap
      * @param sigParts
      * @throws RampartException
      */
@@ -537,8 +534,7 @@ public abstract class BindingBuilder {
      * Get hold of the token from the token storage
      * @param rmd
      * @param tokenId
-     * @param tok
-     * @return
+     * @return token from the token storage
      * @throws RampartException
      */
     protected org.apache.rahas.Token getToken(RampartMessageData rmd, 
