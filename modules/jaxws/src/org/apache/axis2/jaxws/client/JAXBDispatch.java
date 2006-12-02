@@ -17,7 +17,10 @@
 package org.apache.axis2.jaxws.client;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service.Mode;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -25,8 +28,10 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
+import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
@@ -65,15 +70,25 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             } else {
                 context = new JAXBBlockContext(clazz.getPackage().getName());
             }
+            // Create a block from the value
             Block block = factory.createFrom(value, context, null);
-            
-            // The protocol of the Message that is created should be based
-            // on the binding information available.
-            Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
-            
             MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
-            message = mf.create(proto);
-            message.setBodyBlock(0, block);
+            
+            if (mode.equals(Mode.PAYLOAD)) {
+                // Normal case
+                
+                // The protocol of the Message that is created should be based
+                // on the binding information available.
+                Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
+                message = mf.create(proto);
+                message.setBodyBlock(0, block);
+            } else {
+                // Message mode..rare case
+                
+                // Create Message from block
+                message = mf.createFrom(block, null);
+            }
+            
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -84,10 +99,28 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
     public Object getValueFromMessage(Message message) {
         Object value = null;
         try {
-            JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
-            Block block = message.getBodyBlock(0, context, factory);
-            value = block.getBusinessObject(true);
+            if (mode.equals(Mode.PAYLOAD)) {
+                // Normal Case
+                JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
+                JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
+                Block block = message.getBodyBlock(0, context, factory);
+                value = block.getBusinessObject(true);
+            } else {
+                // This is a very strange case, the user would need
+                // to have a JAXB object that represents the message (i.e. SOAPEnvelope)
+                
+                // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock.  
+                // This is not performant. Scheu 
+                OMElement messageOM = message.getAsOMElement();
+                String stringValue = messageOM.toString();  
+                QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
+                
+                XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+                Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
+                BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
+                Block block = factory.createFrom(stringBlock, null);
+                value = block.getBusinessObject(true);   
+            }
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
