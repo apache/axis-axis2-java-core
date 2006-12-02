@@ -35,6 +35,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
@@ -160,12 +161,14 @@ public class HTTPTransportUtils {
     private static final int VERSION_SOAP11 = 1;
     private static final int VERSION_SOAP12 = 2;
 
-    public static void processHTTPPostRequest(MessageContext msgContext, InputStream in,
+    public static InvocationResponse processHTTPPostRequest(MessageContext msgContext, InputStream in,
                                               OutputStream out, String contentType, String soapActionHeader, String requestURI)
             throws AxisFault {
 
         int soapVersion = VERSION_UNKNOWN;
 
+        InvocationResponse pi = InvocationResponse.CONTINUE;
+        
         try {
 
             Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
@@ -321,10 +324,12 @@ public class HTTPTransportUtils {
             AxisEngine engine = new AxisEngine(msgContext.getConfigurationContext());
 
             if (envelope.getBody().hasFault()) {
-                engine.receiveFault(msgContext);
+                pi = engine.receiveFault(msgContext);
             } else {
-                engine.receive(msgContext);
+                pi = engine.receive(msgContext);
             }
+            
+            return pi;
         } catch (SOAPProcessingException e) {
             throw new AxisFault(e);
         } catch (AxisFault e) {

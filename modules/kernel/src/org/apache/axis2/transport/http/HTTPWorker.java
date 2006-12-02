@@ -16,6 +16,9 @@
 
 package org.apache.axis2.transport.http;
 
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -23,6 +26,8 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.Handler.InvocationResponse;
+import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.OutputBuffer;
 import org.apache.axis2.transport.http.server.Worker;
@@ -221,13 +226,15 @@ public class HTTPWorker implements Worker {
             OutputBuffer outbuffer = new OutputBuffer();
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer);
             msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
+            msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
+                                   new SimpleHTTPRequestResponseTransport());
 
             HttpEntity inentity = ((HttpEntityEnclosingRequest) request).getEntity();
             String contenttype = null;
             if (inentity.getContentType() != null) {
                 contenttype = inentity.getContentType().getValue();
             }
-            HTTPTransportUtils.processHTTPPostRequest(
+            InvocationResponse pi = HTTPTransportUtils.processHTTPPostRequest(
                     msgContext,
                     inentity.getContent(),
                     outbuffer.getOutputStream(),
@@ -235,6 +242,18 @@ public class HTTPWorker implements Worker {
                     soapAction,
                     uri);
 
+            if (pi.equals(InvocationResponse.SUSPEND))
+            {
+              try
+              {
+                ((RequestResponseTransport)msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)).awaitResponse();
+              }
+              catch (InterruptedException e)
+              {
+                throw new IOException("We were interrupted, so this may not function correctly:"+ e.getMessage());
+              }
+            }
+            
             outbuffer.setChunked(chunked);
             response.setEntity(outbuffer);
 
@@ -263,4 +282,25 @@ public class HTTPWorker implements Worker {
         }
     }
 
+    class SimpleHTTPRequestResponseTransport implements RequestResponseTransport
+    {
+      private CountDownLatch responseReadySignal = new CountDownLatch(1);
+      
+      public void acknowledgeMessage(MessageContext msgContext) throws AxisFault
+      {
+        //TODO: Once the core HTTP API allows us to return an ack before unwinding, then the should be fixed
+        signalResponseReady();
+      }
+      
+      public void awaitResponse()
+      throws InterruptedException
+      {
+        responseReadySignal.await();
+      }
+      
+      public void signalResponseReady()
+      {
+        responseReadySignal.countDown();
+      }
+    }
 }

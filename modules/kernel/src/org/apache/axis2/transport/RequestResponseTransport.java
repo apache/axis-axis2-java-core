@@ -35,8 +35,29 @@ public interface RequestResponseTransport
   public static final String TRANSPORT_CONTROL
     = "RequestResponseTransportControl";
 
+  /**
+   * Notify the transport that a message should be acknowledged at this time.
+   * 
+   * @param msgContext
+   * @throws AxisFault
+   */
   public void acknowledgeMessage(MessageContext msgContext) throws AxisFault;
   
-  //public void suspendOnReturn(MessageContext msgContext);
-  //public void processResponse(MessageContext msgContext);
+  /**
+   * Pause execution and wait for a response message to be ready.  This will
+   * typically be called by the transport after a message has been paused and
+   * will cause the transport to block until a response message is ready to be
+   * returned.  This is required to enable RM for in-out MEPs over a
+   * request/response transport; without it the message would be paused and the
+   * transport would simply ack the request.
+   *  
+   * @throws InterruptedException
+   */
+  public void awaitResponse() throws InterruptedException;
+  
+  /**
+   * Signal that a response has be created and is ready for transmission.  This
+   * should release anyone who is blocked on a awaitResponse().
+   */
+  public void signalResponseReady();
 }

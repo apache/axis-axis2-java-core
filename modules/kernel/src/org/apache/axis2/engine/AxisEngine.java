@@ -143,7 +143,7 @@ public class AxisEngine {
      * @see Phase
      * @see Handler
      */
-    public void receive(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse receive(MessageContext msgContext) throws AxisFault {
         if(log.isTraceEnabled()){
             log.trace("receive:"+msgContext.getMessageID());
         }
@@ -174,12 +174,12 @@ public class AxisEngine {
           }
           else if (pi.equals(InvocationResponse.SUSPEND))
           {
-            return;
+            return pi;
           }
           else if (pi.equals(InvocationResponse.ABORT))
           {
             flowComplete(msgContext, true);
-            return;
+            return pi;
           }
           else
           {
@@ -193,6 +193,8 @@ public class AxisEngine {
           flowComplete(msgContext, true);
           throw e;
         }
+        
+        return InvocationResponse.CONTINUE;
     }
 
     /**
@@ -378,7 +380,7 @@ public class AxisEngine {
      * @param msgContext
      * @throws AxisFault
      */
-    public void receiveFault(MessageContext msgContext) throws AxisFault {
+    public InvocationResponse receiveFault(MessageContext msgContext) throws AxisFault {
     	log.debug(Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
@@ -409,12 +411,12 @@ public class AxisEngine {
           }
           else if (pi.equals(InvocationResponse.SUSPEND))
           {
-            return;
+            return pi;
           }
           else if (pi.equals(InvocationResponse.ABORT))
           {
             flowComplete(msgContext, true);
-            return;
+            return pi;
           }
           else
           {
@@ -428,6 +430,8 @@ public class AxisEngine {
           flowComplete(msgContext, true);
           throw e;
         }
+        
+        return InvocationResponse.CONTINUE;
     }
 
     /**

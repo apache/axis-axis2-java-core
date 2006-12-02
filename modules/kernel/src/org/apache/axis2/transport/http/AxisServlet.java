@@ -17,6 +17,8 @@
 
 package org.apache.axis2.transport.http;
 
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -32,6 +34,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
@@ -249,10 +252,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             try {
                 // adding ServletContext into msgContext;
                 out = res.getOutputStream();
-                HTTPTransportUtils.processHTTPPostRequest(msgContext, req.getInputStream(), out,
+                InvocationResponse pi = HTTPTransportUtils.processHTTPPostRequest(msgContext, req.getInputStream(), out,
                         req.getContentType(), req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                         req.getRequestURL().toString());
 
+                if (pi.equals(InvocationResponse.SUSPEND))
+                {
+                  ((RequestResponseTransport)msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)).awaitResponse();
+                }
+                
                 Object contextWritten =
                         msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
@@ -547,6 +555,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     class ServletRequestResponseTransport implements RequestResponseTransport
     {
       private HttpServletResponse response;
+      private CountDownLatch responseReadySignal = new CountDownLatch(1);
       
       ServletRequestResponseTransport(HttpServletResponse response)
       {
@@ -555,6 +564,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
       
       public void acknowledgeMessage(MessageContext msgContext) throws AxisFault
       {
+        log.debug("Acking one-way request");
         response.setContentType("text/xml; charset="
                                 + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
         
@@ -567,6 +577,21 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         {
           throw new AxisFault("Error sending acknowledgement", e);
         }
+        
+        signalResponseReady();
+      }
+      
+      public void awaitResponse()
+      throws InterruptedException
+      {
+        log.debug("Blocking servlet thread -- awaiting response");
+        responseReadySignal.await();
+      }
+      
+      public void signalResponseReady()
+      {
+        log.debug("Signalling response available");
+        responseReadySignal.countDown();
       }
     }
 }
