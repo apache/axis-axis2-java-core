@@ -254,7 +254,8 @@ public class RampartMessageData {
                 MessageContext inMsgCtx;
                 if (opCtx != null
                         && (inMsgCtx = opCtx
-                                .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
+                                .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null
+                                && msgContext.getProperty(WSHandlerConstants.RECV_RESULTS) == null) {
                     msgContext.setProperty(WSHandlerConstants.RECV_RESULTS, 
                             inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
                     
