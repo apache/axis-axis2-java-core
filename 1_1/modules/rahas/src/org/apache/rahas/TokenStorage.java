@@ -41,7 +41,7 @@ public interface TokenStorage {
     
     /**
      * Return the list of all token identifiers.
-     * @return
+     * @return As array of token identifiers
      * @throws TrustException
      */
     String[] getTokenIdentifiers() throws TrustException;

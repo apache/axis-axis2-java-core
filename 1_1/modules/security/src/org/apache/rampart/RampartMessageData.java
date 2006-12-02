@@ -566,7 +566,7 @@ public class RampartMessageData {
     
     /**
      * @param msgCtx
-     * @return
+     * @return The key to store/pickup policy of an operation
      */
     public static String getOperationPolicyKey(MessageContext msgCtx) {
         if(msgCtx.getAxisOperation() != null) {
