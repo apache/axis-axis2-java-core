@@ -114,7 +114,7 @@ public class InflowConfiguration {
     
     /**
      * Sets the decryption property ref key.
-     * @param decryptionPropFile
+     * @param decryptionPropRefKey
      */
     public void setDecryptionPropRefKey(String decryptionPropRefKey) {
         this.action.put(WSHandlerConstants.DEC_PROP_REF_ID,decryptionPropRefKey);
@@ -154,7 +154,7 @@ public class InflowConfiguration {
     
     /**
      * Sets the signature property ref key.
-     * @param signaturePropFile
+     * @param signaturePropRefId
      */
     public void setSignaturePropRefId(String signaturePropRefId) {
         this.action.put(WSHandlerConstants.SIG_PROP_REF_ID, signaturePropRefId);

@@ -43,7 +43,7 @@ public class Util {
      * <code>Crypto</code> instance of the configuration.
      *
      * @param config
-     * @return
+     * @return The crypto instance of this configuration
      * @throws RahasException
      */
     public static Crypto getCryptoInstace(ConversationConfiguration config)

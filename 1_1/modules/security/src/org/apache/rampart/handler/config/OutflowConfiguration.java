@@ -496,7 +496,7 @@ public class OutflowConfiguration {
 
     /**
      * Enable/Disable PrecisionInMilliseconds
-     * @param encPropFile
+     * @param value
      */
     public void setPrecisionInMilliseconds(boolean value) {
         this.actionList[this.currentAction].put(

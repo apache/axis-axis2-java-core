@@ -39,6 +39,9 @@ import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 
+/**
+ * @deprecated
+ */
 public class STSRequester {
     
     

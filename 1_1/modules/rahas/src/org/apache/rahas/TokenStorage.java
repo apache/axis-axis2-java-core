@@ -50,28 +50,28 @@ public interface TokenStorage {
      * Return the list of <code>EXPIRED</code> tokens.
      * If there are no <code>EXPIRED</code> tokens <code>null</code> will be 
      * returned
-     * @return
+     * @return An array of expired <code>Tokens</code>
      * @throws TrustException
      */
     Token[] getExpiredTokens() throws TrustException;
     
     /**
      * Return the list of ISSUED and RENEWED tokens.
-     * @return
+     * @return An array of ISSUED and RENEWED <code>Tokens</code>.
      * @throws TrustException
      */
     Token[] getValidTokens() throws TrustException;
     
     /**
      * Return the list of RENEWED tokens.
-     * @return
+     * @return An array of RENEWED <code>Tokens</code>
      * @throws TrustException
      */
     Token[] getRenewedTokens() throws TrustException;
     
     /**
      * Return the list of CANCELLED tokens
-     * @return
+     * @return An array of CANCELLED <code>Tokens</code>
      * @throws TrustException
      */
     Token[] getCancelledTokens() throws TrustException;
@@ -79,7 +79,7 @@ public interface TokenStorage {
     /**
      * Returns the <code>Token</code> of the given id
      * @param id
-     * @return
+     * @return The requested <code>Token</code> identified by the give id
      * @throws TrustException
      */
     Token getToken(String id) throws TrustException;

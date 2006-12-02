@@ -436,7 +436,7 @@ public class RampartPolicyData {
     }
 
     /**
-     * @param signedEndorsingSupportingToken The signedEndorsingSupportingToken to set.
+     * @param signedEndorsingSupportingTokens The signedEndorsingSupportingToken to set.
      */
     public void setSignedEndorsingSupportingTokens(
             SupportingToken signedEndorsingSupportingTokens) {
@@ -451,7 +451,7 @@ public class RampartPolicyData {
     }
 
     /**
-     * @param signedSupportingToken The signedSupportingToken to set.
+     * @param signedSupportingTokens The signedSupportingToken to set.
      */
     public void setSignedSupportingTokens(SupportingToken signedSupportingTokens) {
         this.signedSupportingTokens = signedSupportingTokens;
@@ -465,7 +465,7 @@ public class RampartPolicyData {
     }
 
     /**
-     * @param endorsingSupportingToken The endorsingSupportingToken to set.
+     * @param endorsingSupportingTokens The endorsingSupportingToken to set.
      */
     public void setEndorsingSupportingTokens(SupportingToken endorsingSupportingTokens) {
         this.endorsingSupportingTokens = endorsingSupportingTokens;

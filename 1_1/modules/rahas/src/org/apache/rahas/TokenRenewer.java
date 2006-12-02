@@ -25,7 +25,7 @@ public interface TokenRenewer {
      * 
      * @param data
      *            A populated <code>RahasData</code> instance
-     * @return
+     * @return Response SOAPEnveloper
      * @throws TrustException
      */
     public SOAPEnvelope renew(RahasData data) throws TrustException;
