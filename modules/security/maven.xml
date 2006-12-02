@@ -211,12 +211,14 @@
         <copy toDir="target/classes/META-INF/services" overwrite="yes">
             <fileset dir="src/META-INF/services" />
         </copy>
-		<delete includeEmptyDirs="true">
-			<fileset dir="target/classes/org/xmlsoap/"/>
-			<fileset dir="target/classes/org/oasis_open/"/>
-			<fileset dir="target/classes/org/w3/"/>
-			<fileset file="target/classes/org/apache/axis2/security/InteropScenarioClient.class"/>
-		</delete>
+        <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
+			<delete includeEmptyDirs="true">
+				<fileset dir="target/classes/org/xmlsoap/"/>
+				<fileset dir="target/classes/org/oasis_open/"/>
+				<fileset dir="target/classes/org/w3/"/>
+				<fileset file="target/classes/org/apache/axis2/security/InteropScenarioClient.class"/>
+			</delete>
+        	</j:if>
     </preGoal>
 	
 </project>

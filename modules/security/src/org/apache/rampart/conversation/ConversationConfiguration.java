@@ -43,6 +43,7 @@ import java.util.Properties;
 
 /**
  * Configuration manager for Ramapart-SecConv
+ * @deprecated
  */
 public class ConversationConfiguration {
     

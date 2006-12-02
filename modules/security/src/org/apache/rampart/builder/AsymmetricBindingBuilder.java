@@ -531,39 +531,55 @@ public class AsymmetricBindingBuilder extends BindingBuilder {
                 if(resultsObj != null) {
                     encryptedKeyId = RampartUtil.getRequestEncryptedKeyId((Vector)resultsObj);
                     encryptedKeyValue = RampartUtil.getRequestEncryptedKeyValue((Vector)resultsObj);
-                    if(encryptedKeyId == null || encryptedKeyValue == null) {
-                        throw new RampartException("missingEncryptedKeyInRequest");
+                    
+                    //In the case where we don't have the EncryptedKey in the 
+                    //request, for the control to have reached this state,
+                    //the scenario MUST be a case where this is the response
+                    //message by a listener created for an async client
+                    //Therefor we will create a new EncryptedKey
+                    if(encryptedKeyId == null && encryptedKeyValue == null) {
+                        createEncryptedKey(rmd, token);
                     }
                 } else {
                     throw new RampartException("noSecurityResults");
                 }
-            } else {
-                //Set up the encrypted key to use
-                encrKey = this.getEncryptedKeyBuilder(rmd, token);
+        } else {
+            createEncryptedKey(rmd, token);
+        }
+    }
 
-                Element bstElem = encrKey.getBinarySecurityTokenElement();
-                if (bstElem != null) {
-                    // If a BST is available then use it
-                    RampartUtil.appendChildToSecHeader(rmd, bstElem);
-                }
-                
-                // Add the EncryptedKey
-                encrTokenElement = encrKey.getEncryptedKeyElement();
-                this.encrTokenElement = RampartUtil.appendChildToSecHeader(rmd,
-                        encrTokenElement);
-                encryptedKeyValue = encrKey.getEphemeralKey();
-                encryptedKeyId = encrKey.getId();
+    /**
+     * Create an encrypted key element
+     * @param rmd
+     * @param token
+     * @throws RampartException
+     */
+    private void createEncryptedKey(RampartMessageData rmd, Token token) throws RampartException {
+        //Set up the encrypted key to use
+        encrKey = this.getEncryptedKeyBuilder(rmd, token);
 
-                //Store the token for client - response verification 
-                // and server - response creation
-                try {
-                    org.apache.rahas.Token tok = new org.apache.rahas.Token(
-                            encryptedKeyId, (OMElement)encrTokenElement , null, null);
-                    tok.setSecret(encryptedKeyValue);
-                    rmd.getTokenStorage().add(tok);
-                } catch (TrustException e) {
-                    throw new RampartException("errorInAddingTokenIntoStore", e);
-                }
-            }
+        Element bstElem = encrKey.getBinarySecurityTokenElement();
+        if (bstElem != null) {
+            // If a BST is available then use it
+            RampartUtil.appendChildToSecHeader(rmd, bstElem);
+        }
+        
+        // Add the EncryptedKey
+        encrTokenElement = encrKey.getEncryptedKeyElement();
+        this.encrTokenElement = RampartUtil.appendChildToSecHeader(rmd,
+                encrTokenElement);
+        encryptedKeyValue = encrKey.getEphemeralKey();
+        encryptedKeyId = encrKey.getId();
+
+        //Store the token for client - response verification 
+        // and server - response creation
+        try {
+            org.apache.rahas.Token tok = new org.apache.rahas.Token(
+                    encryptedKeyId, (OMElement)encrTokenElement , null, null);
+            tok.setSecret(encryptedKeyValue);
+            rmd.getTokenStorage().add(tok);
+        } catch (TrustException e) {
+            throw new RampartException("errorInAddingTokenIntoStore", e);
+        }
     }
 }

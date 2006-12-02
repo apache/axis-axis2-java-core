@@ -99,7 +99,7 @@ public abstract class BindingBuilder {
      * @param rmd
      * @param rpd
      * @param doc
-     * @return 
+     * @return The <code>WSSecUsernameToken</code> instance
      * @throws RampartException
      */
     protected WSSecUsernameToken addUsernameToken(RampartMessageData rmd) throws RampartException {

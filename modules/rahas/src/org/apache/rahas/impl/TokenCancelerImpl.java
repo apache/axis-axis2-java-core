@@ -51,7 +51,7 @@ public class TokenCancelerImpl implements TokenCanceler {
      * Cancel the token specified in the request.
      *
      * @param data A populated <code>RahasData</code> instance
-     * @return
+     * @return Response SOAPEnveloper
      * @throws org.apache.rahas.TrustException
      *
      */
