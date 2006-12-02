@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;

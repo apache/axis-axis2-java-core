@@ -1155,13 +1155,26 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
      * @see org.apache.axis2.jaxws.description.OperationDescription#getResultActualType()
      */
     public Class getResultActualType() {
+        
+        // REVIEW:
+        // Do we want to add a getParameterActualGenericType that would return Type
+        // instead of Class ?
+        
+        // NOTE
+        // If you change this code, please remember to change 
+        // ParameterDescription.getParameterActualType
+        
        Class returnType = getResultType();
        if(isAsync()){
            //pooling implementation
            if(Response.class == returnType){
                Type type = seiMethod.getGenericReturnType();
                ParameterizedType pType = (ParameterizedType) type;
-               return (Class)pType.getActualTypeArguments()[0];    
+               Type aType = (Class) pType.getActualTypeArguments()[0];
+               if (aType != null && ParameterizedType.class.isInstance(aType)) {
+                   return (Class) ((ParameterizedType) aType).getRawType();
+               }
+               return (Class) aType;    
            }
            //Callback Implementation
            else{
@@ -1171,7 +1184,11 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                for(Class param:parameters){
                    if(AsyncHandler.class.isAssignableFrom(param)){
                        ParameterizedType pType = (ParameterizedType)type[i];
-                       return (Class)pType.getActualTypeArguments()[0];
+                       Type aType = (Class) pType.getActualTypeArguments()[0];
+                       if (aType != null && ParameterizedType.class.isInstance(aType)) {
+                           return (Class) ((ParameterizedType) aType).getRawType();
+                       }
+                       return (Class)aType;
                    }
                    i++;
                }

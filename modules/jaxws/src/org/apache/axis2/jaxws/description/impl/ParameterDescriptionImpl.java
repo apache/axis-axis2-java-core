@@ -115,8 +115,21 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
      */
     public Class getParameterActualType() {
         if (isHolderType() && parameterGenericType != null) {
+            
+            // REVIEW:
+            // Do we want to add a getParameterActualGenericType that would return Type
+            // instead of Class ?
+            
+            // NOTE
+            // If you change this code, please remember to change 
+            // OperationDesc.getResultActualType
+            
             // For types of Holder<T>, return the class associated with T
-            return (Class) parameterGenericType.getActualTypeArguments()[0];
+            Type type = (Class) parameterGenericType.getActualTypeArguments()[0];
+            if (type != null && ParameterizedType.class.isInstance(type)) {
+                return (Class) ((ParameterizedType) type).getRawType();
+            }
+            return (Class) type;
         }
         else {
             return parameterType;
