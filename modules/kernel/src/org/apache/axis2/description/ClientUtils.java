@@ -82,7 +82,9 @@ public class ClientUtils {
                 }
             } else {
                 //assume listener transport as sender transport
-                listenerTransportProtocol = msgCtxt.getTransportOut().getName().getLocalPart();
+                if (msgCtxt.getTransportOut() != null) {
+                    listenerTransportProtocol = msgCtxt.getTransportOut().getName().getLocalPart();
+                }
             }
         }
         TransportInDescription transportIn = null;
@@ -111,6 +113,7 @@ public class ClientUtils {
                 }
             }
         }
+
         return transportIn;
     }
 }
