@@ -279,8 +279,10 @@ public class RampartMessageData {
 
             this.customClassLoader = msgCtx.getAxisService().getClassLoader();
             
-            this.secHeader = new WSSecHeader();
-            secHeader.insertSecurityHeader(this.document);
+            if(this.policyData != null) {
+                this.secHeader = new WSSecHeader();
+                secHeader.insertSecurityHeader(this.document);
+            }
             
         } catch (TrustException e) {
             throw new RampartException("errorInExtractingMsgProps", e);
