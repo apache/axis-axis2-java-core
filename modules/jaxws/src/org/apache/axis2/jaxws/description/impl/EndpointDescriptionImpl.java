@@ -1128,17 +1128,23 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         String wsdlBindingType = null;
         Binding wsdlBinding = getWSDLBinding();
         if (wsdlBinding != null) {
+            // If a WSDL binding was found, we need to find the proper extensibility
+            // element and return the namespace.  The namespace will be different
+            // for SOAP 1.1 vs. SOAP 1.2 bindings.
+            // TODO: What do we do if no extensibility element exists?
             List<ExtensibilityElement> elements = wsdlBinding.getExtensibilityElements();
             Iterator<ExtensibilityElement> itr = elements.iterator();
             while (itr.hasNext()) {
                 ExtensibilityElement e = itr.next();
                 if (javax.wsdl.extensions.soap.SOAPBinding.class.isAssignableFrom(e.getClass())) {
                     javax.wsdl.extensions.soap.SOAPBinding soapBnd = (javax.wsdl.extensions.soap.SOAPBinding) e;
-                    wsdlBindingType = soapBnd.getTransportURI();
+                    wsdlBindingType = soapBnd.getElementType().getNamespaceURI();
+                    return wsdlBindingType;
                 }
                 else if (SOAP12Binding.class.isAssignableFrom(e.getClass())) {
                     SOAP12Binding soapBnd = (SOAP12Binding) e;
-                    wsdlBindingType = soapBnd.getTransportURI();
+                    wsdlBindingType = soapBnd.getElementType().getNamespaceURI();
+                    return wsdlBindingType;
                 }
             }
         }

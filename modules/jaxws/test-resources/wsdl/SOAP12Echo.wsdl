@@ -3,7 +3,7 @@
       xmlns:tns="http://jaxws.axis2.apache.org/proxy/soap12"
       xmlns="http://schemas.xmlsoap.org/wsdl/" 
       xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/">
 
    <types>
       <xsd:schema targetNamespace="http://jaxws.axis2.apache.org/proxy/soap12"
@@ -45,7 +45,7 @@
    </portType>
 
    <binding name="EchoBinding" type="tns:Echo">
-      <soap:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/>
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
       <operation name="echo">
          <soap:operation soapAction=""/>
          <input>

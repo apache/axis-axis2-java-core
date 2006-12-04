@@ -45,7 +45,7 @@
    </portType>
 
    <binding name="EchoBinding" type="tns:Echo">
-      <soap:binding style="document" transport="http://schemas.xmlsoap.org/wsdl/soap/http"/>
+      <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
       <operation name="echo">
          <soap:operation soapAction=""/>
          <input>

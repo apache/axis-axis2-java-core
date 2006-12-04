@@ -1,18 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.jaxws.message;
 
@@ -20,6 +22,8 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Protocol
@@ -29,9 +33,12 @@ import org.apache.axis2.jaxws.i18n.Messages;
 public enum Protocol {
 	soap11, soap12, rest, unknown;
     
-    // WS-I Basic Profile 1.1 specifies a different value for the SOAP 1.1 HTTP
-    // binding than the one specified in JAX-WS, section 10.4.1
-    private static final String SOAP11HTTP_WSI_BINDING = "http://schemas.xmlsoap.org/soap/http";
+	private static final Log log = LogFactory.getLog(Protocol.class);
+    
+    // These namespaces are used in the WSDL document to indentify a 
+    // SOAP 1.1 vs. a SOAP 1.2 binding
+    private static final String SOAP11_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/soap";
+    private static final String SOAP12_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/soap12";
     
     /**
      * Return the right value for the Protocol based on the binding
@@ -41,18 +48,44 @@ public enum Protocol {
      * @return
      */
     public static Protocol getProtocolForBinding(String url) throws MessageException {
-        System.out.println(">> Looking up binding [" + url + "]");
-        if (url.equals(Protocol.SOAP11HTTP_WSI_BINDING) ||
-            url.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
-        	url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)) {
+        boolean debug = log.isDebugEnabled();
+        if (debug) {
+            log.debug("Configuring message protocol for binding [" + url + "]");
+        }
+        
+        if (namespaceEquals(Protocol.SOAP11_WSDL_BINDING, url) || 
+            namespaceEquals(SOAPBinding.SOAP11HTTP_BINDING, url) ||
+            namespaceEquals(SOAPBinding.SOAP11HTTP_MTOM_BINDING, url)) {
+            if (debug) {
+                log.debug("SOAP 1.1 protocol configured for message");
+            }
             return Protocol.soap11;
         }
-        else if (url.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
-        		 url.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+        else if (namespaceEquals(Protocol.SOAP12_WSDL_BINDING, url) ||
+                 namespaceEquals(SOAPBinding.SOAP12HTTP_BINDING, url) ||
+                 namespaceEquals(SOAPBinding.SOAP12HTTP_MTOM_BINDING, url)) {
+            if (debug) {
+                log.debug("SOAP 1.2 protocol configured for message");
+            }
             return Protocol.soap12;
         }
         else {
             throw ExceptionFactory.makeMessageException(Messages.getMessage("protoNotFound00", url));
         }
+    }
+    
+    /*
+     * Check to see if the two strings (namespaces) passed in are the same, but
+     * also accounts for any trailing "/" characters in the string.
+     */
+    private static boolean namespaceEquals(String target, String input) {
+        if (target.equals(input)) {
+            return true;
+        }
+        else if ((target + "/").equals(input)) {
+            return true;
+        }
+        
+        return false;            
     }
 }
