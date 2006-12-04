@@ -1,0 +1,28 @@
+<s12:Envelope 
+ xmlns:s12='http://www.w3.org/2003/05/soap-envelope' 
+ xmlns:wsa='http://schemas.xmlsoap.org/ws/2004/08/addressing' 
+ xmlns:wse='http://schemas.xmlsoap.org/ws/2004/08/eventing' 
+ xmlns:ew='http://www.example.com/warnings' > 
+ 	<s12:Header /> 
+ 	<s12:Body> 
+ 	<wse:Subscribe> 
+ 		<wse:EndTo> 
+ 			<wsa:Address>http://www.example.com/MyEventSink</wsa:Address> 
+ 			<wsa:ReferenceProperties> 
+ 				<ew:MySubscription>2597</ew:MySubscription> 
+ 			</wsa:ReferenceProperties> 
+ 		</wse:EndTo> 
+ 		<wse:Delivery> 
+ 			<wse:NotifyTo> 
+ 				<wsa:Address>http://www.other.example.com/OnStormWarning</wsa:Address> 
+ 				<wsa:ReferenceProperties> 
+ 					<ew:MySubscription>2597</ew:MySubscription> 
+ 				</wsa:ReferenceProperties> 
+ 			</wse:NotifyTo> 
+ 		</wse:Delivery> 
+ 		<wse:Expires>2004-06-26T21:07:00.000-08:00</wse:Expires> 
+ 		<wse:Filter xmlns:ow='http://www.example.org/oceanwatch' 
+ 		Dialect='http://www.w3.org/TR/1999/REC-xpath-19991116'>/</wse:Filter> 
+ 	</wse:Subscribe> 
+ </s12:Body> 
+ </s12:Envelope>

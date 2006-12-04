@@ -1,0 +1,14 @@
+<s12:Envelope 
+xmlns:s12='http://www.w3.org/2003/05/soap-envelope' 
+xmlns:wsa='http://schemas.xmlsoap.org/ws/2004/08/addressing' 
+xmlns:wse='http://schemas.xmlsoap.org/ws/2004/08/eventing' 
+xmlns:ow='http://www.example.org/oceanwatch' > 
+	<s12:Header> 
+          <wse:Identifier>UUID:DummySubscriberID</wse:Identifier>
+	</s12:Header> 
+	<s12:Body> 
+		<wse:Renew> 
+			<wse:Expires>2004-06-26T21:07:00.000-08:00</wse:Expires> 
+		</wse:Renew> 
+	</s12:Body> 
+</s12:Envelope> 
