@@ -25,7 +25,6 @@ import java.util.concurrent.Future;
 
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Response;
@@ -39,10 +38,8 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
@@ -51,7 +48,6 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -101,9 +97,9 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	
 	public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, EndpointDescription epDesc) {
 		super(delegate, epDesc);
+        
 		this.seiClazz = seiClazz;
-		this.serviceDesc=delegate.getServiceDescription();
-		initRequestContext();
+		this.serviceDesc = delegate.getServiceDescription();
 	}
 	
 	/* (non-Javadoc)
@@ -114,14 +110,15 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	 */
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		if (log.isDebugEnabled()) {
-            log.debug("Attemping to invoke Method: " +method.getName());
+		boolean debug = log.isDebugEnabled();
+        if (debug) {
+            log.debug("Attemping to invoke Method: " + method.getName());
         }
         
 		this.method = method;
 		
 		if(!isValidMethodCall(method)){
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr1",method.getName(), seiClazz.getName()));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr1", method.getName(), seiClazz.getName()));
 		}
 		
 		if(!isPublic(method)){
@@ -129,17 +126,20 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		}
 		
 		if(isBindingProviderInvoked(method)){
-			if (log.isDebugEnabled()) {
-	            log.debug("Invoking method on Binding Provider");
+			if (debug) {
+	            log.debug("Invoking a public method on the javax.xml.ws.BindingProvider interface.");
 	        }
-			try{
+            try { 
 				return method.invoke(this, args);
-			}catch(Throwable e){
-				throw ExceptionFactory.makeMessageException(e);
-			}
-			
+			} 
+            catch(Throwable e) {
+                if (debug) {
+				    log.debug("An error occured while invoking the method: " + e.getMessage());
+                }
+                throw ExceptionFactory.makeMessageException(e);
+			}			
 		}
-		else{
+		else {
 			operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
 			if(isMethodExcluded()){
 				throw ExceptionFactory.makeWebServiceException("Invalid Method Call, Method "+method.getName() + " has been excluded using @webMethod annotation");
@@ -336,21 +336,6 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		return false;
 	}
 	
-	protected void initRequestContext() {
-		String soapAddress = null;
-		String soapAction = null;
-		String endPointAddress = endpointDesc.getEndpointAddress();
-		WSDLWrapper wsdl = ((ServiceDescriptionWSDL) serviceDelegate.getServiceDescription()).getWSDLWrapper();
-		QName serviceName = serviceDelegate.getServiceName();
-		QName portName = endpointDesc.getPortQName();
-        soapAddress = ((EndpointDescriptionWSDL) endpointDesc).getWSDLSOAPAddress();
-		if (wsdl != null) {
-            // FIXME: This is getting the Action from the FIRST operation; that seems wrong!
-			soapAction = wsdl.getSOAPAction(serviceName, portName);
-		}
-		super.initRequestContext(endPointAddress, soapAddress, soapAction);
-	}
-
 	private boolean isPublic(Method method){
 		return Modifier.isPublic(method.getModifiers());
 	}

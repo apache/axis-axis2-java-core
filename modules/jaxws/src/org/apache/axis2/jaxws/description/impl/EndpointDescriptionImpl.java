@@ -1218,7 +1218,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     public String getClientBindingID() {
         if (clientBindingID == null) {
             if (getWSDLDefinition() != null) {
-                System.out.println(">> Getting bindingID from WSDL");
                 clientBindingID = getWSDLBindingType();
             }
             else {
