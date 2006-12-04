@@ -47,6 +47,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
@@ -365,20 +366,28 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	public void setSeiClazz(Class seiClazz) {
 		this.seiClazz = seiClazz;
 	}
+    
 	private void initialize(){
 		SOAPBinding.Style style = operationDesc.getSoapBindingStyle();
-		
+        Protocol p = null;
+        try {
+            EndpointDescription epDesc = getEndpointDescription();
+            String bindingID = epDesc.getClientBindingID();
+            p = Protocol.getProtocolForBinding(bindingID);
+        } catch (MessageException e) {
+            e.printStackTrace();
+        }
+        
 		MethodMarshallerFactory cf = (MethodMarshallerFactory) FactoryRegistry.getFactory(MethodMarshallerFactory.class);
 		if(style == SOAPBinding.Style.DOCUMENT){
-			methodMarshaller = createDocLitMethodMarshaller(cf);
+			methodMarshaller = createDocLitMethodMarshaller(cf, p);
 		}
 		if(style == SOAPBinding.Style.RPC){
-			methodMarshaller = createRPCLitMethodMarshaller(cf);
-			
-		}
-	
+			methodMarshaller = createRPCLitMethodMarshaller(cf, p);
+		}	
 	}
-	private MethodMarshaller createDocLitMethodMarshaller(MethodMarshallerFactory cf){
+    
+	private MethodMarshaller createDocLitMethodMarshaller(MethodMarshallerFactory cf, Protocol p){
 		ParameterStyle parameterStyle = null;
 		if(isDocLitBare()){
 			parameterStyle = SOAPBinding.ParameterStyle.BARE;
@@ -386,18 +395,16 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		if(isDocLitWrapped()){
 			parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
 		}
-		//FIXME: The protocol should actually come from the binding information included in
-	    // either the WSDL or an annotation.
+
 		return cf.createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, 
-                serviceDesc, endpointDesc, operationDesc, Protocol.soap11, true);
+                serviceDesc, endpointDesc, operationDesc, p, true);
 	}
 	
-	private MethodMarshaller createRPCLitMethodMarshaller(MethodMarshallerFactory cf){
-        //    FIXME: The protocol should actually come from the binding information included in
-        // either the WSDL or an annotation.
+	private MethodMarshaller createRPCLitMethodMarshaller(MethodMarshallerFactory cf, Protocol p){
         return cf.createMethodMarshaller(SOAPBinding.Style.RPC, SOAPBinding.ParameterStyle.WRAPPED,
-                serviceDesc, endpointDesc, operationDesc, Protocol.soap11, true);
+                serviceDesc, endpointDesc, operationDesc, p, true);
 	}
+    
 	protected boolean isDocLitBare(){
 		SOAPBinding.ParameterStyle methodParamStyle = operationDesc.getSoapBindingParameterStyle();
 		if(methodParamStyle!=null){

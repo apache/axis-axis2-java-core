@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package org.apache.axis2.jaxws.description.impl;
 
 import java.util.ArrayList;
@@ -23,16 +21,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.jws.WebService;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
-import javax.wsdl.PortType;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
@@ -114,7 +111,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // The JAX-WS Handler port information corresponding to this endpoint
     private PortInfo portInfo;
     
-    private String clientBindingID = DEFAULT_CLIENT_BINDING_ID;
+    private String clientBindingID;
     // The effective endpoint address.  It could be set by the client or come from the WSDL SOAP address
     private String endpointAddress;
     // The endpoint address from the WSDL soap:address extensibility element if present.
@@ -1126,14 +1123,28 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         }
         return wsdlBinding;
     }
+    
     public String getWSDLBindingType() {
         String wsdlBindingType = null;
         Binding wsdlBinding = getWSDLBinding();
         if (wsdlBinding != null) {
-            wsdlBindingType = wsdlBinding.getQName().getNamespaceURI();
+            List<ExtensibilityElement> elements = wsdlBinding.getExtensibilityElements();
+            Iterator<ExtensibilityElement> itr = elements.iterator();
+            while (itr.hasNext()) {
+                ExtensibilityElement e = itr.next();
+                if (javax.wsdl.extensions.soap.SOAPBinding.class.isAssignableFrom(e.getClass())) {
+                    javax.wsdl.extensions.soap.SOAPBinding soapBnd = (javax.wsdl.extensions.soap.SOAPBinding) e;
+                    wsdlBindingType = soapBnd.getTransportURI();
+                }
+                else if (SOAP12Binding.class.isAssignableFrom(e.getClass())) {
+                    SOAP12Binding soapBnd = (SOAP12Binding) e;
+                    wsdlBindingType = soapBnd.getTransportURI();
+                }
+            }
         }
         return wsdlBindingType;
     }
+    
     public String getName() {
         return getAnnoWebServiceName();
     }
@@ -1197,9 +1208,20 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         }
         return isValid;
     }
+    
     public String getClientBindingID() {
+        if (clientBindingID == null) {
+            if (getWSDLDefinition() != null) {
+                System.out.println(">> Getting bindingID from WSDL");
+                clientBindingID = getWSDLBindingType();
+            }
+            else {
+                clientBindingID = DEFAULT_CLIENT_BINDING_ID;
+            }
+        }
         return clientBindingID;
     }
+    
     public void setEndpointAddress(String endpointAddress) {
         // REVIEW: Should this be called whenever BindingProvider.ENDPOINT_ADDRESS_PROPERTY is set by the client?
         if (!DescriptionUtils.isEmpty(endpointAddress)) {

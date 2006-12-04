@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
 
 import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
+import org.apache.axis2.jaxws.databinding.BindingToProtocolTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationProviderImplDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests;
@@ -63,6 +64,7 @@ import org.apache.axis2.jaxws.proxy.GorillaDLWProxyTests;
 import org.apache.axis2.jaxws.proxy.ProxyNonWrappedTests;
 import org.apache.axis2.jaxws.proxy.ProxyTests;
 import org.apache.axis2.jaxws.proxy.RPCProxyTests;
+import org.apache.axis2.jaxws.proxy.SOAP12ProxyTests;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
 import org.apache.axis2.jaxws.sample.BareTests;
@@ -100,6 +102,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(XMLStreamReaderSplitterTests.class);
         suite.addTestSuite(SOAP12Tests.class);
         suite.addTestSuite(MTOMSerializationTests.class);
+        suite.addTestSuite(BindingToProtocolTests.class);
         
         suite.addTestSuite(ServiceAnnotationTests.class);
         suite.addTestSuite(WSDLTests.class);
@@ -130,6 +133,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ProxyNonWrappedTests.class);
         suite.addTestSuite(RPCProxyTests.class);
         suite.addTestSuite(GorillaDLWProxyTests.class);
+        suite.addTestSuite(SOAP12ProxyTests.class);
         suite.addTestSuite(ExceptionFactoryTests.class);
         suite.addTestSuite(BasicAuthSecurityTests.class);
 

@@ -29,6 +29,10 @@ import org.apache.axis2.jaxws.i18n.Messages;
 public enum Protocol {
 	soap11, soap12, rest, unknown;
     
+    // WS-I Basic Profile 1.1 specifies a different value for the SOAP 1.1 HTTP
+    // binding than the one specified in JAX-WS, section 10.4.1
+    private static final String SOAP11HTTP_WSI_BINDING = "http://schemas.xmlsoap.org/soap/http";
+    
     /**
      * Return the right value for the Protocol based on the binding
      * URL that was passed in.
@@ -37,8 +41,9 @@ public enum Protocol {
      * @return
      */
     public static Protocol getProtocolForBinding(String url) throws MessageException {
-        //TODO: Add support for more URLs as needed.
-        if (url.equals(SOAPBinding.SOAP11HTTP_BINDING) || 
+        System.out.println(">> Looking up binding [" + url + "]");
+        if (url.equals(Protocol.SOAP11HTTP_WSI_BINDING) ||
+            url.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
         	url.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)) {
             return Protocol.soap11;
         }
