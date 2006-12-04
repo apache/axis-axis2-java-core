@@ -80,8 +80,8 @@ public class ProtectionToken extends AbstractSecurityAssertion implements TokenW
             writer.writeNamespace(prefix, namespaceURI);
         }
         
-        String policyLocalName = Constants.PROTECTION_TOKEN.getLocalPart();
-        String policyNamespaceURI = Constants.PROTECTION_TOKEN.getNamespaceURI();
+        String policyLocalName = Constants.POLICY.getLocalPart();
+        String policyNamespaceURI = Constants.POLICY.getNamespaceURI();
         
         String wspPrefix;
         
