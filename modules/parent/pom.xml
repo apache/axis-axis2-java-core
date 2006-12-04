@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.axis2</groupId>
   <artifactId>axis2-parent</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Axis 2.0 Parent Project</name>
   <inceptionYear>2004</inceptionYear>
@@ -71,9 +71,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_1</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_1</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/</url>
   </scm>
 
   <mailingLists>
