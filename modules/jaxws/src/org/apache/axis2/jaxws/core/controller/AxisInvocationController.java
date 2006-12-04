@@ -374,10 +374,9 @@ public class AxisInvocationController extends InvocationController {
     
     private void initOperationClient(OperationClient opClient, MessageContext requestMsgCtx) {
         org.apache.axis2.context.MessageContext axisRequest = requestMsgCtx.getAxisMessageContext();
+        setupProperties(requestMsgCtx, axisRequest.getOptions());
         
         Options options = opClient.getOptions();
-        setupProperties(requestMsgCtx, options);
-        
         if (opClient != null) {
             // Get the target endpoint address and setup the TO endpoint 
             // reference.  This tells us where the request is going.
