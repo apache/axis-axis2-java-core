@@ -183,14 +183,15 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
         // <wsp:Policy>
         writer.writeStartElement(wspPrefix, policyLocalName, policyNamespaceURI);
         
-        if (encryptionToken != null) {
-            encryptionToken.serialize(writer);
-            
-        } else if ( protectionToken != null) {
+        if ( protectionToken != null) {
             protectionToken.serialize(writer);
             
+        } else if (encryptionToken != null &&  signatureToken != null) {
+            encryptionToken.serialize(writer);
+            signatureToken.serialize(writer);
+            
         } else {
-            throw new RuntimeException("Either EncryptionToken or ProtectionToken must be set");
+            throw new RuntimeException("Either (EncryptionToken and SignatureToken) or ProtectionToken must be set");
         }
         
         AlgorithmSuite algorithmSuite = getAlgorithmSuite();
@@ -213,9 +214,14 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
             writer.writeEndElement();
         }
         
-        if (Constants.ENCRYPT_BEFORE_SIGNING.equals(protectionToken)) {
+        if (Constants.ENCRYPT_BEFORE_SIGNING.equals(getProtectionOrder())) {
             // <sp:EncryptBeforeSigning />
             writer.writeStartElement(prefix, Constants.ENCRYPT_BEFORE_SIGNING, namespaceURI);
+            writer.writeEndElement();
+            
+        } else if (Constants.SIGN_BEFORE_ENCRYPTING.equals(getProtectionOrder())) {
+            // <sp:SignBeforeEncrypt />
+            writer.writeStartElement(prefix, Constants.SIGN_BEFORE_ENCRYPTING, namespaceURI);
             writer.writeEndElement();
         }
         
@@ -225,8 +231,10 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
             writer.writeEndElement();
         }
         
-        if (protectionToken != null) {
-            protectionToken.serialize(writer);
+        if (isEntireHeadersAndBodySignatures()) {
+            // <sp:OnlySignEntireHeadersAndBody />
+            writer.writeStartElement(prefix, Constants.ONLY_SIGN_ENTIRE_HEADERS_AND_BODY, namespaceURI);
+            writer.writeEndElement();
         }
         
         // </wsp:Policy>
