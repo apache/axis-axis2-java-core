@@ -25,11 +25,18 @@ import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.soap.SOAPFaultException;
 import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.Detail;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.Name;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
 @WebServiceProvider()
@@ -55,6 +62,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     public static String XML_MTOM_RESPONSE        = "xml and mtom response";
     public static String XML_SWAREF_REQUEST       = "xml and swaref request";
     public static String XML_SWAREF_RESPONSE      = "xml and swaref response";
+    public static String XML_FAULT_REQUEST        = "xml fault";
     
     private String XML_RETURN = "<ns2:ReturnType xmlns:ns2=\"http://test\"><return_str>" + 
         SoapMessageProvider.XML_RESPONSE +
@@ -85,7 +93,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     
     
     
-    public SOAPMessage invoke(SOAPMessage soapMessage) {
+    public SOAPMessage invoke(SOAPMessage soapMessage) throws SOAPFaultException {
     	System.out.println(">> SoapMessageProvider: Request received.");
     	
     	try{
@@ -110,6 +118,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
                 response = getXMLMTOMResponse(soapMessage, discElement);
             } else if (XML_SWAREF_REQUEST.equals(text)) {
                 response = getXMLSWARefResponse(soapMessage, discElement);
+            } else if (XML_FAULT_REQUEST.equals(text)) {
+                throwSOAPFaultException();
             } else {
                 // We should not get here
                 System.out.println("Unknown Type of Message");
@@ -121,7 +131,9 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
             //response.writeTo(System.out);
             //System.out.println("\n");
             return response;
-    	}catch(Exception e){
+    	} catch (SOAPFaultException sfe) {
+    	    throw sfe;
+        } catch(Exception e){
             System.out.println("***ERROR: In SoapMessageProvider.invoke: Caught exception " + e);
     		e.printStackTrace();
     	}
@@ -268,6 +280,28 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         return response;
     }
     
+    private void throwSOAPFaultException() throws SOAPFaultException {
+        try {
+            MessageFactory mf = MessageFactory.newInstance();
+            SOAPFactory sf = SOAPFactory.newInstance();
+            
+            SOAPMessage m = mf.createMessage();
+            SOAPBody body = m.getSOAPBody();
+            SOAPFault fault = body.addFault();
+            fault.setFaultString("sample fault");
+            Detail detail = fault.addDetail();
+            Name deName = sf.createName("detailEntry");
+            SOAPElement detailEntry = detail.addDetailEntry(deName);
+            detailEntry.addTextNode("sample detail");
+            
+            SOAPFaultException sfe = new SOAPFaultException(fault);
+            throw sfe;
+        } catch (SOAPFaultException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * Count Attachments
      * @param msg

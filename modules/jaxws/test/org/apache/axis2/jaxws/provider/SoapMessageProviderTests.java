@@ -65,7 +65,10 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         SoapMessageProvider.XML_SWAREF_REQUEST +
         "</invoke_str>" + 
         SoapMessageProvider.SWAREF_REF +
-        "</ns2:invoke>";            
+        "</ns2:invoke>";   
+    private String XML_FAULT_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+    SoapMessageProvider.XML_FAULT_REQUEST +
+    "</invoke_str></ns2:invoke>";
                 
     
     protected void setUp() throws Exception {
@@ -117,6 +120,42 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         	
         }catch(Exception e){
         	e.printStackTrace();
+            fail("Caught exception " + e);
+        }
+        
+    }
+    
+    /**
+     * Sends an SOAPMessage containing only xml data 
+     * Provider will throw a Fault
+     */
+    public void testProviderSOAPFault(){
+        try{       
+            // Create the dispatch
+            Dispatch<SOAPMessage> dispatch = createDispatch();
+            
+            // Create the SOAPMessage
+            String msg = reqMsgStart + XML_FAULT_INVOKE + reqMsgEnd;
+            MessageFactory factory = MessageFactory.newInstance();
+            SOAPMessage request = factory.createMessage(null, 
+                    new ByteArrayInputStream(msg.getBytes()));
+            
+            // Test the transport headers by sending a content description
+            request.setContentDescription(SoapMessageProvider.XML_FAULT_REQUEST);
+            
+            try {
+                // Dispatch
+                System.out.println(">> Invoking SourceMessageProviderDispatch");
+                SOAPMessage response = dispatch.invoke(request);
+                assertTrue("Expected failure", false);
+            } catch (Exception e) {
+                
+            }
+
+           
+            
+        }catch(Exception e){
+            e.printStackTrace();
             fail("Caught exception " + e);
         }
         

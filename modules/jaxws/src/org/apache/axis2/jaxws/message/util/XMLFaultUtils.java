@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.message.impl;
+package org.apache.axis2.jaxws.message.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -37,26 +38,28 @@ import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPFaultSubCode;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultCode;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
-import org.apache.axis2.jaxws.message.util.MessageUtils;
+import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
  * Collection of utilities used by the Message implementation to 
  * process XMLFaults.
  * @see XMLFault
  */
-class XMLFaultUtils {
+public class XMLFaultUtils {
 
     
     /**
      * @param envelope javax.xml.soap.SOAPEnvelope
      * @return true if the SOAPEnvelope contains a SOAPFault
      */
-    static boolean isFault(javax.xml.soap.SOAPEnvelope envelope) throws SOAPException {
+    public static boolean isFault(javax.xml.soap.SOAPEnvelope envelope) throws SOAPException {
         javax.xml.soap.SOAPBody body = envelope.getBody();
         if (body != null) {
             return (body.getFault() != null);
@@ -68,7 +71,7 @@ class XMLFaultUtils {
      * @param envelope org.apache.axiom.soap.SOAPEnvelope
      * @return true if the SOAPEnvelope contains a SOAPFault
      */
-    static boolean isFault(SOAPEnvelope envelope) {
+    public static boolean isFault(SOAPEnvelope envelope) {
         SOAPBody body = envelope.getBody();
         if (body != null) {
             return (body.getFault() != null);
@@ -179,6 +182,44 @@ class XMLFaultUtils {
         return xmlFault;         
 	}
     
+    /**
+     * Create an XMLFault object from a SOAPFault and detail Blocks
+     * @param soapFault
+     * @param detailBlocks
+     * @return
+     */
+    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+       // Convert the SOAPFault into an OM SOAPFault.  OMSOAP Fault already supports SOAP 1.2, so this makes the code easier to migrate
+       SAAJConverter converter = 
+           (SAAJConverter) FactoryRegistry.getFactory(SAAJConverter.class);
+       SOAPFault omSOAPFault = (SOAPFault) converter.toOM(soapFault);
+       Block[] detailBlocks = getDetailBlocks(omSOAPFault);
+       XMLFault xmlFault = createXMLFault(omSOAPFault, detailBlocks);
+       return xmlFault;
+    }
+    
+    private static Block[] getDetailBlocks(SOAPFault soapFault) throws MessageException {
+        try {
+            Block[] blocks = null;
+            SOAPFaultDetail detail = soapFault.getDetail();
+            if (detail != null) {
+                // Create a block for each element
+                OMBlockFactory bf = (OMBlockFactory) FactoryRegistry.getFactory(OMBlockFactory.class);
+                ArrayList<Block> list = new ArrayList<Block>();
+                Iterator it = detail.getChildElements();
+                while (it.hasNext()) {
+                    OMElement om = (OMElement) it.next();
+                    Block b = bf.createFrom(om, null,om.getQName()); 
+                    list.add(b);
+                }
+                blocks = list.toArray(blocks);
+            }
+            return blocks;
+        } catch (Exception e) {
+            throw ExceptionFactory.makeMessageException(e);
+        }
+    }
+        
     /**
      * Create a SOAPFault representing the XMLFault and attach it to body.
      * If there are 1 or more detail Blocks on the XMLFault, a SOAPFaultDetail is attached.

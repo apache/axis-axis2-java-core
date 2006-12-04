@@ -32,11 +32,13 @@ import java.util.concurrent.Future;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPFault;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Holder;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -55,6 +57,7 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
+import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.jaxws.util.JavaUtils;
@@ -411,21 +414,44 @@ class MethodMarshallerUtils  {
      throws MessageException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         
         // Get the root cause of the throwable object
+        Throwable t = ClassUtils.getRootCause(throwable);
         if (log.isDebugEnabled()) {
             log.debug("Marshal Throwable =" + throwable.getClass().getName());
-            log.debug("  exception=" + throwable.toString());
+            log.debug("  rootCause =" + t.getClass().getName());
+            log.debug("  exception=" + t.toString());
         }
-        Throwable t = ClassUtils.getRootCause(throwable);
 
         XMLFault xmlfault = null;
       
+        // There are 5 different categories of exceptions.  Each category has a little different marshaling code.
+        // A) Service Exception that matches the JAX-WS specification (chapter 2.5 of the spec)
+        // B) Service Exception that matches the JAX-WS "legacy" exception (chapter 3.7 of the spec)
+        // C) SOAPFaultException
+        // D) WebServiceException
+        // E) Other runtime exceptions (i.e. NullPointerException)
+        
         // Get the FaultDescriptor matching this Exception.
         // If FaultDescriptor is found, this is a JAX-B Service Exception.
         // If not found, this is a System Exception
         FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getName());
 
-        if (fd != null) {
-            // Service Exception.  
+        if (t instanceof SOAPFaultException) {
+            // Category C: SOAPFaultException 
+            // Construct the xmlFault from the SOAPFaultException's Fault
+            SOAPFaultException sfe = (SOAPFaultException) t;
+            SOAPFault soapFault = sfe.getFault();
+            if (soapFault == null) {
+                // No fault ?  I will treat this like category E
+                xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
+                        new XMLFaultReason(t.toString()));  // Assumes text is the language supported by the current Locale
+            } else {
+                xmlfault = XMLFaultUtils.createXMLFault(soapFault);
+            }
+            
+        } else if (fd != null) {
+            // The exception is a Service Exception.  It may be (A) JAX-WS compliant exception or (B) JAX-WS legacy exception
+            
+            // TODO Need to add detection and code to differentiate between (A) and (B)
             
             // Get the fault bean object.  Make sure it can be rendered as an element
             Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
@@ -448,9 +474,19 @@ class MethodMarshallerUtils  {
             detailBlocks[0] = factory.createFrom(faultBeanObject,context,null);
             
             // Now make a XMLFault containing the detailblock
-            xmlfault = new XMLFault(null, new XMLFaultReason(t.toString()), detailBlocks);
+            xmlfault = new XMLFault(null, new XMLFaultReason(t.getMessage()), detailBlocks);
+        } else if (t instanceof WebServiceException) {
+            // Category D: WebServiceException
+            // The reason is constructed with the getMessage of the exception.  
+            // There is no detail
+            WebServiceException wse = (WebServiceException) t;
+            xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
+                    new XMLFaultReason(wse.getMessage()));  // Assumes text is the language supported by the current Locale
         } else {
-            // System Exception
+            // Category E: Other System Exception
+            // The reason is constructed with the toString of the exception.  
+            // This places the class name of the exception in the reason
+            // There is no detail.
             xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
                     new XMLFaultReason(t.toString()));  // Assumes text is the language supported by the current Locale
         }

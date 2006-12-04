@@ -81,7 +81,7 @@ public class JAXWSTest extends TestCase {
     
     static {
         // Uncomment the followign line to enable debug
-//        BasicConfigurator.configure();
+        BasicConfigurator.configure();
     }
     
     /**
