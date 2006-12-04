@@ -224,8 +224,10 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
      * @see javax.xml.ws.spi.ServiceDelegate#getExecutor()
      */
     public Executor getExecutor() {
-    	//FIXME: Use client provider executor too.	
-        executor = getDefaultExecutor();
+    	//FIXME: Use client provider executor too.
+        if (executor == null) {
+            executor = getDefaultExecutor();
+        }
         return executor;
      }
     
@@ -306,7 +308,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     
     //TODO: Need to make the default number of threads configurable
     private Executor getDefaultExecutor(){
-        return Executors.newFixedThreadPool(3);
+        return Executors.newFixedThreadPool(20);
     }
 
     private <T> JAXWSClientContext<T> createClientContext(EndpointDescription epDesc, Class<T> clazz, Mode mode){
