@@ -1023,8 +1023,8 @@
 
     <!-- ================================================================ -->
     <!--- Create Apache Rampart Release Artifacts                         -->
-    <!-- ========================prereqs="create-lib"======================================== -->
-    <goal name="rampart-release" >
+    <!-- ================================================================ -->
+    <goal name="rampart-release" prereqs="create-lib">
 
         <ant:echo>+----------------------------------------------</ant:echo>
         <ant:echo>| Creating: Rampart Release</ant:echo>
@@ -1177,7 +1177,7 @@
     <goal name="rampart-javadocs">
         <ant:javadoc packagenames="org.apache.rampart.*, org.apache.rahas.*,org.apache.ws.secpolicy.*"
                      defaultexcludes="yes"
-                     destdir="target/dist/rampart/rampart-${rampart_version}-apidocs"
+                     destdir="target/dist/rampart/docs/rampart-${rampart_version}-apidocs"
                      author="true"
                      breakiterator="true"
                      version="true"
@@ -1201,6 +1201,12 @@
             <ant:link href="http://xml.apache.org/xalan-j/apidocs/"/>
             <ant:link href="http://xmlbeans.apache.org/docs/2.1.0/reference/"/>
         </ant:javadoc>
+    	
+        <ant:zip file="target/dist/rampart/rampart-${rampart_version}-docs.zip">
+            <ant:fileset dir="target/dist/rampart/docs"/>
+        </ant:zip>
+        <ant:delete dir="target/dist/rampart/docs"/>
+        	
     </goal>
 
     <define:taglib uri="macros">
