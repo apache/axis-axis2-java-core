@@ -305,6 +305,12 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         if(log.isTraceEnabled()){
             log.trace("extractActionInformation: soapAction='"+soapAction+"' wsa:Action='"+wsaAction+"'");
         }
+        
+        // Need to validate that the content of the wsa:Action header is not null or whitespace
+        if((wsaAction==null) || "".equals(wsaAction.trim())){
+            AddressingFaultsHelper.triggerActionNotSupportedFault(messageContext, wsaAction);
+        }
+        
         // The isServerSide check is because the underlying Options object is
         // shared between request and response MessageContexts for Sync
         // invocations. If the soapAction is set outbound and a wsa:Action is
