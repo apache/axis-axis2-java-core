@@ -243,6 +243,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String TRANSPORT_IN_URL = "TransportInURL";
 
         public static final String URL_PARAMETER_LIST = "URLParameterList";
+        public static final String URL_HTTP_LOCATION_PARAMS_LIST = "HTTPLocationParamsList";
 
         public static final String SEND_STACKTRACE_DETAILS_WITH_FAULTS = "sendStacktraceDetailsWithFaults";
 

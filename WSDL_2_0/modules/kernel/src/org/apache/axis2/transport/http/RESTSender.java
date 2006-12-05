@@ -37,6 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
@@ -63,25 +64,25 @@ public class RESTSender extends AbstractHTTPSender {
         if (msgContext.getProperty(Constants.Configuration.URL_PARAMETER_LIST) != null) {
             urlParameterList = (String[]) msgContext.getProperty(Constants.Configuration.URL_PARAMETER_LIST);
         }
+
         OMElement bodypara = OMAbstractFactory.getOMFactory().createOMElement("temp", null);
 
         while (iter1.hasNext()) {
             OMElement ele = (OMElement) iter1.next();
-            boolean has = false;
+            boolean parameterFound = false;
 
             for (int i = 0; i < urlParameterList.length; i++) {
                 if (urlParameterList[i].equals(ele.getLocalName())) {
-                    has = true;
-
+                    parameterFound = true;
                     break;
                 }
             }
 
-            String parameter1;
+            String parameter;
 
-            if (has) {
-                parameter1 = ele.getLocalName() + "=" + ele.getText();
-                urlList.add(parameter1);
+            if (parameterFound) {
+                parameter = ele.getLocalName() + "=" + ele.getText();
+                urlList.add(parameter);
             } else {
                 bodypara.addChild(ele);
             }
@@ -89,10 +90,10 @@ public class RESTSender extends AbstractHTTPSender {
 
         String urlString = "";
         for (int i = 0; i < urlList.size(); i++) {
-            String c = (String) urlList.get(i);
-            urlString = "".equals(urlString) ? c : (urlString + "&" + c);
-            data.urlRequest = urlString;
+            String nameValuePair = (String) urlList.get(i);
+            urlString = "".equals(urlString) ? nameValuePair : (urlString + "&" + nameValuePair);
         }
+        data.urlRequest = urlString;
 
         Iterator it = bodypara.getChildElements();
 
@@ -144,18 +145,54 @@ public class RESTSender extends AbstractHTTPSender {
         }
     }
 
+    /**
+     * This will be used to support http location. User can set set of param lists and those will be
+     * appended to the url.
+     *
+     * @param messageContext
+     * @param urlString
+     * @return - the URL after appending the properties
+     */
+    private String appendParametersToURL(MessageContext messageContext, String urlString) throws MalformedURLException {
+        OMElement firstElement = messageContext.getEnvelope().getBody().getFirstElement();
+
+        ArrayList httpLocationParams = (ArrayList) messageContext.getProperty(
+                Constants.Configuration.URL_HTTP_LOCATION_PARAMS_LIST);
+
+        URL url = new URL(urlString);
+        String path = url.getPath();
+
+        for (int i = 0; i < httpLocationParams.size(); i++) {
+            String httpLocationParam = (String) httpLocationParams.get(i);
+            OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
+            if (httpURLParam != null) {
+                path += httpURLParam.getText();
+            }
+        }
+
+        String query = url.getQuery();
+        if (query != null && !"".equals(query)) {
+            return path + "?" + query;
+        } else {
+            return path;
+        }
+    }
+
     private void sendViaGet(MessageContext msgContext, URL url)
             throws MalformedURLException, AxisFault, IOException {
-        String param = getParam(msgContext);
+        String param = getQueryParameters(msgContext);
         GetMethod getMethod = new GetMethod();
         if (isAuthenticationEnabled(msgContext)) {
             getMethod.setDoAuthentication(true);
         }
 
+        String urlString = url.getFile();
+        urlString = appendParametersToURL(msgContext, urlString);
+
         if (param != null && param.length() > 0) {
-            getMethod.setPath(url.getFile() + "?" + param);
+            getMethod.setPath(urlString + "?" + param);
         } else {
-            getMethod.setPath(url.getFile());
+            getMethod.setPath(urlString);
         }
 
         // Serialization as "application/x-www-form-urlencoded"
@@ -205,7 +242,7 @@ public class RESTSender extends AbstractHTTPSender {
         HttpClient httpClient = getHttpClient(msgContext);
 
         PostMethod postMethod = new PostMethod(url.toString());
-        if(isAuthenticationEnabled(msgContext)) {
+        if (isAuthenticationEnabled(msgContext)) {
             postMethod.setDoAuthentication(true);
         }
         String httpContentType;
@@ -228,14 +265,18 @@ public class RESTSender extends AbstractHTTPSender {
 
         if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
             reqData = createRequest(msgContext, dataout);
-            postMethod.setPath(url.getPath() + ((reqData.urlRequest) != null
+            String pathString = url.getPath();
+
+            appendParametersToURL(msgContext, pathString);
+
+            postMethod.setPath(pathString + ((reqData.urlRequest) != null
                     ? ("?" + reqData.urlRequest)
                     : ""));
 
             if (reqData.bodyRequest == null) {
                 reqData.bodyRequest = "0";
             }
-            postMethod.setRequestEntity(new AxisRESTRequestEntity(reqData.bodyRequest,httpContentType));
+            postMethod.setRequestEntity(new AxisRESTRequestEntity(reqData.bodyRequest, httpContentType));
 
         } else {
             postMethod.setPath(url.getPath());
@@ -300,7 +341,7 @@ public class RESTSender extends AbstractHTTPSender {
         }
     }
 
-    public String getParam(MessageContext msgContext) {
+    public String getQueryParameters(MessageContext msgContext) {
         OMElement dataOut;
 
         dataOut = msgContext.getEnvelope().getBody().getFirstElement();
@@ -431,7 +472,8 @@ public class RESTSender extends AbstractHTTPSender {
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
             if (!msgCtxt.isSOAP11() && (soapActionString != null)
-                && !"".equals(soapActionString.trim()) && ! "\"\"".equals(soapActionString.trim())) {
+                    && !"".equals(soapActionString.trim()) && ! "\"\"".equals(soapActionString.trim()))
+            {
                 contentType =
                         contentType + ";action=\"" + soapActionString + "\";";
             }
@@ -448,7 +490,7 @@ public class RESTSender extends AbstractHTTPSender {
         private String contentType;
         private String postRequestBody;
 
-        public AxisRESTRequestEntity(String postRequestBody,String contentType) {
+        public AxisRESTRequestEntity(String postRequestBody, String contentType) {
             this.postRequestBody = postRequestBody;
             this.contentType = contentType;
         }
