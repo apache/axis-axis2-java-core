@@ -41,12 +41,12 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      */
     public static final String NAME = "SOAPMessageBodyBasedDispatcher";
     private static final Log log = LogFactory.getLog(SOAPMessageBodyBasedDispatcher.class);
-    String serviceName = null;
-    QName operationName = null;
     private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
+        QName operationName = null;
+        
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
 
         if (bodyFirstChild == null) {
@@ -68,6 +68,8 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
+        String serviceName = null;
+        
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
 
         if (bodyFirstChild != null) {
@@ -83,10 +85,6 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                 }
                 String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
                         messageContext.getConfigurationContext().getServiceContextPath());
-
-                if (values[1] != null) {
-                    operationName = new QName(values[1]);
-                }
 
                 if (values[0] != null) {
                     serviceName = values[0];
