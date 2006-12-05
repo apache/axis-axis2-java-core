@@ -21,6 +21,9 @@
                                         <xsl:value-of select="@type"/>.MY_QNAME,
                                         org.apache.axiom.om.OMAbstractFactory.getOMFactory());
                     </xsl:when>
+                    <xsl:when test="@type = 'org.apache.axiom.om.OMElement'">
+                     return param; 
+                    </xsl:when>
                     <xsl:otherwise>
                      return param.getOMElement(<xsl:value-of select="@type"/>.MY_QNAME,
                                   org.apache.axiom.om.OMAbstractFactory.getOMFactory());
@@ -105,6 +108,9 @@
                                         param,
                                         <xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
                                     </xsl:when>
+                                    <xsl:when test="$inputElementType = 'org.apache.axiom.om.OMElement'">
+                                        emptyEnvelope.getBody().addChild(param);
+                                     </xsl:when>
                                     <xsl:otherwise>
                                         emptyEnvelope.getBody().addChild(param.getOMElement(<xsl:value-of select="$inputElementType"/>.MY_QNAME,factory));
                                     </xsl:otherwise>
@@ -276,6 +282,9 @@
                 <xsl:choose>
                     <xsl:when test="$helpermode">
                            return <xsl:value-of select="@type"/>Helper.parse(param.getXMLStreamReaderWithoutCaching());
+                    </xsl:when>
+                    <xsl:when test="@type = 'org.apache.axiom.om.OMElement'">
+                           return param;
                     </xsl:when>
                     <xsl:otherwise>
                            return <xsl:value-of select="@type"/>.Factory.parse(param.getXMLStreamReaderWithoutCaching());

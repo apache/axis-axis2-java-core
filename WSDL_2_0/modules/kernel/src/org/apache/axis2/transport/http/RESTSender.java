@@ -241,7 +241,7 @@ public class RESTSender extends AbstractHTTPSender {
     }
 
     private void sendViaPost(MessageContext msgContext, OMElement dataout, URL url,
-                             String soapActionString) {
+                             String soapActionString) throws MalformedURLException {
 
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple

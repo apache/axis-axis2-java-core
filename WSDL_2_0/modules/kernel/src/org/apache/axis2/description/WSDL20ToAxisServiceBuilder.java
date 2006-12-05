@@ -856,7 +856,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             elementQName = messageReference.getElementDeclaration().getName();
         } else if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_ANY.equals(messageContentModelName)) {
             // TODO : Need to improve this
-//           elementQName = SchemaConstants.XSD_ANY;
+           elementQName = Constants.XSD_ANY;
         } else
         if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_NONE.equals(messageContentModelName)) {
             // TODO : Need to improve this
