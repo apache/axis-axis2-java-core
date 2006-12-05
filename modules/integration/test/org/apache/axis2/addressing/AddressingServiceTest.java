@@ -72,6 +72,7 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
                 new RawXMLINOutMessageReceiver(),
                 Echo.class.getName(),
                 operationName);
+        echoService.getOperation(operationName).setOutputAction("echoOMElementResponse");
         UtilServer.deployService(echoService);
 
         rrService = createRedirectReceiverService();

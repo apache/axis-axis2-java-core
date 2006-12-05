@@ -123,7 +123,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
-        options.setAction(serviceName.getLocalPart());
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
 
         Callback callback = new Callback() {
             public void onComplete(AsyncResult result) {
@@ -150,9 +150,9 @@ public class JMSEchoRawXMLTest extends TestCase {
 
         int index = 0;
         while (!finish) {
-            Thread.sleep(10000);
+            Thread.sleep(1000);
             index++;
-            if (index > 10) {
+            if (index > 100) {
                 throw new AxisFault(
                         "Server was shutdown as the async response take too long to complete");
             }
@@ -164,7 +164,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
-        options.setAction(serviceName.getLocalPart());
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
 
@@ -210,7 +210,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setAction(operationName.getLocalPart());
+        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
