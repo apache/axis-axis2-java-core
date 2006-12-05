@@ -73,11 +73,12 @@ public class SchemaUtil {
     }
 
     /**
-     * This method is designed for REST handling. Parameter of a REST request comes in the URL or in
+     * This method is designed for REST handling. Parameters of a REST request comes in the URL or in
      * the body of the message (if it is POST). Since those parameters may not be in the proper order,
-     * we need to retrieve the schema of the operation and construct the message according to that
-     * from the parameters received as the REST request.
-     * This method will carry out that function and it is assumed that this method is called in that scenarios only.
+     * we need to retrieve the schema of the operation and construct the message according to the
+     * parameters received as the REST request.
+     * This method will carry out that function and it is assumed that this method is called in that
+     * scenarios only.
      *
      * @param msgCtxt
      * @param request
@@ -95,7 +96,9 @@ public class SchemaUtil {
         SOAPBody body = soapEnvelope.getBody();
 
         if (xmlSchemaElement == null) {
-            // if there is no schema its piece of cake !! add these to the soap body in any order you like
+            // if there is no schema its piece of cake !! add these to the soap body in any order you like.
+            // Note : if there are parameters in the path of the URL, there is no way this can add them
+            // to the message.
             OMElement bodyFirstChild = soapFactory.createOMElement(msgCtxt.getAxisOperation().getName(), body);
 
             // first add the parameters in the URL
@@ -119,8 +122,9 @@ public class SchemaUtil {
             }
             OMElement bodyFirstChild = soapFactory.createOMElement(bodyFirstChildQName, body);
 
-            if (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST.equals(request.getMethod())
-                || (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET.equals(request.getMethod()))) {
+            String httpMethod = request.getMethod();
+            if (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST.equals(httpMethod)
+                || (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET.equals(httpMethod))) {
                 XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
                 if (schemaType instanceof XmlSchemaComplexType) {
                     XmlSchemaComplexType complexType = ((XmlSchemaComplexType) schemaType);

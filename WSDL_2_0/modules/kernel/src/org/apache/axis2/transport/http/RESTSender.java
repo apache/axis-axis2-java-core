@@ -153,29 +153,35 @@ public class RESTSender extends AbstractHTTPSender {
      * @param urlString
      * @return - the URL after appending the properties
      */
-    private String appendParametersToURL(MessageContext messageContext, String urlString) throws MalformedURLException {
-        OMElement firstElement = messageContext.getEnvelope().getBody().getFirstElement();
+    private String appendParametersToURL(MessageContext messageContext, String urlString) {
+        try {
+            OMElement firstElement = messageContext.getEnvelope().getBody().getFirstElement();
 
-        ArrayList httpLocationParams = (ArrayList) messageContext.getProperty(
-                Constants.Configuration.URL_HTTP_LOCATION_PARAMS_LIST);
+            ArrayList httpLocationParams = (ArrayList) messageContext.getProperty(
+                    Constants.Configuration.URL_HTTP_LOCATION_PARAMS_LIST);
 
-        URL url = new URL(urlString);
-        String path = url.getPath();
+            URL url = new URL(urlString);
+            String path = url.getPath();
 
-        for (int i = 0; i < httpLocationParams.size(); i++) {
-            String httpLocationParam = (String) httpLocationParams.get(i);
-            OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
-            if (httpURLParam != null) {
-                path += httpURLParam.getText();
+            for (int i = 0; i < httpLocationParams.size(); i++) {
+                String httpLocationParam = (String) httpLocationParams.get(i);
+                OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
+                if (httpURLParam != null) {
+                    path += httpURLParam.getText();
+                }
             }
+
+            String query = url.getQuery();
+            if (query != null && !"".equals(query)) {
+                return path + "?" + query;
+            } else {
+                return path;
+            }
+        } catch (MalformedURLException e) {
+            log.error("Error in processing POST request", e);
         }
 
-        String query = url.getQuery();
-        if (query != null && !"".equals(query)) {
-            return path + "?" + query;
-        } else {
-            return path;
-        }
+        return null;
     }
 
     private void sendViaGet(MessageContext msgContext, URL url)

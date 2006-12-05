@@ -72,7 +72,7 @@ import java.util.*;
  */
 public class AxisService extends AxisDescription {
 
-    private Map endpoitMap = new HashMap();
+    private Map endpointMap = new HashMap();
 
     private Map messageNameToOperationsMap = new HashMap();
 
@@ -191,12 +191,12 @@ public class AxisService extends AxisDescription {
     // name of the  binding used : use in codegeneration
     private String bindingName;
 
-    public AxisEndpoint getEndpoit(String key) {
-        return (AxisEndpoint)endpoitMap.get(key);
+    public AxisEndpoint getEndpoint(String key) {
+        return (AxisEndpoint)endpointMap.get(key);
     }
 
     public void addEndpoint(String key,AxisEndpoint axisEndpoint) {
-        this.endpoitMap.put(key,axisEndpoint);
+        this.endpointMap.put(key,axisEndpoint);
     }
 
     public String getWSAddressingFlag() {
@@ -1854,5 +1854,9 @@ public class AxisService extends AxisDescription {
 
     public void setEndpointURL(String endpointURL) {
         this.endpointURL = endpointURL;
+    }
+
+    public Map getEndpoints() {
+        return endpointMap;
     }
 }
