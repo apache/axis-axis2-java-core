@@ -30,13 +30,14 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
@@ -52,23 +53,19 @@ import org.apache.commons.logging.LogFactory;
 public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
 
     private static Log log = LogFactory.getLog(DocLitWrappedMethodMarshaller.class);
-    protected ServiceDescription serviceDesc = null;
-    protected EndpointDescription endpointDesc = null;
-    protected OperationDescription operationDesc = null;
-    protected Protocol protocol = Protocol.soap11;
     
     
-    public DocLitWrappedMethodMarshaller(ServiceDescription serviceDesc, EndpointDescription endpointDesc, OperationDescription operationDesc, Protocol protocol) {
+    public DocLitWrappedMethodMarshaller() {
         super();
-        this.serviceDesc = serviceDesc;
-        this.endpointDesc = endpointDesc;
-        this.operationDesc = operationDesc;
-        this.protocol = protocol;
     }
 
-    public Object demarshalResponse(Message message, Object[] signatureArgs)
+    public Object demarshalResponse(Message message, Object[] signatureArgs, OperationDescription operationDesc)
             throws WebServiceException {
         // Note all exceptions are caught and rethrown with a WebServiceException
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        
         try {
             // Sample Document message
             // ..
@@ -168,8 +165,12 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Object[] demarshalRequest(Message message)
+    public Object[] demarshalRequest(Message message, OperationDescription operationDesc)
             throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample Document message
@@ -244,8 +245,19 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Message marshalResponse(Object returnObject, Object[] signatureArgs)
+    public Message marshalResponse(Object returnObject, Object[] signatureArgs, OperationDescription operationDesc)
             throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        Protocol protocol = null;
+        try {
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
+        } catch (MessageException e) {
+            // TODO better handling than this?
+            e.printStackTrace();
+        }
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample Document message
@@ -338,7 +350,18 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Message marshalRequest(Object[] signatureArguments) throws WebServiceException {
+    public Message marshalRequest(Object[] signatureArguments, OperationDescription operationDesc) throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        Protocol protocol = null;
+        try {
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
+        } catch (MessageException e) {
+            // TODO better handling than this?
+            e.printStackTrace();
+        }
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample Document message
@@ -418,7 +441,18 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Message marshalFaultResponse(Throwable throwable) throws WebServiceException {
+    public Message marshalFaultResponse(Throwable throwable, OperationDescription operationDesc) throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        Protocol protocol = null;
+        try {
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
+        } catch (MessageException e) {
+            // TODO better handling than this?
+            e.printStackTrace();
+        }
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Create the message 
@@ -437,7 +471,11 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Throwable demarshalFaultResponse(Message message) throws WebServiceException {
+    public Throwable demarshalFaultResponse(Message message, OperationDescription operationDesc) throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, 

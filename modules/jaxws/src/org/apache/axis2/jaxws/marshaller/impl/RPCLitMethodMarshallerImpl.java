@@ -29,36 +29,35 @@ import org.apache.axis2.jaxws.message.Protocol;
 public class RPCLitMethodMarshallerImpl extends MethodMarshallerImpl {
 
    
-    public RPCLitMethodMarshallerImpl(ServiceDescription serviceDesc,
-            EndpointDescription endpointDesc, OperationDescription operationDesc, Protocol protocol) {
-        super(serviceDesc, endpointDesc, operationDesc, protocol);
+    public RPCLitMethodMarshallerImpl() {
+        super();
         // TODO Unsupported
         throw new UnsupportedOperationException();
     }
     
     @Override
-    public Object demarshalResponse(Message message, Object[] inputArgs)
+    public Object demarshalResponse(Message message, Object[] inputArgs, OperationDescription operationDesc)
             throws WebServiceException {
         // TODO Unsupported
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object[] demarshalRequest(Message message)
+    public Object[] demarshalRequest(Message message, OperationDescription operationDesc)
             throws WebServiceException {
         // TODO Unsupported
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Message marshalResponse(Object returnObject, Object[] holderObjects)
+    public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc)
             throws WebServiceException {
         // TODO Unsupported
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Message marshalRequest(Object[] object) throws WebServiceException {
+    public Message marshalRequest(Object[] object, OperationDescription operationDesc) throws WebServiceException {
         // TODO Unsupported
         throw new UnsupportedOperationException();
     }

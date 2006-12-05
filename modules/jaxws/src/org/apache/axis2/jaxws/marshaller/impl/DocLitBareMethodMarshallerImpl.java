@@ -27,15 +27,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,19 +46,18 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 	 * @param endpointDesc
 	 * @param operationDesc
 	 */
-	public DocLitBareMethodMarshallerImpl(ServiceDescription serviceDesc,
-			EndpointDescription endpointDesc, OperationDescription operationDesc, Protocol protocol) {
-		super(serviceDesc, endpointDesc, operationDesc, protocol);
+	public DocLitBareMethodMarshallerImpl() {
+		super();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#toJAXBObject(org.apache.axis2.jaxws.message.Message)
 	 */
 	@Override
-	public Object demarshalResponse(Message message, Object[] inputArgs) throws WebServiceException {
+	public Object demarshalResponse(Message message, Object[] inputArgs, OperationDescription operationDesc) throws WebServiceException {
 		try {
 
-			Class returnType = getReturnType();
+			Class returnType = getReturnType(operationDesc);
 
 			ArrayList<Object> holderArgs = null;
 			ArrayList<MethodParameter> mps = null;
@@ -69,7 +65,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 
 			holderArgs = new ArrayList<Object>();
 			mps = new ArrayList<MethodParameter>();
-			mps = extractHolderParameters(inputArgs);
+			mps = extractHolderParameters(inputArgs, operationDesc);
 			holdermps = new ArrayList<MethodParameter>(mps);
 
 
@@ -91,11 +87,11 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 			}
 			else if(holdermps.size() == 0 && !returnType.getName().equals("void")){
 				// No holders but a return type example --> public ReturnType someMethod()
-				bo = createBusinessObject(createContextPackageSet(), message);
+				bo = createBusinessObject(createContextPackageSet(operationDesc), message);
 			}
 			else if(holdermps.size()>0 && returnType.getName().equals("void")){
 				// Holders found and no return type example --> public void someMethod(Holder<AHolder>)	
-				assignHolderValues(holdermps, holderArgs, message);
+				assignHolderValues(holdermps, holderArgs, message, operationDesc);
 			}
 			else{
 				// Holders found and return type example --> public ReturnType someMethod(Holder<AHolder>)
@@ -103,8 +99,8 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 				// type and input param as holder.
 				// WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject 
 				// property, if wsdl schema forces a holder and a return type.
-				assignHolderValues(holdermps, holderArgs, message);
-				bo = createBusinessObject(createContextPackageSet(), message);
+				assignHolderValues(holdermps, holderArgs, message, operationDesc);
+				bo = createBusinessObject(createContextPackageSet(operationDesc), message);
 			}
 
             if (bo instanceof JAXBElement) {
@@ -118,7 +114,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 		}
         
     }
-	private ArrayList<MethodParameter> createParameterForSEIMethod(Message message)throws IllegalAccessException, InstantiationException, ClassNotFoundException, MessageException, XMLStreamException, JAXBException{
+	private ArrayList<MethodParameter> createParameterForSEIMethod(Message message, OperationDescription operationDesc)throws IllegalAccessException, InstantiationException, ClassNotFoundException, MessageException, XMLStreamException, JAXBException{
 	    ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 	    if(message == null){
 	        return null;
@@ -135,7 +131,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 	        Object bo = null;
             // Create a set of context packages that will be needed to demarshal
             // the jaxb object.  For now just consider the actualType
-            Set<String> contextPackages = createContextPackageSet();
+            Set<String> contextPackages = createContextPackageSet(operationDesc);
             
             // Create the business object
             if(isHeader){
@@ -161,7 +157,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 	        } 
 	        paramValues.add(arg);
 	    }
-	    mps = createParameters(paramDescs, paramValues);
+	    mps = createParameters(paramDescs, paramValues, operationDesc);
 	    
 	    return mps;
 	}
@@ -170,27 +166,26 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#toObjects(org.apache.axis2.jaxws.message.Message)
 	 */
 	@Override
-	public Object[] demarshalRequest(Message message) throws WebServiceException {
+	public Object[] demarshalRequest(Message message, OperationDescription operationDesc) throws WebServiceException {
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Attempting to demarshal a document/literal request.");
 			}
 
-			ArrayList<Class> inputParams = getInputTypes();
+			ArrayList<Class> inputParams = getInputTypes(operationDesc);
 
 			// If the method has no input parameters, then we're done.
 			if(inputParams.size() == 0){
 				return null;
 			}
 
-			ArrayList<MethodParameter> mps = createParameterForSEIMethod(message);
+			ArrayList<MethodParameter> mps = createParameterForSEIMethod(message, operationDesc);
 
 			ArrayList<Object> objectList = new ArrayList<Object>();
 			if (log.isDebugEnabled()) {
 				log.debug("reading input method parameters");
 			}
 			for(MethodParameter mp:mps){
-				ParameterDescription pd = mp.getParameterDescription();
 				objectList.add(mp.getValue());
 			}
 			return objectList.toArray();		
@@ -205,19 +200,19 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromJAXBObject(java.lang.Object)
 	 */
 	@Override
-	public Message marshalResponse(Object returnObject, Object[] holderObjects) throws WebServiceException {
+	public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc) throws WebServiceException {
 		try {
 			// Response wrapper is basically the return type. So the return object 
 			// is a JAXB object. If there is a holder objects then that is the 
 			// responsewrapper.
-			Class wrapperClazz = getReturnType();
+			Class wrapperClazz = getReturnType(operationDesc);
 			String wrapperClazzName = operationDesc.getResultName();
 			if (wrapperClazzName == null || wrapperClazzName.trim().length() == 0) {
 				wrapperClazzName = wrapperClazz.getName();
 			}
 			String wrapperTNS = operationDesc.getResultTargetNamespace();
 
-			ArrayList<MethodParameter> holdersNreturnObject = extractHolderParameters(holderObjects);
+			ArrayList<MethodParameter> holdersNreturnObject = extractHolderParameters(holderObjects, operationDesc);
 
 
 			Message message = null;
@@ -225,17 +220,17 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 			if(holdersNreturnObject.size() == 0 && wrapperClazz.getName().equals("void")){
 				//No holders and return type void example --> public void someMethod() I will return empty ResponseWrapper in message body for this case.
 				//doNothing as there is nothing to wrap
-				message = createEmptyMessage();
+				message = createEmptyMessage(operationDesc);
 			}
 			else if(holdersNreturnObject.size() == 0 && !wrapperClazz.getName().equals("void")){
 				//No holders but a return type example --> public ReturnType someMethod()
 				MethodParameter mp = new MethodParameter(wrapperClazzName,wrapperTNS, wrapperClazz, returnObject);
 				holdersNreturnObject.add(mp);
-				message = createMessage(holdersNreturnObject);
+				message = createMessage(holdersNreturnObject, operationDesc);
 			}
 			else if(holdersNreturnObject.size()>0 && wrapperClazz.getName().equals("void")){
 				//Holders found and no return type example --> public void someMethod(Holder<AHolder>)	
-				message = createMessage(holdersNreturnObject);
+				message = createMessage(holdersNreturnObject, operationDesc);
 			}
 			else{
 				//Holders found and return type example --> public ReturnType someMethod(Holder<AHolder>)
@@ -243,7 +238,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 				//WSGen and WsImport Generate Holders with return type as one of the Holder JAXBObject property, if wsdl schema forces a holder and a return type.
 				MethodParameter mp = new MethodParameter(wrapperClazzName,wrapperTNS, wrapperClazz, returnObject);
 				holdersNreturnObject.add(mp);
-				message = createMessage(holdersNreturnObject);
+				message = createMessage(holdersNreturnObject, operationDesc);
 			}
 
 
@@ -259,13 +254,13 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromObjects(java.lang.Object[])
 	 */
 	@Override
-	public Message marshalRequest(Object[] objects) throws WebServiceException {
+	public Message marshalRequest(Object[] objects, OperationDescription operationDesc) throws WebServiceException {
 		try {
 			if (log.isDebugEnabled()) {
 				log.debug("Attempting to marshal document/literal request");
 			}
 
-			ArrayList<MethodParameter> mps = createRequestWrapperParameters(objects);
+			ArrayList<MethodParameter> mps = createRequestWrapperParameters(objects, operationDesc);
 
 			//WSDL wrapped and running wsImport with non-wrap binding or wsdl un-Wrapped and running wsImport with no binding, EITHER WAYS 
 			//there can be only 0 or 1 Body parts as per WS-I. 
@@ -289,11 +284,11 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 			Message message = null;
 
 			if (mps.size() !=0) {
-				message = createMessage(mps);
+				message = createMessage(mps, operationDesc);
 			}
 			//no message part case or no input parameter
 			if (mps.size() == 0) {
-				message = createEmptyMessage();
+				message = createEmptyMessage(operationDesc);
 			}
 
 

@@ -90,9 +90,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
 	//Reference to ServiceDelegate instance that was used to create the Proxy
 	protected ServiceDescription serviceDesc = null;
-	protected OperationDescription operationDesc = null;
-	protected MethodMarshaller methodMarshaller = null;
-	private Class seiClazz = null;
+    private Class seiClazz = null;
 	private Method method = null;
 	
 	public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, EndpointDescription epDesc) {
@@ -140,8 +138,8 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			}			
 		}
 		else {
-			operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
-			if(isMethodExcluded()){
+			OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
+			if(isMethodExcluded(operationDesc)){
 				throw ExceptionFactory.makeWebServiceException("Invalid Method Call, Method "+method.getName() + " has been excluded using @webMethod annotation");
 			}
 			return InvokeSEIMethod(method, args);
@@ -158,7 +156,10 @@ public class JAXWSProxyHandler extends BindingProvider implements
             log.debug("Attempting to Invoke SEI Method "+ method.getName());
         }
 		
-		initialize();
+		//initialize();
+        
+        OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
+        
 		InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
 		MessageContext requestContext = createRequest(method, args);
 		//Enable MTOM on the Message if the property was
@@ -207,7 +208,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			if(asyncHandler == null){
 				throw ExceptionFactory.makeWebServiceException("AynchHandler null for Async callback, Invalid AsyncHandler callback Object");
 			}
-			AsyncResponse listener = createProxyListener(args);
+			AsyncResponse listener = createProxyListener(args, operationDesc);
 			requestIC.setAsyncResponseListener(listener);
 			requestIC.setExecutor(serviceDelegate.getExecutor());
 				        
@@ -227,7 +228,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			if(log.isDebugEnabled()){
 				log.debug("Async Polling");
 			}
-			AsyncResponse listener = createProxyListener(args);
+			AsyncResponse listener = createProxyListener(args, operationDesc);
 			requestIC.setAsyncResponseListener(listener);
 			requestIC.setExecutor(serviceDelegate.getExecutor());
 	        
@@ -252,14 +253,14 @@ public class JAXWSProxyHandler extends BindingProvider implements
             }
 	        
 			MessageContext responseContext = responseIC.getResponseMessageContext();
-			Object responseObj = createResponse(method, args, responseContext);
+			Object responseObj = createResponse(method, args, responseContext, operationDesc);
 			return responseObj;
 		}
 		return null;
 	}
 	
-	private AsyncResponse createProxyListener(Object[] args){
-		ProxyAsyncListener listener = new ProxyAsyncListener();
+	private AsyncResponse createProxyListener(Object[] args, OperationDescription operationDesc){
+		ProxyAsyncListener listener = new ProxyAsyncListener(operationDesc);
 		listener.setHandler(this);
 		listener.setInputArgs(args);
 		return listener;
@@ -280,7 +281,10 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		if (log.isDebugEnabled()) {
             log.debug("Converting objects to Message");
         }
-		Message message = methodMarshaller.marshalRequest(args);
+        
+        OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
+        
+		Message message = operationDesc.getMarshaller(true).marshalRequest(args, operationDesc);
 		
 		if (log.isDebugEnabled()) {
             log.debug("Objects converted to Message");
@@ -300,13 +304,14 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	 * @param responseContext
 	 * @return
 	 */
-	protected Object createResponse(Method method, Object[] args, MessageContext responseContext)throws Throwable{
+	protected Object createResponse(Method method, Object[] args, MessageContext responseContext, OperationDescription operationDesc)throws Throwable{
 		Message responseMsg = responseContext.getMessage();
+
 		if (log.isDebugEnabled()) {
             log.debug("Converting Message to Response Object");
         }
 		if (responseMsg.isFault()) {
-		    Object object = methodMarshaller.demarshalFaultResponse(responseMsg);
+		    Object object = operationDesc.getMarshaller(false).demarshalFaultResponse(responseMsg, operationDesc);
 		    if (log.isDebugEnabled()) {
 		        log.debug("Message Converted to response Throwable.  Throwing back to client.");
 		    }
@@ -316,7 +321,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		    // use the factory, it'll throw the right thing:
 		    throw ExceptionFactory.makeWebServiceException(responseContext.getLocalException());
 		}
-		Object object = methodMarshaller.demarshalResponse(responseMsg, args);
+		Object object = operationDesc.getMarshaller(false).demarshalResponse(responseMsg, args, operationDesc);
 		if (log.isDebugEnabled()) {
             log.debug("Message Converted to response Object");
         }
@@ -335,12 +340,13 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		}
 		return false;
 	}
-	
+
+    
 	private boolean isPublic(Method method){
 		return Modifier.isPublic(method.getModifiers());
 	}
 	
-	private boolean isMethodExcluded(){
+	private boolean isMethodExcluded(OperationDescription operationDesc){
 		return operationDesc.isExcluded();
 	}
 
@@ -350,65 +356,5 @@ public class JAXWSProxyHandler extends BindingProvider implements
 
 	public void setSeiClazz(Class seiClazz) {
 		this.seiClazz = seiClazz;
-	}
-    
-	private void initialize(){
-		SOAPBinding.Style style = operationDesc.getSoapBindingStyle();
-        Protocol p = null;
-        try {
-            EndpointDescription epDesc = getEndpointDescription();
-            String bindingID = epDesc.getClientBindingID();
-            p = Protocol.getProtocolForBinding(bindingID);
-        } catch (MessageException e) {
-            e.printStackTrace();
-        }
-        
-		MethodMarshallerFactory cf = (MethodMarshallerFactory) FactoryRegistry.getFactory(MethodMarshallerFactory.class);
-		if(style == SOAPBinding.Style.DOCUMENT){
-			methodMarshaller = createDocLitMethodMarshaller(cf, p);
-		}
-		if(style == SOAPBinding.Style.RPC){
-			methodMarshaller = createRPCLitMethodMarshaller(cf, p);
-		}	
-	}
-    
-	private MethodMarshaller createDocLitMethodMarshaller(MethodMarshallerFactory cf, Protocol p){
-		ParameterStyle parameterStyle = null;
-		if(isDocLitBare()){
-			parameterStyle = SOAPBinding.ParameterStyle.BARE;
-		}
-		if(isDocLitWrapped()){
-			parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
-		}
-
-		return cf.createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, 
-                serviceDesc, endpointDesc, operationDesc, p, true);
-	}
-	
-	private MethodMarshaller createRPCLitMethodMarshaller(MethodMarshallerFactory cf, Protocol p){
-        return cf.createMethodMarshaller(SOAPBinding.Style.RPC, SOAPBinding.ParameterStyle.WRAPPED,
-                serviceDesc, endpointDesc, operationDesc, p, true);
-	}
-    
-	protected boolean isDocLitBare(){
-		SOAPBinding.ParameterStyle methodParamStyle = operationDesc.getSoapBindingParameterStyle();
-		if(methodParamStyle!=null){
-			return methodParamStyle == SOAPBinding.ParameterStyle.BARE;
-		}
-		else{
-			SOAPBinding.ParameterStyle SEIParamStyle = endpointDesc.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
-			return SEIParamStyle == SOAPBinding.ParameterStyle.BARE;
-		}
-	}
-	
-	protected boolean isDocLitWrapped(){
-		SOAPBinding.ParameterStyle methodParamStyle = operationDesc.getSoapBindingParameterStyle();
-		if(methodParamStyle!=null){
-			return methodParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
-		}
-		else{
-		SOAPBinding.ParameterStyle SEIParamStyle = endpointDesc.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
-		return SEIParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
-		}
 	}
 }

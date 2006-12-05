@@ -47,10 +47,8 @@ import org.apache.commons.logging.LogFactory;
 public class JavaBeanDispatcher extends JavaDispatcher {
 
     private static final Log log = LogFactory.getLog(JavaBeanDispatcher.class);
-    private ServiceDescription serviceDesc = null;
     private EndpointDescription endpointDesc = null;
-    private OperationDescription operationDesc = null;
-    private MethodMarshaller methodMarshaller = null;
+    //private MethodMarshaller methodMarshaller = null;
     
     public JavaBeanDispatcher(Class implClass, Object serviceInstance) {
         super(implClass, serviceInstance);
@@ -67,8 +65,9 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         }
         
         initialize(mc);
-        methodMarshaller = createMethodMarshaller(mc.getMessage().getProtocol());
-        Object[] methodInputParams = methodMarshaller.demarshalRequest(mc.getMessage());
+        OperationDescription operationDesc = getOperationDescription(mc); //mc.getOperationDescription();
+        MethodMarshaller methodMarshaller = getMethodMarshaller(mc.getMessage().getProtocol(), mc.getOperationDescription());
+        Object[] methodInputParams = methodMarshaller.demarshalRequest(mc.getMessage(), mc.getOperationDescription());
         Method target = getJavaMethod(mc, serviceImplClass);
 
         //At this point, we have the method that is going to be invoked and
@@ -102,13 +101,13 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         	return null;
         }
         else if (response instanceof Throwable) {
-        	message = methodMarshaller.marshalFaultResponse((Throwable)response); 
+        	message = methodMarshaller.marshalFaultResponse((Throwable)response, mc.getOperationDescription()); 
         }
         else if(target.getReturnType().getName().equals("void")){
-        	message = methodMarshaller.marshalResponse(null, methodInputParams);
+        	message = methodMarshaller.marshalResponse(null, methodInputParams, mc.getOperationDescription());
         }
         else{
-        	message = methodMarshaller.marshalResponse(response, methodInputParams);
+        	message = methodMarshaller.marshalResponse(response, methodInputParams, mc.getOperationDescription());
         }
         
         MessageContext responseMsgCtx = MessageContextUtils.createMessageMessageContext(mc);
@@ -131,11 +130,9 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     
     private void initialize(MessageContext mc){
     	mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
-    	serviceDesc = getServiceDescription(mc);
         endpointDesc = getEndpointDescription(mc);
-        operationDesc = getOperationDescription(mc);
-        mc.setOperationDescription(operationDesc);
-        methodMarshaller = null;
+        mc.setOperationDescription(getOperationDescription(mc));
+        //methodMarshaller = null;
     }
 
     /*
@@ -185,27 +182,31 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         return ed;
     }
     
-    private MethodMarshaller createMethodMarshaller(Protocol protocol){
+    
+    private MethodMarshaller getMethodMarshaller(Protocol protocol, OperationDescription operationDesc){
     	javax.jws.soap.SOAPBinding.Style styleOnSEI = endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();
 		javax.jws.soap.SOAPBinding.Style styleOnMethod = operationDesc.getSoapBindingStyle();
 		if(styleOnMethod!=null && styleOnSEI!=styleOnMethod){
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
 		}
+        return operationDesc.getMarshaller(false);
 		
-		
+		/*
 		MethodMarshallerFactory cf = (MethodMarshallerFactory) FactoryRegistry.getFactory(MethodMarshallerFactory.class);
 		
 		if(styleOnSEI == javax.jws.soap.SOAPBinding.Style.DOCUMENT){
-			return createDocLitMessageConvertor(cf, protocol);
+			return createDocLitMessageConvertor(cf, operationDesc);
 		}
 		if(styleOnSEI == javax.jws.soap.SOAPBinding.Style.RPC){
-			return createRPCLitMessageConvertor(cf, protocol);
+			return createRPCLitMessageConvertor(cf);
 			
 		}
 		return null;
+        */
     }
     
-    private MethodMarshaller createDocLitMessageConvertor(MethodMarshallerFactory cf, Protocol protocol){
+    /*
+    private MethodMarshaller createDocLitMessageConvertor(MethodMarshallerFactory cf, OperationDescription operationDesc){
 		ParameterStyle parameterStyle = null;
 		if(isDocLitBare(endpointDesc, operationDesc)){
 			parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE;
@@ -213,15 +214,13 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 		if(isDocLitWrapped(endpointDesc, operationDesc)){
 			parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 		}
-        return cf.createMethodMarshaller(Style.DOCUMENT, parameterStyle, 
-                serviceDesc, endpointDesc, operationDesc, protocol, false);
+        return cf.createMethodMarshaller(Style.DOCUMENT, parameterStyle, false);
 	}
 	
-	private MethodMarshaller createRPCLitMessageConvertor(MethodMarshallerFactory cf, Protocol protocol){
-        return cf.createMethodMarshaller(Style.RPC, ParameterStyle.WRAPPED, 
-                serviceDesc, endpointDesc, operationDesc, protocol, false);
+	private MethodMarshaller createRPCLitMessageConvertor(MethodMarshallerFactory cf){
+        return cf.createMethodMarshaller(Style.RPC, ParameterStyle.WRAPPED, false);
 	}
-	
+	*/
     
     public Method getJavaMethod(MessageContext mc, Class serviceImplClass) {
 		 QName opName = mc.getOperationName();
@@ -233,7 +232,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 	        String localPart = opName.getLocalPart();
 	        Method[] methods = serviceImplClass.getMethods();
 	        for (int i = 0; i < methods.length; ++i) {
-	        	String webMethodName = operationDesc.getOperationName();
+	        	String webMethodName = mc.getOperationDescription().getOperationName();
 	            if (localPart.equals(methods[i].getName())){
 	                return methods[i];
 	            }
@@ -249,7 +248,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 	        // TODO: NLS
 	        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("JavaBeanDispatcherErr1"));
 	}
-    
+    /*
     protected boolean isDocLitBare(EndpointDescription endpointDesc, OperationDescription operationDesc){
 		javax.jws.soap.SOAPBinding.ParameterStyle methodParamStyle = operationDesc.getSoapBindingParameterStyle();
 		if(methodParamStyle!=null){
@@ -271,5 +270,6 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 		return SEIParamStyle == javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
 		}
 	}
+    */
     
 }

@@ -22,18 +22,14 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Block;
@@ -58,37 +54,26 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
 	 * @param endpointDesc
 	 * @param operationDesc
 	 */
-	public DocLitWrappedMethodMarshallerImpl(ServiceDescription serviceDesc,
-			EndpointDescription endpointDesc, OperationDescription operationDesc, Protocol protocol) {
-		super(serviceDesc, endpointDesc, operationDesc, protocol);
+	public DocLitWrappedMethodMarshallerImpl() {
+		super();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#toJAXBObject(org.apache.axis2.jaxws.message.Message)
 	 */
 	@Override
-	public Object demarshalResponse(Message message, Object[] inputArgs) throws WebServiceException {
+	public Object demarshalResponse(Message message, Object[] inputArgs, OperationDescription operationDesc) throws WebServiceException {
 		
         try {
         	if (log.isDebugEnabled()) {
     		    log.debug("Attempting to demarshal a document/literal wrapped response");
             }
             
-    		String className = operationDesc.getResponseWrapperClassName();
             Object businessObject = null;
-            
-            //TODO Move this to Operation Description.
-            Class wrapperClazz = null;
-            if (className == null || (className != null && className.length() == 0)) {
-    			wrapperClazz = getReturnType();
-    		}
-    		else {		
-                wrapperClazz = loadClass(className);
-    		}
     		
             String resultName = operationDesc.getResultName();
-    		businessObject = createBusinessObject(createContextPackageSet(), message);
-            assignHolderValues(businessObject, inputArgs, false);
+    		businessObject = createBusinessObject(createContextPackageSet(operationDesc), message);
+            assignHolderValues(businessObject, inputArgs, false, operationDesc);
             
             // REVIEW: Is the the appropriate logic, to be checking for the existence of the annotation
             //         as the decision point for getting into the property logic?  Note that even if the annotation
@@ -112,20 +97,17 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#toObjects(org.apache.axis2.jaxws.message.Message)
 	 */
 	@Override
-	public Object[] demarshalRequest(Message message) throws WebServiceException {
+	public Object[] demarshalRequest(Message message, OperationDescription operationDesc) throws WebServiceException {
 		try {
-			String className = operationDesc.getRequestWrapperClassName();
-
 			ArrayList<MethodParameter> mps;
 
-			Class requestWrapperClazz = loadClass(className);
-			Object jaxbObject = createBusinessObject(createContextPackageSet(), message);
+			Object jaxbObject = createBusinessObject(createContextPackageSet(operationDesc), message);
 
 			if (log.isDebugEnabled()) {
 				log.debug("reading input method parameters");
 			}
 
-			mps = createParameterForSEIMethod(jaxbObject);
+			mps = createParameterForSEIMethod(jaxbObject, operationDesc);
 
 
 			if (log.isDebugEnabled()) {
@@ -153,7 +135,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromJAXBObject(java.lang.Object)
 	 */
 	@Override
-	public Message marshalResponse(Object returnObject, Object[] holderObjects) throws WebServiceException {
+	public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc) throws WebServiceException {
 
 		try {
 			// Get the necessary information from the OperationDesc
@@ -161,14 +143,13 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
 			String wrapperClazzName = operationDesc.getResponseWrapperClassName();
 			String wrapperLocalName = operationDesc.getResponseWrapperLocalName();
 			String wrapperTNS = operationDesc.getResponseWrapperTargetNamespace();
-			String webResult = operationDesc.getResultName();
 
 			//TODO Move this to Operation Description.
 			if (wrapperClazzName == null || (wrapperClazzName != null && wrapperClazzName.length() == 0)) {
 				if (log.isDebugEnabled()) {
 					log.debug("No ResponseWrapper annotation found, using return type of method as response object");
 				}
-				wrapperClazz = getReturnType();
+				wrapperClazz = getReturnType(operationDesc);
 				wrapperClazzName = wrapperClazz.getName();
 			}
 			else {		
@@ -197,11 +178,11 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
 			}
 			if(objectList.size() == 0 && !wrapperClazz.getName().equals("void")){
 				//No holders but a return type example --> public ReturnType someMethod()
-				mps = createResponseWrapperParameter(returnObject);
+				mps = createResponseWrapperParameter(returnObject, operationDesc);
 			}
 			else{
 				//Holders found and return type or no return type. example --> public ReturnType someMethod(Holder<String>) or public void someMethod(Holder<String>)
-				mps = createResponseWrapperParameter(returnObject, objectList.toArray());
+				mps = createResponseWrapperParameter(returnObject, objectList.toArray(), operationDesc);
 			}
 
 			Object wrapper = wrap(wrapperClazz, mps);
@@ -212,7 +193,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
                 wrapper = XMLRootElementUtil.getElementEnabledObject(wrapperTNS, 
                         wrapperLocalName, wrapperClazz, wrapper);
             }
-			Message message = createMessage(wrapper);
+			Message message = createMessage(wrapper, operationDesc);
 
 
 			return message;
@@ -227,7 +208,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromObjects(java.lang.Object[])
 	 */
 	@Override
-	public Message marshalRequest(Object[] objects) throws WebServiceException {
+	public Message marshalRequest(Object[] objects, OperationDescription operationDesc) throws WebServiceException {
 		try {
 			String className = operationDesc.getRequestWrapperClassName();
 			String wrapperLocalName = operationDesc.getRequestWrapperLocalName();
@@ -240,7 +221,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
 			//Get Name Value pair for input parameter Objects, skip AsyncHandler and identify Holders.
 			Object jaxbObject = null;
 
-			ArrayList<MethodParameter> methodParameters = createRequestWrapperParameters(objects);
+			ArrayList<MethodParameter> methodParameters = createRequestWrapperParameters(objects, operationDesc);
 
 			jaxbObject = wrap(wrapperClazz, methodParameters);
 			
@@ -254,7 +235,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
                             wrapperClazz, 
                             jaxbObject);
             }
-			Message message = createMessage(jaxbObject);
+			Message message = createMessage(jaxbObject, operationDesc);
 
 
 			return message;
@@ -282,14 +263,19 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
      * @throws MessageException
      * @throws XMLStreamException
      */
-    private Message createMessage(Object jaxbElement)throws JAXBException, MessageException, XMLStreamException{
+    private Message createMessage(Object jaxbElement, OperationDescription operationDesc)throws JAXBException, MessageException, XMLStreamException{
             Block bodyBlock = null;
             
-            // Get the object that is the type
-            Object jaxbType = (jaxbElement instanceof JAXBElement) ? ((JAXBElement) jaxbElement).getValue() : jaxbElement; 
-     
+            Protocol protocol = null;
+            try {
+                protocol = Protocol.getProtocolForBinding(operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getBindingType()); //soap11;
+            } catch (MessageException e) {
+                // TODO better handling than this?
+                e.printStackTrace();
+            }
+                 
             // Create the context
-            JAXBBlockContext ctx = new JAXBBlockContext(createContextPackageSet());
+            JAXBBlockContext ctx = new JAXBBlockContext(createContextPackageSet(operationDesc));
             bodyBlock = createJAXBBlock(jaxbElement, ctx);
             
             if (log.isDebugEnabled()) {

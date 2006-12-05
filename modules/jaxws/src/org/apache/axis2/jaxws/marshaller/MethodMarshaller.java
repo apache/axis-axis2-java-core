@@ -20,7 +20,9 @@ package org.apache.axis2.jaxws.marshaller;
 
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.message.Message;
+
 
 /**
  * This class marshals and unmarshals method invocations.
@@ -55,7 +57,7 @@ public interface MethodMarshaller {
 	 * @param signatureArgs
 	 * @return Message
 	 */
-	public Message marshalRequest(Object[] signatureArgs) throws WebServiceException; 
+	public Message marshalRequest(Object[] signatureArgs, OperationDescription opDesc) throws WebServiceException; 
 	
 	/**
 	 * This method converts the SIGNATURE_ARGS and RETURN object into a Message.
@@ -65,7 +67,7 @@ public interface MethodMarshaller {
      * @param signatureArgs
 	 * @return Message
 	 */
-	public Message marshalResponse(Object returnObject, Object[] signatureArgs)throws WebServiceException;
+	public Message marshalResponse(Object returnObject, Object[] signatureArgs, OperationDescription opDesc)throws WebServiceException;
 	
 	
     /**
@@ -75,7 +77,7 @@ public interface MethodMarshaller {
      * @param message
      * @return signature args
      */
-    public Object[] demarshalRequest(Message message)throws WebServiceException;
+    public Object[] demarshalRequest(Message message, OperationDescription opDesc)throws WebServiceException;
     
 	/**
 	 * This method gets the objects from the Message and sets them onto the SIGNATURE_ARGS
@@ -86,7 +88,7 @@ public interface MethodMarshaller {
      * @param signatureAgs (same array of args that were used for marshalRequest.  The out/inout holders are populated with new values)
 	 * @return returnObject
 	 */
-	public Object demarshalResponse(Message message, Object[] signatureArgs) throws WebServiceException;
+	public Object demarshalResponse(Message message, Object[] signatureArgs, OperationDescription opDesc) throws WebServiceException;
 	
     /**
 	 * This method converts a Message (containing a fault) into a JAX-WS Service or WebServiceException.
@@ -95,7 +97,7 @@ public interface MethodMarshaller {
      * @param Message
 	 * @return Throwable
 	 */
-	public Throwable demarshalFaultResponse(Message message) throws WebServiceException;
+	public Throwable demarshalFaultResponse(Message message, OperationDescription opDesc) throws WebServiceException;
     
     /**
      * This method creates a Message from a Throwbale input parameter. 
@@ -103,7 +105,7 @@ public interface MethodMarshaller {
      * @param jaxbObject
      * @return
      */
-    public Message marshalFaultResponse(Throwable throwable) throws WebServiceException;
+    public Message marshalFaultResponse(Throwable throwable, OperationDescription opDesc) throws WebServiceException;
     
 	
 	

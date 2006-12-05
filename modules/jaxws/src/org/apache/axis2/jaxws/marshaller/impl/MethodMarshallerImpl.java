@@ -74,46 +74,38 @@ import org.apache.commons.logging.LogFactory;
 public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	private static QName SOAPENV_QNAME = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
 	private static Log log = LogFactory.getLog(MethodMarshallerImpl.class);
-	protected ServiceDescription serviceDesc = null;
-	protected EndpointDescription endpointDesc = null;
-	protected OperationDescription operationDesc = null;
-	protected Protocol protocol = Protocol.soap11;
 	
-	public MethodMarshallerImpl(ServiceDescription serviceDesc, EndpointDescription endpointDesc, OperationDescription operationDesc, Protocol protocol){
-		this.serviceDesc = serviceDesc;
-		this.endpointDesc = endpointDesc;
-		this.operationDesc = operationDesc;
-		this.protocol = protocol;
+	public MethodMarshallerImpl(){
 	}
 
 	
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#demarshalResponse(org.apache.axis2.jaxws.message.Message, java.lang.Object[])
 	 */
-	public abstract Object demarshalResponse(Message message, Object[] inputArgs) throws WebServiceException; 
+	public abstract Object demarshalResponse(Message message, Object[] inputArgs, OperationDescription operationDesc) throws WebServiceException; 
 
 	
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#demarshalRequest(org.apache.axis2.jaxws.message.Message)
 	 */
-	public abstract Object[] demarshalRequest(Message message) throws WebServiceException;
+	public abstract Object[] demarshalRequest(Message message, OperationDescription operationDesc) throws WebServiceException;
 
 	
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalResponse(java.lang.Object, java.lang.Object[])
 	 */
-	public abstract Message marshalResponse(Object returnObject, Object[] holderObjects)throws WebServiceException; 
+	public abstract Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc)throws WebServiceException; 
 	
 	
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalRequest(java.lang.Object[])
 	 */
-	public abstract Message marshalRequest(Object[] object)throws WebServiceException; 
+	public abstract Message marshalRequest(Object[] object, OperationDescription operationDesc)throws WebServiceException; 
 	
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#demarshalFaultResponse(org.apache.axis2.jaxws.message.Message)
 	 */
-	public Throwable demarshalFaultResponse(Message message) throws WebServiceException {
+	public Throwable demarshalFaultResponse(Message message, OperationDescription operationDesc) throws WebServiceException {
 		
 		Exception exception = null;
         
@@ -146,7 +138,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 				
 				// Now demarshal the block to get a business object (faultbean)
                 // Capture the qname of the element, which will be used to find the JAX-WS Exception
-				Object obj = createFaultBusinessObject(block);
+				Object obj = createFaultBusinessObject(block, operationDesc);
                 QName faultQName = null;
                 if (obj instanceof JAXBElement) {
                     faultQName = ((JAXBElement)obj).getName();
@@ -185,7 +177,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalFaultResponse(java.lang.Throwable)
 	 */
-	public Message marshalFaultResponse(Throwable throwable) throws WebServiceException {
+	public Message marshalFaultResponse(Throwable throwable, OperationDescription operationDesc) throws WebServiceException {
 		try {
 			Throwable t = ClassUtils.getRootCause(throwable);
 
@@ -196,7 +188,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
             }
 			XMLFault xmlfault = null;
 			
-			Message message = createEmptyMessage();
+			Message message = createEmptyMessage(operationDesc);
 			
 			// Get the FaultDescriptor matching this Exception.
 			// If FaultDescriptor is found, this is a JAX-B Service Exception.
@@ -207,7 +199,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 				// Service Exception.  Create an XMLFault with the fault bean
             	Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
             	Object faultBean = getFaultInfo.invoke(t, null);
-            	JAXBBlockContext context = createJAXBBlockContext(createContextPackageSet());
+            	JAXBBlockContext context = createJAXBBlockContext(createContextPackageSet(operationDesc));
             	Block[] detailBlocks = new Block[1];
                 
                 // Make sure to createJAXBBlock with an object that is 
@@ -239,7 +231,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 * and creates a name value pair.
 	 * Also handles situation where ResponseWrapper is a holder.
 	 */
-	protected ArrayList<MethodParameter> createResponseWrapperParameter(Object webResultValue) {
+	protected ArrayList<MethodParameter> createResponseWrapperParameter(Object webResultValue, OperationDescription operationDesc) {
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		if(webResultValue == null){
 			return mps;
@@ -255,7 +247,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return mps;
 	}
 	
-    protected ArrayList<MethodParameter> createResponseWrapperParameter(Object webResultObject, Object[] holderObjects)
+    protected ArrayList<MethodParameter> createResponseWrapperParameter(Object webResultObject, Object[] holderObjects, OperationDescription operationDesc)
         throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 		ParameterDescription[] paramDescs = operationDesc.getParameterDescriptions();
 		ArrayList<ParameterDescription> pds = new ArrayList<ParameterDescription>();
@@ -283,7 +275,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
                     paramValues.add(value);
                     index++;
                 }
-                ArrayList<MethodParameter> mps = createParameters(pds.toArray(new ParameterDescription[0]), paramValues);
+                ArrayList<MethodParameter> mps = createParameters(pds.toArray(new ParameterDescription[0]), paramValues, operationDesc);
         
 		if(webResultObject!=null){
 			MethodParameter outputResult = new MethodParameter(operationDesc.getResultName(), operationDesc.getResultTargetNamespace(), webResultObject.getClass(), webResultObject);
@@ -296,7 +288,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/*
 	 * Request Parameter are those where webParam Mode is IN or INOUT
 	 */
-    protected ArrayList<MethodParameter> createRequestWrapperParameters(Object[] objects)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
+    protected ArrayList<MethodParameter> createRequestWrapperParameters(Object[] objects, OperationDescription operationDesc)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		//Hand no input parameters
 		if(objects == null){
@@ -332,7 +324,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		if (log.isDebugEnabled()) {
 			log.debug("Attempting to create Method Parameters");
 		}
-		mps = createParameters(paramDescs, paramValues);
+		mps = createParameters(paramDescs, paramValues, operationDesc);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Method Parameters created");
@@ -340,7 +332,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 					
 		return mps;
 	}
-	protected ArrayList<MethodParameter> createParameterForSEIMethod(Object jaxbObject) throws JAXBWrapperException, IllegalAccessException, InstantiationException, ClassNotFoundException{
+	protected ArrayList<MethodParameter> createParameterForSEIMethod(Object jaxbObject, OperationDescription operationDesc) throws JAXBWrapperException, IllegalAccessException, InstantiationException, ClassNotFoundException{
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		if(jaxbObject == null){
 			return mps;
@@ -399,7 +391,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         	paramIndex++;
         }
         
-        return createParameters(paramDescs, objectList);
+        return createParameters(paramDescs, objectList, operationDesc);
         
 	}
 	
@@ -408,7 +400,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 * Extract Holder parameter from supplied parameters and add annotation data for these parameters.
 	 */
 
-	protected ArrayList<MethodParameter> extractHolderParameters(Object jaxbObject) throws JAXBWrapperException, IllegalAccessException, InstantiationException, ClassNotFoundException{
+	protected ArrayList<MethodParameter> extractHolderParameters(Object jaxbObject, OperationDescription operationDesc) throws JAXBWrapperException, IllegalAccessException, InstantiationException, ClassNotFoundException{
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		if(jaxbObject == null){
 			return mps;
@@ -456,7 +448,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         	paramValues.add(value);
         	index++;
         }
-		mps = createParameters(paramDescList.toArray(new ParameterDescription[0]), paramValues);
+		mps = createParameters(paramDescList.toArray(new ParameterDescription[0]), paramValues, operationDesc);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Holder Method Parameters created");
@@ -468,7 +460,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/*
 	 * Extract Holder parameter from supplied parameters and add annotation data for these parameters.
 	 */
-	protected ArrayList<MethodParameter> extractHolderParameters(Object[] objects)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
+	protected ArrayList<MethodParameter> extractHolderParameters(Object[] objects, OperationDescription operationDesc)throws IllegalAccessException, InstantiationException, ClassNotFoundException{
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		//Hand no input parameters
 		if(objects == null){
@@ -506,7 +498,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		if (log.isDebugEnabled()) {
 			log.debug("Attempting to create Holder Method Parameters");
 		}
-		mps = createParameters(paramDescList.toArray(new ParameterDescription[0]), paramValues);
+		mps = createParameters(paramDescList.toArray(new ParameterDescription[0]), paramValues, operationDesc);
 
 		if (log.isDebugEnabled()) {
 			log.debug("Holder Method Parameters created");
@@ -516,13 +508,13 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	}
     
 	protected ArrayList<MethodParameter> createParameters(
-			ParameterDescription[] paramDescs, ArrayList<Object> paramValues){
+			ParameterDescription[] paramDescs, ArrayList<Object> paramValues, OperationDescription operationDesc){
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		int index = 0;
 		for (Object paramValue : paramValues){
 			ParameterDescription paramDesc = paramDescs[index];
 			MethodParameter mp = null;
-			if (!isParamAsyncHandler(paramDesc.getParameterName(), paramValue)){
+			if (!isParamAsyncHandler(paramDesc.getParameterName(), paramValue, operationDesc)){
 				mp = new MethodParameter(paramDesc, paramValue);
 				mps.add(mp);
 			}
@@ -532,7 +524,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	}
 	
 	
-	private ArrayList<MethodParameter> createMethodParameters(ParameterDescription[] paramDescs, ArrayList<Object> paramValues)
+	private ArrayList<MethodParameter> createMethodParameters(ParameterDescription[] paramDescs, ArrayList<Object> paramValues, OperationDescription operationDesc)
         throws InstantiationException, ClassNotFoundException, IllegalAccessException {
 		ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 		int index = 0;
@@ -544,7 +536,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 			MethodParameter mp = null;
 			// If call is Async call then lets filter AsyncHandler object name
 			// and value;
-			if (!isParamAsyncHandler(paramDesc.getParameterName(), paramValue)) {
+			if (!isParamAsyncHandler(paramDesc.getParameterName(), paramValue, operationDesc)) {
 				if (paramType != null) {
 				    if(paramValue == null && isHolderType){
                         Holder<Object> holder = createHolder(paramType, paramValue);
@@ -586,14 +578,13 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 
 	}
 			
-	protected ArrayList<Class> getInputTypes(){
+	protected ArrayList<Class> getInputTypes(OperationDescription operationDesc){
 		Method seiMethod = operationDesc.getSEIMethod();
 		ArrayList<Class> paramTypes = new ArrayList<Class>();
 		Type[] types = seiMethod.getGenericParameterTypes();
 		for(Type type:types){
 			if(ParameterizedType.class.isAssignableFrom(type.getClass())){
 				ParameterizedType pType = (ParameterizedType) type;
-				Class rawClazz = (Class)pType.getRawType();
 				Class actualClazz = (Class)pType.getActualTypeArguments()[0];
 				paramTypes.add(actualClazz);
 			}
@@ -605,7 +596,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return paramTypes;
 	}
 	
-	protected boolean isAsync(){
+	protected boolean isAsync(OperationDescription operationDesc){
 		Method method = operationDesc.getSEIMethod();
 		if(method == null){
 			return false;
@@ -681,10 +672,10 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 * @param isAsync
 	 * @return
 	 */
-	protected Class getReturnType(){
+	protected Class getReturnType(OperationDescription operationDesc){
 		Method seiMethod = operationDesc.getSEIMethod();
 		Class returnType = seiMethod.getReturnType();
-		if(isAsync()){
+		if(isAsync(operationDesc)){
 			//pooling implementation
 			if(Response.class.isAssignableFrom(returnType)){
 				Type type = seiMethod.getGenericReturnType();
@@ -710,12 +701,12 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return returnType;	
 	}
 	
-	private boolean isParamAsyncHandler(String name, Object value){
+	private boolean isParamAsyncHandler(String name, Object value, OperationDescription operationDesc){
 		if(value!=null && value instanceof AsyncHandler){
 			if(log.isDebugEnabled()){
 				log.debug("Parameter is AsycnHandler Object");
 			}
-			if(!isAsync()){
+			if(!isAsync(operationDesc)){
 				if (log.isDebugEnabled()) {
 		            log.debug("Method parameter type javax.xml.ws.AsyncHandler should only be used with Async Callback operations, method is Async if it returns a Future<?> and endswith letters 'Async'");
 		        }
@@ -763,13 +754,21 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return null;
 	}
 	
-	protected Message createMessage(ArrayList<MethodParameter> mps) throws JAXBException, MessageException, XMLStreamException{
+	protected Message createMessage(ArrayList<MethodParameter> mps, OperationDescription operationDesc) throws JAXBException, MessageException, XMLStreamException{
 		Block block = null;
 		Object object = null;
 		String objectName = null;
 		String objectTNS = null;
 		Class objectType = null;
 		boolean isHeader =false;
+        
+        Protocol protocol = null;
+        try {
+            protocol = Protocol.getProtocolForBinding(operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getBindingType()); //soap11;
+        } catch (MessageException e) {
+            // TODO better handling than this?
+            e.printStackTrace();
+        }
 		
 		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
 		Message m = mf.create(protocol);
@@ -796,7 +795,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		        }
 				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("DocLitProxyHandlerErr2"));
 			}
-			JAXBBlockContext ctx = createJAXBBlockContext(createContextPackageSet());
+			JAXBBlockContext ctx = createJAXBBlockContext(createContextPackageSet(operationDesc));
 			if (log.isDebugEnabled()) {
 	            log.debug("Attempting to create Block");
 	        }
@@ -831,7 +830,16 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return mf.createFrom(element);
 	}
 	
-	protected Message createEmptyMessage() throws JAXBException, MessageException, XMLStreamException {
+	protected Message createEmptyMessage(OperationDescription operationDesc) throws JAXBException, MessageException, XMLStreamException {
+        
+        Protocol protocol = null;
+        try {
+            protocol = Protocol.getProtocolForBinding(operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getBindingType());
+        } catch (MessageException e) {
+            // TODO better handling than this?
+            e.printStackTrace();
+        }
+        
 		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
 		Message m = mf.create(protocol);
 		return m;
@@ -877,9 +885,9 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 * @throws MessageException
 	 * @throws XMLStreamException
 	 */
-	protected Object createFaultBusinessObject(Block block)
+	protected Object createFaultBusinessObject(Block block, OperationDescription operationDesc)
 			throws JAXBException, MessageException, XMLStreamException {
-		JAXBBlockContext blockContext = new JAXBBlockContext(createContextPackageSet());		
+		JAXBBlockContext blockContext = new JAXBBlockContext(createContextPackageSet(operationDesc));		
 		// Get a JAXBBlockFactory instance. 
         JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
         
@@ -887,19 +895,19 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         return jaxbBlock.getBusinessObject(true); 
 	}
 	
-    protected void assignHolderValues(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message)
+    protected void assignHolderValues(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message, OperationDescription operationDesc)
             throws JAXBException, MessageException, XMLStreamException{
 		Object bo = null;
 		int index = 0;
 		for(MethodParameter mp:mps){
 			ParameterDescription pd = mp.getParameterDescription();
 			if (pd.isHeader() && pd.isHolderType()) {
-				bo = createBOFromHeaderBlock(createContextPackageSet(),
+				bo = createBOFromHeaderBlock(createContextPackageSet(operationDesc),
 						message, pd.getTargetNamespace(), pd
 								.getParameterName());
 			}
 			else if(!pd.isHeader() && pd.isHolderType()){
-				bo = createBOFromBodyBlock(createContextPackageSet(), message);
+				bo = createBOFromBodyBlock(createContextPackageSet(operationDesc), message);
 			}
 			try{
 				Holder inputArgHolder = (Holder)inputArgHolders.get(index);
@@ -916,11 +924,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
      * @param cls
      * @return
      */
-    protected Set<String> createContextPackageSet() {
+    protected Set<String> createContextPackageSet(OperationDescription operationDesc) {
          return operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getPackages();
     }
 	
-    protected void assignHolderValues(Object bo, Object[] inputArgs, boolean isBare)throws JAXBWrapperException, InstantiationException, ClassNotFoundException, IllegalAccessException{
+    protected void assignHolderValues(Object bo, Object[] inputArgs, boolean isBare, OperationDescription operationDesc)throws JAXBWrapperException, InstantiationException, ClassNotFoundException, IllegalAccessException{
 		if(inputArgs == null){
 			return;
 		}
@@ -941,7 +949,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		}
 
 		//Next get all the holder objects from Business Object created from Response Message
-		ArrayList<MethodParameter> mps = extractHolderParameters(bo);
+		ArrayList<MethodParameter> mps = extractHolderParameters(bo, operationDesc);
         
 		if(mps.size() <=0){
 			return;

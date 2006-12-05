@@ -63,28 +63,24 @@ public class MethodMarshallerFactory {
      */
     public static MethodMarshaller createMethodMarshaller(SOAPBinding.Style style, 
             SOAPBinding.ParameterStyle paramStyle,
-            ServiceDescription serviceDesc, 
-            EndpointDescription endpointDesc, 
-            OperationDescription operationDesc, 
-            Protocol protocol, 
             boolean isClient){  // This flag is for testing only !
 		if (style == SOAPBinding.Style.RPC) {
             if (ALT_RPCLIT_CLIENT && isClient || ALT_RPCLIT_SERVER && !isClient ) {
-                return new RPCLitMethodMarshaller(serviceDesc, endpointDesc, operationDesc, protocol);  
+                return new RPCLitMethodMarshaller();  
             } else {
-                return new RPCLitMethodMarshallerImpl(serviceDesc, endpointDesc, operationDesc, protocol);
+                return new RPCLitMethodMarshallerImpl();
             }
         } else if (paramStyle == SOAPBinding.ParameterStyle.WRAPPED){
             if (ALT_DOCLIT_WRAPPED_CLIENT && isClient || ALT_DOCLIT_WRAPPED_SERVER && !isClient) {
-                return new DocLitWrappedMethodMarshaller(serviceDesc, endpointDesc, operationDesc, protocol);
+                return new DocLitWrappedMethodMarshaller();
             } else {
-                return new DocLitWrappedMethodMarshallerImpl(serviceDesc, endpointDesc, operationDesc, protocol);
+                return new DocLitWrappedMethodMarshallerImpl();
             }
 		} else if (paramStyle == SOAPBinding.ParameterStyle.BARE){
             if (ALT_DOCLIT_BARE_CLIENT && isClient || ALT_DOCLIT_BARE_SERVER && !isClient) {
-                return new DocLitBareMethodMarshaller(serviceDesc, endpointDesc, operationDesc, protocol);
+                return new DocLitBareMethodMarshaller();
             } else {
-                return new DocLitBareMethodMarshallerImpl(serviceDesc, endpointDesc, operationDesc, protocol);
+                return new DocLitBareMethodMarshallerImpl();
             }
 		}
 		return null;

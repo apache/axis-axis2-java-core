@@ -32,6 +32,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.RequestWrapper;
@@ -55,6 +56,9 @@ import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
+import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 /**
@@ -80,6 +84,10 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     private MethodDescriptionComposite methodComposite;
     private ParameterDescription[] parameterDescriptions;
     private FaultDescription[] faultDescriptions;
+    
+    // cache the marshallers in use for this operation:
+    private MethodMarshaller clientMarshaller = null;
+    private MethodMarshaller serverMarshaller = null;
 
     // ===========================================
     // ANNOTATION related information
@@ -794,6 +802,74 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         // REVIEW: WSDL/Anno merge
         return getAnnoWebParamNames();
     }
+    
+    public MethodMarshaller getMarshaller(boolean isClient) {
+        
+        MethodMarshaller marshaller = null;
+        if (isClient) {
+            if (clientMarshaller != null) {
+                marshaller = clientMarshaller;
+            } else {
+                if (this.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
+                    clientMarshaller = createDocLitMethodMarshaller(isClient);
+                } else if (this.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
+                    clientMarshaller = createRPCLitMethodMarshaller(isClient);
+                }
+                marshaller = clientMarshaller;
+            }
+        } else { // SERVER
+            if (serverMarshaller != null) {
+                marshaller = serverMarshaller;
+            } else {
+                if (this.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
+                    serverMarshaller = createDocLitMethodMarshaller(isClient);
+                } else if (this.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
+                    serverMarshaller = createRPCLitMethodMarshaller(isClient);
+                }
+                marshaller = serverMarshaller;
+            }
+        }
+        return marshaller;
+    }
+    
+    private MethodMarshaller createDocLitMethodMarshaller(boolean isClient){
+        ParameterStyle parameterStyle = null;
+        if(isDocLitBare()){
+            parameterStyle = SOAPBinding.ParameterStyle.BARE;
+        }
+        if(isDocLitWrapped()){
+            parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
+        }
+        return MethodMarshallerFactory.createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, isClient);
+    }
+    
+    private MethodMarshaller createRPCLitMethodMarshaller(boolean isClient){
+        return MethodMarshallerFactory.createMethodMarshaller(SOAPBinding.Style.RPC, SOAPBinding.ParameterStyle.WRAPPED, isClient);
+    }
+    
+    protected boolean isDocLitBare(){
+        SOAPBinding.ParameterStyle methodParamStyle = this.getSoapBindingParameterStyle();
+        if(methodParamStyle!=null){
+            return methodParamStyle == SOAPBinding.ParameterStyle.BARE;
+        }
+        else{
+            SOAPBinding.ParameterStyle SEIParamStyle = this.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+            return SEIParamStyle == SOAPBinding.ParameterStyle.BARE;
+        }
+    }
+    
+    protected boolean isDocLitWrapped(){
+        SOAPBinding.ParameterStyle methodParamStyle = this.getSoapBindingParameterStyle();
+        if(methodParamStyle!=null){
+            return methodParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
+        }
+        else{
+            SOAPBinding.ParameterStyle SEIParamStyle = this.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+            return SEIParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
+        }
+    }
+    
+    
     public String[] getAnnoWebParamNames() {
         if (webParamNames == null) {
             ArrayList<String> buildNames = new ArrayList<String>();

@@ -128,7 +128,10 @@ public class ProxyTests extends TestCase {
         }
     }
 
-    public void testInvokeWithWSDL(){
+    /*
+     * TODO Temporarily disabled by AXIS2-1825
+     */
+    public void _testInvokeWithWSDL(){
         try{ 
             if(!runningOnAxis){
                 return;

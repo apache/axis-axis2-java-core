@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.client.proxy;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.OperationDescription;
 
 
 /**
@@ -31,8 +32,11 @@ public class ProxyAsyncListener extends AsyncResponse {
 
 	JAXWSProxyHandler handler = null;
 	Object[] inputArgs = null;
-	public ProxyAsyncListener() {
+    OperationDescription operationDesc = null;
+    
+	public ProxyAsyncListener(OperationDescription opDesc) {
 		super();
+        operationDesc = opDesc;
 	}
 	
 	public JAXWSProxyHandler getHandler() {
@@ -52,7 +56,7 @@ public class ProxyAsyncListener extends AsyncResponse {
 	        //I will delegate the request to create respose to proxyHandler 
             //since it has all the logic written to create response for Sync 
             //and oneWay.
-	        return handler.createResponse(null,inputArgs, mc);
+	        return handler.createResponse(null,inputArgs, mc, operationDesc);
 	    }
 	    catch (Throwable e) {
 	        throw ExceptionFactory.makeWebServiceException(e);

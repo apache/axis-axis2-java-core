@@ -27,11 +27,12 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -42,21 +43,23 @@ import org.apache.commons.logging.LogFactory;
 public class RPCLitMethodMarshaller implements MethodMarshaller {
 
     private static Log log = LogFactory.getLog(RPCLitMethodMarshaller.class);
-    protected ServiceDescription serviceDesc = null;
-    protected EndpointDescription endpointDesc = null;
-    protected OperationDescription operationDesc = null;
-    protected Protocol protocol = Protocol.soap11;
     
-    
-    public RPCLitMethodMarshaller(ServiceDescription serviceDesc, EndpointDescription endpointDesc, OperationDescription operationDesc, Protocol protocol) {
+    public RPCLitMethodMarshaller() {
         super();
-        this.serviceDesc = serviceDesc;
-        this.endpointDesc = endpointDesc;
-        this.operationDesc = operationDesc;
-        this.protocol = protocol;
     }
 
-    public Message marshalRequest(Object[] signatureArguments) throws WebServiceException {
+    public Message marshalRequest(Object[] signatureArguments, OperationDescription operationDesc) throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        Protocol protocol = null;
+        try {
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
+        } catch (MessageException e) {
+            // TODO better handling than this?
+            e.printStackTrace();
+        }
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             
@@ -113,8 +116,12 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         }
     }
     
-    public Object[] demarshalRequest(Message message)
+    public Object[] demarshalRequest(Message message, OperationDescription operationDesc)
         throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample RPC message
@@ -157,8 +164,19 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
 
    
 
-    public Message marshalResponse(Object returnObject, Object[] signatureArgs)
+    public Message marshalResponse(Object returnObject, Object[] signatureArgs, OperationDescription operationDesc)
             throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        Protocol protocol = null;
+        try {
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
+        } catch (MessageException e) {
+            // TODO better handling than this?
+            e.printStackTrace();
+        }
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample RPC message
@@ -227,8 +245,12 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
     }
 
     
-    public Object demarshalResponse(Message message, Object[] signatureArgs)
+    public Object demarshalResponse(Message message, Object[] signatureArgs, OperationDescription operationDesc)
           throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Sample RPC message
@@ -276,7 +298,18 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Message marshalFaultResponse(Throwable throwable) throws WebServiceException {
+    public Message marshalFaultResponse(Throwable throwable, OperationDescription operationDesc) throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        Protocol protocol = null;
+        try {
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
+        } catch (MessageException e) {
+            // TODO better handling than this?
+            e.printStackTrace();
+        }
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             // Create the message 
@@ -295,7 +328,11 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Throwable demarshalFaultResponse(Message message) throws WebServiceException {
+    public Throwable demarshalFaultResponse(Message message, OperationDescription operationDesc) throws WebServiceException {
+        
+        EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
+        EndpointDescription endpointDesc = ed.getEndpointDescription();
+        
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, endpointDesc.getPackages(), message,  true); 
