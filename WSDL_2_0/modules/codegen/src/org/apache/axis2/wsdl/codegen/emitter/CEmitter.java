@@ -356,6 +356,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
                 List soapHeaderInputParameterList = new ArrayList();
                 List soapHeaderOutputParameterList = new ArrayList();
+                List soapHeaderFaultParameterList = new ArrayList();
 
                 methodElement = doc.createElement("method");
 
@@ -396,7 +397,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
 
                 methodElement.appendChild(getInputElement(doc, axisOperation, soapHeaderInputParameterList));
                 methodElement.appendChild(getOutputElement(doc, axisOperation, soapHeaderOutputParameterList));
-                methodElement.appendChild(getFaultElement(doc, axisOperation));
+                methodElement.appendChild(getFaultElement(doc, axisOperation, soapHeaderFaultParameterList));
 
                 rootElement.appendChild(methodElement);
             } else {
@@ -407,6 +408,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     opsFound = true;
                     List soapHeaderInputParameterList = new ArrayList();
                     List soapHeaderOutputParameterList = new ArrayList();
+                    List soapHeaderFaultParameterList = new ArrayList();
                     methodElement = doc.createElement("method");
                     String localPart = axisOperation.getName().getLocalPart();
                     String opCName = makeCClassName(localPart);
@@ -450,7 +452,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     methodElement.appendChild(getOutputElement(doc,
                             axisOperation, soapHeaderOutputParameterList));
                     methodElement.appendChild(getFaultElement(doc,
-                            axisOperation));
+                            axisOperation, soapHeaderFaultParameterList));
 
                     rootElement.appendChild(methodElement);
                     //////////////////////

@@ -6,11 +6,13 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.woden.*;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPHeaderBlockImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
+import org.apache.woden.internal.wsdl20.extensions.http.HTTPHeaderImpl;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.*;
 import org.apache.woden.wsdl20.enumeration.Direction;
@@ -20,10 +22,12 @@ import org.apache.woden.wsdl20.extensions.UnknownExtensionElement;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
+import org.apache.woden.wsdl20.extensions.http.HTTPHeader;
 import org.apache.woden.wsdl20.extensions.soap.*;
 import org.apache.woden.wsdl20.xml.*;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.apache.http.Header;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -455,7 +459,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
-                    soapBindingFaultExtensions.getHttpHeaders());
+                    createHttpHeaders(soapBindingFaultExtensions.getHttpHeaders()));
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                     soapBindingFaultExtensions.getHttpTransferCoding());
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WSOAP_CODE,
@@ -542,7 +546,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
-                        soapBindingMessageReferenceExtensions.getHttpHeaders());
+                        createHttpHeaders(soapBindingMessageReferenceExtensions.getHttpHeaders()));
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                         soapBindingMessageReferenceExtensions.getHttpTransferCoding());
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WSOAP_HEADER,
@@ -644,7 +648,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_CODE,
                     httpBindingFaultExtensions.getHttpErrorStatusCode());
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
-                    httpBindingFaultExtensions.getHttpHeaders());
+                    createHttpHeaders(httpBindingFaultExtensions.getHttpHeaders()));
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                     httpBindingFaultExtensions.getHttpTransferCoding());
 
@@ -712,7 +716,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     throw new AxisFault("HTTP Binding Extention not found");
                 }
 
-                axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER, httpBindingMessageReferenceExtensions.getHttpHeaders());
+                axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER, createHttpHeaders(httpBindingMessageReferenceExtensions.getHttpHeaders()));
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING, httpBindingMessageReferenceExtensions.getHttpTransferCoding());
 
 //                    SOAPHeaderBlock[] soapHeaders = soapHeaderExt.getSoapHeaders();
@@ -1246,8 +1250,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return reader.readWSDL(wsdlURI);
     }
 
+    /**
+     * Convert woden dependent SOAPHeaderBlock objects to SOAPHeaderMessage objects
+     * @param soapHeaderBlocks - An array of SOAPHeaderBlock objects
+     * @return ArrayList - An ArrayList of SOAPHeaderMessage objects
+     */
     private ArrayList createSoapHeaders(SOAPHeaderBlock soapHeaderBlocks[]) {
-
         ArrayList soapHeaderMessages = new ArrayList();
 
         for (int i = 0; i < soapHeaderBlocks.length; i++) {
@@ -1261,10 +1269,29 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 soapHeaderMessages.add(soapHeaderMessage);
             }
         }
-
         return soapHeaderMessages;
     }
 
+    /**
+     * Convert woden dependent HTTPHeader objects to Header objects
+     * @param httpHeaders - An array of HTTPHeader objects
+     * @return ArrayList - An ArrayList of Header objects
+     */
+    private ArrayList createHttpHeaders(HTTPHeader httpHeaders[]) {
+        ArrayList httpHeaderMessages = new ArrayList();
 
+        for (int i = 0; i < httpHeaders.length; i++) {
+            HTTPHeader httpHeader = httpHeaders[i];
+            TypeDefinition typeDefinition = httpHeader.getTypeDefinition();
 
+            if (typeDefinition != null) {
+                HTTPHeaderMessage httpHeaderMessage = new HTTPHeaderMessage();
+                httpHeaderMessage.setqName(typeDefinition.getName());
+                httpHeaderMessage.setName(httpHeader.getName());
+                httpHeaderMessage.setRequired(httpHeader.isRequired().booleanValue());
+                httpHeaderMessages.add(httpHeaderMessage);
+            }
+        }
+        return httpHeaderMessages;
+    }
 }
