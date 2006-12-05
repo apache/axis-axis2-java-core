@@ -27,7 +27,7 @@ public interface FaultsServicePortType {
      * @param symbol
      * @return
      *     returns float
-     * @throws InvalidTickerFault
+     * @throws InvalidTickerFault_Exception
      * @throws DerivedFault2_Exception
      * @throws BaseFault_Exception
      * @throws DerivedFault1_Exception
@@ -40,7 +40,7 @@ public interface FaultsServicePortType {
     public float getQuote(
         @WebParam(name = "symbol", targetNamespace = "")
         String symbol)
-        throws BaseFault_Exception, DerivedFault1_Exception, DerivedFault2_Exception, InvalidTickerFault, SimpleFault
+        throws BaseFault_Exception, DerivedFault1_Exception, DerivedFault2_Exception, InvalidTickerFault_Exception, SimpleFault
     ;
 
     /**

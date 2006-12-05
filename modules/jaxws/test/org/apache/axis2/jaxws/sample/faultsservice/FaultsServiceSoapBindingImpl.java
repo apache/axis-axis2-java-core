@@ -36,28 +36,29 @@ public class FaultsServiceSoapBindingImpl implements FaultsServicePortType {
      */
     public float getQuote(String tickerSymbol) throws 
         BaseFault_Exception, DerivedFault1_Exception, 
-        DerivedFault2_Exception, InvalidTickerFault, SimpleFault {
+        DerivedFault2_Exception, InvalidTickerFault_Exception, SimpleFault {
 System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
-        if (tickerSymbol.equals("ABC")) {
+        if (tickerSymbol.equals("SMPL")) {
             throw new SimpleFault("Server throws SimpleFault", 100);
-        } else if (tickerSymbol.equals("XYZ")) {
-            throw new InvalidTickerFault("Server throws InvalidTickerFault", tickerSymbol);
-        } else if (tickerSymbol.equals("one")) {
+        } else if (tickerSymbol.equals("LEGC")) {
+            throw new InvalidTickerFault_Exception("Server throws InvalidTickerFault_Exception", tickerSymbol, 123);
+        } else if (tickerSymbol.equals("DF1")) {
             DerivedFault1 df = new DerivedFault1();
             df.setA(100);
             df.setB(tickerSymbol);
             throw new DerivedFault1_Exception("Server throws DerivedFault1_Exception", df);
-        }  else if (tickerSymbol.equals("two")) {
+        }  else if (tickerSymbol.equals("DF2")) {
             DerivedFault2 df = new DerivedFault2();
             df.setA(200);
             df.setB(tickerSymbol);
             df.setC(80.0F);
             throw new DerivedFault2_Exception("Server throws DerivedFault2_Exception", df);
-        } else {
+        } else if (tickerSymbol.equals("BASE")) {
             BaseFault bf = new BaseFault();
             bf.setA(400);
             throw new BaseFault_Exception("Server throws BaseFault_Exception", bf);
         }
+        return 100;
     }
 
 
@@ -73,12 +74,23 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
             cf.setC(c); 
             cf.setD(5); 
             throw new ComplexFault_Exception("Server throws ComplexFault_Exception", cf);
-        } 
-        DerivedFault2 df = new DerivedFault2();
-        df.setA(a); 
-        df.setB(b); 
-        df.setC(c); 
-        throw new BaseFault_Exception("Server throws BaseFault_Exception", df);
+        } else if (b.equals("BaseFault")) {
+            BaseFault bf = new BaseFault();
+            bf.setA(a);  
+            throw new BaseFault_Exception("Server throws BaseFault_Exception", bf);
+        } else if (b.equals("DerivedFault1")) {
+            DerivedFault1 df = new DerivedFault1();
+            df.setA(a); 
+            df.setB(b); 
+            throw new BaseFault_Exception("Server throws BaseFault_Exception", df);
+        } else if (b.equals("DerivedFault2")) {
+            DerivedFault2 df = new DerivedFault2();
+            df.setA(a); 
+            df.setB(b); 
+            df.setC(c); 
+            throw new BaseFault_Exception("Server throws BaseFault_Exception", df);
+        }
+        return 0;
     }
 
 
