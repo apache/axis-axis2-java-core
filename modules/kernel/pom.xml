@@ -27,6 +27,12 @@
     <relativePath>../parent/pom.xml</relativePath>    
   </parent>
 
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/kernel/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/kernel/</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/kernel/</url>
+  </scm>
+
   <artifactId>axis2-kernel</artifactId>
   <name>Apache Axis 2.0 - Kernel</name>
   <description>Core Parts of Axis 2.0. This includes Axis 2.0 engine, Client API, Addressing support, etc.,</description>

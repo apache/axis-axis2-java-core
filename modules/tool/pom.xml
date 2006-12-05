@@ -35,9 +35,9 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>http://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_1/modules/tool</connection>
-    <developerConnection>https://svn.apache.org/repos/asf/webservices/axis2/branches/java/1_1/modules/tool</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/branches/java/1_1/modules/tool</url>
+    <connection>http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/tool</connection>
+    <developerConnection>https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/tool</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/tool</url>
   </scm>
 
   <modules>
