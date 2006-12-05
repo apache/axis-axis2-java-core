@@ -32,7 +32,7 @@
       <library name="lib/commons-logging-@commons.logging.version@.jar">
          <export name="*"/>
       </library>
-      <library name="lib/axis2-@axis2_version@.jar">
+      <library name="lib/axis2-@version_number@.jar">
          <export name="*"/>
       </library>
       <library name="lib/log4j-@log4j.version@.jar">
