@@ -94,7 +94,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalResponse(java.lang.Object, java.lang.Object[])
 	 */
-	public abstract Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc)throws WebServiceException; 
+	public abstract Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc, Protocol protocol)throws WebServiceException; 
 	
 	
 	/* (non-Javadoc)
@@ -177,7 +177,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.marshaller.MethodMarshaller#marshalFaultResponse(java.lang.Throwable)
 	 */
-	public Message marshalFaultResponse(Throwable throwable, OperationDescription operationDesc) throws WebServiceException {
+	public Message marshalFaultResponse(Throwable throwable, OperationDescription operationDesc, Protocol protocol) throws WebServiceException {
 		try {
 			Throwable t = ClassUtils.getRootCause(throwable);
 

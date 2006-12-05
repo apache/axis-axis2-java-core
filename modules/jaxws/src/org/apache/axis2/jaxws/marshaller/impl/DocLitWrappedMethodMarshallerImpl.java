@@ -135,7 +135,7 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromJAXBObject(java.lang.Object)
 	 */
 	@Override
-	public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc) throws WebServiceException {
+	public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc, Protocol protocol) throws WebServiceException {
 
 		try {
 			// Get the necessary information from the OperationDesc

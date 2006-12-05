@@ -54,7 +54,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         EndpointDescription endpointDesc = ed.getEndpointDescription();
         Protocol protocol = null;
         try {
-            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
         } catch (MessageException e) {
             // TODO better handling than this?
             e.printStackTrace();
@@ -164,17 +164,21 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
 
    
 
-    public Message marshalResponse(Object returnObject, Object[] signatureArgs, OperationDescription operationDesc)
+    public Message marshalResponse(Object returnObject, Object[] signatureArgs, 
+            OperationDescription operationDesc, Protocol protocol)
             throws WebServiceException {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        Protocol protocol = null;
-        try {
-            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
-        } catch (MessageException e) {
-            // TODO better handling than this?
-            e.printStackTrace();
+        // We want to respond with the same protocol as the request,
+        // It the protocol is null, then use the Protocol defined by the binding
+        if (protocol == null) {
+            try {
+                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
+            } catch (MessageException e) {
+                // TODO better handling than this?
+                e.printStackTrace();
+            }
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException
@@ -298,16 +302,20 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         }
     }
 
-    public Message marshalFaultResponse(Throwable throwable, OperationDescription operationDesc) throws WebServiceException {
+    public Message marshalFaultResponse(Throwable throwable, 
+            OperationDescription operationDesc, Protocol protocol) throws WebServiceException {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        Protocol protocol = null;
-        try {
-            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType()); //soap11;
-        } catch (MessageException e) {
-            // TODO better handling than this?
-            e.printStackTrace();
+        // We want to respond with the same protocol as the request,
+        // It the protocol is null, then use the Protocol defined by the binding
+        if (protocol == null) {
+            try {
+                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
+            } catch (MessageException e) {
+                // TODO better handling than this?
+                e.printStackTrace();
+            }
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException

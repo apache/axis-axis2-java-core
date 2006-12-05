@@ -42,9 +42,8 @@ public class SOAP12ProxyTests extends TestCase {
     
     /**
      * Send a SOAP 1.2 request and expect a SOAP 1.2 response.
-     * TODO Temporarily disabled by AXIS2-1825
      */
-    public void _testSOAP12RequestSOAP12Response() throws Exception {
+    public void testSOAP12RequestSOAP12Response() throws Exception {
         System.out.println("---------------------------------------");
         System.out.println("test: " + getName());
         
@@ -66,9 +65,8 @@ public class SOAP12ProxyTests extends TestCase {
     /**
      * Send a SOAP 1.2 request, but have the server send back a SOAP 1.1
      * response.  This should result in an exception.
-     * TODO Temporarily disabled by AXIS2-1825
      */
-    public void _testSOAP12RequestSOAP11Response() {
+    public void testSOAP12RequestSOAP11Response() {
         System.out.println("---------------------------------------");
         System.out.println("test: " + getName());
         

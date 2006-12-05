@@ -22,6 +22,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.Protocol;
 
 
 /**
@@ -65,9 +66,11 @@ public interface MethodMarshaller {
      * 
 	 * @param returnObject
      * @param signatureArgs
+     * @param OperationDesc
+     * @param Protocol for response
 	 * @return Message
 	 */
-	public Message marshalResponse(Object returnObject, Object[] signatureArgs, OperationDescription opDesc)throws WebServiceException;
+	public Message marshalResponse(Object returnObject, Object[] signatureArgs, OperationDescription opDesc, Protocol protocol)throws WebServiceException;
 	
 	
     /**
@@ -86,7 +89,8 @@ public interface MethodMarshaller {
      * 
 	 * @param message
      * @param signatureAgs (same array of args that were used for marshalRequest.  The out/inout holders are populated with new values)
-	 * @return returnObject
+	 * @param OperationDesc
+     * @return returnObject
 	 */
 	public Object demarshalResponse(Message message, Object[] signatureArgs, OperationDescription opDesc) throws WebServiceException;
 	
@@ -100,12 +104,14 @@ public interface MethodMarshaller {
 	public Throwable demarshalFaultResponse(Message message, OperationDescription opDesc) throws WebServiceException;
     
     /**
-     * This method creates a Message from a Throwbale input parameter. 
+     * This method creates a Message from a Throwable input parameter. 
      * Used on the server.
-     * @param jaxbObject
+     * @param Throwable
+     * @param OperationDesc
+     * @param Protocol for response
      * @return
      */
-    public Message marshalFaultResponse(Throwable throwable, OperationDescription opDesc) throws WebServiceException;
+    public Message marshalFaultResponse(Throwable throwable, OperationDescription opDesc, Protocol protocol) throws WebServiceException;
     
 	
 	

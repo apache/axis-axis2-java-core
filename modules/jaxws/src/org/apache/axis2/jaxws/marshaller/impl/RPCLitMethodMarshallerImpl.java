@@ -50,7 +50,7 @@ public class RPCLitMethodMarshallerImpl extends MethodMarshallerImpl {
     }
 
     @Override
-    public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc)
+    public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc, Protocol protocol)
             throws WebServiceException {
         // TODO Unsupported
         throw new UnsupportedOperationException();

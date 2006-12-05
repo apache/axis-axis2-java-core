@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -200,7 +201,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 	 * @see org.apache.axis2.jaxws.convertor.impl.MessageConvertorImpl#fromJAXBObject(java.lang.Object)
 	 */
 	@Override
-	public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc) throws WebServiceException {
+	public Message marshalResponse(Object returnObject, Object[] holderObjects, OperationDescription operationDesc, Protocol protocol ) throws WebServiceException {
 		try {
 			// Response wrapper is basically the return type. So the return object 
 			// is a JAXB object. If there is a holder objects then that is the 

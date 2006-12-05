@@ -66,6 +66,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         initialize(mc);
         OperationDescription operationDesc = getOperationDescription(mc); //mc.getOperationDescription();
+        Protocol requestProtocol = mc.getMessage().getProtocol();
         MethodMarshaller methodMarshaller = getMethodMarshaller(mc.getMessage().getProtocol(), mc.getOperationDescription());
         Object[] methodInputParams = methodMarshaller.demarshalRequest(mc.getMessage(), mc.getOperationDescription());
         Method target = getJavaMethod(mc, serviceImplClass);
@@ -101,13 +102,16 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         	return null;
         }
         else if (response instanceof Throwable) {
-        	message = methodMarshaller.marshalFaultResponse((Throwable)response, mc.getOperationDescription()); 
+        	message = methodMarshaller.marshalFaultResponse((Throwable)response, mc.getOperationDescription(), 
+                        requestProtocol); // Send the response using the same protocol as the request
         }
         else if(target.getReturnType().getName().equals("void")){
-        	message = methodMarshaller.marshalResponse(null, methodInputParams, mc.getOperationDescription());
+        	message = methodMarshaller.marshalResponse(null, methodInputParams, mc.getOperationDescription(), 
+                        requestProtocol); // Send the response using the same protocol as the request
         }
         else{
-        	message = methodMarshaller.marshalResponse(response, methodInputParams, mc.getOperationDescription());
+        	message = methodMarshaller.marshalResponse(response, methodInputParams, mc.getOperationDescription(), 
+                    requestProtocol); // Send the response using the same protocol as the request
         }
         
         MessageContext responseMsgCtx = MessageContextUtils.createMessageMessageContext(mc);

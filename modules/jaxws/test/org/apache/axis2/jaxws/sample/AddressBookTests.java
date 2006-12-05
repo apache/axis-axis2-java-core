@@ -47,10 +47,9 @@ public class AddressBookTests extends TestCase {
     
     /**
      * Test the endpoint by invoking it with a JAX-WS Dispatch.  
-     * TODO Temporarily disabled by AXIS2-1825
      */
     
-    public void _testAddressBookWithDispatch() throws Exception {
+    public void testAddressBookWithDispatch() throws Exception {
         try {
         System.out.println("----------------------------------");
         System.out.println("test: " + getName());
