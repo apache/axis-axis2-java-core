@@ -320,7 +320,6 @@
         <ant:delete dir="${user.home}/.axis2"/>
         <ant:delete dir="${user.home}/.axis2home"/>
         <attainGoal name="modules:clean"/>
-        <attainGoal name="clean-repo"/>
     </goal>
 
     <!-- ================================================================ -->
