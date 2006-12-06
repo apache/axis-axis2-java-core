@@ -135,8 +135,14 @@ public class AxisInvocationController extends InvocationController {
              * local AxisFault was thrown and we need to save it for later throwing
              * We do not want to create a message and go through the whole handler or
              * XMLFault processing because it's unnecessary.
+             * 
+             * Same is true if we get a valid non-fault server response but some jaxws
+             * client processing (a handler, perhaps) throws an exception.
+             * 
+             * If the response message itself is a fault message, let it pass through.
              */
-            if (response.getMessage() == null && faultexception != null) {
+            if ((faultexception != null) && ((response.getMessage() == null)
+                    || (!response.getMessage().isFault()))) {
                 MessageFactory factory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
                 Message message = factory.create(request.getMessage().getProtocol());
                 response.setLocalException(faultexception);
