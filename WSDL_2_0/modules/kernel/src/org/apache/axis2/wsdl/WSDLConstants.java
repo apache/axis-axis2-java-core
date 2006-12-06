@@ -49,9 +49,9 @@ public interface WSDLConstants {
 
     public static final String WSDL_MESSAGE_OUT_MESSAGE = "outMessage";
 
-    public static final String SOAP_HEADER = "soap-header";
+    public static final String SOAP_HEADER = "soap_header";
 
-    public static final String HTTP_HEADER = "http-header";
+    public static final String HTTP_HEADER = "http_header";
 
 
 
