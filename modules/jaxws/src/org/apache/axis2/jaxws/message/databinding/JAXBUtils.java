@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +53,10 @@ public class JAXBUtils {
 	
     private static final Log log = LogFactory.getLog(JAXBUtils.class);
     
-	// Create a synchronized weak hashmap key=set contextPackages, value= JAXBContext
-	private static Map<Set<String>, JAXBContext> map =
-			Collections.synchronizedMap(new WeakHashMap<Set<String>, JAXBContext>());
+	// Create a synchronized map to get the JAXBObject: keys are ClassLoader and Set<String>.
+    // TODO We should change the key from Set<String> to an actual package ContextPath
+    private static Map<ClassLoader, Map<Set<String>, JAXBContext> > jaxbMap =
+			Collections.synchronizedMap(new WeakHashMap<ClassLoader, Map<Set<String>, JAXBContext> >());
 	private static JAXBContext genericJAXBContext = null;
 	
 	private static Map<JAXBContext,Unmarshaller> umap = 
@@ -67,28 +69,6 @@ public class JAXBUtils {
         Collections.synchronizedMap(new WeakHashMap<JAXBContext, JAXBIntrospector>());
 	
     private static boolean ENABLE_ADV_POOLING = false;
-    
-
-    /**
-	 * Get a generic JAXBContext (that can be used for primitives)
-	 * @throws JAXBException
-	 */
-	public static JAXBContext getGenericJAXBContext() throws JAXBException {
-		
-		// JAXBContexts can be reused and are supposed to be thread-safe
-		if (genericJAXBContext == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Generic JAXBContext [created]");
-            }
-            genericJAXBContext = JAXBContext.newInstance(int.class);
-            return genericJAXBContext;
-		} else {
-            if (log.isDebugEnabled()) {
-                log.debug("Generic JAXBContext [from pool]");
-            }
-        }
-		return genericJAXBContext;
-	}
 	
 	/**
 	 * Get a JAXBContext for the class
@@ -98,12 +78,26 @@ public class JAXBUtils {
 	 */
 	public static JAXBContext getJAXBContext(Set<String> contextPackages) throws JAXBException {
 		// JAXBContexts for the same class can be reused and are supposed to be thread-safe
-        if (contextPackages == null || contextPackages.isEmpty()) {
-            return getGenericJAXBContext();
+        
+	    // The JAXBContexts are keyed by ClassLoader and the set of Strings
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        
+        // Get the innerMap 
+        Map<Set<String>, JAXBContext> innerMap = jaxbMap.get(cl);
+        if (innerMap == null) {
+            synchronized(jaxbMap) {
+                innerMap = new WeakHashMap<Set<String>, JAXBContext>();
+                jaxbMap.put(cl, Collections.synchronizedMap(innerMap));
+            }
         }
-		JAXBContext context = map.get(contextPackages);
+        
+        if (contextPackages == null) {
+            contextPackages = new HashSet<String>();
+        }
+        
+		JAXBContext context = innerMap.get(contextPackages);
 		if (context == null) {
-            synchronized(map) {
+            synchronized(innerMap) {
                 try{
                     // There are two ways to construct the context.
                     // 1) USE A CONTEXTPATH, which is a string containing
@@ -132,8 +126,8 @@ public class JAXBUtils {
                     if (log.isDebugEnabled()) {
                         log.debug("First try to create JAXBContext with contextPath");
                     }
-                    if (useJAXBContextWithContextPath(contextPackages)) {   
-                        context = createJAXBContextUsingContextPath(contextPackages);
+                    if (useJAXBContextWithContextPath(contextPackages, cl)) {   
+                        context = createJAXBContextUsingContextPath(contextPackages, cl);
                     }
                     
                     if (context == null) {
@@ -145,7 +139,7 @@ public class JAXBUtils {
                         List<Class> fullList = new ArrayList<Class>();
                         while (it.hasNext()) {
                             String pkg = it.next();
-                    		fullList.addAll(JAXBUtils.getAllClassesFromPackage(pkg));
+                    		fullList.addAll(getAllClassesFromPackage(pkg, cl));
                     	}
                     	Class[] classArray = fullList.toArray(new Class[0]);
                         context = JAXBContext.newInstance(classArray);
@@ -153,7 +147,7 @@ public class JAXBUtils {
                     if (log.isDebugEnabled()) {
                         log.debug("Successfully created JAXBContext " + context.toString());
                     }
-                    map.put(contextPackages, context);	
+                    innerMap.put(contextPackages, context);	
                 }catch(ClassNotFoundException e){
                 	throw new JAXBException(e);
                 }
@@ -297,9 +291,12 @@ public class JAXBUtils {
         imap.put(context, introspector);
 	}
     
-    private static boolean useJAXBContextWithContextPath(Set<String> packages) {
-        // Do we want to use the current class loader, or get it from a loaded class ?
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    /**
+     * @param packages
+     * @param cl
+     * @return
+     */
+    private static boolean useJAXBContextWithContextPath(Set<String> packages, ClassLoader cl) {
         
         // Each package must have 
         Iterator<String> it = packages.iterator();
@@ -333,15 +330,12 @@ public class JAXBUtils {
     /**
      * Create a JAXBContext using the contextpath approach
      * @param packages
+     * @param cl ClassLoader
      * @return JAXBContext or null if unsuccessful
      */
-    private static JAXBContext createJAXBContextUsingContextPath(Set<String> packages) {
+    private static JAXBContext createJAXBContextUsingContextPath(Set<String> packages, ClassLoader cl) {
         JAXBContext context = null;
         String contextpath = "";
-        
-        // TODO
-        // Do we want to use the current class loader, or get it from a loaded class ?
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         
         // Iterate through the classes and build the contextpath
         Iterator<String> it = packages.iterator();
@@ -377,10 +371,11 @@ public class JAXBUtils {
     /**
      * This method will return all the Class names needed to construct a JAXBContext
      * @param pkg Package
+     * @param ClassLoader cl
      * @return
      * @throws ClassNotFoundException
      */
-    private static List<Class> getAllClassesFromPackage(String pkg) throws ClassNotFoundException {
+    private static List<Class> getAllClassesFromPackage(String pkg, ClassLoader cl) throws ClassNotFoundException {
         if (pkg == null) {
             return new ArrayList<Class>();
         }   
@@ -391,16 +386,9 @@ public class JAXBUtils {
         String pckgname = pkg;
         ArrayList<File> directories = new ArrayList<File>();
         try {
-            ClassLoader cld = Thread.currentThread().getContextClassLoader();
-            if (cld == null) {
-                if(log.isDebugEnabled()){
-                    log.debug("Unable to get class loader");
-                }
-                throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr1"));
-            }
             String path = pckgname.replace('.', '/');
             // Ask for all resources for the path
-            Enumeration<URL> resources = cld.getResources(path);
+            Enumeration<URL> resources = cl.getResources(path);
             while (resources.hasMoreElements()) {
                 directories.add(new File(URLDecoder.decode(resources.nextElement().getPath(), "UTF-8")));
             }
