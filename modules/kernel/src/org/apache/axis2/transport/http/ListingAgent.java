@@ -72,7 +72,9 @@ public class ListingAgent extends AbstractAgent {
                             new QName(schema));
             if (trsIn == null) {
                 trsIn = new TransportInDescription(new QName(schema));
-                trsIn.setReceiver(new HTTPSListener(port, schema));
+                HTTPSListener httspReceiver = new HTTPSListener(port, schema);
+                httspReceiver.init(configContext,trsIn);
+                trsIn.setReceiver(httspReceiver);
                 configContext.getListenerManager().addListener(trsIn, true);
             }
         } catch (AxisFault axisFault) {
