@@ -226,14 +226,16 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
         }
 
-        if (endpoints.length != 0) {
+        if (endpoint == null && endpoints.length > 0) {
 
             endpoint = endpoints[0];
+
+        }
 
             axisService.setEndpointName(endpoint.getName().toString());
             axisService.setBindingName(endpoint.getBinding().getName().getLocalPart());
             axisService.setEndpointURL(endpoint.getAddress().toString());
-        }
+
 
 
     }

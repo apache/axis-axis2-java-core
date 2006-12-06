@@ -206,20 +206,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         Object property = null;
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
-        AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
+        AxisBindingOperation axisBindingOperation =
+                (AxisBindingOperation) axisBinding.getChild(qName);
 
         AxisBindingMessage axisBindingMessage = null;
         if (axisBindingOperation != null) {
             axisBindingMessage = (AxisBindingMessage) axisBindingOperation.getChild(key);
+            if (axisBindingMessage != null) {
+                property = axisBindingMessage.getProperty(name);
+            }
+
+            if (property == null) {
+                property = axisBindingOperation.getProperty(name);
+            }
         }
 
-        if (axisBindingMessage != null) {
-            property = axisBindingMessage.getProperty(name);
-        }
-
-        if (property == null) {
-            property = axisBindingOperation.getProperty(name);
-        }
 
         if (property == null) {
             property = axisBinding.getProperty(name);
@@ -242,15 +243,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         AxisBindingMessage axisBindingFault = null;
         if (axisBindingOperation != null) {
             axisBindingMessageFault = (AxisBindingMessage) axisBindingOperation.getFault(key);
-        }
 
-        if (axisBindingMessageFault != null) {
-            property = axisBindingMessageFault.getProperty(name);
-        }
+            if (axisBindingMessageFault != null) {
+                property = axisBindingMessageFault.getProperty(name);
+            }
 
-        if (property == null) {
-            axisBindingFault = axisBinding.getFault(key);
-            property = axisBindingFault.getProperty(name);
+            if (property == null) {
+                axisBindingFault = axisBinding.getFault(key);
+                property = axisBindingFault.getProperty(name);
+            }
         }
 
         if (property == null) {
@@ -1784,7 +1785,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element methodElement;
         List soapHeaderInputParameterList = new ArrayList();
         List soapHeaderOutputParameterList = new ArrayList();
-        List soapHeaderFaultParameterList = new ArrayList();
         methodElement = doc.createElement("method");
         String localPart = axisOperation.getName().getLocalPart();
 
@@ -1813,7 +1813,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addOutputAndFaultActions(doc, methodElement, axisOperation);
         addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
         addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
-        addHeaderOperationsToFault(soapHeaderFaultParameterList, axisOperation);
 
         /*
          * Setting the policy of the operation
@@ -1839,7 +1838,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     axisOperation, soapHeaderOutputParameterList));
         }
         methodElement.appendChild(getFaultElement(doc,
-                axisOperation, soapHeaderFaultParameterList));
+                axisOperation));
         return methodElement;
     }
 
@@ -2018,33 +2017,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             }
         }
 
-        for (Iterator iterator = headerparamList.iterator(); iterator.hasNext();) {
-            SOAPHeaderMessage header = (SOAPHeaderMessage) iterator.next();
-            soapHeaderParameterQNameList.add(header.getElement());
-        }
-    }
-
-    /**
-     * populate the header parameters to faults
-     *
-     * @param soapHeaderParameterQNameList
-     * @param axisOperation
-     */
-    protected void addHeaderOperationsToFault(List soapHeaderParameterQNameList, AxisOperation axisOperation) {
-        ArrayList headerparamList = new ArrayList();
-        ArrayList faultMessages = axisOperation.getFaultMessages();
-        Iterator iter = faultMessages.iterator();
-        while(iter.hasNext())
-        {
-            AxisMessage axisFaultMessage = (AxisMessage)iter.next();
-            headerparamList.addAll((ArrayList) getBindingPropertyFromMessageFault(WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(), axisFaultMessage.getName()));
-        }
-
+        if (headerparamList != null) {
             for (Iterator iterator = headerparamList.iterator(); iterator.hasNext();) {
-            SOAPHeaderMessage header = (SOAPHeaderMessage) iterator.next();
-            soapHeaderParameterQNameList.add(header.getElement());
+                SOAPHeaderMessage header = (SOAPHeaderMessage) iterator.next();
+                soapHeaderParameterQNameList.add(header.getElement());
+            }
         }
     }
+
 
     /**
      * Get the input element
@@ -2102,7 +2082,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param doc
      * @param operation
      */
-    protected Element getFaultElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
+    protected Element getFaultElement(Document doc, AxisOperation operation) {
         Element faultElt = doc.createElement("fault");
         Element[] param = getFaultParamElements(doc, operation);
 
@@ -2110,18 +2090,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             faultElt.appendChild(param[i]);
         }
 
-        List parameterElementList = getParameterElementList(doc, headerParameterQNameList, WSDLConstants.SOAP_HEADER);
-        ArrayList faultMessages = operation.getFaultMessages();
-        Iterator iter = faultMessages.iterator();
-        while (iter.hasNext()) {
-            AxisMessage faultMessage = (AxisMessage)iter.next();
-        parameterElementList.addAll(getParameterElementListForHttpHeader(doc,(ArrayList)getBindingPropertyFromMessageFault(WSDL2Constants.ATTR_WHTTP_HEADER,operation.getName(), faultMessage.getName()),WSDLConstants.HTTP_HEADER));
-        }
-            for (int i = 0; i < parameterElementList.size(); i++) {
-                faultElt.appendChild((Element) parameterElementList.get(i));
-            }
-
-        return faultElt;
+       return faultElt;
     }
 
     /**
