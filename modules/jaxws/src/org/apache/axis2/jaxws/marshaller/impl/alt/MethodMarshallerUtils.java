@@ -590,7 +590,7 @@ class MethodMarshallerUtils  {
             
             // Construct the JAX-WS generated exception that holds the faultBeanObject
             Class exceptionClass = loadClass(faultDesc.getExceptionClassName());
-            Class faultBeanFormalClass = loadClass(faultDesc.getFaultBean());            
+            Class faultBeanFormalClass = loadClass(faultDesc.getFaultBean());  // Note that faultBean may not be a bean, it could be a primitive     
             exception =createServiceException(xmlfault.getReason().getText(), exceptionClass, faultBeanObject, faultBeanFormalClass);
         }
         return exception;
@@ -643,7 +643,11 @@ class MethodMarshallerUtils  {
     static Class loadClass(String className)throws ClassNotFoundException{
         // TODO J2W AccessController Needed
         // Don't make this public, its a security exposure
-        return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+        Class cls = ClassUtils.getPrimitiveClass(className);
+        if (cls == null) {
+            cls = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+        }
+        return cls;
     }
     
     /** Create a JAX-WS Service Exception (Generated Exception)

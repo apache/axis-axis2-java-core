@@ -97,11 +97,6 @@ public class ClassUtils {
      */
     public static String getLoadableClassName(String text) {
         int bracket = text.indexOf("[");
-        if (text == null || 
-            bracket < 0 || // no array
-            bracket == 0) { // or already loadable
-            return text;
-        }
         String className = text;
 
         // Get the className without any array brackets
@@ -234,6 +229,14 @@ public class ClassUtils {
 			return null;
 		}
 	}
+    
+    /**
+     * @param name of primitive type
+     * @return primitive Class or null 
+     */
+    public static Class getPrimitiveClass(String text) {
+        return (Class) loadClassMap.get(text);
+    }
     
     /**
      * @param cls

@@ -146,9 +146,8 @@ public class FaultsServiceTests extends TestCase {
     
     /**
      * Tests that throwing of SimpleFault
-     * Disabled while I fix this test
      */
-    public void _testFaultsService4(){
+    public void testFaultsService4(){
         Exception exception = null;
         try{
             FaultsServicePortType proxy = getProxy();

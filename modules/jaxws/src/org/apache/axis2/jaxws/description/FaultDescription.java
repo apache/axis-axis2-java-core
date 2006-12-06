@@ -44,6 +44,12 @@ package org.apache.axis2.jaxws.description;
  */
 public interface FaultDescription {
     public OperationDescription getOperationDescription();
+    
+    
+    /**
+     * @return the name of the JAXB type defined in the schema for this exception.  Note that this is usually
+     * a bean, but it could also be a java primitive
+     */
     public String getFaultBean();
     public String getName();
     public String getTargetNamespace();
