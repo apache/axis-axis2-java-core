@@ -267,6 +267,9 @@
               _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
               _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
+              // create a message context
+              org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+
               <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
@@ -323,13 +326,20 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
 
-                                   <xsl:if test="count(input/param[@location='header']) &gt; 0">
+                                   <xsl:if test="count(input/param[@location='soap_header']) &gt; 0">
                                                env.build();
                                     </xsl:if>
-                                    <xsl:for-each select="input/param[@location='header']">
+                                    <xsl:for-each select="input/param[@location='soap_header']">
                                         // add the children only if the parameter is not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                            env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                        }
+                                    </xsl:for-each>
+
+                                    <xsl:for-each select="input/param[@location='http_header']">
+                                        // add the children only if the parameter is not null
+                                        if (<xsl:value-of select="@name"/>!=null){
+                                            addHttpHeader(_messageContext,"<xsl:value-of select="@headername"/>",<xsl:value-of select="@name"/>);
                                         }
                                     </xsl:for-each>
                                 </xsl:when>
@@ -353,10 +363,9 @@
                             </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
-        //adding SOAP headers
+        //adding SOAP soap_headers
          _serviceClient.addHeadersToEnvelope(env);
-        // create message context with that soap envelope
-        org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
+        // set the message context with that soap envelope
         _messageContext.setEnvelope(env);
 
         // add the message contxt to the operation client
@@ -496,6 +505,8 @@
 
               // create SOAP envelope with that payload
               org.apache.axiom.soap.SOAPEnvelope env=null;
+              org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+
                     <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                     <xsl:choose>
                         <!-- test the number of input parameters
@@ -536,10 +547,16 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
 
-                                    <xsl:for-each select="input/param[@location='header']">
-                                         // add the headers only if they are not null
+                                    <xsl:for-each select="input/param[@location='soap_header']">
+                                         // add the soap_headers only if they are not null
                                         if (<xsl:value-of select="@name"/>!=null){
                                            env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                        }
+                                    </xsl:for-each>
+                                     <xsl:for-each select="input/param[@location='http_header']">
+                                        // add the children only if the parameter is not null
+                                        if (<xsl:value-of select="@name"/>!=null){
+                                            addHttpHeader(_messageContext,"<xsl:value-of select="@headername"/>",<xsl:value-of select="@name"/>);
                                         }
                                     </xsl:for-each>
                                 </xsl:when>
@@ -563,10 +580,9 @@
                             </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
-        //adding SOAP headers
+        //adding SOAP soap_headers
          _serviceClient.addHeadersToEnvelope(env);
         // create message context with that soap envelope
-        org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
         _messageContext.setEnvelope(env);
 
         // add the message contxt to the operation client
@@ -658,6 +674,7 @@
 
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
                 org.apache.axiom.soap.SOAPEnvelope env = null;
+                org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 
                 <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                                     <xsl:choose>
@@ -700,10 +717,16 @@
                                                         </xsl:otherwise>
                                                   </xsl:choose>
 
-                                                    <xsl:for-each select="input/param[@location='header']">
+                                                    <xsl:for-each select="input/param[@location='soap_header']">
                                                         // add the children only if the parameter is not null
                                                         if (<xsl:value-of select="@name"/>!=null){
                                                         env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                        }
+                                                    </xsl:for-each>
+                                                     <xsl:for-each select="input/param[@location='http_header']">
+                                                        // add the children only if the parameter is not null
+                                                        if (<xsl:value-of select="@name"/>!=null){
+                                                            addHttpHeader(_messageContext,"<xsl:value-of select="@headername"/>",<xsl:value-of select="@name"/>);
                                                         }
                                                     </xsl:for-each>
                                                 </xsl:when>
@@ -728,10 +751,10 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
 
-              //adding SOAP headers
+              //adding SOAP soap_headers
          _serviceClient.addHeadersToEnvelope(env);
                 // create message context with that soap envelope
-            org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
+
             _messageContext.setEnvelope(env);
 
             // add the message contxt to the operation client
@@ -795,6 +818,27 @@
             </xsl:if>
           </xsl:if>
         </xsl:for-each>
+
+        /**
+         * private method to add the http soap_headers
+         *
+         * @param messageContext
+         * @param name
+         * @param value
+         */
+        private void addHttpHeader(org.apache.axis2.context.MessageContext messageContext,
+                                   String name,
+                                   String value) {
+            java.lang.Object headersObj = messageContext.getProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_HEADERS);
+            if (headersObj == null) {
+                headersObj = new java.util.ArrayList();
+            }
+            java.util.List headers = (java.util.List) headersObj;
+            org.apache.commons.httpclient.Header header = new org.apache.commons.httpclient.Header();
+            headers.add(header);
+            messageContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_HEADERS, headers);
+        }
+
 
        /**
         *  A utility method that copies the namepaces from the SOAPEnvelope
