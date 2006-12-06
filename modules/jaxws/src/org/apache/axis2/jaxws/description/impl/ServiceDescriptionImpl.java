@@ -408,6 +408,11 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	
     	if (isDBCMap()) {
 
+    		//TODO: Currently, there is a bug which allows the wsdlDefinition to be placed
+    		//  on either the impl class composite or the sei composite, or both. We need to 
+    		//  look in both places and find the correct one, if it exists. There is a patch 
+    		//  in EndpointDescriptionImpl constructor which will reset the wsdlWrapper, if necessary. But
+    		//  that functionality should be moved here at some point.
     		if (composite.getWsdlDefinition() != null) {
     			this.wsdlURL = composite.getWsdlURL();
                 
@@ -500,6 +505,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	this.generatedWsdlWrapper = wrapper;
     }
     
+    void setWsdlWrapper(WSDL4JWrapper wrapper) {
+    	this.wsdlWrapper = wrapper;
+    }
+    
 	private void validateDBCLIntegrity(){
 		
 		//First, check the integrity of this input composite
@@ -583,7 +592,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 				// TODO: Validate on the class that a public constructor exists
 				// TODO: Validate on the class that a finalize() method does not exist
 				if (!DescriptionUtils.isEmpty(composite.getWebServiceAnnot().wsdlLocation())) {
-					if (composite.getWsdlDefinition() == null || composite.getWsdlURL() == null) {
+					if (composite.getWsdlDefinition() == null && composite.getWsdlURL() == null) {
 						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: cannot find WSDL Definition pertaining to this WebService annotation");
 					}
 				}

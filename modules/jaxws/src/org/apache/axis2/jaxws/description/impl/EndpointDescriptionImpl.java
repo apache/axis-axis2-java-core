@@ -26,6 +26,7 @@ import javax.jws.WebService;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
@@ -277,77 +278,88 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         
     	WsdlComposite wsdlComposite = null;
         
-    	//Invoke the callback for generating the wsdl
-        if (composite.getCustomWsdlGenerator() != null) {
-        	wsdlComposite = 
-        		composite.getCustomWsdlGenerator().generateWsdl((String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS));
-   					
-        	Definition wsdlDef = wsdlComposite.getWsdlDefinition();
-        	
-        	try {
-    			WSDL4JWrapper wsdl4jWrapper = new WSDL4JWrapper(composite.getWsdlURL(), wsdlDef);
-    			getServiceDescriptionImpl().setGeneratedWsdlWrapper(wsdl4jWrapper);
-            } catch (Exception e) {
-                throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: WSDLException thrown when attempting to instantiate WSDL4JWrapper ");
-            }
-        } else {
-        	//TODO:Determine if we should always throw an exception on this, or at this point
-            //throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: Unable to find custom WSDL generator");
-        }
+    	//Determine if we need to generate WSDL
+    	//Assumption is that WSDL will be generated only when the composite does not contain a 
+    	//Wsdl Definition
+    	if ( 
+    		(isEndpointBased() && DescriptionUtils.isEmpty(getAnnoWebServiceEndpointInterface()))
+    		 		|| 
+    		(!isEndpointBased())
+    	) {
+    		//This is either an implicit SEI, or a WebService Provider
 
-        //Save the WSDL Definition
-        // REVIEW: This could be a PARTIAL WSDL; not sure if that will cause trouble later on.
-        //			Maybe we should always be setting it to generated WSDL
-        Parameter wsdlDefParameter = new Parameter();
-        wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);       
-        
-        if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
-            wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
-        } else {
-        	if (getServiceDescriptionImpl().getGeneratedWsdlWrapper() != null) {
-        		wsdlDefParameter.setValue(getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition());
-        	} else {
-        		//TODO: Hmmm, this should probably be an exception, will probably always need to set wsdl	
-        	}
-        }
-        
-        //Save the WSDL Location
-        //REVIEW: hmm, this won't always be set
+    		wsdlComposite = generateWSDL(composite);
+    		
+    	} else if (isEndpointBased()) {
+    		//This impl class specifies an SEI...this is a special case. There is a bug
+    		//in the tooling that allows for the wsdllocation to be specifed on either the
+    		//impl. class, or the SEI, or both. So, we need to look for the wsdl as follows:
+    		//			1. If the Wsdl exists on the SEI, then check for it on the impl.
+    		//			2. If it is not found in either location, in that order, then generate
+    	
+			DescriptionBuilderComposite seic = 
+					getServiceDescriptionImpl().getDBCMap().get(composite.getWebServiceAnnot().endpointInterface());
+	
+			//TODO: This functionality is intended to fix the bug that potentially places the 
+			// wsdlDefinition on the wrong composite. This code should be moved to 
+			// ServiceDescriptionImpl.setupWsdlDefinition() eventually
+			try { 
+				WSDL4JWrapper wsdl4jWrapper = null;
+
+				if (seic.getWsdlDefinition() != null) {
+					//set the sdimpl from the SEI composite
+					wsdl4jWrapper = new WSDL4JWrapper(seic.getWsdlURL(), seic.getWsdlDefinition());
+					getServiceDescriptionImpl().setWsdlWrapper(wsdl4jWrapper);
+				} else if (composite.getWsdlDefinition() != null) {
+					//set the sdimpl from the impl. class composite
+					wsdl4jWrapper = new WSDL4JWrapper(composite.getWsdlURL(), composite.getWsdlDefinition());
+					getServiceDescriptionImpl().setWsdlWrapper(wsdl4jWrapper);
+				}
+			} catch (WSDLException e) {
+				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
+			}
+			
+			//If this is not null, then we don't bother generating wsdl
+			if (seic.getWsdlDefinition() == null)	
+				wsdlComposite = generateWSDL(composite);	
+    	}
+    	
+        //Store the WsdlComposite only if it was created
+    	if (wsdlComposite != null) {
+            Parameter wsdlCompositeParameter = new Parameter();
+            wsdlCompositeParameter.setName(MDQConstants.WSDL_COMPOSITE);
+            wsdlCompositeParameter.setValue(wsdlComposite);
+            
+            try {
+            	axisService.addParameter(wsdlCompositeParameter);
+            } catch (Exception e) {
+            	throw ExceptionFactory.makeWebServiceException("EndpointDescription: Unable to add wsdlComposite parm. to AxisService");
+            }  		
+    	}
+    		        
+        //Save the WSDL Location and the WsdlDefinition, value depends on whether wsdl was generated
         Parameter wsdlLocationParameter = new Parameter();
         wsdlLocationParameter.setName(MDQConstants.WSDL_LOCATION);
-        wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
-
-        //Save the WSDL File Name
-        //REVIEW: is it possible this won't always be set
-        Parameter wsdlFileName = new Parameter();
-        wsdlFileName.setName(MDQConstants.WSDL_FILE_NAME);
-        
-        //Save the Schema Doc
-        //REVIEW: is it possible this won't always be set
-        Parameter schemaDocs = new Parameter();
-        schemaDocs.setName(MDQConstants.SCHEMA_DOCS);
-        
-        //Save the WSDL Composite
-        //REVIEW: is it possible this won't always be set
-        Parameter wsdlCompositeParameter = new Parameter();
-        wsdlCompositeParameter.setName(MDQConstants.WSDL_COMPOSITE);
-        wsdlCompositeParameter.setValue(wsdlComposite);
-        
+ 
+        Parameter wsdlDefParameter = new Parameter();
+        wsdlDefParameter.setName(MDQConstants.WSDL_DEFINITION);    
+       
         if (wsdlComposite != null) {
-        	wsdlFileName.setValue(wsdlComposite.getWsdlFileName());
-        	schemaDocs.setValue(wsdlComposite.getSchemaMap());
+        	
+        	wsdlLocationParameter.setValue(wsdlComposite.getWsdlFileName());
+    		wsdlDefParameter.setValue(getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition());
+        } else {
+
+        	wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
+            wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
         }
-        
+        	
         try {
         	axisService.addParameter(wsdlDefParameter);
         	axisService.addParameter(wsdlLocationParameter);                        
-        	axisService.addParameter(wsdlFileName);
-        	axisService.addParameter(schemaDocs); 
-        	axisService.addParameter(wsdlCompositeParameter);
         } catch (Exception e) {
         	throw ExceptionFactory.makeWebServiceException("EndpointDescription: Unable to add parms. to AxisService");
-        }
-         
+        }   
     }
     
     /**
@@ -834,21 +846,33 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // ===========================================
     
     public String getAnnoWebServiceWSDLLocation() {
-        if (annotation_WsdlLocation == null) {
-            if (getAnnoWebService() != null 
-                    && !DescriptionUtils.isEmpty(getAnnoWebService().wsdlLocation())) {
-                annotation_WsdlLocation = getAnnoWebService().wsdlLocation();
-            }
-            else if (getAnnoWebServiceProvider() != null 
-                    && !DescriptionUtils.isEmpty(getAnnoWebServiceProvider().wsdlLocation())) {
-                annotation_WsdlLocation = getAnnoWebServiceProvider().wsdlLocation();
-            }
-            else {
-                // There is no default value per JSR-181 MR Sec 4.1 pg 16
-                annotation_WsdlLocation = "";
-            }
-        }
-        return annotation_WsdlLocation;
+    	if (annotation_WsdlLocation == null) {
+    		
+    		if (getAnnoWebService() != null) {
+				annotation_WsdlLocation = getAnnoWebService().wsdlLocation();        				
+					 
+     			//If this is not an implicit SEI, then make sure that its not on the SEI
+				if (getServiceDescriptionImpl().isDBCMap()) {
+					if (!DescriptionUtils.isEmpty(getAnnoWebServiceEndpointInterface())) {
+    				
+    					DescriptionBuilderComposite seic = 
+    						getServiceDescriptionImpl().getDBCMap().get(composite.getWebServiceAnnot().endpointInterface());
+    					if (!DescriptionUtils.isEmpty(seic.getWebServiceAnnot().wsdlLocation())) {
+    						annotation_WsdlLocation = seic.getWebServiceAnnot().wsdlLocation();
+    					}
+    				}
+				}
+    		}
+    		else if (getAnnoWebServiceProvider() != null 
+    				&& !DescriptionUtils.isEmpty(getAnnoWebServiceProvider().wsdlLocation())) {
+    			annotation_WsdlLocation = getAnnoWebServiceProvider().wsdlLocation();
+    		}
+    		else {
+    			// There is no default value per JSR-181 MR Sec 4.1 pg 16
+    			annotation_WsdlLocation = "";
+    		}
+    	}
+    	return annotation_WsdlLocation;
     }
 
     public String getAnnoWebServiceServiceName() {
@@ -1367,6 +1391,41 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 
         return wsdlPortToUse;
     }
+    private WsdlComposite generateWSDL(DescriptionBuilderComposite dbc) {
+    	
+    	WsdlComposite wsdlComposite = null;
+     	Definition defn = dbc.getWsdlDefinition();
+    	
+    	if (defn == null ) {
+    		
+        	//Invoke the callback for generating the wsdl
+            if (dbc.getCustomWsdlGenerator() != null) {
+            	
+            	wsdlComposite = 
+            		dbc.getCustomWsdlGenerator().generateWsdl((String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS));
+ 
+            	if (wsdlComposite != null) {
+            		wsdlComposite.setWsdlFileName((this.getAnnoWebServiceServiceName() + ".wsdl").toLowerCase());
+      					
+            		Definition wsdlDef = wsdlComposite.getRootWsdlDefinition();
+            	
+            		try {
+            			WSDL4JWrapper wsdl4jWrapper = new WSDL4JWrapper(dbc.getWsdlURL(), wsdlDef);
+            			getServiceDescriptionImpl().setGeneratedWsdlWrapper(wsdl4jWrapper);
+            		} catch (Exception e) {
+            			throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: WSDLException thrown when attempting to instantiate WSDL4JWrapper ");
+            		} 
+            	} else {
+                	//TODO:Determine if we should always throw an exception on this, or at this point
+                    //throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: Unable to find custom WSDL generator");
+            	}
+            } else {
+            	//TODO:Determine if we should always throw an exception on this, or at this point
+                throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: Unable to find custom WSDL generator");
+            }
+    	}
+    	return wsdlComposite;
+    } 
 }
 
 

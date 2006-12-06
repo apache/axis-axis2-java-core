@@ -1,12 +1,14 @@
 package org.apache.axis2.jaxws.description.builder;
 
 import java.util.HashMap;
+
 import javax.wsdl.Definition;
+
 import org.apache.axiom.om.OMDocument;
 
 public class WsdlComposite {
 
-	Definition wsdlDefinition;
+	HashMap <String, Definition> wsdlDefinitionsMap;
 	
 	HashMap <String, OMDocument> schemaMap;
 	
@@ -14,7 +16,6 @@ public class WsdlComposite {
 
 	public WsdlComposite() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -27,8 +28,16 @@ public class WsdlComposite {
 	/**
 	 * @return Returns the wsdlDefinition.
 	 */
-	public Definition getWsdlDefinition() {
-		return wsdlDefinition;
+	public HashMap<String, Definition> getWsdlDefinitionsMap() {
+		return wsdlDefinitionsMap;
+	}
+	
+	/**
+	 * @return Returns the root WSDL Definition
+	 */
+	public Definition getRootWsdlDefinition() {
+		
+		return wsdlDefinitionsMap.get(getWsdlFileName().toLowerCase());
 	}
 
 	/**
@@ -48,8 +57,8 @@ public class WsdlComposite {
 	/**
 	 * @param wsdlDefinition The wsdlDefinition to set.
 	 */
-	public void setWsdlDefinition(Definition wsdlDefinition) {
-		this.wsdlDefinition = wsdlDefinition;
+	public void setWsdlDefinition(HashMap<String, Definition> wsdlDefinitionsMap) {
+		this.wsdlDefinitionsMap = wsdlDefinitionsMap;
 	}
 
 	/**
