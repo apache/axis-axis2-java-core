@@ -42,12 +42,12 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
     }
 
     public OperationClient createClient(ServiceContext sc, Options options) {
-        return new RobustOperationClient(this, sc, options);
+        return new RobustOutOnlyOperationClient(this, sc, options);
     }
 
-    class RobustOperationClient extends OutInAxisOperationClient {
+    class RobustOutOnlyOperationClient extends OutInAxisOperationClient {
 
-        public RobustOperationClient(OutInAxisOperation axisOp, ServiceContext sc, Options options) {
+        public RobustOutOnlyOperationClient(OutInAxisOperation axisOp, ServiceContext sc, Options options) {
             super(axisOp, sc, options);
         }
 

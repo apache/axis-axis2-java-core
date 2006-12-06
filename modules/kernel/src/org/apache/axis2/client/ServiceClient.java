@@ -747,6 +747,20 @@ public class ServiceClient {
         options.setTo(targetEpr);
     }
 
+    /**
+     * Gets the last OperationContext
+     */
+    public OperationContext getLastOperationContext() {
+        return serviceContext.getLastOperationContext();
+    }
+
+    /**
+     * Sets whether or not to cache the last OperationContext
+     */
+    public void setCachingOperationContext(boolean cachingOpContext) {
+        serviceContext.setCachingOperationContext(cachingOpContext);
+    }
+
 
     /**
      * This class acts as a callback that allows users to wait on the result.

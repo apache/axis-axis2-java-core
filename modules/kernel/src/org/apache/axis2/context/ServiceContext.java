@@ -41,6 +41,11 @@ public class ServiceContext extends AbstractContext {
     private ServiceGroupContext serviceGroupContext;
     private ConfigurationContext configContext;
 
+    /** Should we cache the last OperationContext? */
+    private boolean cachingOperationContext;
+    /** A cache for the last OperationContext */
+    private OperationContext lastOperationContext;
+
     public ServiceContext(AxisService serviceConfig, ServiceGroupContext serviceGroupContext) {
         super(serviceGroupContext);
         this.serviceGroupContext = serviceGroupContext;
@@ -50,8 +55,16 @@ public class ServiceContext extends AbstractContext {
 
     public OperationContext createOperationContext(QName name) {
         AxisOperation axisOp = axisService.getOperation(name);
+        return createOperationContext(axisOp);
+    }
 
-        return new OperationContext(axisOp, this);
+    public OperationContext createOperationContext(AxisOperation axisOp) {
+        OperationContext ctx = new OperationContext(axisOp, this);
+        if (cachingOperationContext) {
+            // Squirrel this away for anyone who wants it later
+            lastOperationContext = ctx;
+        }
+        return ctx;
     }
 
     public AxisService getAxisService() {
@@ -123,5 +136,21 @@ public class ServiceContext extends AbstractContext {
 
     public void setMyEPR(EndpointReference myEPR) {
         this.myEPR = myEPR;
+    }
+
+    public OperationContext getLastOperationContext() {
+        return lastOperationContext;
+    }
+
+    public void setLastOperationContext(OperationContext lastOperationContext) {
+        this.lastOperationContext = lastOperationContext;
+    }
+
+    public boolean isCachingOperationContext() {
+        return cachingOperationContext;
+    }
+
+    public void setCachingOperationContext(boolean cacheLastOperationContext) {
+        this.cachingOperationContext = cacheLastOperationContext;
     }
 }

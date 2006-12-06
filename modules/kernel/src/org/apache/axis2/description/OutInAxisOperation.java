@@ -118,8 +118,7 @@ class OutInAxisOperationClient implements OperationClient {
         this.sc = sc;
         this.options = options;
         this.completed = false;
-        this.oc = new OperationContext(axisOp);
-        this.oc.setParent(this.sc);
+        this.oc = sc.createOperationContext(axisOp);
     }
 
     /**

@@ -31,7 +31,7 @@ import org.apache.axis2.context.OperationContext;
  * in a new message being created, then if a message receiver is registered with
  * the client then the message will be delivered to that client.
  */
-public interface OperationClient {
+public interface  OperationClient {
     /**
      * Sets the options that should be used for this particular client. This
      * resets the entire set of options to use the new options - so you'd lose

@@ -185,7 +185,7 @@ class OutOnlyAxisOperationClient implements OperationClient {
         this.sc = sc;
         this.options = options;
         this.completed = false;
-        oc = new OperationContext(axisOp, sc);
+        oc = sc.createOperationContext(axisOp);
     }
 
     /**
