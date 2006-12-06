@@ -72,6 +72,7 @@ import org.apache.axis2.jaxws.sample.FaultsServiceTests;
 import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
+import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.sample.faultsservice.FaultsService;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
@@ -144,6 +145,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(WrapTests.class);
         suite.addTestSuite(NonAnonymousComplexTypeTests.class);
         suite.addTestSuite(AddNumbersTests.class);
+        suite.addTestSuite(ParallelAsyncTests.class);
         suite.addTestSuite(FaultyWebServiceTests.class);
         
         suite.addTestSuite(FaultsServiceTests.class);

@@ -117,6 +117,13 @@
     	    <classpath location="${compiled.classes.dir}"/>
     	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
     	</java>
+    	<ant:echo>Generating java from async_doclitwr.wsdl</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	   	<arg line="-d ${schema.generated.src.dir} -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl"/>
+    	</java>
 
     	<ant:echo>Generating java from FaultyWebService.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
@@ -427,6 +434,17 @@
 			   <ant:include name="org/apache/axis2/jaxws/sample/addnumbers/**"/>
 			</ant:fileset>
 			<ant:fileset dir="test/org/apache/axis2/jaxws/sample/addnumbers">
+			   <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+		<ant:copy toDir="target/test-classes/services/AsyncService/">
+			<ant:fileset dir="target/test-classes">
+			   <ant:include name="org/apache/axis2/jaxws/sample/parallelasync/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/sample/parallelasync/server">
 			   <ant:include name="META-INF/**"/>
 			</ant:fileset>
 			<ant:fileset dir="target/classes">
