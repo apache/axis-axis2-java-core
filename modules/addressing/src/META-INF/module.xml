@@ -8,7 +8,7 @@
             <order phase="PreDispatch"/>
         </handler>
         <handler name="AddressingWSDLValidationHandler" class="org.apache.axis2.handlers.addressing.AddressingWSDLValidationHandler">
-            <order phase="Dispatch" after="InstanceDispatcher" />
+            <order phase="Dispatch" after="AddressingBasedDispatcher" />
         </handler>
     </InFlow>
 
