@@ -41,19 +41,13 @@ public class ParallelAsyncTests extends TestCase {
         System.out.println("==================== " + getName());
     }
     
-    // TODO delete this test once the next is running.  This test prevents a
-    // failure because JUNIT doesn't like when a test suite has no tests
-    public void testPREVENT_FAILURE() throws Exception {
-        
-    }
-    
     /**
      * @testStrategy Test that the service is up and running before running any
      *               other tests
      * @wsdl async.wsdl + async.xml
      * @target AsyncPortImpl
      */
-    public void _intestService_isAlive() throws Exception {
+    public void testService_isAlive() throws Exception {
         final String MESSAGE = "testServiceAlive";
 
         AsyncPort port = getPort(null);

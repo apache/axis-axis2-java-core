@@ -279,5 +279,19 @@ public interface AsyncPort {
     public String anotherAsync(
         @WebParam(name = "request", targetNamespace = "")
         String request);
+    
+    /**
+     * 
+     * @param request
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod(action = "http://org/test/parallelasync/customAsync")
+    @WebResult(name = "response", targetNamespace = "")
+    @RequestWrapper(localName = "customAsync", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.CustomAsync")
+    @ResponseWrapper(localName = "customAsyncResponse", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.CustomAsyncResponse")
+    public String customAsync(
+        @WebParam(name = "request", targetNamespace = "")
+        String request);
 
 }
