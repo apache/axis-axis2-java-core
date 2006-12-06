@@ -53,6 +53,8 @@ import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * XMLSpineImpl
@@ -68,6 +70,7 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
  */
 class XMLSpineImpl implements XMLSpine {
 	
+    private static Log log = LogFactory.getLog(XMLSpine.class);
 	private static OMBlockFactory obf = (OMBlockFactory) FactoryRegistry.getFactory(OMBlockFactory.class);
 	
 	private Protocol protocol = Protocol.unknown;
@@ -340,17 +343,33 @@ class XMLSpineImpl implements XMLSpine {
 	    }            
 	    if (bodyBlocks != null) {
 	        for (int i=0; i<bodyBlocks.size(); i++) {                   
-	            Block b = (Block) bodyBlocks.get(i);                  
-	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);
+	            Block b = (Block) bodyBlocks.get(i);       
                 
-                // The blocks are directly under the body if DOCUMENT.
-                // The blocks are under the operation element if RPC
-                if (style == Style.DOCUMENT) {
-                    root.getBody().addChild(e);    
-                } else {
-                    root.getBody().getFirstElement().addChild(e);   
+                // In Dispatch<String> Provider<String> and some source modes, the block is built from text data.
+                // The assumption is that the text data represents one or more elements, but this may not be the
+                // case.  It could represent whitespace.  In such cases querying the qname will cause a parse of the
+                // code and the parse will fail.  We will interpret a failure as an indication that the block does not represent
+                // an element
+                
+                QName blockQName = null;
+                try {
+                    blockQName = b.getQName();
+                } catch (Exception e) {
+                    log.debug("The block does not represent an element");
                 }
-	                          
+                
+                // Only create an OMElement if the block represents an element
+                if (blockQName != null) {
+                    OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);
+                
+                    // The blocks are directly under the body if DOCUMENT.
+                    // The blocks are under the operation element if RPC
+                    if (style == Style.DOCUMENT) {
+                        root.getBody().addChild(e);    
+                    } else {
+                        root.getBody().getFirstElement().addChild(e);   
+                    }
+                }             
 	        }               
 	        bodyBlocks.clear();               
 	    }

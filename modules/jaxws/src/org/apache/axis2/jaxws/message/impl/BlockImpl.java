@@ -166,7 +166,8 @@ public abstract class BlockImpl implements Block {
 				qName = omElement.getQName();
 			}
 			return qName;
-		} catch (XMLStreamException xse) {
+		} catch (Exception xse) {
+            setConsumed(true);
 			throw ExceptionFactory.makeMessageException(xse);
 		}
 	}
@@ -279,7 +280,7 @@ public abstract class BlockImpl implements Block {
 	 * @param consume
 	 * @return
 	 */
-	private void setConsumed(boolean consume) { 
+	public void setConsumed(boolean consume) { 
 		if (consume) {
 			this.consumed = true;
 			busObject = null;

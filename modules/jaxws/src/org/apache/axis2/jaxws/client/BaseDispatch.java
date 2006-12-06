@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.client;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Response;
@@ -365,6 +366,13 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // if the parameter is null.
             if (object == null) {
                 throw ExceptionFactory.makeWebServiceException("dispatchNullParamHttpBinding");
+            }
+        }
+        
+        if (object instanceof DOMSource) {
+            DOMSource ds = (DOMSource) object;
+            if (ds.getNode() == null && ds.getSystemId() == null) {
+                throw ExceptionFactory.makeWebServiceException("");
             }
         }
         

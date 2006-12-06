@@ -70,6 +70,16 @@ public class MessageTests extends TestCase {
 		"<b>Hello</b>" +
 		"<c>World</c>" +
 		"</pre:a>";
+    
+    private static final String sampleDouble =
+        "<pre:a xmlns:pre=\"urn://sample\">" +
+        "<b>Hello</b>" +
+        "<c>World</c>" +
+        "</pre:a>" +
+        "<pre:aa xmlns:pre=\"urn://sample\">" +
+        "<b>Hello</b>" +
+        "<c>World</c>" +
+        "</pre:aa>";
 	
     private static final String sampleEnvelope11 = 
         sampleEnvelopeHead11 +
@@ -247,7 +257,132 @@ public class MessageTests extends TestCase {
 		assertTrue(newText.contains("Body"));
 		
 	}
+    
+    /**
+     * Create a Block representing an empty XMLString and simulate a 
+     * normal Dispatch<String> flow with an application handler.
+     * @throws Exception
+     */
+    public void testStringOutflowEmptyString() throws Exception {
+        
+        // Create a SOAP 1.1 Message
+        MessageFactory mf = (MessageFactory)
+            FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.create(Protocol.soap11);
+        
+        // Get the BlockFactory
+        XMLStringBlockFactory f = (XMLStringBlockFactory)
+            FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+        
+        // Sample text is whitespace.  There is no element
+        
+        String whiteSpaceText = "<!-- Comment -->";
+        // Create a Block using the sample string as the content.  This simulates
+        // what occurs on the outbound JAX-WS dispatch<String> client
+        Block block = f.createFrom(whiteSpaceText, null, null);
+        
+        // Add the block to the message as normal body content.
+        m.setBodyBlock(0, block);
+        
+        // If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
+        SOAPEnvelope soapEnvelope = m.getAsSOAPEnvelope();
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SOAPENVELOPE".equals(m.getXMLPartContentType()));
+        
+        // Normally the handler would not touch the body...but for our scenario, assume that it does.
+        // The whitespace is not preserved, so there should be no first child in the body
+        assertTrue(soapEnvelope.getBody().getFirstChild() == null);
+        
+        // The block should be consumed at this point
+        assertTrue(block.isConsumed());
+        
+        // After the handler processing the message is obtained as an OM
+        OMElement om = m.getAsOMElement();
+                
+        // Serialize the Envelope using the same mechanism as the 
+        // HTTP client.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        om.serializeAndConsume(baos, new OMOutputFormat());
+        
+        // To check that the output is correct, get the String contents of the 
+        // reader
+        String newText = baos.toString();
+        System.out.println(newText);
+        assertTrue(newText.contains("soap"));
+        assertTrue(newText.contains("Envelope"));
+        assertTrue(newText.contains("Body"));
+        
+    }
 	
+    /**
+     * Create a Block representing an XMLString with 2 elements and simulate a 
+     * normal Dispatch<String> flow with an application handler.
+     * @throws Exception
+     * 
+     * @REVIEW This test is disabled because (a) it fails and (b) we don't believe this
+     * is allowed due by WSI.
+     */
+    public void _testStringOutflowDoubleElement() throws Exception {
+        
+        // Create a SOAP 1.1 Message
+        MessageFactory mf = (MessageFactory)
+            FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.create(Protocol.soap11);
+        
+        // Get the BlockFactory
+        XMLStringBlockFactory f = (XMLStringBlockFactory)
+            FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+        
+        // Create a Block using the sample string as the content.  This simulates
+        // what occurs on the outbound JAX-WS dispatch<String> client
+        // In this case the sample string contains 2 elements a and aa
+        Block block = f.createFrom(this.sampleDouble, null, null);
+        
+        // Add the block to the message as normal body content.
+        m.setBodyBlock(0, block);
+        
+        // If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
+        SOAPEnvelope soapEnvelope = m.getAsSOAPEnvelope();
+        
+        // Check to see if the message is a fault.  The client/server will always call this method.
+        // The Message must respond appropriately without doing a conversion.
+        boolean isFault = m.isFault();
+        assertTrue(!isFault);
+        assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
+                    "SOAPENVELOPE".equals(m.getXMLPartContentType()));
+        
+        // Normally the handler would not touch the body...but for our scenario, assume that it does.
+        String name = soapEnvelope.getBody().getFirstChild().getLocalName();
+        assertTrue("a".equals(name));
+        name = soapEnvelope.getBody().getLastChild().getLocalName();
+        assertTrue("aa".equals(name));
+        
+        // The block should be consumed at this point
+        assertTrue(block.isConsumed());
+        
+        // After the handler processing the message is obtained as an OM
+        OMElement om = m.getAsOMElement();
+                
+        // Serialize the Envelope using the same mechanism as the 
+        // HTTP client.
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        om.serializeAndConsume(baos, new OMOutputFormat());
+        
+        // To check that the output is correct, get the String contents of the 
+        // reader
+        String newText = baos.toString();
+        System.out.println(newText);
+        assertTrue(newText.contains(sampleText));
+        assertTrue(newText.contains("soap"));
+        assertTrue(newText.contains("Envelope"));
+        assertTrue(newText.contains("Body"));
+        
+    }
     
 	/**
 	 * Create a Block representing an XMLString and simulate a 
