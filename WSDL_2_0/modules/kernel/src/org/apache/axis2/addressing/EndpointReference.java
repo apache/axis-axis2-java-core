@@ -45,12 +45,12 @@ public class EndpointReference implements Serializable {
     private static final long serialVersionUID = 5278892171162372439L;
 
     private static final Log log = LogFactory.getLog(EndpointReference.class);
-    
+
     /**
      * <EndpointReference>
-     *    <Address>xs:anyURI</Address>
-     *    <ReferenceParameters>xs:any*</ReferenceParameters>
-     *    <MetaData>xs:any*</MetaData>
+     * <Address>xs:anyURI</Address>
+     * <ReferenceParameters>xs:any*</ReferenceParameters>
+     * <MetaData>xs:any*</MetaData>
      * <!-- In addition to this, EPR can contain any number of OMElements -->
      * </EndpointReference>
      */
@@ -121,31 +121,31 @@ public class EndpointReference implements Serializable {
 
     /**
      * hasAnonymousAddress
-     * 
+     *
      * @return true if address is 'Anonymous URI' from either supported addressing version
      */
-    public boolean hasAnonymousAddress(){
-        boolean result  = (AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(address) ||
-                           AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address));
-        if(log.isTraceEnabled()){
-            log.trace("hasAnonymousAddress: "+address+" is Anonymous: "+result);
+    public boolean hasAnonymousAddress() {
+        boolean result = (AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(address) ||
+                AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address));
+        if (log.isTraceEnabled()) {
+            log.trace("hasAnonymousAddress: " + address + " is Anonymous: " + result);
         }
         return result;
     }
-    
+
     /**
      * hasNoneAddress
-     * 
+     *
      * @return true if the address is the 'None URI' from the final addressing spec.
      */
     public boolean hasNoneAddress() {
         boolean result = AddressingConstants.Final.WSA_NONE_URI.equals(address);
-        if(log.isTraceEnabled()){
-            log.trace("hasNoneAddress: "+address+" is None: "+result);
+        if (log.isTraceEnabled()) {
+            log.trace("hasNoneAddress: " + address + " is None: " + result);
         }
         return result;
     }
-    
+
     /**
      * @param localName
      * @param ns
@@ -217,7 +217,6 @@ public class EndpointReference implements Serializable {
     }
 
     /**
-     * 
      * @param name
      * @deprecated
      */
@@ -234,33 +233,32 @@ public class EndpointReference implements Serializable {
     public void setReferenceParameters(Map referenceParameters) {
         this.referenceParameters = referenceParameters;
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+    *  (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
     public String toString() {
         StringBuffer buffer = new StringBuffer("Address: " + address);
-        
+
         if (metaData != null)
             buffer.append(", Metadata: ").append(metaData);
 
         if (referenceParameters != null)
             buffer.append(", Reference Parameters: ").append(referenceParameters);
-        
+
         if (extensibleElements != null)
             buffer.append(", Extensibility elements: ").append(extensibleElements);
-        
+
         if (attributes != null)
             buffer.append(", Attributes: ").append(attributes);
-        
+
         return buffer.toString();
     }
 
     /**
-     * 
      * @param eprOMElement
-     * @deprecated use {@link org.apache.axis2.addressing.EndpointReferenceHelper#fromOM(OMElement)} instead.
+     * @deprecated use {@link EndpointReferenceHelper#fromOM(OMElement)} instead.
      */
     public void fromOM(OMElement eprOMElement) {
         setAddress(eprOMElement.getFirstChildWithName(new QName("Address")).getText());
@@ -295,26 +293,25 @@ public class EndpointReference implements Serializable {
             OMAttribute attribute = (OMAttribute) allAttributes.next();
             attributes.add(attribute);
         }
-        
+
         Iterator childElements = eprOMElement.getChildElements();
         while (childElements.hasNext()) {
             OMElement eprChildElement = (OMElement) childElements.next();
             String localName = eprChildElement.getLocalName();
-            if(!localName.equals("Address") &&
-               !localName.equals(AddressingConstants.EPR_REFERENCE_PARAMETERS) &&
-               !localName.equals(AddressingConstants.Final.WSA_METADATA)){
+            if (!localName.equals("Address") &&
+                    !localName.equals(AddressingConstants.EPR_REFERENCE_PARAMETERS) &&
+                    !localName.equals(AddressingConstants.Final.WSA_METADATA)) {
                 addExtensibleElement(eprChildElement);
             }
         }
     }
 
     /**
-     * 
      * @param nsurl
      * @param localName
      * @param prefix
      * @throws AxisFault
-     * @deprecated  use {@link org.apache.axis2.addressing.EndpointReferenceHelper#toOM(EndpointReference, QName, String)} instead.
+     * @deprecated use {@link EndpointReferenceHelper#toOM(EndpointReference, QName, String)} instead.
      */
     public OMElement toOM(String nsurl, String localName, String prefix) throws AxisFault {
         OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -324,7 +321,7 @@ public class EndpointReference implements Serializable {
             OMNamespace wsaNS = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_DEFAULT_PREFIX);
             OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS, wsaNS, epr);
             addressE.setText(address);
-            
+
             if (this.metaData != null) {
                 OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);
                 Iterator metadata = this.metaData.iterator();
@@ -340,7 +337,7 @@ public class EndpointReference implements Serializable {
                     refParameterElement.addChild((OMNode) refParms.next());
                 }
             }
-            
+
             if (attributes != null) {
                 Iterator attrIter = attributes.iterator();
                 while (attrIter.hasNext()) {
@@ -348,7 +345,7 @@ public class EndpointReference implements Serializable {
                     epr.addAttribute(omAttributes);
                 }
             }
-            
+
             // add xs:any
             ArrayList omElements = extensibleElements;
             if (omElements != null) {
@@ -356,11 +353,54 @@ public class EndpointReference implements Serializable {
                     epr.addChild((OMElement) omElements.get(i));
                 }
             }
-            
+
             return epr;
         } else {
             throw new AxisFault("prefix must be specified");
         }
+    }
+
+    /**
+     * This is a deep copy of the EPR element.
+     * @return
+     * @throws CloneNotSupportedException
+     */
+    protected EndpointReference cloneEPR() throws CloneNotSupportedException {
+        EndpointReference epr = new EndpointReference(this.address);
+
+        if (extensibleElements != null) {
+            for (int i = 0; i < extensibleElements.size(); i++) {
+                epr.addExtensibleElement(((OMElement) extensibleElements.get(i)).cloneOMElement());
+            }
+        }
+
+        if (referenceParameters != null) {
+            Iterator refParamIter = referenceParameters.values().iterator();
+            while (refParamIter.hasNext()) {
+                OMElement refParameter = (OMElement) refParamIter.next();
+                epr.addReferenceParameter(refParameter.cloneOMElement());
+            }
+        }
+
+        if (metaData != null) {
+            for (int i = 0; i < metaData.size(); i++) {
+                OMNode omNode = (OMNode) metaData.get(i);
+                if (omNode instanceof OMElement) {
+                    epr.addMetaData(((OMElement) omNode).cloneOMElement());
+                } else {
+                    epr.addMetaData(omNode);
+                }
+            }
+        }
+
+        if (attributes != null) {
+            for (int i = 0; i < attributes.size(); i++) {
+                OMAttribute omAttr = (OMAttribute) attributes.get(i);
+                epr.addAttribute(omAttr.getLocalName(), omAttr.getNamespace(), omAttr.getAttributeValue());
+            }
+        }
+
+        return epr;
     }
 
 
