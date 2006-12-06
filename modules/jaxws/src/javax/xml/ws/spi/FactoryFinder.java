@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -60,28 +62,40 @@ class FactoryFinder {
      */
     private static ClassLoader findClassLoader()
             throws ConfigurationError {
-        Method m = null;
+        // REVIEW This doPriv block may be unnecessary because this method is private and 
+        // the caller already has a doPriv.  I added the doPriv in case someone changes the 
+        // visibility of this method to non-private.
+        ClassLoader cl = (ClassLoader)
+            AccessController.doPrivileged( new PrivilegedAction() {
+                public Object run() {
+                
+                    Method m = null;
 
-        try {
+                    try {
 
-            m = Thread.class.getMethod("getContextClassLoader", (Class []) null);
-        } catch (NoSuchMethodException e) {
-            // Assume that we are running JDK 1.1, use the current ClassLoader
-            debugPrintln("assuming JDK 1.1");
-            return FactoryFinder.class.getClassLoader();
-        }
+                        m = Thread.class.getMethod("getContextClassLoader", (Class []) null);
+                    } catch (NoSuchMethodException e) {
+                        // Assume that we are running JDK 1.1, use the current ClassLoader
+                        debugPrintln("assuming JDK 1.1");
+                        return FactoryFinder.class.getClassLoader();
+                    }
 
-        try {
-            return (ClassLoader) m.invoke(Thread.currentThread(), (Object []) null);
-        } catch (IllegalAccessException e) {
-            // assert(false)
-            throw new ConfigurationError("Unexpected IllegalAccessException",
-                    e);
-        } catch (InvocationTargetException e) {
-            // assert(e.getTargetException() instanceof SecurityException)
-            throw new ConfigurationError("Unexpected InvocationTargetException",
-                    e);
-        }
+                    try {
+                        return (ClassLoader) m.invoke(Thread.currentThread(), (Object []) null);
+                    } catch (IllegalAccessException e) {
+                        // assert(false)
+                        throw new ConfigurationError("Unexpected IllegalAccessException",
+                                e);
+                    } catch (InvocationTargetException e) {
+                        // assert(e.getTargetException() instanceof SecurityException)
+                        throw new ConfigurationError("Unexpected InvocationTargetException",
+                                e);
+                    }
+                }
+            }
+        );
+        return cl;
+        
     }
 
     /**
@@ -99,23 +113,36 @@ class FactoryFinder {
     private static Object newInstance(String className,
                                       ClassLoader classLoader)
             throws ConfigurationError {
-        try {
-            if (classLoader != null) {
-                try {
-                    return classLoader.loadClass(className).newInstance();
-                } catch (ClassNotFoundException x) {
-                    // try again
+        
+        final ClassLoader iClassLoader = classLoader;
+        final String iClassName = className;
+        
+        // REVIEW This doPriv block may be unnecessary because this method is private and 
+        // the caller already has a doPriv.  I added the doPriv in case someone changes the 
+        // visibility of this method to non-private.
+        Object obj = 
+            AccessController.doPrivileged( new PrivilegedAction() {
+                public Object run() {
+                    try {
+                        if (iClassLoader != null) {
+                            try {
+                                return iClassLoader.loadClass(iClassName).newInstance();
+                            } catch (ClassNotFoundException x) {
+                                // try again
+                            }
+                        }
+                        return Class.forName(iClassName).newInstance();
+                    } catch (ClassNotFoundException x) {
+                        throw new ConfigurationError(
+                                "Provider " + iClassName + " not found", x);
+                    } catch (Exception x) {
+                        throw new ConfigurationError(
+                                "Provider " + iClassName + " could not be instantiated: " + x,
+                                x);
+                    }
                 }
-            }
-            return Class.forName(className).newInstance();
-        } catch (ClassNotFoundException x) {
-            throw new ConfigurationError(
-                    "Provider " + className + " not found", x);
-        } catch (Exception x) {
-            throw new ConfigurationError(
-                    "Provider " + className + " could not be instantiated: " + x,
-                    x);
-        }
+            });
+        return obj;
     }
 
     /**
@@ -132,94 +159,104 @@ class FactoryFinder {
      */
     static Object find(String factoryId, String fallbackClassName)
             throws ConfigurationError {
-        debugPrintln("debug is on");
-
-        ClassLoader classLoader = findClassLoader();
-
-        // Use the system property first
-        try {
-            String systemProp =
-                    System.getProperty(factoryId);
-            if (systemProp != null) {
-                debugPrintln("found system property " + systemProp);
-                return newInstance(systemProp, classLoader);
-            }
-        } catch (SecurityException se) {
-        }
-
-        // try to read from $java.home/lib/xml.properties
-        try {
-            String javah = System.getProperty("java.home");
-            String configFile = javah + File.separator +
-                    "lib" + File.separator + "jaxrpc.properties";
-            File f = new File(configFile);
-            if (f.exists()) {
-                Properties props = new Properties();
-                props.load(new FileInputStream(f));
-                String factoryClassName = props.getProperty(factoryId);
-                debugPrintln("found java.home property " + factoryClassName);
-                return newInstance(factoryClassName, classLoader);
-            }
-        } catch (Exception ex) {
-            if (debug) ex.printStackTrace();
-        }
-
-        String serviceId = "META-INF/services/" + factoryId;
-        // try to find services in CLASSPATH
-        try {
-            InputStream is = null;
-            if (classLoader == null) {
-                is = ClassLoader.getSystemResourceAsStream(serviceId);
-            } else {
-                is = classLoader.getResourceAsStream(serviceId);
-            }
-
-            if (is != null) {
-                debugPrintln("found " + serviceId);
-
-                // Read the service provider name in UTF-8 as specified in
-                // the jar spec.  Unfortunately this fails in Microsoft
-                // VJ++, which does not implement the UTF-8
-                // encoding. Theoretically, we should simply let it fail in
-                // that case, since the JVM is obviously broken if it
-                // doesn't support such a basic standard.  But since there
-                // are still some users attempting to use VJ++ for
-                // development, we have dropped in a fallback which makes a
-                // second attempt using the platform's default encoding. In
-                // VJ++ this is apparently ASCII, which is a subset of
-                // UTF-8... and since the strings we'll be reading here are
-                // also primarily limited to the 7-bit ASCII range (at
-                // least, in English versions), this should work well
-                // enough to keep us on the air until we're ready to
-                // officially decommit from VJ++. [Edited comment from
-                // jkesselm]
-                BufferedReader rd;
-                try {
-                    rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                } catch (java.io.UnsupportedEncodingException e) {
-                    rd = new BufferedReader(new InputStreamReader(is));
+        
+        final String iFactoryId = factoryId;
+        final String iFallbackClassName = fallbackClassName;
+        
+        Object obj = 
+            AccessController.doPrivileged( new PrivilegedAction() {
+                public Object run() {
+                    debugPrintln("debug is on");
+                    
+                    ClassLoader classLoader = findClassLoader();
+                    
+                    // Use the system property first
+                    try {
+                        String systemProp =
+                            System.getProperty(iFactoryId);
+                        if (systemProp != null) {
+                            debugPrintln("found system property " + systemProp);
+                            return newInstance(systemProp, classLoader);
+                        }
+                    } catch (SecurityException se) {
+                    }
+                    
+                    // try to read from $java.home/lib/xml.properties
+                    try {
+                        String javah = System.getProperty("java.home");
+                        String configFile = javah + File.separator +
+                        "lib" + File.separator + "jaxrpc.properties";
+                        File f = new File(configFile);
+                        if (f.exists()) {
+                            Properties props = new Properties();
+                            props.load(new FileInputStream(f));
+                            String factoryClassName = props.getProperty(iFactoryId);
+                            debugPrintln("found java.home property " + factoryClassName);
+                            return newInstance(factoryClassName, classLoader);
+                        }
+                    } catch (Exception ex) {
+                        if (debug) ex.printStackTrace();
+                    }
+                    
+                    String serviceId = "META-INF/services/" + iFactoryId;
+                    // try to find services in CLASSPATH
+                    try {
+                        InputStream is = null;
+                        if (classLoader == null) {
+                            is = ClassLoader.getSystemResourceAsStream(serviceId);
+                        } else {
+                            is = classLoader.getResourceAsStream(serviceId);
+                        }
+                        
+                        if (is != null) {
+                            debugPrintln("found " + serviceId);
+                            
+                            // Read the service provider name in UTF-8 as specified in
+                            // the jar spec.  Unfortunately this fails in Microsoft
+                            // VJ++, which does not implement the UTF-8
+                            // encoding. Theoretically, we should simply let it fail in
+                            // that case, since the JVM is obviously broken if it
+                            // doesn't support such a basic standard.  But since there
+                            // are still some users attempting to use VJ++ for
+                            // development, we have dropped in a fallback which makes a
+                            // second attempt using the platform's default encoding. In
+                            // VJ++ this is apparently ASCII, which is a subset of
+                            // UTF-8... and since the strings we'll be reading here are
+                            // also primarily limited to the 7-bit ASCII range (at
+                            // least, in English versions), this should work well
+                            // enough to keep us on the air until we're ready to
+                            // officially decommit from VJ++. [Edited comment from
+                            // jkesselm]
+                            BufferedReader rd;
+                            try {
+                                rd = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                            } catch (java.io.UnsupportedEncodingException e) {
+                                rd = new BufferedReader(new InputStreamReader(is));
+                            }
+                            
+                            String factoryClassName = rd.readLine();
+                            rd.close();
+                            
+                            if (factoryClassName != null &&
+                                    ! "".equals(factoryClassName)) {
+                                debugPrintln("loaded from services: " + factoryClassName);
+                                return newInstance(factoryClassName, classLoader);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        if (debug) ex.printStackTrace();
+                    }
+                    
+                    if (iFallbackClassName == null) {
+                        throw new ConfigurationError(
+                                "Provider for " + iFactoryId + " cannot be found", null);
+                    }
+                    
+                    debugPrintln("loaded from fallback value: " + iFallbackClassName);
+                    return newInstance(iFallbackClassName, classLoader);
                 }
-
-                String factoryClassName = rd.readLine();
-                rd.close();
-
-                if (factoryClassName != null &&
-                        ! "".equals(factoryClassName)) {
-                    debugPrintln("loaded from services: " + factoryClassName);
-                    return newInstance(factoryClassName, classLoader);
-                }
-            }
-        } catch (Exception ex) {
-            if (debug) ex.printStackTrace();
-        }
-
-        if (fallbackClassName == null) {
-            throw new ConfigurationError(
-                    "Provider for " + factoryId + " cannot be found", null);
-        }
-
-        debugPrintln("loaded from fallback value: " + fallbackClassName);
-        return newInstance(fallbackClassName, classLoader);
+            });
+        return obj;
     }
 
     static class ConfigurationError extends Error {
