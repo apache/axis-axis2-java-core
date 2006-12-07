@@ -365,7 +365,7 @@ public class EndpointReference implements Serializable {
      * @return
      * @throws CloneNotSupportedException
      */
-    protected EndpointReference cloneEPR() throws CloneNotSupportedException {
+    public EndpointReference cloneEPR()  {
         EndpointReference epr = new EndpointReference(this.address);
 
         if (extensibleElements != null) {

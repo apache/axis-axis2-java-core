@@ -267,6 +267,11 @@
               _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
               _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
+              <!-- change the EPR if http location available -->
+              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
+              </xsl:if>
+
               // create a message context
               org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 
@@ -501,6 +506,11 @@
              _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
              _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
+             <!-- change the EPR if http location available -->
+              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
+              </xsl:if>
+
           <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
@@ -672,6 +682,11 @@
                 _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
                 _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
+                <!-- change the EPR if http location available -->
+               <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
+               </xsl:if>
+
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
                 org.apache.axiom.soap.SOAPEnvelope env = null;
                 org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
@@ -819,27 +834,7 @@
           </xsl:if>
         </xsl:for-each>
 
-        /**
-         * private method to add the http soap_headers
-         *
-         * @param messageContext
-         * @param name
-         * @param value
-         */
-        private void addHttpHeader(org.apache.axis2.context.MessageContext messageContext,
-                                   String name,
-                                   String value) {
-            java.lang.Object headersObj = messageContext.getProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_HEADERS);
-            if (headersObj == null) {
-                headersObj = new java.util.ArrayList();
-            }
-            java.util.List headers = (java.util.List) headersObj;
-            org.apache.commons.httpclient.Header header = new org.apache.commons.httpclient.Header();
-            headers.add(header);
-            messageContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_HEADERS, headers);
-        }
-
-
+        
        /**
         *  A utility method that copies the namepaces from the SOAPEnvelope
         */

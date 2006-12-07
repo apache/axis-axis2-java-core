@@ -31,8 +31,12 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
+import org.apache.commons.httpclient.Header;
 
 /**
  * Base class for generated client stubs. This defines several client API
@@ -42,7 +46,7 @@ import org.apache.axis2.i18n.Messages;
  * underscore character to avoid conflicts with actual implementation methods.
  */
 public abstract class Stub {
-    
+
     protected AxisService _service;
     protected ArrayList modules = new ArrayList();
 
@@ -51,7 +55,7 @@ public abstract class Stub {
 
     /**
      * Get service client implementation used by this stub.
-     * 
+     *
      * @return service client
      */
     public ServiceClient _getServiceClient() {
@@ -62,7 +66,7 @@ public abstract class Stub {
      * Set service client implementation used by this stub. Once set, the
      * service client is owned by this stub and will automatically be removed
      * from the configuration when use of the stub is done.
-     * 
+     *
      * @param _serviceClient
      */
     public void _setServiceClient(ServiceClient _serviceClient) {
@@ -73,9 +77,9 @@ public abstract class Stub {
      * Create a SOAP message envelope using the supplied options.
      * TODO generated stub code should use this method, or similar method taking
      * an operation client
-     * 
+     *
      * @param options
-     * @return generated 
+     * @return generated
      * @throws SOAPProcessingException
      */
     protected static SOAPEnvelope createEnvelope(Options options) throws SOAPProcessingException {
@@ -85,7 +89,7 @@ public abstract class Stub {
     /**
      * Read a root element from the parser.
      * TODO generated stub code should use this method
-     * 
+     *
      * @param reader
      * @return root element
      */
@@ -98,7 +102,7 @@ public abstract class Stub {
 
     /**
      * Get Axiom factory appropriate to selected SOAP version.
-     * 
+     *
      * @param soapVersionURI
      * @return factory
      */
@@ -117,21 +121,75 @@ public abstract class Stub {
     /**
      * Finalize method called by garbage collection. This is overridden to
      * support cleanup of any associated resources.
-     * 
+     *
      * @throws Throwable
      */
     protected void finalize() throws Throwable {
-         super.finalize();
-         cleanup();
+        super.finalize();
+        cleanup();
     }
 
     /**
      * Cleanup associated resources. This removes the axis service from the
      * configuration.
-     * 
+     *
      * @throws AxisFault
      */
     public void cleanup() throws AxisFault {
         _service.getAxisConfiguration().removeService(_service.getName());
     }
+
+    /**
+     * sets the EPR in operation client. First get the available EPR from the service client
+     * and then append the addressFromBinding string to available address
+     *
+     * @param _operationClient
+     * @param addressFromBinding
+     */
+
+
+    protected void setAppendAddressToEPR(OperationClient _operationClient,
+                                         String addressFromBinding) {
+        EndpointReference toEPRFromServiceClient = _serviceClient.getOptions().getTo();
+        EndpointReference endpointReference = toEPRFromServiceClient.cloneEPR();
+
+        String address = endpointReference.getAddress();
+
+        // here we assume either addressFromBinding have a '?' infront or not
+        if (addressFromBinding.charAt(0) != '?') {
+            addressFromBinding = "?" + addressFromBinding;
+        }
+
+        if (address.indexOf("?") != -1) {
+            address += addressFromBinding.replaceAll("\\?", "&");
+        } else {
+            address += addressFromBinding;
+        }
+
+        endpointReference.setAddress(address);
+        _operationClient.getOptions().setTo(endpointReference);
+    }
+
+    /**
+     * add an http header with name and value to message context
+     *
+     * @param messageContext
+     * @param name
+     * @param value
+     */
+    protected void addHttpHeader(MessageContext messageContext,
+                                 String name,
+                                 String value) {
+        java.lang.Object headersObj = messageContext.getProperty(HTTPConstants.HTTP_HEADERS);
+        if (headersObj == null) {
+            headersObj = new java.util.ArrayList();
+        }
+        java.util.List headers = (java.util.List) headersObj;
+        Header header = new Header();
+        header.setName(name);
+        header.setValue(value);
+        headers.add(header);
+        messageContext.setProperty(HTTPConstants.HTTP_HEADERS, headers);
+    }
+
 }
