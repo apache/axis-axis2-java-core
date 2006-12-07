@@ -24,7 +24,6 @@ import java.lang.reflect.Modifier;
 import java.util.concurrent.Future;
 
 import javax.jws.soap.SOAPBinding;
-import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Response;
@@ -41,12 +40,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
-import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.Protocol;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -103,8 +97,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	/* (non-Javadoc)
 	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
 	 * 
-	 * Invoke method checks to see if BindingProvider method was invoked by client if yes, it uses reflection and invokes the BindingProvider method.
-	 * If SEI method was called then it delegates to InvokeSEIMethod().
+     * Invokes the method that was called on the java.lang.reflect.Proxy instance.
 	 */
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
@@ -142,38 +135,43 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			if(isMethodExcluded(operationDesc)){
 				throw ExceptionFactory.makeWebServiceException("Invalid Method Call, Method "+method.getName() + " has been excluded using @webMethod annotation");
 			}
-			return InvokeSEIMethod(method, args);
+			return invokeSEIMethod(method, args);
 		}
 	}
 	
-	/**
-	 * InvokeSEIMethod invokes Axis engine using methods on InvocationController. Create request Invocation context, instantiates AxisInvocationController and 
-	 * runs invoke.
-	 * 
+	/*
+     * Performs the invocation of the method defined on the Service Endpoint
+     * Interface.  
 	 */
-	private Object InvokeSEIMethod(Method method, Object[] args)throws Throwable{
+    private Object invokeSEIMethod(Method method, Object[] args)throws Throwable{
 		if (log.isDebugEnabled()) {
             log.debug("Attempting to Invoke SEI Method "+ method.getName());
         }
 		
-		//initialize();
-        
         OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
         
+        // Create and configure the request MessageContext
 		InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
-		MessageContext requestContext = createRequest(method, args);
-		//Enable MTOM on the Message if the property was
-        //set on the SOAPBinding.
+		MessageContext request = createRequest(method, args);
+        request.setOperationDescription(operationDesc);
+        
+        // Enable MTOM on the Message if the property was set on the SOAPBinding.
         Binding bnd = getBinding();
         if (bnd != null && bnd instanceof SOAPBinding) {
             javax.xml.ws.soap.SOAPBinding soapBnd = (javax.xml.ws.soap.SOAPBinding) bnd;
             if (soapBnd.isMTOMEnabled()) {
-                Message requestMsg = requestContext.getMessage();
+                Message requestMsg = request.getMessage();
                 requestMsg.setMTOMEnabled(true);
             }
         }
-        requestContext.setOperationDescription(operationDesc);
-		requestIC.setRequestMessageContext(requestContext);
+        
+        // Configure the SOAPAction.
+        String action = operationDesc.getAction();
+        if (action != null) {
+            getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, action);
+        }
+        
+		requestIC.setRequestMessageContext(request);
 		InvocationController controller = new AxisInvocationController();
 		requestIC.setServiceClient(serviceDelegate.getServiceClient(endpointDesc.getPortQName()));
 		
@@ -186,7 +184,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			controller.invokeOneWay(requestIC);
 			
             //Check to see if we need to maintain session state
-            if (requestContext.isMaintainSession()) {
+            if (request.isMaintainSession()) {
                 //TODO: Need to figure out a cleaner way to make this call. 
                 setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
             }
@@ -215,7 +213,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 	        Future<?> future = controller.invokeAsync(requestIC, asyncHandler);
 	        
             //Check to see if we need to maintain session state
-            if (requestContext.isMaintainSession()) {
+            if (request.isMaintainSession()) {
                 //TODO: Need to figure out a cleaner way to make this call. 
                 setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
             }
@@ -235,7 +233,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			Response response = controller.invokeAsync(requestIC);
 			
             //Check to see if we need to maintain session state
-            if (requestContext.isMaintainSession()) {
+            if (request.isMaintainSession()) {
                 //TODO: Need to figure out a cleaner way to make this call. 
                 setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
             }
@@ -247,7 +245,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 			InvocationContext responseIC = controller.invoke(requestIC);
 		
             //Check to see if we need to maintain session state
-            if (requestContext.isMaintainSession()) {
+            if (request.isMaintainSession()) {
                 //TODO: Need to figure out a cleaner way to make this call. 
                 setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
             }

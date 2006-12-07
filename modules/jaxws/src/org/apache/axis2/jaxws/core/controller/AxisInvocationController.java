@@ -77,6 +77,7 @@ import org.apache.commons.logging.LogFactory;
 public class AxisInvocationController extends InvocationController {
     
     private static Log log = LogFactory.getLog(AxisInvocationController.class);
+    private static boolean debug = log.isDebugEnabled();
     
     /*
      *  (non-Javadoc)
@@ -426,15 +427,18 @@ public class AxisInvocationController extends InvocationController {
      * @return
      */
     private String configureSOAPAction(MessageContext ctx) {
-        //TODO: Need to get SOAPAction information from the WSDL config
-        
-        //TODO: Need to determine what the story is with using the SOAPAction
-        // declared in the WSDL.  If the property says not to use it, but it's
-        // listed in the WSDL, do we still include it?  Do we include it if
-        // the property is not even set?
         Boolean useSoapAction = (Boolean) ctx.getProperties().get(BindingProvider.SOAPACTION_USE_PROPERTY);
         if(useSoapAction != null && useSoapAction.booleanValue()){
-            return (String) ctx.getProperties().get(BindingProvider.SOAPACTION_URI_PROPERTY);
+            String action = (String) ctx.getProperties().get(BindingProvider.SOAPACTION_URI_PROPERTY);
+            if (debug) {
+                log.debug("Setting SOAPAction to:" + action);
+            }
+            return action;
+        }
+        else {
+            if (debug) {
+                log.debug("SOAPAction usage was disabled");
+            }
         }
         
         return null;

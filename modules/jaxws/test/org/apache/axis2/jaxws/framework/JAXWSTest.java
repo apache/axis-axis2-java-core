@@ -23,6 +23,8 @@ import junit.framework.TestSuite;
 
 import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
+import org.apache.axis2.jaxws.client.DispatchSoapActionTests;
+import org.apache.axis2.jaxws.client.ProxySoapActionTests;
 import org.apache.axis2.jaxws.databinding.BindingToProtocolTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationProviderImplDescriptionTests;
@@ -31,16 +33,16 @@ import org.apache.axis2.jaxws.description.AnnotationServiceImplWithDBCTests;
 import org.apache.axis2.jaxws.description.GetDescFromBindingProvider;
 import org.apache.axis2.jaxws.description.PartialWSDLTests;
 import org.apache.axis2.jaxws.description.PortSelectionTests;
-import org.apache.axis2.jaxws.description.ServiceTests;
 import org.apache.axis2.jaxws.description.ServiceAnnotationTests;
+import org.apache.axis2.jaxws.description.ServiceTests;
 import org.apache.axis2.jaxws.description.ValidateWSDLTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
 import org.apache.axis2.jaxws.description.WrapperPackageTests;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderTests;
 import org.apache.axis2.jaxws.description.impl.ServiceDescriptionImplTests;
-import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
+import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessorTests;
 import org.apache.axis2.jaxws.i18n.JaxwsMessageBundleTests;
@@ -74,7 +76,6 @@ import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
-import org.apache.axis2.jaxws.sample.faultsservice.FaultsService;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
 import org.apache.log4j.BasicConfigurator;
 
@@ -82,7 +83,7 @@ public class JAXWSTest extends TestCase {
     
     static {
         // Uncomment the followign line to enable debug
-        // BasicConfigurator.configure();
+        BasicConfigurator.configure();
     }
     
     /**
@@ -95,6 +96,8 @@ public class JAXWSTest extends TestCase {
         // Add each of the test suites
         suite = DispatchTestSuite.addTestSuites(suite);
         suite.addTestSuite(SOAP12Dispatch.class);
+        suite.addTestSuite(DispatchSoapActionTests.class);
+        suite.addTestSuite(ProxySoapActionTests.class);
         
         suite.addTestSuite(BlockTests.class);
         suite.addTestSuite(MessageTests.class);

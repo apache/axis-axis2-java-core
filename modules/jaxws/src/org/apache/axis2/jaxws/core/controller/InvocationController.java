@@ -90,7 +90,6 @@ public abstract class InvocationController {
         // TODO: Place-holder for running the JAX-WS request handler chain
         
         prepareRequest(request);
-        
         response = doInvoke(request);
         prepareResponse(response);
         ic.setResponseMessageContext(response);

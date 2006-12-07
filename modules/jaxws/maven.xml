@@ -122,7 +122,7 @@
     	    <jvmarg line="${maven.junit.jvmargs}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
-    	   	<arg line="-d ${schema.generated.src.dir} -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl"/>
+    	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl"/>
     	</java>
 
     	<ant:echo>Generating java from FaultyWebService.wsdl</ant:echo>
@@ -211,6 +211,14 @@
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/shapes.wsdl"/>
+    	</java>
+    	
+    	<ant:echo>Generating java from SOAPActionTest.wsdl</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAPActionTest.wsdl"/>
     	</java>
     	<!-- Compile the generated classes -->
     	<ant:echo>Compiling generated schema</ant:echo>
@@ -369,6 +377,15 @@
 				<ant:include name="org/apache/axis2/jaxws/proxy/soap12/**"/>
 			</ant:fileset>
 			<ant:fileset dir="test/org/apache/axis2/jaxws/proxy/soap12/server">
+		        <ant:include name="META-INF/**"/>
+			</ant:fileset>
+		</ant:copy>
+		
+		<ant:copy toDir="target/test-classes/services/BookStoreService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/client/soapaction/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/client/soapaction/server">
 		        <ant:include name="META-INF/**"/>
 			</ant:fileset>
 		</ant:copy>

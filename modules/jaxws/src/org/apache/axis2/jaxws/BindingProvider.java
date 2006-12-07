@@ -54,8 +54,8 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         
         // Setting standard property defaults for the request context
         requestContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, new Boolean(false));
-        requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, new Boolean(false));
-       
+        requestContext.put(BindingProvider.SOAPACTION_USE_PROPERTY, new Boolean(true));
+        
         // Set the endpoint address
         String endpointAddress = endpointDesc.getEndpointAddress();
         if (endpointAddress != null) {
