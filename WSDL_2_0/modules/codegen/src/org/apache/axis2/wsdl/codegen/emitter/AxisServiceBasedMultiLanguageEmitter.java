@@ -2,26 +2,24 @@ package org.apache.axis2.wsdl.codegen.emitter;
 
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.*;
-import org.apache.axis2.util.CommandLineOptionConstants;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.util.PolicyUtil;
-import org.apache.axis2.util.Utils;
-import org.apache.axis2.util.XSLTUtils;
+import org.apache.axis2.util.*;
+import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
-import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.*;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.util.*;
+import org.apache.axis2.wsdl.util.Constants;
+import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
+import org.apache.axis2.wsdl.util.TypeTesterUtil;
+import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
-import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.woden.internal.util.dom.DOM2Writer;
-//import org.apache.woden.internal.util.dom.DOM2Writer;
+import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -118,15 +116,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //populate the MEP -> class map
         mepToClassMap = new HashMap();
-        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, "org.apache.axis2.receivers.AbstractInMessageReceiver");
-        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, "org.apache.axis2.receivers.AbstractRobustInMessageReceiver");
-        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY,
+                "org.apache.axis2.receivers.AbstractInMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY,
+                "org.apache.axis2.receivers.AbstractRobustInMessageReceiver");
+        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
+                "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
 
         //populate the MEP -> suffix map
         mepToSuffixMap = new HashMap();
-        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
-        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
-        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY,
+                MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY,
+                MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
+                MESSAGE_RECEIVER_SUFFIX + "InOut");
         //register the other types as necessary
     }
 
@@ -184,7 +188,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     private Object getBindingPropertyFromOperation(String name, QName qName) {
 
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
-        AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
+        AxisBindingOperation axisBindingOperation =
+                (AxisBindingOperation) axisBinding.getChild(qName);
         Object property = null;
 
         if (axisBindingOperation != null) {
@@ -237,7 +242,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         Object property = null;
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
-        AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
+        AxisBindingOperation axisBindingOperation =
+                (AxisBindingOperation) axisBinding.getChild(qName);
 
         AxisBindingMessage axisBindingMessageFault = null;
         AxisBindingMessage axisBindingFault = null;
@@ -439,8 +445,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             TestClassWriter callbackWriter =
                     new TestClassWriter(
                             codeGenConfiguration.isFlattenFiles() ?
-                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), TEST_SRC_DIR_NAME),
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                            null) :
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                            TEST_SRC_DIR_NAME),
                             codeGenConfiguration.getOutputLanguage());
 
             writeClass(classModel, callbackWriter);
@@ -464,13 +472,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "interfaceName", coreClassName, rootElement);
         addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            addAttribute(doc, "stubname", makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX, rootElement);
+            addAttribute(doc, "stubname",
+                    makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX, rootElement);
         } else {
             addAttribute(doc, "stubname", coreClassName + STUB_SUFFIX, rootElement);
         }
 
         //add backwordcompatibility attribute
-        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+        addAttribute(doc, "isbackcompatible",
+                String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
                 rootElement);
 
         fillSyncAttributes(doc, rootElement);
@@ -501,7 +511,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 new InterfaceImplementationWriter(
                         codeGenConfiguration.isFlattenFiles() ?
                                 getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                                getOutputDirectory(codeGenConfiguration.getOutputLocation(), codeGenConfiguration.getSourceLocation()),
+                                getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                        codeGenConfiguration.getSourceLocation()),
                         codeGenConfiguration.getOutputLanguage());
 
         writeClass(interfaceImplModel, writer);
@@ -536,7 +547,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
         //add backwordcompatibility attribute
-        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+        addAttribute(doc, "isbackcompatible",
+                String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
                 rootElement);
 
         // add the wrap classes flag
@@ -580,9 +592,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //if some extension has added the stub methods property, add them to the
         //main document
-        if ((moduleCodegenPolicyExtensionElement = codeGenConfiguration.getProperty("module-codegen-policy-extensions")) != null)
-        {
-            rootElement.appendChild(doc.importNode((Element) moduleCodegenPolicyExtensionElement, true));
+        if ((moduleCodegenPolicyExtensionElement =
+                codeGenConfiguration.getProperty("module-codegen-policy-extensions")) != null) {
+            rootElement.appendChild(
+                    doc.importNode((Element) moduleCodegenPolicyExtensionElement, true));
         }
 
         //add another element to have the unique list of faults
@@ -773,7 +786,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected void addSoapVersion(Document doc, Element rootElement) {
         // loop through the extensibility elements to get to the bindings element
-        addAttribute(doc, "soap-version", (String) axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION), rootElement);
+        addAttribute(doc, "soap-version",
+                (String) axisBinding.getProperty(WSDL2Constants.ATTR_WSOAP_VERSION), rootElement);
     }
 
     /**
@@ -823,7 +837,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             ExceptionWriter exceptionWriter =
                     new ExceptionWriter(
                             codeGenConfiguration.isFlattenFiles() ?
-                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                            null) :
                                     getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                             codeGenConfiguration.getSourceLocation()),
                             codeGenConfiguration.getOutputLanguage());
@@ -841,7 +856,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("callback");
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
-        addAttribute(doc, "name", makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        addAttribute(doc, "name",
+                makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
 
         // TODO JAXRPC mapping support should be considered here ??
         this.loadOperations(doc, rootElement, null);
@@ -861,7 +877,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             CallbackHandlerWriter callbackWriter =
                     new CallbackHandlerWriter(
                             codeGenConfiguration.isFlattenFiles() ?
-                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
+                                    getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                            null) :
                                     getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                             codeGenConfiguration.getSourceLocation()),
                             codeGenConfiguration.getOutputLanguage());
@@ -878,7 +895,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("callback");
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
-        addAttribute(doc, "name", makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        addAttribute(doc, "name",
+                makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
 
         // TODO JAXRPC mapping support should be considered here ??
         this.loadOperations(doc, rootElement, null);
@@ -914,17 +932,20 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("interface");
         String localPart = null;
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            localPart = makeJavaClassName(axisService.getEndpointName() + STUB_INTERFACE_SUFFIX_BACK);
+            localPart =
+                    makeJavaClassName(axisService.getEndpointName() + STUB_INTERFACE_SUFFIX_BACK);
         } else {
             localPart = makeJavaClassName(axisService.getName());
         }
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         addAttribute(doc, "name", localPart, rootElement);
-        addAttribute(doc, "callbackname", makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX,
+        addAttribute(doc, "callbackname",
+                makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         //add backwordcompatibility attribute
-        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+        addAttribute(doc, "isbackcompatible",
+                String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
                 rootElement);
         fillSyncAttributes(doc, rootElement);
         loadOperations(doc, rootElement, null);
@@ -976,7 +997,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = makeJavaClassName(axisService.getName());
         String skeltonName;
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            skeltonName = packageName + "." + makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK;
+            skeltonName = packageName + "." + makeJavaClassName(axisService.getBindingName()) +
+                    SKELETON_CLASS_SUFFIX_BACK;
         } else {
             skeltonName = packageName + "." + localPart + SKELETON_CLASS_SUFFIX;
         }
@@ -991,7 +1013,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String localPart = makeJavaClassName(axisService.getName());
         String skeltonInterfaceName;
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            skeltonInterfaceName = packageName + "." + makeJavaClassName(axisService.getEndpointName()) + SKELETON_INTERFACE_SUFFIX_BACK;
+            skeltonInterfaceName = packageName + "." +
+                    makeJavaClassName(axisService.getEndpointName()) +
+                    SKELETON_INTERFACE_SUFFIX_BACK;
         } else {
             skeltonInterfaceName = packageName + "." + localPart + SKELETON_INTERFACE_SUFFIX;
         }
@@ -1176,8 +1200,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     MessageReceiverWriter writer =
                             new MessageReceiverWriter(
                                     codeGenConfiguration.isFlattenFiles() ?
-                                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-                                            getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                            getOutputDirectory(
+                                                    codeGenConfiguration.getOutputLocation(),
+                                                    null) :
+                                            getOutputDirectory(
+                                                    codeGenConfiguration.getOutputLocation(),
                                                     codeGenConfiguration.getSourceLocation()),
                                     codeGenConfiguration.getOutputLanguage());
 
@@ -1205,16 +1232,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "name", localPart + mepToSuffixMap.get(mep), rootElement);
         //add backwordcompatibility attribute
-        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+        addAttribute(doc, "isbackcompatible",
+                String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
                 rootElement);
 
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            addAttribute(doc, "skeletonname", makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK, rootElement);
+            addAttribute(doc, "skeletonname",
+                    makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK,
+                    rootElement);
             if (isServerSideInterface) {
-                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(axisService.getEndpointName()) + SKELETON_INTERFACE_SUFFIX_BACK,
+                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(
+                        axisService.getEndpointName()) + SKELETON_INTERFACE_SUFFIX_BACK,
                         rootElement);
             } else {
-                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK,
+                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(
+                        axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK,
                         rootElement);
             }
         } else {
@@ -1273,6 +1305,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // First Iterate through the operations and find the relevant fromOM and toOM methods to be generated
         ArrayList parameters = new ArrayList();
 
+
         for (Iterator operationsIterator = axisService.getOperations(); operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
 
@@ -1315,7 +1348,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Element newChild;
             List headerParameterQNameList = new ArrayList();
             addHeaderOperations(headerParameterQNameList, axisOperation, true);
-            List parameterElementList = getParameterElementList(doc, headerParameterQNameList, WSDLConstants.SOAP_HEADER);
+            List parameterElementList = getParameterElementList(doc, headerParameterQNameList,
+                    WSDLConstants.SOAP_HEADER);
 
             for (int i = 0; i < parameterElementList.size(); i++) {
                 newChild = (Element) parameterElementList.get(i);
@@ -1325,7 +1359,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             headerParameterQNameList.clear();
             parameterElementList.clear();
             addHeaderOperations(headerParameterQNameList, axisOperation, false);
-            parameterElementList = getParameterElementList(doc, headerParameterQNameList, WSDLConstants.SOAP_HEADER);
+            parameterElementList = getParameterElementList(doc, headerParameterQNameList,
+                    WSDLConstants.SOAP_HEADER);
 
             for (int i = 0; i < parameterElementList.size(); i++) {
                 newChild = (Element) parameterElementList.get(i);
@@ -1389,6 +1424,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
             }
         }
+
         for (Iterator operationsIterator = axisService.getOperations(); operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
             details = axisOperation.getParameter(Constants.DATABINDING_OPERATION_DETAILS);
@@ -1435,6 +1471,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Element getOpNames(Document doc) {
         Element root = doc.createElement("opnames");
         Element elt;
+
 
         for (Iterator operationsIterator = axisService.getOperations(); operationsIterator.hasNext();) {
             AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
@@ -1598,7 +1635,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             Object key = it.next();
 
             if (Boolean.TRUE.equals(infoHolder.get(key))) {
-                Element elt = addElement(doc, "messagereceiver", makeJavaClassName(serviceName) + mepToSuffixMap.get(key), rootElement);
+                Element elt = addElement(doc, "messagereceiver",
+                        makeJavaClassName(serviceName) + mepToSuffixMap.get(key), rootElement);
                 addAttribute(doc, "mepURI", key.toString(), elt);
             }
 
@@ -1610,7 +1648,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     protected void writeSkeleton() throws Exception {
-        Document skeletonModel = createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
+        Document skeletonModel =
+                createDOMDocumentForSkeleton(codeGenConfiguration.isServerSideInterface());
         debugLogDocument("Document for skeleton:", skeletonModel);
         ClassWriter skeletonWriter = new SkeletonWriter(
                 codeGenConfiguration.isFlattenFiles() ?
@@ -1653,18 +1692,22 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String serviceName = makeJavaClassName(axisService.getName());
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            addAttribute(doc, "name", makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK, rootElement);
+            addAttribute(doc, "name",
+                    makeJavaClassName(axisService.getBindingName()) + SKELETON_CLASS_SUFFIX_BACK,
+                    rootElement);
         } else {
             addAttribute(doc, "name", serviceName + SKELETON_CLASS_SUFFIX, rootElement);
         }
         addAttribute(doc, "callbackname", serviceName + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
         //add backwordcompatibility attribute
-        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+        addAttribute(doc, "isbackcompatible",
+                String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
                 rootElement);
         if (isSkeletonInterface) {
             if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(axisService.getEndpointName()) + SKELETON_INTERFACE_SUFFIX_BACK,
+                addAttribute(doc, "skeletonInterfaceName", makeJavaClassName(
+                        axisService.getEndpointName()) + SKELETON_INTERFACE_SUFFIX_BACK,
                         rootElement);
             } else {
                 addAttribute(doc, "skeletonInterfaceName", serviceName + SKELETON_INTERFACE_SUFFIX,
@@ -1695,7 +1738,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String serviceName = makeJavaClassName(axisService.getName());
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            addAttribute(doc, "name", makeJavaClassName(axisService.getEndpointName()) + SKELETON_INTERFACE_SUFFIX_BACK, rootElement);
+            addAttribute(doc, "name", makeJavaClassName(axisService.getEndpointName()) +
+                    SKELETON_INTERFACE_SUFFIX_BACK, rootElement);
         } else {
             addAttribute(doc, "name", serviceName + SKELETON_INTERFACE_SUFFIX, rootElement);
         }
@@ -1704,7 +1748,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 rootElement);
 
         //add backwordcompatibility attribute
-        addAttribute(doc, "isbackcompatible", String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
+        addAttribute(doc, "isbackcompatible",
+                String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
                 rootElement);
 
         fillSyncAttributes(doc, rootElement);
@@ -1778,7 +1823,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @return generated element
      * @throws DOMException
      */
-    private Element generateMethodElement(Document doc, String endpointName, AxisOperation axisOperation) throws DOMException {
+    private Element generateMethodElement(Document doc, String endpointName,
+                                          AxisOperation axisOperation) throws DOMException {
         Element methodElement;
         List soapHeaderInputParameterList = new ArrayList();
         List soapHeaderOutputParameterList = new ArrayList();
@@ -1788,10 +1834,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "name", JavaUtils.xmlNameToJava(localPart), methodElement);
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
-        addAttribute(doc, "dbsupportname", endpointName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
+        addAttribute(doc, "http_location", (String) getBindingPropertyFromOperation(
+                WSDL2Constants.ATTR_WHTTP_LOCATION, axisOperation.getName()), methodElement);
+        addAttribute(doc, "dbsupportname",
+                endpointName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                 methodElement);
         String messageExchangePattern = axisOperation.getMessageExchangePattern();
-        addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(messageExchangePattern) + "", methodElement);
+        addAttribute(doc, "mep", Utils.getAxisSpecifMEPConstant(messageExchangePattern) + "",
+                methodElement);
         addAttribute(doc, "mepURI", messageExchangePattern, methodElement);
 
         // check for this operation to be handled directly by databinding code generation
@@ -1799,7 +1849,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (dbmethname != null) {
             addAttribute(doc, "usedbmethod", (String) dbmethname.getValue(), methodElement);
         }
-        Parameter dbgenimpl = axisOperation.getParameter(Constants.DATABINDING_GENERATED_IMPLEMENTATION);
+        Parameter dbgenimpl =
+                axisOperation.getParameter(Constants.DATABINDING_GENERATED_IMPLEMENTATION);
         if (dbgenimpl != null && Boolean.TRUE.equals(dbgenimpl.getValue())) {
             addAttribute(doc, "usdbimpl", "true", methodElement);
         } else {
@@ -1845,7 +1896,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected Document getEmptyDocument() {
         try {
-            DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilder documentBuilder =
+                    DocumentBuilderFactory.newInstance().newDocumentBuilder();
             return documentBuilder.newDocument();
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
@@ -1872,7 +1924,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param attribValue
      * @param element
      */
-    protected void addAttribute(Document document, String AttribName, String attribValue, Element element) {
+    protected void addAttribute(Document document, String AttribName, String attribValue,
+                                Element element) {
         XSLTUtils.addAttribute(document, AttribName, attribValue, element);
     }
 
@@ -1963,7 +2016,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param qName
      */
     protected void addSOAPAction(Document doc, Element rootElement, QName qName) {
-        addAttribute(doc, "soapaction", (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WSOAP_ACTION, qName), rootElement);
+        addAttribute(doc, "soapaction",
+                (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WSOAP_ACTION, qName),
+                rootElement);
     }
 
     /**
@@ -1973,10 +2028,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param methodElement
      * @param operation
      */
-    private void addOutputAndFaultActions(Document doc, Element methodElement, AxisOperation operation) {
+    private void addOutputAndFaultActions(Document doc, Element methodElement,
+                                          AxisOperation operation) {
         String outputAction = operation.getOutputAction();
         if (outputAction != null) {
-            Element outputActionElt = doc.createElement(org.apache.axis2.Constants.OUTPUT_ACTION_MAPPING);
+            Element outputActionElt =
+                    doc.createElement(org.apache.axis2.Constants.OUTPUT_ACTION_MAPPING);
             outputActionElt.setAttribute(AddressingConstants.WSA_ACTION, outputAction);
             methodElement.appendChild(outputActionElt);
         }
@@ -1984,9 +2041,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String[] faultActionNames = operation.getFaultActionNames();
         if (faultActionNames != null) {
             for (int i = 0; i < faultActionNames.length; i++) {
-                Element faultActionElt = doc.createElement(org.apache.axis2.Constants.FAULT_ACTION_MAPPING);
-                faultActionElt.setAttribute(org.apache.axis2.Constants.FAULT_ACTION_NAME, faultActionNames[i]);
-                faultActionElt.setAttribute(AddressingConstants.WSA_ACTION, operation.getFaultAction(faultActionNames[i]));
+                Element faultActionElt =
+                        doc.createElement(org.apache.axis2.Constants.FAULT_ACTION_MAPPING);
+                faultActionElt.setAttribute(org.apache.axis2.Constants.FAULT_ACTION_NAME,
+                        faultActionNames[i]);
+                faultActionElt.setAttribute(AddressingConstants.WSA_ACTION,
+                        operation.getFaultAction(faultActionNames[i]));
                 methodElement.appendChild(faultActionElt);
             }
         }
@@ -1999,18 +2059,22 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param axisOperation
      * @param input
      */
-    protected void addHeaderOperations(List soapHeaderParameterQNameList, AxisOperation axisOperation,
+    protected void addHeaderOperations(List soapHeaderParameterQNameList,
+                                       AxisOperation axisOperation,
                                        boolean input) {
         ArrayList headerparamList = new ArrayList();
         String MEP = axisOperation.getMessageExchangePattern();
         if (input) {
             if (WSDLUtil.isInputPresentForMEP(MEP)) {
+
                 headerparamList = (ArrayList) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
 
             }
         } else {
             if (WSDLUtil.isOutputPresentForMEP(MEP)) {
-                headerparamList = (ArrayList) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
+                headerparamList = (ArrayList) getBindingPropertyFromMessage(
+                        WSDL2Constants.ATTR_WSOAP_HEADER, axisOperation.getName(),
+                        WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT);
             }
         }
         if (headerparamList != null) {
@@ -2054,7 +2118,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param headerParameterQNameList
      * @return DOM element
      */
-    protected Element getInputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
+    protected Element getInputElement(Document doc, AxisOperation operation,
+                                      List headerParameterQNameList) {
         Element inputElt = doc.createElement("input");
         String mep = operation.getMessageExchangePattern();
 
@@ -2120,7 +2185,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param operation
      * @param headerParameterQNameList
      */
-    protected Element getOutputElement(Document doc, AxisOperation operation, List headerParameterQNameList) {
+    protected Element getOutputElement(Document doc, AxisOperation operation,
+                                       List headerParameterQNameList) {
         Element outputElt = doc.createElement("output");
         String mep = operation.getMessageExchangePattern();
 
@@ -2539,7 +2605,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      * @param eltValue
      * @param element
      */
-    protected Element addElement(Document document, String eltName, String eltValue, Element element) {
+    protected Element addElement(Document document, String eltName, String eltValue,
+                                 Element element) {
         Element elt = XSLTUtils.addChildElement(document, eltName, element);
         if (eltValue != null) {
             elt.appendChild(document.createTextNode(eltValue));

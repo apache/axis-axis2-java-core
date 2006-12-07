@@ -1,7 +1,7 @@
 package org.apache.axis2.description;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -24,6 +24,7 @@ public class WSDL20DefaultValueHolder {
 
     static {
         defaultValuesMap.put(WSDL2Constants.ATTR_WSOAP_VERSION, WSDL2Constants.SOAP_VERSION_1_2);
+        defaultValuesMap.put(WSDL2Constants.ATTR_WSOAP_ACTION, "\\\"\\\"");
     }
 
     public static String getDefaultValue(String name) {

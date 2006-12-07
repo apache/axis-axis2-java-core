@@ -24,9 +24,7 @@ import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.neethi.Policy;
-import org.apache.axiom.om.OMFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
