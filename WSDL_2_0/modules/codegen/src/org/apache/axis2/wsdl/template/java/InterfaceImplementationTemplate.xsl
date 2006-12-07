@@ -272,6 +272,11 @@
                    setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
               </xsl:if>
 
+              <!-- add the other parameter options to operational client -->
+              <xsl:for-each select="optionParam">
+                  addPropertyToOperationClient(_operationClient,<xsl:value-of select="@name"/>,<xsl:value-of select="@value"/>);
+              </xsl:for-each>
+
               // create a message context
               org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 
@@ -511,6 +516,11 @@
                    setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
               </xsl:if>
 
+              <!-- add the other parameter options to operational client -->
+              <xsl:for-each select="optionParam">
+                  addPropertyToOperationClient(_operationClient,<xsl:value-of select="@name"/>,<xsl:value-of select="@value"/>);
+              </xsl:for-each>
+
           <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
@@ -687,6 +697,11 @@
                    setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
                </xsl:if>
 
+                <!-- add the other parameter options to operational client -->
+              <xsl:for-each select="optionParam">
+                  addPropertyToOperationClient(_operationClient,<xsl:value-of select="@name"/>,<xsl:value-of select="@value"/>);
+              </xsl:for-each>
+
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
                 org.apache.axiom.soap.SOAPEnvelope env = null;
                 org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
@@ -834,7 +849,7 @@
           </xsl:if>
         </xsl:for-each>
 
-        
+
        /**
         *  A utility method that copies the namepaces from the SOAPEnvelope
         */

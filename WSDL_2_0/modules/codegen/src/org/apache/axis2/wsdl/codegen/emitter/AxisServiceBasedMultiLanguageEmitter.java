@@ -605,7 +605,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         doc.appendChild(rootElement);
 
         //////////////////////////////////////////////////////////
-        System.out.println(DOM2Writer.nodeToString(rootElement));
+//        System.out.println(DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////////////////////////////////
         return doc;
     }

@@ -192,4 +192,31 @@ public abstract class Stub {
         messageContext.setProperty(HTTPConstants.HTTP_HEADERS, headers);
     }
 
+    /**
+     * sets the propertykey and propertyValue as a pair to operation client
+     * @param operationClient
+     * @param propertyKey
+     * @param propertyValue
+     */
+
+    protected void addPropertyToOperationClient(OperationClient operationClient,
+                                                String propertyKey,
+                                                Object propertyValue){
+        Options options = new Options();
+        options.setProperty(propertyKey,propertyValue);
+        operationClient.setOptions(options);
+    }
+
+    protected void addPropertyToOperationClient(OperationClient operationClient,
+                                                String propertyKey,
+                                                boolean value){
+       addPropertyToOperationClient(operationClient,propertyKey,new Boolean(value));
+    }
+
+    protected void addPropertyToOperationClient(OperationClient operationClient,
+                                                String propertyKey,
+                                                int value){
+       addPropertyToOperationClient(operationClient,propertyKey,new Integer(value));
+    }
+
 }
