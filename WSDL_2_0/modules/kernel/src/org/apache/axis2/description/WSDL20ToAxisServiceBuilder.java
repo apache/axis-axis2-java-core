@@ -862,7 +862,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         } else
         if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_NONE.equals(messageContentModelName)) {
             // TODO : Need to improve this
-//           elementQName = new QName("None");
+           elementQName = Constants.AXIS2_NONE;
         } else {
             throw new AxisFault("Sorry we do not support " + messageContentModelName +
                     ". We do only support #any, #none and #element as message content models.");

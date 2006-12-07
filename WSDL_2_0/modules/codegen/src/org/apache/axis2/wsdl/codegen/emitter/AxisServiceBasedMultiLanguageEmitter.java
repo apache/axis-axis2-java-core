@@ -1892,16 +1892,34 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         return methodElement;
     }
 
+    /**
+     * Set the transfer coding property of the input message
+     * @param axisOperation
+     * @param methodElement
+     * @param doc
+     */
     private void setTransferCoding(AxisOperation axisOperation, Element methodElement,
                                    Document doc) {
         // Add a optionParam element which holds the value of transferCoding
         String transferCoding = (String) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                         axisOperation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
         if (!"".equals(transferCoding)) {
-            if ("gzip".equals(transferCoding)) {
+            if ("gzip".equals(transferCoding) || "compress".equals(transferCoding)) {
                 methodElement.appendChild(generateOptionParamComponent(doc, "org.apache.axis2.transport.http.HTTPConstants.MC_GZIP_REQUEST", "true"));
             }
         }
+    }
+
+    /**
+     * Set thttp header properties needed for the stub
+     * @param axisOperation
+     * @param methodElement
+     * @param doc
+     */
+    private void setHttpHeaderOptions(AxisOperation axisOperation, Element methodElement,
+                                   Document doc) {
+        // Add a optionParam elements here
+
     }
 
     // ==================================================================
