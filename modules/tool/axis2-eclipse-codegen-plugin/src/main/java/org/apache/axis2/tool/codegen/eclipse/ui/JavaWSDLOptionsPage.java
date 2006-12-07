@@ -73,7 +73,8 @@ public class JavaWSDLOptionsPage extends AbstractWizardPage {
 		targetNamespacePrefixText.setText(NamespaceFinder.getDefaultNamespacePrefix());
 		schemaTargetNamespacePrefixText.setText(NamespaceFinder.getDefaultSchemaNamespacePrefix());
 		
-		serviceNameText.setText(fullyQualifiedClassName.replaceAll("\\.","_"));
+		//serviceNameText.setText(fullyQualifiedClassName.replaceAll("\\.","_"));
+		serviceNameText.setText(NamespaceFinder.getServiceNameText(fullyQualifiedClassName));
 	}
 	/**
 	 * @param pageName
