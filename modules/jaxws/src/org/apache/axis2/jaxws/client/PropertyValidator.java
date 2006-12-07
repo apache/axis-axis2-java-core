@@ -55,4 +55,8 @@ public class PropertyValidator {
         
         return true;
     }
+    
+    public static Class getExpectedValue(String key) {
+        return map.get(key);
+    }
 }

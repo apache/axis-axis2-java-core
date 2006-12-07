@@ -170,7 +170,9 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
                 return super.put(key, value);
             }
             else {
-                throw ExceptionFactory.makeWebServiceException("Bad Property");
+                throw ExceptionFactory.makeWebServiceException(
+                        Messages.getMessage("invalidPropValue", key, value.getClass().getName(), 
+                                PropertyValidator.getExpectedValue(key).getName()));
             }
         }
     }
