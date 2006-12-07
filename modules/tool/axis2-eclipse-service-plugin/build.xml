@@ -1,4 +1,4 @@
-<project basedir="." default="all">
+<project basedir="." default="help">
 
     <!--Set your elcipse home directory  -->
     <property environment="env" />
@@ -73,6 +73,7 @@
 		<delete file=".classpath" />
                 <delete dir="icons" />
                 <delete dir="help" />
+                <delete dir="lib" />
                 <!-- Copy with the filtering on-->
                 <copy todir="." filtering="on" >
                     <fileset dir="${service.resource.dir}">
