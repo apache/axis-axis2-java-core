@@ -1887,7 +1887,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
         methodElement.appendChild(getFaultElement(doc,
                 axisOperation));
+
+        setTransferCoding(axisOperation, methodElement, doc);
         return methodElement;
+    }
+
+    private void setTransferCoding(AxisOperation axisOperation, Element methodElement,
+                                   Document doc) {
+        // Add a optionParam element which holds the value of transferCoding
+        String transferCoding = (String) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
+                        axisOperation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+        if (!"".equals(transferCoding)) {
+            if ("gzip".equals(transferCoding)) {
+                methodElement.appendChild(generateOptionParamComponent(doc, "org.apache.axis2.transport.http.HTTPConstants.MC_GZIP_REQUEST", "true"));
+            }
+        }
     }
 
     // ==================================================================
@@ -2407,6 +2421,22 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                              String paramType) {
         return generateParamComponent(doc, paramName, paramType, null, null, false, false);
 
+    }
+
+    /**
+     * A convenient method for the generating optionParam components
+     *
+     * @param doc
+     * @param name
+     * @param value
+     * @return Element
+     */
+    protected Element generateOptionParamComponent(Document doc, String name, String value) {
+
+        Element optionParamElement = doc.createElement("optionParam");
+        addAttribute(doc, "name", name, optionParamElement);
+        addAttribute(doc, "value", value, optionParamElement);
+        return optionParamElement;
     }
 
     /**
