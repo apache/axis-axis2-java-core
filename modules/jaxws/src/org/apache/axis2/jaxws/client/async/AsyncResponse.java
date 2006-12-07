@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.client.async;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -47,21 +48,25 @@ public class AsyncResponse implements Response {
 
     private static final Log log = LogFactory.getLog(AsyncResponse.class);
     
-    private boolean done;
     private boolean cancelled;
     private Object responseObj;
     private MessageContext response;
     private Map<String, Object> responseContext;
     private Throwable fault;
+    private CountDownLatch latch;
+    
+    protected AsyncResponse() {
+        latch = new CountDownLatch(1);
+    }
     
     protected void onError(Throwable t) {
         fault = t;
-        done = true;
+        latch.countDown();
     }
     
     protected void onComplete(MessageContext mc) {
         response = mc;
-        done = true;
+        latch.countDown();
     }
     
     //-------------------------------------
@@ -76,7 +81,7 @@ public class AsyncResponse implements Response {
 
         // TODO: Do we actually need to do some level of interrupt on the
         // processing in the get() call?  If so, how?  
-        if (!cancelled || !done) {
+        if (!cancelled || !(latch.getCount() == 0)) {
             return false;
         }
         else {
@@ -86,6 +91,9 @@ public class AsyncResponse implements Response {
     }
 
     public Object get() throws InterruptedException, ExecutionException {
+        // Wait for the response to come back
+        latch.await();
+        
         if (hasFault()) {
             throw new ExecutionException(fault);
         }
@@ -106,9 +114,28 @@ public class AsyncResponse implements Response {
         return responseObj;
     }
 
-    // TODO: Implement this method with the correct timeout
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return null;
+        // Wait for the response to come back
+        latch.await(timeout, unit);
+        
+        if (hasFault()) {
+            throw new ExecutionException(fault);
+        }
+        if (response == null) {
+            WebServiceException wse = new WebServiceException("null response");
+            throw new ExecutionException(wse);
+        }
+        
+        // TODO: Check the type of the object to make sure it corresponds with
+        // the parameterized generic type.
+        if (responseObj == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Demarshalling the async response message");
+            }
+            responseObj = getResponseValueObject(response);
+        }
+
+        return responseObj;
     }
 
     public boolean isCancelled() {
@@ -116,7 +143,7 @@ public class AsyncResponse implements Response {
     }
 
     public boolean isDone() {
-        return done;
+        return (latch.getCount() == 0);
     }
 
     public Map getContext() {
