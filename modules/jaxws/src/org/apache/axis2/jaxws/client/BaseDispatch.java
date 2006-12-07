@@ -89,220 +89,255 @@ public abstract class BaseDispatch<T> extends BindingProvider
     protected abstract AsyncResponse createAsyncResponseListener();
     
     public Object invoke(Object obj) throws WebServiceException {
-        if (log.isDebugEnabled()) { 
-            log.debug("Entered synchronous invocation: BaseDispatch.invoke()");
-        }
         
-        // Create the InvocationContext instance for this request/response flow.
-        InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
-        invocationContext.setServiceClient(serviceClient);
-        
-        // Create the MessageContext to hold the actual request message and its
-        // associated properties
-        MessageContext requestMsgCtx = new MessageContext();
-        invocationContext.setRequestMessageContext(requestMsgCtx);
-        
-        Message requestMsg = null;
-        if (isValidInvocationParam(obj)) {
-            requestMsg = createMessageFromValue(obj);
-        }
-        else {
-            throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
-        }
-        
-        setupMessageProperties(requestMsg);
-        requestMsgCtx.setMessage(requestMsg);            
-            
-        // Copy the properties from the request context into the MessageContext
-        requestMsgCtx.getProperties().putAll(requestContext);
-        
-        // Send the request using the InvocationController
-        ic.invoke(invocationContext);
-        
-        MessageContext responseMsgCtx = invocationContext.getResponseMessageContext();
-        
-        //FIXME: This is temporary until more of the Message model is available
-        Message responseMsg = responseMsgCtx.getMessage();
+        // Catch all exceptions and rethrow an appropriate WebService Exception
         try {
-            if (responseMsg.isFault()) {
-                XMLFault fault = responseMsg.getXMLFault();
-                throw ExceptionFactory.makeWebServiceException(fault.getReason().getText());
+            if (log.isDebugEnabled()) { 
+                log.debug("Entered synchronous invocation: BaseDispatch.invoke()");
             }
-            else if (responseMsgCtx.getLocalException() != null) {
-                // use the factory, it'll throw the right thing:
-                throw ExceptionFactory.makeWebServiceException(responseMsgCtx.getLocalException());
+            
+            // Create the InvocationContext instance for this request/response flow.
+            InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
+            invocationContext.setServiceClient(serviceClient);
+            
+            // Create the MessageContext to hold the actual request message and its
+            // associated properties
+            MessageContext requestMsgCtx = new MessageContext();
+            invocationContext.setRequestMessageContext(requestMsgCtx);
+            
+            Message requestMsg = null;
+            if (isValidInvocationParam(obj)) {
+                requestMsg = createMessageFromValue(obj);
             }
-        } catch (MessageException e) {
+            else {
+                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+            }
+            
+            setupMessageProperties(requestMsg);
+            requestMsgCtx.setMessage(requestMsg);            
+            
+            // Copy the properties from the request context into the MessageContext
+            requestMsgCtx.getProperties().putAll(requestContext);
+            
+            // Send the request using the InvocationController
+            ic.invoke(invocationContext);
+            
+            MessageContext responseMsgCtx = invocationContext.getResponseMessageContext();
+            
+            Message responseMsg = responseMsgCtx.getMessage();
+            try {
+                if (responseMsg.isFault()) {
+                    XMLFault fault = responseMsg.getXMLFault();
+                    throw ExceptionFactory.makeWebServiceException(fault.getReason().getText());
+                }
+                else if (responseMsgCtx.getLocalException() != null) {
+                    // use the factory, it'll throw the right thing:
+                    throw ExceptionFactory.makeWebServiceException(responseMsgCtx.getLocalException());
+                }
+            } catch (MessageException e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+            
+            Object returnObj = getValueFromMessage(responseMsg);
+            
+            //Check to see if we need to maintain session state
+            if (requestMsgCtx.isMaintainSession()) {
+                //TODO: Need to figure out a cleaner way to make this call. 
+                setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Synchronous invocation completed: BaseDispatch.invoke()");
+            }
+            
+            return returnObj;
+        } catch (WebServiceException e) {
+            throw e; 
+        } catch (Exception e) {
+            // All exceptions are caught and rethrown as a WebServiceException
             throw ExceptionFactory.makeWebServiceException(e);
         }
-        
-        Object returnObj = getValueFromMessage(responseMsg);
-        
-        //Check to see if we need to maintain session state
-        if (requestMsgCtx.isMaintainSession()) {
-            //TODO: Need to figure out a cleaner way to make this call. 
-            setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
-        }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Synchronous invocation completed: BaseDispatch.invoke()");
-        }
-        
-        return returnObj;
     }
     
     public void invokeOneWay(Object obj) throws WebServiceException{
-        if (log.isDebugEnabled()) { 
-            log.debug("Entered one-way invocation: BaseDispatch.invokeOneWay()");
-        }
         
-        // Create the InvocationContext instance for this request/response flow.
-        InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
-        invocationContext.setServiceClient(serviceClient);
-       
-        // Create the MessageContext to hold the actual request message and its
-        // associated properties
-        MessageContext requestMsgCtx = new MessageContext();
-        invocationContext.setRequestMessageContext(requestMsgCtx);
-       
-        Message requestMsg = null;
-        if (isValidInvocationParam(obj)) {
-            requestMsg = createMessageFromValue(obj);
+        // All exceptions are caught and rethrown as a WebServiceException
+        try {
+            if (log.isDebugEnabled()) { 
+                log.debug("Entered one-way invocation: BaseDispatch.invokeOneWay()");
+            }
+            
+            // Create the InvocationContext instance for this request/response flow.
+            InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
+            invocationContext.setServiceClient(serviceClient);
+            
+            // Create the MessageContext to hold the actual request message and its
+            // associated properties
+            MessageContext requestMsgCtx = new MessageContext();
+            invocationContext.setRequestMessageContext(requestMsgCtx);
+            
+            Message requestMsg = null;
+            if (isValidInvocationParam(obj)) {
+                requestMsg = createMessageFromValue(obj);
+            }
+            else {
+                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+            }
+            
+            setupMessageProperties(requestMsg);
+            requestMsgCtx.setMessage(requestMsg);
+            
+            // Copy the properties from the request context into the MessageContext
+            requestMsgCtx.getProperties().putAll(requestContext);
+            
+            // Send the request using the InvocationController
+            ic.invokeOneWay(invocationContext);
+            
+            //Check to see if we need to maintain session state
+            if (requestMsgCtx.isMaintainSession()) {
+                //TODO: Need to figure out a cleaner way to make this call. 
+                setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("One-way invocation completed: BaseDispatch.invokeOneWay()");
+            }
+            
+            return;
+        } catch (WebServiceException e) {
+            throw e; 
+        } catch (Exception e) {
+            // All exceptions are caught and rethrown as a WebServiceException
+            throw ExceptionFactory.makeWebServiceException(e);
         }
-        else {
-            throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
-        }
-        
-        setupMessageProperties(requestMsg);
-        requestMsgCtx.setMessage(requestMsg);
-       
-        // Copy the properties from the request context into the MessageContext
-        requestMsgCtx.getProperties().putAll(requestContext);
-       
-        // Send the request using the InvocationController
-        ic.invokeOneWay(invocationContext);
-        
-        //Check to see if we need to maintain session state
-        if (requestMsgCtx.isMaintainSession()) {
-            //TODO: Need to figure out a cleaner way to make this call. 
-            setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
-        }
-       
-        if (log.isDebugEnabled()) {
-            log.debug("One-way invocation completed: BaseDispatch.invokeOneWay()");
-        }
-       
-        return;
     }
    
     public Future<?> invokeAsync(Object obj, AsyncHandler asynchandler) throws WebServiceException {
-        if (log.isDebugEnabled()) { 
-            log.debug("Entered asynchronous (callback) invocation: BaseDispatch.invokeAsync()");
+        
+        // All exceptions are caught and rethrown as a WebServiceException
+        try {
+            if (log.isDebugEnabled()) { 
+                log.debug("Entered asynchronous (callback) invocation: BaseDispatch.invokeAsync()");
+            }
+            
+            // Create the InvocationContext instance for this request/response flow.
+            InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
+            invocationContext.setServiceClient(serviceClient);
+            
+            // Create the MessageContext to hold the actual request message and its
+            // associated properties
+            MessageContext requestMsgCtx = new MessageContext();
+            invocationContext.setRequestMessageContext(requestMsgCtx);
+            
+            Message requestMsg = null;
+            if (isValidInvocationParam(obj)) {
+                requestMsg = createMessageFromValue(obj);
+            }
+            else {
+                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+            }
+            
+            setupMessageProperties(requestMsg);
+            requestMsgCtx.setMessage(requestMsg);
+            
+            // Copy the properties from the request context into the MessageContext
+            requestMsgCtx.getProperties().putAll(requestContext);
+            
+            // Setup the Executor that will be used to drive async responses back to 
+            // the client.
+            // FIXME: We shouldn't be getting this from the ServiceDelegate, rather each 
+            // Dispatch object should have it's own.
+            Executor e = serviceDelegate.getExecutor();
+            invocationContext.setExecutor(e);
+            
+            // Create the AsyncListener that is to be used by the InvocationController.
+            AsyncResponse listener = createAsyncResponseListener();
+            invocationContext.setAsyncResponseListener(listener);
+            
+            // Send the request using the InvocationController
+            Future<?> asyncResponse = ic.invokeAsync(invocationContext, asynchandler);
+            
+            //Check to see if we need to maintain session state
+            if (requestMsgCtx.isMaintainSession()) {
+                //TODO: Need to figure out a cleaner way to make this call. 
+                setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Asynchronous (callback) invocation sent: BaseDispatch.invokeAsync()");
+            }
+            
+            return asyncResponse;
+        } catch (WebServiceException e) {
+            throw e; 
+        } catch (Exception e) {
+            // All exceptions are caught and rethrown as a WebServiceException
+            throw ExceptionFactory.makeWebServiceException(e);
         }
-        
-        // Create the InvocationContext instance for this request/response flow.
-        InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
-        invocationContext.setServiceClient(serviceClient);
-        
-        // Create the MessageContext to hold the actual request message and its
-        // associated properties
-        MessageContext requestMsgCtx = new MessageContext();
-        invocationContext.setRequestMessageContext(requestMsgCtx);
-        
-        Message requestMsg = null;
-        if (isValidInvocationParam(obj)) {
-            requestMsg = createMessageFromValue(obj);
-        }
-        else {
-            throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
-        }
-        
-        setupMessageProperties(requestMsg);
-        requestMsgCtx.setMessage(requestMsg);
-        
-        // Copy the properties from the request context into the MessageContext
-        requestMsgCtx.getProperties().putAll(requestContext);
-
-        // Setup the Executor that will be used to drive async responses back to 
-        // the client.
-        // FIXME: We shouldn't be getting this from the ServiceDelegate, rather each 
-        // Dispatch object should have it's own.
-        Executor e = serviceDelegate.getExecutor();
-        invocationContext.setExecutor(e);
-        
-        // Create the AsyncListener that is to be used by the InvocationController.
-        AsyncResponse listener = createAsyncResponseListener();
-        invocationContext.setAsyncResponseListener(listener);
-        
-        // Send the request using the InvocationController
-        Future<?> asyncResponse = ic.invokeAsync(invocationContext, asynchandler);
-        
-        //Check to see if we need to maintain session state
-        if (requestMsgCtx.isMaintainSession()) {
-            //TODO: Need to figure out a cleaner way to make this call. 
-            setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
-        }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Asynchronous (callback) invocation sent: BaseDispatch.invokeAsync()");
-        }
-        
-        return asyncResponse;
     }
   
     public Response invokeAsync(Object obj)throws WebServiceException{
-        if (log.isDebugEnabled()) { 
-            log.debug("Entered asynchronous (polling) invocation: BaseDispatch.invokeAsync()");
+        
+        // All exceptions are caught and rethrown as a WebServiceException
+        try {
+            if (log.isDebugEnabled()) { 
+                log.debug("Entered asynchronous (polling) invocation: BaseDispatch.invokeAsync()");
+            }
+            
+            // Create the InvocationContext instance for this request/response flow.
+            InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
+            invocationContext.setServiceClient(serviceClient);
+            
+            // Create the MessageContext to hold the actual request message and its
+            // associated properties
+            MessageContext requestMsgCtx = new MessageContext();
+            invocationContext.setRequestMessageContext(requestMsgCtx);
+            
+            Message requestMsg = null;
+            if (isValidInvocationParam(obj)) {
+                requestMsg = createMessageFromValue(obj);
+            }
+            else {
+                throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
+            }
+            
+            setupMessageProperties(requestMsg);
+            requestMsgCtx.setMessage(requestMsg);
+            
+            // Copy the properties from the request context into the MessageContext
+            requestMsgCtx.getProperties().putAll(requestContext);
+            
+            // Setup the Executor that will be used to drive async responses back to 
+            // the client.
+            // FIXME: We shouldn't be getting this from the ServiceDelegate, rather each 
+            // Dispatch object should have it's own.
+            Executor e = serviceDelegate.getExecutor();
+            invocationContext.setExecutor(e);
+            
+            // Create the AsyncListener that is to be used by the InvocationController.
+            AsyncResponse listener = createAsyncResponseListener();
+            invocationContext.setAsyncResponseListener(listener);
+            
+            // Send the request using the InvocationController
+            Response asyncResponse = ic.invokeAsync(invocationContext);
+            
+            //Check to see if we need to maintain session state
+            if (requestMsgCtx.isMaintainSession()) {
+                //TODO: Need to figure out a cleaner way to make this call. 
+                setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug("Asynchronous (polling) invocation sent: BaseDispatch.invokeAsync()");
+            }
+            
+            return asyncResponse;
+        } catch (WebServiceException e) {
+            throw e; 
+        } catch (Exception e) {
+            // All exceptions are caught and rethrown as a WebServiceException
+            throw ExceptionFactory.makeWebServiceException(e);
         }
-        
-        // Create the InvocationContext instance for this request/response flow.
-        InvocationContext invocationContext = InvocationContextFactory.createInvocationContext(null);
-        invocationContext.setServiceClient(serviceClient);
-        
-        // Create the MessageContext to hold the actual request message and its
-        // associated properties
-        MessageContext requestMsgCtx = new MessageContext();
-        invocationContext.setRequestMessageContext(requestMsgCtx);
-        
-        Message requestMsg = null;
-        if (isValidInvocationParam(obj)) {
-            requestMsg = createMessageFromValue(obj);
-        }
-        else {
-            throw ExceptionFactory.makeWebServiceException("dispatchInvalidParam");
-        }
-        
-        setupMessageProperties(requestMsg);
-        requestMsgCtx.setMessage(requestMsg);
-        
-        // Copy the properties from the request context into the MessageContext
-        requestMsgCtx.getProperties().putAll(requestContext);
-
-        // Setup the Executor that will be used to drive async responses back to 
-        // the client.
-        // FIXME: We shouldn't be getting this from the ServiceDelegate, rather each 
-        // Dispatch object should have it's own.
-        Executor e = serviceDelegate.getExecutor();
-        invocationContext.setExecutor(e);
-        
-        // Create the AsyncListener that is to be used by the InvocationController.
-        AsyncResponse listener = createAsyncResponseListener();
-        invocationContext.setAsyncResponseListener(listener);
-        
-        // Send the request using the InvocationController
-        Response asyncResponse = ic.invokeAsync(invocationContext);
-        
-        //Check to see if we need to maintain session state
-        if (requestMsgCtx.isMaintainSession()) {
-            //TODO: Need to figure out a cleaner way to make this call. 
-            setupSessionContext(invocationContext.getServiceClient().getServiceContext().getProperties());
-        }
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Asynchronous (polling) invocation sent: BaseDispatch.invokeAsync()");
-        }
-        
-        return asyncResponse;
     }
     
     public void setServiceClient(ServiceClient sc) {
@@ -372,7 +407,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
         if (object instanceof DOMSource) {
             DOMSource ds = (DOMSource) object;
             if (ds.getNode() == null && ds.getSystemId() == null) {
-                throw ExceptionFactory.makeWebServiceException("");
+                throw ExceptionFactory.makeWebServiceException("dispatchBadDOMSource");
             }
         }
         

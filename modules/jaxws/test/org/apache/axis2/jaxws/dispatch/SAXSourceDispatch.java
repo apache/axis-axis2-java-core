@@ -331,11 +331,25 @@ public class SAXSourceDispatch extends TestCase{
         Source request = new SAXSource();
         
         try {
+            dispatch.invoke(request);
+            fail("WebServiceException was expected");
+        } catch (WebServiceException e) {
+            System.out.println("A Web Service Exception was expected: " + e.toString());
+            assertTrue(e.getMessage() != null);
+        } catch (Exception e) {
+            fail("WebServiceException was expected, but received:" + e);
+        }
+        
+        try {
             dispatch.invokeOneWay(request);
             fail("WebServiceException was expected");
         } catch (WebServiceException e) {
             System.out.println("A Web Service Exception was expected: " + e.toString());
             assertTrue(e.getMessage() != null);
+        } catch (Exception e) {
+            fail("WebServiceException was expected, but received:" + e);
         }
+        
     }
+    
 }

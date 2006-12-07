@@ -301,6 +301,8 @@ public class DOMSourceDispatch extends TestCase{
         } catch (WebServiceException e) {
             System.out.println("A Web Service Exception was expected: " + e.toString());
             assertTrue(e.getMessage() != null);
+        } catch (Exception e) {
+            fail("WebServiceException was expected, but received " + e);
         }
         
     }
