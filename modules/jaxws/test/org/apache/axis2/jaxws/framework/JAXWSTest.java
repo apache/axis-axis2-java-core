@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
 import org.apache.axis2.jaxws.client.DispatchSoapActionTests;
+import org.apache.axis2.jaxws.client.PropertyValueTests;
 import org.apache.axis2.jaxws.client.ProxySoapActionTests;
 import org.apache.axis2.jaxws.databinding.BindingToProtocolTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
@@ -98,6 +99,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SOAP12Dispatch.class);
         suite.addTestSuite(DispatchSoapActionTests.class);
         suite.addTestSuite(ProxySoapActionTests.class);
+        suite.addTestSuite(PropertyValueTests.class);
         
         suite.addTestSuite(BlockTests.class);
         suite.addTestSuite(MessageTests.class);

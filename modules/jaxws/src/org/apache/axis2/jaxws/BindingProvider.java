@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.xml.ws.Binding;
 
 import org.apache.axis2.jaxws.binding.SOAPBinding;
+import org.apache.axis2.jaxws.client.PropertyValidator;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
@@ -49,8 +50,8 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
      * Initialize any objects needed by the BindingProvider
      */
     private void initialize() {
-        requestContext = new Hashtable<String,Object>();
-        responseContext = new Hashtable<String,Object>();
+        requestContext = new ValidatingClientContext();
+        responseContext = new ValidatingClientContext();
         
         // Setting standard property defaults for the request context
         requestContext.put(BindingProvider.SESSION_MAINTAIN_PROPERTY, new Boolean(false));
@@ -155,6 +156,22 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         else {
             // If the value is not set, then just default to sending a SOAPAction
             return true;
+        }
+    }
+    
+    /*
+     * An inner class used to validate properties as they are set by the client.
+     */
+    class ValidatingClientContext extends Hashtable<String, Object> {
+
+        @Override
+        public synchronized Object put(String key, Object value) {
+            if (PropertyValidator.validate(key, value)) {
+                return super.put(key, value);
+            }
+            else {
+                throw ExceptionFactory.makeWebServiceException("Bad Property");
+            }
         }
     }
 }
