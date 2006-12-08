@@ -283,7 +283,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
                 // REVIEW: Is this a valid check?
                 throw ExceptionFactory.makeWebServiceException("ServiceDescription.updateEndpointDescription: Can not specify an SEI when creating a Dispatch. PortQN: " + portQName);
             }
-            else if (isPortDeclared) {
+            else if (getWSDLWrapper() != null && isPortDeclared) {
                 // EndpointDescription doesn't exist and this is a declared Port, so create one
                 // Use the SEI Class and its annotations to finish creating the Description hierachy.  Note that EndpointInterface, Operations, Parameters, etc.
                 // are not created for Dipsatch-based ports, but might be updated later if a getPort is done against the same declared port.

@@ -143,10 +143,10 @@ public class GetDescFromBindingProvider extends TestCase {
         assertNotNull(service);
         
         QName validPortQName = new QName(namespaceURI, "EchoPort");
-        Dispatch<String> dispatch = service.createDispatch(validPortQName, String.class, null);
-        assertNotNull(dispatch);
+        EchoPort echoPort = service.getPort(validPortQName, EchoPort.class);
+        assertNotNull(echoPort);
         
-        BindingProvider bindingProvider = (BindingProvider) dispatch;
+        BindingProvider bindingProvider = (BindingProvider)Proxy.getInvocationHandler(echoPort);
         ServiceDelegate serviceDelegate = bindingProvider.getServiceDelegate();
         assertNotNull(serviceDelegate);
         EndpointDescription endpointDesc = bindingProvider.getEndpointDescription();
@@ -165,6 +165,7 @@ public class GetDescFromBindingProvider extends TestCase {
         assertNotNull(service);
         
         QName validPortQName = new QName(namespaceURI, "EchoPort");
+        EchoPort echoPort = service.getPort(validPortQName, EchoPort.class);
         Dispatch<String> dispatch = service.createDispatch(validPortQName, String.class, null);
         assertNotNull(dispatch);
         

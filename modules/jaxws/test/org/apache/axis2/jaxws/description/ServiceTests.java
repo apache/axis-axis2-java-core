@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
@@ -243,6 +244,83 @@ public class ServiceTests extends TestCase {
         assertEquals(4, service1PortsList.size());
         Iterator<QName> service1PortIterator = service1.getPorts();
         assertQNameIteratorSameAsList(service1PortIterator, service1PortsList);
+    }
+    
+    public void testCreateDispatchWSDL() {
+        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+
+        QName service1QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_1);
+        Service service1 = Service.create(wsdlURL, service1QN);
+        assertNotNull(service1);
+        // Create Dispatch should work on a WSDL declared port prior to a getPort
+        // and again after the call to getPort
+        QName validPortQName = new QName(VALID_SERVICE_NAMESPACE, VALID_PORT_S1P1);
+        Dispatch<String> dispatch = service1.createDispatch(validPortQName, String.class, null);
+        assertNotNull(dispatch);
+        AddNumbersPortType addNumbersPortS1P1 = service1.getPort(validPortQName, AddNumbersPortType.class);
+        assertNotNull(addNumbersPortS1P1);
+        
+        // Create Dispatch should NOT work on a dynamic port that has not been added yet
+        // but should work after it has been added
+        QName addedPort = new QName(VALID_SERVICE_NAMESPACE, "addedPortS1P1");
+        try {
+            Dispatch<String> dispatch2 = service1.createDispatch(addedPort, String.class, null);
+            fail("Create Dispatch on non-existant port should have thrown an exception");
+        }
+        catch (WebServiceException ex) {
+            // Expected path
+        }
+        catch (Exception ex) {
+            fail("Unexpected exception thrown " + ex.toString());
+        }
+        service1.addPort(addedPort, null, null);
+        Dispatch<String> dispatch2 = service1.createDispatch(addedPort, String.class, null);
+        assertNotNull(dispatch2);
+
+    }
+    
+    public void testCreateDispatchNoWSDL() {
+        
+        // Note that this test is intentionally using the same names as the WSDL test, even though no WSDL is
+        // provided.  This is to verify that using the same names in the abscense of WSDL doesn't cause any
+        // issues.
+        
+        QName service1QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_1);
+        Service service1 = Service.create(service1QN);
+        assertNotNull(service1);
+        // Create Dispatch should NOT work on a dynamic port prior to a getPort
+        // but should work after the getPort causes the port to be added.
+        QName validPortQName = new QName(VALID_SERVICE_NAMESPACE, VALID_PORT_S1P1);
+        try {
+            Dispatch<String> dispatch = service1.createDispatch(validPortQName, String.class, null);
+            fail("Create Dispatch on non-existant port should have thrown and exception");
+        }
+        catch (WebServiceException ex) {
+            // Expected path
+        }
+        catch (Exception ex) {
+            fail("Unexpected exception thrown " + ex.toString());
+        }
+        AddNumbersPortType addNumbersPortS1P1 = service1.getPort(validPortQName, AddNumbersPortType.class);
+        Dispatch<String> dispatch = service1.createDispatch(validPortQName, String.class, null);
+        assertNotNull(dispatch);
+
+        // Create Dispatch should NOT work on a dynamic port that has not been added yet
+        // but should work after it has been added
+        QName addedPort = new QName(VALID_SERVICE_NAMESPACE, "addedPortS1P1");
+        try {
+            Dispatch<String> dispatch2 = service1.createDispatch(addedPort, String.class, null);
+            fail("Create Dispatch on non-existant port should have thrown an exception");
+        }
+        catch (WebServiceException ex) {
+            // Expected path
+        }
+        catch (Exception ex) {
+            fail("Unexpected exception thrown " + ex.toString());
+        }
+        service1.addPort(addedPort, null, null);
+        Dispatch<String> dispatch2 = service1.createDispatch(addedPort, String.class, null);
+        assertNotNull(dispatch2);
     }
     
     private void assertQNameIteratorSameAsList(Iterator<QName> iterator, List<QName> list) {

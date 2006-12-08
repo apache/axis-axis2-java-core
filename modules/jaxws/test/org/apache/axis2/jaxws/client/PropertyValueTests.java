@@ -40,7 +40,9 @@ public class PropertyValueTests extends TestCase {
     
     public void testSetInvalidClientProperties() throws Exception {
         Service svc = Service.create(new QName("http://test", "TestService"));
-        Dispatch dispatch = svc.createDispatch(new QName("http://test", "TestPort"), String.class, Mode.PAYLOAD);
+        QName portQName = new QName("http://test", "TestPort");
+        svc.addPort(portQName, null, null);
+        Dispatch dispatch = svc.createDispatch(portQName, String.class, Mode.PAYLOAD);
         
         Map<String, Object> map = dispatch.getRequestContext();
         
