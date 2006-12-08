@@ -294,18 +294,20 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         String anonymous = isFinalAddressingNamespace ?
                 Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
 
-        if (epr == null) {
-            epr = new EndpointReference(anonymous);
+        EndpointReference eprCopy = epr;
+        
+        if (eprCopy == null) {
+            eprCopy = new EndpointReference(anonymous);
         }
-        else if (!isFinalAddressingNamespace && epr.hasNoneAddress()) {
+        else if (!isFinalAddressingNamespace && eprCopy.hasNoneAddress()) {
             return; //Omit the header.
         }
-        else if (epr.hasAnonymousAddress()) {
-            epr.setAddress(anonymous);
+        else if (eprCopy.hasAnonymousAddress()) {
+            eprCopy.setAddress(anonymous);
         }
 
         OMElement soapHeaderBlock = EndpointReferenceHelper.toOM(envelope.getOMFactory(), 
-                                        epr, 
+                                        eprCopy, 
                                         new QName(namespace, headerName, prefix), namespace);
         envelope.getHeader().addChild(soapHeaderBlock);
     }

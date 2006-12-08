@@ -50,10 +50,11 @@ public class AddressingFaultsHelper{
             log.debug("triggerInvalidCardinalityFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-        if (Submission.WSA_NAMESPACE.equals(namespace))
+        if (Submission.WSA_NAMESPACE.equals(namespace)){
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
-        else
+        }else{
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "InvalidCardinality", Final.FAULT_INVALID_HEADER_REASON);
+        }
     }
 
     //      wsa:MissingAddressInEPR
@@ -62,10 +63,11 @@ public class AddressingFaultsHelper{
             log.debug("triggerMissingAddressInEPRFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-        if (Submission.WSA_NAMESPACE.equals(namespace))
+        if (Submission.WSA_NAMESPACE.equals(namespace)){
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
-        else
+        }else{
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "MissingAddressInEPR", Final.FAULT_INVALID_HEADER_REASON);
+        }
     }
 
     //      wsa:DuplicateMessageID
@@ -75,10 +77,11 @@ public class AddressingFaultsHelper{
             log.debug("triggerActionMismatchFault: messageContext: "+messageContext);
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-        if (Submission.WSA_NAMESPACE.equals(namespace))
+        if (Submission.WSA_NAMESPACE.equals(namespace)){
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":Action", Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
-        else
+        }else{
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":Action", Final.FAULT_INVALID_HEADER, "ActionMismatch", Final.FAULT_INVALID_HEADER_REASON);
+        }
     }
 
     //      wsa:OnlyAnonymousAddressSupported
@@ -87,10 +90,11 @@ public class AddressingFaultsHelper{
             log.debug("triggerOnlyAnonymousAddressSupportedFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-        if (Submission.WSA_NAMESPACE.equals(namespace))
+        if (Submission.WSA_NAMESPACE.equals(namespace)){
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
-        else
+        }else{
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED, Final.FAULT_INVALID_HEADER_REASON);
+        }
     }
 
     //      wsa:OnlyNonAnonymousAddressSupported
@@ -99,10 +103,11 @@ public class AddressingFaultsHelper{
             log.debug("triggerOnlyNonAnonymousAddressSupportedFault: messageContext: "+messageContext+" incorrectHeaderName: "+incorrectHeaderName);
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-        if (Submission.WSA_NAMESPACE.equals(namespace))
+        if (Submission.WSA_NAMESPACE.equals(namespace)){
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
-        else
+        }else{
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED, Final.FAULT_INVALID_HEADER_REASON);
+        }
     }
 
     //    wsa:MessageAddressingHeaderRequired [Reason] the string: "A required header representing a Message Addressing Property is not present"
@@ -111,10 +116,11 @@ public class AddressingFaultsHelper{
             log.debug("triggerMessageAddressingRequiredFault: messageContext: "+messageContext+" missingHeaderName: "+missingHeaderName);
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-        if (Submission.WSA_NAMESPACE.equals(namespace))
+        if (Submission.WSA_NAMESPACE.equals(namespace)){
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Submission.FAULT_ADDRESSING_HEADER_REQUIRED, null, Submission.FAULT_ADDRESSING_HEADER_REQUIRED_REASON);
-        else
+        }else{
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null, Final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON);
+        }
     }
 
     //    wsa:ActionNotSupported [Reason] the string: "The [action] cannot be processed at the receiver"

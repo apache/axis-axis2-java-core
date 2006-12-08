@@ -120,46 +120,44 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         Iterator addressingHeadersIt = addressingHeaders.iterator();
         while (addressingHeadersIt.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
-            if (SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole()))
-                continue;
-
-	        if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
-	            ignoreTo = checkDuplicateHeaders(WSA_TO, checkedHeaderNames, duplicateHeaderNames);
-	        } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
-	            ignoreFrom = checkDuplicateHeaders(WSA_FROM, checkedHeaderNames, duplicateHeaderNames);
-	        } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
-	            ignoreReplyTo = checkDuplicateHeaders(WSA_REPLY_TO, checkedHeaderNames, duplicateHeaderNames);
-	        } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
-	            ignoreFaultTo = checkDuplicateHeaders(WSA_FAULT_TO, checkedHeaderNames, duplicateHeaderNames);
-	        } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
-	            ignoreMessageID = checkDuplicateHeaders(WSA_MESSAGE_ID, checkedHeaderNames, duplicateHeaderNames);
-	        } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
-	            ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames, duplicateHeaderNames);
-	        }
+            if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())){
+                if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreTo = checkDuplicateHeaders(WSA_TO, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreFrom = checkDuplicateHeaders(WSA_FROM, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreReplyTo = checkDuplicateHeaders(WSA_REPLY_TO, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreFaultTo = checkDuplicateHeaders(WSA_FAULT_TO, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreMessageID = checkDuplicateHeaders(WSA_MESSAGE_ID, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames, duplicateHeaderNames);
+                }
+            }
         }
         
         // Now extract information
         Iterator addressingHeadersIt2 = addressingHeaders.iterator();
         while (addressingHeadersIt2.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt2.next();
-            if (SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole()))
-                continue;
-            
-            if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
-                extractToEPRInformation(soapHeaderBlock, messageContextOptions, header, namespace);
-            } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
-                extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
-            } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreReplyTo) {
-                extractReplyToEPRInformation(soapHeaderBlock, namespace, messageContext);
-            } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
-                extractFaultToEPRInformation(soapHeaderBlock, namespace, messageContext);
-            } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
-                messageContextOptions.setMessageId(soapHeaderBlock.getText());
-                soapHeaderBlock.setProcessed();
-            } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
-                extractActionInformation(soapHeaderBlock, namespace, messageContext);
-            } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
-                extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
+            if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())){
+                if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
+                    extractToEPRInformation(soapHeaderBlock, messageContextOptions, header, namespace);
+                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
+                    extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
+                } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreReplyTo) {
+                    extractReplyToEPRInformation(soapHeaderBlock, namespace, messageContext);
+                } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
+                    extractFaultToEPRInformation(soapHeaderBlock, namespace, messageContext);
+                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
+                    messageContextOptions.setMessageId(soapHeaderBlock.getText());
+                    soapHeaderBlock.setProcessed();
+                } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
+                    extractActionInformation(soapHeaderBlock, namespace, messageContext);
+                } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
+                    extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
+                }
             }
         }
 

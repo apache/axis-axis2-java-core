@@ -79,8 +79,9 @@ public class AddressingFinalInHandler extends AddressingInHandler {
                 messageContextOptions.setReplyTo(epr);
             }
             
-            if (log.isTraceEnabled())
+            if (log.isTraceEnabled()){
                 log.trace("setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
+            }
             
             epr.setAddress(Final.WSA_ANONYMOUS_URL);
         }        

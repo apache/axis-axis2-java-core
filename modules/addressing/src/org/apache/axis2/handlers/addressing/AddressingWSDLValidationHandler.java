@@ -52,12 +52,14 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
     private void checkUsingAddressing(MessageContext msgContext)
             throws AxisFault {
         String addressingFlag = msgContext.getAxisService().getWSAddressingFlag();
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()){
             log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
+        }
         if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
             Object flag = msgContext.getProperty(AddressingConstants.IS_ADDR_INFO_ALREADY_PROCESSED);
-            if (log.isTraceEnabled())
+            if (log.isTraceEnabled()){
                 log.trace("checkUsingAddressing: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
+            }
             if (JavaUtils.isFalseExplicitly(flag)) {
                 AddressingFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
             }
@@ -70,8 +72,9 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
      */
     private void checkAnonymous(MessageContext msgContext) throws AxisFault {
         String anonymous = AddressingHelper.getAnonymousParameterValue(msgContext.getAxisOperation());
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()){
             log.trace("checkAnonymous: Anonymous=" + anonymous);
+        }
         if("required".equals(anonymous)){
             if(AddressingHelper.isReplyRedirected(msgContext)){
                 EndpointReference anonEPR = new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL);
@@ -102,8 +105,9 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
      */
     private void checkAction(MessageContext msgContext) throws AxisFault{
         Object flag = msgContext.getProperty(AddressingConstants.IS_ADDR_INFO_ALREADY_PROCESSED);
-        if (log.isTraceEnabled())
+        if (log.isTraceEnabled()){
             log.trace("checkAction: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
+        }
         if(JavaUtils.isTrueExplicitly(flag)){
             if((msgContext.getAxisService() == null) || (msgContext.getAxisOperation() == null)){
                 AddressingFaultsHelper.triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
