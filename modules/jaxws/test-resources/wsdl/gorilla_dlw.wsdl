@@ -5,10 +5,12 @@
     targetNamespace="http://org/apache/axis2/jaxws/proxy/gorilla_dlw" 
     xmlns:tns="http://org/apache/axis2/jaxws/proxy/gorilla_dlw" 
     xmlns:data="http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"  jaxb:version="2.0"
     xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
     <!-- Use elementFormDefault=qualified.  Many users use this setting for interop compatibility -->
     <s:schema elementFormDefault="qualified" 
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"  jaxb:version="2.0"
         targetNamespace="http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data" >
 
       <s:import namespace="http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data2"  />
@@ -121,6 +123,9 @@
       </s:element>
 
       <!-- Echo stringList.  Tests xsd:list-->
+      <!-- Both the SEI and the bean use List String to represent the data.  -->
+      <!-- But there are some semantic differences between this and echoStringArray -->
+      <!-- due to xml differences between xsd:list and maxOccurs unbounded -->
       <s:element name="echoStringList">
         <s:complexType>
           <s:sequence>
@@ -137,7 +142,63 @@
         </s:complexType>
       </s:element>
 
-      <!-- Echo a String.  This also supports the situation where there is no string -->
+      <!-- Just like stringList, except the SEI parameter is manually changed to String[] -->
+      <!-- This will test List <-> java Array processing -->
+      <s:element name="echoStringListAlt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="data" type="data:stringList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <s:element name="echoStringListAltResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="result" type="data:stringList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <!-- Just like stringList, except the SEI parameter is manually changed to LinkedList String -->
+      <!-- This will test List <-> java Array processing -->
+      <s:element name="echoStringListAsLinkedList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="data" type="data:stringList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <s:element name="echoStringListAltAsLinkedListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="result" type="data:stringList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <!-- The SEI and bean property map to List List String -->
+      <s:element name="echoStringListArray">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="data" type="data:stringList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <s:element name="echoStringListArrayResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="result" type="data:stringList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <!-- Echo a String aray. -->
+      <!-- Probably the most common case.  Both the SEI and bean are mapped to List String -->
+      <!-- The xml maxOccurs semantics are used to marshal and unmarshal the values... -->
+      <!-- Which makes this a little different than the echoStringList case -->
       <s:element name="echoStringArray">
         <s:complexType>
           <s:sequence>
@@ -149,6 +210,68 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="unbounded" name="result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <!-- Same as echoStringArray, except the SEI is manually changed to String[] -->
+      <s:element name="echoStringArrayAlt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="data" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringArrayAltResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <!-- Same as echoStringArray, except the SEI is manually changed to LinkedList String -->
+      <s:element name="echoStringArrayAsLinkedList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="data" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoStringArrayAsLinkedListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+
+      <!-- Echo Indexed String Array -->
+      <!-- In this case the parameter is a List String, but the bean property uses the indexed -->
+      <!-- setter/getter style methods -->
+      <s:element name="echoIndexedStringArray">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="data" type="s:string" >
+              <s:annotation>
+                <s:appinfo>
+                  <jaxb:property collectionType="indexed" />
+                </s:appinfo>
+              </s:annotation>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="echoIndexedStringArrayResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="unbounded" name="result" type="s:string" >
+              <s:annotation>
+                <s:appinfo>
+                  <jaxb:property collectionType="indexed" />
+                </s:appinfo>
+              </s:annotation>
+            </s:element>
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -292,12 +415,52 @@
   <message name="echoStringListResponse">
     <part name="x" element="data:echoStringListResponse" />
   </message>
+  <message name="echoStringListAlt">
+    <part name="x" element="data:echoStringListAlt" />
+  </message>
+  <message name="echoStringListAltResponse">
+    <part name="x" element="data:echoStringListAltResponse" />
+  </message>
+  <message name="echoStringListAsLinkedList">
+    <part name="x" element="data:echoStringListAsLinkedList" />
+  </message>
+  <message name="echoStringListAsLinkedListResponse">
+    <part name="x" element="data:echoStringListAsLinkedListResponse" />
+  </message>
+
+  <message name="echoStringListArray">
+    <part name="x" element="data:echoStringListArray" />
+  </message>
+  <message name="echoStringListArrayResponse">
+    <part name="x" element="data:echoStringListArrayResponse" />
+  </message>
 
   <message name="echoStringArray">
     <part name="x" element="data:echoStringArray" />
   </message>
   <message name="echoStringArrayResponse">
     <part name="x" element="data:echoStringArrayResponse" />
+  </message>
+
+  <message name="echoStringArrayAlt">
+    <part name="x" element="data:echoStringArrayAlt" />
+  </message>
+  <message name="echoStringArrayAltResponse">
+    <part name="x" element="data:echoStringArrayAltResponse" />
+  </message>
+
+  <message name="echoStringArrayAsLinkedList">
+    <part name="x" element="data:echoStringArrayAsLinkedList" />
+  </message>
+  <message name="echoStringArrayAsLinkedListResponse">
+    <part name="x" element="data:echoStringArrayAsLinkedListResponse" />
+  </message>
+  
+  <message name="echoIndexedStringArray">
+    <part name="x" element="data:echoIndexedStringArray" />
+  </message>
+  <message name="echoIndexedStringArrayResponse">
+    <part name="x" element="data:echoIndexedStringArrayResponse" />
   </message>
 
   <message name="echoString2Array">
@@ -355,15 +518,50 @@
       <output message="tns:echoAnyTypeResponse" />
       <fault  name="assertFault" message="tns:assertFault" />
     </operation>
+
     <operation name="echoStringList">
       <input message="tns:echoStringList" />
       <output message="tns:echoStringListResponse" />
+      <fault  name="assertFault" message="tns:assertFault" />
+    </operation>
+    <operation name="echoStringListAlt">
+      <input message="tns:echoStringListAlt" />
+      <output message="tns:echoStringListAltResponse" />
+      <fault  name="assertFault" message="tns:assertFault" />
+    </operation>
+    <operation name="echoStringListAsLinkedList">
+      <input message="tns:echoStringListAsLinkedList" />
+      <output message="tns:echoStringListAsLinkedListResponse" />
+      <fault  name="assertFault" message="tns:assertFault" />
+    </operation>
+   
+    <operation name="echoStringListArray">
+      <input message="tns:echoStringListArray" />
+      <output message="tns:echoStringListArrayResponse" />
       <fault  name="assertFault" message="tns:assertFault" />
     </operation>
 
     <operation name="echoStringArray">
       <input message="tns:echoStringArray" />
       <output message="tns:echoStringArrayResponse" />
+      <fault name="assertFault" message="tns:assertFault" />
+    </operation>
+    <operation name="echoStringArrayAlt">
+      <input message="tns:echoStringArrayAlt" />
+      <output message="tns:echoStringArrayAltResponse" />
+      <fault name="assertFault" message="tns:assertFault" />
+    </operation>
+
+   <operation name="echoStringArrayAsLinkedList">
+      <input message="tns:echoStringArrayAsLinkedList" />
+      <output message="tns:echoStringArrayAsLinkedListResponse" />
+      <fault name="assertFault" message="tns:assertFault" />
+    </operation>
+
+
+    <operation name="echoIndexedStringArray">
+      <input message="tns:echoIndexedStringArray" />
+      <output message="tns:echoIndexedStringArrayResponse" />
       <fault name="assertFault" message="tns:assertFault" />
     </operation>
 
@@ -464,6 +662,42 @@
         <soap:fault name="assertFault" use="literal" />
       </fault>
     </operation>
+    <operation name="echoStringListAlt">
+      <soap:operation style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+      <fault name="assertFault">
+        <soap:fault name="assertFault" use="literal" />
+      </fault>
+    </operation>
+    <operation name="echoStringListAsLinkedList">
+      <soap:operation style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+      <fault name="assertFault">
+        <soap:fault name="assertFault" use="literal" />
+      </fault>
+    </operation>
+    <operation name="echoStringListArray">
+      <soap:operation style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+      <fault name="assertFault">
+        <soap:fault name="assertFault" use="literal" />
+      </fault>
+    </operation>
 
     <operation name="echoStringArray">
       <soap:operation style="document" />
@@ -477,6 +711,44 @@
         <soap:fault name="assertFault" use="literal" />
       </fault>
     </operation>
+    <operation name="echoStringArrayAlt">
+      <soap:operation style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+      <fault name="assertFault">
+        <soap:fault name="assertFault" use="literal" />
+      </fault>
+    </operation>
+    <operation name="echoStringArrayAsLinkedList">
+      <soap:operation style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+      <fault name="assertFault">
+        <soap:fault name="assertFault" use="literal" />
+      </fault>
+    </operation>
+
+    <operation name="echoIndexedStringArray">
+      <soap:operation style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+      <fault name="assertFault">
+        <soap:fault name="assertFault" use="literal" />
+      </fault>
+    </operation>
+
     <operation name="echoString2Array">
       <soap:operation style="document" />
       <input>

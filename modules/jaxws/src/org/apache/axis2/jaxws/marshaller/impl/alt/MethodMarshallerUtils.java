@@ -60,6 +60,7 @@ import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.ConvertUtils;
 import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
@@ -236,6 +237,19 @@ class MethodMarshallerUtils  {
                 // The signature wants the object that is rendered as the type
                 value = XMLRootElementUtil.getTypeEnabledObject(value);
                 
+                // Now that we have the type, there may be a mismatch
+                // between the type (as defined by JAXB) and the formal
+                // parameter (as defined by JAXWS).  Frequently this occurs
+                // with respect to T[] versus List<T>.  
+                // Use the convert utility to silently do any conversions
+                if (ConvertUtils.isConvertable(value, pd.getParameterActualType())) {
+                    value = ConvertUtils.convert(value, pd.getParameterActualType());
+                } else {
+                    String objectClass = (value == null) ? "null" : value.getClass().getName();
+                    throw ExceptionFactory.makeWebServiceException(
+                            Messages.getMessage("convertProblem", objectClass, pd.getParameterActualType().getName()));
+                }
+                
                 // The signature may want a holder representation
                 if (pd.isHolderType()) {
                     args[i] = createHolder(pd.getParameterType(), value);
@@ -276,6 +290,19 @@ class MethodMarshallerUtils  {
                 
                 // The signature wants the object that is rendered as the type
                 value = XMLRootElementUtil.getTypeEnabledObject(value);
+                
+                // Now that we have the type, there may be a mismatch
+                // between the type (as defined by JAXB) and the formal
+                // parameter (as defined by JAXWS).  Frequently this occurs
+                // with respect to T[] versus List<T>.  
+                // Use the convert utility to silently do any conversions
+                if (ConvertUtils.isConvertable(value, pd.getParameterActualType())) {
+                    value = ConvertUtils.convert(value, pd.getParameterActualType());
+                } else {
+                    String objectClass = (value == null) ? "null" : value.getClass().getName();
+                    throw ExceptionFactory.makeWebServiceException(
+                            Messages.getMessage("convertProblem", objectClass, pd.getParameterActualType().getName()));
+                }
                 
                 // TODO Assert that this ParameterDescriptor must represent
                 // an OUT or INOUT and must have a non-null holder object to 

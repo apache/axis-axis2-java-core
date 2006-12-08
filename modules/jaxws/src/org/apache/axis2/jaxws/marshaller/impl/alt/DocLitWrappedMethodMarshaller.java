@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -43,6 +44,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.util.ConvertUtils;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
@@ -155,6 +157,14 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 returnValue = null;
             } else if (isChildReturn) {
                 returnValue = objects[objects.length-1];
+                // returnValue may be incompatible with JAX-WS signature
+                if (ConvertUtils.isConvertable(returnValue, returnType)) {
+                    returnValue = ConvertUtils.convert(returnValue, returnType);
+                } else {
+                    String objectClass = (returnValue == null) ? "null" : returnValue.getClass().getName();
+                    throw ExceptionFactory.makeWebServiceException(
+                            Messages.getMessage("convertProblem", objectClass, returnType.getName()));
+                }
             } else {
                 returnValue = wrapperObject;
             }

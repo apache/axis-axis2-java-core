@@ -129,6 +129,41 @@ public interface GorillaInterface {
      * 
      * @param data
      * @return
+     *     returns String[]
+     * @throws AssertFault
+     */
+    // NOTE: The return and param are manually changed from List<String> to String[]
+    @WebMethod
+    @WebResult(name = "result", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+    @RequestWrapper(localName = "echoStringListAlt", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoStringListAlt")
+    @ResponseWrapper(localName = "echoStringListAltResponse", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoStringListAltResponse")
+    public String[] echoStringListAlt(
+        @WebParam(name = "data", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+        String[] data)
+        throws AssertFault
+    ;
+
+    /**
+     * 
+     * @param data
+     * @return
+     *     returns java.util.List<java.util.List<java.lang.String>>
+     * @throws AssertFault
+     */
+    @WebMethod
+    @WebResult(name = "result", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+    @RequestWrapper(localName = "echoStringListArray", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoStringListArray")
+    @ResponseWrapper(localName = "echoStringListArrayResponse", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoStringListArrayResponse")
+    public List<List<String>> echoStringListArray(
+        @WebParam(name = "data", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+        List<List<String>> data)
+        throws AssertFault
+    ;
+
+    /**
+     * 
+     * @param data
+     * @return
      *     returns java.util.List<java.lang.String>
      * @throws AssertFault
      */
@@ -141,6 +176,42 @@ public interface GorillaInterface {
         List<String> data)
         throws AssertFault
     ;
+    
+    /**
+     * 
+     * @param data
+     * @return
+     *     returns String[]
+     * @throws AssertFault
+     */
+    //  NOTE: The return and param are manually changed from List<String> to String[]
+    @WebMethod
+    @WebResult(name = "result", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+    @RequestWrapper(localName = "echoStringArrayAlt", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoStringArrayAlt")
+    @ResponseWrapper(localName = "echoStringArrayAltResponse", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoStringArrayAltResponse")
+    public String[] echoStringArrayAlt(
+        @WebParam(name = "data", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+        String[] data)
+        throws AssertFault
+    ;
+
+    /**
+     * 
+     * @param data
+     * @return
+     *     returns java.util.List<java.lang.String>
+     * @throws AssertFault
+     */
+    @WebMethod
+    @WebResult(name = "result", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+    @RequestWrapper(localName = "echoIndexedStringArray", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoIndexedStringArray")
+    @ResponseWrapper(localName = "echoIndexedStringArrayResponse", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data", className = "org.apache.axis2.jaxws.proxy.gorilla_dlw.data.EchoIndexedStringArrayResponse")
+    public List<String> echoIndexedStringArray(
+        @WebParam(name = "data", targetNamespace = "http://org/apache/axis2/jaxws/proxy/gorilla_dlw/data")
+        List<String> data)
+        throws AssertFault
+    ;
+    
 
     /**
      * 

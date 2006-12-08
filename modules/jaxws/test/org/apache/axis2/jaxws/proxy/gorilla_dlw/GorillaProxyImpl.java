@@ -78,11 +78,27 @@ public class GorillaProxyImpl implements GorillaInterface {
             throws AssertFault {
         return data;
     }
+    
+    public String[] echoStringListAlt(String[] data) throws AssertFault {
+       return data;
+    }
 
+    public List<List<String>> echoStringListArray(List<List<String>> data) throws AssertFault {
+        return data;
+    }
+    
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface#echoStringArray(java.util.List)
      */
     public List<String> echoStringArray(List<String> data) throws AssertFault {
+        return data;
+    }
+    
+    public String[] echoStringArrayAlt(String[] data) throws AssertFault {
+        return data;
+    }
+
+    public List<String> echoIndexedStringArray(List<String> data) throws AssertFault {
         return data;
     }
 
@@ -115,5 +131,4 @@ public class GorillaProxyImpl implements GorillaInterface {
     public List<Fruit> echoEnumArray(List<Fruit> data) throws AssertFault {
         return data;
     }
-
 }

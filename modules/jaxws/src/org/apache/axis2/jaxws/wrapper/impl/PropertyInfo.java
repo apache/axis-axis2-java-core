@@ -17,11 +17,16 @@
 
 package org.apache.axis2.jaxws.wrapper.impl;
 
+import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.util.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -64,39 +69,131 @@ public class PropertyInfo {
 	 * @throws IllegalAccessException
 	 * @throws JAXBWrapperException
 	 */
-	public void set(Object targetBean, Object propValue)throws InvocationTargetException, IllegalAccessException, JAXBWrapperException{
-		Method method = descriptor.getWriteMethod();
-        // JAXB provides setters for atomic values.
-        // For non-atomic values (i.e. lists, collections), there is no setter.
-		if (method != null) {
-            // Method exists, this is the atomic case
-		    Object[] object = new Object[]{propValue};
-		    Class[] paramTypes = method.getParameterTypes();
-		    if(paramTypes !=null && paramTypes.length ==1){
-		        Class paramType = paramTypes[0];
-		        if(paramType.isPrimitive() && propValue == null){
-		            //Ignoring null value for primitive type, this could potentially be the way of a customer indicating to set
-		            //default values defined in JAXBObject/xmlSchema.
-		            if(log.isDebugEnabled()){
-		                log.debug("Ignoring null value for primitive type, this is the way to set default values defined in JAXBObject/xmlSchema. for primitive types");
-		            }
-		            return;
-                }
-			}
-            method.invoke(targetBean, object);
-		} else {
-            // There is no setter, we will assume that this is the Collection case
-            // Get the collection. (If there is no collection, the JAXB bean will construct a new one; thus 
-            // collection will always be non-null.)
-		    Collection collection = (Collection) get(targetBean);
+	public void set(Object targetBean, Object propValue) throws InvocationTargetException, IllegalAccessException, JAXBWrapperException{
+        
+        // No set occurs if the value is null
+        if (propValue == null) {
+            return;
+        }
             
-            // Now add our our object to the collection
-            collection.clear();
-            if (propValue != null) {
-                collection.addAll((Collection) propValue);
+        // There are 3 different types of setters that can occur.
+        // 1) Normal Attomic Setter : setFoo(type)
+        // 2) Indexed Array Setter : setFoo(type[])
+        // 3) No Setter case if the property is a List<T>.
+        
+        Method writeMethod = descriptor.getWriteMethod();
+        if (descriptor instanceof IndexedPropertyDescriptor) {
+            // Set for indexed  T[]
+            setIndexedArray(targetBean, propValue, writeMethod);
+        } else if (writeMethod == null) {
+            // Set for List<T>
+            setList(targetBean, propValue);
+        } else {
+            // Normal case
+            setAtomic(targetBean, propValue, writeMethod);
+        }
+    }
+    
+    /**
+     * Set the property value onto targetBean using the writeMethod
+     * @param targetBean
+     * @param propValue
+     * @param writeMethod (set(T))
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws JAXBWrapperException
+     */
+    private void setAtomic(Object targetBean, Object propValue, Method writeMethod) 
+        throws InvocationTargetException, IllegalAccessException, JAXBWrapperException {
+        // JAXB provides setters for atomic value.
+        Object[] object = new Object[]{propValue};
+        Class[] paramTypes = writeMethod.getParameterTypes();
+        if(paramTypes !=null && paramTypes.length ==1){
+            Class paramType = paramTypes[0];
+            if(paramType.isPrimitive() && propValue == null){
+                //Ignoring null value for primitive type, this could potentially be the way of a customer indicating to set
+                //default values defined in JAXBObject/xmlSchema.
+                if(log.isDebugEnabled()){
+                    log.debug("Ignoring null value for primitive type, this is the way to set default values defined in JAXBObject/xmlSchema. for primitive types");
+                }
+                return;
             }
         }
-		
-	}
-	
+        writeMethod.invoke(targetBean, object);
+    }
+    
+    /**
+     * Set the property value using the indexed array setter
+     * @param targetBean
+     * @param propValue
+     * @param writeMethod set(T[])
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws JAXBWrapperException
+     */
+    private void setIndexedArray(Object targetBean, Object propValue, Method writeMethod) 
+        throws InvocationTargetException, IllegalAccessException, JAXBWrapperException {
+        
+        Class paramType = writeMethod.getParameterTypes()[0];
+        Object value = asArray(propValue, paramType);
+        // JAXB provides setters for atomic value.
+        Object[] object = new Object[]{value};
+        
+        writeMethod.invoke(targetBean, value);
+    }
+    /**
+     * Set the property value for the collection case.
+     * @param targetBean
+     * @param propValue
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws JAXBWrapperException
+     */
+    private void setList(Object targetBean, Object propValue) throws InvocationTargetException, IllegalAccessException, JAXBWrapperException {
+        // For the List<T> case, there is no setter. 
+        // You are supposed to use the getter to obtain access to the collection and then add the collection
+        
+        Collection value = asCollection(propValue, descriptor.getPropertyType());
+        Collection collection = (Collection) get(targetBean);
+        
+        // Now add our our object to the collection
+        collection.clear();
+        if (propValue != null) {
+            collection.addAll(value);
+        }
+    }
+            
+    /**
+     * @param propValue
+     * @param destType
+     * @return propValue as a Collection
+     */
+    private static Collection asCollection(Object propValue, Class destType) {
+        // TODO Missing function
+        // Convert the object into an equivalent object that is a collection
+        if (ConvertUtils.isConvertable(propValue, destType)) {
+            return (Collection) ConvertUtils.convert(propValue, destType);
+        } else {
+            String objectClass = (propValue == null) ? "null" : propValue.getClass().getName();
+            throw ExceptionFactory.makeWebServiceException(
+                    Messages.getMessage("convertProblem", objectClass, destType.getName()));
+            
+        }
+    }
+    
+    /**
+     * @param propValue
+     * @param destType T[]
+     * @return array of component type
+     */
+    private static Object asArray(Object propValue, Class destType) {
+        if (ConvertUtils.isConvertable(propValue, destType)) {
+            return ConvertUtils.convert(propValue, destType);
+        } else {
+            String objectClass = (propValue == null) ? "null" : propValue.getClass().getName();
+            throw ExceptionFactory.makeWebServiceException(
+                    Messages.getMessage("convertProblem", objectClass, destType.getName()));
+
+        }
+    }
 }

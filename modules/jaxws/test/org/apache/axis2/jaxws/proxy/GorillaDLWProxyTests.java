@@ -176,6 +176,60 @@ public class GorillaDLWProxyTests extends TestCase {
      * Test of String Array (string maxOccurs=unbounded)
      * @throws Exception
      */
+    public void testEchoIndexedStringArray() throws Exception {
+        try{ 
+            GorillaInterface proxy = getProxy();
+            
+            // Test sending Hello World
+            List<String> request1 = new ArrayList<String>();
+            request1.add("Hello");
+            request1.add("World");
+            List<String> response1 = proxy.echoIndexedStringArray(request1);
+            assertTrue(response1 != null);
+            assertTrue(compareLists(request1, response1));
+            
+            // Test with empty list
+            List<String> request2 = new ArrayList<String>();
+            List<String> response2 = proxy.echoIndexedStringArray(request2);
+            assertTrue(response2 != null);
+            assertTrue(compareLists(request2, response2));
+            
+            // Test with null
+            // Note that the response will be an empty array because
+            // the JAXB bean will never represent List<String> as a null.  This is expected.
+            List<String> request3 = null;
+            List<String> response3 = proxy.echoIndexedStringArray(request3);
+            assertTrue(response3 != null && response3.size() == 0);
+            
+            // Test sending Hello null World
+            // Note that the null is preserved and the request and response
+            // are the same..note that this is different than the xsd:list processing (see testStringList above)
+            // This is expected.
+            List<String> request4 = new ArrayList<String>();
+            request4.add("Hello");
+            request4.add(null);
+            request4.add("World");
+            List<String> response4 = proxy.echoIndexedStringArray(request4);
+            assertTrue(response4!= null);
+            assertTrue(compareLists(request4, response4));  // Response 4 should be the same as Request 1
+            
+            // Test sending "Hello World"
+            // Note that the Hello World remains one item.
+            List<String> request5 = new ArrayList<String>();
+            request5.add("Hello World");
+            List<String> response5 = proxy.echoIndexedStringArray(request5);
+            assertTrue(response5!= null);
+            assertTrue(compareLists(request5, response5)); // Response 5 should be the same as Request 1
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
+    
+    /**
+     * Test of String Array (string maxOccurs=unbounded)
+     * @throws Exception
+     */
     public void testEchoStringArray() throws Exception {
         try{ 
             GorillaInterface proxy = getProxy();
@@ -190,7 +244,7 @@ public class GorillaDLWProxyTests extends TestCase {
             
             // Test with empty list
             List<String> request2 = new ArrayList<String>();
-            List<String> response2 = proxy.echoStringList(request2);
+            List<String> response2 = proxy.echoStringArray(request2);
             assertTrue(response2 != null);
             assertTrue(compareLists(request2, response2));
             
