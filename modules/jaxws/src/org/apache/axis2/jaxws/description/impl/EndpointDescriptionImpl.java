@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.description.impl;
 
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -314,7 +315,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 					//set the sdimpl from the impl. class composite
 					wsdl4jWrapper = new WSDL4JWrapper(composite.getWsdlURL(), composite.getWsdlDefinition());
 					getServiceDescriptionImpl().setWsdlWrapper(wsdl4jWrapper);
-				}
+				} 
 			} catch (WSDLException e) {
 				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
 			}
@@ -1206,13 +1207,18 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                 // @TODO There are two ways to get the packages.
                 // Schema Walk (prefered) and Annotation Walk.
                 // The Schema walk requires an existing or generated schema.
-                // For now, we will force the use of annotation walk
-                // @See PackageSetBuilder for details
-                boolean useSchemaWalk = true;
-                if (useSchemaWalk) {
-                    packages = PackageSetBuilder.getPackagesFromSchema(this.getServiceDescription());
-                } else {
-                    packages = PackageSetBuilder.getPackagesFromAnnotations(this);
+                // 
+                // There are some limitations in the current schema walk
+                // And there are problems in the annotation walk.
+                // So for now we will do both.
+                boolean doSchemaWalk = true;
+                boolean doAnnotationWalk = true;
+                packages = new HashSet<String>();
+                if (doSchemaWalk) {
+                    packages.addAll(PackageSetBuilder.getPackagesFromSchema(this.getServiceDescription()));
+                }
+                if (doAnnotationWalk) {
+                    packages.addAll(PackageSetBuilder.getPackagesFromAnnotations(this));
                 }
             }
         }
